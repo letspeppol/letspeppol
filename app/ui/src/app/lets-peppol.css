@@ -1176,6 +1176,32 @@ main.container .data-table tbody td {
     text-decoration: underline;
 }
 
+.auth-info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: .4rem;
+    border: solid var(--primary-strong) 1px;
+    border-radius: var(--radius-input);
+    background: rgb(from var(--primary-strong) r g b / 0.1);
+    padding: .8rem;
+    color: var(--muted);
+    margin: 0;
+}
+
+.auth-info svg {
+    color: var(--primary-strong);
+}
+
+.auth-info a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.auth-info a:hover {
+    text-decoration: underline;
+}
+
 /* ============================================================================
    16. Inline Form Error
    ============================================================================ */
