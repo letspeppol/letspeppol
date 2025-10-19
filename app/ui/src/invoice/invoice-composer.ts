@@ -3,7 +3,6 @@ import moment from "moment/moment";
 import {singleton} from "aurelia";
 import {resolve} from "@aurelia/kernel";
 import {CompanyService} from "../services/app/company-service";
-import {omit} from 'lodash';
 import {PartnerDto} from "../services/app/partner-service";
 
 @singleton()
@@ -226,23 +225,58 @@ export class InvoiceComposer {
 
     invoiceToCreditNote(invoice: Invoice): CreditNote {
         return {
-            ...omit(invoice,  ["InvoiceTypeCode" , "InvoiceLine"]),
+            CustomizationID: invoice.CustomizationID,
+            ProfileID: invoice.ProfileID,
+            ID: invoice.ID,
+            IssueDate: invoice.IssueDate,
+            DueDate: invoice.DueDate,
             CreditNoteTypeCode: 381,
+            DocumentCurrencyCode: "EUR",
+            BuyerReference: invoice.BuyerReference, // or OrderReference
+            AccountingSupplierParty: invoice.AccountingSupplierParty,
+            AccountingCustomerParty: invoice.AccountingCustomerParty,
+            PaymentMeans: invoice.PaymentMeans,
+            PaymentTerms: invoice.PaymentTerms,
+            TaxTotal: invoice.TaxTotal,
+            LegalMonetaryTotal: invoice.LegalMonetaryTotal,
             CreditNoteLine: invoice.InvoiceLine.map(line => ({
-                ...omit(line, ["InvoicedQuantity"]),
+                ID: line.ID,
                 CreditedQuantity: line.InvoicedQuantity,
+                LineExtensionAmount: line.LineExtensionAmount,
+                Item: line.Item,
+                Price: line.Price,
             })),
         } as CreditNote;
+
+        /*
+          <cac:BillingReference>
+            <cac:InvoiceDocumentReference>
+              <cbc:ID>INV-2025-007</cbc:ID>
+            </cac:InvoiceDocumentReference>
+          </cac:BillingReference>
+         */
     }
 
     creditNoteToInvoice(creditNote: CreditNote): Invoice {
         return {
-            ...omit(creditNote, ["CreditNoteTypeCode", "CreditNoteLine"]),
+            CustomizationID: creditNote.CustomizationID,
+            ProfileID: creditNote.ProfileID,
+            ID: creditNote.ID,
+            IssueDate: creditNote.IssueDate,
             InvoiceTypeCode: 380,
+            DocumentCurrencyCode: "EUR",
+            AccountingSupplierParty: creditNote.AccountingSupplierParty,
+            AccountingCustomerParty: creditNote.AccountingCustomerParty,
+            PaymentMeans: creditNote.PaymentMeans,
+            PaymentTerms: creditNote.PaymentTerms,
+            TaxTotal: creditNote.TaxTotal,
+            LegalMonetaryTotal: creditNote.LegalMonetaryTotal,
             InvoiceLine: creditNote.CreditNoteLine.map(line => ({
-                ...omit(line, ["CreditedQuantity"]),
+                ID: line.ID,
                 InvoicedQuantity: line.CreditedQuantity,
-                CreditedQuantity: undefined
+                LineExtensionAmount: line.LineExtensionAmount,
+                Item: line.Item,
+                Price: line.Price,
             })),
         } as Invoice;
     }

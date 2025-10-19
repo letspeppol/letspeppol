@@ -18,6 +18,7 @@ import {InvoiceCalculator, roundTwoDecimals} from "../invoice-calculator";
 import {InvoiceComposer} from "../invoice-composer";
 import {downloadInvoicePdf} from "../pdf/invoice-pdf";
 import {InvoiceDraftDto, InvoiceService} from "../../services/app/invoice-service";
+import {ValidationResultModal} from "./components/validation-result-modal";
 
 export class InvoiceEdit {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -32,6 +33,7 @@ export class InvoiceEdit {
     @observable customerCompanyNumber: undefined | string;
     @bindable invoicePaymentModal: InvoicePaymentModal;
     @bindable invoiceCustomerModal: InvoiceCustomerModal;
+    @bindable validationResultModal: ValidationResultModal;
 
     taxCategories: ClassifiedTaxCategory[] = [
         { ID: "S", Percent: 21, TaxScheme: { ID: 'VAT' } },
@@ -149,6 +151,7 @@ export class InvoiceEdit {
     async validate() {
         const xml = this.buildXml();
         const response = await this.invoiceService.validate(xml);
+        this.validationResultModal.showModal(response);
         console.log(response);
     }
 }

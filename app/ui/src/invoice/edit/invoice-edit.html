@@ -1,7 +1,12 @@
 <import from="../../components/alert/alert"></import>
 <import from="./components/invoice-payment-modal"></import>
 <import from="./components/invoice-customer-modal"></import>
+<import from="./components/validation-result-modal"></import>
 <import from="./components/product-name-search"></import>
+
+<invoice-payment-modal component.ref="invoicePaymentModal" invoice-context.bind="invoiceContext" selected-payment-means-code.bind="selectedPaymentMeansCode"></invoice-payment-modal>
+<invoice-customer-modal component.ref="invoiceCustomerModal" invoice-context.bind="invoiceContext"></invoice-customer-modal>
+<validation-result-modal component.ref="validationResultModal"></validation-result-modal>
 
 <div class="invoices-main">
     <div class="section-header">
@@ -37,13 +42,13 @@
                     <span>Issue Date</span>
                     <input type="date" name="issueDate" value.bind="invoiceContext.selectedInvoice.IssueDate" required />
                 </label>
-                <label class="field">
+                <label class="field" if.bind="selectedDocumentType === 'Invoice'">
                     <span>Due Date</span>
                     <input type="date" name="dueDate" value.bind="invoiceContext.selectedInvoice.DueDate" required />
                 </label>
                 <label class="field" if.bind="selectedDocumentType === 'Credit Note'">
                     <span>Invoice Reference</span>
-                    <input type="date" name="invoiceReference" value.bind="invoiceContext.selectedInvoice.BillingReference[0].InvoiceDocumentReference" required />
+                    <input type="text" name="invoiceReference" value.bind="invoiceContext.selectedInvoice.BillingReference[0].InvoiceDocumentReference" required />
                 </label>
                 <label class="field full">
                     <details>
@@ -163,5 +168,4 @@
     </div>
 </div>
 
-<invoice-payment-modal component.ref="invoicePaymentModal" invoice-context.bind="invoiceContext" selected-payment-means-code.bind="selectedPaymentMeansCode"></invoice-payment-modal>
-<invoice-customer-modal component.ref="invoiceCustomerModal" invoice-context.bind="invoiceContext"></invoice-customer-modal>
+

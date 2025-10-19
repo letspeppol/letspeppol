@@ -1,0 +1,19 @@
+<import from="./customer-search"></import>
+
+<div class="modal" role="dialog" aria-modal="true" show.bind="open">
+    <div class="modal-backdrop"></div>
+    <div class="modal-card" style="width: 1000px">
+        <header class="modal-header">
+            <h2>Validation</h2>
+            <button class="icon-btn" aria-label="Close dialog" click.trigger="closeModal()">×</button>
+        </header>
+        <div class="modal-body" style="max-height: 600px; overflow: auto;">
+            <span>Error count: ${validationResult.errorCount}</span>
+            <ul>
+                <li repeat.for="error of validationResult.errors">
+                    ${error.message}
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
