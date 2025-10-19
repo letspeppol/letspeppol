@@ -31,13 +31,13 @@
    ============================================================================ */
 :root {
     /* Semantic colors */
-    --bg: #f6f7fb;
-    --bg-input: #f9fafb;
+    --bg: #f5f7fb;
+    --bg-input: #f6f8fb;
     --panel: #fff;
     --muted: #6b7280;
     --text: #1f2937;
     --text-strong: #111827;
-    --primary: #2563eb;
+    --primary: #2C3C69;
     --primary-strong: #1d4ed8;
     --accent: #14b8a6;
     --border-soft: #e5e7ebdd;
@@ -126,15 +126,16 @@
    ============================================================================ */
 @media (prefers-color-scheme: light) {
     :root {
-        --bg: #f6f7fb;
+        --bg: #f5f7fb;
+        --bg-input: #f6f8fb;
         --panel: #fff;
         --muted: #6b7280;
         --text: #1f2937;
         --text-strong: #111827;
-        --primary: #2563eb;
-        --primary-strong: #1d4ed8;
+        --primary: #2C3C69;
+        --primary-strong: #FAA21D;
         --accent: #14b8a6;
-        --border-soft: #e5e7eb;
+        --border-soft: #e0e3eb;
         --elev: 0 10px 30px rgb(0 0 0 / 6%);
         --shadow-card: 0 8px 28px rgb(15 23 42 / 8%);
         --shadow-soft: 0 3px 10px rgb(15 23 42 / 6%);
@@ -143,19 +144,20 @@
 
 /* Explicit theme override (attribute wins over system preference) */
 :root[data-theme="dark"] {
-    --bg: #0b0c10;
-    --panel: #0f1115;
+    --bg: #0c0d10;
+    --bg-input: #17181a;
+    --panel: #0e1014;
     --muted: #8b93a7;
     --text: #e7eaf3;
     --text-strong: #f5f7fb;
-    --primary: #6ea8fe;
-    --primary-strong: #2f6fed;
+    --primary: #FAA21D;
+    --primary-strong: #2C3C69;
     --accent: #7be3c5;
-    --border-soft: #202433;
+    --border-soft: #2b2419;
     --elev: 0 10px 30px rgb(0 0 0 / 35%), 0 1px 0 rgb(255 255 255 / 4%) inset;
     --shadow-card: 0 8px 24px rgb(15 23 42 / 8%);
     --shadow-soft: 0 4px 12px rgb(15 23 42 / 6%);
-    --app-bg-base: #0b0c10;
+    --app-bg-base: #0c0d10;
     --radial-blue: rgb(80 125 255 / 8%);
     --radial-teal: rgb(20 184 166 / 8%);
     --table-row-alt: color-mix(in hsl, var(--panel) 92%, transparent);
@@ -163,15 +165,16 @@
 }
 
 :root[data-theme="light"] {
-    --bg: #f6f7fb;
+    --bg: #f5f7fb;
+    --bg-input: #f6f8fb;
     --panel: #fff;
     --muted: #6b7280;
     --text: #1f2937;
     --text-strong: #111827;
-    --primary: #2563eb;
-    --primary-strong: #1d4ed8;
+    --primary: #2C3C69;
+    --primary-strong: #FAA21D;
     --accent: #14b8a6;
-    --border-soft: #e5e7eb;
+    --border-soft: #e0e3eb;
     --elev: 0 10px 30px rgb(0 0 0 / 6%);
     --shadow-card: 0 8px 28px rgb(15 23 42 / 8%);
     --shadow-soft: 0 3px 10px rgb(15 23 42 / 6%);
@@ -198,13 +201,34 @@ body {
     display: none !important;
 }
 
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: url('/logo-only.svg') center/cover no-repeat;
+    -webkit-mask: url('/file.svg') space;
+            mask: url('/file.svg') space;
+    -webkit-mask-size: 16px;
+            mask-size: 16px;
+    /*background: url('/logo-only.svg') no-repeat center center;
+    background-size: cover;*/
+    opacity: 0.05;
+    filter: blur(64px);
+    pointer-events: none;
+    z-index: -1;
+}
+
 body {
     margin: 0;
     font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
     color: var(--text);
-    background: radial-gradient(1200px 800px at 10% -10%, var(--radial-blue), transparent 60%), radial-gradient(900px 650px at 110% 10%, var(--radial-teal), transparent 60%), var(--app-bg-base);
+    background: var(--bg);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+input[type=checkbox] {
+    accent-color: var(--primary);
 }
 
 /* ============================================================================

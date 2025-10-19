@@ -11,7 +11,8 @@
     "title" : "Sign in to your account",
     "new" : "New here?",
     "register" : "Register your company",
-    "continue" : "Sign in"
+    "continue" : "Sign in",
+    "forgot" : "Forgot my password"
   },
   "error" : {
     "login-failed" : "Login failed",
