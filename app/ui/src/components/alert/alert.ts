@@ -19,7 +19,7 @@ export class Alert {
     private alertMessageSubscription: IDisposable;
     private alertType = AlertType.Success;
     private showElement = false;
-    private text = "Jop";
+    private text = "";
     private timeout?: number | undefined;
 
     bound() {

@@ -6,7 +6,7 @@ import {ProductCategoryDto} from "../services/app/product-category-service";
 export class ProductContext {
     @bindable selectedProduct: ProductDto | undefined = undefined;
     selectedProductCategory: ProductCategoryDto | undefined = undefined;
-    products: ProductDto[] = [];
+    products: ProductDto[] = undefined;
     productCategories: ProductCategoryDto[] = [];
     productCategoryMap = new Map();
 

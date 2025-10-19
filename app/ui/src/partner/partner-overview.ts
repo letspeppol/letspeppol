@@ -17,7 +17,6 @@ export class PartnerOverview {
 
     @watch((vm) => vm.partnerContext.partners.length)
     partnersChange() {
-        console.log('jop');
         this.filterItems(this.category);
     }
 

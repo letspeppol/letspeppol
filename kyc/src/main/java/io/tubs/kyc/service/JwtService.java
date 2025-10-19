@@ -55,6 +55,7 @@ public class JwtService {
         return new JwtInfo(
                 token,
                 claims.get(PEPPOL_ID, String.class),
+                claims.get(PEPPOL_ID, String.class).split(":")[1],
                 claims.get(UID, String.class)
         );
     }

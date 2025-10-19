@@ -4,7 +4,6 @@ import io.tubs.kyc.dto.CompanyResponse;
 import io.tubs.kyc.dto.DirectorDto;
 import io.tubs.kyc.exception.KycErrorCodes;
 import io.tubs.kyc.exception.KycException;
-import io.tubs.kyc.exception.NotFoundException;
 import io.tubs.kyc.model.kbo.Company;
 import io.tubs.kyc.model.kbo.Director;
 import io.tubs.kyc.repository.CompanyRepository;
@@ -25,6 +24,7 @@ public class CompanyService {
     private final DirectorRepository directorRepository;
     private final KboLookupService kboLookupService;
     private final LetsPeppolProxyService letsPeppolProxyService;
+    private final AppService appService;
 
     public Optional<CompanyResponse> getByCompanyNumber(String companyNumber) {
         Optional<Company> company = companyRepository.findByCompanyNumber(companyNumber);
@@ -77,6 +77,7 @@ public class CompanyService {
         Company company = companyRepository.findByCompanyNumber(companyNumber).orElseThrow(() -> new KycException(KycErrorCodes.COMPANY_NOT_FOUND));
         company.setRegisteredOnPeppol(false);
         companyRepository.save(company);
-        letsPeppolProxyService.unregisterCompany(token);
+        //letsPeppolProxyService.unregisterCompany(token);
+        appService.unregister(companyNumber);
     }
 }

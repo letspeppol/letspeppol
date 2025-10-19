@@ -28,7 +28,8 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable())
+        http
+            //.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
             .cors(cors -> {})
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers("/api/internal/**").hasAuthority(ROLE_SERVICE)

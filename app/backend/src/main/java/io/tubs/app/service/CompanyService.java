@@ -1,7 +1,7 @@
 package io.tubs.app.service;
 
-import io.tubs.app.dto.AppRegistrationRequest;
 import io.tubs.app.dto.CompanyDto;
+import io.tubs.app.dto.RegistrationRequest;
 import io.tubs.app.exception.NotFoundException;
 import io.tubs.app.mapper.CompanyMapper;
 import io.tubs.app.model.Company;
@@ -17,7 +17,7 @@ public class CompanyService {
 
     private final CompanyRepository companyRepository;
 
-    public void register(AppRegistrationRequest request) {
+    public void register(RegistrationRequest request) {
         Company account = new Company(
                 request.companyNumber(),
                 request.companyName(),
@@ -49,4 +49,9 @@ public class CompanyService {
         return CompanyMapper.toDto(company);
     }
 
+    public void unregister(String companyNumber) {
+        Company company = companyRepository.findByCompanyNumber(companyNumber).orElseThrow(() -> new NotFoundException("Company does not exist"));
+        company.setRegisteredOnPeppol(false);
+        companyRepository.save(company);
+    }
 }

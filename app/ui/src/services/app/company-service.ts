@@ -10,6 +10,7 @@ export interface CompanyDto {
     paymentTerms: string,
     iban: string,
     paymentAccountName: string,
+    registeredOnPeppol: boolean,
     registeredOffice: Address
 }
 

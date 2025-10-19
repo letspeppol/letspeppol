@@ -1,6 +1,9 @@
-package io.tubs.app.dto;
+package io.tubs.kyc.dto;
 
-public record AppRegistrationRequest(
+/**
+ * Sent to App backend
+ */
+public record RegistrationRequest(
         String companyNumber,
         String companyName,
         String street,

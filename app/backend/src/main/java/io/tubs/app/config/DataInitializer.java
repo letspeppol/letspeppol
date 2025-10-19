@@ -30,7 +30,7 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) {
         String companyNumber = "0705969661";
         if (companyRepository.findByCompanyNumber(companyNumber).isEmpty()) {
-            AppRegistrationRequest registrationRequest = new AppRegistrationRequest(
+            RegistrationRequest registrationRequest = new RegistrationRequest(
                     companyNumber,
                     "Digita bv.",
                     "Demerstraat",
@@ -85,7 +85,7 @@ public class DataInitializer implements CommandLineRunner {
         }
         companyNumber = "1023290711";
         if (companyRepository.findByCompanyNumber(companyNumber).isEmpty()) {
-            AppRegistrationRequest registrationRequest = new AppRegistrationRequest(
+            RegistrationRequest registrationRequest = new RegistrationRequest(
                     companyNumber,
                     "SoftwareOplossing bv.",
                     "Demerstraat",

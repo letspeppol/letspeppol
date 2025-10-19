@@ -13,7 +13,8 @@ export class AppApi {
         this.httpClient.configure(config => config
             .withBaseUrl(baseUrl)
             .withDefaults({
-                headers: {'Authorization': `Bearer ${localStorage.getItem('token') ?? ''}`}
+                headers: {'Authorization': `Bearer ${localStorage.getItem('token') ?? ''}`},
+                credentials: "include"
             })
             .rejectErrorResponses()
             .withInterceptor({

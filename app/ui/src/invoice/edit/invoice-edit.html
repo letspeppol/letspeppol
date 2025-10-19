@@ -1,6 +1,7 @@
 <import from="../../components/alert/alert"></import>
 <import from="./components/invoice-payment-modal"></import>
 <import from="./components/invoice-customer-modal"></import>
+<import from="./components/product-name-search"></import>
 
 <div class="invoices-main">
     <div class="section-header">
@@ -104,6 +105,7 @@
                     <span>Total</span>
                     <strong>€ ${invoiceContext.selectedInvoice.LegalMonetaryTotal.PayableAmount.value.toFixed(2)}</strong>
                 </div>
+<!--                <product-name-search></product-name-search>-->
             </div>
         </div>
         <div class="line-items">
@@ -127,7 +129,10 @@
                     <tbody if.bind="invoiceContext.selectedInvoice">
                         <tr repeat.for="line of invoiceContext.lines">
                             <td><input class="pos" type="number" min="1" value.bind="line.ID"/></td>
-                            <td><input class="name" type="text" placeholder="Item name" value.bind="line.Item.Name"/></td>
+                            <td>
+<!--                                <input class="name" type="text" placeholder="Item name" value.bind="line.Item.Name"/>-->
+                                <product-name-search></product-name-search>
+                            </td>
                             <td><textarea class="description" placeholder="Description" value.bind="line.Item.Description"></textarea></td>
                             <td class="num">
                                 <template if.bind="line.InvoicedQuantity">

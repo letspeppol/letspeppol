@@ -14,6 +14,7 @@ public class CompanyMapper {
                 company.getPaymentTerms(),
                 company.getIban(),
                 company.getPaymentAccountName(),
+                company.isRegisteredOnPeppol(),
                 AddressMapper.toDto(company.getRegisteredOffice())
         );
     }

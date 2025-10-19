@@ -1218,3 +1218,7 @@ main.container .data-table tbody td {
     background: color-mix(in hsl, var(--status-overdue) 28%, #1a0d0e);
     box-shadow: 0 0 0 1px color-mix(in hsl, var(--status-overdue) 35%, transparent);
 }
+
+table, tr, td {
+    overflow: visible !important;
+}

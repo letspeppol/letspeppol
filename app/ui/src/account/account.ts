@@ -59,6 +59,7 @@ export class Account {
     async unregisterFromPeppol() {
         try {
             await this.registrationService.unregisterCompany()
+            this.company.registeredOnPeppol = false;
             this.ea.publish('alert', {alertType: AlertType.Success, text: "Removed company from Peppol"});
         } catch {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to remove company from Peppol"});

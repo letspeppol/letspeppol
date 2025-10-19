@@ -20,22 +20,9 @@ export class CustomerSearch {
         try {
             const response = await this.partnerService.getPartners();
             this.customers = response.filter((partner: PartnerDto) => partner.customer);
-            if (!this.customers.length) {
-                this.customers = this.getMockCustomers();
-            }
         } catch (e) {
             console.warn('Partner API failed, using mock data');
-            this.customers = this.getMockCustomers();
         }
-    }
-
-    private getMockCustomers(): PartnerDto[] {
-        return [
-            { name: 'Acme NV', companyNumber: '0123456789', customer: true, supplier: false, registeredOffice: { street: 'Main', houseNumber: '1', postalCode: '1000', city: 'Brussels' } },
-            { name: 'Globex BV', companyNumber: '9876543210', customer: true, supplier: false, registeredOffice: { street: 'Market', houseNumber: '22', postalCode: '2000', city: 'Antwerp' } },
-            { name: 'Initech SPRL', companyNumber: '1234509876', customer: true, supplier: false, registeredOffice: { street: 'Code', houseNumber: '7', postalCode: '3000', city: 'Leuven' } },
-            { name: 'Umbrella SA', companyNumber: '9988776655', customer: true, supplier: false }
-        ];
     }
 
     onSearchInput() {
