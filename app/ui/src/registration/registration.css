@@ -4,4 +4,5 @@
     align-items: center;
     gap: var(--space-035);
     color:var(--muted);
+    margin-bottom: var(--space-04);
 }

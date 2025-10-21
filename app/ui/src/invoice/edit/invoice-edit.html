@@ -21,8 +21,8 @@
         </div>
     </div>
 
-    <div class="card composer-card">
-        <div class="composer-head">
+    <form id="invoiceForm" class="card composer-card">
+        <div  class="composer-head">
             <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-09);">
                 <label class="field">
                     <span>Document</span>
@@ -35,7 +35,7 @@
                     <input type="text" name="docNumber" placeholder.bind="selectedDocumentType === 'Invoice' ? 'INV-2025-0001' : 'CRE-2025-0001'" value.bind="invoiceContext.selectedInvoice.ID" required />
                 </label>
                 <label class="field">
-                    <span>Reference</span>
+                    <span>Buyer Reference</span>
                     <input type="text" name="reference" placeholder="PO-12345" value.bind="invoiceContext.selectedInvoice.BuyerReference" required />
                 </label>
                 <label class="field">
@@ -45,10 +45,6 @@
                 <label class="field" if.bind="selectedDocumentType === 'Invoice'">
                     <span>Due Date</span>
                     <input type="date" name="dueDate" value.bind="invoiceContext.selectedInvoice.DueDate" required />
-                </label>
-                <label class="field" if.bind="selectedDocumentType === 'Credit Note'">
-                    <span>Invoice Reference</span>
-                    <input type="text" name="invoiceReference" value.bind="invoiceContext.selectedInvoice.BillingReference[0].InvoiceDocumentReference" required />
                 </label>
                 <label class="field full">
                     <details>
@@ -63,7 +59,7 @@
                     <div style="display: flex; flex-direction: row;">
                         <div class="card-header">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-building-icon lucide-building"><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M12 6h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/><path d="M8 6h.01"/><path d="M9 22v-3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><rect x="4" y="2" width="16" height="20" rx="2"/></svg>
-                            <h5>Customer</h5>
+                            <h5 style="margin: 0">Customer</h5>
                         </div>
 
                         <button class="icon-btn" title="Edit" click.trigger="showCustomerModal()">
@@ -85,7 +81,7 @@
                     <div style="display: flex; flex-direction: row; margin-bottom: var(--space-025)">
                         <div class="card-header">
                             <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-banknote-arrow-down-icon lucide-banknote-arrow-down"><path d="M12 18H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5"/><path d="m16 19 3 3 3-3"/><path d="M18 12h.01"/><path d="M19 16v6"/><path d="M6 12h.01"/><circle cx="12" cy="12" r="2"/></svg>
-                            <h5>Payment</h5>
+                            <h5 style="margin: 0">Payment</h5>
                         </div>
                         <button class="icon-btn" title="Edit" click.trigger="showPaymentModal()">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pen-icon lucide-pen"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>
@@ -133,10 +129,10 @@
                     </thead>
                     <tbody if.bind="invoiceContext.selectedInvoice">
                         <tr repeat.for="line of invoiceContext.lines">
-                            <td><input class="pos" type="number" min="1" value.bind="line.ID"/></td>
+                            <td><input class="pos" type="number" min="1" value.bind="line.ID" required/></td>
                             <td>
 <!--                                <input class="name" type="text" placeholder="Item name" value.bind="line.Item.Name"/>-->
-                                <product-name-search></product-name-search>
+                                <product-name-search input-value.bind="line.Item.Name"></product-name-search>
                             </td>
                             <td><textarea class="description" placeholder="Description" value.bind="line.Item.Description"></textarea></td>
                             <td class="num">
@@ -165,7 +161,7 @@
             </div>
         </div>
         <button type="button" class="btn primary" click.trigger="addLine()">+ Add line</button>
-    </div>
+    </form>
 </div>
 
 

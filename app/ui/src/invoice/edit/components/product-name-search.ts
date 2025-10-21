@@ -6,7 +6,7 @@ import {ProductContext} from "../../../product/product-context";
 export class ProductNameSearch {
     private productService = resolve(ProductService);
     private productContext = resolve(ProductContext);
-    searchQuery = '';
+    @bindable inputValue = '';
     filteredProducts: ProductDto[] = [];
     showSuggestions = false;
     highlightedIndex = -1;
@@ -31,7 +31,7 @@ export class ProductNameSearch {
     }
 
     onSearchInput(e: KeyboardEvent) {
-        const q = this.searchQuery?.trim().toLowerCase();
+        const q = this.inputValue?.trim().toLowerCase();
         if (!q) {
             this.filteredProducts = [];
             this.showSuggestions = false;
@@ -87,12 +87,12 @@ export class ProductNameSearch {
         if (this.selectProductFunction) {
             this.selectProductFunction(c);
         }
-        this.searchQuery = `${c.name}`;
+        this.inputValue = `${c.name}`;
         this.showSuggestions = false;
     }
 
     public resetSearch() {
-        this.searchQuery = '';
+        this.inputValue = '';
         this.filteredProducts = [];
         this.showSuggestions = false;
         this.highlightedIndex = -1;

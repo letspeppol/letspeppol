@@ -1,5 +1,5 @@
 // mapper-ns.ts
-import { XMLParser, XMLBuilder } from "fast-xml-parser";
+import {XMLBuilder, XMLParser} from "fast-xml-parser";
 import {CreditNote, Invoice} from "./ubl";
 
 const parser = new XMLParser({
@@ -80,6 +80,7 @@ export function parseInvoice(xml: string): Invoice {
 }
 
 export function buildInvoice(invoice: Invoice): string {
+    invoice = removeEmpty(invoice);
     const invoiceWithNS = { ...UBL_NS, ...addPrefixes(invoice), };
     const cleaned = removeEmptyNodes(invoiceWithNS);
     return `<?xml version="1.0" encoding="UTF-8"?>` + builder.build({Invoice: cleaned});
@@ -94,6 +95,7 @@ export function parseCreditNote(xml: string): CreditNote {
 }
 
 export function buildCreditNote(creditNote: CreditNote): string {
+    creditNote = removeEmpty(creditNote);
     const creditWithNS = { ...CREDIT_NOTE_NS, ...addPrefixes(creditNote) };
     const cleaned = removeEmptyNodes(creditWithNS);
     return `<?xml version="1.0" encoding="UTF-8"?>` + builder.build({ CreditNote: cleaned });
@@ -168,6 +170,35 @@ function normalizeArrays(obj: any, keys: string[]) {
     for (const k of Object.keys(obj)) {
         normalizeArrays(obj[k], keys);
     }
+}
+
+function removeEmpty<T>(value: T): T | undefined {
+    if (value == null) return undefined; // null or undefined
+
+    if (typeof value === 'string') {
+        const trimmed = value.trim();
+        return trimmed === '' ? undefined : (trimmed as T);
+    }
+
+    if (Array.isArray(value)) {
+        const cleaned = value
+            .map(removeEmpty)
+            .filter((v): v is Exclude<typeof v, undefined> => v !== undefined);
+
+        return cleaned.length > 0 ? (cleaned as T) : undefined;
+    }
+
+    if (typeof value === 'object') {
+        const entries = Object.entries(value)
+            .map(([k, v]) => [k, removeEmpty(v)] as const)
+            .filter(([_, v]) => v !== undefined);
+
+        if (entries.length === 0) return undefined;
+        return Object.fromEntries(entries) as T;
+    }
+
+    // numbers, booleans, etc.
+    return value;
 }
 
 // Explicit prefix map for UBL 2.1 Invoice

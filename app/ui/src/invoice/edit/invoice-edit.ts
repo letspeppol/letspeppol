@@ -46,13 +46,6 @@ export class InvoiceEdit {
         return a?.value === b?.value;
     };
 
-    customerCompanyNumberChanged(newValue: string) {
-        this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party.EndpointID.value = newValue;
-        this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PartyIdentification[0].ID.value = newValue;
-        this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PartyTaxScheme.CompanyID.value = newValue;
-        console.log(newValue);
-    }
-
     calcLineTotal(line: UBLLine) {
         const quantity = getAmount(line);
         line.LineExtensionAmount.value = roundTwoDecimals(line.Price.PriceAmount.value * quantity.value);
@@ -72,14 +65,6 @@ export class InvoiceEdit {
     deleteLine(line: UBLLine) {
         this.invoiceContext.lines.splice(this.invoiceContext.lines.findIndex(item => item === line), 1);
         this.invoiceCalculator.calculateTaxAndTotals(this.invoiceContext.selectedInvoice);
-    }
-
-    selectedDocumentTypeChanged(newValue) {
-        if (newValue === DocumentType.Invoice) {
-            this.invoiceContext.selectedInvoice = this.invoiceComposer.creditNoteToInvoice(this.invoiceContext.selectedInvoice as unknown as CreditNote);
-        } else {
-            this.invoiceContext.selectedInvoice = this.invoiceComposer.invoiceToCreditNote(this.invoiceContext.selectedInvoice as Invoice);
-        }
     }
 
     async sendInvoice() {
@@ -149,9 +134,30 @@ export class InvoiceEdit {
     }
 
     async validate() {
+        const form = document.getElementById('invoiceForm') as HTMLFormElement;
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
         const xml = this.buildXml();
         const response = await this.invoiceService.validate(xml);
         this.validationResultModal.showModal(response);
         console.log(response);
     }
+
+    customerCompanyNumberChanged(newValue: string) {
+        this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party.EndpointID.value = newValue;
+        this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PartyIdentification[0].ID.value = newValue;
+        this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PartyTaxScheme.CompanyID.value = newValue;
+        console.log(newValue);
+    }
+
+    selectedDocumentTypeChanged(newValue) {
+        if (newValue === DocumentType.Invoice) {
+            this.invoiceContext.selectedInvoice = this.invoiceComposer.creditNoteToInvoice(this.invoiceContext.selectedInvoice as unknown as CreditNote);
+        } else {
+            this.invoiceContext.selectedInvoice = this.invoiceComposer.invoiceToCreditNote(this.invoiceContext.selectedInvoice as Invoice);
+        }
+    }
+    
 }

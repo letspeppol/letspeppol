@@ -229,7 +229,6 @@ export class InvoiceComposer {
             ProfileID: invoice.ProfileID,
             ID: invoice.ID,
             IssueDate: invoice.IssueDate,
-            DueDate: invoice.DueDate,
             CreditNoteTypeCode: 381,
             DocumentCurrencyCode: "EUR",
             BuyerReference: invoice.BuyerReference, // or OrderReference
@@ -263,8 +262,10 @@ export class InvoiceComposer {
             ProfileID: creditNote.ProfileID,
             ID: creditNote.ID,
             IssueDate: creditNote.IssueDate,
+            DueDate: undefined,
             InvoiceTypeCode: 380,
             DocumentCurrencyCode: "EUR",
+            BuyerReference: creditNote.BuyerReference,
             AccountingSupplierParty: creditNote.AccountingSupplierParty,
             AccountingCustomerParty: creditNote.AccountingCustomerParty,
             PaymentMeans: creditNote.PaymentMeans,
