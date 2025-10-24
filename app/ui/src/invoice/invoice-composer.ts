@@ -98,6 +98,7 @@ export class InvoiceComposer {
                 },
                 PostalAddress: {
                     StreetName: this.customer.registeredOffice.street,
+                    AdditionalStreetName: this.customer.registeredOffice.houseNumber,
                     CityName: this.customer.registeredOffice.city,
                     PostalZone: this.customer.registeredOffice.postalCode,
                     Country: {

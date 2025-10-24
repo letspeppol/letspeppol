@@ -20,18 +20,26 @@
                     <span>Name</span>
                     <input type="text" name="customerName" value.bind="customer.PartyName.Name" required />
                 </label>
-                <label class="field">
-                    <span>Street</span>
-                    <input type="text" name="customerStreet" value.bind="customer.PostalAddress.StreetName" required />
-                </label>
-                <label class="field">
-                    <span>City</span>
-                    <input type="text" name="customerCity" value.bind="customer.PostalAddress.CityName" required />
-                </label>
-                <label class="field">
-                    <span>Postal Code</span>
-                    <input type="text" name="customerPostalCode" value.bind="customer.PostalAddress.PostalZone" required />
-                </label>
+
+                <div class="grid grid-col-73">
+                    <label class="field">
+                        <span>Street</span>
+                        <input type="text" name="customerStreet" value.bind="customer.PostalAddress.StreetName" required />
+                    </label>
+                    <label class="field">
+                        <span>Housenumber</span>
+                        <input type="text" name="customerStreet" value.bind="customer.PostalAddress.AdditionalStreetName" required />
+                    </label>
+                    <label class="field">
+                        <span>City</span>
+                        <input type="text" name="customerCity" value.bind="customer.PostalAddress.CityName" required />
+                    </label>
+                    <label class="field">
+                        <span>Postal Code</span>
+                        <input type="text" name="customerPostalCode" value.bind="customer.PostalAddress.PostalZone" required />
+                    </label>
+                </div>
+
                 <label class="field">
                     <span>Country</span>
                     <input type="text" name="customerCity" value="Belgium" required disabled />

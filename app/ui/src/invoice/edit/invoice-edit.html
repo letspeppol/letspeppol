@@ -70,7 +70,9 @@
                     <b>${invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PartyName.Name}</b>
                     <span>Address</span>
                     <b>
-                        ${invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PostalAddress.StreetName}<br/>
+                        ${invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PostalAddress.StreetName}
+                        ${invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PostalAddress.AdditionalStreetName}
+                        <br/>
                         ${invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PostalAddress.CityName}
                         ${invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PostalAddress.PostalZone}
                     </b>
