@@ -310,6 +310,10 @@ input[type=checkbox] {
     flex-wrap: wrap;
 }
 
+.line-total {
+    font-weight: bold;
+}
+
 /* ============================================================================
    5. Navigation / Tabs / Mailbox
    ============================================================================ */
@@ -970,6 +974,10 @@ main.container .data-table tbody td {
     min-width: var(--composer-min);
 }
 
+.composer-info b {
+    font-size: var(--space-09);
+}
+
 .total-display {
     display: grid;
     align-content: center;
@@ -1038,7 +1046,6 @@ main.container .data-table tbody td {
     color: var(--text);
     border-radius: var(--radius-input);
     padding: var(--space-045) var(--space-05);
-    font: inherit;
 }
 
 .line-table select {
@@ -1047,7 +1054,6 @@ main.container .data-table tbody td {
     color: var(--text);
     border-radius: var(--radius-input);
     padding: var(--space-045) var(--space-05);
-    font: inherit;
 }
 
 .line-table textarea {
