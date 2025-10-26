@@ -1,0 +1,25 @@
+<div class="modal" role="dialog" aria-modal="true" show.bind="open">
+    <div class="modal-backdrop"></div>
+    <div class="modal-card">
+        <header class="modal-header">
+            <h2>Invoice</h2>
+            <button class="icon-btn" click.trigger="closeModal()">×</button>
+        </header>
+        <div class="modal-body">
+            <div style="display: inline-grid; gap: var(--space-1)">
+                <label class="field">
+                    <span>Type</span>
+                    <select name="paymentMeanCode" value.bind="selectedPaymentMeansCode" change.trigger="paymentMeansCodeChanged()" required>
+                        <option value="">None</option>
+                        <option repeat.for="paymentMeanCode of invoiceContext.paymentMeansCodes" model.bind="paymentMeanCode.value">${paymentMeanCode.__name}</option>
+                    </select>
+                </label>
+
+            </div>
+        </div>
+        <footer class="modal-footer">
+            <button type="button" class="btn" click.trigger="closeModal()">Cancel</button>
+            <button type="button" class="btn primary" click.trigger="savePaymentMeans()">Confirm</button>
+        </footer>
+    </div>
+</div>

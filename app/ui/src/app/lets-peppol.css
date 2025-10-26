@@ -956,7 +956,7 @@ main.container .data-table tbody td {
 
 .composer-head {
     display: grid;
-    grid-template-columns: 1fr auto auto auto;
+    grid-template-columns: auto auto auto auto auto auto;
     gap: var(--space-1);
     align-items: start;
     margin-bottom: var(--space-1);

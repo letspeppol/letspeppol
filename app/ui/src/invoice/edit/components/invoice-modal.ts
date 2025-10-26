@@ -1,14 +1,14 @@
 import {bindable} from "aurelia";
-import {PaymentMeans} from "../../../services/peppol/ubl";
 
-export class InvoicePaymentModal {
+export class InvoiceModal {
     @bindable invoiceContext;
-    @bindable selectedPaymentMeansCode;
     open = false;
-    paymentMeans: PaymentMeans | undefined;
+    paymentTerms: string;
+    issueDate: string;
+    dueDate: string;
 
     showModal() {
-        this.paymentMeans = JSON.parse(JSON.stringify(this.invoiceContext.selectedInvoice.PaymentMeans));
+        this.paymentTerms = JSON.parse(JSON.stringify(this.invoiceContext.selectedInvoice.PaymentTerms));
         this.open = true;
     }
 
@@ -16,7 +16,7 @@ export class InvoicePaymentModal {
         this.open = false;
     }
 
-    savePaymentMeans() {
+    saveDate() {
         this.open = false;
         this.invoiceContext.selectedInvoice.PaymentMeans = this.paymentMeans;
     }

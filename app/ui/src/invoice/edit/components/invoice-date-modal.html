@@ -1,0 +1,33 @@
+<div class="modal" role="dialog" aria-modal="true" show.bind="open">
+    <div class="modal-backdrop"></div>
+    <div class="modal-card">
+        <header class="modal-header">
+            <h2>Date</h2>
+            <button class="icon-btn" click.trigger="closeModal()">×</button>
+        </header>
+        <div class="modal-body">
+            <div style="display: inline-grid; gap: var(--space-1)">
+                <label class="field">
+                    <span>Issue Date</span>
+                    <input type="date" name="issueDate" value.bind="issueDate" required />
+                </label>
+                <label class="field full">
+                    <span>Payment Terms</span>
+                    <select value.bind="selectedPaymentTerm">
+                        <option repeat.for="term of possiblePaymentTerms" value.bind="term.key">
+                            <span>${term.translation}</span>
+                        </option>
+                    </select>
+                </label>
+                <label class="field">
+                    <span>Due Date</span>
+                    <input type="date" name="dueDate" value.bind="dueDate" disabled />
+                </label>
+            </div>
+        </div>
+        <footer class="modal-footer">
+            <button type="button" class="btn" click.trigger="closeModal()">Cancel</button>
+            <button type="button" class="btn primary" click.trigger="saveDate()" disabled.bind="!issueDate">Confirm</button>
+        </footer>
+    </div>
+</div>

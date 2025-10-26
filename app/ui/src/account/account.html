@@ -116,7 +116,11 @@
                     </label>
                     <label class="field full">
                         <span>Payment Terms</span>
-                        <input type="text" value.bind="company.paymentTerms" />
+                        <select value.bind="company.paymentTerms">
+                            <option repeat.for="terms of PAYMENT_TERMS" value.bind="terms">
+                                <span t="paymentTerms.${terms}"></span>
+                            </option>
+                        </select>
                     </label>
                 </div>
             </div>

@@ -18,5 +18,11 @@
     "login-failed" : "Login failed",
     "registration-company-not-found" : "Company not found",
     "registration-company-already-registered" : "Company already registered"
+  },
+  "paymentTerms" : {
+    "15_DAYS" :  "15 days",
+    "30_DAYS" :  "30 days",
+    "60_DAYS" : "60 days",
+    "END_OF_NEXT_MONTH" : "End of the month"
   }
 }

@@ -12,6 +12,7 @@ export class Account {
     private readonly registrationService = resolve(RegistrationService);
     private readonly confirmationModalContext = resolve(ConfirmationModalContext);
     private company: CompanyDto;
+    public static PAYMENT_TERMS = ['15_DAYS', '30_DAYS', '60_DAYS', 'END_OF_NEXT_MONTH'];
     changePasswordModal: ChangePasswordModal;
 
     attached() {

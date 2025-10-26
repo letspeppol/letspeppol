@@ -19,6 +19,7 @@ import {InvoiceComposer} from "../invoice-composer";
 import {downloadInvoicePdf} from "../pdf/invoice-pdf";
 import {InvoiceDraftDto, InvoiceService} from "../../services/app/invoice-service";
 import {ValidationResultModal} from "./components/validation-result-modal";
+import {InvoiceModal} from "./components/invoice-modal";
 
 export class InvoiceEdit {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -31,8 +32,10 @@ export class InvoiceEdit {
     selectedPaymentMeansCode: number | undefined = 30;
     @observable selectedDocumentType = DocumentType.Invoice;
     @observable customerCompanyNumber: undefined | string;
-    @bindable invoicePaymentModal: InvoicePaymentModal;
+    @bindable invoiceModal: InvoiceModal;
+    @bindable invoiceDateModal: InvoicePaymentModal;
     @bindable invoiceCustomerModal: InvoiceCustomerModal;
+    @bindable invoicePaymentModal: InvoicePaymentModal;
     @bindable validationResultModal: ValidationResultModal;
 
     taxCategories: ClassifiedTaxCategory[] = [
@@ -96,14 +99,6 @@ export class InvoiceEdit {
         }
     }
 
-    showPaymentModal() {
-        this.invoicePaymentModal.showModal();
-    }
-
-    showCustomerModal() {
-        this.invoiceCustomerModal.showModal();
-    }
-
     async saveAsDraft() {
         try {
             const draft = this.convertInvoiceToDraft();
@@ -159,5 +154,23 @@ export class InvoiceEdit {
             this.invoiceContext.selectedInvoice = this.invoiceComposer.invoiceToCreditNote(this.invoiceContext.selectedInvoice as Invoice);
         }
     }
-    
+
+    // Modals
+
+    showInvoiceModal() {
+        this.invoiceModal.showModal();
+    }
+
+    showDateModal() {
+        this.invoiceDateModal.showModal();
+    }
+
+    showCustomerModal() {
+        this.invoiceCustomerModal.showModal();
+    }
+
+    showPaymentModal() {
+        this.invoicePaymentModal.showModal();
+    }
+
 }

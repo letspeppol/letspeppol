@@ -48,6 +48,7 @@ export class InvoiceContext {
         if (!this.companyService.myCompany) {
             try {
                 await this.companyService.getAndSetMyCompanyForToken();
+                this.newUBLDocument();
             } catch {
                 this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to get company info"});
             }
@@ -75,6 +76,7 @@ export class InvoiceContext {
         jop.InvoiceLine.push(line);
         jop.PaymentMeans.PayeeFinancialAccount.Name = "Software Oplossing";
         jop.PaymentMeans.PayeeFinancialAccount.ID = "BE123457807";
+        jop.PaymentTerms = {Note: "jaja"};
         this.invoiceCalculator.calculateTaxAndTotals(this.selectedInvoice);
     }
 
