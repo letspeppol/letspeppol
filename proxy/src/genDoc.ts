@@ -43,9 +43,9 @@ async function genDoc(
   </cac:AdditionalDocumentReference>
   <cac:AccountingSupplierParty>
       <cac:Party>
-          <cbc:EndpointID schemeID="${senderScheme}">${senderSubId}</cbc:EndpointID>
+          <cbc:EndpointID schemeID="iso6523-actorid-upis">${senderScheme}:${senderSubId}</cbc:EndpointID>
           <cac:PartyIdentification>
-              <cbc:ID schemeID="${senderScheme}">${senderSubId}</cbc:ID>
+              <cbc:ID schemeID="iso6523-actorid-upis">${senderScheme}:${senderSubId}</cbc:ID>
           </cac:PartyIdentification>
           <cac:PartyName>
               <cbc:Name>Softwareoplossing.be</cbc:Name>
@@ -78,9 +78,9 @@ async function genDoc(
 
   <cac:AccountingCustomerParty>
       <cac:Party>
-          <cbc:EndpointID schemeID="${receiverScheme}">${receiverSubId}</cbc:EndpointID>
+          <cbc:EndpointID schemeID="iso6523-actorid-upis">${receiverScheme}:${receiverSubId}</cbc:EndpointID>
           <cac:PartyIdentification>
-              <cbc:ID>${receiverSubId}</cbc:ID>
+              <cbc:ID schemeID="iso6523-actorid-upis">${receiverScheme}:${receiverSubId}</cbc:ID>
           </cac:PartyIdentification>
           <cac:PartyName>
               <cbc:Name>Ponder Source Three</cbc:Name>
@@ -380,9 +380,9 @@ async function genDoc(
   <cbc:BuyerReference>0150abc</cbc:BuyerReference>
   <cac:AccountingSupplierParty>
     <cac:Party>
-      <cbc:EndpointID schemeID="${senderScheme}">${senderSubId}</cbc:EndpointID>
+      <cbc:EndpointID schemeID="iso6523-actorid-upis">${senderScheme}"${senderSubId}</cbc:EndpointID>
       <cac:PartyIdentification>
-        <cbc:ID schemeID="${senderScheme}">${senderSubId}</cbc:ID>
+        <cbc:ID schemeID="iso6523-actorid-upis">${senderScheme}"${senderSubId}</cbc:ID>
       </cac:PartyIdentification>
       <cac:PartyName>
         <cbc:Name>SupplierTradingName Ltd.</cbc:Name>
@@ -410,9 +410,9 @@ async function genDoc(
   </cac:AccountingSupplierParty>
   <cac:AccountingCustomerParty>
     <cac:Party>
-      <cbc:EndpointID schemeID="${receiverScheme}">${receiverSubId}</cbc:EndpointID>
+      <cbc:EndpointID schemeID="iso6523-actorid-upis">${receiverScheme}"${receiverSubId}</cbc:EndpointID>
       <cac:PartyIdentification>
-        <cbc:ID schemeID="${receiverScheme}">${receiverSubId}</cbc:ID>
+        <cbc:ID schemeID="iso6523-actorid-upis">${receiverScheme}"${receiverSubId}</cbc:ID>
       </cac:PartyIdentification>
       <cac:PartyName>
         <cbc:Name>BuyerTradingName AS</cbc:Name>
