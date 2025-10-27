@@ -2,7 +2,7 @@ import { INVOICES, CREDIT_NOTES, ID_SCHEME } from "./constants.js";
 import { Backend } from "./Backend.js";
 import { parseDocument } from "./parse.js";
 
-function toScrada(docSpec: { documentTypeScheme: string; documentType: string; processScheme: string; process: string }) {
+function toScrada(docSpec: { documentTypeScheme: string; documentType: string; processScheme: string; process: string }): object {
   return {
     "scheme": docSpec.documentTypeScheme,
     "value": docSpec.documentType,

@@ -9,7 +9,7 @@ import { Scrada } from './scrada.js';
 import { Ion } from './ion.js';
 import { listEntityDocuments } from './db.js';
 
-function getAuthMiddleware(secretKey: string) {
+function getAuthMiddleware(secretKey: string): express.RequestHandler {
   return async function checkAuth(req, res, next): Promise<void> {
     const authorization = req.headers['authorization'];
     if (!authorization) {
@@ -20,9 +20,9 @@ function getAuthMiddleware(secretKey: string) {
         const peppolId = await checkBearerToken(token, secretKey);
         req.peppolId = peppolId;
         next();
-      } catch (err: { message: string } | any) {
+      } catch (err: { message: string } | unknown) {
         console.error('Error verifying token:', err);
-        res.status(401).json({ error: err.message });
+        res.status(401).json({ error: (err as { message: string }).message });
       }
     }
   }
@@ -60,35 +60,35 @@ export async function startServer(env: ServerOptions): Promise<number> {
     return backends[backendName];
   }
 
-  async function hello (_req, res) {
+  async function hello (_req, res): Promise<void> {
     res.setHeader('Content-Type', 'text/plain');
     res.end('Let\'s Peppol!\n');
   }
-  async function listV1 (req, res) {
+  async function listV1 (req, res): Promise<void> {
     const documents = await listEntityDocuments({ peppolId: req.peppolId, direction: req.params.direction, type: req.params.docType, query: req.query, apiVersion: 'v1', page: req.query.page ? parseInt(req.query.page as string) : 1, pageSize: req.query.pageSize ? parseInt(req.query.pageSize as string) : 20 });
     res.setHeader('Content-Type', 'application/json');
     res.json(documents);
   }
-  async function get (req, res) {
+  async function get (req, res): Promise<void> {
     const backend = getBackend(req.peppolId);
     const xml = await backend.getDocumentXml({ peppolId: req.peppolId, type: req.params.docType, uuid: req.params.uuid, direction: req.params.direction });
     res.setHeader('Content-Type', 'text/xml');
     res.send(xml);
   }
-  async function send (req, res) {
+  async function send (req, res): Promise<void> {
     const backend = getBackend(req.peppolId);
     const sendingEntity = req.peppolId;
     await backend.sendDocument(req.body, sendingEntity);
     res.end('OK\n');
   }
-  async function reg (req, res) {
+  async function reg (req, res): Promise<void> {
     const backend = getBackend(req.peppolId);
     const sendingEntity = req.peppolId;
     console.log('Registering', sendingEntity);
     await backend.reg(sendingEntity);
     res.end('OK\n');
   }
-  async function unreg (req, res) {
+  async function unreg (req, res): Promise<void> {
     const backend = getBackend(req.peppolId);
     const sendingEntity = req.peppolId;
     await backend.unreg(sendingEntity);
