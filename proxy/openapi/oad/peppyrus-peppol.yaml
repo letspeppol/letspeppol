@@ -1,0 +1,1106 @@
+{
+    "openapi": "3.0.2",
+    "servers": [
+        {
+            "url": "\/v1"
+        }
+    ],
+    "info": {
+        "version": "1.0.0",
+        "title": "Peppyrus API",
+        "termsOfService": "https:\/\/www.tigron.be\/privacy",
+        "description": "\n## About Peppyrus\nPeppyrus is a free and reliable PEPPOL Access Point designed to simplify and streamline electronic document exchange using the PEPPOL network. As part of our commitment to open standards and accessibility, Peppyrus allows users to send and receive e-invoices, order documents, and other UBL-compliant messages securely and efficiently \u2014 at no cost.\n\nThis API provides programmatic access to the core Peppyrus services, enabling seamless integration with your systems for PEPPOL-compliant document transmission. Whether you're a software vendor, public institution, or private business, Peppyrus ensures compliance with PEPPOL standards without licensing fees or usage charges.\n\nFor more information, visit [https:\/\/www.peppyrus.be](https:\/\/www.peppyrus.be) or contact support at [support@peppyrus.be](mailto:support@peppyrus.be).\n\n## Testing and production environments\nTwo fully separate environments, each with its own API:\n\n**Test**\n- API: [https:\/\/api.test.peppyrus.be\/v1](https:\/\/api.test.peppyrus.be\/v1)\n- Frontend: [https:\/\/customer.test.peppyrus.be](https:\/\/customer.test.peppyrus.be)\n\n**Production**\n- API: [https:\/\/api.peppyrus.be\/v1](https:\/\/api.peppyrus.be\/v1)\n- Frontend:  [https:\/\/customer.peppyrus.be](https:\/\/customer.peppyrus.be)\n\n\n## Howto\n\nThis API can be used with any HTTP client. We provide a PHP package on [https:\/\/github.com\/tigron\/peppyrus-api-php](https:\/\/github.com\/tigron\/peppyrus-api-php).\nThis package can be installed via composer:\n\n    composer require tigron\/peppyrus-api-php\n\n\t",
+        "contact": {
+            "email": "support@tigron.be"
+        }
+    },
+    "tags": [
+        {
+            "name": "message",
+            "description": "Operations on messages"
+        },
+        {
+            "name": "organization",
+            "description": "Information linked to the organization"
+        },
+        {
+            "name": "peppol",
+            "description": "Lookup operations"
+        }
+    ],
+    "paths": {
+        "\/message": {
+            "post": {
+                "tags": [
+                    "message"
+                ],
+                "summary": "Post a message",
+                "deprecated": false,
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application\/json": {
+                            "schema": {
+                                "$ref": "#\/components\/schemas\/MessageBody"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "the message",
+                        "content": {
+                            "application\/json": {
+                                "schema": {
+                                    "$ref": "#\/components\/schemas\/Message"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
+                        "content": {
+                            "application\/json": {
+                                "schema": {
+                                    "type": "string",
+                                    "description": "The error message"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication failure"
+                    }
+                },
+                "security": [
+                    {
+                        "API key": []
+                    }
+                ]
+            }
+        },
+        "\/message\/list": {
+            "get": {
+                "tags": [
+                    "message"
+                ],
+                "summary": "Retrieve a list of messages",
+                "deprecated": false,
+                "parameters": [
+                    {
+                        "name": "folder",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "the folder to list, can be: INBOX|OUTBOX|SENT|FAILED"
+                    },
+                    {
+                        "name": "sender",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "optionally a sender participant ID"
+                    },
+                    {
+                        "name": "receiver",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "optionally a receiver participant ID"
+                    },
+                    {
+                        "name": "confirmed",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "boolean"
+                        },
+                        "description": "filter on confirmed messages ('true'|'false'|'' for all)"
+                    },
+                    {
+                        "name": "page",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        },
+                        "description": "which page to retrieve"
+                    },
+                    {
+                        "name": "perPage",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        },
+                        "description": "how many elements per page (max 100)"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "the message",
+                        "content": {
+                            "application\/json": {
+                                "schema": {
+                                    "$ref": "#\/components\/schemas\/MessageList"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "content": {
+                            "application\/json": {
+                                "schema": {
+                                    "type": "string",
+                                    "description": "The error message"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication failure"
+                    }
+                },
+                "security": [
+                    {
+                        "API key": []
+                    }
+                ]
+            }
+        },
+        "\/message\/{id}": {
+            "get": {
+                "tags": [
+                    "message"
+                ],
+                "summary": "Retrieve a message and its content",
+                "deprecated": false,
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "ID of the message to fetch"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "the message",
+                        "content": {
+                            "application\/json": {
+                                "schema": {
+                                    "$ref": "#\/components\/schemas\/Message"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "content": {
+                            "application\/json": {
+                                "schema": {
+                                    "type": "string",
+                                    "description": "The error message"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication failure"
+                    }
+                },
+                "security": [
+                    {
+                        "API key": []
+                    }
+                ]
+            }
+        },
+        "\/message\/{id}\/confirm": {
+            "patch": {
+                "tags": [
+                    "message"
+                ],
+                "summary": "Confirm the good reception of a message",
+                "deprecated": false,
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "ID of the message to confirm"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application\/json": {
+                                "schema": {
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Already confirmed",
+                        "content": {
+                            "application\/json": {
+                                "schema": {
+                                    "type": "string",
+                                    "description": "The error message"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication failure"
+                    }
+                },
+                "security": [
+                    {
+                        "API key": []
+                    }
+                ]
+            }
+        },
+        "\/message\/{id}\/report": {
+            "get": {
+                "tags": [
+                    "message"
+                ],
+                "summary": "Get the report of a message",
+                "deprecated": false,
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "ID of the message to get the report from"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "the message report",
+                        "content": {
+                            "application\/json": {
+                                "schema": {
+                                    "$ref": "#\/components\/schemas\/Message Report"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "content": {
+                            "application\/json": {
+                                "schema": {
+                                    "type": "string",
+                                    "description": "The error message"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication failure"
+                    }
+                },
+                "security": [
+                    {
+                        "API key": []
+                    }
+                ]
+            }
+        },
+        "\/organization\/info": {
+            "get": {
+                "tags": [
+                    "organization"
+                ],
+                "summary": "Retreive your organization information from Peppyrus",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "The organization info",
+                        "content": {
+                            "application\/json": {
+                                "schema": {
+                                    "$ref": "#\/components\/schemas\/OrganizationInfo"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
+                        "content": {
+                            "application\/json": {
+                                "schema": {
+                                    "type": "string",
+                                    "description": "The error message"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "content": {
+                            "application\/json": {
+                                "schema": {
+                                    "type": "string",
+                                    "description": "The error message"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication failure"
+                    }
+                },
+                "security": [
+                    {
+                        "API key": []
+                    }
+                ]
+            }
+        },
+        "\/organization\/peppol": {
+            "get": {
+                "tags": [
+                    "organization"
+                ],
+                "summary": "Retreive the specific peppol info for your organization from Peppyrus",
+                "deprecated": false,
+                "responses": {
+                    "200": {
+                        "description": "Specific Peppol info linked to your organization",
+                        "content": {
+                            "application\/json": {
+                                "schema": {
+                                    "$ref": "#\/components\/schemas\/Peppol"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
+                        "content": {
+                            "application\/json": {
+                                "schema": {
+                                    "type": "string",
+                                    "description": "The error message"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "content": {
+                            "application\/json": {
+                                "schema": {
+                                    "type": "string",
+                                    "description": "The error message"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication failure"
+                    }
+                },
+                "security": [
+                    {
+                        "API key": []
+                    }
+                ]
+            }
+        },
+        "\/peppol\/bestMatch": {
+            "get": {
+                "tags": [
+                    "peppol"
+                ],
+                "summary": "Get the best participant for a country code and vat number without prefix",
+                "deprecated": false,
+                "parameters": [
+                    {
+                        "name": "vatNumber",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Without countryCode => 0123456789"
+                    },
+                    {
+                        "name": "countryCode",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Vat CountryCode => BE, NL, ..."
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application\/json": {
+                                "schema": {
+                                    "$ref": "#\/components\/schemas\/Participant"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication failure"
+                    }
+                },
+                "security": [
+                    {
+                        "API key": []
+                    }
+                ]
+            }
+        },
+        "\/peppol\/lookup": {
+            "get": {
+                "tags": [
+                    "peppol"
+                ],
+                "summary": "Lookup participant capabilities in SMP",
+                "deprecated": false,
+                "parameters": [
+                    {
+                        "name": "participantId",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": ""
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Participant information",
+                        "content": {
+                            "application\/json": {
+                                "schema": {
+                                    "$ref": "#\/components\/schemas\/Participant"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
+                        "content": {
+                            "application\/json": {
+                                "schema": {
+                                    "type": "string",
+                                    "description": "The error message"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "content": {
+                            "application\/json": {
+                                "schema": {
+                                    "type": "string",
+                                    "description": "The error message"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication failure"
+                    }
+                },
+                "security": [
+                    {
+                        "API key": []
+                    }
+                ]
+            }
+        },
+        "\/peppol\/search": {
+            "get": {
+                "tags": [
+                    "peppol"
+                ],
+                "summary": "Query Peppol Directory for one of the several search criteria proposed",
+                "deprecated": false,
+                "parameters": [
+                    {
+                        "name": "query",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": ""
+                    },
+                    {
+                        "name": "participantId",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Participant id (9925:be0123456789)"
+                    },
+                    {
+                        "name": "name",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": ""
+                    },
+                    {
+                        "name": "country",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": ""
+                    },
+                    {
+                        "name": "geoInfo",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": ""
+                    },
+                    {
+                        "name": "contact",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": ""
+                    },
+                    {
+                        "name": "identifierScheme",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": ""
+                    },
+                    {
+                        "name": "identifierValue",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": ""
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application\/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#\/components\/schemas\/Businesscard"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication failure"
+                    }
+                },
+                "security": [
+                    {
+                        "API key": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "API key": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "X-Api-Key"
+            }
+        },
+        "schemas": {
+            "Businesscard": {
+                "type": "object",
+                "properties": {
+                    "participant": {
+                        "$ref": "#\/components\/schemas\/BusinesscardParticipant"
+                    },
+                    "entities": {
+                        "type": "array",
+                        "description": "Entities",
+                        "items": {
+                            "$ref": "#\/components\/schemas\/BusinesscardEntity"
+                        }
+                    }
+                }
+            },
+            "BusinesscardEntity": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "array",
+                        "description": "Name",
+                        "items": {
+                            "$ref": "#\/components\/schemas\/BusinesscardEntityName"
+                        }
+                    },
+                    "countryCode": {
+                        "type": "string",
+                        "description": "Country Code",
+                        "example": "BE"
+                    },
+                    "geoInfo": {
+                        "type": "string",
+                        "description": "Geo Info",
+                        "example": "Brussels, Belgium"
+                    },
+                    "identifiers": {
+                        "type": "array",
+                        "description": "Identifiers",
+                        "items": {
+                            "$ref": "#\/components\/schemas\/BusinesscardEntityIdentifier"
+                        }
+                    },
+                    "website": {
+                        "type": "array",
+                        "description": "Website",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "contacts": {
+                        "type": "array",
+                        "description": "Contact",
+                        "items": {
+                            "$ref": "#\/components\/schemas\/BusinesscardEntityContact"
+                        }
+                    },
+                    "additionalInfo": {
+                        "type": "string",
+                        "description": "Additional info",
+                        "example": "Powered by Peppyrus"
+                    },
+                    "regDate": {
+                        "type": "string",
+                        "description": "Registration date",
+                        "example": "1970-01-01"
+                    }
+                }
+            },
+            "BusinesscardEntityContact": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "description": "Type",
+                        "example": "Director"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Name",
+                        "example": "John Doe"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "description": "Phone",
+                        "example": "+32123456789"
+                    },
+                    "email": {
+                        "type": "string",
+                        "description": "Email",
+                        "example": "john.doe@email.com"
+                    }
+                }
+            },
+            "BusinesscardEntityIdentifier": {
+                "type": "object",
+                "properties": {
+                    "scheme": {
+                        "type": "string",
+                        "description": "Scheme",
+                        "example": "VAT"
+                    },
+                    "value": {
+                        "type": "string",
+                        "description": "Value",
+                        "example": "BE0123456789"
+                    }
+                }
+            },
+            "BusinesscardEntityName": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Name",
+                        "example": "My Company"
+                    },
+                    "language": {
+                        "type": "string",
+                        "description": "Language",
+                        "example": "en"
+                    }
+                }
+            },
+            "BusinesscardParticipant": {
+                "type": "object",
+                "properties": {
+                    "scheme": {
+                        "type": "string",
+                        "description": "Scheme",
+                        "example": "iso6523-actorid-upis"
+                    },
+                    "identifier": {
+                        "type": "string",
+                        "description": "Value",
+                        "example": "9925:be0123456789"
+                    }
+                }
+            },
+            "ListMeta": {
+                "type": "object",
+                "properties": {
+                    "pages": {
+                        "type": "integer",
+                        "description": "amount of pages"
+                    },
+                    "currentPage": {
+                        "type": "integer",
+                        "description": "current page"
+                    },
+                    "itemCount": {
+                        "type": "integer",
+                        "description": "amount of total items found"
+                    }
+                }
+            },
+            "Message": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "ID of the message",
+                        "example": "012345678-9abc-def0-123456789abc",
+                        "format": "uuid"
+                    },
+                    "sender": {
+                        "type": "string",
+                        "description": "Participant ID of the sender",
+                        "example": "9925:be0123456789"
+                    },
+                    "recipient": {
+                        "type": "string",
+                        "description": "Participant ID of the recipient",
+                        "example": "9925:be0123456789"
+                    },
+                    "direction": {
+                        "type": "string",
+                        "description": "Direction",
+                        "example": "IN",
+                        "enum": [
+                            "IN",
+                            "OUT"
+                        ]
+                    },
+                    "folder": {
+                        "type": "string",
+                        "description": "Folder",
+                        "example": "Inbox",
+                        "enum": [
+                            "Inbox",
+                            "Outbox",
+                            "Sent",
+                            "Failed"
+                        ]
+                    },
+                    "processType": {
+                        "type": "string",
+                        "description": "Process Type",
+                        "example": "cenbii-procid-ubl::urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"
+                    },
+                    "documentType": {
+                        "type": "string",
+                        "description": "Document Type",
+                        "example": "busdox-docid-qns::urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"
+                    },
+                    "fileContent": {
+                        "type": "string",
+                        "description": "File content base64 encoded",
+                        "example": "File content base64 encoded"
+                    },
+                    "created": {
+                        "type": "string",
+                        "description": "Date\/time created",
+                        "format": "date-time"
+                    },
+                    "confirmed": {
+                        "type": "boolean",
+                        "description": "Indicates confirmed status"
+                    }
+                }
+            },
+            "Message Report": {
+                "type": "object",
+                "properties": {
+                    "validationRules": {
+                        "type": "array",
+                        "description": "Message validation rules",
+                        "items": {
+                            "$ref": "#\/components\/schemas\/Message validation rule"
+                        }
+                    },
+                    "transmissionRules": {
+                        "type": "string",
+                        "description": "Message transmission rules"
+                    }
+                }
+            },
+            "Message validation rule": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "ID of the rule",
+                        "example": "BR-07"
+                    },
+                    "type": {
+                        "type": "string",
+                        "description": "Type of the rule",
+                        "example": "FATAL",
+                        "enum": [
+                            "WARNING",
+                            "FATAL"
+                        ]
+                    },
+                    "location": {
+                        "type": "string",
+                        "description": "Location of the rule",
+                        "example": "\/*:Invoice[namespace-uri()='urn:oasis:names:specification:ubl:schema:xsd:Invoice-2'][1]"
+                    },
+                    "message": {
+                        "type": "string",
+                        "description": "Message of the rule",
+                        "example": "BR-06]-An Invoice shall contain the Seller name (BT-27)."
+                    }
+                }
+            },
+            "MessageBody": {
+                "type": "object",
+                "properties": {
+                    "sender": {
+                        "type": "string",
+                        "description": "Participant ID of the sender of the message (format iso6523-actorid-upis)",
+                        "example": "9925:be0123456789"
+                    },
+                    "recipient": {
+                        "type": "string",
+                        "description": "Participant ID of the recipient of the message (format iso6523-actorid-upis)",
+                        "example": "9925:be0123456789"
+                    },
+                    "processType": {
+                        "type": "string",
+                        "description": "Type of process for document transmitted",
+                        "example": "cenbii-procid-ubl::urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"
+                    },
+                    "documentType": {
+                        "type": "string",
+                        "description": "Type of document transmitted",
+                        "example": "busdox-docid-qns::urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"
+                    },
+                    "fileContent": {
+                        "type": "string",
+                        "description": "Content of the file base64 encoded"
+                    }
+                },
+                "required": [
+                    "sender",
+                    "recipient",
+                    "processType",
+                    "documentType",
+                    "fileContent"
+                ]
+            },
+            "MessageList": {
+                "type": "object",
+                "properties": {
+                    "items": {
+                        "type": "array",
+                        "description": "messages",
+                        "items": {
+                            "$ref": "#\/components\/schemas\/Message"
+                        }
+                    },
+                    "meta": {
+                        "$ref": "#\/components\/schemas\/ListMeta"
+                    }
+                }
+            },
+            "OrganizationInfo": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "The name of the organization",
+                        "example": "Tigron BV"
+                    },
+                    "street": {
+                        "type": "string",
+                        "description": "The street where the organization is based",
+                        "example": "Excelsiorlaan"
+                    },
+                    "houseNumber": {
+                        "type": "string",
+                        "description": "The housenumber for the organization",
+                        "example": "17"
+                    },
+                    "zipCode": {
+                        "type": "string",
+                        "description": "The zip code for the organization",
+                        "example": "1930"
+                    },
+                    "city": {
+                        "type": "string",
+                        "description": "The city for the organization",
+                        "example": "Zaventem"
+                    },
+                    "country": {
+                        "type": "string",
+                        "description": "The country for the organization",
+                        "example": "Belgium"
+                    },
+                    "VAT": {
+                        "type": "string",
+                        "description": "The VAT number for the organization",
+                        "example": "BE0886776275"
+                    }
+                }
+            },
+            "Participant": {
+                "type": "object",
+                "properties": {
+                    "scheme": {
+                        "type": "string",
+                        "description": "Scheme of the identifier of the participant",
+                        "example": "iso6523-actorid-upis"
+                    },
+                    "participantId": {
+                        "type": "string",
+                        "description": "identifier of the participant",
+                        "example": "9925:be0123456789"
+                    },
+                    "services": {
+                        "type": "array",
+                        "description": "Services published in SMP",
+                        "items": {
+                            "$ref": "#\/components\/schemas\/Service"
+                        }
+                    }
+                }
+            },
+            "Peppol": {
+                "type": "object",
+                "properties": {
+                    "participants": {
+                        "$ref": "#\/components\/schemas\/PeppolParticipant"
+                    }
+                },
+                "required": [
+                    "participants"
+                ]
+            },
+            "PeppolParticipant": {
+                "type": "object",
+                "properties": {
+                    "participantId": {
+                        "type": "string",
+                        "description": "The participant ID registered in SML and in the PEPPOL directory",
+                        "example": "9925:TIGRON"
+                    },
+                    "canReceive": {
+                        "type": "boolean",
+                        "description": "If your organization can be found and you are able to receive messages via PEPPOL"
+                    },
+                    "iSender": {
+                        "type": "boolean",
+                        "description": "If your organization can send messages via PEPPOL"
+                    }
+                }
+            },
+            "Service": {
+                "type": "object",
+                "properties": {
+                    "documentType": {
+                        "type": "string",
+                        "description": "Document Type",
+                        "example": "busdox-docid-qns::urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"
+                    },
+                    "process": {
+                        "type": "string",
+                        "description": "Process",
+                        "example": "cenbii-procid-ubl::urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"
+                    },
+                    "transportProfile": {
+                        "type": "string",
+                        "description": "Transport Profile",
+                        "example": "peppol-transport-as4-v2_0"
+                    },
+                    "endpoint": {
+                        "type": "string",
+                        "description": "Endpoint url of access point",
+                        "example": "https:\/\/ap.peppol.tigron.be"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Description of the service",
+                        "example": "Peppol BIS Billing UBL Invoice V3"
+                    },
+                    "contact": {
+                        "type": "string",
+                        "description": "Technical contact for this service",
+                        "example": "support@peppyrus.be"
+                    }
+                }
+            }
+        }
+    }
+}

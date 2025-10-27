@@ -1,0 +1,17 @@
+openapi: 3.0.0
+info:
+  description: Add syncables to the A-Cube Peppol API.
+actions:
+- target: $
+  update:
+    syncables:
+      invoice:
+        description: |-
+          Invoice Documents received or sent by the authenticated user.
+        type: collection
+        hydra: /invoices
+      creditNote:
+        description: |-
+          Credit Notes received or sent by the authenticated user.
+        type: collection
+        hydra: /credit-notes

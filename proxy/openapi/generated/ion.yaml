@@ -1,0 +1,6641 @@
+openapi: 3.0.3
+info:
+  title: ion-AP API (test environment)
+  version: 2.3.0-rc2
+  description: >+
+
+    ## Introduction
+
+
+    This is the API documentation for ion-AP, the Peppol/AS4 access point.
+
+
+    ## General information
+
+
+    The API is discoverable and has an interactive version: simply visit the
+    base API url in a browser and you can interact with it directly.
+
+
+    There are three types of API endpoints: direct resources, resource lists,
+    and actions (such as send-document).
+
+
+    ### Resource objects
+
+
+    Resource objects are generally recognized by the URI being singular.
+
+
+    Resource objects contain serialized information about the relevant resource.
+    By default, they will also include a links object, containing links relevant
+
+    to the requested resource.
+
+
+    The 'self' link always shows the canonical URL of the resource itself. This
+    is useful when these resources are encountered in a resource list context. 
+
+    Usually, there are context-specific other actions or resources in the links
+    as well.
+
+
+    Most resources return a serialized form of the resource in JSON format.
+    There are a few exceptions: when direct XML is requested (such as a sent
+    Document or 
+
+    an SBDH), only application/xml is supported.
+
+
+    You can disable the links being included on any page with the query
+    parameter `disable_links=1`
+
+
+    ### Resource lists
+
+
+    For consistency, any list endpoint is paginated, even if those list
+    endpoints that are expected to be small. Pagination objects contain the
+    following parts:
+
+
+    - count: The total number of elements
+
+    - next: The URL of the next set of elements (if any)
+
+    - previous: The URL of the previous set of elements (if any)
+
+
+    Pagination can be influenced with the following query parameters:
+
+
+    - offset: The index of the starting element of the returned set (starting at
+    0)
+
+    - limit: The number of items to return
+
+
+    By default, the offset is 0, and the limit is 10.
+
+
+    You can disable pagination on any page with a query parameter:
+    `disable_pagination=1`.
+
+
+    ### Actions
+
+
+    Actions are generally recognized by the URI being a verb.
+
+
+    If an action creates an object as a side effect, this object will be
+    returned in JSON format. For instance, `send-document` creates and schedules
+    a send 
+
+    transaction, so this action will return the same as requesting the details
+    of one through the send-transaction/ endpoint.
+
+
+    ## Error responses
+
+
+    Errors responses have the corresponding HTTP code set, but also include the
+    following content:
+
+        {
+            "type": "client_error|server_error|",
+            "errors": [
+                {
+                    "code": "error_code",
+                    "detail": "Error details.",
+                    "attr": <optional attributes>
+                }
+            ]
+        }
+
+    For consistency, this format is also used for singular errors, such as 404
+    results.
+
+
+    ## Authentication
+
+
+    Applications have three options to authenticate to ion-AP:
+
+
+    1. JWT
+
+    2. API Token, configured per user
+
+    3. Basic HTTP session authentication
+
+
+    JWT is used by the front-end as well, and is considered the most secure
+    method of authentication, due to the tokens expiring automatically. When
+    using the `obtain_jwt_token` request, you receive an access token and a
+    refresh token.
+
+
+    The access token is used in subsequence requests by using the header:
+
+
+    `Authorization: JWT <access token>`
+
+
+    The access token is valid for 1 hour, but you can create a new one by using
+    the refresh token with the `refresh_jwt_token` endpoint.
+
+
+
+    API Tokens do not expire, but need to be created in an authenticated session
+    before they can be used (either through the web interface or with a one-off
+    other authentication method).
+
+
+    API Tokens are used through the Authorization header, with the Token
+    identifier:
+
+
+    `Authorization: Token <your API token>`.
+
+
+    For instance, if your token is 69206a9c9fa6c7c9156133a5f2839028ffa4e538, the
+    full header would be:
+
+
+    `Authorization: Token 69206a9c9fa6c7c9156133a5f2839028ffa4e538`
+
+
+
+    Basic HTTP session authentication is considered the least secure option,
+    since it places the username and password in every request.
+
+
+    You can use basic authentication with the header
+
+
+    `Authorization: Basic <base64-encoding of username:password>`
+
+servers:
+  - url: 'https://test.ion-ap.net'
+paths:
+  /api/v2/account/transaction-bundle:
+    get:
+      operationId: account_transaction_bundle_retrieve
+      tags:
+        - account
+      description: Manage your account bundle
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: account_transaction_bundle_create
+      tags:
+        - account
+      description: Manage your account bundle
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v2/auth/create_auth_token:
+    post:
+      operationId: auth_create_auth_token_create
+      tags:
+        - auth
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+      responses:
+        '200':
+          description: No response body
+  '/api/v2/auth/delete_auth_token/{key}':
+    delete:
+      operationId: auth_delete_auth_token_destroy
+      tags:
+        - auth
+      parameters:
+        - in: path
+          name: key
+          schema:
+            type: string
+          required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v2/auth/obtain_jwt_token:
+    post:
+      operationId: auth_obtain_jwt_token_create
+      tags:
+        - auth
+      description: >-
+        Takes a set of user credentials and returns an access and refresh JSON
+        web
+
+        token pair to prove the authentication of those credentials.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MyJSONWebToken'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MyJSONWebToken'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MyJSONWebToken'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MyJSONWebToken'
+          description: ''
+  /api/v2/auth/refresh_jwt_token:
+    post:
+      operationId: auth_refresh_jwt_token_create
+      tags:
+        - auth
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /api/v2/auth/update_password:
+    post:
+      operationId: auth_update_password_create
+      tags:
+        - auth
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v2/auth/user_data:
+    get:
+      operationId: auth_user_data_retrieve
+      tags:
+        - auth
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+      responses:
+        '200':
+          description: No response body
+  '/api/v2/discover/{identifier}':
+    get:
+      operationId: Check Participant Presence
+      tags:
+        - discover
+      description: >-
+
+        This endpoint provides minimal information about the presence of the
+        given participant on the network.
+
+
+        It checks whether the participant identifier is registered in the SML,
+        and whether the SMP is reachable.
+
+
+        This endpoint does not provide any information on document type or
+        processes of the registered participant.
+                        
+      parameters:
+        - in: path
+          name: identifier
+          schema:
+            type: string
+          description: >
+
+
+            The identifier of the participant to find.
+
+
+            Should be of the form `<scheme>:<identifier>`, for example
+            `0106:12345678`
+
+
+            Optionally, you can provide the participant identifier scheme as
+            well: `iso6523-actorid-upis::0106:12345678`
+          required: true
+        - in: query
+          name: log_level
+          schema:
+            type: string
+            default: NOTSET
+          description: >-
+            Add log messages from the lookup to the response object. If not set,
+            the 'logs' element is left out of the response. Possible values:
+            `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`, `NOTSET`.
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParticipantPresence'
+          description: Successful Response
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParticipantPresence'
+          description: Not Found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPBasicError'
+          description: >-
+            Either a remote SMP gave a response this service cannot handle, or
+            there is an internal issue in the lookup service.
+  '/api/v2/discover/{identifier}/document-types':
+    get:
+      operationId: Discover Participant Document Types
+      tags:
+        - discover
+      description: >-
+        Find the given identifier on the Peppol network, returning a list of all
+        the document type supported by the participant, if found.
+      parameters:
+        - in: path
+          name: identifier
+          schema:
+            type: string
+          description: >-
+            The identifier of the participant to find. Examples:
+            `0106:84418745`, `iso6523-actorid-upis::0106:84418745`
+          required: true
+        - in: query
+          name: log_level
+          schema:
+            type: string
+            default: NOTSET
+          description: >-
+            Add log messages from the lookup to the response object. If not set,
+            the 'logs' element is left out of the response. Possible values:
+            `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`, `NOTSET`.
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParticipantSupportedDocumentTypes'
+          description: Successful Response
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPBasicError'
+          description: >-
+            The identifier could not be found on the network. Either there is no
+            entry in the SML, or the SMP returned a 404 response.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPBasicError'
+          description: >-
+            Either a remote SMP gave a response this service cannot handle, or
+            there is an internal issue in the lookup service.
+  '/api/v2/discover/{identifier}/endpoints':
+    get:
+      operationId: Discover Participant Endpoints
+      tags:
+        - discover
+      description: >-
+
+        Find the given identifier on the Peppol network, returning a list of
+        endpoints if found.
+
+
+        This endpoint list contains only the minimal information necessary for a
+        technical connection to the endpoint, such as its URL, and the endpoint
+        certificate.
+                        
+      parameters:
+        - in: path
+          name: identifier
+          schema:
+            type: string
+          description: |+
+
+
+          required: true
+        - in: query
+          name: log_level
+          schema:
+            type: string
+            default: NOTSET
+          description: >-
+            Add log messages from the lookup to the response object. If not set,
+            the 'logs' element is left out of the response. Possible values:
+            `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`, `NOTSET`.
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParticipantEndpoints'
+          description: Successful Response
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPBasicError'
+          description: >-
+            The identifier could not be found on the network. Either there is no
+            entry in the SML, or the SMP returned a 404 response.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPBasicError'
+          description: >-
+            Either a remote SMP gave a response this service cannot handle, or
+            there is an internal issue in the lookup service.
+  /api/v2/discover/endpoints-for-document:
+    post:
+      operationId: Discover Participant Endpoints For Document
+      tags:
+        - discover
+      description: >-
+
+        Parse the uploaded document, and find the endpoint(s) for the
+        corresponding recipient and document type.
+
+
+        This requires a full upload of the document, and may therefore not be
+        the most efficient method, but it is provided in the case where the
+        caller does not have the tools required to extract that information
+        itself.
+
+
+        The request Content-Type should be application/xml, and the body should
+        be the XML document itself.
+
+
+        Returns a list of potential endpoints, as there may be multiple matches.
+        Results are ordered by most-specific-first.
+                        
+      parameters:
+        - in: query
+          name: log_level
+          schema:
+            type: string
+            default: NOTSET
+          description: >-
+            Add log messages from the lookup to the response object. If not set,
+            the 'logs' element is left out of the response. Possible values:
+            `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`, `NOTSET`.
+      requestBody:
+        content:
+          application/xml:
+            schema:
+              type: object
+              additionalProperties: {}
+              description: Unspecified request body
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParticipantEndpoints'
+          description: Successful Response
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPBasicError'
+          description: >-
+            The identifier could not be found on the network. Either there is no
+            entry in the SML, or the SMP returned a 404 response.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPBasicError'
+          description: >-
+            Either a remote SMP gave a response this service cannot handle, or
+            there is an internal issue in the lookup service.
+  /api/v2/organizations:
+    get:
+      operationId: organizations_list
+      tags:
+        - organizations
+      description: >-
+        Organizations, or Trading Entities, are the senders and receivers of
+        documents on the peppol network.
+
+
+        Organizations have one or more Peppol Identifiers, such as a Chamber of
+        Commerce number or a VAT number.
+
+
+        Users can, depending on their account type and role permissions, send
+        and receive document on behalf of
+
+        zero, one, or multiple organizations.
+
+
+        This endpoint manages the organization entries for an account
+        themselves.
+      parameters:
+        - in: query
+          name: descending
+          schema:
+            type: boolean
+          description: >-
+            If set to true, show the results in descending rather than ascending
+            order. Note that if order_by is not specified, the results are
+            already shown in descending order of the id field.
+        - in: query
+          name: filter_identifier
+          schema:
+            type: string
+          description: >-
+            Filter the results by peppol identifier field. Case insensitive
+            partial match.
+        - in: query
+          name: filter_name
+          schema:
+            type: string
+          description: >-
+            Filter the results by the value of the name field. Case insensitive
+            partial match.
+        - in: query
+          name: filter_reference
+          schema:
+            type: string
+          description: >-
+            Filter the results by the value of the name field. Case insensitive
+            partial match.
+        - name: limit
+          required: false
+          in: query
+          description: Number of results to return per page.
+          schema:
+            type: integer
+        - name: offset
+          required: false
+          in: query
+          description: The initial index from which to return the results.
+          schema:
+            type: integer
+        - in: query
+          name: order_by
+          schema:
+            type: string
+          description: >-
+            Order the results by the given attribute. Attribute must be one of
+            "name" or "country".
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedOrganizationList'
+          description: ''
+    post:
+      operationId: organizations_create
+      tags:
+        - organizations
+      description: >-
+        Organizations, or Trading Entities, are the senders and receivers of
+        documents on the peppol network.
+
+
+        Organizations have one or more Peppol Identifiers, such as a Chamber of
+        Commerce number or a VAT number.
+
+
+        Users can, depending on their account type and role permissions, send
+        and receive document on behalf of
+
+        zero, one, or multiple organizations.
+
+
+        This endpoint manages the organization entries for an account
+        themselves.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Organization'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Organization'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Organization'
+        required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+          description: ''
+  '/api/v2/organizations/{organization_pk}/identifiers':
+    get:
+      operationId: organizations_identifiers_list
+      tags:
+        - organizations
+      description: >-
+        Identifiers, or Peppol Identifiers, are the unique values by which
+        organizations are identified on the Peppol Network.
+
+
+        An identifier also contains a general scheme. In the Peppol case you
+        should leave this at the default 'iso6523-actorid-upis'.
+
+
+        Identifiers themselves, when using iso6523, consist of their own scheme
+        identifier, such as 0106 for Dutch Chamber of
+
+        Commerce, and a value, such as the actual Chamber of Commerce number.
+        For example: 0106:12345678.
+
+
+        An organization can have multiple identifiers, but each identifier must
+        be globally unique.
+
+
+        The 'verified' value MUST be set to True in order to be able to use this
+        identifier as a sender. You can set it to False if you have a KYC
+        process that has not been completed yet, but wish to add the identifier
+        already.
+      parameters:
+        - name: limit
+          required: false
+          in: query
+          description: Number of results to return per page.
+          schema:
+            type: integer
+        - name: offset
+          required: false
+          in: query
+          description: The initial index from which to return the results.
+          schema:
+            type: integer
+        - in: path
+          name: organization_pk
+          schema:
+            type: integer
+            description: The organization this Identifier belongs to
+          required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedIdentifierList'
+          description: ''
+    post:
+      operationId: organizations_identifiers_create
+      tags:
+        - organizations
+      description: >-
+        Identifiers, or Peppol Identifiers, are the unique values by which
+        organizations are identified on the Peppol Network.
+
+
+        An identifier also contains a general scheme. In the Peppol case you
+        should leave this at the default 'iso6523-actorid-upis'.
+
+
+        Identifiers themselves, when using iso6523, consist of their own scheme
+        identifier, such as 0106 for Dutch Chamber of
+
+        Commerce, and a value, such as the actual Chamber of Commerce number.
+        For example: 0106:12345678.
+
+
+        An organization can have multiple identifiers, but each identifier must
+        be globally unique.
+
+
+        The 'verified' value MUST be set to True in order to be able to use this
+        identifier as a sender. You can set it to False if you have a KYC
+        process that has not been completed yet, but wish to add the identifier
+        already.
+      parameters:
+        - in: path
+          name: organization_pk
+          schema:
+            type: integer
+            description: The organization this Identifier belongs to
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Identifier'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Identifier'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Identifier'
+        required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Identifier'
+          description: ''
+  '/api/v2/organizations/{organization_pk}/identifiers/{id}':
+    get:
+      operationId: organizations_identifiers_retrieve
+      tags:
+        - organizations
+      description: >-
+        Identifiers, or Peppol Identifiers, are the unique values by which
+        organizations are identified on the Peppol Network.
+
+
+        An identifier also contains a general scheme. In the Peppol case you
+        should leave this at the default 'iso6523-actorid-upis'.
+
+
+        Identifiers themselves, when using iso6523, consist of their own scheme
+        identifier, such as 0106 for Dutch Chamber of
+
+        Commerce, and a value, such as the actual Chamber of Commerce number.
+        For example: 0106:12345678.
+
+
+        An organization can have multiple identifiers, but each identifier must
+        be globally unique.
+
+
+        The 'verified' value MUST be set to True in order to be able to use this
+        identifier as a sender. You can set it to False if you have a KYC
+        process that has not been completed yet, but wish to add the identifier
+        already.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this identifier.
+          required: true
+        - in: path
+          name: organization_pk
+          schema:
+            type: integer
+            description: The organization this Identifier belongs to
+          required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Identifier'
+          description: ''
+    put:
+      operationId: organizations_identifiers_update
+      tags:
+        - organizations
+      description: >-
+        Identifiers, or Peppol Identifiers, are the unique values by which
+        organizations are identified on the Peppol Network.
+
+
+        An identifier also contains a general scheme. In the Peppol case you
+        should leave this at the default 'iso6523-actorid-upis'.
+
+
+        Identifiers themselves, when using iso6523, consist of their own scheme
+        identifier, such as 0106 for Dutch Chamber of
+
+        Commerce, and a value, such as the actual Chamber of Commerce number.
+        For example: 0106:12345678.
+
+
+        An organization can have multiple identifiers, but each identifier must
+        be globally unique.
+
+
+        The 'verified' value MUST be set to True in order to be able to use this
+        identifier as a sender. You can set it to False if you have a KYC
+        process that has not been completed yet, but wish to add the identifier
+        already.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this identifier.
+          required: true
+        - in: path
+          name: organization_pk
+          schema:
+            type: integer
+            description: The organization this Identifier belongs to
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Identifier'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Identifier'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Identifier'
+        required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Identifier'
+          description: ''
+    patch:
+      operationId: organizations_identifiers_partial_update
+      tags:
+        - organizations
+      description: >-
+        Identifiers, or Peppol Identifiers, are the unique values by which
+        organizations are identified on the Peppol Network.
+
+
+        An identifier also contains a general scheme. In the Peppol case you
+        should leave this at the default 'iso6523-actorid-upis'.
+
+
+        Identifiers themselves, when using iso6523, consist of their own scheme
+        identifier, such as 0106 for Dutch Chamber of
+
+        Commerce, and a value, such as the actual Chamber of Commerce number.
+        For example: 0106:12345678.
+
+
+        An organization can have multiple identifiers, but each identifier must
+        be globally unique.
+
+
+        The 'verified' value MUST be set to True in order to be able to use this
+        identifier as a sender. You can set it to False if you have a KYC
+        process that has not been completed yet, but wish to add the identifier
+        already.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this identifier.
+          required: true
+        - in: path
+          name: organization_pk
+          schema:
+            type: integer
+            description: The organization this Identifier belongs to
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedIdentifier'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedIdentifier'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedIdentifier'
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Identifier'
+          description: ''
+    delete:
+      operationId: organizations_identifiers_destroy
+      tags:
+        - organizations
+      description: >-
+        Identifiers, or Peppol Identifiers, are the unique values by which
+        organizations are identified on the Peppol Network.
+
+
+        An identifier also contains a general scheme. In the Peppol case you
+        should leave this at the default 'iso6523-actorid-upis'.
+
+
+        Identifiers themselves, when using iso6523, consist of their own scheme
+        identifier, such as 0106 for Dutch Chamber of
+
+        Commerce, and a value, such as the actual Chamber of Commerce number.
+        For example: 0106:12345678.
+
+
+        An organization can have multiple identifiers, but each identifier must
+        be globally unique.
+
+
+        The 'verified' value MUST be set to True in order to be able to use this
+        identifier as a sender. You can set it to False if you have a KYC
+        process that has not been completed yet, but wish to add the identifier
+        already.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this identifier.
+          required: true
+        - in: path
+          name: organization_pk
+          schema:
+            type: integer
+            description: The organization this Identifier belongs to
+          required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  '/api/v2/organizations/{organization_pk}/logs':
+    get:
+      operationId: organizations_logs_list
+      tags:
+        - organizations
+      description: |-
+        Base class for specific features we want to have consistently
+        throughout the entire API, such as pagination that can be disabled
+        ('disable_pagination' parameter)
+      parameters:
+        - name: limit
+          required: false
+          in: query
+          description: Number of results to return per page.
+          schema:
+            type: integer
+        - name: offset
+          required: false
+          in: query
+          description: The initial index from which to return the results.
+          schema:
+            type: integer
+        - in: path
+          name: organization_pk
+          schema:
+            type: integer
+            description: The organization this log entry is related to
+          required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedLogList'
+          description: ''
+  '/api/v2/organizations/{organization_pk}/logs/{id}':
+    get:
+      operationId: organizations_logs_retrieve
+      tags:
+        - organizations
+      description: |-
+        Base class for specific features we want to have consistently
+        throughout the entire API, such as pagination that can be disabled
+        ('disable_pagination' parameter)
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this log.
+          required: true
+        - in: path
+          name: organization_pk
+          schema:
+            type: integer
+            description: The organization this log entry is related to
+          required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Log'
+          description: ''
+  '/api/v2/organizations/{organization_pk}/receive-trigger-options':
+    get:
+      operationId: organizations_receive_trigger_options_retrieve
+      tags:
+        - organizations
+      parameters:
+        - in: path
+          name: organization_pk
+          schema:
+            type: string
+          required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+  '/api/v2/organizations/{organization_pk}/receive-triggers':
+    get:
+      operationId: organizations_receive_triggers_list
+      tags:
+        - organizations
+      description: >-
+        Receive triggers are actions that ion-AP can take when an organization
+        receives a document on the peppol network.
+
+
+        To configure a receive trigger, you must set a trigger type and,
+        depending on the type, a number of arguments.
+
+
+        Note that these are likely to be expanded, and possibly changed, in the
+        near future. If you have any specific requests,
+
+        please let us know.
+
+
+        There are currently two trigger types implemented:
+
+
+        - API_CALL: ion-ap performs a web API call to a remote endpoint, to
+        notify of the received document.
+
+        - SEND_EMAIL: ion-ap sends an email to a configured e-mail address, with
+        a notification that a document has been received.
+
+
+        API_CALL has the following arguments:
+
+        - url: The remote URL of the call
+
+        - method: GET or POST: the HTTP method that the call will use
+
+        - post_data: one of the following values:
+          - document: The HTTP POST method will set the Content-Type header to application/xml, and POST the received document
+          - sbdh: The HTTP POST method will set the Content-Type header to application/xml, and POST the entire received SBDH
+          - fetch-url-transaction: The HTTP POST method will send an x-www-form-urlencoded data object, with a single field containing the API Resource URL to fetch the transaction data. The name of the field defaults to 'data', but can be set with the argument 'post_field_name'
+        - post_field_name: For post_data arguments that send an
+        x-www-form-urlencoded form, this argument specified the name of the
+        field containing the configured data. Defaults to 'data'.
+
+
+        SEND_EMAIL has the following arguments:
+
+        - recipient: The email address to which the email messages are sent
+
+        - attach_document: The received document will be attached to the email
+        (as an xml file)
+
+        - attach_sbdh: The full SBDH of the received document will be attached
+        to the email (as an xml file)
+
+        - attach_pdf: A pdf conversion of the received document will be attached
+        to the email (experimental, only for invoices)
+
+        - subject: A template for the subject of the email, defaults to "Peppol
+        document received for %RECEIVER_NAME% from %SENDER_NAME%"
+
+        - body: A template for the body of the email, defaults to "You have
+        received a peppol document from %SENDER_NAME%. The API resource URL is:
+        %API_RESOURCE_URL%"
+
+
+        The email subject and body are templates, in which the following
+        keywords are automatically replaced:
+
+        - %SENDER_NAME%: The name of the sending organization
+
+        - %RECEIVER_NAME%: The name of the receiving organization
+
+        - %API_RESOURCE_URL%: The API Resource URL that returns the details of
+        the receive transaction
+
+
+
+        There are also arguments to all trigger types:
+
+        - only_on_document_type: <string> Only execute the trigger when the full
+        document type from the transaction matches
+
+        - only_on_xml_type: <string> only execute the trigger when the XML of
+        the document in the transaction matches the (optional) namespace and
+        root element, format: xml namespace::<root element>. Yopu can use * to
+        match all XML namespaces, or all root elements (e.g. *::Invoice, or
+        urn:ns:example::*)
+
+        - only_on_sender_id: <string> only execute the trigger if the sender
+        matches this identifier
+
+        - only_on_receiver_id: <string> only execute the trigger if the receiver
+        matches this identifier
+
+        - only_on_no_other_triggers: <boolean> only executes if there were no
+        other triggers executed for this transaction. This excepts other
+        triggers that had this requirement set (i.e. if there are multiple
+        triggers with this setting set, they are all executed).
+
+
+        If you specify multiple 'only_on' arguments for a trigger, they must all
+        match in order for the trigger to be executed; their values are a
+        logical AND.
+
+        If you want a logical OR, you can specify multiple triggers, where only
+        the 'only_on' values differ.
+
+
+        Note that there is a difference between not specifying any only_on
+        arguments (the trigger will always be executed) and using
+        'only_otherwise' (the trigger will only be executed if no other triggers
+        were).
+
+
+        Example:
+      parameters:
+        - name: limit
+          required: false
+          in: query
+          description: Number of results to return per page.
+          schema:
+            type: integer
+        - name: offset
+          required: false
+          in: query
+          description: The initial index from which to return the results.
+          schema:
+            type: integer
+        - in: path
+          name: organization_pk
+          schema:
+            type: integer
+          required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedOrganizationReceiveTriggerList'
+          description: ''
+    post:
+      operationId: organizations_receive_triggers_create
+      tags:
+        - organizations
+      description: >-
+        Receive triggers are actions that ion-AP can take when an organization
+        receives a document on the peppol network.
+
+
+        To configure a receive trigger, you must set a trigger type and,
+        depending on the type, a number of arguments.
+
+
+        Note that these are likely to be expanded, and possibly changed, in the
+        near future. If you have any specific requests,
+
+        please let us know.
+
+
+        There are currently two trigger types implemented:
+
+
+        - API_CALL: ion-ap performs a web API call to a remote endpoint, to
+        notify of the received document.
+
+        - SEND_EMAIL: ion-ap sends an email to a configured e-mail address, with
+        a notification that a document has been received.
+
+
+        API_CALL has the following arguments:
+
+        - url: The remote URL of the call
+
+        - method: GET or POST: the HTTP method that the call will use
+
+        - post_data: one of the following values:
+          - document: The HTTP POST method will set the Content-Type header to application/xml, and POST the received document
+          - sbdh: The HTTP POST method will set the Content-Type header to application/xml, and POST the entire received SBDH
+          - fetch-url-transaction: The HTTP POST method will send an x-www-form-urlencoded data object, with a single field containing the API Resource URL to fetch the transaction data. The name of the field defaults to 'data', but can be set with the argument 'post_field_name'
+        - post_field_name: For post_data arguments that send an
+        x-www-form-urlencoded form, this argument specified the name of the
+        field containing the configured data. Defaults to 'data'.
+
+
+        SEND_EMAIL has the following arguments:
+
+        - recipient: The email address to which the email messages are sent
+
+        - attach_document: The received document will be attached to the email
+        (as an xml file)
+
+        - attach_sbdh: The full SBDH of the received document will be attached
+        to the email (as an xml file)
+
+        - attach_pdf: A pdf conversion of the received document will be attached
+        to the email (experimental, only for invoices)
+
+        - subject: A template for the subject of the email, defaults to "Peppol
+        document received for %RECEIVER_NAME% from %SENDER_NAME%"
+
+        - body: A template for the body of the email, defaults to "You have
+        received a peppol document from %SENDER_NAME%. The API resource URL is:
+        %API_RESOURCE_URL%"
+
+
+        The email subject and body are templates, in which the following
+        keywords are automatically replaced:
+
+        - %SENDER_NAME%: The name of the sending organization
+
+        - %RECEIVER_NAME%: The name of the receiving organization
+
+        - %API_RESOURCE_URL%: The API Resource URL that returns the details of
+        the receive transaction
+
+
+
+        There are also arguments to all trigger types:
+
+        - only_on_document_type: <string> Only execute the trigger when the full
+        document type from the transaction matches
+
+        - only_on_xml_type: <string> only execute the trigger when the XML of
+        the document in the transaction matches the (optional) namespace and
+        root element, format: xml namespace::<root element>. Yopu can use * to
+        match all XML namespaces, or all root elements (e.g. *::Invoice, or
+        urn:ns:example::*)
+
+        - only_on_sender_id: <string> only execute the trigger if the sender
+        matches this identifier
+
+        - only_on_receiver_id: <string> only execute the trigger if the receiver
+        matches this identifier
+
+        - only_on_no_other_triggers: <boolean> only executes if there were no
+        other triggers executed for this transaction. This excepts other
+        triggers that had this requirement set (i.e. if there are multiple
+        triggers with this setting set, they are all executed).
+
+
+        If you specify multiple 'only_on' arguments for a trigger, they must all
+        match in order for the trigger to be executed; their values are a
+        logical AND.
+
+        If you want a logical OR, you can specify multiple triggers, where only
+        the 'only_on' values differ.
+
+
+        Note that there is a difference between not specifying any only_on
+        arguments (the trigger will always be executed) and using
+        'only_otherwise' (the trigger will only be executed if no other triggers
+        were).
+
+
+        Example:
+      parameters:
+        - in: path
+          name: organization_pk
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizationReceiveTrigger'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OrganizationReceiveTrigger'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OrganizationReceiveTrigger'
+        required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationReceiveTrigger'
+          description: ''
+  '/api/v2/organizations/{organization_pk}/receive-triggers/{id}':
+    get:
+      operationId: organizations_receive_triggers_retrieve
+      tags:
+        - organizations
+      description: >-
+        Receive triggers are actions that ion-AP can take when an organization
+        receives a document on the peppol network.
+
+
+        To configure a receive trigger, you must set a trigger type and,
+        depending on the type, a number of arguments.
+
+
+        Note that these are likely to be expanded, and possibly changed, in the
+        near future. If you have any specific requests,
+
+        please let us know.
+
+
+        There are currently two trigger types implemented:
+
+
+        - API_CALL: ion-ap performs a web API call to a remote endpoint, to
+        notify of the received document.
+
+        - SEND_EMAIL: ion-ap sends an email to a configured e-mail address, with
+        a notification that a document has been received.
+
+
+        API_CALL has the following arguments:
+
+        - url: The remote URL of the call
+
+        - method: GET or POST: the HTTP method that the call will use
+
+        - post_data: one of the following values:
+          - document: The HTTP POST method will set the Content-Type header to application/xml, and POST the received document
+          - sbdh: The HTTP POST method will set the Content-Type header to application/xml, and POST the entire received SBDH
+          - fetch-url-transaction: The HTTP POST method will send an x-www-form-urlencoded data object, with a single field containing the API Resource URL to fetch the transaction data. The name of the field defaults to 'data', but can be set with the argument 'post_field_name'
+        - post_field_name: For post_data arguments that send an
+        x-www-form-urlencoded form, this argument specified the name of the
+        field containing the configured data. Defaults to 'data'.
+
+
+        SEND_EMAIL has the following arguments:
+
+        - recipient: The email address to which the email messages are sent
+
+        - attach_document: The received document will be attached to the email
+        (as an xml file)
+
+        - attach_sbdh: The full SBDH of the received document will be attached
+        to the email (as an xml file)
+
+        - attach_pdf: A pdf conversion of the received document will be attached
+        to the email (experimental, only for invoices)
+
+        - subject: A template for the subject of the email, defaults to "Peppol
+        document received for %RECEIVER_NAME% from %SENDER_NAME%"
+
+        - body: A template for the body of the email, defaults to "You have
+        received a peppol document from %SENDER_NAME%. The API resource URL is:
+        %API_RESOURCE_URL%"
+
+
+        The email subject and body are templates, in which the following
+        keywords are automatically replaced:
+
+        - %SENDER_NAME%: The name of the sending organization
+
+        - %RECEIVER_NAME%: The name of the receiving organization
+
+        - %API_RESOURCE_URL%: The API Resource URL that returns the details of
+        the receive transaction
+
+
+
+        There are also arguments to all trigger types:
+
+        - only_on_document_type: <string> Only execute the trigger when the full
+        document type from the transaction matches
+
+        - only_on_xml_type: <string> only execute the trigger when the XML of
+        the document in the transaction matches the (optional) namespace and
+        root element, format: xml namespace::<root element>. Yopu can use * to
+        match all XML namespaces, or all root elements (e.g. *::Invoice, or
+        urn:ns:example::*)
+
+        - only_on_sender_id: <string> only execute the trigger if the sender
+        matches this identifier
+
+        - only_on_receiver_id: <string> only execute the trigger if the receiver
+        matches this identifier
+
+        - only_on_no_other_triggers: <boolean> only executes if there were no
+        other triggers executed for this transaction. This excepts other
+        triggers that had this requirement set (i.e. if there are multiple
+        triggers with this setting set, they are all executed).
+
+
+        If you specify multiple 'only_on' arguments for a trigger, they must all
+        match in order for the trigger to be executed; their values are a
+        logical AND.
+
+        If you want a logical OR, you can specify multiple triggers, where only
+        the 'only_on' values differ.
+
+
+        Note that there is a difference between not specifying any only_on
+        arguments (the trigger will always be executed) and using
+        'only_otherwise' (the trigger will only be executed if no other triggers
+        were).
+
+
+        Example:
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: >-
+            A unique integer value identifying this organization receive
+            trigger.
+          required: true
+        - in: path
+          name: organization_pk
+          schema:
+            type: integer
+          required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationReceiveTrigger'
+          description: ''
+    put:
+      operationId: organizations_receive_triggers_update
+      tags:
+        - organizations
+      description: >-
+        Receive triggers are actions that ion-AP can take when an organization
+        receives a document on the peppol network.
+
+
+        To configure a receive trigger, you must set a trigger type and,
+        depending on the type, a number of arguments.
+
+
+        Note that these are likely to be expanded, and possibly changed, in the
+        near future. If you have any specific requests,
+
+        please let us know.
+
+
+        There are currently two trigger types implemented:
+
+
+        - API_CALL: ion-ap performs a web API call to a remote endpoint, to
+        notify of the received document.
+
+        - SEND_EMAIL: ion-ap sends an email to a configured e-mail address, with
+        a notification that a document has been received.
+
+
+        API_CALL has the following arguments:
+
+        - url: The remote URL of the call
+
+        - method: GET or POST: the HTTP method that the call will use
+
+        - post_data: one of the following values:
+          - document: The HTTP POST method will set the Content-Type header to application/xml, and POST the received document
+          - sbdh: The HTTP POST method will set the Content-Type header to application/xml, and POST the entire received SBDH
+          - fetch-url-transaction: The HTTP POST method will send an x-www-form-urlencoded data object, with a single field containing the API Resource URL to fetch the transaction data. The name of the field defaults to 'data', but can be set with the argument 'post_field_name'
+        - post_field_name: For post_data arguments that send an
+        x-www-form-urlencoded form, this argument specified the name of the
+        field containing the configured data. Defaults to 'data'.
+
+
+        SEND_EMAIL has the following arguments:
+
+        - recipient: The email address to which the email messages are sent
+
+        - attach_document: The received document will be attached to the email
+        (as an xml file)
+
+        - attach_sbdh: The full SBDH of the received document will be attached
+        to the email (as an xml file)
+
+        - attach_pdf: A pdf conversion of the received document will be attached
+        to the email (experimental, only for invoices)
+
+        - subject: A template for the subject of the email, defaults to "Peppol
+        document received for %RECEIVER_NAME% from %SENDER_NAME%"
+
+        - body: A template for the body of the email, defaults to "You have
+        received a peppol document from %SENDER_NAME%. The API resource URL is:
+        %API_RESOURCE_URL%"
+
+
+        The email subject and body are templates, in which the following
+        keywords are automatically replaced:
+
+        - %SENDER_NAME%: The name of the sending organization
+
+        - %RECEIVER_NAME%: The name of the receiving organization
+
+        - %API_RESOURCE_URL%: The API Resource URL that returns the details of
+        the receive transaction
+
+
+
+        There are also arguments to all trigger types:
+
+        - only_on_document_type: <string> Only execute the trigger when the full
+        document type from the transaction matches
+
+        - only_on_xml_type: <string> only execute the trigger when the XML of
+        the document in the transaction matches the (optional) namespace and
+        root element, format: xml namespace::<root element>. Yopu can use * to
+        match all XML namespaces, or all root elements (e.g. *::Invoice, or
+        urn:ns:example::*)
+
+        - only_on_sender_id: <string> only execute the trigger if the sender
+        matches this identifier
+
+        - only_on_receiver_id: <string> only execute the trigger if the receiver
+        matches this identifier
+
+        - only_on_no_other_triggers: <boolean> only executes if there were no
+        other triggers executed for this transaction. This excepts other
+        triggers that had this requirement set (i.e. if there are multiple
+        triggers with this setting set, they are all executed).
+
+
+        If you specify multiple 'only_on' arguments for a trigger, they must all
+        match in order for the trigger to be executed; their values are a
+        logical AND.
+
+        If you want a logical OR, you can specify multiple triggers, where only
+        the 'only_on' values differ.
+
+
+        Note that there is a difference between not specifying any only_on
+        arguments (the trigger will always be executed) and using
+        'only_otherwise' (the trigger will only be executed if no other triggers
+        were).
+
+
+        Example:
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: >-
+            A unique integer value identifying this organization receive
+            trigger.
+          required: true
+        - in: path
+          name: organization_pk
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizationReceiveTrigger'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OrganizationReceiveTrigger'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OrganizationReceiveTrigger'
+        required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationReceiveTrigger'
+          description: ''
+    patch:
+      operationId: organizations_receive_triggers_partial_update
+      tags:
+        - organizations
+      description: >-
+        Receive triggers are actions that ion-AP can take when an organization
+        receives a document on the peppol network.
+
+
+        To configure a receive trigger, you must set a trigger type and,
+        depending on the type, a number of arguments.
+
+
+        Note that these are likely to be expanded, and possibly changed, in the
+        near future. If you have any specific requests,
+
+        please let us know.
+
+
+        There are currently two trigger types implemented:
+
+
+        - API_CALL: ion-ap performs a web API call to a remote endpoint, to
+        notify of the received document.
+
+        - SEND_EMAIL: ion-ap sends an email to a configured e-mail address, with
+        a notification that a document has been received.
+
+
+        API_CALL has the following arguments:
+
+        - url: The remote URL of the call
+
+        - method: GET or POST: the HTTP method that the call will use
+
+        - post_data: one of the following values:
+          - document: The HTTP POST method will set the Content-Type header to application/xml, and POST the received document
+          - sbdh: The HTTP POST method will set the Content-Type header to application/xml, and POST the entire received SBDH
+          - fetch-url-transaction: The HTTP POST method will send an x-www-form-urlencoded data object, with a single field containing the API Resource URL to fetch the transaction data. The name of the field defaults to 'data', but can be set with the argument 'post_field_name'
+        - post_field_name: For post_data arguments that send an
+        x-www-form-urlencoded form, this argument specified the name of the
+        field containing the configured data. Defaults to 'data'.
+
+
+        SEND_EMAIL has the following arguments:
+
+        - recipient: The email address to which the email messages are sent
+
+        - attach_document: The received document will be attached to the email
+        (as an xml file)
+
+        - attach_sbdh: The full SBDH of the received document will be attached
+        to the email (as an xml file)
+
+        - attach_pdf: A pdf conversion of the received document will be attached
+        to the email (experimental, only for invoices)
+
+        - subject: A template for the subject of the email, defaults to "Peppol
+        document received for %RECEIVER_NAME% from %SENDER_NAME%"
+
+        - body: A template for the body of the email, defaults to "You have
+        received a peppol document from %SENDER_NAME%. The API resource URL is:
+        %API_RESOURCE_URL%"
+
+
+        The email subject and body are templates, in which the following
+        keywords are automatically replaced:
+
+        - %SENDER_NAME%: The name of the sending organization
+
+        - %RECEIVER_NAME%: The name of the receiving organization
+
+        - %API_RESOURCE_URL%: The API Resource URL that returns the details of
+        the receive transaction
+
+
+
+        There are also arguments to all trigger types:
+
+        - only_on_document_type: <string> Only execute the trigger when the full
+        document type from the transaction matches
+
+        - only_on_xml_type: <string> only execute the trigger when the XML of
+        the document in the transaction matches the (optional) namespace and
+        root element, format: xml namespace::<root element>. Yopu can use * to
+        match all XML namespaces, or all root elements (e.g. *::Invoice, or
+        urn:ns:example::*)
+
+        - only_on_sender_id: <string> only execute the trigger if the sender
+        matches this identifier
+
+        - only_on_receiver_id: <string> only execute the trigger if the receiver
+        matches this identifier
+
+        - only_on_no_other_triggers: <boolean> only executes if there were no
+        other triggers executed for this transaction. This excepts other
+        triggers that had this requirement set (i.e. if there are multiple
+        triggers with this setting set, they are all executed).
+
+
+        If you specify multiple 'only_on' arguments for a trigger, they must all
+        match in order for the trigger to be executed; their values are a
+        logical AND.
+
+        If you want a logical OR, you can specify multiple triggers, where only
+        the 'only_on' values differ.
+
+
+        Note that there is a difference between not specifying any only_on
+        arguments (the trigger will always be executed) and using
+        'only_otherwise' (the trigger will only be executed if no other triggers
+        were).
+
+
+        Example:
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: >-
+            A unique integer value identifying this organization receive
+            trigger.
+          required: true
+        - in: path
+          name: organization_pk
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedOrganizationReceiveTrigger'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedOrganizationReceiveTrigger'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedOrganizationReceiveTrigger'
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationReceiveTrigger'
+          description: ''
+    delete:
+      operationId: organizations_receive_triggers_destroy
+      tags:
+        - organizations
+      description: >-
+        Receive triggers are actions that ion-AP can take when an organization
+        receives a document on the peppol network.
+
+
+        To configure a receive trigger, you must set a trigger type and,
+        depending on the type, a number of arguments.
+
+
+        Note that these are likely to be expanded, and possibly changed, in the
+        near future. If you have any specific requests,
+
+        please let us know.
+
+
+        There are currently two trigger types implemented:
+
+
+        - API_CALL: ion-ap performs a web API call to a remote endpoint, to
+        notify of the received document.
+
+        - SEND_EMAIL: ion-ap sends an email to a configured e-mail address, with
+        a notification that a document has been received.
+
+
+        API_CALL has the following arguments:
+
+        - url: The remote URL of the call
+
+        - method: GET or POST: the HTTP method that the call will use
+
+        - post_data: one of the following values:
+          - document: The HTTP POST method will set the Content-Type header to application/xml, and POST the received document
+          - sbdh: The HTTP POST method will set the Content-Type header to application/xml, and POST the entire received SBDH
+          - fetch-url-transaction: The HTTP POST method will send an x-www-form-urlencoded data object, with a single field containing the API Resource URL to fetch the transaction data. The name of the field defaults to 'data', but can be set with the argument 'post_field_name'
+        - post_field_name: For post_data arguments that send an
+        x-www-form-urlencoded form, this argument specified the name of the
+        field containing the configured data. Defaults to 'data'.
+
+
+        SEND_EMAIL has the following arguments:
+
+        - recipient: The email address to which the email messages are sent
+
+        - attach_document: The received document will be attached to the email
+        (as an xml file)
+
+        - attach_sbdh: The full SBDH of the received document will be attached
+        to the email (as an xml file)
+
+        - attach_pdf: A pdf conversion of the received document will be attached
+        to the email (experimental, only for invoices)
+
+        - subject: A template for the subject of the email, defaults to "Peppol
+        document received for %RECEIVER_NAME% from %SENDER_NAME%"
+
+        - body: A template for the body of the email, defaults to "You have
+        received a peppol document from %SENDER_NAME%. The API resource URL is:
+        %API_RESOURCE_URL%"
+
+
+        The email subject and body are templates, in which the following
+        keywords are automatically replaced:
+
+        - %SENDER_NAME%: The name of the sending organization
+
+        - %RECEIVER_NAME%: The name of the receiving organization
+
+        - %API_RESOURCE_URL%: The API Resource URL that returns the details of
+        the receive transaction
+
+
+
+        There are also arguments to all trigger types:
+
+        - only_on_document_type: <string> Only execute the trigger when the full
+        document type from the transaction matches
+
+        - only_on_xml_type: <string> only execute the trigger when the XML of
+        the document in the transaction matches the (optional) namespace and
+        root element, format: xml namespace::<root element>. Yopu can use * to
+        match all XML namespaces, or all root elements (e.g. *::Invoice, or
+        urn:ns:example::*)
+
+        - only_on_sender_id: <string> only execute the trigger if the sender
+        matches this identifier
+
+        - only_on_receiver_id: <string> only execute the trigger if the receiver
+        matches this identifier
+
+        - only_on_no_other_triggers: <boolean> only executes if there were no
+        other triggers executed for this transaction. This excepts other
+        triggers that had this requirement set (i.e. if there are multiple
+        triggers with this setting set, they are all executed).
+
+
+        If you specify multiple 'only_on' arguments for a trigger, they must all
+        match in order for the trigger to be executed; their values are a
+        logical AND.
+
+        If you want a logical OR, you can specify multiple triggers, where only
+        the 'only_on' values differ.
+
+
+        Note that there is a difference between not specifying any only_on
+        arguments (the trigger will always be executed) and using
+        'only_otherwise' (the trigger will only be executed if no other triggers
+        were).
+
+
+        Example:
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: >-
+            A unique integer value identifying this organization receive
+            trigger.
+          required: true
+        - in: path
+          name: organization_pk
+          schema:
+            type: integer
+          required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  '/api/v2/organizations/{organization_pk}/receive-triggers/{trigger_pk}/options':
+    get:
+      operationId: organizations_receive_triggers_options_list
+      tags:
+        - organizations
+      description: >-
+        Endpoint to configure Receive Trigger arguments.
+
+
+        See the documentation for organization_triggers_list for a full list of
+        possible arguments.
+      parameters:
+        - name: limit
+          required: false
+          in: query
+          description: Number of results to return per page.
+          schema:
+            type: integer
+        - name: offset
+          required: false
+          in: query
+          description: The initial index from which to return the results.
+          schema:
+            type: integer
+        - in: path
+          name: organization_pk
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: trigger_pk
+          schema:
+            type: integer
+          required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/PaginatedOrganizationReceiveTriggerArgumentList
+          description: ''
+    post:
+      operationId: organizations_receive_triggers_options_create
+      tags:
+        - organizations
+      description: >-
+        Endpoint to configure Receive Trigger arguments.
+
+
+        See the documentation for organization_triggers_list for a full list of
+        possible arguments.
+      parameters:
+        - in: path
+          name: organization_pk
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: trigger_pk
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizationReceiveTriggerArgument'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OrganizationReceiveTriggerArgument'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OrganizationReceiveTriggerArgument'
+        required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationReceiveTriggerArgument'
+          description: ''
+  '/api/v2/organizations/{organization_pk}/receive-triggers/{trigger_pk}/options/{id}':
+    get:
+      operationId: organizations_receive_triggers_options_retrieve
+      tags:
+        - organizations
+      description: >-
+        Endpoint to configure Receive Trigger arguments.
+
+
+        See the documentation for organization_triggers_list for a full list of
+        possible arguments.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: >-
+            A unique integer value identifying this organization receive trigger
+            argument.
+          required: true
+        - in: path
+          name: organization_pk
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: trigger_pk
+          schema:
+            type: integer
+          required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationReceiveTriggerArgument'
+          description: ''
+    put:
+      operationId: organizations_receive_triggers_options_update
+      tags:
+        - organizations
+      description: >-
+        Endpoint to configure Receive Trigger arguments.
+
+
+        See the documentation for organization_triggers_list for a full list of
+        possible arguments.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: >-
+            A unique integer value identifying this organization receive trigger
+            argument.
+          required: true
+        - in: path
+          name: organization_pk
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: trigger_pk
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizationReceiveTriggerArgument'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OrganizationReceiveTriggerArgument'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OrganizationReceiveTriggerArgument'
+        required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationReceiveTriggerArgument'
+          description: ''
+    patch:
+      operationId: organizations_receive_triggers_options_partial_update
+      tags:
+        - organizations
+      description: >-
+        Endpoint to configure Receive Trigger arguments.
+
+
+        See the documentation for organization_triggers_list for a full list of
+        possible arguments.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: >-
+            A unique integer value identifying this organization receive trigger
+            argument.
+          required: true
+        - in: path
+          name: organization_pk
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: trigger_pk
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedOrganizationReceiveTriggerArgument'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedOrganizationReceiveTriggerArgument'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedOrganizationReceiveTriggerArgument'
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationReceiveTriggerArgument'
+          description: ''
+    delete:
+      operationId: organizations_receive_triggers_options_destroy
+      tags:
+        - organizations
+      description: >-
+        Endpoint to configure Receive Trigger arguments.
+
+
+        See the documentation for organization_triggers_list for a full list of
+        possible arguments.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: >-
+            A unique integer value identifying this organization receive trigger
+            argument.
+          required: true
+        - in: path
+          name: organization_pk
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: trigger_pk
+          schema:
+            type: integer
+          required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  '/api/v2/organizations/{organization_pk}/users':
+    get:
+      operationId: organizations_users_list
+      tags:
+        - organizations
+      description: |-
+        Base class for specific features we want to have consistently
+        throughout the entire API, such as pagination that can be disabled
+        ('disable_pagination' parameter)
+      parameters:
+        - name: limit
+          required: false
+          in: query
+          description: Number of results to return per page.
+          schema:
+            type: integer
+        - name: offset
+          required: false
+          in: query
+          description: The initial index from which to return the results.
+          schema:
+            type: integer
+        - in: path
+          name: organization_pk
+          schema:
+            type: string
+          required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedOrganizationUserList'
+          description: ''
+    post:
+      operationId: organizations_users_create
+      tags:
+        - organizations
+      description: |-
+        Base class for specific features we want to have consistently
+        throughout the entire API, such as pagination that can be disabled
+        ('disable_pagination' parameter)
+      parameters:
+        - in: path
+          name: organization_pk
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizationUser'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OrganizationUser'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OrganizationUser'
+        required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationUser'
+          description: ''
+  '/api/v2/organizations/{organization_pk}/users/{id}':
+    get:
+      operationId: organizations_users_retrieve
+      tags:
+        - organizations
+      description: |-
+        Base class for specific features we want to have consistently
+        throughout the entire API, such as pagination that can be disabled
+        ('disable_pagination' parameter)
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: organization_pk
+          schema:
+            type: string
+          required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationUser'
+          description: ''
+    delete:
+      operationId: organizations_users_destroy
+      tags:
+        - organizations
+      description: |-
+        Base class for specific features we want to have consistently
+        throughout the entire API, such as pagination that can be disabled
+        ('disable_pagination' parameter)
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: organization_pk
+          schema:
+            type: string
+          required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  '/api/v2/organizations/{id}':
+    get:
+      operationId: organizations_retrieve
+      tags:
+        - organizations
+      description: >-
+        Organizations, or Trading Entities, are the senders and receivers of
+        documents on the peppol network.
+
+
+        Organizations have one or more Peppol Identifiers, such as a Chamber of
+        Commerce number or a VAT number.
+
+
+        Users can, depending on their account type and role permissions, send
+        and receive document on behalf of
+
+        zero, one, or multiple organizations.
+
+
+        This endpoint manages the organization entries for an account
+        themselves.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this organization.
+          required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+          description: ''
+    put:
+      operationId: organizations_update
+      tags:
+        - organizations
+      description: >-
+        Organizations, or Trading Entities, are the senders and receivers of
+        documents on the peppol network.
+
+
+        Organizations have one or more Peppol Identifiers, such as a Chamber of
+        Commerce number or a VAT number.
+
+
+        Users can, depending on their account type and role permissions, send
+        and receive document on behalf of
+
+        zero, one, or multiple organizations.
+
+
+        This endpoint manages the organization entries for an account
+        themselves.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this organization.
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Organization'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Organization'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Organization'
+        required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+          description: ''
+    patch:
+      operationId: organizations_partial_update
+      tags:
+        - organizations
+      description: >-
+        Organizations, or Trading Entities, are the senders and receivers of
+        documents on the peppol network.
+
+
+        Organizations have one or more Peppol Identifiers, such as a Chamber of
+        Commerce number or a VAT number.
+
+
+        Users can, depending on their account type and role permissions, send
+        and receive document on behalf of
+
+        zero, one, or multiple organizations.
+
+
+        This endpoint manages the organization entries for an account
+        themselves.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this organization.
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedOrganization'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedOrganization'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedOrganization'
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+          description: ''
+    delete:
+      operationId: organizations_destroy
+      tags:
+        - organizations
+      description: >-
+        Organizations, or Trading Entities, are the senders and receivers of
+        documents on the peppol network.
+
+
+        Organizations have one or more Peppol Identifiers, such as a Chamber of
+        Commerce number or a VAT number.
+
+
+        Users can, depending on their account type and role permissions, send
+        and receive document on behalf of
+
+        zero, one, or multiple organizations.
+
+
+        This endpoint manages the organization entries for an account
+        themselves.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this organization.
+          required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v2/organizations/create-full:
+    post:
+      operationId: organizations_create_full_create
+      tags:
+        - organizations
+      description: >-
+        Create a new organization, including identifier(s) and receive
+        trigger(s), in a single call.
+
+
+        The data provided is a nested structure of components, similar to the
+        ones used for the CRUD endpoints.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Organization'
+            examples:
+              Example1:
+                value:
+                  name: Example Company
+                  country: NL
+                  publish_in_smp: true
+                  reference: EXC-11
+                  identifiers:
+                    - identifier: '0106:sample-id-one'
+                      verified: true
+                      publish_receive_peppolbis: true
+                      publish_receive_nlcius: true
+                      publish_receive_invoice_response: false
+                    - identifier: '9944:sample-id-two'
+                      verified: true
+                      publish_receive_peppolbis: false
+                      publish_receive_nlcius: true
+                      publish_receive_invoice_response: false
+                  receive_triggers:
+                    - trigger_type: SEND_EMAIL
+                      name: Send email with PDF for invoices
+                      enabled: true
+                      options:
+                        - name: recipient
+                          value: example@example.com
+                        - name: attach_document
+                          value: 'true'
+                summary: Example 1
+                description: Sample with two identifiers and an email trigger
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Organization'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Organization'
+        required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+              examples:
+                Example1:
+                  value:
+                    name: Example Company
+                    country: NL
+                    publish_in_smp: true
+                    reference: EXC-11
+                    identifiers:
+                      - identifier: '0106:sample-id-one'
+                        verified: true
+                        publish_receive_peppolbis: true
+                        publish_receive_nlcius: true
+                        publish_receive_invoice_response: false
+                      - identifier: '9944:sample-id-two'
+                        verified: true
+                        publish_receive_peppolbis: false
+                        publish_receive_nlcius: true
+                        publish_receive_invoice_response: false
+                    receive_triggers:
+                      - trigger_type: SEND_EMAIL
+                        name: Send email with PDF for invoices
+                        enabled: true
+                        options:
+                          - name: recipient
+                            value: example@example.com
+                          - name: attach_document
+                            value: 'true'
+                  summary: Example 1
+                  description: Sample with two identifiers and an email trigger
+          description: ''
+        '400':
+          description: >-
+            Input validation errors. The result is a dictionary with the keys
+            being the input field that failed validation, and the values are
+            list of error messages for those fields. Note that the errors do not
+            follow the nesting structure of the input.
+        '409':
+          description: >-
+            If publication of identifiers in the SMP is requested, this error is
+            returned if the SML reported that the identifier was already
+            registered.
+  /api/v2/receive-transactions:
+    get:
+      operationId: receive_transactions_list
+      tags:
+        - receive-transactions
+      description: >-
+        Manage receive transactions. These contain the documents that were sent
+        to your organization(s).
+      parameters:
+        - in: query
+          name: descending
+          schema:
+            type: boolean
+          description: >-
+            If set to true, show the results in descending rather than ascending
+            order. Note that if order_by is not specified, the results are
+            already shown in descending order of the created_on field.
+        - in: query
+          name: filter_document_identifier
+          schema:
+            type: string
+          description: >-
+            Filter the results by the value of the document identifier field (in
+            case of invoices: the invoice number). Case insensitive partial
+            match.
+        - in: query
+          name: filter_document_type
+          schema:
+            type: string
+          description: >-
+            Filter the results by the value of the document type (as defined by
+            the 'Peppol Document Type Identifier Value' field on
+            https://docs.peppol.eu/edelivery/codelists/v9.2/Peppol%20Code%20Lists%20-%20Document%20types%20v9.2.html).
+            Case insensitive partial match.
+        - in: query
+          name: filter_from_date
+          schema:
+            type: string
+            format: date
+          description: >-
+            Filter the results to only show elements with a created_on value on
+            or after the given point in time. You can specify a date only
+            (YYYY-MM-DD) or a full date/time format as defined in RFC3339:
+            https://www.rfc-editor.org/rfc/rfc3339#section-5.8
+        - in: query
+          name: filter_receiver
+          schema:
+            type: integer
+          description: >-
+            Filter the results by the value of the receiver field. Case
+            insensitive partial match.
+        - in: query
+          name: filter_sender
+          schema:
+            type: string
+          description: >-
+            Filter the results by the value of the sender field. Case
+            insensitive partial match.
+        - in: query
+          name: filter_state
+          schema:
+            type: string
+          description: >-
+            Filter the results by the value of the state field. Case insensitive
+            partial match.
+        - in: query
+          name: filter_to_date
+          schema:
+            type: string
+            format: date
+          description: >-
+            Filter the results to only show elements with a created_on value on
+            or before the given point in time. You can specify a date only
+            (YYYY-MM-DD) or a full date/time format as defined in RFC3339:
+            https://www.rfc-editor.org/rfc/rfc3339#section-5.8
+        - in: query
+          name: filter_transaction_identifier
+          schema:
+            type: string
+          description: >-
+            Filter the results by the value of the transaction identifier field
+            (The UUID from the SBDH envelope). Case insensitive partial match.
+        - name: limit
+          required: false
+          in: query
+          description: Number of results to return per page.
+          schema:
+            type: integer
+        - name: offset
+          required: false
+          in: query
+          description: The initial index from which to return the results.
+          schema:
+            type: integer
+        - in: query
+          name: order_by
+          schema:
+            type: string
+          description: >-
+            Order the results by the given attribute. Attribute must be one of
+            "created_on", "sender_identifier", "receiver_identifier",
+            "document_element", "document_id", or "state".
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedReceiveTransactionList'
+          description: ''
+    post:
+      operationId: receive_transactions_create
+      tags:
+        - receive-transactions
+      description: >-
+        Manage receive transactions. These contain the documents that were sent
+        to your organization(s).
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReceiveTransaction'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReceiveTransaction'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReceiveTransaction'
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceiveTransaction'
+          description: ''
+  '/api/v2/receive-transactions/{id}':
+    get:
+      operationId: receive_transactions_retrieve
+      tags:
+        - receive-transactions
+      description: >-
+        Manage receive transactions. These contain the documents that were sent
+        to your organization(s).
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this receive transaction.
+          required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceiveTransaction'
+          description: ''
+    patch:
+      operationId: receive_transactions_partial_update
+      tags:
+        - receive-transactions
+      description: >-
+        Manage receive transactions. These contain the documents that were sent
+        to your organization(s).
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this receive transaction.
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedReceiveTransaction'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedReceiveTransaction'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedReceiveTransaction'
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceiveTransaction'
+          description: ''
+    delete:
+      operationId: receive_transactions_destroy
+      tags:
+        - receive-transactions
+      description: >-
+        Manage receive transactions. These contain the documents that were sent
+        to your organization(s).
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this receive transaction.
+          required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  '/api/v2/receive-transactions/{id}/document':
+    get:
+      operationId: receive_transactions_document_retrieve
+      tags:
+        - receive-transactions
+      description: Retrieve the XML document that was sent with this transaction
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this receive transaction.
+          required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ReceiveTransaction'
+          description: ''
+  '/api/v2/receive-transactions/{id}/execute_triggers':
+    post:
+      operationId: receive_transactions_execute_triggers_create
+      tags:
+        - receive-transactions
+      description: >-
+        Execute the currently configured receive triggers (again), as if this
+        transaction was just received.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this receive transaction.
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReceiveTransaction'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReceiveTransaction'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReceiveTransaction'
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceiveTransaction'
+          description: ''
+  '/api/v2/receive-transactions/{id}/mark-read':
+    post:
+      operationId: receive_transactions_mark_read_create
+      tags:
+        - receive-transactions
+      description: >-
+        Mark the given transaction as read. This is never done automatically by
+        the system, it is up to the (API) client to set a transaction as read.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this receive transaction.
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReceiveTransaction'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReceiveTransaction'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReceiveTransaction'
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceiveTransaction'
+          description: ''
+  '/api/v2/receive-transactions/{id}/mark-unread':
+    post:
+      operationId: receive_transactions_mark_unread_create
+      tags:
+        - receive-transactions
+      description: >-
+        Mark the given transaction as unread. This has no other effects than
+        setting the state to NEW
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this receive transaction.
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReceiveTransaction'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReceiveTransaction'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReceiveTransaction'
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceiveTransaction'
+          description: ''
+  '/api/v2/receive-transactions/{id}/pdf':
+    get:
+      operationId: receive_transactions_pdf_retrieve
+      tags:
+        - receive-transactions
+      description: >-
+        Manage receive transactions. These contain the documents that were sent
+        to your organization(s).
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this receive transaction.
+          required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/pdf:
+              schema:
+                $ref: '#/components/schemas/ReceiveTransaction'
+          description: ''
+  '/api/v2/receive-transactions/{id}/receipt':
+    get:
+      operationId: receive_transactions_receipt_retrieve
+      tags:
+        - receive-transactions
+      description: >-
+        Retrieve the full Standard Business Document Header (SBDH) that was sent
+        with this transaction, both the SBD header and the document itself, as
+        one XML document.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this receive transaction.
+          required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ReceiveTransaction'
+          description: ''
+  '/api/v2/receive-transactions/{id}/sbdh':
+    get:
+      operationId: receive_transactions_sbdh_retrieve
+      tags:
+        - receive-transactions
+      description: >-
+        Retrieve the full Standard Business Document Header (SBDH) that was sent
+        with this transaction, both the SBD header and the document itself, as
+        one XML document.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this receive transaction.
+          required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ReceiveTransaction'
+          description: ''
+  '/api/v2/receive-transactions/{receive_transaction_pk}/logs':
+    get:
+      operationId: receive_transactions_logs_list
+      tags:
+        - receive-transactions
+      description: View log entries related to a specific receive transaction
+      parameters:
+        - name: limit
+          required: false
+          in: query
+          description: Number of results to return per page.
+          schema:
+            type: integer
+        - name: offset
+          required: false
+          in: query
+          description: The initial index from which to return the results.
+          schema:
+            type: integer
+        - in: path
+          name: receive_transaction_pk
+          schema:
+            type: integer
+            description: The receive transaction this log entry is related to
+          required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedLogList'
+          description: ''
+  '/api/v2/receive-transactions/{receive_transaction_pk}/logs/{id}':
+    get:
+      operationId: receive_transactions_logs_retrieve
+      tags:
+        - receive-transactions
+      description: View log entries related to a specific receive transaction
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this log.
+          required: true
+        - in: path
+          name: receive_transaction_pk
+          schema:
+            type: integer
+            description: The receive transaction this log entry is related to
+          required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Log'
+          description: ''
+  /api/v2/send-document:
+    post:
+      operationId: send_document_create
+      tags:
+        - send-document
+      description: >-
+        Send a document.
+
+
+        This can either be a Standard Business Document XML file, including the
+        full SBD Header, or it can be just the document itself, in which
+
+        case the SBD Envelope will be generated automatically. The latter only
+        works for support XML files, such as UBL or CII Invoices and
+        CreditNotes.
+
+
+        For supported documents, a number of checks are performed, such as that
+        it is does not have validation errors, and that you are allowed to send
+
+        the document (whether you have the right access for sender identifier in
+        the document).
+
+
+        If so, a SendTransaction is created, and the document will be scheduled
+        for sending. You can retrieve the status of the send transaction with
+
+        the relevant resource URI.
+      requestBody:
+        content:
+          application/xml:
+            schema:
+              type: object
+              additionalProperties: {}
+              description: Unspecified request body
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendTransaction'
+          description: ''
+  /api/v2/send-transactions:
+    get:
+      operationId: send_transactions_list
+      tags:
+        - send-transactions
+      description: Manage ongoing and finished send transactions.
+      parameters:
+        - in: query
+          name: descending
+          schema:
+            type: boolean
+          description: >-
+            If set to true, show the results in descending rather than ascending
+            order. Note that if order_by is not specified, the results are
+            already shown in descending order of the created_on field.
+        - in: query
+          name: filter_document_identifier
+          schema:
+            type: string
+          description: >-
+            Filter the results by the value of the document identifier field (in
+            case of invoices: the invoice number). Case insensitive partial
+            match.
+        - in: query
+          name: filter_document_type
+          schema:
+            type: string
+          description: >-
+            Filter the results by the value of the document type (as defined by
+            the 'Peppol Document Type Identifier Value' field on
+            https://docs.peppol.eu/edelivery/codelists/v9.2/Peppol%20Code%20Lists%20-%20Document%20types%20v9.2.html).
+            Case insensitive partial match.
+        - in: query
+          name: filter_from_date
+          schema:
+            type: string
+            format: date
+          description: >-
+            Filter the results to only show elements with a created_on value on
+            or after the given point in time. You can specify a date only
+            (YYYY-MM-DD) or a full date/time format as defined in RFC3339:
+            https://www.rfc-editor.org/rfc/rfc3339#section-5.8
+        - in: query
+          name: filter_receiver
+          schema:
+            type: integer
+          description: >-
+            Filter the results by the value of the receiver field. Case
+            insensitive partial match.
+        - in: query
+          name: filter_sender
+          schema:
+            type: string
+          description: >-
+            Filter the results by the value of the sender field. Case
+            insensitive partial match.
+        - in: query
+          name: filter_state
+          schema:
+            type: string
+          description: >-
+            Filter the results by the value of the state field. Case insensitive
+            partial match.
+        - in: query
+          name: filter_to_date
+          schema:
+            type: string
+            format: date
+          description: >-
+            Filter the results to only show elements with a created_on value on
+            or before the given point in time. You can specify a date only
+            (YYYY-MM-DD) or a full date/time format as defined in RFC3339:
+            https://www.rfc-editor.org/rfc/rfc3339#section-5.8
+        - in: query
+          name: filter_transaction_identifier
+          schema:
+            type: string
+          description: >-
+            Filter the results by the value of the transaction identifier field
+            (The UUID from the SBDH envelope). Case insensitive partial match.
+        - name: limit
+          required: false
+          in: query
+          description: Number of results to return per page.
+          schema:
+            type: integer
+        - name: offset
+          required: false
+          in: query
+          description: The initial index from which to return the results.
+          schema:
+            type: integer
+        - in: query
+          name: order_by
+          schema:
+            type: string
+          description: >-
+            Order the results by the given attribute. Attribute must be one of
+            "created_on", "sender_identifier", "receiver_identifier",
+            "document_element", "document_id", or "state".
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSendTransactionList'
+          description: ''
+  '/api/v2/send-transactions/{id}':
+    get:
+      operationId: send_transactions_retrieve
+      tags:
+        - send-transactions
+      description: Manage ongoing and finished send transactions.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this send transaction.
+          required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendTransaction'
+          description: ''
+    delete:
+      operationId: send_transactions_destroy
+      tags:
+        - send-transactions
+      description: >-
+        Remove all information about the send transaction, including information
+        about the sent document and receipt, as well as any related errors or
+        logs.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this send transaction.
+          required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  '/api/v2/send-transactions/{id}/document':
+    get:
+      operationId: send_transactions_document_retrieve
+      tags:
+        - send-transactions
+      description: >-
+        Retrieve the full Standard Business Document Header (SBDH) that was sent
+        with this transaction, both the SBD header and the document itself, as
+        one XML document.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this send transaction.
+          required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SendTransaction'
+          description: ''
+  '/api/v2/send-transactions/{id}/pdf':
+    get:
+      operationId: send_transactions_pdf_retrieve
+      tags:
+        - send-transactions
+      description: Manage ongoing and finished send transactions.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this send transaction.
+          required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/pdf:
+              schema:
+                $ref: '#/components/schemas/SendTransaction'
+          description: ''
+  '/api/v2/send-transactions/{id}/receipt':
+    get:
+      operationId: send_transactions_receipt_retrieve
+      tags:
+        - send-transactions
+      description: >-
+        Retrieve the full Standard Business Document Header (SBDH) that was sent
+        with this transaction, both the SBD header and the document itself, as
+        one XML document.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this send transaction.
+          required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SendTransaction'
+          description: ''
+  '/api/v2/send-transactions/{id}/sbdh':
+    get:
+      operationId: send_transactions_sbdh_retrieve
+      tags:
+        - send-transactions
+      description: >-
+        Retrieve the full Standard Business Document Header (SBDH) that was sent
+        with this transaction, both the SBD header and the document itself, as
+        one XML document.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this send transaction.
+          required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SendTransaction'
+          description: ''
+  '/api/v2/send-transactions/{send_transaction_pk}/errors':
+    get:
+      operationId: send_transactions_errors_list
+      tags:
+        - send-transactions
+      description: >-
+        If the transaction failed, the errors resource contains errors as
+        returned by the remote access point.
+      parameters:
+        - name: limit
+          required: false
+          in: query
+          description: Number of results to return per page.
+          schema:
+            type: integer
+        - name: offset
+          required: false
+          in: query
+          description: The initial index from which to return the results.
+          schema:
+            type: integer
+        - in: path
+          name: send_transaction_pk
+          schema:
+            type: string
+          required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSendTransactionErrorList'
+          description: ''
+  '/api/v2/send-transactions/{send_transaction_pk}/errors/{id}':
+    get:
+      operationId: send_transactions_errors_retrieve
+      tags:
+        - send-transactions
+      description: >-
+        If the transaction failed, the errors resource contains errors as
+        returned by the remote access point.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this send transaction error.
+          required: true
+        - in: path
+          name: send_transaction_pk
+          schema:
+            type: string
+          required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendTransactionError'
+          description: ''
+  '/api/v2/send-transactions/{send_transaction_pk}/logs':
+    get:
+      operationId: send_transactions_logs_list
+      tags:
+        - send-transactions
+      description: View log entries related to a specific send transaction
+      parameters:
+        - name: limit
+          required: false
+          in: query
+          description: Number of results to return per page.
+          schema:
+            type: integer
+        - name: offset
+          required: false
+          in: query
+          description: The initial index from which to return the results.
+          schema:
+            type: integer
+        - in: path
+          name: send_transaction_pk
+          schema:
+            type: integer
+            description: The send transaction this log entry is related to
+          required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedLogList'
+          description: ''
+  '/api/v2/send-transactions/{send_transaction_pk}/logs/{id}':
+    get:
+      operationId: send_transactions_logs_retrieve
+      tags:
+        - send-transactions
+      description: View log entries related to a specific send transaction
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this log.
+          required: true
+        - in: path
+          name: send_transaction_pk
+          schema:
+            type: integer
+            description: The send transaction this log entry is related to
+          required: true
+      security:
+        - jwtAuth: []
+        - cookieAuth: []
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Log'
+          description: ''
+components:
+  schemas:
+    CountryEnum:
+      enum:
+        - AF
+        - AX
+        - AL
+        - DZ
+        - AS
+        - AD
+        - AO
+        - AI
+        - AQ
+        - AG
+        - AR
+        - AM
+        - AW
+        - AU
+        - AT
+        - AZ
+        - BS
+        - BH
+        - BD
+        - BB
+        - BY
+        - BE
+        - BZ
+        - BJ
+        - BM
+        - BT
+        - BO
+        - BQ
+        - BA
+        - BW
+        - BV
+        - BR
+        - IO
+        - BN
+        - BG
+        - BF
+        - BI
+        - CV
+        - KH
+        - CM
+        - CA
+        - KY
+        - CF
+        - TD
+        - CL
+        - CN
+        - CX
+        - CC
+        - CO
+        - KM
+        - CG
+        - CD
+        - CK
+        - CR
+        - CI
+        - HR
+        - CU
+        - CW
+        - CY
+        - CZ
+        - DK
+        - DJ
+        - DM
+        - DO
+        - EC
+        - EG
+        - SV
+        - GQ
+        - ER
+        - EE
+        - SZ
+        - ET
+        - FK
+        - FO
+        - FJ
+        - FI
+        - FR
+        - GF
+        - PF
+        - TF
+        - GA
+        - GM
+        - GE
+        - DE
+        - GH
+        - GI
+        - GR
+        - GL
+        - GD
+        - GP
+        - GU
+        - GT
+        - GG
+        - GN
+        - GW
+        - GY
+        - HT
+        - HM
+        - VA
+        - HN
+        - HK
+        - HU
+        - IS
+        - IN
+        - ID
+        - IR
+        - IQ
+        - IE
+        - IM
+        - IL
+        - IT
+        - JM
+        - JP
+        - JE
+        - JO
+        - KZ
+        - KE
+        - KI
+        - KW
+        - KG
+        - LA
+        - LV
+        - LB
+        - LS
+        - LR
+        - LY
+        - LI
+        - LT
+        - LU
+        - MO
+        - MG
+        - MW
+        - MY
+        - MV
+        - ML
+        - MT
+        - MH
+        - MQ
+        - MR
+        - MU
+        - YT
+        - MX
+        - FM
+        - MD
+        - MC
+        - MN
+        - ME
+        - MS
+        - MA
+        - MZ
+        - MM
+        - NA
+        - NR
+        - NP
+        - NL
+        - NC
+        - NZ
+        - NI
+        - NE
+        - NG
+        - NU
+        - NF
+        - KP
+        - MK
+        - MP
+        - 'NO'
+        - OM
+        - PK
+        - PW
+        - PS
+        - PA
+        - PG
+        - PY
+        - PE
+        - PH
+        - PN
+        - PL
+        - PT
+        - PR
+        - QA
+        - RE
+        - RO
+        - RU
+        - RW
+        - BL
+        - SH
+        - KN
+        - LC
+        - MF
+        - PM
+        - VC
+        - WS
+        - SM
+        - ST
+        - SA
+        - SN
+        - RS
+        - SC
+        - SL
+        - SG
+        - SX
+        - SK
+        - SI
+        - SB
+        - SO
+        - ZA
+        - GS
+        - KR
+        - SS
+        - ES
+        - LK
+        - SD
+        - SR
+        - SJ
+        - SE
+        - CH
+        - SY
+        - TW
+        - TJ
+        - TZ
+        - TH
+        - TL
+        - TG
+        - TK
+        - TO
+        - TT
+        - TN
+        - TR
+        - TM
+        - TC
+        - TV
+        - UG
+        - UA
+        - AE
+        - GB
+        - UM
+        - US
+        - UY
+        - UZ
+        - VU
+        - VE
+        - VN
+        - VG
+        - VI
+        - WF
+        - EH
+        - YE
+        - ZM
+        - ZW
+      type: string
+      description: |-
+        * `AF` - Afghanistan
+        * `AX` - Åland Islands
+        * `AL` - Albania
+        * `DZ` - Algeria
+        * `AS` - American Samoa
+        * `AD` - Andorra
+        * `AO` - Angola
+        * `AI` - Anguilla
+        * `AQ` - Antarctica
+        * `AG` - Antigua and Barbuda
+        * `AR` - Argentina
+        * `AM` - Armenia
+        * `AW` - Aruba
+        * `AU` - Australia
+        * `AT` - Austria
+        * `AZ` - Azerbaijan
+        * `BS` - Bahamas
+        * `BH` - Bahrain
+        * `BD` - Bangladesh
+        * `BB` - Barbados
+        * `BY` - Belarus
+        * `BE` - Belgium
+        * `BZ` - Belize
+        * `BJ` - Benin
+        * `BM` - Bermuda
+        * `BT` - Bhutan
+        * `BO` - Bolivia
+        * `BQ` - Bonaire, Sint Eustatius and Saba
+        * `BA` - Bosnia and Herzegovina
+        * `BW` - Botswana
+        * `BV` - Bouvet Island
+        * `BR` - Brazil
+        * `IO` - British Indian Ocean Territory
+        * `BN` - Brunei
+        * `BG` - Bulgaria
+        * `BF` - Burkina Faso
+        * `BI` - Burundi
+        * `CV` - Cabo Verde
+        * `KH` - Cambodia
+        * `CM` - Cameroon
+        * `CA` - Canada
+        * `KY` - Cayman Islands
+        * `CF` - Central African Republic
+        * `TD` - Chad
+        * `CL` - Chile
+        * `CN` - China
+        * `CX` - Christmas Island
+        * `CC` - Cocos (Keeling) Islands
+        * `CO` - Colombia
+        * `KM` - Comoros
+        * `CG` - Congo
+        * `CD` - Congo (the Democratic Republic of the)
+        * `CK` - Cook Islands
+        * `CR` - Costa Rica
+        * `CI` - Côte d'Ivoire
+        * `HR` - Croatia
+        * `CU` - Cuba
+        * `CW` - Curaçao
+        * `CY` - Cyprus
+        * `CZ` - Czechia
+        * `DK` - Denmark
+        * `DJ` - Djibouti
+        * `DM` - Dominica
+        * `DO` - Dominican Republic
+        * `EC` - Ecuador
+        * `EG` - Egypt
+        * `SV` - El Salvador
+        * `GQ` - Equatorial Guinea
+        * `ER` - Eritrea
+        * `EE` - Estonia
+        * `SZ` - Eswatini
+        * `ET` - Ethiopia
+        * `FK` - Falkland Islands (Malvinas)
+        * `FO` - Faroe Islands
+        * `FJ` - Fiji
+        * `FI` - Finland
+        * `FR` - France
+        * `GF` - French Guiana
+        * `PF` - French Polynesia
+        * `TF` - French Southern Territories
+        * `GA` - Gabon
+        * `GM` - Gambia
+        * `GE` - Georgia
+        * `DE` - Germany
+        * `GH` - Ghana
+        * `GI` - Gibraltar
+        * `GR` - Greece
+        * `GL` - Greenland
+        * `GD` - Grenada
+        * `GP` - Guadeloupe
+        * `GU` - Guam
+        * `GT` - Guatemala
+        * `GG` - Guernsey
+        * `GN` - Guinea
+        * `GW` - Guinea-Bissau
+        * `GY` - Guyana
+        * `HT` - Haiti
+        * `HM` - Heard Island and McDonald Islands
+        * `VA` - Holy See
+        * `HN` - Honduras
+        * `HK` - Hong Kong
+        * `HU` - Hungary
+        * `IS` - Iceland
+        * `IN` - India
+        * `ID` - Indonesia
+        * `IR` - Iran
+        * `IQ` - Iraq
+        * `IE` - Ireland
+        * `IM` - Isle of Man
+        * `IL` - Israel
+        * `IT` - Italy
+        * `JM` - Jamaica
+        * `JP` - Japan
+        * `JE` - Jersey
+        * `JO` - Jordan
+        * `KZ` - Kazakhstan
+        * `KE` - Kenya
+        * `KI` - Kiribati
+        * `KW` - Kuwait
+        * `KG` - Kyrgyzstan
+        * `LA` - Laos
+        * `LV` - Latvia
+        * `LB` - Lebanon
+        * `LS` - Lesotho
+        * `LR` - Liberia
+        * `LY` - Libya
+        * `LI` - Liechtenstein
+        * `LT` - Lithuania
+        * `LU` - Luxembourg
+        * `MO` - Macao
+        * `MG` - Madagascar
+        * `MW` - Malawi
+        * `MY` - Malaysia
+        * `MV` - Maldives
+        * `ML` - Mali
+        * `MT` - Malta
+        * `MH` - Marshall Islands
+        * `MQ` - Martinique
+        * `MR` - Mauritania
+        * `MU` - Mauritius
+        * `YT` - Mayotte
+        * `MX` - Mexico
+        * `FM` - Micronesia
+        * `MD` - Moldova
+        * `MC` - Monaco
+        * `MN` - Mongolia
+        * `ME` - Montenegro
+        * `MS` - Montserrat
+        * `MA` - Morocco
+        * `MZ` - Mozambique
+        * `MM` - Myanmar
+        * `NA` - Namibia
+        * `NR` - Nauru
+        * `NP` - Nepal
+        * `NL` - Netherlands
+        * `NC` - New Caledonia
+        * `NZ` - New Zealand
+        * `NI` - Nicaragua
+        * `NE` - Niger
+        * `NG` - Nigeria
+        * `NU` - Niue
+        * `NF` - Norfolk Island
+        * `KP` - North Korea
+        * `MK` - North Macedonia
+        * `MP` - Northern Mariana Islands
+        * `NO` - Norway
+        * `OM` - Oman
+        * `PK` - Pakistan
+        * `PW` - Palau
+        * `PS` - Palestine, State of
+        * `PA` - Panama
+        * `PG` - Papua New Guinea
+        * `PY` - Paraguay
+        * `PE` - Peru
+        * `PH` - Philippines
+        * `PN` - Pitcairn
+        * `PL` - Poland
+        * `PT` - Portugal
+        * `PR` - Puerto Rico
+        * `QA` - Qatar
+        * `RE` - Réunion
+        * `RO` - Romania
+        * `RU` - Russia
+        * `RW` - Rwanda
+        * `BL` - Saint Barthélemy
+        * `SH` - Saint Helena, Ascension and Tristan da Cunha
+        * `KN` - Saint Kitts and Nevis
+        * `LC` - Saint Lucia
+        * `MF` - Saint Martin (French part)
+        * `PM` - Saint Pierre and Miquelon
+        * `VC` - Saint Vincent and the Grenadines
+        * `WS` - Samoa
+        * `SM` - San Marino
+        * `ST` - Sao Tome and Principe
+        * `SA` - Saudi Arabia
+        * `SN` - Senegal
+        * `RS` - Serbia
+        * `SC` - Seychelles
+        * `SL` - Sierra Leone
+        * `SG` - Singapore
+        * `SX` - Sint Maarten (Dutch part)
+        * `SK` - Slovakia
+        * `SI` - Slovenia
+        * `SB` - Solomon Islands
+        * `SO` - Somalia
+        * `ZA` - South Africa
+        * `GS` - South Georgia and the South Sandwich Islands
+        * `KR` - South Korea
+        * `SS` - South Sudan
+        * `ES` - Spain
+        * `LK` - Sri Lanka
+        * `SD` - Sudan
+        * `SR` - Suriname
+        * `SJ` - Svalbard and Jan Mayen
+        * `SE` - Sweden
+        * `CH` - Switzerland
+        * `SY` - Syria
+        * `TW` - Taiwan
+        * `TJ` - Tajikistan
+        * `TZ` - Tanzania
+        * `TH` - Thailand
+        * `TL` - Timor-Leste
+        * `TG` - Togo
+        * `TK` - Tokelau
+        * `TO` - Tonga
+        * `TT` - Trinidad and Tobago
+        * `TN` - Tunisia
+        * `TR` - Türkiye
+        * `TM` - Turkmenistan
+        * `TC` - Turks and Caicos Islands
+        * `TV` - Tuvalu
+        * `UG` - Uganda
+        * `UA` - Ukraine
+        * `AE` - United Arab Emirates
+        * `GB` - United Kingdom
+        * `UM` - United States Minor Outlying Islands
+        * `US` - United States of America
+        * `UY` - Uruguay
+        * `UZ` - Uzbekistan
+        * `VU` - Vanuatu
+        * `VE` - Venezuela
+        * `VN` - Vietnam
+        * `VG` - Virgin Islands (British)
+        * `VI` - Virgin Islands (U.S.)
+        * `WF` - Wallis and Futuna
+        * `EH` - Western Sahara
+        * `YE` - Yemen
+        * `ZM` - Zambia
+        * `ZW` - Zimbabwe
+    DocumentType:
+      type: object
+      description: >-
+        This model represents a basic document type identifier, with some scheme
+        (such as busdox-docid-qns), and an identifier value (such as
+        urn:oasis...::Invoice##urn:fcd:peppol...::2.1). The exact layout and
+        properties of the identifier value depends on the identifier scheme.
+      properties:
+        scheme:
+          type: string
+          description: The scheme of the identifier
+        value:
+          type: string
+          description: The identifier itself
+        name:
+          type: string
+          description: >-
+            A human-readable name of the document type. This value is only set
+            if it is defined in the network.
+      required:
+        - name
+        - scheme
+        - value
+    EndpointData:
+      type: object
+      properties:
+        transport_profile:
+          type: string
+          description: The transport profile
+        document_type:
+          $ref: '#/components/schemas/DocumentType'
+        uri:
+          type: string
+          description: The URI of the endpoint
+        ap_certificate:
+          type: string
+          description: >-
+            The access point certificate, as published by their SMP. This
+            certificate is used for both signing and encryption.
+      required:
+        - ap_certificate
+        - document_type
+        - transport_profile
+        - uri
+    HTTPBasicError:
+      type: object
+      properties:
+        detail:
+          type: string
+          description: An error description
+      required:
+        - detail
+    Identifier:
+      type: object
+      description: >-
+        A type of `ModelSerializer` that uses hyperlinked relationships with
+        compound keys instead
+
+        of primary key relationships.  Specifically:
+
+
+        * A 'url' field is included instead of the 'id' field.
+
+        * Relationships to other instances are hyperlinks, instead of primary
+        keys.
+
+
+        NOTE: this only works with DRF 3.1.0 and above.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        scheme:
+          type: string
+          description: >-
+            The identifier scheme that is used, defaults to
+            iso6523-actorid-upis, which is the scheme used for Peppol. Note that
+            this is NOT the Peppol identifier scheme (like 0088 or 0106), that
+            scheme ID is used in the identifier value itself.
+          maxLength: 32
+        identifier:
+          type: string
+          description: >-
+            An organization identifier, such as 0106:12345678 or
+            0190:000011123003456321. Note that this includes the peppol
+            identifier scheme.
+          maxLength: 64
+        verified:
+          type: boolean
+          description: >-
+            Set this value to true when KYC procedures have been followed, and
+            this identifier has been verified for this organization. Must be set
+            to true in order for this identifier to be usable when sending
+            documents.
+        publish_receive_peppolbis:
+          type: boolean
+          description: >-
+            Set this value to true to publish this identifier in ion-SMP with
+            receiving capability for Peppol BIS invoice and credit-note documents
+        publish_receive_nlcius:
+          type: boolean
+          description: >-
+            Set this value to true to publish this identifier in ion-SMP with
+            receiving capability for SI-UBL-2.0 (NLCIUS) invoice and credit-note
+            documents
+        publish_receive_invoice_response:
+          type: boolean
+          description: >-
+            Set this value to true to publish this identifier in ion-SMP with
+            receiving capability for Invoice Response documents
+        links:
+          allOf:
+            - $ref: '#/components/schemas/IdentifierLink'
+          readOnly: true
+      required:
+        - id
+        - identifier
+        - links
+    IdentifierLink:
+      type: object
+      description: >-
+        A type of `ModelSerializer` that uses hyperlinked relationships with
+        compound keys instead
+
+        of primary key relationships.  Specifically:
+
+
+        * A 'url' field is included instead of the 'id' field.
+
+        * Relationships to other instances are hyperlinks, instead of primary
+        keys.
+
+
+        NOTE: this only works with DRF 3.1.0 and above.
+      properties:
+        self:
+          type: string
+          format: uri
+          readOnly: true
+          description: The resource URL for this identifier
+      required:
+        - self
+    Log:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          readOnly: true
+          description: The creation date and time of this log entry
+        organization:
+          type: integer
+          readOnly: true
+          nullable: true
+          description: The organization this log entry is related to
+        send_transaction:
+          type: integer
+          readOnly: true
+          nullable: true
+          description: The send transaction this log entry is related to
+        receive_transaction:
+          type: integer
+          readOnly: true
+          nullable: true
+          description: The receive transaction this log entry is related to
+        name:
+          type: string
+          readOnly: true
+          description: The name of the specific internal module that created this log entry
+        level:
+          type: string
+          readOnly: true
+          description: The severity level of this log entry
+        msg:
+          type: string
+          readOnly: true
+          description: The main content of this log entry
+        links:
+          allOf:
+            - $ref: '#/components/schemas/LogLink'
+          readOnly: true
+      required:
+        - level
+        - links
+        - msg
+        - name
+        - organization
+        - receive_transaction
+        - send_transaction
+        - timestamp
+    LogLink:
+      type: object
+      properties:
+        organization:
+          type: string
+          format: uri
+          readOnly: true
+          description: The receiving organization of this transaction
+        send_transaction:
+          type: string
+          format: uri
+          readOnly: true
+          description: The transaction this log entry is related to
+        receive_transaction:
+          type: string
+          format: uri
+          readOnly: true
+          description: The transaction this log entry is related to
+      required:
+        - organization
+        - receive_transaction
+        - send_transaction
+    MyJSONWebToken:
+      type: object
+      properties:
+        email:
+          type: string
+          writeOnly: true
+        password:
+          type: string
+          writeOnly: true
+      required:
+        - email
+        - password
+    Organization:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          description: The name of the organization
+          maxLength: 128
+        country:
+          allOf:
+            - $ref: '#/components/schemas/CountryEnum'
+          description: >-
+            The country of this organization, mandatory for Peppol statistics
+            and agreements.
+
+
+            * `AF` - Afghanistan
+
+            * `AX` - Åland Islands
+
+            * `AL` - Albania
+
+            * `DZ` - Algeria
+
+            * `AS` - American Samoa
+
+            * `AD` - Andorra
+
+            * `AO` - Angola
+
+            * `AI` - Anguilla
+
+            * `AQ` - Antarctica
+
+            * `AG` - Antigua and Barbuda
+
+            * `AR` - Argentina
+
+            * `AM` - Armenia
+
+            * `AW` - Aruba
+
+            * `AU` - Australia
+
+            * `AT` - Austria
+
+            * `AZ` - Azerbaijan
+
+            * `BS` - Bahamas
+
+            * `BH` - Bahrain
+
+            * `BD` - Bangladesh
+
+            * `BB` - Barbados
+
+            * `BY` - Belarus
+
+            * `BE` - Belgium
+
+            * `BZ` - Belize
+
+            * `BJ` - Benin
+
+            * `BM` - Bermuda
+
+            * `BT` - Bhutan
+
+            * `BO` - Bolivia
+
+            * `BQ` - Bonaire, Sint Eustatius and Saba
+
+            * `BA` - Bosnia and Herzegovina
+
+            * `BW` - Botswana
+
+            * `BV` - Bouvet Island
+
+            * `BR` - Brazil
+
+            * `IO` - British Indian Ocean Territory
+
+            * `BN` - Brunei
+
+            * `BG` - Bulgaria
+
+            * `BF` - Burkina Faso
+
+            * `BI` - Burundi
+
+            * `CV` - Cabo Verde
+
+            * `KH` - Cambodia
+
+            * `CM` - Cameroon
+
+            * `CA` - Canada
+
+            * `KY` - Cayman Islands
+
+            * `CF` - Central African Republic
+
+            * `TD` - Chad
+
+            * `CL` - Chile
+
+            * `CN` - China
+
+            * `CX` - Christmas Island
+
+            * `CC` - Cocos (Keeling) Islands
+
+            * `CO` - Colombia
+
+            * `KM` - Comoros
+
+            * `CG` - Congo
+
+            * `CD` - Congo (the Democratic Republic of the)
+
+            * `CK` - Cook Islands
+
+            * `CR` - Costa Rica
+
+            * `CI` - Côte d'Ivoire
+
+            * `HR` - Croatia
+
+            * `CU` - Cuba
+
+            * `CW` - Curaçao
+
+            * `CY` - Cyprus
+
+            * `CZ` - Czechia
+
+            * `DK` - Denmark
+
+            * `DJ` - Djibouti
+
+            * `DM` - Dominica
+
+            * `DO` - Dominican Republic
+
+            * `EC` - Ecuador
+
+            * `EG` - Egypt
+
+            * `SV` - El Salvador
+
+            * `GQ` - Equatorial Guinea
+
+            * `ER` - Eritrea
+
+            * `EE` - Estonia
+
+            * `SZ` - Eswatini
+
+            * `ET` - Ethiopia
+
+            * `FK` - Falkland Islands (Malvinas)
+
+            * `FO` - Faroe Islands
+
+            * `FJ` - Fiji
+
+            * `FI` - Finland
+
+            * `FR` - France
+
+            * `GF` - French Guiana
+
+            * `PF` - French Polynesia
+
+            * `TF` - French Southern Territories
+
+            * `GA` - Gabon
+
+            * `GM` - Gambia
+
+            * `GE` - Georgia
+
+            * `DE` - Germany
+
+            * `GH` - Ghana
+
+            * `GI` - Gibraltar
+
+            * `GR` - Greece
+
+            * `GL` - Greenland
+
+            * `GD` - Grenada
+
+            * `GP` - Guadeloupe
+
+            * `GU` - Guam
+
+            * `GT` - Guatemala
+
+            * `GG` - Guernsey
+
+            * `GN` - Guinea
+
+            * `GW` - Guinea-Bissau
+
+            * `GY` - Guyana
+
+            * `HT` - Haiti
+
+            * `HM` - Heard Island and McDonald Islands
+
+            * `VA` - Holy See
+
+            * `HN` - Honduras
+
+            * `HK` - Hong Kong
+
+            * `HU` - Hungary
+
+            * `IS` - Iceland
+
+            * `IN` - India
+
+            * `ID` - Indonesia
+
+            * `IR` - Iran
+
+            * `IQ` - Iraq
+
+            * `IE` - Ireland
+
+            * `IM` - Isle of Man
+
+            * `IL` - Israel
+
+            * `IT` - Italy
+
+            * `JM` - Jamaica
+
+            * `JP` - Japan
+
+            * `JE` - Jersey
+
+            * `JO` - Jordan
+
+            * `KZ` - Kazakhstan
+
+            * `KE` - Kenya
+
+            * `KI` - Kiribati
+
+            * `KW` - Kuwait
+
+            * `KG` - Kyrgyzstan
+
+            * `LA` - Laos
+
+            * `LV` - Latvia
+
+            * `LB` - Lebanon
+
+            * `LS` - Lesotho
+
+            * `LR` - Liberia
+
+            * `LY` - Libya
+
+            * `LI` - Liechtenstein
+
+            * `LT` - Lithuania
+
+            * `LU` - Luxembourg
+
+            * `MO` - Macao
+
+            * `MG` - Madagascar
+
+            * `MW` - Malawi
+
+            * `MY` - Malaysia
+
+            * `MV` - Maldives
+
+            * `ML` - Mali
+
+            * `MT` - Malta
+
+            * `MH` - Marshall Islands
+
+            * `MQ` - Martinique
+
+            * `MR` - Mauritania
+
+            * `MU` - Mauritius
+
+            * `YT` - Mayotte
+
+            * `MX` - Mexico
+
+            * `FM` - Micronesia
+
+            * `MD` - Moldova
+
+            * `MC` - Monaco
+
+            * `MN` - Mongolia
+
+            * `ME` - Montenegro
+
+            * `MS` - Montserrat
+
+            * `MA` - Morocco
+
+            * `MZ` - Mozambique
+
+            * `MM` - Myanmar
+
+            * `NA` - Namibia
+
+            * `NR` - Nauru
+
+            * `NP` - Nepal
+
+            * `NL` - Netherlands
+
+            * `NC` - New Caledonia
+
+            * `NZ` - New Zealand
+
+            * `NI` - Nicaragua
+
+            * `NE` - Niger
+
+            * `NG` - Nigeria
+
+            * `NU` - Niue
+
+            * `NF` - Norfolk Island
+
+            * `KP` - North Korea
+
+            * `MK` - North Macedonia
+
+            * `MP` - Northern Mariana Islands
+
+            * `NO` - Norway
+
+            * `OM` - Oman
+
+            * `PK` - Pakistan
+
+            * `PW` - Palau
+
+            * `PS` - Palestine, State of
+
+            * `PA` - Panama
+
+            * `PG` - Papua New Guinea
+
+            * `PY` - Paraguay
+
+            * `PE` - Peru
+
+            * `PH` - Philippines
+
+            * `PN` - Pitcairn
+
+            * `PL` - Poland
+
+            * `PT` - Portugal
+
+            * `PR` - Puerto Rico
+
+            * `QA` - Qatar
+
+            * `RE` - Réunion
+
+            * `RO` - Romania
+
+            * `RU` - Russia
+
+            * `RW` - Rwanda
+
+            * `BL` - Saint Barthélemy
+
+            * `SH` - Saint Helena, Ascension and Tristan da Cunha
+
+            * `KN` - Saint Kitts and Nevis
+
+            * `LC` - Saint Lucia
+
+            * `MF` - Saint Martin (French part)
+
+            * `PM` - Saint Pierre and Miquelon
+
+            * `VC` - Saint Vincent and the Grenadines
+
+            * `WS` - Samoa
+
+            * `SM` - San Marino
+
+            * `ST` - Sao Tome and Principe
+
+            * `SA` - Saudi Arabia
+
+            * `SN` - Senegal
+
+            * `RS` - Serbia
+
+            * `SC` - Seychelles
+
+            * `SL` - Sierra Leone
+
+            * `SG` - Singapore
+
+            * `SX` - Sint Maarten (Dutch part)
+
+            * `SK` - Slovakia
+
+            * `SI` - Slovenia
+
+            * `SB` - Solomon Islands
+
+            * `SO` - Somalia
+
+            * `ZA` - South Africa
+
+            * `GS` - South Georgia and the South Sandwich Islands
+
+            * `KR` - South Korea
+
+            * `SS` - South Sudan
+
+            * `ES` - Spain
+
+            * `LK` - Sri Lanka
+
+            * `SD` - Sudan
+
+            * `SR` - Suriname
+
+            * `SJ` - Svalbard and Jan Mayen
+
+            * `SE` - Sweden
+
+            * `CH` - Switzerland
+
+            * `SY` - Syria
+
+            * `TW` - Taiwan
+
+            * `TJ` - Tajikistan
+
+            * `TZ` - Tanzania
+
+            * `TH` - Thailand
+
+            * `TL` - Timor-Leste
+
+            * `TG` - Togo
+
+            * `TK` - Tokelau
+
+            * `TO` - Tonga
+
+            * `TT` - Trinidad and Tobago
+
+            * `TN` - Tunisia
+
+            * `TR` - Türkiye
+
+            * `TM` - Turkmenistan
+
+            * `TC` - Turks and Caicos Islands
+
+            * `TV` - Tuvalu
+
+            * `UG` - Uganda
+
+            * `UA` - Ukraine
+
+            * `AE` - United Arab Emirates
+
+            * `GB` - United Kingdom
+
+            * `UM` - United States Minor Outlying Islands
+
+            * `US` - United States of America
+
+            * `UY` - Uruguay
+
+            * `UZ` - Uzbekistan
+
+            * `VU` - Vanuatu
+
+            * `VE` - Venezuela
+
+            * `VN` - Vietnam
+
+            * `VG` - Virgin Islands (British)
+
+            * `VI` - Virgin Islands (U.S.)
+
+            * `WF` - Wallis and Futuna
+
+            * `EH` - Western Sahara
+
+            * `YE` - Yemen
+
+            * `ZM` - Zambia
+
+            * `ZW` - Zimbabwe
+        publish_in_smp:
+          type: boolean
+          description: >-
+            Use ion-SMP to automatically publish this organization as a
+            recipient. Set this value to False if this organization is managed
+            through a different SMP or account.
+        reference:
+          type: string
+          description: >-
+            An accounting reference for this organization. You can use this
+            reference to filter on organizations, and transaction reports will
+            provide a separate tally for each unique reference
+          maxLength: 256
+        identifiers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Identifier'
+          readOnly: true
+        links:
+          allOf:
+            - $ref: '#/components/schemas/OrganizationLink'
+          readOnly: true
+      required:
+        - country
+        - id
+        - identifiers
+        - links
+        - name
+        - publish_in_smp
+    OrganizationLink:
+      type: object
+      properties:
+        self:
+          type: string
+          format: uri
+          readOnly: true
+          description: The resource URL for this organization
+        identifiers:
+          type: string
+          format: uri
+          readOnly: true
+          description: The list of identifiers of this organization
+        receive_triggers:
+          type: string
+          format: uri
+          readOnly: true
+          description: The list of receive triggers for this organization
+        receive_trigger_options:
+          type: string
+          format: uri
+          readOnly: true
+          description: >-
+            Overview of receive triggers and receive trigger options that can be
+            configured
+        users:
+          type: string
+          format: uri
+          readOnly: true
+          description: The users specific to this organization
+        logs:
+          type: string
+          format: uri
+          readOnly: true
+          description: The log entries for this organization
+      required:
+        - identifiers
+        - logs
+        - receive_trigger_options
+        - receive_triggers
+        - self
+        - users
+    OrganizationReceiveTrigger:
+      type: object
+      description: >-
+        A type of `ModelSerializer` that uses hyperlinked relationships with
+        compound keys instead
+
+        of primary key relationships.  Specifically:
+
+
+        * A 'url' field is included instead of the 'id' field.
+
+        * Relationships to other instances are hyperlinks, instead of primary
+        keys.
+
+
+        NOTE: this only works with DRF 3.1.0 and above.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        trigger_type:
+          allOf:
+            - $ref: '#/components/schemas/TriggerTypeEnum'
+          description: >-
+            The type of the trigger
+
+
+            * `API_CALL` - API call
+
+            * `SEND_EMAIL` - Basic email, a default template and optional
+            document contents as attachments
+        name:
+          type: string
+          description: A description of the receiver trigger
+          maxLength: 256
+        enabled:
+          type: boolean
+          description: Set to true to enable the trigger
+        links:
+          allOf:
+            - $ref: '#/components/schemas/OrganizationReceiveTriggerLink'
+          readOnly: true
+      required:
+        - id
+        - links
+        - name
+        - trigger_type
+    OrganizationReceiveTriggerArgument:
+      type: object
+      description: >-
+        A type of `ModelSerializer` that uses hyperlinked relationships with
+        compound keys instead
+
+        of primary key relationships.  Specifically:
+
+
+        * A 'url' field is included instead of the 'id' field.
+
+        * Relationships to other instances are hyperlinks, instead of primary
+        keys.
+
+
+        NOTE: this only works with DRF 3.1.0 and above.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          description: >-
+            The name of the argument, see the trigger type documentation for
+            possible argument names
+          maxLength: 32
+        value:
+          type: string
+          description: >-
+            The argument value, see the trigger type documentation for allowed
+            values
+          maxLength: 512
+        links:
+          allOf:
+            - $ref: '#/components/schemas/OrganizationReceiveTriggerArgumentLink'
+          readOnly: true
+      required:
+        - id
+        - links
+        - name
+        - value
+    OrganizationReceiveTriggerArgumentLink:
+      type: object
+      description: >-
+        A type of `ModelSerializer` that uses hyperlinked relationships with
+        compound keys instead
+
+        of primary key relationships.  Specifically:
+
+
+        * A 'url' field is included instead of the 'id' field.
+
+        * Relationships to other instances are hyperlinks, instead of primary
+        keys.
+
+
+        NOTE: this only works with DRF 3.1.0 and above.
+      properties:
+        self:
+          type: string
+          format: uri
+          readOnly: true
+          description: The resource URL for this receive trigger argument
+      required:
+        - self
+    OrganizationReceiveTriggerLink:
+      type: object
+      description: >-
+        A type of `ModelSerializer` that uses hyperlinked relationships with
+        compound keys instead
+
+        of primary key relationships.  Specifically:
+
+
+        * A 'url' field is included instead of the 'id' field.
+
+        * Relationships to other instances are hyperlinks, instead of primary
+        keys.
+
+
+        NOTE: this only works with DRF 3.1.0 and above.
+      properties:
+        self:
+          type: string
+          format: uri
+          readOnly: true
+          description: The resource URL for this receive trigger
+        options:
+          type: string
+          format: uri
+          readOnly: true
+          description: The list of options for this receive trigger
+      required:
+        - options
+        - self
+    OrganizationUser:
+      type: object
+      description: >-
+        A type of `ModelSerializer` that uses hyperlinked relationships with
+        compound keys instead
+
+        of primary key relationships.  Specifically:
+
+
+        * A 'url' field is included instead of the 'id' field.
+
+        * Relationships to other instances are hyperlinks, instead of primary
+        keys.
+
+
+        NOTE: this only works with DRF 3.1.0 and above.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        email:
+          type: string
+          format: email
+        email_verified:
+          type: string
+          readOnly: true
+        auth_token:
+          type: string
+          readOnly: true
+        links:
+          allOf:
+            - $ref: '#/components/schemas/OrganizationUserLink'
+          readOnly: true
+      required:
+        - auth_token
+        - email
+        - email_verified
+        - id
+        - links
+    OrganizationUserLink:
+      type: object
+      description: >-
+        A type of `ModelSerializer` that uses hyperlinked relationships with
+        compound keys instead
+
+        of primary key relationships.  Specifically:
+
+
+        * A 'url' field is included instead of the 'id' field.
+
+        * Relationships to other instances are hyperlinks, instead of primary
+        keys.
+
+
+        NOTE: this only works with DRF 3.1.0 and above.
+      properties:
+        self:
+          type: string
+          format: uri
+          readOnly: true
+          description: The resource URL for this identifier
+      required:
+        - self
+    PaginatedIdentifierList:
+      type: object
+      required:
+        - count
+        - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: 'http://api.example.org/accounts/?offset=400&limit=100'
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: 'http://api.example.org/accounts/?offset=200&limit=100'
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Identifier'
+    PaginatedLogList:
+      type: object
+      required:
+        - count
+        - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: 'http://api.example.org/accounts/?offset=400&limit=100'
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: 'http://api.example.org/accounts/?offset=200&limit=100'
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Log'
+    PaginatedOrganizationList:
+      type: object
+      required:
+        - count
+        - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: 'http://api.example.org/accounts/?offset=400&limit=100'
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: 'http://api.example.org/accounts/?offset=200&limit=100'
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Organization'
+    PaginatedOrganizationReceiveTriggerArgumentList:
+      type: object
+      required:
+        - count
+        - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: 'http://api.example.org/accounts/?offset=400&limit=100'
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: 'http://api.example.org/accounts/?offset=200&limit=100'
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrganizationReceiveTriggerArgument'
+    PaginatedOrganizationReceiveTriggerList:
+      type: object
+      required:
+        - count
+        - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: 'http://api.example.org/accounts/?offset=400&limit=100'
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: 'http://api.example.org/accounts/?offset=200&limit=100'
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrganizationReceiveTrigger'
+    PaginatedOrganizationUserList:
+      type: object
+      required:
+        - count
+        - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: 'http://api.example.org/accounts/?offset=400&limit=100'
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: 'http://api.example.org/accounts/?offset=200&limit=100'
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrganizationUser'
+    PaginatedReceiveTransactionList:
+      type: object
+      required:
+        - count
+        - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: 'http://api.example.org/accounts/?offset=400&limit=100'
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: 'http://api.example.org/accounts/?offset=200&limit=100'
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReceiveTransaction'
+    PaginatedSendTransactionErrorList:
+      type: object
+      required:
+        - count
+        - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: 'http://api.example.org/accounts/?offset=400&limit=100'
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: 'http://api.example.org/accounts/?offset=200&limit=100'
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SendTransactionError'
+    PaginatedSendTransactionList:
+      type: object
+      required:
+        - count
+        - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: 'http://api.example.org/accounts/?offset=400&limit=100'
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: 'http://api.example.org/accounts/?offset=200&limit=100'
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SendTransaction'
+    ParticipantEndpoints:
+      type: object
+      properties:
+        endpoints:
+          type: array
+          items:
+            $ref: '#/components/schemas/EndpointData'
+        logs:
+          type: array
+          items:
+            type: string
+          description: 'A list of log lines, if enabled with the log_level parameter.'
+      required:
+        - endpoints
+    ParticipantPresence:
+      type: object
+      properties:
+        exists:
+          type: boolean
+          description: 'true if the participant is present on the network, false if not.'
+        detail:
+          type: string
+          description: A status line providing details about the presence value
+        logs:
+          type: array
+          items:
+            type: string
+          description: 'A list of log lines, if enabled with the log_level parameter.'
+      required:
+        - detail
+        - exists
+    ParticipantSupportedDocumentTypes:
+      type: object
+      properties:
+        document_types:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentType'
+      required:
+        - document_types
+    PatchedIdentifier:
+      type: object
+      description: >-
+        A type of `ModelSerializer` that uses hyperlinked relationships with
+        compound keys instead
+
+        of primary key relationships.  Specifically:
+
+
+        * A 'url' field is included instead of the 'id' field.
+
+        * Relationships to other instances are hyperlinks, instead of primary
+        keys.
+
+
+        NOTE: this only works with DRF 3.1.0 and above.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        scheme:
+          type: string
+          description: >-
+            The identifier scheme that is used, defaults to
+            iso6523-actorid-upis, which is the scheme used for Peppol. Note that
+            this is NOT the Peppol identifier scheme (like 0088 or 0106), that
+            scheme ID is used in the identifier value itself.
+          maxLength: 32
+        identifier:
+          type: string
+          description: >-
+            An organization identifier, such as 0106:12345678 or
+            0190:000011123003456321. Note that this includes the peppol
+            identifier scheme.
+          maxLength: 64
+        verified:
+          type: boolean
+          description: >-
+            Set this value to true when KYC procedures have been followed, and
+            this identifier has been verified for this organization. Must be set
+            to true in order for this identifier to be usable when sending
+            documents.
+        publish_receive_peppolbis:
+          type: boolean
+          description: >-
+            Set this value to true to publish this identifier in ion-SMP with
+            receiving capability for Peppol BIS invoice and credit-note documents
+        publish_receive_nlcius:
+          type: boolean
+          description: >-
+            Set this value to true to publish this identifier in ion-SMP with
+            receiving capability for SI-UBL-2.0 (NLCIUS) invoice and credit-note
+            documents
+        publish_receive_invoice_response:
+          type: boolean
+          description: >-
+            Set this value to true to publish this identifier in ion-SMP with
+            receiving capability for Invoice Response documents
+        links:
+          allOf:
+            - $ref: '#/components/schemas/IdentifierLink'
+          readOnly: true
+    PatchedOrganization:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          description: The name of the organization
+          maxLength: 128
+        country:
+          allOf:
+            - $ref: '#/components/schemas/CountryEnum'
+          description: >-
+            The country of this organization, mandatory for Peppol statistics
+            and agreements.
+
+
+            * `AF` - Afghanistan
+
+            * `AX` - Åland Islands
+
+            * `AL` - Albania
+
+            * `DZ` - Algeria
+
+            * `AS` - American Samoa
+
+            * `AD` - Andorra
+
+            * `AO` - Angola
+
+            * `AI` - Anguilla
+
+            * `AQ` - Antarctica
+
+            * `AG` - Antigua and Barbuda
+
+            * `AR` - Argentina
+
+            * `AM` - Armenia
+
+            * `AW` - Aruba
+
+            * `AU` - Australia
+
+            * `AT` - Austria
+
+            * `AZ` - Azerbaijan
+
+            * `BS` - Bahamas
+
+            * `BH` - Bahrain
+
+            * `BD` - Bangladesh
+
+            * `BB` - Barbados
+
+            * `BY` - Belarus
+
+            * `BE` - Belgium
+
+            * `BZ` - Belize
+
+            * `BJ` - Benin
+
+            * `BM` - Bermuda
+
+            * `BT` - Bhutan
+
+            * `BO` - Bolivia
+
+            * `BQ` - Bonaire, Sint Eustatius and Saba
+
+            * `BA` - Bosnia and Herzegovina
+
+            * `BW` - Botswana
+
+            * `BV` - Bouvet Island
+
+            * `BR` - Brazil
+
+            * `IO` - British Indian Ocean Territory
+
+            * `BN` - Brunei
+
+            * `BG` - Bulgaria
+
+            * `BF` - Burkina Faso
+
+            * `BI` - Burundi
+
+            * `CV` - Cabo Verde
+
+            * `KH` - Cambodia
+
+            * `CM` - Cameroon
+
+            * `CA` - Canada
+
+            * `KY` - Cayman Islands
+
+            * `CF` - Central African Republic
+
+            * `TD` - Chad
+
+            * `CL` - Chile
+
+            * `CN` - China
+
+            * `CX` - Christmas Island
+
+            * `CC` - Cocos (Keeling) Islands
+
+            * `CO` - Colombia
+
+            * `KM` - Comoros
+
+            * `CG` - Congo
+
+            * `CD` - Congo (the Democratic Republic of the)
+
+            * `CK` - Cook Islands
+
+            * `CR` - Costa Rica
+
+            * `CI` - Côte d'Ivoire
+
+            * `HR` - Croatia
+
+            * `CU` - Cuba
+
+            * `CW` - Curaçao
+
+            * `CY` - Cyprus
+
+            * `CZ` - Czechia
+
+            * `DK` - Denmark
+
+            * `DJ` - Djibouti
+
+            * `DM` - Dominica
+
+            * `DO` - Dominican Republic
+
+            * `EC` - Ecuador
+
+            * `EG` - Egypt
+
+            * `SV` - El Salvador
+
+            * `GQ` - Equatorial Guinea
+
+            * `ER` - Eritrea
+
+            * `EE` - Estonia
+
+            * `SZ` - Eswatini
+
+            * `ET` - Ethiopia
+
+            * `FK` - Falkland Islands (Malvinas)
+
+            * `FO` - Faroe Islands
+
+            * `FJ` - Fiji
+
+            * `FI` - Finland
+
+            * `FR` - France
+
+            * `GF` - French Guiana
+
+            * `PF` - French Polynesia
+
+            * `TF` - French Southern Territories
+
+            * `GA` - Gabon
+
+            * `GM` - Gambia
+
+            * `GE` - Georgia
+
+            * `DE` - Germany
+
+            * `GH` - Ghana
+
+            * `GI` - Gibraltar
+
+            * `GR` - Greece
+
+            * `GL` - Greenland
+
+            * `GD` - Grenada
+
+            * `GP` - Guadeloupe
+
+            * `GU` - Guam
+
+            * `GT` - Guatemala
+
+            * `GG` - Guernsey
+
+            * `GN` - Guinea
+
+            * `GW` - Guinea-Bissau
+
+            * `GY` - Guyana
+
+            * `HT` - Haiti
+
+            * `HM` - Heard Island and McDonald Islands
+
+            * `VA` - Holy See
+
+            * `HN` - Honduras
+
+            * `HK` - Hong Kong
+
+            * `HU` - Hungary
+
+            * `IS` - Iceland
+
+            * `IN` - India
+
+            * `ID` - Indonesia
+
+            * `IR` - Iran
+
+            * `IQ` - Iraq
+
+            * `IE` - Ireland
+
+            * `IM` - Isle of Man
+
+            * `IL` - Israel
+
+            * `IT` - Italy
+
+            * `JM` - Jamaica
+
+            * `JP` - Japan
+
+            * `JE` - Jersey
+
+            * `JO` - Jordan
+
+            * `KZ` - Kazakhstan
+
+            * `KE` - Kenya
+
+            * `KI` - Kiribati
+
+            * `KW` - Kuwait
+
+            * `KG` - Kyrgyzstan
+
+            * `LA` - Laos
+
+            * `LV` - Latvia
+
+            * `LB` - Lebanon
+
+            * `LS` - Lesotho
+
+            * `LR` - Liberia
+
+            * `LY` - Libya
+
+            * `LI` - Liechtenstein
+
+            * `LT` - Lithuania
+
+            * `LU` - Luxembourg
+
+            * `MO` - Macao
+
+            * `MG` - Madagascar
+
+            * `MW` - Malawi
+
+            * `MY` - Malaysia
+
+            * `MV` - Maldives
+
+            * `ML` - Mali
+
+            * `MT` - Malta
+
+            * `MH` - Marshall Islands
+
+            * `MQ` - Martinique
+
+            * `MR` - Mauritania
+
+            * `MU` - Mauritius
+
+            * `YT` - Mayotte
+
+            * `MX` - Mexico
+
+            * `FM` - Micronesia
+
+            * `MD` - Moldova
+
+            * `MC` - Monaco
+
+            * `MN` - Mongolia
+
+            * `ME` - Montenegro
+
+            * `MS` - Montserrat
+
+            * `MA` - Morocco
+
+            * `MZ` - Mozambique
+
+            * `MM` - Myanmar
+
+            * `NA` - Namibia
+
+            * `NR` - Nauru
+
+            * `NP` - Nepal
+
+            * `NL` - Netherlands
+
+            * `NC` - New Caledonia
+
+            * `NZ` - New Zealand
+
+            * `NI` - Nicaragua
+
+            * `NE` - Niger
+
+            * `NG` - Nigeria
+
+            * `NU` - Niue
+
+            * `NF` - Norfolk Island
+
+            * `KP` - North Korea
+
+            * `MK` - North Macedonia
+
+            * `MP` - Northern Mariana Islands
+
+            * `NO` - Norway
+
+            * `OM` - Oman
+
+            * `PK` - Pakistan
+
+            * `PW` - Palau
+
+            * `PS` - Palestine, State of
+
+            * `PA` - Panama
+
+            * `PG` - Papua New Guinea
+
+            * `PY` - Paraguay
+
+            * `PE` - Peru
+
+            * `PH` - Philippines
+
+            * `PN` - Pitcairn
+
+            * `PL` - Poland
+
+            * `PT` - Portugal
+
+            * `PR` - Puerto Rico
+
+            * `QA` - Qatar
+
+            * `RE` - Réunion
+
+            * `RO` - Romania
+
+            * `RU` - Russia
+
+            * `RW` - Rwanda
+
+            * `BL` - Saint Barthélemy
+
+            * `SH` - Saint Helena, Ascension and Tristan da Cunha
+
+            * `KN` - Saint Kitts and Nevis
+
+            * `LC` - Saint Lucia
+
+            * `MF` - Saint Martin (French part)
+
+            * `PM` - Saint Pierre and Miquelon
+
+            * `VC` - Saint Vincent and the Grenadines
+
+            * `WS` - Samoa
+
+            * `SM` - San Marino
+
+            * `ST` - Sao Tome and Principe
+
+            * `SA` - Saudi Arabia
+
+            * `SN` - Senegal
+
+            * `RS` - Serbia
+
+            * `SC` - Seychelles
+
+            * `SL` - Sierra Leone
+
+            * `SG` - Singapore
+
+            * `SX` - Sint Maarten (Dutch part)
+
+            * `SK` - Slovakia
+
+            * `SI` - Slovenia
+
+            * `SB` - Solomon Islands
+
+            * `SO` - Somalia
+
+            * `ZA` - South Africa
+
+            * `GS` - South Georgia and the South Sandwich Islands
+
+            * `KR` - South Korea
+
+            * `SS` - South Sudan
+
+            * `ES` - Spain
+
+            * `LK` - Sri Lanka
+
+            * `SD` - Sudan
+
+            * `SR` - Suriname
+
+            * `SJ` - Svalbard and Jan Mayen
+
+            * `SE` - Sweden
+
+            * `CH` - Switzerland
+
+            * `SY` - Syria
+
+            * `TW` - Taiwan
+
+            * `TJ` - Tajikistan
+
+            * `TZ` - Tanzania
+
+            * `TH` - Thailand
+
+            * `TL` - Timor-Leste
+
+            * `TG` - Togo
+
+            * `TK` - Tokelau
+
+            * `TO` - Tonga
+
+            * `TT` - Trinidad and Tobago
+
+            * `TN` - Tunisia
+
+            * `TR` - Türkiye
+
+            * `TM` - Turkmenistan
+
+            * `TC` - Turks and Caicos Islands
+
+            * `TV` - Tuvalu
+
+            * `UG` - Uganda
+
+            * `UA` - Ukraine
+
+            * `AE` - United Arab Emirates
+
+            * `GB` - United Kingdom
+
+            * `UM` - United States Minor Outlying Islands
+
+            * `US` - United States of America
+
+            * `UY` - Uruguay
+
+            * `UZ` - Uzbekistan
+
+            * `VU` - Vanuatu
+
+            * `VE` - Venezuela
+
+            * `VN` - Vietnam
+
+            * `VG` - Virgin Islands (British)
+
+            * `VI` - Virgin Islands (U.S.)
+
+            * `WF` - Wallis and Futuna
+
+            * `EH` - Western Sahara
+
+            * `YE` - Yemen
+
+            * `ZM` - Zambia
+
+            * `ZW` - Zimbabwe
+        publish_in_smp:
+          type: boolean
+          description: >-
+            Use ion-SMP to automatically publish this organization as a
+            recipient. Set this value to False if this organization is managed
+            through a different SMP or account.
+        reference:
+          type: string
+          description: >-
+            An accounting reference for this organization. You can use this
+            reference to filter on organizations, and transaction reports will
+            provide a separate tally for each unique reference
+          maxLength: 256
+        identifiers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Identifier'
+          readOnly: true
+        links:
+          allOf:
+            - $ref: '#/components/schemas/OrganizationLink'
+          readOnly: true
+    PatchedOrganizationReceiveTrigger:
+      type: object
+      description: >-
+        A type of `ModelSerializer` that uses hyperlinked relationships with
+        compound keys instead
+
+        of primary key relationships.  Specifically:
+
+
+        * A 'url' field is included instead of the 'id' field.
+
+        * Relationships to other instances are hyperlinks, instead of primary
+        keys.
+
+
+        NOTE: this only works with DRF 3.1.0 and above.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        trigger_type:
+          allOf:
+            - $ref: '#/components/schemas/TriggerTypeEnum'
+          description: >-
+            The type of the trigger
+
+
+            * `API_CALL` - API call
+
+            * `SEND_EMAIL` - Basic email, a default template and optional
+            document contents as attachments
+        name:
+          type: string
+          description: A description of the receiver trigger
+          maxLength: 256
+        enabled:
+          type: boolean
+          description: Set to true to enable the trigger
+        links:
+          allOf:
+            - $ref: '#/components/schemas/OrganizationReceiveTriggerLink'
+          readOnly: true
+    PatchedOrganizationReceiveTriggerArgument:
+      type: object
+      description: >-
+        A type of `ModelSerializer` that uses hyperlinked relationships with
+        compound keys instead
+
+        of primary key relationships.  Specifically:
+
+
+        * A 'url' field is included instead of the 'id' field.
+
+        * Relationships to other instances are hyperlinks, instead of primary
+        keys.
+
+
+        NOTE: this only works with DRF 3.1.0 and above.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          description: >-
+            The name of the argument, see the trigger type documentation for
+            possible argument names
+          maxLength: 32
+        value:
+          type: string
+          description: >-
+            The argument value, see the trigger type documentation for allowed
+            values
+          maxLength: 512
+        links:
+          allOf:
+            - $ref: '#/components/schemas/OrganizationReceiveTriggerArgumentLink'
+          readOnly: true
+    PatchedReceiveTransaction:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created_on:
+          type: string
+          format: date-time
+          readOnly: true
+          description: The creation date and time of this transaction
+        last_updated_on:
+          type: string
+          format: date-time
+          readOnly: true
+          description: The date and time of the last change in this transaction
+        transaction_id:
+          type: string
+          readOnly: true
+          nullable: true
+          description: The (globally) unique identifier for this transaction
+        transport_sender:
+          type: string
+          readOnly: true
+          description: >-
+            The identifier of the sending access point. For Peppol this is the
+            Peppol Seat ID of the service provider.
+        transport_receiver:
+          type: string
+          readOnly: true
+          description: >-
+            The identifier of the receiving access point. For Peppol this is the
+            Peppol Seat ID of the service provider.
+        sender_authority:
+          type: string
+          readOnly: true
+          description: >-
+            The authority scheme of the sender identifier. For peppol this is
+            iso6523-actorid-upis.
+        sender_identifier:
+          type: string
+          readOnly: true
+          description: 'The identifier of the sender, such as 0106:12345678.'
+        receiver_authority:
+          type: string
+          readOnly: true
+          description: >-
+            The authority scheme of the receiver identifier. For peppol this is
+            iso6523-actorid-upis.
+        receiver_identifier:
+          type: string
+          readOnly: true
+          description: 'The identifier of the receiver, such as 0106:12345678.'
+        document_element:
+          type: string
+          readOnly: true
+          description: 'The short name for the document type, such as ''Invoice'''
+        document_type:
+          type: string
+          readOnly: true
+          description: The full document type identifier sent in this transaction
+        process:
+          type: string
+          readOnly: true
+          description: The process identifier for this transaction
+        document_id:
+          type: string
+          readOnly: true
+          nullable: true
+          description: >-
+            The identifier of the document itself, such as the Invoice ID, for
+            supported document types. Empty for document types without a defined
+            ID.
+        state:
+          allOf:
+            - $ref: '#/components/schemas/ReceiveTransactionStateEnum'
+          description: |-
+            The state of this transaction
+
+            * `NEW` - new
+            * `READ` - read
+        client_state:
+          type: string
+          nullable: true
+          description: >-
+            A user-settable field for additional state. This value is not used
+            by ion-AP, but API clients can use this for central storage of
+            additional state.
+          maxLength: 64
+        links:
+          allOf:
+            - $ref: '#/components/schemas/ReceiveTransactionLink'
+          readOnly: true
+    ReceiveTransaction:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created_on:
+          type: string
+          format: date-time
+          readOnly: true
+          description: The creation date and time of this transaction
+        last_updated_on:
+          type: string
+          format: date-time
+          readOnly: true
+          description: The date and time of the last change in this transaction
+        transaction_id:
+          type: string
+          readOnly: true
+          nullable: true
+          description: The (globally) unique identifier for this transaction
+        transport_sender:
+          type: string
+          readOnly: true
+          description: >-
+            The identifier of the sending access point. For Peppol this is the
+            Peppol Seat ID of the service provider.
+        transport_receiver:
+          type: string
+          readOnly: true
+          description: >-
+            The identifier of the receiving access point. For Peppol this is the
+            Peppol Seat ID of the service provider.
+        sender_authority:
+          type: string
+          readOnly: true
+          description: >-
+            The authority scheme of the sender identifier. For peppol this is
+            iso6523-actorid-upis.
+        sender_identifier:
+          type: string
+          readOnly: true
+          description: 'The identifier of the sender, such as 0106:12345678.'
+        receiver_authority:
+          type: string
+          readOnly: true
+          description: >-
+            The authority scheme of the receiver identifier. For peppol this is
+            iso6523-actorid-upis.
+        receiver_identifier:
+          type: string
+          readOnly: true
+          description: 'The identifier of the receiver, such as 0106:12345678.'
+        document_element:
+          type: string
+          readOnly: true
+          description: 'The short name for the document type, such as ''Invoice'''
+        document_type:
+          type: string
+          readOnly: true
+          description: The full document type identifier sent in this transaction
+        process:
+          type: string
+          readOnly: true
+          description: The process identifier for this transaction
+        document_id:
+          type: string
+          readOnly: true
+          nullable: true
+          description: >-
+            The identifier of the document itself, such as the Invoice ID, for
+            supported document types. Empty for document types without a defined
+            ID.
+        state:
+          allOf:
+            - $ref: '#/components/schemas/ReceiveTransactionStateEnum'
+          description: |-
+            The state of this transaction
+
+            * `NEW` - new
+            * `READ` - read
+        client_state:
+          type: string
+          nullable: true
+          description: >-
+            A user-settable field for additional state. This value is not used
+            by ion-AP, but API clients can use this for central storage of
+            additional state.
+          maxLength: 64
+        links:
+          allOf:
+            - $ref: '#/components/schemas/ReceiveTransactionLink'
+          readOnly: true
+      required:
+        - created_on
+        - document_element
+        - document_id
+        - document_type
+        - id
+        - last_updated_on
+        - links
+        - process
+        - receiver_authority
+        - receiver_identifier
+        - sender_authority
+        - sender_identifier
+        - transaction_id
+        - transport_receiver
+        - transport_sender
+    ReceiveTransactionLink:
+      type: object
+      properties:
+        self:
+          type: string
+          format: uri
+          readOnly: true
+          description: The resource URL for this transaction
+        organization:
+          type: string
+          format: uri
+          readOnly: true
+          description: The recipient organization of this transaction
+        document:
+          type: string
+          format: uri
+          readOnly: true
+          description: The document that was received
+        sbdh:
+          type: string
+          format: uri
+          readOnly: true
+          description: The full Standard Business Header Envelope that was received
+        pdf:
+          type: string
+          format: uri
+          readOnly: true
+          description: >-
+            A PDF Rendering of the received document (experimental, invoices
+            only at this time)
+        logs:
+          type: string
+          format: uri
+          readOnly: true
+          description: Log messages for this transaction
+        execute_triggers:
+          type: string
+          format: uri
+          readOnly: true
+          description: (Re-)execute the receive triggers for this transaction.
+      required:
+        - document
+        - execute_triggers
+        - logs
+        - organization
+        - pdf
+        - sbdh
+        - self
+    ReceiveTransactionStateEnum:
+      enum:
+        - NEW
+        - READ
+      type: string
+      description: |-
+        * `NEW` - new
+        * `READ` - read
+    SendTransaction:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created_on:
+          type: string
+          format: date-time
+          readOnly: true
+          description: The creation date and time of this transaction
+        last_updated_on:
+          type: string
+          format: date-time
+          readOnly: true
+          description: The date and time of the last change in this transaction
+        transaction_id:
+          type: string
+          readOnly: true
+          nullable: true
+          description: The (globally) unique identifier for this transaction
+        transport_sender:
+          type: string
+          readOnly: true
+          description: >-
+            The identifier of the sending access point. For Peppol this is the
+            Peppol Seat ID of the service provider.
+        transport_receiver:
+          type: string
+          readOnly: true
+          description: >-
+            The identifier of the receiving access point. For Peppol this is the
+            Peppol Seat ID of the service provider.
+        sender_authority:
+          type: string
+          readOnly: true
+          description: >-
+            The authority scheme of the sender identifier. For peppol this is
+            iso6523-actorid-upis.
+        sender_identifier:
+          type: string
+          readOnly: true
+          description: 'The identifier of the sender, such as 0106:12345678.'
+        receiver_authority:
+          type: string
+          readOnly: true
+          description: >-
+            The authority scheme of the receiver identifier. For peppol this is
+            iso6523-actorid-upis.
+        receiver_identifier:
+          type: string
+          readOnly: true
+          description: 'The identifier of the receiver, such as 0106:12345678.'
+        document_element:
+          type: string
+          readOnly: true
+          description: 'The short name for the document type, such as ''Invoice'''
+        document_type:
+          type: string
+          readOnly: true
+          description: The full document type identifier sent in this transaction
+        process:
+          type: string
+          readOnly: true
+          description: The process identifier for this transaction
+        document_id:
+          type: string
+          readOnly: true
+          nullable: true
+          description: >-
+            The identifier of the document itself, such as the Invoice ID, for
+            supported document types. Empty for document types without a defined
+            ID.
+        state:
+          allOf:
+            - $ref: '#/components/schemas/SendTransactionStateEnum'
+          description: |-
+            The state of this transaction
+
+            * `QUEUED` - queued
+            * `SENDING` - sending
+            * `SENT` - sent
+            * `DEFERRED` - deferred
+            * `ERROR` - error
+        links:
+          allOf:
+            - $ref: '#/components/schemas/SendTransactionLink'
+          readOnly: true
+      required:
+        - created_on
+        - document_element
+        - document_id
+        - document_type
+        - id
+        - last_updated_on
+        - links
+        - process
+        - receiver_authority
+        - receiver_identifier
+        - sender_authority
+        - sender_identifier
+        - transaction_id
+        - transport_receiver
+        - transport_sender
+    SendTransactionError:
+      type: object
+      properties:
+        code:
+          type: string
+          readOnly: true
+          nullable: true
+          description: 'The error code of this error, such as EBMS:0004'
+        detail:
+          type: string
+          readOnly: true
+          description: A detailed description of the error
+      required:
+        - code
+        - detail
+    SendTransactionLink:
+      type: object
+      properties:
+        self:
+          type: string
+          format: uri
+          readOnly: true
+          description: The resource URL for this transaction
+        organization:
+          type: string
+          format: uri
+          readOnly: true
+          description: The sending organization of this transaction
+        sbdh:
+          type: string
+          format: uri
+          readOnly: true
+          description: The full Standard Business Header Envelope that was sent
+        document:
+          type: string
+          format: uri
+          readOnly: true
+          description: The document that was sent
+        pdf:
+          type: string
+          format: uri
+          readOnly: true
+          description: >-
+            A PDF Rendering of the sent document (experimental, invoices only at
+            this time)
+        receipt:
+          type: string
+          format: uri
+          readOnly: true
+          description: >-
+            The receipt from the receiving access point, if transaction was
+            successful
+        errors:
+          type: string
+          format: uri
+          readOnly: true
+          description: A list of errors for this transaction
+        logs:
+          type: string
+          format: uri
+          readOnly: true
+          description: Log messages for this transaction
+      required:
+        - document
+        - errors
+        - logs
+        - organization
+        - pdf
+        - receipt
+        - sbdh
+        - self
+    SendTransactionStateEnum:
+      enum:
+        - QUEUED
+        - SENDING
+        - SENT
+        - DEFERRED
+        - ERROR
+      type: string
+      description: |-
+        * `QUEUED` - queued
+        * `SENDING` - sending
+        * `SENT` - sent
+        * `DEFERRED` - deferred
+        * `ERROR` - error
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          writeOnly: true
+      required:
+        - access
+        - refresh
+    TriggerTypeEnum:
+      enum:
+        - API_CALL
+        - SEND_EMAIL
+      type: string
+      description: >-
+        * `API_CALL` - API call
+
+        * `SEND_EMAIL` - Basic email, a default template and optional document
+        contents as attachments
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
+    jwtAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Token-based authentication with required prefix "JWT"
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Token-based authentication with required prefix "Token"
+syncables:
+  sendTransactions:
+    description: Invoice and Credit Note Documents sent by the authenticated user.
+    type: collection
+    get:
+      path: /api/v2/send-transactions
+      field: results
+      paging:
+        offsetParam: offset
+        limitParam: limit
+  receiveTransactions:
+    description: Invoice and Credit Note Documents received by the authenticated user.
+    type: collection
+    get:
+      path: /api/v2/receive-transactions
+      field: results
+      paging:
+        offsetParam: offset
+        limitParam: limit
+

@@ -1,0 +1,20 @@
+openapi: 3.0.0
+info:
+  description: Add syncables to the Peppyrus Peppol API.
+actions:
+- target: servers[0]
+  update:
+    url: https://api.test.peppyrus.be/v1
+- target: $
+  update:
+    syncables:
+      message:
+        description: |-
+          Invoice and Credit Note Documents received or sent by the authenticated user.
+        type: collection
+        get:
+          path: /message/list
+          field: items
+          paging:
+            pageParam: page # optional for first page, >=1 for subsequent pages
+            pageSizeParam: perPage

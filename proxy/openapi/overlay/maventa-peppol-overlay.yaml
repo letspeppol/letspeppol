@@ -1,0 +1,18 @@
+openapi: 3.0.0
+info:
+  description: Add syncables to the Maventa Peppol API.
+actions:
+- target: $
+  update:
+    syncables:
+      invoices:
+        description: |-
+          Invoice Documents received or sent by the authenticated user.
+        type: collection
+        get:
+          path: /v1/invoices
+          paging:
+            pageParam: page
+            pageSizeParam: per_page
+            minDateIncl: created_at_start
+            maxDateIncl: created_at_end
