@@ -1,14 +1,34 @@
 import {bindable} from "aurelia";
+import {DocumentType} from "../../invoice-context";
+import {CreditNote, Invoice} from "../../../services/peppol/ubl";
+import {resolve} from "@aurelia/kernel";
+import {InvoiceComposer} from "../../invoice-composer";
 
 export class InvoiceModal {
+    private readonly invoiceComposer = resolve(InvoiceComposer);
+    private documentTypes = Object.values(DocumentType) as string[];
     @bindable invoiceContext;
+    @bindable originalDocumentType: DocumentType;
     open = false;
-    paymentTerms: string;
-    issueDate: string;
-    dueDate: string;
+    id: string;
+    selectedDocumentType: DocumentType;
+    buyerReference: string;
+    note: string;
 
     showModal() {
-        this.paymentTerms = JSON.parse(JSON.stringify(this.invoiceContext.selectedInvoice.PaymentTerms));
+        this.selectedDocumentType = JSON.parse(JSON.stringify(this.originalDocumentType));
+        this.id = undefined;
+        this.buyerReference = undefined;
+        this.note = undefined;
+        if (this.invoiceContext.selectedInvoice.ID) {
+            this.id = JSON.parse(JSON.stringify(this.invoiceContext.selectedInvoice.ID));
+        }
+        if (this.invoiceContext.selectedInvoice.BuyerReference) {
+            this.buyerReference = JSON.parse(JSON.stringify(this.invoiceContext.selectedInvoice.BuyerReference));
+        }
+        if (this.invoiceContext.selectedInvoice.Note) {
+            this.note = JSON.parse(JSON.stringify(this.invoiceContext.selectedInvoice.Note));
+        }
         this.open = true;
     }
 
@@ -16,22 +36,19 @@ export class InvoiceModal {
         this.open = false;
     }
 
-    saveDate() {
+    saveInvoiceInfo() {
         this.open = false;
-        this.invoiceContext.selectedInvoice.PaymentMeans = this.paymentMeans;
-    }
-
-    paymentMeansCodeChanged() {
-        if (!this.selectedPaymentMeansCode) {
-            this.paymentMeans = null;
-            return;
+        if (this.selectedDocumentType !== this.originalDocumentType) {
+            this.originalDocumentType = this.selectedDocumentType;
+            if (this.selectedDocumentType === DocumentType.Invoice) {
+                this.invoiceContext.selectedInvoice = this.invoiceComposer.creditNoteToInvoice(this.invoiceContext.selectedInvoice as unknown as CreditNote);
+            } else {
+                this.invoiceContext.selectedInvoice = this.invoiceComposer.invoiceToCreditNote(this.invoiceContext.selectedInvoice as Invoice);
+            }
         }
-        console.log(this.selectedPaymentMeansCode);
-        const index = this.invoiceContext.paymentMeansCodes.find(item => item.value === this.selectedPaymentMeansCode);
-        if (index >= 0) {
-            this.paymentMeans.PaymentMeansCode = JSON.parse(JSON.stringify(this.invoiceContext.paymentMeansCodes[index]));
-            console.log(this.paymentMeans.PaymentMeansCode.value);
-            console.log(this.paymentMeans.PaymentMeansCode.__name);
-        }
+        this.invoiceContext.selectedInvoice.ID = this.id;
+        this.invoiceContext.selectedInvoice.BuyerReference = this.buyerReference;
+        this.invoiceContext.selectedInvoice.Note = this.note;
+        console.log(this.originalDocumentType);
     }
 }

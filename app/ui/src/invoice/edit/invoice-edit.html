@@ -6,7 +6,7 @@
 <import from="./components/validation-result-modal"></import>
 <import from="./components/product-name-search"></import>
 
-<invoice-modal component.ref="invoiceModal" invoice-context.bind="invoiceContext"></invoice-modal>
+<invoice-modal component.ref="invoiceModal" invoice-context.bind="invoiceContext" original-document-type.two-way="selectedDocumentType"></invoice-modal>
 <invoice-date-modal component.ref="invoiceDateModal" invoice-context.bind="invoiceContext"></invoice-date-modal>
 <invoice-customer-modal component.ref="invoiceCustomerModal" invoice-context.bind="invoiceContext"></invoice-customer-modal>
 <invoice-payment-modal component.ref="invoicePaymentModal" invoice-context.bind="invoiceContext" selected-payment-means-code.bind="selectedPaymentMeansCode"></invoice-payment-modal>
@@ -27,52 +27,18 @@
 
     <form id="invoiceForm" class="card composer-card">
         <div  class="composer-head">
-<!--            <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(&#45;&#45;space-09);">-->
-<!--                <label class="field">-->
-<!--                    <span>Document</span>-->
-<!--                    <select name="documentType" value.bind="selectedDocumentType" required>-->
-<!--                        <option repeat.for="type of documentTypes" value.bind="type">${type}</option>-->
-<!--                    </select>-->
-<!--                </label>-->
-<!--                <label class="field">-->
-<!--                    <span>Invoice number</span>-->
-<!--                    <input type="text" name="docNumber" placeholder.bind="selectedDocumentType === 'Invoice' ? 'INV-2025-0001' : 'CRE-2025-0001'" value.bind="invoiceContext.selectedInvoice.ID" required />-->
-<!--                </label>-->
-<!--                <label class="field">-->
-<!--                    <span>Buyer Reference</span>-->
-<!--                    <input type="text" name="reference" placeholder="PO-12345" value.bind="invoiceContext.selectedInvoice.BuyerReference" required />-->
-<!--                </label>-->
-<!--                <label class="field">-->
-<!--                    <span>Issue Date</span>-->
-<!--                    <input type="date" name="issueDate" value.bind="invoiceContext.selectedInvoice.IssueDate" required />-->
-<!--                </label>-->
-<!--                <label class="field" if.bind="selectedDocumentType === 'Invoice'">-->
-<!--                    <span>Due Date</span>-->
-<!--                    <input type="date" name="dueDate" value.bind="invoiceContext.selectedInvoice.DueDate" required />-->
-<!--                </label>-->
-<!--                <label class="field full">-->
-<!--                    <details>-->
-<!--                        <summary><span>Note (optional)</span></summary>-->
-<!--                        <textarea name="note" style="min-width: 100%" placeholder="Additional notes for this invoice"></textarea>-->
-<!--                    </details>-->
-<!--                </label>-->
-<!--            </div>-->
-
             <div class="composer-info">
                 <div style="display: flex; flex-direction: row;">
                     <div class="card-header">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-text-icon lucide-file-text"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
-                        <h5 style="margin: 0">
-                            <span if.bind="selectedDocumentType === 'Invoice'">Invoice</span>
-                            <span else>Credit Note</span>
-                        </h5>
+                        <h5 style="margin: 0"><span t="documentType.${selectedDocumentType}"></span></h5>
                     </div>
 
                     <button class="icon-btn" title="Edit" click.trigger="showInvoiceModal()">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pen-icon lucide-pen"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>
                     </button>
                 </div>
-                <span>Invoice Number</span>
+                <div><span t="documentType.${selectedDocumentType}"></span><span> Number</span></div>
                 <b>${invoiceContext.selectedInvoice.ID}</b>
                 <span>Buyer Reference</span>
                 <b>${invoiceContext.selectedInvoice.BuyerReference}</b>
@@ -155,7 +121,12 @@
                 <table class="data-table line-table">
                     <thead>
                     <tr>
-                        <th style="width:80px">Pos</th>
+                        <th style="width:80px; display: flex">
+                            Pos
+                            <button class="icon-btn" data-action="remove-line" title="Recreate line positions" click.trigger="recalculateLinePositions()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-restart-icon lucide-list-restart"><path d="M21 5H3"/><path d="M7 12H3"/><path d="M7 19H3"/><path d="M12 18a5 5 0 0 0 9-3 4.5 4.5 0 0 0-4.5-4.5c-1.33 0-2.54.54-3.41 1.41L11 14"/><path d="M11 10v4h4"/></svg>
+                            </button>
+                        </th>
                         <th style="width:18%">Name</th>
                         <th>Description</th>
                         <th class="num" style="width:120px">Amount</th>
@@ -199,5 +170,13 @@
             </div>
         </div>
         <button type="button" class="btn primary" click.trigger="addLine()">+ Add line</button>
+        <div if.bind="invoiceContext.selectedInvoice.Note" style="margin-top: 20px">
+            <div class="line-items-head">
+                <h3>Note</h3>
+            </div>
+            <label class="field">
+                <textarea name="note" placeholder="Additional notes for this invoice" value.bind="invoiceContext.selectedInvoice.Note" disabled></textarea>
+            </label>
+        </div>
     </form>
 </div>

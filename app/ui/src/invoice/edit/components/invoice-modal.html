@@ -7,19 +7,35 @@
         </header>
         <div class="modal-body">
             <div style="display: inline-grid; gap: var(--space-1)">
-                <label class="field">
-                    <span>Type</span>
-                    <select name="paymentMeanCode" value.bind="selectedPaymentMeansCode" change.trigger="paymentMeansCodeChanged()" required>
-                        <option value="">None</option>
-                        <option repeat.for="paymentMeanCode of invoiceContext.paymentMeansCodes" model.bind="paymentMeanCode.value">${paymentMeanCode.__name}</option>
-                    </select>
-                </label>
-
+                <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-09);">
+                    <label class="field" >
+                        <span>Document</span>
+                        <select name="documentType" value.bind="selectedDocumentType" required>
+                            <option repeat.for="type of documentTypes" value.bind="type">
+                                <span t="documentType.${type}"></span>
+                            </option>
+                        </select>
+                    </label>
+                    <label class="field">
+                        <span>Invoice number</span>
+                        <input type="text" name="docNumber" placeholder.bind="selectedDocumentType === 'Invoice' ? 'INV-2025-0001' : 'CRE-2025-0001'" value.bind="id" required />
+                    </label>
+                    <label class="field">
+                        <span>Buyer Reference</span>
+                        <input type="text" name="reference" placeholder="PO-12345" value.bind="buyerReference" required />
+                    </label>
+                    <label class="field full">
+                        <details>
+                            <summary><span>Note (optional)</span></summary>
+                            <textarea name="note" style="min-width: 100%" placeholder="Additional notes for this invoice" value.bind="note"></textarea>
+                        </details>
+                    </label>
+                </div>
             </div>
         </div>
         <footer class="modal-footer">
             <button type="button" class="btn" click.trigger="closeModal()">Cancel</button>
-            <button type="button" class="btn primary" click.trigger="savePaymentMeans()">Confirm</button>
+            <button type="button" class="btn primary" click.trigger="saveInvoiceInfo()">Confirm</button>
         </footer>
     </div>
 </div>

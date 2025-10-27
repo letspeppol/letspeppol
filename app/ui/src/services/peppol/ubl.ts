@@ -47,6 +47,7 @@ export interface UBLBase {
     ID: string;
     IssueDate: string;
     DueDate?: string;
+    Note?: string;
     DocumentCurrencyCode?: string;
     AccountingCost?: string;
     BuyerReference?: string;

@@ -24,5 +24,9 @@
     "30_DAYS" :  "30 days",
     "60_DAYS" : "60 days",
     "END_OF_NEXT_MONTH" : "End of the month"
+  },
+  "documentType" : {
+    "invoice" : "Invoice",
+    "credit-note" : "Credit Note"
   }
 }

@@ -117,7 +117,7 @@
                     <label class="field full">
                         <span>Payment Terms</span>
                         <select value.bind="company.paymentTerms">
-                            <option repeat.for="terms of PAYMENT_TERMS" value.bind="terms">
+                            <option repeat.for="terms of getPaymentTerms()" value.bind="terms">
                                 <span t="paymentTerms.${terms}"></span>
                             </option>
                         </select>

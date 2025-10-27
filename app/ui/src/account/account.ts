@@ -70,4 +70,8 @@ export class Account {
     showChangePasswordModal() {
         this.changePasswordModal.showChangePasswordModal();
     }
+
+    getPaymentTerms() {
+        return Account.PAYMENT_TERMS;
+    }
 }

@@ -28,7 +28,7 @@ export class InvoiceEdit {
     private invoiceContext = resolve(InvoiceContext);
     private invoiceCalculator = resolve(InvoiceCalculator);
     private invoiceComposer = resolve(InvoiceComposer);
-    private documentTypes = Object.values(DocumentType) as string[];
+
     selectedPaymentMeansCode: number | undefined = 30;
     @observable selectedDocumentType = DocumentType.Invoice;
     @observable customerCompanyNumber: undefined | string;
@@ -57,10 +57,11 @@ export class InvoiceEdit {
 
     addLine() {
         let line: UBLLine;
+        const pos = this.invoiceContext.getNextPosition();
         if (this.selectedDocumentType === DocumentType.Invoice) {
-            line = this.invoiceComposer.getInvoiceLine("1");
+            line = this.invoiceComposer.getInvoiceLine(pos);
         } else {
-            line = this.invoiceComposer.getCreditNoteLine("1");
+            line = this.invoiceComposer.getCreditNoteLine(pos);
         }
         this.invoiceContext.lines.push(line);
     }
@@ -147,11 +148,9 @@ export class InvoiceEdit {
         console.log(newValue);
     }
 
-    selectedDocumentTypeChanged(newValue) {
-        if (newValue === DocumentType.Invoice) {
-            this.invoiceContext.selectedInvoice = this.invoiceComposer.creditNoteToInvoice(this.invoiceContext.selectedInvoice as unknown as CreditNote);
-        } else {
-            this.invoiceContext.selectedInvoice = this.invoiceComposer.invoiceToCreditNote(this.invoiceContext.selectedInvoice as Invoice);
+    recalculateLinePositions() {
+        for (let i = 0; i < this.invoiceContext.lines.length; i++) {
+            this.invoiceContext.lines[i].ID = (i + 1).toString();
         }
     }
 

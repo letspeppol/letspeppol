@@ -16,8 +16,8 @@ import {AlertType} from "../components/alert/alert";
 import {InvoiceDraftDto} from "../services/app/invoice-service";
 
 export enum DocumentType {
-    Invoice = "Invoice",
-    CreditNote = "Credit Note"
+    Invoice = "invoice",
+    CreditNote = "credit-note"
 }
 
 // export interface PaymentMeansCode {
@@ -31,6 +31,7 @@ export class InvoiceContext {
     private readonly companyService = resolve(CompanyService);
     private readonly invoiceComposer = resolve(InvoiceComposer);
     private readonly invoiceCalculator = resolve(InvoiceCalculator);
+    selectedDocumentType: DocumentType = DocumentType.Invoice;
     lines : undefined | InvoiceLine[] | CreditNoteLine[];
     drafts: InvoiceDraftDto[] = [];
     @observable selectedInvoice:  undefined | Invoice | CreditNote;
@@ -69,7 +70,7 @@ export class InvoiceContext {
         line.LineExtensionAmount.value = 10.66;
 
         const jop = this.selectedInvoice as Invoice;
-        jop.ID = "INV-2025-0001";
+        jop.ID = "20250001";
         jop.BuyerReference = "PO-12345";
         jop.AccountingCustomerParty.Party.EndpointID.value = "0705969661";
         jop.AccountingCustomerParty.Party.PartyName.Name = "Ponder Source";
@@ -81,6 +82,12 @@ export class InvoiceContext {
     }
 
     getNextPosition(): string {
+        if (this.lines.length && this.lines[this.lines.length - 1]) {
+            const id = parseInt(this.lines[this.lines.length - 1].ID);
+            if (!isNaN(id)) {
+                return (id + 1).toString();
+            }
+        }
         return "1";
     }
 
