@@ -21,19 +21,19 @@ export function parseDocument(documentXml: string): { sender: string | undefined
   if (!docType) {
     throw new Error('Could not determine document type from XML');
   }
-  const sender = jObj[docType]?.['cac:AccountingSupplierParty']?.['cac:Party']?.['cbc:EndpointID'];
-  const recipient = jObj[docType]?.['cac:AccountingCustomerParty']?.['cac:Party']?.['cbc:EndpointID'];
-  if (!sender['#text']) {
+  const sender = jObj[docType]?.['cac:AccountingSupplierParty']?.['cac:Party'];
+  const recipient = jObj[docType]?.['cac:AccountingCustomerParty']?.['cac:Party'];
+  if (!sender?.['cbc:EndpointID']?.['#text']) {
     throw new Error('Missing sender EndpointID text');
   }
-  if (!recipient['#text']) {
+  if (!recipient?.['cbc:EndpointID']?.['#text']) {
     throw new Error('Missing recipient EndpointID text');
   }
   return {
-    sender: `${sender['@_schemeID']}:${sender['#text']}`,
-    senderName: jObj[docType]?.['cac:AccountingSupplierParty']?.['cac:Party']?.['cac:PartyName']?.['cbc:Name'],
-    recipient: `${recipient['@_schemeID']}:${recipient['#text']}`,
-    recipientName: jObj[docType]?.['cac:AccountingCustomerParty']?.['cac:Party']?.['cac:PartyName']?.['cbc:Name'],
+    sender: sender?.['cbc:EndpointID']?.['#text'],
+    senderName: sender?.['cac:PartyName']?.['cbc:Name'],
+    recipient: recipient?.['cbc:EndpointID']?.['#text'],
+    recipientName: recipient?.['cac:PartyName']?.['cbc:Name'],
     amount: parseFloat(jObj[docType]?.['cac:LegalMonetaryTotal']?.['cbc:PayableAmount']?.['#text']),
     docType: docType === 'Invoice' ? 'Invoice' : docType === 'CreditNote' ? 'CreditNote' : undefined,
     docId: jObj[docType]?.['cbc:ID'],

@@ -30,9 +30,9 @@ function getAuthMiddleware(secretKey: string) {
 
 export type ServerOptions = {
   PORT: string;
-  ACUBE_TOKEN: string;
   PEPPYRUS_TOKEN_TEST: string;
   ACCESS_TOKEN_KEY: string;
+  DATABASE_URL: string;
 };
 
 const optionsToRequire = ['PORT', 'PEPPYRUS_TOKEN_TEST', 'ACCESS_TOKEN_KEY', 'DATABASE_URL'];

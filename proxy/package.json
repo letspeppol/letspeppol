@@ -35,7 +35,7 @@
     "build:watch": "tsc -w -p tsconfig.json",
     "build:release": "pnpm run clean && tsc -p tsconfig.release.json",
     "lint": "eslint .",
-    "test": "vitest run unit --config __tests__/vitest.config.ts",
+    "test": "DATABASE_URL=\"postgres://syncables:syncables@localhost:5432/syncables?sslmode=disable\" vitest run unit --config __tests__/vitest.config.ts",
     "test:coverage": "vitest run unit --config __tests__/vitest.config.ts --coverage.enabled --coverage.all",
     "prettier": "prettier \"{src,__{tests}__}/**/*.{ts,mts}\" --config .prettierrc --write",
     "prettier:check": "prettier \"{src,__{tests}__}/**/*.{ts,mts}\" --config .prettierrc --check",
