@@ -27,7 +27,7 @@ export class Login {
     async loginSuccess() {
         await this.companyService.getAndSetMyCompanyForToken();
         this.error = false;
-        // await this.router.load('invoices');
+        await this.router.load('invoices');
     }
 
     verifyAuthenticated() {

@@ -13,9 +13,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-@Component
 @Slf4j
 @RequiredArgsConstructor
+@Component
 public class DataInitializer implements CommandLineRunner {
 
     private final CustomerRepository customerRepository;
@@ -32,17 +32,23 @@ public class DataInitializer implements CommandLineRunner {
             companyRepository.save(c);
             directorRepository.save(new Director("Bart In Stukken", c));
             directorRepository.save(new Director("Wout Schattebout", c));
+            Customer customer = Customer.builder()
+                    .company(c)
+                    .email("test@softwareoplossing.be")
+                    .passwordHash(passwordEncoder.encode("test"))
+                    .build();
+            customerRepository.save(customer);
             log.info("Seeded sample company {}", companyNumber);
         }
         companyNumber = "0705969661";
         if (companyRepository.findByCompanyNumber(companyNumber).isEmpty()) {
-            Company c = new Company(companyNumber, "0705969661", "Hasselt", "3500", "Demerstraat", "2");
+            Company c = new Company(companyNumber, "Digita bv.", "Hasselt", "3500", "Demerstraat", "2");
             companyRepository.save(c);
             directorRepository.save(new Director("Michiel Wouters", c));
             directorRepository.save(new Director("Saskia Verellen", c));
             Customer customer = Customer.builder()
                     .company(c)
-                    .email("michiel@test.be")
+                    .email("michiel@digita.be")
                     .passwordHash(passwordEncoder.encode("test"))
                     .build();
             customerRepository.save(customer);

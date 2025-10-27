@@ -1,0 +1,7 @@
+<import from="../heading/heading"></import>
+<import from="../invoice/invoice-overview"></import>
+<import from="../invoice/edit/invoice-edit"></import>
+
+<heading></heading>
+<invoice-overview show.bind="!invoiceContext.selectedInvoice"></invoice-overview>
+<invoice-edit show.bind="invoiceContext.selectedInvoice"></invoice-edit>

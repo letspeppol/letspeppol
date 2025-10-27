@@ -9,7 +9,7 @@ import lombok.Setter;
 import java.time.Instant;
 
 @Entity
-@Table(name = "customer_identity_verifications", indexes = {
+@Table(name = "customer_identity_verification", indexes = {
         @Index(name = "idx_customer", columnList = "customer_id")
 })
 @Getter

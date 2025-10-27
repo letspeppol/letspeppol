@@ -1,0 +1,35 @@
+<div class="modal" role="dialog" aria-modal="true" show.bind="open">
+    <div class="modal-backdrop"></div>
+    <div class="modal-card" role="document">
+        <header class="modal-header">
+            <h2>Payment</h2>
+            <button class="icon-btn" aria-label="Close dialog" click.trigger="closeModal()">×</button>
+        </header>
+        <div class="modal-body">
+            <div style="display: inline-grid; gap: var(--space-1)">
+                <!--                        <h3 class="field full" style="margin-bottom: 0px">Payment</h3>-->
+                <label class="field">
+                    <span>Type</span>
+                    <select name="paymentMeanCode" value.bind="selectedPaymentMeansCode" change.trigger="paymentMeansCodeChanged()" required>
+                        <option repeat.for="paymentMeanCode of invoiceContext.paymentMeansCodes" model.bind="paymentMeanCode.value">${paymentMeanCode.__name}</option>
+                    </select>
+                    <!-- ${invoiceContext.selectedInvoice.PaymentMeans.PaymentMeansCode.value} ${invoiceContext.selectedInvoice.PaymentMeans.PaymentMeansCode.__name} -->
+                </label>
+                <template if.bind="invoiceContext.selectedInvoice.PaymentMeans.PaymentMeansCode.value === 30">
+                    <label class="field">
+                        <span>Name</span>
+                        <input type="text" name="payeeFinancialAccountName" placeholder="Acccount name" value.bind="invoiceContext.selectedInvoice.PaymentMeans.PayeeFinancialAccount.Name" />
+                    </label>
+                    <label class="field">
+                        <span>IBAN</span>
+                        <input type="text" name="payeeFinancialAccountID" placeholder="IBAN" value.bind="invoiceContext.selectedInvoice.PaymentMeans.PayeeFinancialAccount.ID" />
+                    </label>
+                </template>
+            </div>
+        </div>
+        <footer class="modal-footer">
+            <button type="button" class="btn" click.trigger="closeModal()">Cancel</button>
+            <button type="button" class="btn primary" data-dialog-confirm>Confirm</button>
+        </footer>
+    </div>
+</div>

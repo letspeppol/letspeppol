@@ -26,12 +26,13 @@ import static io.tubs.kyc.service.signing.CertificateUtil.getRDNName;
 @RequiredArgsConstructor
 public class IdentityVerificationService {
 
+    private final AppService appService;
     private final CustomerIdentityVerificationRepository civRepository;
     private final CustomerRepository customerRepository;
+    private final EncryptionService encryptionService;
+    private final JwtService jwtService;
     private final LetsPeppolProxyService letsPeppolProxyService;
     private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
-    private final EncryptionService encryptionService;
 
     public void verifyNotRegistered(String email) {
         if (customerRepository.existsByEmail(email)) {
@@ -51,9 +52,6 @@ public class IdentityVerificationService {
         customer.setCompany(req.director().getCompany());
         customerRepository.save(customer);
 
-        String token = jwtService.generateToken("0208:" + req.director().getCompany().getCompanyNumber().replaceAll("BE", "")); // TODO ?
-        letsPeppolProxyService.registerCompany(token);
-
         CustomerIdentityVerification civ = new CustomerIdentityVerification(
                 customer,
                 req.director(),
@@ -65,8 +63,12 @@ public class IdentityVerificationService {
                 encryptionService.encrypt(req.certificate()),
                 encryptionService.encrypt(req.signature())
         );
-
         civRepository.save(civ);
+
+        String token = jwtService.generateToken("0208:" + req.director().getCompany().getCompanyNumber().replaceAll("BE", "")); // TODO ?
+        letsPeppolProxyService.registerCompany(token);
+        appService.register(req);
+
         log.info("Identity verified for email={} director={} serial={}", customer.getEmail(), req.director().getName(), req.x509Certificate().getSerialNumber());
     }
 

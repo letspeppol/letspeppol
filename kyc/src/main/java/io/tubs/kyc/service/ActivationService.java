@@ -25,6 +25,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class ActivationService {
+
     private final EmailVerificationRepository verificationRepository;
     private final JavaMailSender mailSender;
     private final CompanyService companyService;

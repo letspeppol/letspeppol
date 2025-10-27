@@ -1,36 +1,33 @@
 import { resolve } from '@aurelia/kernel';
-import { IHttpClient } from '@aurelia/fetch-client';
 import {singleton} from "aurelia";
-import {KYCApi} from "./api/kyc-api";
+import {AppApi} from "./api/app-api";
 
 export interface CompanyResponse {
-    id: number,
     companyNumber: string,
-    name: string;
-    street: string;
-    city: string;
-    postalCode: string;
-    directors?: Director[];
+    name: string,
+    subscriber: string,
+    subscriberEmail: string,
+    paymentTerms: string,
+    iban: string,
+    paymentAccountName: string,
+    registeredOffice: Address
 }
 
-export interface Director {
-    id: number;
-    name: string;
+export interface Address {
+    city: string,
+    postalCode: string,
+    street: string,
+    houseNumber: string
 }
 
 @singleton()
 export class CompanyService {
-    public kycApi = resolve(KYCApi);
+    public appApi = resolve(AppApi);
     public myCompany: CompanyResponse;
 
-    async getCompany(companyNumber: string): Promise<CompanyResponse>  {
-        const response = await this.kycApi.httpClient.get(`/api/company/${companyNumber}`);
-        return response.json();
-    }
-
-    async getAndSetMyCompanyForToken() : Promise<void> {
-        const response = await this.kycApi.httpClient.get(`/api/company`);
-        this.myCompany = await response.json();
+    async getAndSetMyCompanyForToken() : Promise<CompanyResponse> {
+        this.myCompany = await this.appApi.httpClient.get(`/api/company`).then(response => response.json());
+        return Promise.resolve(this.myCompany);
     }
 
 }

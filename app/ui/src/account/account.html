@@ -1,0 +1,83 @@
+<import from="../heading/heading"></import>
+
+<heading></heading>
+
+<main class="container">
+    <div class="section-header">
+        <h1>Account</h1>
+        <div class="actions">
+            <button class="btn primary" click.trigger="invoiceContext.newUBLDocument()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save-icon lucide-save"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>
+                Save
+            </button>
+        </div>
+    </div>
+    <section class="section active">
+        <div style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+
+            <div class="card">
+                <h2>Company Info</h2>
+                <div style="display: grid; gap: var(--space-1)">
+                    <label class="field">
+                        <span>VAT Number</span>
+                        <input type="text" value.bind="company.companyNumber" disabled />
+                    </label>
+                    <label class="field">
+                        <span>Company name</span>
+                        <input type="text" value.bind="company.name" disabled />
+                    </label>
+                </div>
+            </div>
+            <div class="card" style="min-width: 320px">
+                <h2>Address</h2>
+                <div class="grid">
+                    <label class="field">
+                        <span>City</span>
+                        <input type="text" value.bind="company.registeredOffice.city" />
+                    </label>
+                    <label class="field">
+                        <span>Postal Code</span>
+                        <input type="text" value.bind="company.registeredOffice.postalCode" />
+                    </label>
+                    <label class="field">
+                        <span>Street</span>
+                        <input type="text" value.bind="company.registeredOffice.street" />
+                    </label>
+                    <label class="field">
+                        <span>Number</span>
+                        <input type="text" value.bind="company.registeredOffice.houseNumber" />
+                    </label>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Subscriber Info</h2>
+                <label class="field">
+                    <span>Name</span>
+                    <input type="text" value.bind="company.subscriber" disabled />
+                </label>
+                <label class="field">
+                    <span>Email</span>
+                    <input type="text" value.bind="company.email" disabled />
+                </label>
+            </div>
+
+            <div class="card">
+                <h2>Payment Info</h2>
+                <label class="field">
+                    <span>IBAN</span>
+                    <input type="text" value.bind="company.iban" />
+                </label>
+                <label class="field">
+                    <span>Account Name</span>
+                    <input type="text" value.bind="company.paymentAccountName" />
+                </label>
+                <label class="field">
+                    <span>Payment Terms</span>
+                    <input type="text" value.bind="company.paymentTerms" />
+                </label>
+            </div>
+
+        </div>
+    </section>
+</main>

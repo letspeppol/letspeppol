@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "companies", indexes = {
+@Table(name = "company", indexes = {
         @Index(name = "uk_company_number", columnList = "companyNumber", unique = true)
 })
 @Getter
@@ -33,6 +33,8 @@ public class Company {
     private String street;
 
     private String houseNumber;
+
+    private boolean synced = false;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Director> directors = new ArrayList<>();

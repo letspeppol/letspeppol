@@ -1,11 +1,25 @@
 import {resolve} from "@aurelia/kernel";
-import {CompanyResponse} from "./company-service";
 import {KYCApi} from "./api/kyc-api";
 import {SignatureAlgorithm} from "@web-eid/web-eid-library/models/SignatureAlgorithm";
 
 export interface TokenVerificationResponse {
     email: string;
-    company: CompanyResponse;
+    company: KycCompanyResponse;
+}
+
+export interface KycCompanyResponse {
+    id: number,
+    companyNumber: string,
+    name: string;
+    street: string;
+    city: string;
+    postalCode: string;
+    directors?: Director[];
+}
+
+export interface Director {
+    id: number;
+    name: string;
 }
 
 export interface PrepareSigningRequest {
@@ -35,6 +49,11 @@ export interface FinalizeSigningRequest {
 
 export class RegistrationService {
     public kycApi = resolve(KYCApi);
+
+    async getCompany(companyNumber: string): Promise<KycCompanyResponse>  {
+        const response = await this.kycApi.httpClient.get(`/api/company/${companyNumber}`);
+        return response.json();
+    }
 
     async confirmCompany(companyNumber: string, email: string) {
         const body = {

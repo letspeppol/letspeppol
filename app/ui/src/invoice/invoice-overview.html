@@ -1,0 +1,146 @@
+<import from="../value-converters/date-format.ts"></import>
+
+<main class="container">
+    <section class="section active">
+        <div class="invoices-layout">
+            <aside class="mailbox" aria-label="Invoice inboxes">
+                <div class="mailbox-title">Boxes</div>
+                <nav>
+                    <button active.class="box === 'all'" class="mail-item" click.trigger="setActiveItems('all')">
+                        <span class="label">All</span>
+                        <span class="badge">0</span>
+                    </button>
+                    <button active.class="box === 'outgoing'" class="mail-item" click.trigger="setActiveItems('outgoing')">
+                        <span class="label">Outgoing</span>
+                        <span class="badge">0</span>
+                    </button>
+                    <button active.class="box === 'incoming'" class="mail-item" click.trigger="setActiveItems('incoming')">
+                        <span class="label">Incoming</span>
+                        <span class="badge">0</span>
+                    </button>
+                </nav>
+            </aside>
+            <div class="invoices-main">
+                <!-- Editor header (visible when creating/editing) -->
+                <div class="section-header" hidden>
+                    <div style="display:flex;align-items:center;gap:.5rem">
+<!--                        <button class="btn" aria-label="Back to invoices">← Back</button>-->
+                        <h1 style="margin:0" >New invoice</h1>
+                    </div>
+<!--                    <div class="editor-header-actions">-->
+<!--                    </div>-->
+                </div>
+
+                <div>
+                    <div class="section-header">
+                        <h1>Invoices</h1>
+                        <div class="actions">
+                            <div class="filters">
+                                <label class="select" style="position: relative">
+                                    <select aria-label="Filter by document type">
+                                        <option value="all" selected>All</option>
+                                        <option value="invoice">Invoice</option>
+                                        <option value="credit-note">Credit note</option>
+                                    </select>
+                                </label>
+                                <label class="search">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                        <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                        <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.5"/>
+                                    </svg>
+                                    <input type="search" placeholder="Search customer or reference" aria-label="Search" />
+                                </label>
+                            </div>
+                            <button class="btn primary" click.trigger="invoiceContext.newUBLDocument()">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                    <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                                New invoice
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card table-card">
+                        <div class="table-wrapper">
+                            <table class="data-table" aria-describedby="invoices-title">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Doc</th>
+                                    <th class="th-filter">
+                                        <div class="th-inner">
+                                            <span>Date</span>
+                                            <button class="icon-btn filter-toggle" aria-expanded="false" aria-controls="dateFilterPanel" title="Filter by date">▾</button>
+                                        </div>
+                                        <div class="filter-panel" hidden>
+                                            <label class="field">
+                                                <span>From</span>
+                                                <input type="date" />
+                                            </label>
+                                            <label class="field">
+                                                <span>To</span>
+                                                <input type="date" />
+                                            </label>
+                                            <div class="panel-actions">
+                                                <button type="button" class="btn ghost">Clear</button>
+                                                <button type="button" class="btn primary">Apply</button>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th class="th-filter">
+                                        <div class="th-inner">
+                                            <span>Due date</span>
+                                            <button class="icon-btn filter-toggle" aria-expanded="false" aria-controls="endDateFilterPanel" title="Filter by end date">▾</button>
+                                        </div>
+                                        <div class="filter-panel" hidden>
+                                            <label class="field">
+                                                <span>From</span>
+                                                <input type="date" />
+                                            </label>
+                                            <label class="field">
+                                                <span>To</span>
+                                                <input type="date" />
+                                            </label>
+                                            <div class="panel-actions">
+                                                <button type="button" class="btn ghost">Clear</button>
+                                                <button type="button" class="btn primary">Apply</button>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th>Customer</th>
+                                    <th class="num">Total amount</th>
+                                    <th>Reference</th>
+                                    <th class="actions-col">Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    <tr repeat.for="item of activeItems" click.trigger="selectItem(item)">
+                                        <td><span class="pill" class.bind="item.type === 'invoice' ? 'sent' : 'incoming' ">${item.type}</span></td>
+                                        <td>${item.number}</td>
+                                        <td>${item.requestSentAt | dateFormat}</td>
+                                        <td></td>
+                                        <td>${item.recipientName}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div if.bind="!activeItems || activeItems.length === 0" class="empty-state" >
+                            <div class="empty-icon" aria-hidden="true">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                    <path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                                    <path d="M14 3v5h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <p>No invoices match your filters.</p>
+                        </div>
+                        <div class="table-footer pager" hidden>
+                            <button type="button" class="btn ghost">← Previous</button>
+                            <span class="pager-range"></span>
+                            <button type="button" class="btn ghost">Next →</button>
+                        </div>
+                    </div>
+                </div> <!-- /#invoicesOverview -->
+            </div>
+        </div>
+    </section>
+</main>

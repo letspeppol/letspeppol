@@ -1,0 +1,5 @@
+.card h2 {
+    margin: 0 0 var(--space-09) 0;
+    font-size: 1rem;
+    color: var(--muted);
+}

@@ -1,0 +1,41 @@
+<div class="modal" role="dialog" aria-modal="true" show.bind="open">
+    <div class="modal-backdrop"></div>
+    <div class="modal-card" role="document">
+        <header class="modal-header">
+            <h2>Customer</h2>
+            <button class="icon-btn" aria-label="Close dialog" click.trigger="closeModal()">×</button>
+        </header>
+        <div class="modal-body">
+            <div style="display: inline-grid; gap: var(--space-1)">
+                <h3 class="field full" style="margin-bottom: 0px">Customer</h3>
+                <label class="field">
+                    <span>VAT Number</span>
+                    <input type="text" name="customerId" placeholder="Search by VAT number" value.bind="customer.PartyIdentification[0].ID.value"  required change.trigger="vatChanged()" />
+                </label>
+                <label class="field">
+                    <span>Name</span>
+                    <input type="text" name="customerName" value.bind="customer.PartyName.Name" required />
+                </label>
+                <label class="field">
+                    <span>Street</span>
+                    <input type="text" name="customerStreet" value.bind="customer.PostalAddress.StreetName" required />
+                </label>
+                <label class="field">
+                    <span>City</span>
+                    <input type="text" name="customerCity" value.bind="customer.PostalAddress.CityName" required />
+                </label>
+                <label class="field">
+                    <span>Postal Code</span>
+                    <input type="text" name="customerPostalCode" value.bind="customer.PostalAddress.PostalZone" required />
+                </label>
+                <label class="field">
+                    <span>Country</span>
+                    <input type="text" name="customerCity" value="Belgium" required disabled />
+                </label>
+            </div>
+            <footer class="modal-footer">
+                <button type="button" class="btn" click.trigger="closeModal()">Cancel</button>
+                <button type="button" class="btn primary" click.trigger="saveCustomer()">Confirm</button>
+            </footer>
+        </div>
+    </div>
