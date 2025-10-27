@@ -1,6 +1,9 @@
 import jsonwebtoken from 'jsonwebtoken';
 
-export async function checkBearerToken(token: string, secretKey: string): Promise<string> {
+export async function checkBearerToken(
+  token: string,
+  secretKey: string,
+): Promise<string> {
   return new Promise((resolve, reject) => {
     jsonwebtoken.verify(token, secretKey, (err, payload) => {
       if (err) {

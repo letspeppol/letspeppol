@@ -1,4 +1,9 @@
-async function genDoc(docType: string, senderId: string, receiverId: string, docId: string): Promise<string> {
+async function genDoc(
+  docType: string,
+  senderId: string,
+  receiverId: string,
+  docId: string,
+): Promise<string> {
   const [senderScheme, senderSubId] = senderId.split(':');
   const [receiverScheme, receiverSubId] = receiverId.split(':');
   if (docType === 'invoice') {
@@ -543,9 +548,13 @@ async function genDoc(docType: string, senderId: string, receiverId: string, doc
 
 // ...
 if (process.argv.length !== 6) {
-  console.error('Usage: ts-node src/genDoc.ts <docType> <senderId> <receiverId> <docId>');
+  console.error(
+    'Usage: ts-node src/genDoc.ts <docType> <senderId> <receiverId> <docId>',
+  );
   process.exit(1);
 }
-genDoc(process.argv[2], process.argv[3], process.argv[4], process.argv[5]).then((doc) => {
-  console.log(doc);
-});
+genDoc(process.argv[2], process.argv[3], process.argv[4], process.argv[5]).then(
+  (doc) => {
+    console.log(doc);
+  },
+);

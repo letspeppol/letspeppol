@@ -4,8252 +4,8797 @@
  */
 
 export interface paths {
-    "/status/authenticated": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Status requiring authentication
-         * @description Returns information of currently authenticated identity. Only for testing purposes.
-         */
-        get: operations["getStatusAuthenticated"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/oauth2/token": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * OAuth2 token endpoint
-         * @description The endpoint enables a registered company to obtain a OAuth 2 Bearer Token, which can be used to access the companys data in all the future API calls.
-         *      A token will be active for 60 minutes.
-         *      #### Scopes
-         *      Scopes let you specify what type of access you need and limit access for granted OAuth tokens.
-         *
-         *      | Scope | Description |
-         *      |-------|-------------|
-         *                                 eui|  Recommended to use when integrating to EUI. Alias for eui:open, company:read, company:write, lookup, receivables:assignments, document:send, document:receive, invoice:receive, invoice:send, analysis|
-         *                             global|                                                                                                                                         Alias for company:read, document:receive, document:send, lookup|
-         *                            company|                                                                                                                                                                   Alias for company:read, company:write|
-         *                             lookup|                                                                                                                                                                  grants access to the lookup operations|
-         *                   document:receive|                                                                                                                                                            grants access to document receive operations|
-         *                      document:send|                                                                                                                                                               grants access to document send operations|
-         *                    invoice:receive|                                                                                                                                                             grants access to invoice receive operations|
-         *                       invoice:send|                                                                                                                                                                grants access to invoice send operations|
-         *                       company:read|                                                                                                                                      grants read access to company settings, profiles and notifications|
-         *                      company:write|                                                                                                                                     grants write access to company settings, profiles and notifications|
-         *                           validate|                                                                                                                                                      grants access to the AutoInvoice validator service|
-         *            receivables:assignments|                                                                                                                                                 grants access to assignments in the receivables service|
-         *                           analysis|                                                                                                                                                                       grants access to analysis service|
-         *                    billing:reports|                                                                                                                                                                        grants access to billing reports|
-         *     partner:invoice_delivery_actions|                                                                                                                                                                grants access to partner invoice actions|
-         *                    partner:lookups|                                                                                                                                                                 grants access to partner lookup actions|
-         *                  partner:takeovers|                                                                                                                                                                      grants access to partner takeovers|
-         *       partner:lyanthe_scan_service|                                                                                                                                                   grants access to partner lyanthe scan service actions|
-         *               fi_bank_message:send|                                                                                                                                                        grants access to FI bank message send operations|
-         *            fi_bank_message:receive|                                                                                                                                                     grants access to FI bank message receive operations|
-         *         operator:documents:receive|                                                                                                                                                               grants access to fetch received documents|
-         *            operator:documents:send|                                                                                                                                                                         grants access to send documents|
-         *                    operator:lookup|                                                                                                                                                     grants access to perform actions related to lookups|
-         *              operator:participants|                                                                                                                                               grants access to perform actions on operator participants|
-         *             operator:notifications|                                                                                                                                              grants access to perform actions on operator notifications|
-         *                  operator:validate|                                                                                                                                                      grants access to the AutoInvoice validator service|
-         *     operator:receivables:assignments|                                                                                                                                                    grants access to assignments the receivables service|
-         *     operator:receivables:assignments:create|                                                                                                                                          grants access to create assignments in the receivables service|
-         *     operator:receivables:account_statement|                                                                                                                                                                     grants access to account statements|
-         *                  operator:analysis|                                                                                                                                                                       grants access to analysis service|
-         *                 operator:companies|                                                                                                                                                               grants access to fetch operator companies|
-         *                  operator:takeover|                                                                                                                                                             grants access to execute a company takeover|
-         *           operator:billing:actions|                                                                                                                                                               grants access to operator billing actions|
-         *     operator:sending_parties:write|                                                                                                                                                                  grants access to write sending parties|
-         *     operator:supplier_bank_accounts:write|                                                                                                                                                           grants access to write supplier bank accounts|
-         *               operator:user:create|                                                                                                                                                                          grants access to create a user|
-         *              operator:company:read|                                                                                                                                                                  grants access to read company profiles|
-         *             operator:company:write|                                                                                                                                                                 grants access to write company profiles
-         *
-         *      If no scope is defined, the token request will default to use the scopes ```global``` and ```company```. The granted scopes will be returned in the response.
-         *      #### Vendor API key and license data
-         *      To identify the application a valid ```vendor_api_key``` should be provided in the token request. Additional license data can be provided as JSON in the ```license_data``` parameter:
-         *      ```
-         *     {
-         *       "key": "C84411ED-5639-4B48-83D0-B718BB9DA0F7", // License key of software making the call
-         *       "meta": {
-         *         "licensing":   "VLS",       // Information about the licensing system
-         *         "erp_name":    "Visma ERP", // Name of ERP
-         *         "erp_version": "1.1",       // Current version number of ERP
-         *         "erp_user":    "rbaardse"   // Local ERP user name
-         *       }
-         *     }
-         *     ```
-         */
-        post: operations["postOauth2Token"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/oauth2/current": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Fetch information about the authenticated user and company */
-        get: operations["getOauth2Current"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/odp/companies/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Fetch ODP company by id */
-        get: operations["getOdpCompaniesId"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** @description Update existing ODP company or create a new one if missing */
-        patch: operations["patchOdpCompaniesId"];
-        trace?: never;
-    };
-    "/v2/services/amili/receivables": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Current state of the Amili receivables service */
-        get: operations["getV2ServicesAmiliReceivables"];
-        /** Start the Amili Receivables service onboarding */
-        put: operations["putV2ServicesAmiliReceivables"];
-        post?: never;
-        /** Disable the Amili Receivables service */
-        delete: operations["deleteV2ServicesAmiliReceivables"];
-        options?: never;
-        head?: never;
-        /** Update the Amili Receivables service */
-        patch: operations["patchV2ServicesAmiliReceivables"];
-        trace?: never;
-    };
-    "/v2/services/intrum/receivables": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Current state of the Intrum receivables service */
-        get: operations["getV2ServicesIntrumReceivables"];
-        /** Start the Intrum Receivables service onboarding */
-        put: operations["putV2ServicesIntrumReceivables"];
-        post?: never;
-        /** Disable the Intrum Receivables service */
-        delete: operations["deleteV2ServicesIntrumReceivables"];
-        options?: never;
-        head?: never;
-        /** Update the Intrum Receivables service */
-        patch: operations["patchV2ServicesIntrumReceivables"];
-        trace?: never;
-    };
-    "/v1/services/receivables": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Current state of the receivables service */
-        get: operations["getV1ServicesReceivables"];
-        /** Start the Receivables service onboarding */
-        put: operations["putV1ServicesReceivables"];
-        post?: never;
-        /** Disable the Receivables service */
-        delete: operations["deleteV1ServicesReceivables"];
-        options?: never;
-        head?: never;
-        /** Update the Receivables service */
-        patch: operations["patchV1ServicesReceivables"];
-        trace?: never;
-    };
-    "/v1/services/atg": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List ATG agreements */
-        get: operations["getV1ServicesAtg"];
-        put?: never;
-        /** Create a new ATG agreement */
-        post: operations["postV1ServicesAtg"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/services/atg/mandates": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List B2C ATG mandates */
-        get: operations["getV1ServicesAtgMandates"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/services/atg/{account_number}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Fetch ATG agreement */
-        get: operations["getV1ServicesAtgAccountNumber"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Update existing ATG agreement */
-        patch: operations["patchV1ServicesAtgAccountNumber"];
-        trace?: never;
-    };
-    "/v1/services/op_invoice_credit/offer": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get an offer for OP Laskulaina before the activation */
-        get: operations["getV1ServicesOpInvoiceCreditOffer"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/services/op_invoice_credit": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Current information about the OP Laskulaina service */
-        get: operations["getV1ServicesOpInvoiceCredit"];
-        /** Start the OP Laskulaina onboarding */
-        put: operations["putV1ServicesOpInvoiceCredit"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/services/op_invoice_credit/settings": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Show current settings */
-        get: operations["getV1ServicesOpInvoiceCreditSettings"];
-        put?: never;
-        /** Modify settings */
-        post: operations["postV1ServicesOpInvoiceCreditSettings"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/services/op_invoice_credit/available_credit": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Check the credit balance */
-        get: operations["getV1ServicesOpInvoiceCreditAvailableCredit"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/services/op_invoice_credit/withdrawal": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Make a withdrawal */
-        post: operations["postV1ServicesOpInvoiceCreditWithdrawal"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/services/op_invoice_credit/direct_payment": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Make a direct payment
-         * @description Mark an invoice to be directly paid to the sender instead of the OP Invoice Credit account
-         */
-        post: operations["postV1ServicesOpInvoiceCreditDirectPayment"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/services/op_invoice_credit/account_statement": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Fetch account statement
-         * @description Returns the account statement per day in SEPA XML format
-         */
-        get: operations["getV1ServicesOpInvoiceCreditAccountStatement"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/services/detect/checks": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List enabled Detect checks */
-        get: operations["getV1ServicesDetectChecks"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Update Detect checks */
-        patch: operations["patchV1ServicesDetectChecks"];
-        trace?: never;
-    };
-    "/v1/services/autoscan": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** [EXPERIMENTAL] Current AutoScan configuration */
-        get: operations["getV1ServicesAutoscan"];
-        /** [EXPERIMENTAL] Activates AutoScan */
-        put: operations["putV1ServicesAutoscan"];
-        post?: never;
-        /** [EXPERIMENTAL] Deactivates AutoScan */
-        delete: operations["deleteV1ServicesAutoscan"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/services/scan": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** [EXPERIMENTAL] Current Scan configuration */
-        get: operations["getV1ServicesScan"];
-        /** [EXPERIMENTAL] Update scan account */
-        put: operations["putV1ServicesScan"];
-        /** [EXPERIMENTAL] Activate scan account */
-        post: operations["postV1ServicesScan"];
-        /** [EXPERIMENTAL] Deactivate scan account */
-        delete: operations["deleteV1ServicesScan"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/services/b2cno/consumers": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List B2CNO Consumers - DEPRECATED 2025 */
-        get: operations["getV1ServicesB2cnoConsumers"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/services/b2cno": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Information about B2CNO agreement */
-        get: operations["getV1ServicesB2cno"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/services/b2cse/agreement": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get status of B2CSE network reqistration request
-         * @description [EXPERIMENTAL] Get status of B2CSE network reqistration request
-         */
-        get: operations["getV1ServicesB2cseAgreement"];
-        put?: never;
-        /**
-         * Create B2CSE network registration request
-         * @description [EXPERIMENTAL] Open B2CSE network agreement with the details gotten from the bank. If FUI and agreement ID are not given, a new bank agreement will be created for B2C traffic.
-         */
-        post: operations["postV1ServicesB2cseAgreement"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/invoices/reports/definitions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Get useful definitions for user reports */
-        get: operations["getV1InvoicesReportsDefinitions"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/invoices": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List invoices */
-        get: operations["getV1Invoices"];
-        put?: never;
-        /** Upload new invoice */
-        post: operations["postV1Invoices"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/invoices/{id}/detect_results": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Fetch results provided by Detect service
-         * @description Returns the check results provided by the Detect service
-         *
-         *     The JSON (`application/json`) response contains the following fields.
-         *     - **status** The overall status of the executed checks.
-         *       - On status **OK** all the checks have been executed without findings.
-         *       - On status **DISABLED** the Detect service has not been enabled by the customer and no checks have been executed.
-         *       - On status **WARN** at least one of the checks has been executed with findings.
-         *     - **executed_checks** List of checks that were executed.
-         *     - **findings** List of findings that were found when executing the checks.
-         *
-         *     The `lang` request parameter can be used to specify the language the checks and findings will be presented in. The default language is English.
-         *
-         *     An example response:
-         *     ```
-         *     {
-         *       "status": "WARN",
-         *       "executed_checks": [
-         *         "Check if the supplier sent the material in a non-optimal way",
-         *         "Check that the sender's business ID is active",
-         *         "Check that the sender of the invoice is registered to charge VAT",
-         *         "Check if the sender of the invoice has had suspicious activity in the past"
-         *       ],
-         *       "findings": [
-         *         "The sender '9944556677' was found in Brønnøysundregistrene, but has been closed.",
-         *         "The sender 'NO9944556677MVA' is not found in VAT registry.",
-         *         "Something went wrong when executing the check. Detect could not automatically check if sender is found in a warning list."
-         *       ]
-         *     }
-         *     ```
-         */
-        get: operations["getV1InvoicesIdDetectResults"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/invoices/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Invoice details */
-        get: operations["getV1InvoicesId"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/invoices/{id}/actions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List invoice actions */
-        get: operations["getV1InvoicesIdActions"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/invoices/{id}/invoice_events": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Change state for recevied events */
-        patch: operations["patchV1InvoicesIdInvoiceEvents"];
-        trace?: never;
-    };
-    "/v1/invoices/{id}/files/{file_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Fetch file content */
-        get: operations["getV1InvoicesIdFilesFileId"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/invoices/{id}/reroute/einvoice": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** @description Reroutes invoice via einvoice */
-        put: operations["putV1InvoicesIdRerouteEinvoice"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/invoices/{id}/reroute/email": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** @description Reroutes invoice via email */
-        put: operations["putV1InvoicesIdRerouteEmail"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/invoices/{id}/reroute/print": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** @description Reroutes invoice via print */
-        put: operations["putV1InvoicesIdReroutePrint"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/invoices/{id}/reports": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Fetch user reports for invoice */
-        get: operations["getV1InvoicesIdReports"];
-        put?: never;
-        /** @description Report sender of fraud attempt */
-        post: operations["postV1InvoicesIdReports"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/invoices/{id}/reports/{report_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** @description Delete user report for invoice */
-        delete: operations["deleteV1InvoicesIdReportsReportId"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/invoices/{id}/assignment": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Get assignment for invoice */
-        get: operations["getV1InvoicesIdAssignment"];
-        put?: never;
-        /** @description Post assignment for invoice */
-        post: operations["postV1InvoicesIdAssignment"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/invoices/{id}/responses/nemhandel": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** @description Sets the business response for an invoice in the Nemhandel network. When an invoice has a final response you cannot set another response. The responses have to be set in a predefined order, specified by the standards.Note: This API has a vendor lock. To enable access, please contact Maventa Support before using this endpoint. */
-        post: operations["postV1InvoicesIdResponsesNemhandel"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/company/profiles": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List network registrations */
-        get: operations["getV1CompanyProfiles"];
-        put?: never;
-        /** Create network registration request */
-        post: operations["postV1CompanyProfiles"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/company/profiles/{id}/extensions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** @description EXPERIMENTAL Create extensions for profiles */
-        put: operations["putV1CompanyProfilesIdExtensions"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/company/profiles/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Fetch a network registration */
-        get: operations["getV1CompanyProfilesId"];
-        put?: never;
-        post?: never;
-        /** Delete a network registration */
-        delete: operations["deleteV1CompanyProfilesId"];
-        options?: never;
-        head?: never;
-        /** Update a network registration */
-        patch: operations["patchV1CompanyProfilesId"];
-        trace?: never;
-    };
-    "/v1/company/settings": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Fetch company settings */
-        get: operations["getV1CompanySettings"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /**
-         * Modify company settings
-         * @description ### Company billing details
-         *      ```
-         *     {
-         *       "billing_details": {
-         *         "electronic_invoicing_details": {
-         *           "invoicing_eia": "Company electronic invoicing address (Billing information: The delivery method priority is following 1 = einvoice, 2 = email, 3 = print, if all below values are given. If company prefers Invoicing via normal post, invoicing_eia, invoicing_operator and invoicing_email should be left blank).",
-         *           "invoicing_operator": "Company electronic invoicing operator address"
-         *         },
-         *         "invoicing_email": "info@company.com",
-         *         "invoicing_street_address1": "My street 1",
-         *         "invoicing_street_address2": "My street 2",
-         *         "invoicing_post_code": "123456",
-         *         "invoicing_post_office": "Helsinki",
-         *         "billing_company_id": "123456"
-         *       }
-         *     }
-         *     ```
-         *
-         *
-         *
-         *
-         *     ### Company email reports
-         *
-         *     ```
-         *     {
-         *       "email_reports": {
-         *         "report_interval": "off | daily | weekly | monthly",
-         *         "email_reports": [
-         *           "info@company.com",
-         *           "reports@company.com"
-         *         ]
-         *       }
-         *     }
-         *     ```
-         *
-         *
-         *
-         *     ### Company logos
-         *
-         *     ```
-         *     {
-         *       "logos": {
-         *         "pdf": {
-         *           "content": "Base64 encoded string of PNG or JPEG image for use as logo on generated PDF invoices"
-         *         },
-         *         "email_header": {
-         *           "content": "Base64 encoded string of PNG only image for use as header image on sent email invoices"
-         *         }
-         *       },
-         *     }
-         *     ```
-         *
-         *
-         *     ### Company general settings
-         *
-         *     ```
-         *     {
-         *       "send_invoice_general": {
-         *         "hold_multiple_recipients": false,
-         *         "stop_duplicate_numbers": false
-         *       }
-         *     }
-         *     ```
-         *
-         *
-         *     ### Company invoice print settings
-         *
-         *     ```
-         *     {
-         *       "send_invoice_print": {
-         *         "enabled": false,
-         *         "letter_class": "ECONOMY",
-         *         "color_scheme": "BLACK_AND_WHITE",
-         *         "attachment_print": false,
-         *         "marketing_page": false,
-         *         "use_own_pdf": false
-         *       }
-         *     }
-         *     ```
-         *
-         *
-         *     ### Company details
-         *
-         *     ```
-         *     {
-         *       "details": {
-         *         "name": "My Company Ltd",
-         *         "email": "info@company.com",
-         *         "website": "https://my.company.com"
-         *       }
-         *     }
-         *     ```
-         *
-         *     ### Company address
-         *      ```
-         *     {
-         *       "address": {
-         *         "street_address": "My street 1",
-         *         "post_code": "123456",
-         *         "post_office": "Oslo",
-         *         "city": "Oslo",
-         *         "country": "NO"
-         *       }
-         *     }
-         *     ```
-         *
-         *
-         *
-         *     ### Company send invoice email related settings
-         *
-         *     ```
-         *     {
-         *       "send_invoice_email": {
-         *         "enabled": true,
-         *         "how_to_send": "EMBEDDED | WITH_OBJECTIONS | WITH_LINK | EMBEDDED_MERGE (only if enabled is true)",
-         *         "reminder_frequency": 4,
-         *         "content_data": {
-         *           "note_to_receiver": "A message added to the receiver",
-         *           "contact": {
-         *             "email": "invoices@company.com (this is validated by sending a link email to the email)",
-         *             "name": "Info User",
-         *             "phone": "+555 55 555 5555"
-         *           }
-         *         }
-         *       }
-         *     }
-         *     ```
-         *
-         *
-         *     ### Company invoice notification settings
-         *
-         *     ```
-         *     {
-         *       "invoice_notifications": {
-         *         "on_receiving": {
-         *           "enabled": true,
-         *           "how_to_send": "OTHER_EMAIL",
-         *           "other_email": "info@company.com"
-         *         },
-         *         "on_send_errors": {
-         *           "to_user": true,
-         *           "to_emails": [
-         *             "info@company.com"
-         *           ]
-         *         }
-         *       }
-         *     }
-         *     ```
-         */
-        patch: operations["patchV1CompanySettings"];
-        trace?: never;
-    };
-    "/v1/company/consumers": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List B2CNO Consumers - DEPRECATED 2025 */
-        get: operations["getV1CompanyConsumers"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/company/notifications": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List notification subscriptions */
-        get: operations["getV1CompanyNotifications"];
-        put?: never;
-        /** Create new notification subscription */
-        post: operations["postV1CompanyNotifications"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/company/notifications/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Fetch a specific notification subscription */
-        get: operations["getV1CompanyNotificationsId"];
-        put?: never;
-        post?: never;
-        /** Delete a specific notification subscription */
-        delete: operations["deleteV1CompanyNotificationsId"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/company/notifications_resend_unacknowledged": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** [EXPERIMENTAL] Resend unacknowledged notifications */
-        post: operations["postV1CompanyNotificationsResendUnacknowledged"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/company/vendors": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Vendor API key link status */
-        get: operations["getV1CompanyVendors"];
-        put?: never;
-        /** @description Link vendor API key */
-        post: operations["postV1CompanyVendors"];
-        /** @description Unlink vendor API key */
-        delete: operations["deleteV1CompanyVendors"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/company/authorization": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Company authorization status. In order to use company account to send, receive and activate services status needs to be verified */
-        get: operations["getV1CompanyAuthorization"];
-        put?: never;
-        /** @description Authorize your company. Required to complete KYC process and take company account into use */
-        post: operations["postV1CompanyAuthorization"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/company/users": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description List existing users */
-        get: operations["getV1CompanyUsers"];
-        put?: never;
-        /** @description Add a new or existing user to a company */
-        post: operations["postV1CompanyUsers"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/company/users/{user_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Fetch user info */
-        get: operations["getV1CompanyUsersUserId"];
-        put?: never;
-        post?: never;
-        /** @description Remove a user from this company */
-        delete: operations["deleteV1CompanyUsersUserId"];
-        options?: never;
-        head?: never;
-        /** @description Update user info */
-        patch: operations["patchV1CompanyUsersUserId"];
-        trace?: never;
-    };
-    "/v1/company/users/{user_id}/roles": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** @description Update user role */
-        post: operations["postV1CompanyUsersUserIdRoles"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/company/keep_active": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** @description Mark company as active even if no transactions have occurred during the past year. */
-        post: operations["postV1CompanyKeepActive"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/company/departments": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description List departments [EXPERIMENTAL] */
-        get: operations["getV1CompanyDepartments"];
-        put?: never;
-        /** @description Create a department [EXPERIMENTAL] */
-        post: operations["postV1CompanyDepartments"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/company/suppliers/query": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** [EXPERIMENTAL] Query suppliers that could send e-invoices instead PDFs */
-        post: operations["postV1CompanySuppliersQuery"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/company/suppliers/notifications": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * [EXPERIMENTAL] Create and send notifications to suppliers
-         * @description Sends notification emails to listed suppliers
-         */
-        post: operations["postV1CompanySuppliersNotifications"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/companies": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List active companies the user has access to
-         * @description List all companies without giving params, or check if user belongs to a given company.
-         */
-        get: operations["getV1Companies"];
-        put?: never;
-        /** @description Create a Company */
-        post: operations["postV1Companies"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/companies/authorizations": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** @description Authorize one or multiple companies. Required to complete KYC process and take company account into use */
-        post: operations["postV1CompaniesAuthorizations"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/companies/{id}/status": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Company authorization status. In order to use company account to send, receive and activate services status needs to be verified */
-        get: operations["getV1CompaniesIdStatus"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/operator/participants": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description List participants registered by operator */
-        get: operations["getV1OperatorParticipants"];
-        put?: never;
-        /** @description Register a participant */
-        post: operations["postV1OperatorParticipants"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/operator/participants/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Fetch participant by id */
-        get: operations["getV1OperatorParticipantsId"];
-        put?: never;
-        post?: never;
-        /** @description Delete participant */
-        delete: operations["deleteV1OperatorParticipantsId"];
-        options?: never;
-        head?: never;
-        /** @description Update participant information */
-        patch: operations["patchV1OperatorParticipantsId"];
-        trace?: never;
-    };
-    "/v1/operator/notifications": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description List notification subscriptions */
-        get: operations["getV1OperatorNotifications"];
-        put?: never;
-        /** @description Create new notification subscription */
-        post: operations["postV1OperatorNotifications"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/operator/notifications/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Fetch a specific notification subscription */
-        get: operations["getV1OperatorNotificationsId"];
-        put?: never;
-        post?: never;
-        /** @description Delete notification subscription */
-        delete: operations["deleteV1OperatorNotificationsId"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/operator/companies": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Get company data */
-        get: operations["getV1OperatorCompanies"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/operator/receivables/op_account_statement": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Fetch an account statements for a company
-         * @description Returns the account statement per day in SEPA XML format
-         */
-        get: operations["getV1OperatorReceivablesOpAccountStatement"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/operator/receivables/invoice_image/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Fetch invoice image for assignment
-         * @description Returns the invoice image PDF file for the assignment
-         */
-        get: operations["getV1OperatorReceivablesInvoiceImageId"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/lookup/endpoints": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Fetch sending options for company bid */
-        get: operations["getV1LookupEndpoints"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/lookup/consumers": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Lookup for consumer recipients */
-        get: operations["getV1LookupConsumers"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/lookup/receivers": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Lookup for B2B document receivers */
-        get: operations["getV1LookupReceivers"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/jwk": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description List the public keys of this API */
-        get: operations["getV1Jwk"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/definitions/operators": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description List operators */
-        get: operations["getV1DefinitionsOperators"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/definitions/detect/checks": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get definition of all supported detect checks */
-        get: operations["getV1DefinitionsDetectChecks"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/users": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** @description Create a User */
-        post: operations["postV1Users"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/files": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description List document files */
-        get: operations["getV1Files"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/files/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Get file content */
-        get: operations["getV1FilesId"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/documents": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Query documents
-         * @description #### Pagination and sorting
-         *     The items per page parameter **per_page** will default to 10 if not provided, also the **page** parameter will default to 1 if not provided.
-         *     The maximum value of the **per_page** parameter is 100.
-         *     Default order of the items is descending by the created_at attribute.
-         *     Additional information about returned page can be extracted from the returned header parameters:
-         *      - **X-Total**: Total number of items
-         *     - **X-Total-Pages**: Total number of pages
-         *     - **X-Page**: Index of the current page
-         *     - **X-Next-Page**: Index of the next page
-         *     - **X-Prev-Page**: Index of the previous page
-         *     - **X-Per-Page**: Items per page
-         *     - **Link**: Links to the first, previous, next, and last pages can be found from this header
-         *     The page indexing starts from 1.
-         */
-        get: operations["getV1Documents"];
-        put?: never;
-        /** @description Create document */
-        post: operations["postV1Documents"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/documents/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Document details */
-        get: operations["getV1DocumentsId"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** @description Update existing document */
-        patch: operations["patchV1DocumentsId"];
-        trace?: never;
-    };
-    "/v1/documents/{id}/events": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Document's events */
-        get: operations["getV1DocumentsIdEvents"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/analysis/definitions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Get definition of all supported analysis checks */
-        get: operations["getV1AnalysisDefinitions"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/analysis": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Trigger analysis for resource
-         * @description Following checks can be triggered:
-         *
-         *     **SUPPLIER_ACTIVATION**
-         *     Check performed on: INVOICE
-         *     For invoices received through scan service, checks if the sender has sent electronic invoices in the past and could be contacted to change to electronic sending.
-         *
-         *
-         *     **BANK_ACCOUNT_CHANGED**
-         *     Check performed on: INVOICE
-         *
-         *
-         *
-         *     **SENDER_BID_STATUS**
-         *     Check performed on: INVOICE
-         *     Checks the invoice sender against national company register to see that the company business ID is registered and active.
-         *     The check also returns information if the company is going through insolvency or bankruptcy proceedings.
-         *     For Finland additional checking that the company is found in the Prepayment register.
-         *     The registries used to get this information, depend on the country of the sender and are as follows:
-         *     1. Finland - YTJ [ http://www.ytj.fi ]
-         *     2. Norway - Brønnøysundregistrene [ https://brreg.no ]
-         *     3. Other countries -> not supported
-         *
-         *
-         *
-         *     **SENDER_WARNING_LIST**
-         *     Check performed on: INVOICE
-         *     Checks the invoice sender against a list of suspicious/fraud companies.
-         *
-         *
-         *     **VAT**
-         *     Check performed on: INVOICE
-         *     For invoices containing value added tax, checks that the sender of the invoice is found in VAT register.
-         *     Note that if the total amount of value added tax on the invoice is under 1 EUR/NOK/SEK etc., the invoice sender is not checked against the VAT register.
-         *     The registries used to get this information, depend on the country of the sender and are as follows:
-         *     1. Norway - Brønnøysundregistrene [ https://brreg.no ]
-         *     2. EU countries - Vies [ https://ec.europa.eu/taxation_customs/vies/ ]
-         *     3. Other countries - not supported
-         */
-        post: operations["postV1Analysis"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/analysis/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Resource analysis result */
-        get: operations["getV1AnalysisId"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/partner/invoice_delivery_actions/inbound": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List inbound invoice delivery actions */
-        get: operations["getV1PartnerInvoiceDeliveryActionsInbound"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/partner/invoice_delivery_actions/outbound_errors": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List outbound invoice errors */
-        get: operations["getV1PartnerInvoiceDeliveryActionsOutboundErrors"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/partner/invoice_events/received": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List inbound invoice delivery actions */
-        get: operations["getV1PartnerInvoiceEventsReceived"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/partner/invoice_events/sent_errors": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List outbound invoice errors */
-        get: operations["getV1PartnerInvoiceEventsSentErrors"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/partner/lookups/companies": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List companies availability */
-        get: operations["getV1PartnerLookupsCompanies"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/partner/scan_service/lyanthe": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** [EXPERIMENTAL] Fetch Lyanthe scan service information */
-        get: operations["getV1PartnerScanServiceLyanthe"];
-        put?: never;
-        /** [EXPERIMENTAL] Mark Lyanthe scan service as active. */
-        post: operations["postV1PartnerScanServiceLyanthe"];
-        /** [EXPERIMENTAL] Mark Lyanthe scan service as inactive */
-        delete: operations["deleteV1PartnerScanServiceLyanthe"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/partner/takeovers": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** [EXPERIMENTAL] Start takeover process */
-        post: operations["postV1PartnerTakeovers"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/partner/takeovers/{takeover_id}/complete": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** [EXPERIMENTAL] Complete takeover process */
-        post: operations["postV1PartnerTakeoversTakeoverIdComplete"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/partner/takeovers/{takeover_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** [EXPERIMENTAL] Revert takeover process */
-        delete: operations["deleteV1PartnerTakeoversTakeoverId"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/fi_bank_messages/ri_messages": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List IDs of incoming RI messages within given timeframe */
-        get: operations["getV1FiBankMessagesRiMessages"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/fi_bank_messages/ri_messages/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get content of single RI message */
-        get: operations["getV1FiBankMessagesRiMessagesId"];
-        put?: never;
-        post?: never;
-        /** Delete a single RI message */
-        delete: operations["deleteV1FiBankMessagesRiMessagesId"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/fi_bank_messages/sent_messages": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List IDs of sent messages within given timeframe */
-        get: operations["getV1FiBankMessagesSentMessages"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/fi_bank_messages/sent_messages/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get content of single message */
-        get: operations["getV1FiBankMessagesSentMessagesId"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/fi_bank_messages/error_messages": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List IDs of incoming error messages within given timeframe */
-        get: operations["getV1FiBankMessagesErrorMessages"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/fi_bank_messages/error_messages/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get content of single error message */
-        get: operations["getV1FiBankMessagesErrorMessagesId"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/fi_bank_messages": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Upload new message */
-        post: operations["postV1FiBankMessages"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/fi_bank_messages/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get status of sent message */
-        get: operations["getV1FiBankMessagesId"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
+  '/status/authenticated': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Status requiring authentication
+     * @description Returns information of currently authenticated identity. Only for testing purposes.
+     */
+    get: operations['getStatusAuthenticated'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/oauth2/token': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * OAuth2 token endpoint
+     * @description The endpoint enables a registered company to obtain a OAuth 2 Bearer Token, which can be used to access the companys data in all the future API calls.
+     *      A token will be active for 60 minutes.
+     *      #### Scopes
+     *      Scopes let you specify what type of access you need and limit access for granted OAuth tokens.
+     *
+     *      | Scope | Description |
+     *      |-------|-------------|
+     *                                 eui|  Recommended to use when integrating to EUI. Alias for eui:open, company:read, company:write, lookup, receivables:assignments, document:send, document:receive, invoice:receive, invoice:send, analysis|
+     *                             global|                                                                                                                                         Alias for company:read, document:receive, document:send, lookup|
+     *                            company|                                                                                                                                                                   Alias for company:read, company:write|
+     *                             lookup|                                                                                                                                                                  grants access to the lookup operations|
+     *                   document:receive|                                                                                                                                                            grants access to document receive operations|
+     *                      document:send|                                                                                                                                                               grants access to document send operations|
+     *                    invoice:receive|                                                                                                                                                             grants access to invoice receive operations|
+     *                       invoice:send|                                                                                                                                                                grants access to invoice send operations|
+     *                       company:read|                                                                                                                                      grants read access to company settings, profiles and notifications|
+     *                      company:write|                                                                                                                                     grants write access to company settings, profiles and notifications|
+     *                           validate|                                                                                                                                                      grants access to the AutoInvoice validator service|
+     *            receivables:assignments|                                                                                                                                                 grants access to assignments in the receivables service|
+     *                           analysis|                                                                                                                                                                       grants access to analysis service|
+     *                    billing:reports|                                                                                                                                                                        grants access to billing reports|
+     *     partner:invoice_delivery_actions|                                                                                                                                                                grants access to partner invoice actions|
+     *                    partner:lookups|                                                                                                                                                                 grants access to partner lookup actions|
+     *                  partner:takeovers|                                                                                                                                                                      grants access to partner takeovers|
+     *       partner:lyanthe_scan_service|                                                                                                                                                   grants access to partner lyanthe scan service actions|
+     *               fi_bank_message:send|                                                                                                                                                        grants access to FI bank message send operations|
+     *            fi_bank_message:receive|                                                                                                                                                     grants access to FI bank message receive operations|
+     *         operator:documents:receive|                                                                                                                                                               grants access to fetch received documents|
+     *            operator:documents:send|                                                                                                                                                                         grants access to send documents|
+     *                    operator:lookup|                                                                                                                                                     grants access to perform actions related to lookups|
+     *              operator:participants|                                                                                                                                               grants access to perform actions on operator participants|
+     *             operator:notifications|                                                                                                                                              grants access to perform actions on operator notifications|
+     *                  operator:validate|                                                                                                                                                      grants access to the AutoInvoice validator service|
+     *     operator:receivables:assignments|                                                                                                                                                    grants access to assignments the receivables service|
+     *     operator:receivables:assignments:create|                                                                                                                                          grants access to create assignments in the receivables service|
+     *     operator:receivables:account_statement|                                                                                                                                                                     grants access to account statements|
+     *                  operator:analysis|                                                                                                                                                                       grants access to analysis service|
+     *                 operator:companies|                                                                                                                                                               grants access to fetch operator companies|
+     *                  operator:takeover|                                                                                                                                                             grants access to execute a company takeover|
+     *           operator:billing:actions|                                                                                                                                                               grants access to operator billing actions|
+     *     operator:sending_parties:write|                                                                                                                                                                  grants access to write sending parties|
+     *     operator:supplier_bank_accounts:write|                                                                                                                                                           grants access to write supplier bank accounts|
+     *               operator:user:create|                                                                                                                                                                          grants access to create a user|
+     *              operator:company:read|                                                                                                                                                                  grants access to read company profiles|
+     *             operator:company:write|                                                                                                                                                                 grants access to write company profiles
+     *
+     *      If no scope is defined, the token request will default to use the scopes ```global``` and ```company```. The granted scopes will be returned in the response.
+     *      #### Vendor API key and license data
+     *      To identify the application a valid ```vendor_api_key``` should be provided in the token request. Additional license data can be provided as JSON in the ```license_data``` parameter:
+     *      ```
+     *     {
+     *       "key": "C84411ED-5639-4B48-83D0-B718BB9DA0F7", // License key of software making the call
+     *       "meta": {
+     *         "licensing":   "VLS",       // Information about the licensing system
+     *         "erp_name":    "Visma ERP", // Name of ERP
+     *         "erp_version": "1.1",       // Current version number of ERP
+     *         "erp_user":    "rbaardse"   // Local ERP user name
+     *       }
+     *     }
+     *     ```
+     */
+    post: operations['postOauth2Token'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/oauth2/current': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Fetch information about the authenticated user and company */
+    get: operations['getOauth2Current'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/odp/companies/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description Fetch ODP company by id */
+    get: operations['getOdpCompaniesId'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** @description Update existing ODP company or create a new one if missing */
+    patch: operations['patchOdpCompaniesId'];
+    trace?: never;
+  };
+  '/v2/services/amili/receivables': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Current state of the Amili receivables service */
+    get: operations['getV2ServicesAmiliReceivables'];
+    /** Start the Amili Receivables service onboarding */
+    put: operations['putV2ServicesAmiliReceivables'];
+    post?: never;
+    /** Disable the Amili Receivables service */
+    delete: operations['deleteV2ServicesAmiliReceivables'];
+    options?: never;
+    head?: never;
+    /** Update the Amili Receivables service */
+    patch: operations['patchV2ServicesAmiliReceivables'];
+    trace?: never;
+  };
+  '/v2/services/intrum/receivables': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Current state of the Intrum receivables service */
+    get: operations['getV2ServicesIntrumReceivables'];
+    /** Start the Intrum Receivables service onboarding */
+    put: operations['putV2ServicesIntrumReceivables'];
+    post?: never;
+    /** Disable the Intrum Receivables service */
+    delete: operations['deleteV2ServicesIntrumReceivables'];
+    options?: never;
+    head?: never;
+    /** Update the Intrum Receivables service */
+    patch: operations['patchV2ServicesIntrumReceivables'];
+    trace?: never;
+  };
+  '/v1/services/receivables': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Current state of the receivables service */
+    get: operations['getV1ServicesReceivables'];
+    /** Start the Receivables service onboarding */
+    put: operations['putV1ServicesReceivables'];
+    post?: never;
+    /** Disable the Receivables service */
+    delete: operations['deleteV1ServicesReceivables'];
+    options?: never;
+    head?: never;
+    /** Update the Receivables service */
+    patch: operations['patchV1ServicesReceivables'];
+    trace?: never;
+  };
+  '/v1/services/atg': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List ATG agreements */
+    get: operations['getV1ServicesAtg'];
+    put?: never;
+    /** Create a new ATG agreement */
+    post: operations['postV1ServicesAtg'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/services/atg/mandates': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List B2C ATG mandates */
+    get: operations['getV1ServicesAtgMandates'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/services/atg/{account_number}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Fetch ATG agreement */
+    get: operations['getV1ServicesAtgAccountNumber'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** Update existing ATG agreement */
+    patch: operations['patchV1ServicesAtgAccountNumber'];
+    trace?: never;
+  };
+  '/v1/services/op_invoice_credit/offer': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get an offer for OP Laskulaina before the activation */
+    get: operations['getV1ServicesOpInvoiceCreditOffer'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/services/op_invoice_credit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Current information about the OP Laskulaina service */
+    get: operations['getV1ServicesOpInvoiceCredit'];
+    /** Start the OP Laskulaina onboarding */
+    put: operations['putV1ServicesOpInvoiceCredit'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/services/op_invoice_credit/settings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Show current settings */
+    get: operations['getV1ServicesOpInvoiceCreditSettings'];
+    put?: never;
+    /** Modify settings */
+    post: operations['postV1ServicesOpInvoiceCreditSettings'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/services/op_invoice_credit/available_credit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Check the credit balance */
+    get: operations['getV1ServicesOpInvoiceCreditAvailableCredit'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/services/op_invoice_credit/withdrawal': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Make a withdrawal */
+    post: operations['postV1ServicesOpInvoiceCreditWithdrawal'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/services/op_invoice_credit/direct_payment': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Make a direct payment
+     * @description Mark an invoice to be directly paid to the sender instead of the OP Invoice Credit account
+     */
+    post: operations['postV1ServicesOpInvoiceCreditDirectPayment'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/services/op_invoice_credit/account_statement': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Fetch account statement
+     * @description Returns the account statement per day in SEPA XML format
+     */
+    get: operations['getV1ServicesOpInvoiceCreditAccountStatement'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/services/detect/checks': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List enabled Detect checks */
+    get: operations['getV1ServicesDetectChecks'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** Update Detect checks */
+    patch: operations['patchV1ServicesDetectChecks'];
+    trace?: never;
+  };
+  '/v1/services/autoscan': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** [EXPERIMENTAL] Current AutoScan configuration */
+    get: operations['getV1ServicesAutoscan'];
+    /** [EXPERIMENTAL] Activates AutoScan */
+    put: operations['putV1ServicesAutoscan'];
+    post?: never;
+    /** [EXPERIMENTAL] Deactivates AutoScan */
+    delete: operations['deleteV1ServicesAutoscan'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/services/scan': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** [EXPERIMENTAL] Current Scan configuration */
+    get: operations['getV1ServicesScan'];
+    /** [EXPERIMENTAL] Update scan account */
+    put: operations['putV1ServicesScan'];
+    /** [EXPERIMENTAL] Activate scan account */
+    post: operations['postV1ServicesScan'];
+    /** [EXPERIMENTAL] Deactivate scan account */
+    delete: operations['deleteV1ServicesScan'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/services/b2cno/consumers': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List B2CNO Consumers - DEPRECATED 2025 */
+    get: operations['getV1ServicesB2cnoConsumers'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/services/b2cno': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Information about B2CNO agreement */
+    get: operations['getV1ServicesB2cno'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/services/b2cse/agreement': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get status of B2CSE network reqistration request
+     * @description [EXPERIMENTAL] Get status of B2CSE network reqistration request
+     */
+    get: operations['getV1ServicesB2cseAgreement'];
+    put?: never;
+    /**
+     * Create B2CSE network registration request
+     * @description [EXPERIMENTAL] Open B2CSE network agreement with the details gotten from the bank. If FUI and agreement ID are not given, a new bank agreement will be created for B2C traffic.
+     */
+    post: operations['postV1ServicesB2cseAgreement'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/invoices/reports/definitions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description Get useful definitions for user reports */
+    get: operations['getV1InvoicesReportsDefinitions'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/invoices': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List invoices */
+    get: operations['getV1Invoices'];
+    put?: never;
+    /** Upload new invoice */
+    post: operations['postV1Invoices'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/invoices/{id}/detect_results': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Fetch results provided by Detect service
+     * @description Returns the check results provided by the Detect service
+     *
+     *     The JSON (`application/json`) response contains the following fields.
+     *     - **status** The overall status of the executed checks.
+     *       - On status **OK** all the checks have been executed without findings.
+     *       - On status **DISABLED** the Detect service has not been enabled by the customer and no checks have been executed.
+     *       - On status **WARN** at least one of the checks has been executed with findings.
+     *     - **executed_checks** List of checks that were executed.
+     *     - **findings** List of findings that were found when executing the checks.
+     *
+     *     The `lang` request parameter can be used to specify the language the checks and findings will be presented in. The default language is English.
+     *
+     *     An example response:
+     *     ```
+     *     {
+     *       "status": "WARN",
+     *       "executed_checks": [
+     *         "Check if the supplier sent the material in a non-optimal way",
+     *         "Check that the sender's business ID is active",
+     *         "Check that the sender of the invoice is registered to charge VAT",
+     *         "Check if the sender of the invoice has had suspicious activity in the past"
+     *       ],
+     *       "findings": [
+     *         "The sender '9944556677' was found in Brønnøysundregistrene, but has been closed.",
+     *         "The sender 'NO9944556677MVA' is not found in VAT registry.",
+     *         "Something went wrong when executing the check. Detect could not automatically check if sender is found in a warning list."
+     *       ]
+     *     }
+     *     ```
+     */
+    get: operations['getV1InvoicesIdDetectResults'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/invoices/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Invoice details */
+    get: operations['getV1InvoicesId'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/invoices/{id}/actions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List invoice actions */
+    get: operations['getV1InvoicesIdActions'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/invoices/{id}/invoice_events': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** Change state for recevied events */
+    patch: operations['patchV1InvoicesIdInvoiceEvents'];
+    trace?: never;
+  };
+  '/v1/invoices/{id}/files/{file_id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Fetch file content */
+    get: operations['getV1InvoicesIdFilesFileId'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/invoices/{id}/reroute/einvoice': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** @description Reroutes invoice via einvoice */
+    put: operations['putV1InvoicesIdRerouteEinvoice'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/invoices/{id}/reroute/email': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** @description Reroutes invoice via email */
+    put: operations['putV1InvoicesIdRerouteEmail'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/invoices/{id}/reroute/print': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** @description Reroutes invoice via print */
+    put: operations['putV1InvoicesIdReroutePrint'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/invoices/{id}/reports': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description Fetch user reports for invoice */
+    get: operations['getV1InvoicesIdReports'];
+    put?: never;
+    /** @description Report sender of fraud attempt */
+    post: operations['postV1InvoicesIdReports'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/invoices/{id}/reports/{report_id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /** @description Delete user report for invoice */
+    delete: operations['deleteV1InvoicesIdReportsReportId'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/invoices/{id}/assignment': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description Get assignment for invoice */
+    get: operations['getV1InvoicesIdAssignment'];
+    put?: never;
+    /** @description Post assignment for invoice */
+    post: operations['postV1InvoicesIdAssignment'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/invoices/{id}/responses/nemhandel': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description Sets the business response for an invoice in the Nemhandel network. When an invoice has a final response you cannot set another response. The responses have to be set in a predefined order, specified by the standards.Note: This API has a vendor lock. To enable access, please contact Maventa Support before using this endpoint. */
+    post: operations['postV1InvoicesIdResponsesNemhandel'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/profiles': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List network registrations */
+    get: operations['getV1CompanyProfiles'];
+    put?: never;
+    /** Create network registration request */
+    post: operations['postV1CompanyProfiles'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/profiles/{id}/extensions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** @description EXPERIMENTAL Create extensions for profiles */
+    put: operations['putV1CompanyProfilesIdExtensions'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/profiles/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Fetch a network registration */
+    get: operations['getV1CompanyProfilesId'];
+    put?: never;
+    post?: never;
+    /** Delete a network registration */
+    delete: operations['deleteV1CompanyProfilesId'];
+    options?: never;
+    head?: never;
+    /** Update a network registration */
+    patch: operations['patchV1CompanyProfilesId'];
+    trace?: never;
+  };
+  '/v1/company/settings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Fetch company settings */
+    get: operations['getV1CompanySettings'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /**
+     * Modify company settings
+     * @description ### Company billing details
+     *      ```
+     *     {
+     *       "billing_details": {
+     *         "electronic_invoicing_details": {
+     *           "invoicing_eia": "Company electronic invoicing address (Billing information: The delivery method priority is following 1 = einvoice, 2 = email, 3 = print, if all below values are given. If company prefers Invoicing via normal post, invoicing_eia, invoicing_operator and invoicing_email should be left blank).",
+     *           "invoicing_operator": "Company electronic invoicing operator address"
+     *         },
+     *         "invoicing_email": "info@company.com",
+     *         "invoicing_street_address1": "My street 1",
+     *         "invoicing_street_address2": "My street 2",
+     *         "invoicing_post_code": "123456",
+     *         "invoicing_post_office": "Helsinki",
+     *         "billing_company_id": "123456"
+     *       }
+     *     }
+     *     ```
+     *
+     *
+     *
+     *
+     *     ### Company email reports
+     *
+     *     ```
+     *     {
+     *       "email_reports": {
+     *         "report_interval": "off | daily | weekly | monthly",
+     *         "email_reports": [
+     *           "info@company.com",
+     *           "reports@company.com"
+     *         ]
+     *       }
+     *     }
+     *     ```
+     *
+     *
+     *
+     *     ### Company logos
+     *
+     *     ```
+     *     {
+     *       "logos": {
+     *         "pdf": {
+     *           "content": "Base64 encoded string of PNG or JPEG image for use as logo on generated PDF invoices"
+     *         },
+     *         "email_header": {
+     *           "content": "Base64 encoded string of PNG only image for use as header image on sent email invoices"
+     *         }
+     *       },
+     *     }
+     *     ```
+     *
+     *
+     *     ### Company general settings
+     *
+     *     ```
+     *     {
+     *       "send_invoice_general": {
+     *         "hold_multiple_recipients": false,
+     *         "stop_duplicate_numbers": false
+     *       }
+     *     }
+     *     ```
+     *
+     *
+     *     ### Company invoice print settings
+     *
+     *     ```
+     *     {
+     *       "send_invoice_print": {
+     *         "enabled": false,
+     *         "letter_class": "ECONOMY",
+     *         "color_scheme": "BLACK_AND_WHITE",
+     *         "attachment_print": false,
+     *         "marketing_page": false,
+     *         "use_own_pdf": false
+     *       }
+     *     }
+     *     ```
+     *
+     *
+     *     ### Company details
+     *
+     *     ```
+     *     {
+     *       "details": {
+     *         "name": "My Company Ltd",
+     *         "email": "info@company.com",
+     *         "website": "https://my.company.com"
+     *       }
+     *     }
+     *     ```
+     *
+     *     ### Company address
+     *      ```
+     *     {
+     *       "address": {
+     *         "street_address": "My street 1",
+     *         "post_code": "123456",
+     *         "post_office": "Oslo",
+     *         "city": "Oslo",
+     *         "country": "NO"
+     *       }
+     *     }
+     *     ```
+     *
+     *
+     *
+     *     ### Company send invoice email related settings
+     *
+     *     ```
+     *     {
+     *       "send_invoice_email": {
+     *         "enabled": true,
+     *         "how_to_send": "EMBEDDED | WITH_OBJECTIONS | WITH_LINK | EMBEDDED_MERGE (only if enabled is true)",
+     *         "reminder_frequency": 4,
+     *         "content_data": {
+     *           "note_to_receiver": "A message added to the receiver",
+     *           "contact": {
+     *             "email": "invoices@company.com (this is validated by sending a link email to the email)",
+     *             "name": "Info User",
+     *             "phone": "+555 55 555 5555"
+     *           }
+     *         }
+     *       }
+     *     }
+     *     ```
+     *
+     *
+     *     ### Company invoice notification settings
+     *
+     *     ```
+     *     {
+     *       "invoice_notifications": {
+     *         "on_receiving": {
+     *           "enabled": true,
+     *           "how_to_send": "OTHER_EMAIL",
+     *           "other_email": "info@company.com"
+     *         },
+     *         "on_send_errors": {
+     *           "to_user": true,
+     *           "to_emails": [
+     *             "info@company.com"
+     *           ]
+     *         }
+     *       }
+     *     }
+     *     ```
+     */
+    patch: operations['patchV1CompanySettings'];
+    trace?: never;
+  };
+  '/v1/company/consumers': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List B2CNO Consumers - DEPRECATED 2025 */
+    get: operations['getV1CompanyConsumers'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/notifications': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List notification subscriptions */
+    get: operations['getV1CompanyNotifications'];
+    put?: never;
+    /** Create new notification subscription */
+    post: operations['postV1CompanyNotifications'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/notifications/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Fetch a specific notification subscription */
+    get: operations['getV1CompanyNotificationsId'];
+    put?: never;
+    post?: never;
+    /** Delete a specific notification subscription */
+    delete: operations['deleteV1CompanyNotificationsId'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/notifications_resend_unacknowledged': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** [EXPERIMENTAL] Resend unacknowledged notifications */
+    post: operations['postV1CompanyNotificationsResendUnacknowledged'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/vendors': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description Vendor API key link status */
+    get: operations['getV1CompanyVendors'];
+    put?: never;
+    /** @description Link vendor API key */
+    post: operations['postV1CompanyVendors'];
+    /** @description Unlink vendor API key */
+    delete: operations['deleteV1CompanyVendors'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/authorization': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Company authorization status. In order to use company account to send, receive and activate services status needs to be verified */
+    get: operations['getV1CompanyAuthorization'];
+    put?: never;
+    /** @description Authorize your company. Required to complete KYC process and take company account into use */
+    post: operations['postV1CompanyAuthorization'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/users': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description List existing users */
+    get: operations['getV1CompanyUsers'];
+    put?: never;
+    /** @description Add a new or existing user to a company */
+    post: operations['postV1CompanyUsers'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/users/{user_id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description Fetch user info */
+    get: operations['getV1CompanyUsersUserId'];
+    put?: never;
+    post?: never;
+    /** @description Remove a user from this company */
+    delete: operations['deleteV1CompanyUsersUserId'];
+    options?: never;
+    head?: never;
+    /** @description Update user info */
+    patch: operations['patchV1CompanyUsersUserId'];
+    trace?: never;
+  };
+  '/v1/company/users/{user_id}/roles': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description Update user role */
+    post: operations['postV1CompanyUsersUserIdRoles'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/keep_active': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description Mark company as active even if no transactions have occurred during the past year. */
+    post: operations['postV1CompanyKeepActive'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/departments': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description List departments [EXPERIMENTAL] */
+    get: operations['getV1CompanyDepartments'];
+    put?: never;
+    /** @description Create a department [EXPERIMENTAL] */
+    post: operations['postV1CompanyDepartments'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/suppliers/query': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** [EXPERIMENTAL] Query suppliers that could send e-invoices instead PDFs */
+    post: operations['postV1CompanySuppliersQuery'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/suppliers/notifications': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * [EXPERIMENTAL] Create and send notifications to suppliers
+     * @description Sends notification emails to listed suppliers
+     */
+    post: operations['postV1CompanySuppliersNotifications'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/companies': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List active companies the user has access to
+     * @description List all companies without giving params, or check if user belongs to a given company.
+     */
+    get: operations['getV1Companies'];
+    put?: never;
+    /** @description Create a Company */
+    post: operations['postV1Companies'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/companies/authorizations': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description Authorize one or multiple companies. Required to complete KYC process and take company account into use */
+    post: operations['postV1CompaniesAuthorizations'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/companies/{id}/status': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description Company authorization status. In order to use company account to send, receive and activate services status needs to be verified */
+    get: operations['getV1CompaniesIdStatus'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/operator/participants': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description List participants registered by operator */
+    get: operations['getV1OperatorParticipants'];
+    put?: never;
+    /** @description Register a participant */
+    post: operations['postV1OperatorParticipants'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/operator/participants/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description Fetch participant by id */
+    get: operations['getV1OperatorParticipantsId'];
+    put?: never;
+    post?: never;
+    /** @description Delete participant */
+    delete: operations['deleteV1OperatorParticipantsId'];
+    options?: never;
+    head?: never;
+    /** @description Update participant information */
+    patch: operations['patchV1OperatorParticipantsId'];
+    trace?: never;
+  };
+  '/v1/operator/notifications': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description List notification subscriptions */
+    get: operations['getV1OperatorNotifications'];
+    put?: never;
+    /** @description Create new notification subscription */
+    post: operations['postV1OperatorNotifications'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/operator/notifications/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description Fetch a specific notification subscription */
+    get: operations['getV1OperatorNotificationsId'];
+    put?: never;
+    post?: never;
+    /** @description Delete notification subscription */
+    delete: operations['deleteV1OperatorNotificationsId'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/operator/companies': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description Get company data */
+    get: operations['getV1OperatorCompanies'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/operator/receivables/op_account_statement': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Fetch an account statements for a company
+     * @description Returns the account statement per day in SEPA XML format
+     */
+    get: operations['getV1OperatorReceivablesOpAccountStatement'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/operator/receivables/invoice_image/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Fetch invoice image for assignment
+     * @description Returns the invoice image PDF file for the assignment
+     */
+    get: operations['getV1OperatorReceivablesInvoiceImageId'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/lookup/endpoints': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description Fetch sending options for company bid */
+    get: operations['getV1LookupEndpoints'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/lookup/consumers': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Lookup for consumer recipients */
+    get: operations['getV1LookupConsumers'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/lookup/receivers': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description Lookup for B2B document receivers */
+    get: operations['getV1LookupReceivers'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/jwk': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description List the public keys of this API */
+    get: operations['getV1Jwk'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/definitions/operators': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description List operators */
+    get: operations['getV1DefinitionsOperators'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/definitions/detect/checks': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get definition of all supported detect checks */
+    get: operations['getV1DefinitionsDetectChecks'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/users': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description Create a User */
+    post: operations['postV1Users'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/files': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description List document files */
+    get: operations['getV1Files'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/files/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description Get file content */
+    get: operations['getV1FilesId'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/documents': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Query documents
+     * @description #### Pagination and sorting
+     *     The items per page parameter **per_page** will default to 10 if not provided, also the **page** parameter will default to 1 if not provided.
+     *     The maximum value of the **per_page** parameter is 100.
+     *     Default order of the items is descending by the created_at attribute.
+     *     Additional information about returned page can be extracted from the returned header parameters:
+     *      - **X-Total**: Total number of items
+     *     - **X-Total-Pages**: Total number of pages
+     *     - **X-Page**: Index of the current page
+     *     - **X-Next-Page**: Index of the next page
+     *     - **X-Prev-Page**: Index of the previous page
+     *     - **X-Per-Page**: Items per page
+     *     - **Link**: Links to the first, previous, next, and last pages can be found from this header
+     *     The page indexing starts from 1.
+     */
+    get: operations['getV1Documents'];
+    put?: never;
+    /** @description Create document */
+    post: operations['postV1Documents'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/documents/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description Document details */
+    get: operations['getV1DocumentsId'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** @description Update existing document */
+    patch: operations['patchV1DocumentsId'];
+    trace?: never;
+  };
+  '/v1/documents/{id}/events': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description Document's events */
+    get: operations['getV1DocumentsIdEvents'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/analysis/definitions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description Get definition of all supported analysis checks */
+    get: operations['getV1AnalysisDefinitions'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/analysis': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Trigger analysis for resource
+     * @description Following checks can be triggered:
+     *
+     *     **SUPPLIER_ACTIVATION**
+     *     Check performed on: INVOICE
+     *     For invoices received through scan service, checks if the sender has sent electronic invoices in the past and could be contacted to change to electronic sending.
+     *
+     *
+     *     **BANK_ACCOUNT_CHANGED**
+     *     Check performed on: INVOICE
+     *
+     *
+     *
+     *     **SENDER_BID_STATUS**
+     *     Check performed on: INVOICE
+     *     Checks the invoice sender against national company register to see that the company business ID is registered and active.
+     *     The check also returns information if the company is going through insolvency or bankruptcy proceedings.
+     *     For Finland additional checking that the company is found in the Prepayment register.
+     *     The registries used to get this information, depend on the country of the sender and are as follows:
+     *     1. Finland - YTJ [ http://www.ytj.fi ]
+     *     2. Norway - Brønnøysundregistrene [ https://brreg.no ]
+     *     3. Other countries -> not supported
+     *
+     *
+     *
+     *     **SENDER_WARNING_LIST**
+     *     Check performed on: INVOICE
+     *     Checks the invoice sender against a list of suspicious/fraud companies.
+     *
+     *
+     *     **VAT**
+     *     Check performed on: INVOICE
+     *     For invoices containing value added tax, checks that the sender of the invoice is found in VAT register.
+     *     Note that if the total amount of value added tax on the invoice is under 1 EUR/NOK/SEK etc., the invoice sender is not checked against the VAT register.
+     *     The registries used to get this information, depend on the country of the sender and are as follows:
+     *     1. Norway - Brønnøysundregistrene [ https://brreg.no ]
+     *     2. EU countries - Vies [ https://ec.europa.eu/taxation_customs/vies/ ]
+     *     3. Other countries - not supported
+     */
+    post: operations['postV1Analysis'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/analysis/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description Resource analysis result */
+    get: operations['getV1AnalysisId'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/partner/invoice_delivery_actions/inbound': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List inbound invoice delivery actions */
+    get: operations['getV1PartnerInvoiceDeliveryActionsInbound'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/partner/invoice_delivery_actions/outbound_errors': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List outbound invoice errors */
+    get: operations['getV1PartnerInvoiceDeliveryActionsOutboundErrors'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/partner/invoice_events/received': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List inbound invoice delivery actions */
+    get: operations['getV1PartnerInvoiceEventsReceived'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/partner/invoice_events/sent_errors': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List outbound invoice errors */
+    get: operations['getV1PartnerInvoiceEventsSentErrors'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/partner/lookups/companies': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List companies availability */
+    get: operations['getV1PartnerLookupsCompanies'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/partner/scan_service/lyanthe': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** [EXPERIMENTAL] Fetch Lyanthe scan service information */
+    get: operations['getV1PartnerScanServiceLyanthe'];
+    put?: never;
+    /** [EXPERIMENTAL] Mark Lyanthe scan service as active. */
+    post: operations['postV1PartnerScanServiceLyanthe'];
+    /** [EXPERIMENTAL] Mark Lyanthe scan service as inactive */
+    delete: operations['deleteV1PartnerScanServiceLyanthe'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/partner/takeovers': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** [EXPERIMENTAL] Start takeover process */
+    post: operations['postV1PartnerTakeovers'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/partner/takeovers/{takeover_id}/complete': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** [EXPERIMENTAL] Complete takeover process */
+    post: operations['postV1PartnerTakeoversTakeoverIdComplete'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/partner/takeovers/{takeover_id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /** [EXPERIMENTAL] Revert takeover process */
+    delete: operations['deleteV1PartnerTakeoversTakeoverId'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/fi_bank_messages/ri_messages': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List IDs of incoming RI messages within given timeframe */
+    get: operations['getV1FiBankMessagesRiMessages'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/fi_bank_messages/ri_messages/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get content of single RI message */
+    get: operations['getV1FiBankMessagesRiMessagesId'];
+    put?: never;
+    post?: never;
+    /** Delete a single RI message */
+    delete: operations['deleteV1FiBankMessagesRiMessagesId'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/fi_bank_messages/sent_messages': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List IDs of sent messages within given timeframe */
+    get: operations['getV1FiBankMessagesSentMessages'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/fi_bank_messages/sent_messages/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get content of single message */
+    get: operations['getV1FiBankMessagesSentMessagesId'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/fi_bank_messages/error_messages': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List IDs of incoming error messages within given timeframe */
+    get: operations['getV1FiBankMessagesErrorMessages'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/fi_bank_messages/error_messages/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get content of single error message */
+    get: operations['getV1FiBankMessagesErrorMessagesId'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/fi_bank_messages': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Upload new message */
+    post: operations['postV1FiBankMessages'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/fi_bank_messages/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get status of sent message */
+    get: operations['getV1FiBankMessagesId'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: {
-        /** @description API_Entities_Status model */
-        API_Entities_Status: {
-            /** @description Authenticated client_id. Will be company_id for Companies */
-            client_id: string;
-            /**
-             * Format: date-time
-             * @description Tells when the current authentication token will expire
-             */
-            expires_at?: string;
-        };
-        /** @description API_Entities_OAuthToken model */
-        API_Entities_OAuthToken: {
-            /** @description The access token issued */
-            access_token: string;
-            /** @description The type of the token issued */
-            token_type: string;
-            /**
-             * Format: int32
-             * @description The lifetime in seconds of the access token
-             */
-            expires_in: number;
-            /** @description The refresh token, which can be used to obtain new access token */
-            refresh_token?: string;
-            /** @description List of scopes granted for token */
-            scope?: string;
-        };
-        /** @description API_Entities_OAuthCurrent model */
-        API_Entities_OAuthCurrent: {
-            user: components["schemas"]["API_Entities_User"];
-            company: components["schemas"]["API_Entities_CompanyParty"];
-            /** @description List of granted scopes */
-            scopes?: string[];
-        };
-        API_Entities_User: {
-            id: string;
-            first_name?: string;
-            last_name?: string;
-            email?: string;
-        };
-        API_Entities_CompanyParty: {
-            /** @description Business ID / Organisation number */
-            bid?: string;
-            /** @description Name of party */
-            name?: string;
-            /** @description Two letter country code of the party */
-            country?: string;
-            /** @description VAT number */
-            vat?: string;
-            /** @description Company Id (GUID) */
-            id: string;
-            /** @description Company has completed the first time wizard */
-            wizard_done?: boolean;
-            /** @description Company is disabled */
-            disabled?: boolean;
-        };
-        /** @description OdpCompany model */
-        OdpCompany: {
-            /**
-             * Format: int32
-             * @description ID of ODP company
-             */
-            id: number;
-            /** @description Name of ODP company */
-            name?: string;
-            /** @description Organisation number of ODP company */
-            bid?: string;
-            /**
-             * @description ODP Company state
-             * @enum {string}
-             */
-            state?: "CREATED" | "TRUSTED" | "DISABLED";
-            /** @description ODP services associated to this ODP company */
-            services?: components["schemas"]["OdpService"][];
-        };
-        OdpService: {
-            /** @description Name of ODP Service */
-            name?: string;
-        };
-        /** @description ReceivablesService model */
-        ReceivablesService: {
-            /** @description IBAN */
-            iban?: string;
-            /** @description Bank identifier code */
-            bic?: string;
-            /** @description Bank */
-            bank?: string;
-            /** @description Contact person */
-            contact_person?: string;
-            /** @description Contact email */
-            contact_email?: string;
-            /** @description Customer service email */
-            customer_service_email?: string;
-            /** @description Customer service phone number */
-            customer_service_phone_number?: string;
-            /** @description Contact Phone Number */
-            contact_phone_number?: string;
-            /** @description Authorization email */
-            authorization_email?: string;
-            /** @description Party who is responsible for monitoring the payments and adding them to assignments. The value "vfs" means using VFS account number, reference number and PDF image. The value "company" means using senders own account number, reference number and PDF image. */
-            accountable_party?: string;
-            billing_address?: components["schemas"]["API_Entities_VFSFI_BillingAddress"];
-            vfsfi?: components["schemas"]["API_Entities_VFSFI_Data"];
-            /**
-             * @description Service status
-             * @enum {string}
-             */
-            status?: "DISABLED" | "ACTIVE" | "PENDING";
-            /** @description Activation URL */
-            activation_url?: string;
-            /**
-             * @description Service type
-             * @enum {string}
-             */
-            service_type?: "full" | "express";
-        };
-        API_Entities_VFSFI_BillingAddress: {
-            /** @description Country */
-            country?: string;
-            /** @description Streets */
-            streets?: string[];
-            /** @description City */
-            city?: string;
-            /** @description Zip code */
-            zip_code?: string;
-        };
-        API_Entities_VFSFI_Data: {
-            /** @description IBAN */
-            iban?: string;
-            /** @description BIC */
-            bic?: string;
-            /** @description Account number */
-            account_number?: string;
-            /** @description Notes */
-            notes?: components["schemas"]["API_Entities_VFSFI_Note"][];
-        };
-        API_Entities_VFSFI_Note: {
-            /** @description Phrase */
-            phrase?: string;
-            /** @description Code */
-            code?: string;
-        };
-        /** @description Start the Amili Receivables service onboarding */
-        putV2ServicesAmiliReceivables: {
-            /** @description IBAN */
-            iban: string;
-            /** @description Bank identifier code */
-            bic: string;
-            /** @description Bank */
-            bank: string;
-            /** @description Contact person */
-            contact_person: string;
-            /** @description Contact email */
-            contact_email: string;
-            /** @description Customer service email */
-            customer_service_email: string;
-            /** @description Customer service phone number */
-            customer_service_phone_number?: string;
-            /** @description Contact Phone Number */
-            contact_phone_number: string;
-            /** @description Authorization email, if this is not provided you will not get an email and the authorization process will proceed by accessing the activation_url from the GET method. */
-            authorization_email?: string;
-            /**
-             * @description Party who is responsible for monitoring the payments and adding them to assignments. The value "vfs" means using VFS account number, reference number and PDF image. The value "company" means using senders own account number, reference number and PDF image.
-             * @enum {string}
-             */
-            accountable_party?: "vfsfi" | "company";
-            /**
-             * @description Choose full Receivables management service (default) or Receivables Express
-             * @default full
-             * @enum {string}
-             */
-            service_type: "full" | "express";
-            billing_address: {
-                /** @description Country */
-                country: string;
-                /** @description Streets */
-                streets: string[];
-                /** @description City */
-                city: string;
-                /** @description Zip code */
-                zip_code: string;
-            };
-            /** @description Postal address if different than the company address */
-            postal_address?: {
-                /** @description Country */
-                country?: string;
-                /** @description Streets */
-                streets?: string[];
-                /** @description City */
-                city?: string;
-                /** @description Zip code */
-                zip_code?: string;
-            };
-        };
-        /** @description Update the Amili Receivables service */
-        patchV2ServicesAmiliReceivables: {
-            /**
-             * @description Party who is responsible for monitoring the payments and adding them to assignments. The value "vfs" means using VFS account number, reference number and PDF image. The value "company" means using senders own account number, reference number and PDF image.
-             * @enum {string}
-             */
-            accountable_party?: "vfsfi" | "company";
-            /**
-             * @description Choose full Receivables management service (default) or Receivables Express
-             * @enum {string}
-             */
-            service_type?: "full" | "express";
-        };
-        /** @description Start the Intrum Receivables service onboarding */
-        putV2ServicesIntrumReceivables: {
-            /** @description Contact phone number for agreement purposes */
-            agreement_contact_phone: string;
-            /** @description Contact name for agreement purposes */
-            agreement_contact_name: string;
-            /** @description Contact email for agreement purposes */
-            agreement_contact_email: string;
-            details?: {
-                /** @description The name of the Real Estate Management Company */
-                real_estate_management_company?: string;
-            };
-        };
-        /** @description API_Entities_CompanyServices_Intrum model */
-        API_Entities_CompanyServices_Intrum: {
-            /**
-             * @description Service status
-             * @enum {string}
-             */
-            status?: "PENDING" | "DISABLED" | "ACTIVE";
-            /** @description Contact phone number for agreement purposes */
-            agreement_contact_phone?: string;
-            /** @description Contact email for agreement purposes */
-            agreement_contact_email?: string;
-            /** @description Contact name for agreement purposes */
-            agreement_contact_name?: string;
-            details?: components["schemas"]["API_Entities_CompanyServices_Intrum_Details"];
-        };
-        API_Entities_CompanyServices_Intrum_Details: {
-            /** @description The name of the Real Estate Management Company */
-            real_estate_management_company?: string;
-        };
-        /** @description Update the Intrum Receivables service */
-        patchV2ServicesIntrumReceivables: {
-            /** @description Client code. This is used to activate a pending service after contract has been signed and the agency has given a client_code to the customer. */
-            client_code?: string;
-        };
-        /** @description Start the Receivables service onboarding */
-        putV1ServicesReceivables: {
-            /** @description IBAN */
-            iban: string;
-            /** @description Bank identifier code */
-            bic: string;
-            /** @description Bank */
-            bank: string;
-            /** @description Contact person */
-            contact_person: string;
-            /** @description Contact email */
-            contact_email: string;
-            /** @description Customer service email */
-            customer_service_email: string;
-            /** @description Customer service phone number */
-            customer_service_phone_number?: string;
-            /** @description Contact Phone Number */
-            contact_phone_number: string;
-            /** @description Authorization email, if this is not provided you will not get an email and the authorization process will proceed by accessing the activation_url from the GET method. */
-            authorization_email?: string;
-            /**
-             * @description Party who is responsible for monitoring the payments and adding them to assignments. The value "vfs" means using VFS account number, reference number and PDF image. The value "company" means using senders own account number, reference number and PDF image.
-             * @enum {string}
-             */
-            accountable_party?: "vfsfi" | "company";
-            /**
-             * @description Choose full Receivables management service (default) or Receivables Express
-             * @default full
-             * @enum {string}
-             */
-            service_type: "full" | "express";
-            billing_address: {
-                /** @description Country */
-                country: string;
-                /** @description Streets */
-                streets: string[];
-                /** @description City */
-                city: string;
-                /** @description Zip code */
-                zip_code: string;
-            };
-            /** @description Postal address if different than the company address */
-            postal_address?: {
-                /** @description Country */
-                country?: string;
-                /** @description Streets */
-                streets?: string[];
-                /** @description City */
-                city?: string;
-                /** @description Zip code */
-                zip_code?: string;
-            };
-        };
-        /** @description Update the Receivables service */
-        patchV1ServicesReceivables: {
-            /**
-             * @description Party who is responsible for monitoring the payments and adding them to assignments. The value "vfs" means using VFS account number, reference number and PDF image. The value "company" means using senders own account number, reference number and PDF image.
-             * @enum {string}
-             */
-            accountable_party?: "vfsfi" | "company";
-            /**
-             * @description Choose full Receivables management service (default) or Receivables Express
-             * @enum {string}
-             */
-            service_type?: "full" | "express";
-        };
-        /** @description API_Entities_CompanyAgreements_Atg model */
-        API_Entities_CompanyAgreements_Atg: {
-            /** @description Account number */
-            account_number?: string;
-            /** @description Length of the KID */
-            kid_length?: string;
-            /** @description Reference position in KID */
-            reference_position?: string;
-            /** @description Payment type position in KID */
-            payment_type_position?: string;
-            /** @description Notifications should be sent as print */
-            notification_by_print?: boolean;
-            /** @description Notifications should be sent as email */
-            notification_by_email?: boolean;
-            /**
-             * @description Agreement status
-             * @enum {string}
-             */
-            status?: "INACTIVE" | "ACTIVE" | "PENDING" | "DISABLED";
-            /**
-             * Format: date-time
-             * @description Agreement creation timestamp
-             */
-            created_at?: string;
-        };
-        /** @description Create a new ATG agreement */
-        postV1ServicesAtg: {
-            /** @description Account number linked to agreement */
-            account_number: string;
-            /**
-             * Format: int32
-             * @description Length of KID
-             */
-            kid_length: number;
-            /** @description The reference position in the KID */
-            reference_position: string;
-            /** @description The payment type position in the KID */
-            payment_type_position?: string;
-            /** @description Email for possible agreement signature request if required */
-            signer_email: string;
-            /** @description Send notification about ATG invoice by print */
-            notification_by_print?: boolean;
-            /** @description Send notification about ATG invoice by email */
-            notification_by_email?: boolean;
-        };
-        /** @description API_Entities_CompanyConsumers_Mandate model */
-        API_Entities_CompanyConsumers_Mandate: {
-            /** @description KID */
-            kid?: string;
-            /** @description Account number */
-            account_number?: string;
-            /** @description Notifications enabled */
-            notification?: string;
-            /** @description Status */
-            status?: string;
-            /** @description Reference nr from KID */
-            reference_nr?: string;
-            /** @description Payment type from KID */
-            payment_type?: string;
-            /**
-             * Format: date-time
-             * @description Entry updated timestamp
-             */
-            updated_at?: string;
-        };
-        /** @description Update existing ATG agreement */
-        patchV1ServicesAtgAccountNumber: {
-            /**
-             * Format: int32
-             * @description Length of KID
-             */
-            kid_length: number;
-            /** @description The reference position in the KID */
-            reference_position: string;
-            /** @description The payment type position in the KID */
-            payment_type_position?: string;
-            /** @description Email for possible agreement signature request if required */
-            signer_email: string;
-            /** @description Send notification about ATG invoice by print */
-            notification_by_print?: boolean;
-            /** @description Send notification about ATG invoice by email */
-            notification_by_email?: boolean;
-        };
-        /** @description OPInvoiceCreditSettingsOffer model */
-        OPInvoiceCreditSettingsOffer: {
-            /** @description Are B2C (business to consumer) invoices counted towards the available credit balance (true) or just passed trough the service (false) */
-            b2c_enabled?: boolean;
-            /**
-             * Format: int32
-             * @description Payback percentage as an integer (eg. 80 means 80%), by default 100. The amount of payments used to pay back the withdrawn loan. If set to 80% it means 20% of each payment will not be used to repay the loan, instead it will be transferred directly to customer.
-             */
-            payment_percent?: number;
-            /**
-             * Format: int32
-             * @description Interest rate as an integer (eg. 2 means 2%)
-             */
-            interest_rate?: number;
-            /**
-             * Format: float
-             * @description Credit limit
-             */
-            credit_limit?: number;
-        };
-        /** @description OPInvoiceCredit model */
-        OPInvoiceCredit: {
-            /**
-             * @description Service status
-             * @enum {string}
-             */
-            status?: "DISABLED" | "ACTIVE" | "PENDING";
-            /** @description Channel user id for the company */
-            channel_user_id?: string;
-            /** @description Company contact email */
-            contact_email?: string;
-            /** @description Company IBAN account number */
-            iban?: string;
-            /** @description Company bank BIC number */
-            bic?: string;
-            /** @description Company bank name */
-            bank?: string;
-            /** @description Url for the user to sign the agreement */
-            activation_url?: string;
-            op_bank_details?: components["schemas"]["OPInvoiceCreditBankDetails"];
-        };
-        OPInvoiceCreditBankDetails: {
-            /** @description OP IBAN to be used on invoices */
-            iban?: string;
-            /** @description OP BIC to be used on invoices */
-            bic?: string;
-            transfer_clause?: components["schemas"]["API_Entities_CompanyServices_OPInvoiceCreditTransferClause"];
-        };
-        API_Entities_CompanyServices_OPInvoiceCreditTransferClause: {
-            /** @description Language of the transfer clause */
-            language_code?: string;
-            /** @description Contents/text of the transfer clause */
-            content?: string;
-        };
-        /** @description API_Entities_Error model */
-        API_Entities_Error: {
-            /** @description Error code */
-            code?: string;
-            /** @description General error message */
-            message?: string;
-            /** @description Details about the error */
-            details?: string[];
-        };
-        /** @description OPInvoiceCreditSettings model */
-        OPInvoiceCreditSettings: {
-            current?: components["schemas"]["OPInvoiceCreditSettingsCurrent"];
-            offer?: components["schemas"]["OPInvoiceCreditSettingsOffer"];
-        };
-        OPInvoiceCreditSettingsCurrent: {
-            /** @description Are B2C (business to consumer) invoices counted towards the available credit balance (true) or just passed trough the service (false) */
-            b2c_enabled?: boolean;
-            /**
-             * Format: int32
-             * @description Payback percentage as an integer (eg. 80 means 80%), by default 100. The amount of payments used to pay back the withdrawn loan. If set to 80% it means 20% of each payment will not be used to repay the loan, instead it will be transferred directly to customer.
-             */
-            payment_percent?: number;
-            /**
-             * Format: int32
-             * @description Interest rate as an integer (eg. 2 means 2%)
-             */
-            interest_rate?: number;
-            /**
-             * Format: float
-             * @description Credit limit
-             */
-            credit_limit?: number;
-        };
-        /** @description Modify settings */
-        postV1ServicesOpInvoiceCreditSettings: {
-            /** @description Are B2C (business to consumer) invoices counted towards the available credit balance (true) or just passed trough the service (false) */
-            b2c_enabled: boolean;
-            /**
-             * Format: int32
-             * @description Payback percentage as an integer (eg. 80 means 80%), by default 100. The amount of payments used to pay back the withdrawn loan. If set to 80% it means 20% of each payment will not be used to repay the loan, instead it will be transferred directly to customer.
-             */
-            payment_percent: number;
-            /**
-             * Format: int32
-             * @description Interest rate as an integer (eg. 2 means 2%)
-             */
-            interest_rate: number;
-            /**
-             * Format: float
-             * @description Credit limit
-             */
-            credit_limit: number;
-        };
-        /** @description Start the OP Laskulaina onboarding */
-        putV1ServicesOpInvoiceCredit: {
-            /** @description Contact email */
-            contact_email: string;
-            /** @description IBAN account number */
-            iban: string;
-            /** @description Bank identifier */
-            bic: string;
-            /** @description Bank name */
-            bank: string;
-        };
-        /** @description OPInvoiceCreditAvailableCredit model */
-        OPInvoiceCreditAvailableCredit: {
-            /**
-             * Format: float
-             * @description Amount withdrawable based on the collateral value or limit
-             */
-            available_credit_amount?: number;
-            /** @description Only EUR supported */
-            currency?: string;
-            /**
-             * Format: float
-             * @description Ongoing month interest accrual at this time
-             */
-            current_month_interest?: number;
-            /**
-             * Format: float
-             * @description Unpaid capitalized interest from previous months
-             */
-            interest_balance?: number;
-            /**
-             * Format: float
-             * @description Credit limit
-             */
-            max_credit_amount?: number;
-            /**
-             * Format: float
-             * @description AI calculated total collateral value (collateral basket) on all open invoices, which due date in in the future(invoice collateral is deducted from basket on due date)
-             */
-            total_collateral_amount?: number;
-            /**
-             * Format: float
-             * @description Amount of withdrawn loan
-             */
-            total_withdrawn?: number;
-        };
-        /** @description Make a withdrawal */
-        postV1ServicesOpInvoiceCreditWithdrawal: {
-            /**
-             * Format: float
-             * @description EUR amount to withdraw
-             */
-            amount: number;
-        };
-        /** @description Make a direct payment */
-        postV1ServicesOpInvoiceCreditDirectPayment: {
-            /** @description ID of the invoice (UUID) */
-            invoice_id: string;
-        };
-        /** @description Detect_Checks model */
-        Detect_Checks: {
-            /** @description Check name */
-            on_invoice_receive?: string;
-        };
-        /** @description AutoScan_HttpApi_Entities_AutoScanConfiguration model */
-        AutoScan_HttpApi_Entities_AutoScanConfiguration: {
-            /**
-             * @description AutoScan status
-             * @enum {string}
-             */
-            status?: "active" | "inactive";
-            /** @description AutoScan email address */
-            scan_email_address?: string;
-            /** @description AutoScan features */
-            features?: Record<string, never>;
-        };
-        /** @description [EXPERIMENTAL] Activates AutoScan */
-        putV1ServicesAutoscan: {
-            features?: {
-                /** @description Enable or disable invoice line scanning */
-                invoice_line_scanning?: boolean;
-            };
-        };
-        /** @description Scan_HttpApi_Entities_ScanConfiguration model */
-        Scan_HttpApi_Entities_ScanConfiguration: {
-            /**
-             * @description Scan status
-             * @enum {string}
-             */
-            status?: "active" | "disabled" | "pending" | "error";
-            /** @description Error message if status is pending else nil */
-            error_message?: string;
-            scan_address?: components["schemas"]["Scan_HttpApi_Entities_ScanAddress"];
-            return_address?: components["schemas"]["Scan_HttpApi_Entities_ReturnAddress"];
-            features?: components["schemas"]["Scan_HttpApi_Entities_ScanFeatures"];
-        };
-        Scan_HttpApi_Entities_ScanAddress: {
-            /** @description Email address where supplier should send pdf invoices */
-            email_address?: string;
-            postal_address?: components["schemas"]["Scan_HttpApi_Entities_PostalAddress"];
-        };
-        Scan_HttpApi_Entities_PostalAddress: {
-            /** @description Name of the company */
-            name?: string;
-            address1?: string;
-            address2?: string;
-            country_code?: string;
-            post_code?: string;
-            city?: string;
-        };
-        Scan_HttpApi_Entities_ReturnAddress: {
-            /** @description Email address where all other material than invoices are delivered by the scanning service */
-            email_address?: string;
-            postal_address?: components["schemas"]["Scan_HttpApi_Entities_PostalAddress"];
-        };
-        Scan_HttpApi_Entities_ScanFeatures: {
-            /** @description Other documents */
-            other_docs?: boolean;
-            /** @description Scan reminders */
-            scan_reminders?: boolean;
-            /** @description Cash discount field scanning */
-            cash_discount_field_scanning?: boolean;
-            /** @description Line scanning */
-            line_scanning?: boolean;
-            /** @description VAT liable */
-            vat_liable?: boolean;
-        };
-        /** @description API_Entities_CompanyConsumers_Consumer model */
-        API_Entities_CompanyConsumers_Consumer: {
-            /** @description Full name */
-            name?: string;
-            /** @description Customer number */
-            customer_number?: string;
-            /** @description Reference number */
-            reference_number?: string;
-            /** @description Email address */
-            email?: string;
-            /** @description Phone number */
-            phone?: string;
-            /**
-             * @description Status
-             * @enum {string}
-             */
-            status: "NEW" | "REQUEST_SENT" | "ACCEPTED" | "ACTIVE" | "DELETED" | "REJECTED" | "ERROR";
-            /**
-             * Format: date-time
-             * @description Last update time
-             */
-            updated_at?: string;
-        };
-        /** @description API_Entities_B2CNO_Status model */
-        API_Entities_B2CNO_Status: {
-            /**
-             * @description B2CNO Agreement status for company
-             * @enum {string}
-             */
-            status: "ACTIVE" | "FREE" | "RESERVED" | "FAULT" | "ERROR";
-        };
-        /** @description Create B2CSE network registration request */
-        postV1ServicesB2cseAgreement: {
-            /** @description FUI = Faktura Utställar Identitet. Only if company already has an existing agreement with their bank and knows their FUI. If given, also agreement_id is required. */
-            fui?: string;
-            /** @description Agreement ID. Only if company already has an existing agreement with their bank and knows their agreement ID. If given, also fui is required. */
-            agreement_id?: string;
-            /** @description Account Number without dashes (123456) */
-            account_number: string;
-            /**
-             * @description Account type (PlusGiro or BankGiro)
-             * @enum {string}
-             */
-            account_type: "PlusGiro" | "BankGiro";
-            /** @description Website URL */
-            website?: string;
-        };
-        /** @description API_Entities_B2CSE_Agreement model */
-        API_Entities_B2CSE_Agreement: {
-            /** @description Status of the agreement */
-            status?: string;
-            /** @description FUI = Faktura Utställar Identitet */
-            fui?: string;
-            /** @description Agreement ID */
-            agreement_id?: string;
-            /** @description Account Number without dashes (123456) */
-            account_number?: string;
-            /**
-             * @description Account type (PlusGiro or BankGiro)
-             * @enum {string}
-             */
-            account_type?: "PlusGiro" | "BankGiro";
-            /** @description Website URL */
-            website?: string;
-        };
-        /** @description ReportsDefinitions model */
-        ReportsDefinitions: {
-            /** @description User reporting criteria */
-            criteria?: components["schemas"]["Criteria"][];
-            /** @description Purpose of user reporting disclaimer text */
-            disclaimer_text?: string;
-            /** @description Purpose of user reporting disclaimer text, translated in all supported languages */
-            disclaimer_texts?: components["schemas"]["Translation"][];
-        };
-        Criteria: {
-            /** @description Criteria name */
-            name?: string;
-            /** @description Criteria friendly name */
-            friendly_name?: string;
-            /** @description Criteria friendly name, translated in all supported languages */
-            friendly_names?: components["schemas"]["Translation"][];
-            /** @description Criteria text */
-            text?: string;
-            /** @description Criteria text, translated in all supported languages */
-            texts?: components["schemas"]["Translation"][];
-        };
-        Translation: {
-            /** @description Language ISO code the text is translated to */
-            lang?: string;
-            /** @description Translated text */
-            value?: string;
-        };
-        /** @description Invoices_HttpApi_Entities_Invoice model */
-        Invoices_HttpApi_Entities_Invoice: {
-            /** @description Invoice ID */
-            id?: string;
-            /**
-             * @description Current status of document
-             * @enum {string}
-             */
-            status?: "PENDING" | "DELIVERED" | "FAILED";
-            /** @description Reference number */
-            reference?: string;
-            /** @description Invoice number */
-            number?: string;
-            sender?: components["schemas"]["Invoices_HttpApi_Entities_InvoiceSenderParty"];
-            recipient?: components["schemas"]["Invoices_HttpApi_Entities_InvoiceRecipientParty"];
-            /**
-             * Format: date-time
-             * @description The timestamp when invoice was received
-             */
-            received_at?: string;
-            /**
-             * Format: date-time
-             * @description The timestamp when invoice was created
-             */
-            created_at?: string;
-            /**
-             * Format: date
-             * @description Invoice date
-             */
-            date?: string;
-            /**
-             * Format: date
-             * @description Invoice due date
-             */
-            date_due?: string;
-            /** @description Format the invoice was created from */
-            source_format: string;
-            /**
-             * Format: float
-             * @description Invoice sum
-             */
-            sum: number;
-            /**
-             * Format: float
-             * @description Invoice sum with tax
-             */
-            sum_tax: number;
-            /** @description Invoice currency */
-            currency: string;
-            /**
-             * @description Invoice origin
-             * @enum {string}
-             */
-            origin?: "INTERNAL" | "EXTERNAL" | "SCAN";
-            /**
-             * @description Invoice origin type. Not null only if origin is SCAN.
-             *                               SCAN_PDF - Scanned from a PDF file
-             *                               SCAN_PAPER - Scanned from a paper invoice
-             *                               AUTOSCAN - Automatically scanned from a PDF file
-             *                               SCAN - Scanned from non-invoice material
-             *                               null - Non scan origin
-             * @enum {string}
-             */
-            origin_type?: "SCAN_PDF" | "SCAN_PAPER" | "AUTOSCAN" | "SCAN" | "null";
-            /** @description Invoice destination */
-            destination?: string;
-            /** @description Custom comment */
-            comment?: string;
-            /** @description Files attached to the invoice */
-            files?: components["schemas"]["Invoices_HttpApi_Entities_InvoiceFile"][];
-            /** @description Invoice actions */
-            actions?: components["schemas"]["Invoices_HttpApi_Entities_InvoiceAction"][];
-            /** @description Data set after resending the invoice */
-            revision?: Record<string, never>;
-        };
-        Invoices_HttpApi_Entities_InvoiceSenderParty: {
-            /** @description Electronic Identifier Address */
-            eia?: string;
-            /** @description Business ID / Organisation number */
-            bid?: string;
-            /** @description Name of party */
-            name?: string;
-            /** @description Two letter country code of the party */
-            country?: string;
-        };
-        Invoices_HttpApi_Entities_InvoiceRecipientParty: {
-            /** @description Electronic Identifier Address */
-            eia?: string;
-            /** @description Business ID / Organisation number */
-            bid?: string;
-            /** @description Name of party */
-            name?: string;
-            /** @description Two letter country code of the party */
-            country?: string;
-            /** @description Recipients operator */
-            operator?: string;
-        };
-        Invoices_HttpApi_Entities_InvoiceFile: {
-            /** @description Unique ID of the file */
-            id: string;
-            /** @description File name */
-            filename?: string;
-            /** @description File format */
-            type?: string;
-            /** @description Mime type passed when created or inferred from file extension */
-            mimetype?: string;
-            /** @description Direct link for accesing the file content */
-            href?: string;
-        };
-        /** @description Invoices_HttpApi_Entities_InvoiceAction model */
-        Invoices_HttpApi_Entities_InvoiceAction: {
-            /**
-             * @description The type of event that happened
-             * @enum {string}
-             */
-            type: "RECEIVED" | "CREATED" | "SENT" | "DELIVERED" | "INFO" | "ERROR";
-            /**
-             * @description Channel the event is related to. For example from where the invoice is coming from or where it was sent.
-             * @enum {string}
-             */
-            channel?: "EINVOICE" | "PRINT" | "SCAN" | "EMAIL";
-            /** @description Additional message related to the event */
-            message?: string;
-            /**
-             * @description The unique action key
-             * @enum {string}
-             */
-            key?: "action_created" | "action_sent_print" | "action_sent_email" | "action_error" | "action_route_failed" | "action_incoming_receive" | "action_incoming_bank" | "action_internal_sent" | "action_sent_email_failed" | "action_seen" | "action_send_fail" | "action_accepted" | "action_paper_ordered" | "action_sent_paper" | "action_expired" | "action_confirmed" | "action_declined" | "action_disputed" | "action_archived" | "action_paid" | "action_reminder" | "action_delivered" | "action_delivery_failed" | "action_signed" | "action_trx_ok" | "action_trx_fail" | "action_trx_delay" | "action_canceled" | "action_collection" | "action_notice" | "action_reminder_and_collection" | "action_send_without_attachments";
-            /**
-             * Format: date-time
-             * @description When the event happened
-             */
-            happened_at: string;
-        };
-        /** @description Invoices_HttpApi_Entities_InvoiceDetectResults model */
-        Invoices_HttpApi_Entities_InvoiceDetectResults: {
-            /** @description Overall status of the checks */
-            status?: ("OK" | "WARN" | "DISABLED")[];
-            /** @description Checks executed by Detect service */
-            executed_checks?: string[];
-            /** @description Findings found by Detect service */
-            findings?: string[];
-        };
-        /** @description Change state for recevied events */
-        patchV1InvoicesIdInvoiceEvents: {
-            /**
-             * @description State to change to
-             * @enum {string}
-             */
-            state: "CREATED" | "HANDLED";
-        };
-        /** @description Reroutes invoice via einvoice */
-        putV1InvoicesIdRerouteEinvoice: {
-            /** @description Recipient electronic invoice address */
-            recipient_eia: string;
-            /** @description Recipient operator */
-            recipient_operator: string;
-        };
-        /** @description Reroutes invoice via email */
-        putV1InvoicesIdRerouteEmail: {
-            /** @description Recipient email address */
-            recipient_email: string;
-        };
-        /** @description Reroutes invoice via print */
-        putV1InvoicesIdReroutePrint: {
-            /** @description Recipient name */
-            recipient_name: string;
-            /** @description Recipient address line 1 */
-            recipient_address1: string;
-            /** @description Recipient address line 2 */
-            recipient_address2?: string;
-            /** @description Recipient post code */
-            recipient_post_code: string;
-            /** @description Recipient post office */
-            recipient_post_office: string;
-            /** @description Recipient state */
-            recipient_state?: string;
-            /**
-             * @description Recipient country in ISO 3166-1 alpha-2 format (2 letters)
-             * @enum {string}
-             */
-            recipient_country: "AF" | "AX" | "AL" | "DZ" | "AS" | "AD" | "AO" | "AI" | "AQ" | "AG" | "AR" | "AM" | "AW" | "AU" | "AT" | "AZ" | "BS" | "BH" | "BD" | "BB" | "BY" | "BE" | "BZ" | "BJ" | "BM" | "BT" | "BO" | "BQ" | "BA" | "BW" | "BV" | "BR" | "IO" | "BN" | "BG" | "BF" | "BI" | "CV" | "KH" | "CM" | "CA" | "KY" | "CF" | "TD" | "CL" | "CN" | "CX" | "CC" | "CO" | "KM" | "CG" | "CD" | "CK" | "CR" | "CI" | "HR" | "CU" | "CW" | "CY" | "CZ" | "DK" | "DJ" | "DM" | "DO" | "EC" | "EG" | "SV" | "GQ" | "ER" | "EE" | "SZ" | "ET" | "FK" | "FO" | "FJ" | "FI" | "FR" | "GF" | "PF" | "TF" | "GA" | "GM" | "GE" | "DE" | "GH" | "GI" | "GR" | "GL" | "GD" | "GP" | "GU" | "GT" | "GG" | "GN" | "GW" | "GY" | "HT" | "HM" | "VA" | "HN" | "HK" | "HU" | "IS" | "IN" | "ID" | "IR" | "IQ" | "IE" | "IM" | "IL" | "IT" | "JM" | "JP" | "JE" | "JO" | "KZ" | "KE" | "KI" | "KP" | "KR" | "KW" | "KG" | "LA" | "LV" | "LB" | "LS" | "LR" | "LY" | "LI" | "LT" | "LU" | "MO" | "MG" | "MW" | "MY" | "MV" | "ML" | "MT" | "MH" | "MQ" | "MR" | "MU" | "YT" | "MX" | "FM" | "MD" | "MC" | "MN" | "ME" | "MS" | "MA" | "MZ" | "MM" | "NA" | "NR" | "NP" | "NL" | "NC" | "NZ" | "NI" | "NE" | "NG" | "NU" | "NF" | "MK" | "MP" | "NO" | "OM" | "PK" | "PW" | "PS" | "PA" | "PG" | "PY" | "PE" | "PH" | "PN" | "PL" | "PT" | "PR" | "QA" | "RE" | "RO" | "RU" | "RW" | "BL" | "SH" | "KN" | "LC" | "MF" | "PM" | "VC" | "WS" | "SM" | "ST" | "SA" | "SN" | "RS" | "SC" | "SL" | "SG" | "SX" | "SK" | "SI" | "SB" | "SO" | "ZA" | "GS" | "SS" | "ES" | "LK" | "SD" | "SR" | "SJ" | "SE" | "CH" | "SY" | "TW" | "TJ" | "TZ" | "TH" | "TL" | "TG" | "TK" | "TO" | "TT" | "TN" | "TR" | "TM" | "TC" | "TV" | "UG" | "UA" | "AE" | "GB" | "US" | "UM" | "UY" | "UZ" | "VU" | "VE" | "VN" | "VG" | "VI" | "WF" | "EH" | "YE" | "ZM" | "ZW" | "XK";
-        };
-        /** @description Report sender of fraud attempt */
-        postV1InvoicesIdReports: {
-            /** @description Reporting reason. Can be multiple. */
-            reason: ("NONEXISTENT_PRODUCT" | "OFFERS_AS_INVOICES" | "UNKNOWN_COMPANY" | "INVOICE_NOT_FOLLOWING_LAW" | "MISLEADING_NAME" | "IMPOSSIBLE_TO_CONTACT" | "MISLEADING_MARKETING" | "COMPANY_NOT_FOLLOWING_LAW" | "KNOWN_FOR_FRAUD_ATTEMPTS" | "KNOWN_FOR_SUSPICIOUS_ACTIVITIES")[];
-            /** @description Contact email for reporter in case of follow up questions */
-            contact_email: string;
-            /** @description Description for reporting with certain reasons */
-            description?: string;
-        };
-        /** @description UserReport model */
-        UserReport: {
-            /** @description User report id */
-            id?: string;
-            /** @description Bid of reported company */
-            company_bid?: string;
-            /** @description Name of reported company */
-            company_name?: string;
-            /** @description Country code of reported company */
-            company_country_code?: string;
-            /** @description Bank account of reported company */
-            company_bank_account?: string;
-            /** @description Id of reporter user */
-            reporter_user_id?: string;
-            /** @description Contact email of reporter */
-            reporter_contact_email?: string;
-            /** @description Reported invoice id */
-            invoice_id?: string;
-            /** @description Selected reasons at report time */
-            reasons?: components["schemas"]["Criteria"][];
-            /** @description Additional explanation given by the user at report time */
-            additional_explanation?: string;
-            /**
-             * Format: date-time
-             * @description Timestamp when report was done
-             */
-            report_date?: string;
-        };
-        /** @description Invoices_HttpApi_Entities_InvoiceAssignment model */
-        Invoices_HttpApi_Entities_InvoiceAssignment: {
-            /** @enum {string} */
-            status: "pending" | "sent" | "error";
-            /** @description URL for fetching the assignment details */
-            url?: string;
-            /**
-             * Format: double
-             * @description Collectable amount
-             */
-            collectable_amount?: number;
-            /** @description Error reason when the status is pending or error */
-            error_reason?: string;
-        };
-        /** @description Post assignment for invoice */
-        postV1InvoicesIdAssignment: {
-            /**
-             * @description Collection type
-             * @enum {string}
-             */
-            collection_type: "reminder_and_collection" | "collection";
-            /**
-             * Format: double
-             * @description Total collectable amount, needs to be a positive number (for example 100.50). Cannot be used in combination with amounts.
-             */
-            collectable_amount?: number;
-            /** @description Detailed breakdown of amounts. Cannot be used in combination with collectable_amount. */
-            amounts?: {
-                /**
-                 * Format: double
-                 * @description Amount of capital invoiced. Needs to be a positive number (for example 100.50).
-                 */
-                capital_amount: number;
-                /**
-                 * Format: double
-                 * @description Amount of reminder fees invoiced. Needs to be a positive number (for example 5.00).
-                 */
-                reminder_amount: number;
-                /**
-                 * Format: double
-                 * @description Amount of previous interest invoiced. Needs to be a positive number (for example 10.50).
-                 */
-                interest_amount: number;
-                /**
-                 * Format: date
-                 * @description YYYY-MM-DD format. Date from which to start interest calculation.For cases where interest has been collected before assignment creation.
-                 */
-                interest_calculation_date?: string;
-            };
-            /** @description List of payer customer IDs, used for joining assignments when the payers are the same */
-            payer_identifiers?: string[];
-            /** @description List of payer customer social security numbers, used for the legal collection process */
-            payer_ssns?: string[];
-            /** @description Industry specific optional parameters */
-            industry_specific_options?: {
-                /** @description Only for collectibles regarding rental business. Cannot be used in combination with housing_charge. Currently only supported with the Intrum collection agency. */
-                rental?: {
-                    /** @description Address of the rental target or the housing company */
-                    address: string;
-                    /**
-                     * Format: double
-                     * @description Total invoice sum assumed if target is not given.
-                     */
-                    current_target_amount?: number;
-                    /**
-                     * Format: date
-                     * @description YYYY-MM-DD format. Applicable for temporary contracts.
-                     */
-                    contract_expiry_date?: string;
-                    /**
-                     * @description continuous assumed if contract_expiry_date is not given
-                     * @enum {string}
-                     */
-                    contract_type?: "continuous" | "temporary";
-                };
-                /** @description Only for collectibles regarding housing charges. Cannot be used in combination with rental. Currently only supported with the Intrum collection agency. */
-                housing_charge?: {
-                    /** @description Address of the target for which housing charge is collected */
-                    address: string;
-                };
-            };
-            /** @description Summary of the assignment, will be included in the reminder and collection letters. Length 2-64 characters. */
-            assignment_summary?: string;
-        };
-        /** @description Sets the business response for an invoice in the Nemhandel network. When an invoice has a final response you cannot set another response. The responses have to be set in a predefined order, specified by the standards.Note: This API has a vendor lock. To enable access, please contact Maventa Support before using this endpoint. */
-        postV1InvoicesIdResponsesNemhandel: {
-            /**
-             * @description Invoice response type
-             * @enum {string}
-             */
-            response: "MessageAcknowledgement" | "InProcess" | "UnderQuery" | "ConditionallyAccepted" | "Rejected" | "Accepted" | "PartiallyPaid" | "FullyPaid";
-            /** @description Reason for response, required for some responses */
-            reason?: string;
-        };
-        /** @description Invoices_HttpApi_Entities_InvoiceResponseNemhandel model */
-        Invoices_HttpApi_Entities_InvoiceResponseNemhandel: {
-            /** @description Specifies if the response is requested by the original sender of the invoice */
-            is_requested?: boolean;
-        };
-        /** @description API_Entities_CompanyProfile model */
-        API_Entities_CompanyProfile: {
-            /** @description Profile unique id */
-            id?: string;
-            /**
-             * @description Status of profile registration
-             * @enum {string}
-             */
-            status?: "active" | "pending" | "error";
-            last_event?: components["schemas"]["API_Entities_CompanyProfileEvent"];
-            /** @description Profile name (DEPRECATED) */
-            profile?: string;
-            /** @description List of profile names */
-            profiles?: string[];
-            /** @description Profile version, eg. EHF30, PEPPOLBIS30 */
-            profile_version?: string;
-            /** @description Endpoint identifier */
-            endpoint_id?: string;
-            /** @description ISO6523 code of the endpoint_id scheme. eg. 0192 for NO:ORG */
-            scheme?: string;
-            /** @description Target network, defaults to PEPPOL */
-            network?: string;
-            /** @description List of profile names with extensions */
-            profiles_with_extensions?: components["schemas"]["API_Entities_CompanyProfileProfilesWithExtensions"][];
-            /** @description Additional network settings */
-            network_settings?: Record<string, never>;
-        };
-        API_Entities_CompanyProfileEvent: {
-            /** @description Information about the event */
-            message?: string;
-            /**
-             * Format: date-time
-             * @description Created timestamp
-             */
-            created_at: string;
-        };
-        API_Entities_CompanyProfileProfilesWithExtensions: {
-            /** @description Profile name */
-            profile_name?: string;
-            /** @description Active extensions */
-            extensions?: string;
-        };
-        /** @description Create network registration request */
-        postV1CompanyProfiles: {
-            /** @description List of profile names */
-            profiles?: string[];
-            /** @description Profile version, eg. EHF30, PEPPOLBIS30 */
-            profile_version?: string;
-            /** @description Endpoint identifier */
-            endpoint_id?: string;
-            /** @description ISO6523 code of the endpoint_id scheme. eg. 0192 for NO:ORG */
-            scheme?: string;
-            /** @description Target network, defaults to PEPPOL */
-            network?: string;
-            /** @description List of profile names with extensions */
-            profiles_with_extensions?: string[];
-            /** @description Additional network settings */
-            network_settings?: Record<string, never>;
-        };
-        /** @description EXPERIMENTAL Create extensions for profiles */
-        putV1CompanyProfilesIdExtensions: {
-            /** @description Profile name */
-            profile_name: string;
-            /** @description Extensions */
-            extensions: "GACCOUNT10"[];
-        };
-        /** @description Update a network registration */
-        patchV1CompanyProfilesId: {
-            /** @description Additional network settings */
-            network_settings?: Record<string, never>;
-        };
-        /** @description API_Entities_CompanySettings_Settings model */
-        API_Entities_CompanySettings_Settings: {
-            details?: components["schemas"]["API_Entities_CompanySettings_CompanyDetails"];
-            address?: components["schemas"]["API_Entities_CompanySettings_CompanyAddress"];
-            invoice_notifications?: components["schemas"]["API_Entities_CompanySettings_CompanyInvoiceNotifications"];
-            send_invoice_email?: components["schemas"]["API_Entities_CompanySettings_CompanySendInvoiceEmail"];
-            send_invoice_print?: components["schemas"]["API_Entities_CompanySettings_CompanySendInvoicePrintSettings"];
-            send_invoice_general?: components["schemas"]["API_Entities_CompanySettings_CompanySendInvoiceGeneralSettings"];
-            logos?: components["schemas"]["API_Entities_CompanySettings_CompanyLogos"];
-            email_reports?: components["schemas"]["API_Entities_CompanySettings_CompanyEmailReports"];
-            billing_details?: components["schemas"]["API_Entities_CompanySettings_CompanyBillingDetails"];
-        };
-        API_Entities_CompanySettings_CompanyDetails: {
-            /** @description Name of the company */
-            name?: string;
-            /** @description Main email address */
-            email?: string;
-            /** @description URL to company web pages */
-            website?: string;
-            /** @description Company's country */
-            country?: string;
-            /** @description Company's business id */
-            bid?: string;
-            /** @description Company's VAT number */
-            vat_number?: string;
-        };
-        API_Entities_CompanySettings_CompanyAddress: {
-            /** @description Street address */
-            street_address?: string;
-            /** @description Post code */
-            post_code?: string;
-            /** @description Post office */
-            post_office?: string;
-            /** @description City */
-            city?: string;
-            /** @description Country as a two letter country code */
-            country?: string;
-        };
-        API_Entities_CompanySettings_CompanyInvoiceNotifications: {
-            on_receiving?: components["schemas"]["API_Entities_CompanySettings_CompanySendInvoiceEmailOnReceivingData"];
-            on_send_errors?: components["schemas"]["API_Entities_CompanySettings_CompanySendInvoiceEmailOnSendErrorsData"];
-        };
-        API_Entities_CompanySettings_CompanySendInvoiceEmailOnReceivingData: {
-            /** @description Enable notifications for incoming invoices */
-            enabled?: boolean;
-            /** @description Sent to company email or other email */
-            how_to_send?: string;
-            /** @description Email address for receiving notifications for incoming invoices */
-            other_email?: string;
-        };
-        API_Entities_CompanySettings_CompanySendInvoiceEmailOnSendErrorsData: {
-            /** @description Users get informed on invoice send errors */
-            to_user?: boolean;
-            /** @description Email addresses for sending related errors */
-            to_emails?: string[];
-        };
-        API_Entities_CompanySettings_CompanySendInvoiceEmail: {
-            /** @description Describe if send via email is enabled */
-            enabled?: boolean;
-            /**
-             * @description Describe which method to use to send invoices via email.
-             * @enum {string}
-             */
-            how_to_send?: "EMBEDDED" | "WITH_OBJECTIONS" | "WITH_LINK" | "EMBEDDED_MERGE";
-            /** @description Describes the frequency of email reminder’s for open invoices in days. */
-            reminder_frequency?: number;
-            content_data?: components["schemas"]["API_Entities_CompanySettings_CompanySendInvoiceEmailContentData"];
-        };
-        API_Entities_CompanySettings_CompanySendInvoiceEmailContentData: {
-            /** @description What message to be added to the sent email */
-            note_to_receiver?: string;
-            contact?: components["schemas"]["API_Entities_CompanySettings_CompanySendInvoiceEmailContentDataContactData"];
-        };
-        API_Entities_CompanySettings_CompanySendInvoiceEmailContentDataContactData: {
-            /** @description reply-to email, which needs to be verified */
-            email?: string;
-            /** @description Name of the person to be contacted */
-            name?: string;
-            /** @description Phone number to be contacted */
-            phone?: string;
-        };
-        API_Entities_CompanySettings_CompanySendInvoicePrintSettings: {
-            /** @description Print service enabled */
-            enabled?: boolean;
-            /** @description Print service letter class (FI SE NL only) */
-            letter_class?: string;
-            /** @description Print color (FI SE NO DK only) */
-            color_scheme?: string;
-            /** @description Attachment print */
-            attachment_print?: boolean;
-            /** @description Automatic e-invoice marketing page (FI only) */
-            marketing_page?: boolean;
-            /** @description Use own PDFs for print service (FI NO SE DK only). NL has always on. */
-            use_own_pdf?: boolean;
-        };
-        API_Entities_CompanySettings_CompanySendInvoiceGeneralSettings: {
-            /** @description Stop duplicate invoice numbers */
-            stop_duplicate_numbers?: boolean;
-            /** @description Hold invoices on multiple recipients */
-            hold_multiple_recipients?: boolean;
-        };
-        API_Entities_CompanySettings_CompanyLogos: {
-            pdf?: components["schemas"]["API_Entities_CompanySettings_CompanyLogoData"];
-            email_header?: components["schemas"]["API_Entities_CompanySettings_CompanyHeaderImage"];
-        };
-        API_Entities_CompanySettings_CompanyLogoData: {
-            /** @description Base64-encoded content for logo */
-            content: string;
-        };
-        API_Entities_CompanySettings_CompanyHeaderImage: {
-            /** @description Base64-encoded content for header image. PNG only */
-            content: string;
-        };
-        API_Entities_CompanySettings_CompanyEmailReports: {
-            /** @description Email reports interval */
-            report_interval?: string;
-            /** @description Email address for reports */
-            email_reports?: string[];
-        };
-        API_Entities_CompanySettings_CompanyBillingDetails: {
-            electronic_invoicing_details?: components["schemas"]["API_Entities_CompanySettings_CompanyBillingDetailsElectronicInvoicingData"];
-            /** @description Email address for billing */
-            invoicing_email?: string;
-            /** @description Street address for billing */
-            invoicing_street_address1?: string;
-            /** @description Additional street address for billing */
-            invoicing_street_address2?: string;
-            /** @description Postal code for billing */
-            invoicing_post_code?: string;
-            /** @description Postal office for billing */
-            invoicing_post_office?: string;
-            /** @description Billing company UUID */
-            billing_company_id?: string;
-        };
-        API_Entities_CompanySettings_CompanyBillingDetailsElectronicInvoicingData: {
-            /** @description Company electronic invoicing address */
-            invoicing_eia?: string;
-            /** @description Company electronic invoicing operator */
-            invoicing_operator?: string;
-        };
-        /** @description Modify company settings */
-        patchV1CompanySettings: {
-            details: components["schemas"]["API_Entities_CompanySettings_CompanyDetails"];
-            address: components["schemas"]["API_Entities_CompanySettings_CompanyAddress"];
-            invoice_notifications: components["schemas"]["API_Entities_CompanySettings_CompanyInvoiceNotifications"];
-            send_invoice_email?: components["schemas"]["API_Entities_CompanySettings_CompanySendInvoiceEmail"];
-            send_invoice_print?: components["schemas"]["API_Entities_CompanySettings_CompanySendInvoicePrintSettings"];
-            send_invoice_general?: components["schemas"]["API_Entities_CompanySettings_CompanySendInvoiceGeneralSettings"];
-            logos?: components["schemas"]["API_Entities_CompanySettings_CompanyLogos"];
-            email_reports?: components["schemas"]["API_Entities_CompanySettings_CompanyEmailReports"];
-            billing_details?: components["schemas"]["API_Entities_CompanySettings_CompanyBillingDetails"];
-        };
-        /** @description API_Entities_Notifications_Notification model */
-        API_Entities_Notifications_Notification: {
-            /** @description Notification id */
-            id: string;
-            /** @description Type of notification. Possible values: WEBHOOK, VENDOR_WEBHOOK */
-            destination_type: string;
-            /** @description Notification destination. e.g. URL for webhooks. */
-            destination: string;
-            /** @description Name/Key of registered vendor key */
-            vendor_key?: string;
-            /** @description Type of events */
-            events: string[];
-        };
-        /** @description Create new notification subscription */
-        postV1CompanyNotifications: {
-            /** @description Type of notification. Possible values: WEBHOOK, VENDOR_WEBHOOK */
-            destination_type: string;
-            /** @description Notification destination. e.g. URL for webhooks. */
-            destination: string;
-            /** @description Name/Key of registered vendor key */
-            vendor_key?: string;
-            /** @description Type of events */
-            events: string[];
-        };
-        /** @description API_Entities_LinkVendorAPIKey model */
-        API_Entities_LinkVendorAPIKey: {
-            /** @description Link result */
-            state: string;
-        };
-        /** @description API_Entities_CompanyAuthorizationStatus model */
-        API_Entities_CompanyAuthorizationStatus: {
-            /** @description The authorization state. Possible values are PENDING,SENT,SIGNED,CANCELED,NONE */
-            auth_state: string;
-            /** @description The authorization email */
-            auth_email: string;
-            /** @description Trustated state of the company. Possible values are VERIFIED,UNVERIFIED,UNKNOWN */
-            company_state: string;
-        };
-        /** @description Authorize your company. Required to complete KYC process and take company account into use */
-        postV1CompanyAuthorization: {
-            /** @description Email to send the Visma sign request to. The person signing will be strongly authenticated. */
-            auth_email: string;
-            /**
-             * @description Locale to use on the signin invitation email, visma sign portal and agreement PDF.
-             * @enum {string}
-             */
-            locale: "FI" | "NO" | "SE" | "EN" | "NL" | "BE";
-            /** @description JSON string used to provide proof of KYC process. Mandatory when partner has own KYC process. */
-            options?: string;
-        };
-        /** @description API_Entities_CompanyAuthorization model */
-        API_Entities_CompanyAuthorization: {
-            /** @description The authorization result */
-            status: string;
-            /**
-             * Format: int32
-             * @description The number of companies that were authorized
-             */
-            count?: number;
-        };
-        /** @description API_Entities_CompanyUsers_User model */
-        API_Entities_CompanyUsers_User: {
-            /** @description User ID */
-            id: string;
-            /** @description Email */
-            email: string;
-            /** @description If set to 1, user will not receive e-mail notifications for their invoices. */
-            notifications_disabled?: number;
-            /** @description If set to 1, user will not receive any e-mail notifications e.g. invoice send errors and such. */
-            emails_disabled?: number;
-            /** @description User role */
-            role?: string;
-        };
-        /** @description Add a new or existing user to a company */
-        postV1CompanyUsers: {
-            /** @description User email */
-            email: string;
-            /** @description First name */
-            first_name: string;
-            /** @description Last name */
-            last_name?: string;
-            /** @description Phone number */
-            phone?: string;
-            /**
-             * @description User role
-             * @enum {string}
-             */
-            user_role?: "ADMIN" | "USER";
-            /** @description If set to true, user will not receive e-mail notifications for their invoices. */
-            notifications_disabled?: boolean;
-            /** @description If set to true, user will not receive any e-mail notifications e.g. invoice send errors and such. */
-            emails_disabled?: boolean;
-        };
-        /** @description API_Entities_CompanyUsers_NewUser model */
-        API_Entities_CompanyUsers_NewUser: {
-            /** @description User ID */
-            id: string;
-            /** @description Email */
-            email: string;
-            /** @description If set to 1, user will not receive e-mail notifications for their invoices. */
-            notifications_disabled?: number;
-            /** @description If set to 1, user will not receive any e-mail notifications e.g. invoice send errors and such. */
-            emails_disabled?: number;
-            /** @description User role */
-            role?: string;
-            /** @description User API key */
-            api_key: string;
-        };
-        /** @description Update user info */
-        patchV1CompanyUsersUserId: {
-            /** @description First name */
-            first_name?: string;
-            /** @description Last name */
-            last_name?: string;
-            /** @description Phone number */
-            phone?: string;
-            /** @description If set to true, user will not receive e-mail notifications for their invoices. */
-            notifications_disabled?: boolean;
-            /** @description If set to true, user will not receive any e-mail notifications e.g. invoice send errors and such. */
-            emails_disabled?: boolean;
-        };
-        /** @description Update user role */
-        postV1CompanyUsersUserIdRoles: {
-            /**
-             * @description User role
-             * @enum {string}
-             */
-            user_role: "ADMIN" | "USER";
-        };
-        /** @description API_Entities_Company model */
-        API_Entities_Company: {
-            id: string;
-        };
-        /** @description [EXPERIMENTAL] Query suppliers that could send e-invoices instead PDFs */
-        postV1CompanySuppliersQuery: {
-            /**
-             * @description Include already notified suppliers
-             * @default false
-             */
-            include_notified: boolean;
-            /**
-             * Format: date-time
-             * @description How far back to see for sent PDFss. Max 1 month. In ISO8601 format
-             */
-            oldest_invoice_time?: string;
-        };
-        /** @description Suppliers_HttpApi_Entities_SuppliersQueryResult model */
-        Suppliers_HttpApi_Entities_SuppliersQueryResult: {
-            /** @description Unique query identifier, valid only while query is pending */
-            query_id?: string;
-            /**
-             * @description State of the query
-             * @enum {string}
-             */
-            status: "pending" | "completed";
-            /** @description List of suppliers */
-            suppliers?: components["schemas"]["Suppliers_HttpApi_Entities_SupplierInfo"][];
-        };
-        Suppliers_HttpApi_Entities_SupplierInfo: {
-            /** @description Business ID */
-            company_bid: string;
-            /** @description Country code (ISO 3166-2) */
-            company_country: string;
-            /** @description Name of the supplier */
-            company_name: string;
-            /** @description Email address of the supplier */
-            email_address?: string;
-            /**
-             * Format: int32
-             * @description Number of invoices the supplier has sent you within the specified time frame
-             */
-            invoice_count?: number;
-        };
-        /** @description [EXPERIMENTAL] Create and send notifications to suppliers */
-        postV1CompanySuppliersNotifications: {
-            /** @description Suppliers related functions */
-            suppliers: {
-                /** @description Supplier email address */
-                email_address: string;
-                /** @description Supplier name */
-                name: string;
-                /** @description Two letter country code. Possible values: en, se, fi, nl */
-                language: string;
-            }[];
-        };
-        /** @description Suppliers_HttpApi_Entities_SuppliersNotificationResult model */
-        Suppliers_HttpApi_Entities_SuppliersNotificationResult: {
-            /** @description List of notifications that failed to send (empty if all succeeded) */
-            failures?: components["schemas"]["Suppliers_HttpApi_Entities_NotificationFailure"][];
-        };
-        Suppliers_HttpApi_Entities_NotificationFailure: {
-            /** @description Supplier email address */
-            email?: string;
-            /** @description Reason for failure */
-            reason?: string;
-        };
-        /** @description API_Entities_UserCompany model */
-        API_Entities_UserCompany: {
-            /** @description Unique identifier */
-            id?: string;
-            /** @description Name */
-            name?: string;
-            /** @description Bid */
-            bid?: string;
-        };
-        /** @description Authorize one or multiple companies. Required to complete KYC process and take company account into use */
-        postV1CompaniesAuthorizations: {
-            /** @description Email to send the Visma sign request to. The person signing will be strongly authenticated. */
-            auth_email: string;
-            /** @description Company UUIDs to authorize. Admin user needs to have access to all of the companies given. */
-            company_ids: string[];
-            /**
-             * @description Locale to use on the signin invitation email, visma sign portal and agreement PDF.
-             * @enum {string}
-             */
-            locale: "FI" | "NO" | "SE" | "EN" | "NL" | "BE";
-            /** @description JSON string used to provide proof of KYC process. Mandatory when partner has own KYC process. */
-            options?: string;
-        };
-        /** @description API_Entities_OperatorParticipant model */
-        API_Entities_OperatorParticipant: {
-            /** @description Profile unique id */
-            id?: string;
-            /**
-             * @description Status of profile registration
-             * @enum {string}
-             */
-            status?: "active" | "pending" | "error";
-            last_event?: components["schemas"]["API_Entities_CompanyProfileEvent"];
-            /** @description List of profile names */
-            profiles?: string[];
-            /** @description Profile version, eg. EHF30, PEPPOLBIS30 */
-            profile_version?: string;
-            /** @description Endpoint identifier */
-            endpoint_id?: string;
-            /** @description ISO6523 code of the endpoint_id scheme. eg. 0192 for NO:ORG */
-            scheme?: string;
-            /** @description The participants network */
-            network: string;
-            /** @description List of profile names with extensions */
-            profiles_with_extensions?: components["schemas"]["API_Entities_CompanyProfileProfilesWithExtensions"][];
-            /** @description Role of the participant in the network. For example SENDER or RECEIVER. */
-            role?: string;
-            /** @description Name of the participant */
-            name: string;
-            /** @description Email address for the participant */
-            email: string;
-            /** @description Two letter country code of the party */
-            country?: string;
-            /** @description Unique external id for the participant */
-            external_id: string;
-            /**
-             * Format: date-time
-             * @description Last update timestamp
-             */
-            updated_at: string;
-        };
-        /** @description Register a participant */
-        postV1OperatorParticipants: {
-            /** @description Profile name (DEPRECATED) */
-            profile?: string;
-            /** @description List of profile names */
-            profiles?: string[];
-            /** @description Profile version, eg. EHF30, PEPPOLBIS30 */
-            profile_version?: string;
-            /** @description Endpoint identifier */
-            endpoint_id?: string;
-            /** @description ISO6523 code of the endpoint_id scheme. eg. 0192 for NO:ORG */
-            scheme?: string;
-            /** @description The participants network */
-            network: string;
-            /** @description List of profile names with extensions */
-            profiles_with_extensions?: string[];
-            /** @description Role of the participant in the network. For example SENDER or RECEIVER. */
-            role?: string;
-            /** @description Name of the participant */
-            name: string;
-            /** @description Email address for the participant */
-            email: string;
-            /** @description Two letter country code of the party */
-            country?: string;
-            /** @description Unique external id for the participant */
-            external_id: string;
-        };
-        /** @description Create new notification subscription */
-        postV1OperatorNotifications: {
-            /** @description Type of notification. Possible values: WEBHOOK, VENDOR_WEBHOOK */
-            destination_type: string;
-            /** @description Notification destination. e.g. URL for webhooks. */
-            destination: string;
-            /** @description Name/Key of registered vendor key */
-            vendor_key?: string;
-            /** @description Type of events */
-            events: string[];
-        };
-        /** @description API_Entities_OperatorCompany model */
-        API_Entities_OperatorCompany: {
-            /** @description unique identifier */
-            id?: string;
-            /** @description Name */
-            name?: string;
-        };
-        /** @description API_Entities_Endpoint model */
-        API_Entities_Endpoint: {
-            /** @description Business ID / Organisation number */
-            bid?: string;
-            /** @description Available options for sending */
-            sending?: string[];
-        };
-        /** @description API_Entities_Consumer model */
-        API_Entities_Consumer: {
-            /** @description Reference to lookup entry */
-            reference_id?: string;
-            routes?: {
-                dpi?: components["schemas"]["API_Entities_DpiRoute"];
-                yes2all?: components["schemas"]["API_Entities_Yes2AllRoute"];
-            };
-        };
-        API_Entities_DpiRoute: {
-            /** @description Route status. (RECEIVING,NOT_RECEIVING,NOT_AVAILABLE,TEMPORARY_UNAVAILABLE) */
-            status?: string;
-            /** @description Additional details about the route */
-            details?: string;
-        };
-        API_Entities_Yes2AllRoute: {
-            /** @description Route status. (RECEIVING,NOT_RECEIVING,NOT_AVAILABLE,TEMPORARY_UNAVAILABLE) */
-            status?: string;
-            /** @description Additional details about the route */
-            details?: string;
-            efaktura_identifier?: string;
-        };
-        /** @description API_Entities_LookupEntryReceiver model */
-        API_Entities_LookupEntryReceiver: {
-            /** @description Full Electronic Address eg: 0192:123456789 */
-            eia?: string;
-            identifier?: components["schemas"]["API_Entities_Identifier"];
-            /** @description Network the address belongs to */
-            network?: string;
-            /** @description Operator the address belongs to */
-            operator?: string;
-            /** @description Document profiles supported */
-            document_types?: components["schemas"]["API_Entities_DocumentType"][];
-            participant?: components["schemas"]["API_Entities_Participant"];
-        };
-        API_Entities_Identifier: {
-            /** @description The scheme of the identifier */
-            scheme?: string;
-            /** @description Name of the electronic address id */
-            eaid_name?: string;
-            /** @description Code of the electronic address id */
-            eaid_code?: string;
-            /** @description Endpoint id */
-            endpoint_id?: string;
-        };
-        API_Entities_DocumentType: {
-            /** @description The type of document supported */
-            document_type?: string;
-            /** @description Exact definition of the document type */
-            document_identifier?: string;
-            /** @description Exact definition of the process */
-            process_identifier?: string;
-        };
-        API_Entities_Participant: {
-            /** @description A unique id for the participant */
-            id?: string;
-            /** @description Name of the participant */
-            name?: string;
-            /** @description Participants Business ID */
-            bid?: string;
-            /** @description Two letter country code of the participant */
-            country?: string;
-        };
-        /** @description API_Entities_JWKEntries model */
-        API_Entities_JWKEntries: {
-            /** @description Active keys */
-            keys?: components["schemas"]["API_Entities_JWKEntry"][];
-        };
-        API_Entities_JWKEntry: {
-            /** @description Key type */
-            kty?: string;
-            /** @description e value */
-            e?: string;
-            /** @description n value */
-            n?: string;
-            /** @description Key ID */
-            kid?: string;
-        };
-        /** @description API_Entities_Operator model */
-        API_Entities_Operator: {
-            /** @description The id of the operator */
-            operator_id?: string;
-            /** @description The name of the operator */
-            name?: string;
-            /** @description The country code for this operator */
-            country?: string;
-        };
-        /** @description CheckDefinitions model */
-        CheckDefinitions: {
-            /** @description Version of the application the definitions correspond to */
-            app_version?: string;
-            /** @description All supported checks with their definitions */
-            checks?: components["schemas"]["CheckDefinition"][];
-        };
-        CheckDefinition: {
-            /** @description Check name */
-            name?: string;
-            /** @description Check friendly name */
-            friendly_name?: string;
-            /** @description Check friendly name, translated in all supported languages */
-            friendly_names?: components["schemas"]["Translation"][];
-            /** @description Check title */
-            title?: string;
-            /** @description Check title, translated in all supported languages */
-            titles?: components["schemas"]["Translation"][];
-            /** @description Check description */
-            description?: string;
-            /** @description Check description, translated in all supported languages */
-            descriptions?: components["schemas"]["Translation"][];
-            /** @description Check documentation description */
-            doc_description?: string;
-            /** @description Resource type the check is run for */
-            resource_type?: string;
-            /** @description Resource scope the check is run for */
-            scope?: string;
-            /** @description Resource scope the check is run for, translated in all supported languages */
-            scopes?: components["schemas"]["Translation"][];
-            /** @description Sources used when running the check */
-            sources?: components["schemas"]["Source"][];
-            metadata?: components["schemas"]["WarningListMetadata"];
-            /** @description List of possible results of the check */
-            possible_results?: components["schemas"]["ResultDefinition"][];
-        };
-        Source: {
-            /** @description Source name */
-            name?: string;
-            /** @description Source name, translated in all supported languages */
-            names?: components["schemas"]["Translation"][];
-        };
-        WarningListMetadata: {
-            /** @description Warning List criteria */
-            criteria?: components["schemas"]["Criteria"][];
-        };
-        ResultDefinition: {
-            /** @description Status of the check run */
-            status?: string;
-            /** @description Status of the returned result of the check */
-            result?: string;
-            /** @description Check result reason text */
-            reason?: string;
-            /** @description Check result reason code */
-            reason_code?: string;
-        };
-        /** @description Create a User */
-        postV1Users: {
-            /** @description Vendor API key */
-            vendor_api_key: string;
-            /** @description User email */
-            email: string;
-            /** @description User first name */
-            first_name?: string;
-            /** @description User last name */
-            last_name?: string;
-        };
-        /** @description API_Entities_ApiUser model */
-        API_Entities_ApiUser: {
-            user_api_key?: string;
-        };
-        /** @description API_Entities_DocumentFileInDocument model */
-        API_Entities_DocumentFileInDocument: {
-            /** @description ID of Document File */
-            id: string;
-            /** @description File name */
-            filename?: string;
-            /** @description File format */
-            file_format?: string;
-            /** @description Mime type passed when created or inferred from file extension */
-            mimetype?: string;
-            /** @description Direct link for accesing the file content (ex: "https://ax.maventa.com/v1/files/1234") */
-            href?: string;
-            /**
-             * Format: date-time
-             * @description File creation timestamp
-             */
-            created_at?: string;
-            /** @description File type */
-            type?: string;
-            /** @description Version of file format (ex.: 20) */
-            format_version?: string;
-            /**
-             * @description Array of JSONs, each containing a document_id and the corresponding document's type
-             * @example [
-             *       {
-             *         "document_id": "845fd5a3-d59f-4217-b7ec-c849baefb79e",
-             *         "type": "ATTACHMENT"
-             *       }
-             *     ]
-             */
-            document_file_links?: Record<string, never>[];
-        };
-        /** @description API_Entities_Document model */
-        API_Entities_Document: {
-            /** @description Id as a GUID */
-            id?: string;
-            /**
-             * @description Type of document
-             * @enum {string}
-             */
-            type?: "UNKNOWN" | "INVOICE" | "CREDIT_NOTE" | "ORDER" | "ORDER_RESPONSE" | "CATALOGUE" | "CATALOGUE_RESPONSE" | "SELF_BILLING_INVOICE" | "DESPATCH_ADVICE" | "RECEIPT" | "VOUCHER" | "BANK_FILE" | "REMINDER" | "SCAN" | "INVOICE_RESPONSE" | "MESSAGE_LEVEL_RESPONSE" | "EXPRESSION_OF_INTEREST_REQUEST" | "EXPRESSION_OF_INTEREST_RESPONSE" | "TENDER_STATUS_REQUEST" | "CALL_FOR_TENDERS" | "TENDER" | "TENDER_RECEIPT" | "ORDER_CHANGE" | "ORDER_CANCELLATION";
-            /** @description Document identifier */
-            document_identifier?: string;
-            /** @description Process identifier */
-            process_identifier?: string;
-            /**
-             * @description Current status of document
-             * @enum {string}
-             */
-            status?: "PROCESSING" | "RESERVED" | "DELIVERED" | "CONFIRMED_DELIVERY" | "FAILED";
-            /** @description Document reference */
-            reference?: string;
-            /** @description Document number */
-            number?: string;
-            sender?: components["schemas"]["API_Entities_DocumentParty"];
-            recipient?: components["schemas"]["API_Entities_DocumentRecipientParty"];
-            /**
-             * Format: date-time
-             * @description Document creation time
-             */
-            created_at?: string;
-            /**
-             * Format: date-time
-             * @description The timestamp when sent document was delivered to the destination route
-             */
-            delivered_at?: string;
-            /**
-             * Format: date-time
-             * @description The timestamp when received document was delivered to the recipient
-             */
-            received_at?: string;
-            last_event?: components["schemas"]["API_Entities_DocumentEvent"];
-            /** @description Source format of the document */
-            source_format?: string;
-            /** @description Supported document formats */
-            supported_formats?: string[];
-            /** @description Transmission id */
-            transmission_id?: string;
-            /**
-             * Format: date-time
-             * @description Document transmission time
-             */
-            transmission_at?: string;
-            /** @description The network document is originated from */
-            network?: string;
-            /** @description The origin of the document */
-            origin?: string;
-            /** @description External identifier linked to the document */
-            external_id?: string;
-            /** @description Files related to the document */
-            files?: components["schemas"]["API_Entities_DocumentFileInDocument"][];
-        };
-        API_Entities_DocumentParty: {
-            /** @description Electronic Identifier Address */
-            eia?: string;
-            /** @description Business ID / Organisation number */
-            bid?: string;
-            /** @description Name of party */
-            name?: string;
-            /** @description Two letter country code of the party */
-            country?: string;
-            /** @description VAT number */
-            vat?: string;
-        };
-        API_Entities_DocumentRecipientParty: {
-            /** @description Electronic Identifier Address */
-            eia?: string;
-            /** @description Business ID / Organisation number */
-            bid?: string;
-            /** @description Name of party */
-            name?: string;
-            /** @description Two letter country code of the party */
-            country?: string;
-            /** @description VAT number */
-            vat?: string;
-            /** @description Company operator */
-            operator?: string;
-        };
-        /** @description API_Entities_DocumentEvent model */
-        API_Entities_DocumentEvent: {
-            /** @description Event code */
-            code?: string;
-            /** @description Information about the event */
-            message?: string;
-            /** @description More information about the event */
-            details?: string;
-            /**
-             * Format: date-time
-             * @description Created timestamp
-             */
-            created_at: string;
-        };
-        /** @description Update existing document */
-        patchV1DocumentsId: {
-            /**
-             * @description Change the state of the document.
-             *                                           Possible values: CONFIRMED_DELIVERY
-             */
-            status?: string;
-        };
-        /** @description Analysis model */
-        Analysis: {
-            /** @description Detect status */
-            analysis_id?: string;
-            /** @description Detect type */
-            analysis_type?: string;
-            /** @description Detect check friendly name */
-            friendly_name?: string;
-            /** @description Detect check friendly name, translated in all supported languages */
-            friendly_names?: components["schemas"]["Translation"][];
-            /** @description Detect status */
-            analysis_status?: string;
-            /** @description Detect title */
-            analysis_title?: string;
-            /** @description Detect title, translated in all supported languages */
-            analysis_titles?: components["schemas"]["Translation"][];
-            /**
-             * Format: date-time
-             * @description Timestamp when check was triggered
-             */
-            analysis_trigger_date?: string;
-            /** @description Detect resource origin */
-            analysis_origin?: string;
-            analysis_result?: components["schemas"]["AnalysisResult"];
-            /** @description All results of the detect checks */
-            analysis_results?: components["schemas"]["AnalysisResult"][];
-        };
-        AnalysisResult: {
-            /** @description Detect result status */
-            status?: string;
-            /** @description Detect result text */
-            text?: string;
-            /** @description Detect result text, translated in all supported languages */
-            texts?: components["schemas"]["Translation"][];
-            /** @description Detect result reason code */
-            reason_code?: string;
-            /**
-             * Format: date-time
-             * @description Timestamp when check was performed
-             */
-            check_date?: string;
-            /** @description Detect metadata */
-            data?: Record<string, never>;
-        };
-        /** @description Partner_HttpApi_Entities_InvoiceEventsReceived model */
-        Partner_HttpApi_Entities_InvoiceEventsReceived: {
-            /** @description Company ID */
-            company_id?: string;
-            /** @description Invoice ID */
-            invoice_id?: string;
-            /**
-             * @description Invoice event state
-             * @enum {string}
-             */
-            state?: "CREATED" | "HANDLED";
-            /**
-             * Format: date-time
-             * @description When the event happened
-             */
-            created_at?: string;
-        };
-        /** @description Partner_HttpApi_Entities_InvoiceEventsSentError model */
-        Partner_HttpApi_Entities_InvoiceEventsSentError: {
-            /** @description Company ID */
-            company_id?: string;
-            /** @description Invoice ID */
-            invoice_id?: string;
-        };
-        /** @description Partner_HttpApi_Entities_CompanyLookups model */
-        Partner_HttpApi_Entities_CompanyLookups: {
-            /** @description Company BID */
-            company_bid?: string;
-            /** @description Company status (FREE or RESERVED) */
-            company_status?: string;
-        };
-        /** @description [EXPERIMENTAL] Mark Lyanthe scan service as active. */
-        postV1PartnerScanServiceLyanthe: {
-            /** @description Company id */
-            company_id: string;
-            /** @description Lyanthe scan email address */
-            lyanthe_email_address: string;
-        };
-        /** @description API_Entities_ScanService model */
-        API_Entities_ScanService: {
-            scan_address?: components["schemas"]["API_Entities_ScanAddress"];
-        };
-        API_Entities_ScanAddress: {
-            email_address?: string;
-        };
-        /** @description [EXPERIMENTAL] Start takeover process */
-        postV1PartnerTakeovers: {
-            /** @description Id of company to take over */
-            company_id: string;
-        };
-        /** @description FiBankMessages_HttpApi_Entities_FiBankMessageStatus model */
-        FiBankMessages_HttpApi_Entities_FiBankMessageStatus: {
-            /**
-             * @description Current status of message
-             * @enum {string}
-             */
-            status?: "OK" | "ERROR";
-            /** @description Id for the associated error message if available. Only when status is ERROR */
-            error_message_id?: string;
-        };
+  schemas: {
+    /** @description API_Entities_Status model */
+    API_Entities_Status: {
+      /** @description Authenticated client_id. Will be company_id for Companies */
+      client_id: string;
+      /**
+       * Format: date-time
+       * @description Tells when the current authentication token will expire
+       */
+      expires_at?: string;
     };
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+    /** @description API_Entities_OAuthToken model */
+    API_Entities_OAuthToken: {
+      /** @description The access token issued */
+      access_token: string;
+      /** @description The type of the token issued */
+      token_type: string;
+      /**
+       * Format: int32
+       * @description The lifetime in seconds of the access token
+       */
+      expires_in: number;
+      /** @description The refresh token, which can be used to obtain new access token */
+      refresh_token?: string;
+      /** @description List of scopes granted for token */
+      scope?: string;
+    };
+    /** @description API_Entities_OAuthCurrent model */
+    API_Entities_OAuthCurrent: {
+      user: components['schemas']['API_Entities_User'];
+      company: components['schemas']['API_Entities_CompanyParty'];
+      /** @description List of granted scopes */
+      scopes?: string[];
+    };
+    API_Entities_User: {
+      id: string;
+      first_name?: string;
+      last_name?: string;
+      email?: string;
+    };
+    API_Entities_CompanyParty: {
+      /** @description Business ID / Organisation number */
+      bid?: string;
+      /** @description Name of party */
+      name?: string;
+      /** @description Two letter country code of the party */
+      country?: string;
+      /** @description VAT number */
+      vat?: string;
+      /** @description Company Id (GUID) */
+      id: string;
+      /** @description Company has completed the first time wizard */
+      wizard_done?: boolean;
+      /** @description Company is disabled */
+      disabled?: boolean;
+    };
+    /** @description OdpCompany model */
+    OdpCompany: {
+      /**
+       * Format: int32
+       * @description ID of ODP company
+       */
+      id: number;
+      /** @description Name of ODP company */
+      name?: string;
+      /** @description Organisation number of ODP company */
+      bid?: string;
+      /**
+       * @description ODP Company state
+       * @enum {string}
+       */
+      state?: 'CREATED' | 'TRUSTED' | 'DISABLED';
+      /** @description ODP services associated to this ODP company */
+      services?: components['schemas']['OdpService'][];
+    };
+    OdpService: {
+      /** @description Name of ODP Service */
+      name?: string;
+    };
+    /** @description ReceivablesService model */
+    ReceivablesService: {
+      /** @description IBAN */
+      iban?: string;
+      /** @description Bank identifier code */
+      bic?: string;
+      /** @description Bank */
+      bank?: string;
+      /** @description Contact person */
+      contact_person?: string;
+      /** @description Contact email */
+      contact_email?: string;
+      /** @description Customer service email */
+      customer_service_email?: string;
+      /** @description Customer service phone number */
+      customer_service_phone_number?: string;
+      /** @description Contact Phone Number */
+      contact_phone_number?: string;
+      /** @description Authorization email */
+      authorization_email?: string;
+      /** @description Party who is responsible for monitoring the payments and adding them to assignments. The value "vfs" means using VFS account number, reference number and PDF image. The value "company" means using senders own account number, reference number and PDF image. */
+      accountable_party?: string;
+      billing_address?: components['schemas']['API_Entities_VFSFI_BillingAddress'];
+      vfsfi?: components['schemas']['API_Entities_VFSFI_Data'];
+      /**
+       * @description Service status
+       * @enum {string}
+       */
+      status?: 'DISABLED' | 'ACTIVE' | 'PENDING';
+      /** @description Activation URL */
+      activation_url?: string;
+      /**
+       * @description Service type
+       * @enum {string}
+       */
+      service_type?: 'full' | 'express';
+    };
+    API_Entities_VFSFI_BillingAddress: {
+      /** @description Country */
+      country?: string;
+      /** @description Streets */
+      streets?: string[];
+      /** @description City */
+      city?: string;
+      /** @description Zip code */
+      zip_code?: string;
+    };
+    API_Entities_VFSFI_Data: {
+      /** @description IBAN */
+      iban?: string;
+      /** @description BIC */
+      bic?: string;
+      /** @description Account number */
+      account_number?: string;
+      /** @description Notes */
+      notes?: components['schemas']['API_Entities_VFSFI_Note'][];
+    };
+    API_Entities_VFSFI_Note: {
+      /** @description Phrase */
+      phrase?: string;
+      /** @description Code */
+      code?: string;
+    };
+    /** @description Start the Amili Receivables service onboarding */
+    putV2ServicesAmiliReceivables: {
+      /** @description IBAN */
+      iban: string;
+      /** @description Bank identifier code */
+      bic: string;
+      /** @description Bank */
+      bank: string;
+      /** @description Contact person */
+      contact_person: string;
+      /** @description Contact email */
+      contact_email: string;
+      /** @description Customer service email */
+      customer_service_email: string;
+      /** @description Customer service phone number */
+      customer_service_phone_number?: string;
+      /** @description Contact Phone Number */
+      contact_phone_number: string;
+      /** @description Authorization email, if this is not provided you will not get an email and the authorization process will proceed by accessing the activation_url from the GET method. */
+      authorization_email?: string;
+      /**
+       * @description Party who is responsible for monitoring the payments and adding them to assignments. The value "vfs" means using VFS account number, reference number and PDF image. The value "company" means using senders own account number, reference number and PDF image.
+       * @enum {string}
+       */
+      accountable_party?: 'vfsfi' | 'company';
+      /**
+       * @description Choose full Receivables management service (default) or Receivables Express
+       * @default full
+       * @enum {string}
+       */
+      service_type: 'full' | 'express';
+      billing_address: {
+        /** @description Country */
+        country: string;
+        /** @description Streets */
+        streets: string[];
+        /** @description City */
+        city: string;
+        /** @description Zip code */
+        zip_code: string;
+      };
+      /** @description Postal address if different than the company address */
+      postal_address?: {
+        /** @description Country */
+        country?: string;
+        /** @description Streets */
+        streets?: string[];
+        /** @description City */
+        city?: string;
+        /** @description Zip code */
+        zip_code?: string;
+      };
+    };
+    /** @description Update the Amili Receivables service */
+    patchV2ServicesAmiliReceivables: {
+      /**
+       * @description Party who is responsible for monitoring the payments and adding them to assignments. The value "vfs" means using VFS account number, reference number and PDF image. The value "company" means using senders own account number, reference number and PDF image.
+       * @enum {string}
+       */
+      accountable_party?: 'vfsfi' | 'company';
+      /**
+       * @description Choose full Receivables management service (default) or Receivables Express
+       * @enum {string}
+       */
+      service_type?: 'full' | 'express';
+    };
+    /** @description Start the Intrum Receivables service onboarding */
+    putV2ServicesIntrumReceivables: {
+      /** @description Contact phone number for agreement purposes */
+      agreement_contact_phone: string;
+      /** @description Contact name for agreement purposes */
+      agreement_contact_name: string;
+      /** @description Contact email for agreement purposes */
+      agreement_contact_email: string;
+      details?: {
+        /** @description The name of the Real Estate Management Company */
+        real_estate_management_company?: string;
+      };
+    };
+    /** @description API_Entities_CompanyServices_Intrum model */
+    API_Entities_CompanyServices_Intrum: {
+      /**
+       * @description Service status
+       * @enum {string}
+       */
+      status?: 'PENDING' | 'DISABLED' | 'ACTIVE';
+      /** @description Contact phone number for agreement purposes */
+      agreement_contact_phone?: string;
+      /** @description Contact email for agreement purposes */
+      agreement_contact_email?: string;
+      /** @description Contact name for agreement purposes */
+      agreement_contact_name?: string;
+      details?: components['schemas']['API_Entities_CompanyServices_Intrum_Details'];
+    };
+    API_Entities_CompanyServices_Intrum_Details: {
+      /** @description The name of the Real Estate Management Company */
+      real_estate_management_company?: string;
+    };
+    /** @description Update the Intrum Receivables service */
+    patchV2ServicesIntrumReceivables: {
+      /** @description Client code. This is used to activate a pending service after contract has been signed and the agency has given a client_code to the customer. */
+      client_code?: string;
+    };
+    /** @description Start the Receivables service onboarding */
+    putV1ServicesReceivables: {
+      /** @description IBAN */
+      iban: string;
+      /** @description Bank identifier code */
+      bic: string;
+      /** @description Bank */
+      bank: string;
+      /** @description Contact person */
+      contact_person: string;
+      /** @description Contact email */
+      contact_email: string;
+      /** @description Customer service email */
+      customer_service_email: string;
+      /** @description Customer service phone number */
+      customer_service_phone_number?: string;
+      /** @description Contact Phone Number */
+      contact_phone_number: string;
+      /** @description Authorization email, if this is not provided you will not get an email and the authorization process will proceed by accessing the activation_url from the GET method. */
+      authorization_email?: string;
+      /**
+       * @description Party who is responsible for monitoring the payments and adding them to assignments. The value "vfs" means using VFS account number, reference number and PDF image. The value "company" means using senders own account number, reference number and PDF image.
+       * @enum {string}
+       */
+      accountable_party?: 'vfsfi' | 'company';
+      /**
+       * @description Choose full Receivables management service (default) or Receivables Express
+       * @default full
+       * @enum {string}
+       */
+      service_type: 'full' | 'express';
+      billing_address: {
+        /** @description Country */
+        country: string;
+        /** @description Streets */
+        streets: string[];
+        /** @description City */
+        city: string;
+        /** @description Zip code */
+        zip_code: string;
+      };
+      /** @description Postal address if different than the company address */
+      postal_address?: {
+        /** @description Country */
+        country?: string;
+        /** @description Streets */
+        streets?: string[];
+        /** @description City */
+        city?: string;
+        /** @description Zip code */
+        zip_code?: string;
+      };
+    };
+    /** @description Update the Receivables service */
+    patchV1ServicesReceivables: {
+      /**
+       * @description Party who is responsible for monitoring the payments and adding them to assignments. The value "vfs" means using VFS account number, reference number and PDF image. The value "company" means using senders own account number, reference number and PDF image.
+       * @enum {string}
+       */
+      accountable_party?: 'vfsfi' | 'company';
+      /**
+       * @description Choose full Receivables management service (default) or Receivables Express
+       * @enum {string}
+       */
+      service_type?: 'full' | 'express';
+    };
+    /** @description API_Entities_CompanyAgreements_Atg model */
+    API_Entities_CompanyAgreements_Atg: {
+      /** @description Account number */
+      account_number?: string;
+      /** @description Length of the KID */
+      kid_length?: string;
+      /** @description Reference position in KID */
+      reference_position?: string;
+      /** @description Payment type position in KID */
+      payment_type_position?: string;
+      /** @description Notifications should be sent as print */
+      notification_by_print?: boolean;
+      /** @description Notifications should be sent as email */
+      notification_by_email?: boolean;
+      /**
+       * @description Agreement status
+       * @enum {string}
+       */
+      status?: 'INACTIVE' | 'ACTIVE' | 'PENDING' | 'DISABLED';
+      /**
+       * Format: date-time
+       * @description Agreement creation timestamp
+       */
+      created_at?: string;
+    };
+    /** @description Create a new ATG agreement */
+    postV1ServicesAtg: {
+      /** @description Account number linked to agreement */
+      account_number: string;
+      /**
+       * Format: int32
+       * @description Length of KID
+       */
+      kid_length: number;
+      /** @description The reference position in the KID */
+      reference_position: string;
+      /** @description The payment type position in the KID */
+      payment_type_position?: string;
+      /** @description Email for possible agreement signature request if required */
+      signer_email: string;
+      /** @description Send notification about ATG invoice by print */
+      notification_by_print?: boolean;
+      /** @description Send notification about ATG invoice by email */
+      notification_by_email?: boolean;
+    };
+    /** @description API_Entities_CompanyConsumers_Mandate model */
+    API_Entities_CompanyConsumers_Mandate: {
+      /** @description KID */
+      kid?: string;
+      /** @description Account number */
+      account_number?: string;
+      /** @description Notifications enabled */
+      notification?: string;
+      /** @description Status */
+      status?: string;
+      /** @description Reference nr from KID */
+      reference_nr?: string;
+      /** @description Payment type from KID */
+      payment_type?: string;
+      /**
+       * Format: date-time
+       * @description Entry updated timestamp
+       */
+      updated_at?: string;
+    };
+    /** @description Update existing ATG agreement */
+    patchV1ServicesAtgAccountNumber: {
+      /**
+       * Format: int32
+       * @description Length of KID
+       */
+      kid_length: number;
+      /** @description The reference position in the KID */
+      reference_position: string;
+      /** @description The payment type position in the KID */
+      payment_type_position?: string;
+      /** @description Email for possible agreement signature request if required */
+      signer_email: string;
+      /** @description Send notification about ATG invoice by print */
+      notification_by_print?: boolean;
+      /** @description Send notification about ATG invoice by email */
+      notification_by_email?: boolean;
+    };
+    /** @description OPInvoiceCreditSettingsOffer model */
+    OPInvoiceCreditSettingsOffer: {
+      /** @description Are B2C (business to consumer) invoices counted towards the available credit balance (true) or just passed trough the service (false) */
+      b2c_enabled?: boolean;
+      /**
+       * Format: int32
+       * @description Payback percentage as an integer (eg. 80 means 80%), by default 100. The amount of payments used to pay back the withdrawn loan. If set to 80% it means 20% of each payment will not be used to repay the loan, instead it will be transferred directly to customer.
+       */
+      payment_percent?: number;
+      /**
+       * Format: int32
+       * @description Interest rate as an integer (eg. 2 means 2%)
+       */
+      interest_rate?: number;
+      /**
+       * Format: float
+       * @description Credit limit
+       */
+      credit_limit?: number;
+    };
+    /** @description OPInvoiceCredit model */
+    OPInvoiceCredit: {
+      /**
+       * @description Service status
+       * @enum {string}
+       */
+      status?: 'DISABLED' | 'ACTIVE' | 'PENDING';
+      /** @description Channel user id for the company */
+      channel_user_id?: string;
+      /** @description Company contact email */
+      contact_email?: string;
+      /** @description Company IBAN account number */
+      iban?: string;
+      /** @description Company bank BIC number */
+      bic?: string;
+      /** @description Company bank name */
+      bank?: string;
+      /** @description Url for the user to sign the agreement */
+      activation_url?: string;
+      op_bank_details?: components['schemas']['OPInvoiceCreditBankDetails'];
+    };
+    OPInvoiceCreditBankDetails: {
+      /** @description OP IBAN to be used on invoices */
+      iban?: string;
+      /** @description OP BIC to be used on invoices */
+      bic?: string;
+      transfer_clause?: components['schemas']['API_Entities_CompanyServices_OPInvoiceCreditTransferClause'];
+    };
+    API_Entities_CompanyServices_OPInvoiceCreditTransferClause: {
+      /** @description Language of the transfer clause */
+      language_code?: string;
+      /** @description Contents/text of the transfer clause */
+      content?: string;
+    };
+    /** @description API_Entities_Error model */
+    API_Entities_Error: {
+      /** @description Error code */
+      code?: string;
+      /** @description General error message */
+      message?: string;
+      /** @description Details about the error */
+      details?: string[];
+    };
+    /** @description OPInvoiceCreditSettings model */
+    OPInvoiceCreditSettings: {
+      current?: components['schemas']['OPInvoiceCreditSettingsCurrent'];
+      offer?: components['schemas']['OPInvoiceCreditSettingsOffer'];
+    };
+    OPInvoiceCreditSettingsCurrent: {
+      /** @description Are B2C (business to consumer) invoices counted towards the available credit balance (true) or just passed trough the service (false) */
+      b2c_enabled?: boolean;
+      /**
+       * Format: int32
+       * @description Payback percentage as an integer (eg. 80 means 80%), by default 100. The amount of payments used to pay back the withdrawn loan. If set to 80% it means 20% of each payment will not be used to repay the loan, instead it will be transferred directly to customer.
+       */
+      payment_percent?: number;
+      /**
+       * Format: int32
+       * @description Interest rate as an integer (eg. 2 means 2%)
+       */
+      interest_rate?: number;
+      /**
+       * Format: float
+       * @description Credit limit
+       */
+      credit_limit?: number;
+    };
+    /** @description Modify settings */
+    postV1ServicesOpInvoiceCreditSettings: {
+      /** @description Are B2C (business to consumer) invoices counted towards the available credit balance (true) or just passed trough the service (false) */
+      b2c_enabled: boolean;
+      /**
+       * Format: int32
+       * @description Payback percentage as an integer (eg. 80 means 80%), by default 100. The amount of payments used to pay back the withdrawn loan. If set to 80% it means 20% of each payment will not be used to repay the loan, instead it will be transferred directly to customer.
+       */
+      payment_percent: number;
+      /**
+       * Format: int32
+       * @description Interest rate as an integer (eg. 2 means 2%)
+       */
+      interest_rate: number;
+      /**
+       * Format: float
+       * @description Credit limit
+       */
+      credit_limit: number;
+    };
+    /** @description Start the OP Laskulaina onboarding */
+    putV1ServicesOpInvoiceCredit: {
+      /** @description Contact email */
+      contact_email: string;
+      /** @description IBAN account number */
+      iban: string;
+      /** @description Bank identifier */
+      bic: string;
+      /** @description Bank name */
+      bank: string;
+    };
+    /** @description OPInvoiceCreditAvailableCredit model */
+    OPInvoiceCreditAvailableCredit: {
+      /**
+       * Format: float
+       * @description Amount withdrawable based on the collateral value or limit
+       */
+      available_credit_amount?: number;
+      /** @description Only EUR supported */
+      currency?: string;
+      /**
+       * Format: float
+       * @description Ongoing month interest accrual at this time
+       */
+      current_month_interest?: number;
+      /**
+       * Format: float
+       * @description Unpaid capitalized interest from previous months
+       */
+      interest_balance?: number;
+      /**
+       * Format: float
+       * @description Credit limit
+       */
+      max_credit_amount?: number;
+      /**
+       * Format: float
+       * @description AI calculated total collateral value (collateral basket) on all open invoices, which due date in in the future(invoice collateral is deducted from basket on due date)
+       */
+      total_collateral_amount?: number;
+      /**
+       * Format: float
+       * @description Amount of withdrawn loan
+       */
+      total_withdrawn?: number;
+    };
+    /** @description Make a withdrawal */
+    postV1ServicesOpInvoiceCreditWithdrawal: {
+      /**
+       * Format: float
+       * @description EUR amount to withdraw
+       */
+      amount: number;
+    };
+    /** @description Make a direct payment */
+    postV1ServicesOpInvoiceCreditDirectPayment: {
+      /** @description ID of the invoice (UUID) */
+      invoice_id: string;
+    };
+    /** @description Detect_Checks model */
+    Detect_Checks: {
+      /** @description Check name */
+      on_invoice_receive?: string;
+    };
+    /** @description AutoScan_HttpApi_Entities_AutoScanConfiguration model */
+    AutoScan_HttpApi_Entities_AutoScanConfiguration: {
+      /**
+       * @description AutoScan status
+       * @enum {string}
+       */
+      status?: 'active' | 'inactive';
+      /** @description AutoScan email address */
+      scan_email_address?: string;
+      /** @description AutoScan features */
+      features?: Record<string, never>;
+    };
+    /** @description [EXPERIMENTAL] Activates AutoScan */
+    putV1ServicesAutoscan: {
+      features?: {
+        /** @description Enable or disable invoice line scanning */
+        invoice_line_scanning?: boolean;
+      };
+    };
+    /** @description Scan_HttpApi_Entities_ScanConfiguration model */
+    Scan_HttpApi_Entities_ScanConfiguration: {
+      /**
+       * @description Scan status
+       * @enum {string}
+       */
+      status?: 'active' | 'disabled' | 'pending' | 'error';
+      /** @description Error message if status is pending else nil */
+      error_message?: string;
+      scan_address?: components['schemas']['Scan_HttpApi_Entities_ScanAddress'];
+      return_address?: components['schemas']['Scan_HttpApi_Entities_ReturnAddress'];
+      features?: components['schemas']['Scan_HttpApi_Entities_ScanFeatures'];
+    };
+    Scan_HttpApi_Entities_ScanAddress: {
+      /** @description Email address where supplier should send pdf invoices */
+      email_address?: string;
+      postal_address?: components['schemas']['Scan_HttpApi_Entities_PostalAddress'];
+    };
+    Scan_HttpApi_Entities_PostalAddress: {
+      /** @description Name of the company */
+      name?: string;
+      address1?: string;
+      address2?: string;
+      country_code?: string;
+      post_code?: string;
+      city?: string;
+    };
+    Scan_HttpApi_Entities_ReturnAddress: {
+      /** @description Email address where all other material than invoices are delivered by the scanning service */
+      email_address?: string;
+      postal_address?: components['schemas']['Scan_HttpApi_Entities_PostalAddress'];
+    };
+    Scan_HttpApi_Entities_ScanFeatures: {
+      /** @description Other documents */
+      other_docs?: boolean;
+      /** @description Scan reminders */
+      scan_reminders?: boolean;
+      /** @description Cash discount field scanning */
+      cash_discount_field_scanning?: boolean;
+      /** @description Line scanning */
+      line_scanning?: boolean;
+      /** @description VAT liable */
+      vat_liable?: boolean;
+    };
+    /** @description API_Entities_CompanyConsumers_Consumer model */
+    API_Entities_CompanyConsumers_Consumer: {
+      /** @description Full name */
+      name?: string;
+      /** @description Customer number */
+      customer_number?: string;
+      /** @description Reference number */
+      reference_number?: string;
+      /** @description Email address */
+      email?: string;
+      /** @description Phone number */
+      phone?: string;
+      /**
+       * @description Status
+       * @enum {string}
+       */
+      status:
+        | 'NEW'
+        | 'REQUEST_SENT'
+        | 'ACCEPTED'
+        | 'ACTIVE'
+        | 'DELETED'
+        | 'REJECTED'
+        | 'ERROR';
+      /**
+       * Format: date-time
+       * @description Last update time
+       */
+      updated_at?: string;
+    };
+    /** @description API_Entities_B2CNO_Status model */
+    API_Entities_B2CNO_Status: {
+      /**
+       * @description B2CNO Agreement status for company
+       * @enum {string}
+       */
+      status: 'ACTIVE' | 'FREE' | 'RESERVED' | 'FAULT' | 'ERROR';
+    };
+    /** @description Create B2CSE network registration request */
+    postV1ServicesB2cseAgreement: {
+      /** @description FUI = Faktura Utställar Identitet. Only if company already has an existing agreement with their bank and knows their FUI. If given, also agreement_id is required. */
+      fui?: string;
+      /** @description Agreement ID. Only if company already has an existing agreement with their bank and knows their agreement ID. If given, also fui is required. */
+      agreement_id?: string;
+      /** @description Account Number without dashes (123456) */
+      account_number: string;
+      /**
+       * @description Account type (PlusGiro or BankGiro)
+       * @enum {string}
+       */
+      account_type: 'PlusGiro' | 'BankGiro';
+      /** @description Website URL */
+      website?: string;
+    };
+    /** @description API_Entities_B2CSE_Agreement model */
+    API_Entities_B2CSE_Agreement: {
+      /** @description Status of the agreement */
+      status?: string;
+      /** @description FUI = Faktura Utställar Identitet */
+      fui?: string;
+      /** @description Agreement ID */
+      agreement_id?: string;
+      /** @description Account Number without dashes (123456) */
+      account_number?: string;
+      /**
+       * @description Account type (PlusGiro or BankGiro)
+       * @enum {string}
+       */
+      account_type?: 'PlusGiro' | 'BankGiro';
+      /** @description Website URL */
+      website?: string;
+    };
+    /** @description ReportsDefinitions model */
+    ReportsDefinitions: {
+      /** @description User reporting criteria */
+      criteria?: components['schemas']['Criteria'][];
+      /** @description Purpose of user reporting disclaimer text */
+      disclaimer_text?: string;
+      /** @description Purpose of user reporting disclaimer text, translated in all supported languages */
+      disclaimer_texts?: components['schemas']['Translation'][];
+    };
+    Criteria: {
+      /** @description Criteria name */
+      name?: string;
+      /** @description Criteria friendly name */
+      friendly_name?: string;
+      /** @description Criteria friendly name, translated in all supported languages */
+      friendly_names?: components['schemas']['Translation'][];
+      /** @description Criteria text */
+      text?: string;
+      /** @description Criteria text, translated in all supported languages */
+      texts?: components['schemas']['Translation'][];
+    };
+    Translation: {
+      /** @description Language ISO code the text is translated to */
+      lang?: string;
+      /** @description Translated text */
+      value?: string;
+    };
+    /** @description Invoices_HttpApi_Entities_Invoice model */
+    Invoices_HttpApi_Entities_Invoice: {
+      /** @description Invoice ID */
+      id?: string;
+      /**
+       * @description Current status of document
+       * @enum {string}
+       */
+      status?: 'PENDING' | 'DELIVERED' | 'FAILED';
+      /** @description Reference number */
+      reference?: string;
+      /** @description Invoice number */
+      number?: string;
+      sender?: components['schemas']['Invoices_HttpApi_Entities_InvoiceSenderParty'];
+      recipient?: components['schemas']['Invoices_HttpApi_Entities_InvoiceRecipientParty'];
+      /**
+       * Format: date-time
+       * @description The timestamp when invoice was received
+       */
+      received_at?: string;
+      /**
+       * Format: date-time
+       * @description The timestamp when invoice was created
+       */
+      created_at?: string;
+      /**
+       * Format: date
+       * @description Invoice date
+       */
+      date?: string;
+      /**
+       * Format: date
+       * @description Invoice due date
+       */
+      date_due?: string;
+      /** @description Format the invoice was created from */
+      source_format: string;
+      /**
+       * Format: float
+       * @description Invoice sum
+       */
+      sum: number;
+      /**
+       * Format: float
+       * @description Invoice sum with tax
+       */
+      sum_tax: number;
+      /** @description Invoice currency */
+      currency: string;
+      /**
+       * @description Invoice origin
+       * @enum {string}
+       */
+      origin?: 'INTERNAL' | 'EXTERNAL' | 'SCAN';
+      /**
+       * @description Invoice origin type. Not null only if origin is SCAN.
+       *                               SCAN_PDF - Scanned from a PDF file
+       *                               SCAN_PAPER - Scanned from a paper invoice
+       *                               AUTOSCAN - Automatically scanned from a PDF file
+       *                               SCAN - Scanned from non-invoice material
+       *                               null - Non scan origin
+       * @enum {string}
+       */
+      origin_type?: 'SCAN_PDF' | 'SCAN_PAPER' | 'AUTOSCAN' | 'SCAN' | 'null';
+      /** @description Invoice destination */
+      destination?: string;
+      /** @description Custom comment */
+      comment?: string;
+      /** @description Files attached to the invoice */
+      files?: components['schemas']['Invoices_HttpApi_Entities_InvoiceFile'][];
+      /** @description Invoice actions */
+      actions?: components['schemas']['Invoices_HttpApi_Entities_InvoiceAction'][];
+      /** @description Data set after resending the invoice */
+      revision?: Record<string, never>;
+    };
+    Invoices_HttpApi_Entities_InvoiceSenderParty: {
+      /** @description Electronic Identifier Address */
+      eia?: string;
+      /** @description Business ID / Organisation number */
+      bid?: string;
+      /** @description Name of party */
+      name?: string;
+      /** @description Two letter country code of the party */
+      country?: string;
+    };
+    Invoices_HttpApi_Entities_InvoiceRecipientParty: {
+      /** @description Electronic Identifier Address */
+      eia?: string;
+      /** @description Business ID / Organisation number */
+      bid?: string;
+      /** @description Name of party */
+      name?: string;
+      /** @description Two letter country code of the party */
+      country?: string;
+      /** @description Recipients operator */
+      operator?: string;
+    };
+    Invoices_HttpApi_Entities_InvoiceFile: {
+      /** @description Unique ID of the file */
+      id: string;
+      /** @description File name */
+      filename?: string;
+      /** @description File format */
+      type?: string;
+      /** @description Mime type passed when created or inferred from file extension */
+      mimetype?: string;
+      /** @description Direct link for accesing the file content */
+      href?: string;
+    };
+    /** @description Invoices_HttpApi_Entities_InvoiceAction model */
+    Invoices_HttpApi_Entities_InvoiceAction: {
+      /**
+       * @description The type of event that happened
+       * @enum {string}
+       */
+      type: 'RECEIVED' | 'CREATED' | 'SENT' | 'DELIVERED' | 'INFO' | 'ERROR';
+      /**
+       * @description Channel the event is related to. For example from where the invoice is coming from or where it was sent.
+       * @enum {string}
+       */
+      channel?: 'EINVOICE' | 'PRINT' | 'SCAN' | 'EMAIL';
+      /** @description Additional message related to the event */
+      message?: string;
+      /**
+       * @description The unique action key
+       * @enum {string}
+       */
+      key?:
+        | 'action_created'
+        | 'action_sent_print'
+        | 'action_sent_email'
+        | 'action_error'
+        | 'action_route_failed'
+        | 'action_incoming_receive'
+        | 'action_incoming_bank'
+        | 'action_internal_sent'
+        | 'action_sent_email_failed'
+        | 'action_seen'
+        | 'action_send_fail'
+        | 'action_accepted'
+        | 'action_paper_ordered'
+        | 'action_sent_paper'
+        | 'action_expired'
+        | 'action_confirmed'
+        | 'action_declined'
+        | 'action_disputed'
+        | 'action_archived'
+        | 'action_paid'
+        | 'action_reminder'
+        | 'action_delivered'
+        | 'action_delivery_failed'
+        | 'action_signed'
+        | 'action_trx_ok'
+        | 'action_trx_fail'
+        | 'action_trx_delay'
+        | 'action_canceled'
+        | 'action_collection'
+        | 'action_notice'
+        | 'action_reminder_and_collection'
+        | 'action_send_without_attachments';
+      /**
+       * Format: date-time
+       * @description When the event happened
+       */
+      happened_at: string;
+    };
+    /** @description Invoices_HttpApi_Entities_InvoiceDetectResults model */
+    Invoices_HttpApi_Entities_InvoiceDetectResults: {
+      /** @description Overall status of the checks */
+      status?: ('OK' | 'WARN' | 'DISABLED')[];
+      /** @description Checks executed by Detect service */
+      executed_checks?: string[];
+      /** @description Findings found by Detect service */
+      findings?: string[];
+    };
+    /** @description Change state for recevied events */
+    patchV1InvoicesIdInvoiceEvents: {
+      /**
+       * @description State to change to
+       * @enum {string}
+       */
+      state: 'CREATED' | 'HANDLED';
+    };
+    /** @description Reroutes invoice via einvoice */
+    putV1InvoicesIdRerouteEinvoice: {
+      /** @description Recipient electronic invoice address */
+      recipient_eia: string;
+      /** @description Recipient operator */
+      recipient_operator: string;
+    };
+    /** @description Reroutes invoice via email */
+    putV1InvoicesIdRerouteEmail: {
+      /** @description Recipient email address */
+      recipient_email: string;
+    };
+    /** @description Reroutes invoice via print */
+    putV1InvoicesIdReroutePrint: {
+      /** @description Recipient name */
+      recipient_name: string;
+      /** @description Recipient address line 1 */
+      recipient_address1: string;
+      /** @description Recipient address line 2 */
+      recipient_address2?: string;
+      /** @description Recipient post code */
+      recipient_post_code: string;
+      /** @description Recipient post office */
+      recipient_post_office: string;
+      /** @description Recipient state */
+      recipient_state?: string;
+      /**
+       * @description Recipient country in ISO 3166-1 alpha-2 format (2 letters)
+       * @enum {string}
+       */
+      recipient_country:
+        | 'AF'
+        | 'AX'
+        | 'AL'
+        | 'DZ'
+        | 'AS'
+        | 'AD'
+        | 'AO'
+        | 'AI'
+        | 'AQ'
+        | 'AG'
+        | 'AR'
+        | 'AM'
+        | 'AW'
+        | 'AU'
+        | 'AT'
+        | 'AZ'
+        | 'BS'
+        | 'BH'
+        | 'BD'
+        | 'BB'
+        | 'BY'
+        | 'BE'
+        | 'BZ'
+        | 'BJ'
+        | 'BM'
+        | 'BT'
+        | 'BO'
+        | 'BQ'
+        | 'BA'
+        | 'BW'
+        | 'BV'
+        | 'BR'
+        | 'IO'
+        | 'BN'
+        | 'BG'
+        | 'BF'
+        | 'BI'
+        | 'CV'
+        | 'KH'
+        | 'CM'
+        | 'CA'
+        | 'KY'
+        | 'CF'
+        | 'TD'
+        | 'CL'
+        | 'CN'
+        | 'CX'
+        | 'CC'
+        | 'CO'
+        | 'KM'
+        | 'CG'
+        | 'CD'
+        | 'CK'
+        | 'CR'
+        | 'CI'
+        | 'HR'
+        | 'CU'
+        | 'CW'
+        | 'CY'
+        | 'CZ'
+        | 'DK'
+        | 'DJ'
+        | 'DM'
+        | 'DO'
+        | 'EC'
+        | 'EG'
+        | 'SV'
+        | 'GQ'
+        | 'ER'
+        | 'EE'
+        | 'SZ'
+        | 'ET'
+        | 'FK'
+        | 'FO'
+        | 'FJ'
+        | 'FI'
+        | 'FR'
+        | 'GF'
+        | 'PF'
+        | 'TF'
+        | 'GA'
+        | 'GM'
+        | 'GE'
+        | 'DE'
+        | 'GH'
+        | 'GI'
+        | 'GR'
+        | 'GL'
+        | 'GD'
+        | 'GP'
+        | 'GU'
+        | 'GT'
+        | 'GG'
+        | 'GN'
+        | 'GW'
+        | 'GY'
+        | 'HT'
+        | 'HM'
+        | 'VA'
+        | 'HN'
+        | 'HK'
+        | 'HU'
+        | 'IS'
+        | 'IN'
+        | 'ID'
+        | 'IR'
+        | 'IQ'
+        | 'IE'
+        | 'IM'
+        | 'IL'
+        | 'IT'
+        | 'JM'
+        | 'JP'
+        | 'JE'
+        | 'JO'
+        | 'KZ'
+        | 'KE'
+        | 'KI'
+        | 'KP'
+        | 'KR'
+        | 'KW'
+        | 'KG'
+        | 'LA'
+        | 'LV'
+        | 'LB'
+        | 'LS'
+        | 'LR'
+        | 'LY'
+        | 'LI'
+        | 'LT'
+        | 'LU'
+        | 'MO'
+        | 'MG'
+        | 'MW'
+        | 'MY'
+        | 'MV'
+        | 'ML'
+        | 'MT'
+        | 'MH'
+        | 'MQ'
+        | 'MR'
+        | 'MU'
+        | 'YT'
+        | 'MX'
+        | 'FM'
+        | 'MD'
+        | 'MC'
+        | 'MN'
+        | 'ME'
+        | 'MS'
+        | 'MA'
+        | 'MZ'
+        | 'MM'
+        | 'NA'
+        | 'NR'
+        | 'NP'
+        | 'NL'
+        | 'NC'
+        | 'NZ'
+        | 'NI'
+        | 'NE'
+        | 'NG'
+        | 'NU'
+        | 'NF'
+        | 'MK'
+        | 'MP'
+        | 'NO'
+        | 'OM'
+        | 'PK'
+        | 'PW'
+        | 'PS'
+        | 'PA'
+        | 'PG'
+        | 'PY'
+        | 'PE'
+        | 'PH'
+        | 'PN'
+        | 'PL'
+        | 'PT'
+        | 'PR'
+        | 'QA'
+        | 'RE'
+        | 'RO'
+        | 'RU'
+        | 'RW'
+        | 'BL'
+        | 'SH'
+        | 'KN'
+        | 'LC'
+        | 'MF'
+        | 'PM'
+        | 'VC'
+        | 'WS'
+        | 'SM'
+        | 'ST'
+        | 'SA'
+        | 'SN'
+        | 'RS'
+        | 'SC'
+        | 'SL'
+        | 'SG'
+        | 'SX'
+        | 'SK'
+        | 'SI'
+        | 'SB'
+        | 'SO'
+        | 'ZA'
+        | 'GS'
+        | 'SS'
+        | 'ES'
+        | 'LK'
+        | 'SD'
+        | 'SR'
+        | 'SJ'
+        | 'SE'
+        | 'CH'
+        | 'SY'
+        | 'TW'
+        | 'TJ'
+        | 'TZ'
+        | 'TH'
+        | 'TL'
+        | 'TG'
+        | 'TK'
+        | 'TO'
+        | 'TT'
+        | 'TN'
+        | 'TR'
+        | 'TM'
+        | 'TC'
+        | 'TV'
+        | 'UG'
+        | 'UA'
+        | 'AE'
+        | 'GB'
+        | 'US'
+        | 'UM'
+        | 'UY'
+        | 'UZ'
+        | 'VU'
+        | 'VE'
+        | 'VN'
+        | 'VG'
+        | 'VI'
+        | 'WF'
+        | 'EH'
+        | 'YE'
+        | 'ZM'
+        | 'ZW'
+        | 'XK';
+    };
+    /** @description Report sender of fraud attempt */
+    postV1InvoicesIdReports: {
+      /** @description Reporting reason. Can be multiple. */
+      reason: (
+        | 'NONEXISTENT_PRODUCT'
+        | 'OFFERS_AS_INVOICES'
+        | 'UNKNOWN_COMPANY'
+        | 'INVOICE_NOT_FOLLOWING_LAW'
+        | 'MISLEADING_NAME'
+        | 'IMPOSSIBLE_TO_CONTACT'
+        | 'MISLEADING_MARKETING'
+        | 'COMPANY_NOT_FOLLOWING_LAW'
+        | 'KNOWN_FOR_FRAUD_ATTEMPTS'
+        | 'KNOWN_FOR_SUSPICIOUS_ACTIVITIES'
+      )[];
+      /** @description Contact email for reporter in case of follow up questions */
+      contact_email: string;
+      /** @description Description for reporting with certain reasons */
+      description?: string;
+    };
+    /** @description UserReport model */
+    UserReport: {
+      /** @description User report id */
+      id?: string;
+      /** @description Bid of reported company */
+      company_bid?: string;
+      /** @description Name of reported company */
+      company_name?: string;
+      /** @description Country code of reported company */
+      company_country_code?: string;
+      /** @description Bank account of reported company */
+      company_bank_account?: string;
+      /** @description Id of reporter user */
+      reporter_user_id?: string;
+      /** @description Contact email of reporter */
+      reporter_contact_email?: string;
+      /** @description Reported invoice id */
+      invoice_id?: string;
+      /** @description Selected reasons at report time */
+      reasons?: components['schemas']['Criteria'][];
+      /** @description Additional explanation given by the user at report time */
+      additional_explanation?: string;
+      /**
+       * Format: date-time
+       * @description Timestamp when report was done
+       */
+      report_date?: string;
+    };
+    /** @description Invoices_HttpApi_Entities_InvoiceAssignment model */
+    Invoices_HttpApi_Entities_InvoiceAssignment: {
+      /** @enum {string} */
+      status: 'pending' | 'sent' | 'error';
+      /** @description URL for fetching the assignment details */
+      url?: string;
+      /**
+       * Format: double
+       * @description Collectable amount
+       */
+      collectable_amount?: number;
+      /** @description Error reason when the status is pending or error */
+      error_reason?: string;
+    };
+    /** @description Post assignment for invoice */
+    postV1InvoicesIdAssignment: {
+      /**
+       * @description Collection type
+       * @enum {string}
+       */
+      collection_type: 'reminder_and_collection' | 'collection';
+      /**
+       * Format: double
+       * @description Total collectable amount, needs to be a positive number (for example 100.50). Cannot be used in combination with amounts.
+       */
+      collectable_amount?: number;
+      /** @description Detailed breakdown of amounts. Cannot be used in combination with collectable_amount. */
+      amounts?: {
+        /**
+         * Format: double
+         * @description Amount of capital invoiced. Needs to be a positive number (for example 100.50).
+         */
+        capital_amount: number;
+        /**
+         * Format: double
+         * @description Amount of reminder fees invoiced. Needs to be a positive number (for example 5.00).
+         */
+        reminder_amount: number;
+        /**
+         * Format: double
+         * @description Amount of previous interest invoiced. Needs to be a positive number (for example 10.50).
+         */
+        interest_amount: number;
+        /**
+         * Format: date
+         * @description YYYY-MM-DD format. Date from which to start interest calculation.For cases where interest has been collected before assignment creation.
+         */
+        interest_calculation_date?: string;
+      };
+      /** @description List of payer customer IDs, used for joining assignments when the payers are the same */
+      payer_identifiers?: string[];
+      /** @description List of payer customer social security numbers, used for the legal collection process */
+      payer_ssns?: string[];
+      /** @description Industry specific optional parameters */
+      industry_specific_options?: {
+        /** @description Only for collectibles regarding rental business. Cannot be used in combination with housing_charge. Currently only supported with the Intrum collection agency. */
+        rental?: {
+          /** @description Address of the rental target or the housing company */
+          address: string;
+          /**
+           * Format: double
+           * @description Total invoice sum assumed if target is not given.
+           */
+          current_target_amount?: number;
+          /**
+           * Format: date
+           * @description YYYY-MM-DD format. Applicable for temporary contracts.
+           */
+          contract_expiry_date?: string;
+          /**
+           * @description continuous assumed if contract_expiry_date is not given
+           * @enum {string}
+           */
+          contract_type?: 'continuous' | 'temporary';
+        };
+        /** @description Only for collectibles regarding housing charges. Cannot be used in combination with rental. Currently only supported with the Intrum collection agency. */
+        housing_charge?: {
+          /** @description Address of the target for which housing charge is collected */
+          address: string;
+        };
+      };
+      /** @description Summary of the assignment, will be included in the reminder and collection letters. Length 2-64 characters. */
+      assignment_summary?: string;
+    };
+    /** @description Sets the business response for an invoice in the Nemhandel network. When an invoice has a final response you cannot set another response. The responses have to be set in a predefined order, specified by the standards.Note: This API has a vendor lock. To enable access, please contact Maventa Support before using this endpoint. */
+    postV1InvoicesIdResponsesNemhandel: {
+      /**
+       * @description Invoice response type
+       * @enum {string}
+       */
+      response:
+        | 'MessageAcknowledgement'
+        | 'InProcess'
+        | 'UnderQuery'
+        | 'ConditionallyAccepted'
+        | 'Rejected'
+        | 'Accepted'
+        | 'PartiallyPaid'
+        | 'FullyPaid';
+      /** @description Reason for response, required for some responses */
+      reason?: string;
+    };
+    /** @description Invoices_HttpApi_Entities_InvoiceResponseNemhandel model */
+    Invoices_HttpApi_Entities_InvoiceResponseNemhandel: {
+      /** @description Specifies if the response is requested by the original sender of the invoice */
+      is_requested?: boolean;
+    };
+    /** @description API_Entities_CompanyProfile model */
+    API_Entities_CompanyProfile: {
+      /** @description Profile unique id */
+      id?: string;
+      /**
+       * @description Status of profile registration
+       * @enum {string}
+       */
+      status?: 'active' | 'pending' | 'error';
+      last_event?: components['schemas']['API_Entities_CompanyProfileEvent'];
+      /** @description Profile name (DEPRECATED) */
+      profile?: string;
+      /** @description List of profile names */
+      profiles?: string[];
+      /** @description Profile version, eg. EHF30, PEPPOLBIS30 */
+      profile_version?: string;
+      /** @description Endpoint identifier */
+      endpoint_id?: string;
+      /** @description ISO6523 code of the endpoint_id scheme. eg. 0192 for NO:ORG */
+      scheme?: string;
+      /** @description Target network, defaults to PEPPOL */
+      network?: string;
+      /** @description List of profile names with extensions */
+      profiles_with_extensions?: components['schemas']['API_Entities_CompanyProfileProfilesWithExtensions'][];
+      /** @description Additional network settings */
+      network_settings?: Record<string, never>;
+    };
+    API_Entities_CompanyProfileEvent: {
+      /** @description Information about the event */
+      message?: string;
+      /**
+       * Format: date-time
+       * @description Created timestamp
+       */
+      created_at: string;
+    };
+    API_Entities_CompanyProfileProfilesWithExtensions: {
+      /** @description Profile name */
+      profile_name?: string;
+      /** @description Active extensions */
+      extensions?: string;
+    };
+    /** @description Create network registration request */
+    postV1CompanyProfiles: {
+      /** @description List of profile names */
+      profiles?: string[];
+      /** @description Profile version, eg. EHF30, PEPPOLBIS30 */
+      profile_version?: string;
+      /** @description Endpoint identifier */
+      endpoint_id?: string;
+      /** @description ISO6523 code of the endpoint_id scheme. eg. 0192 for NO:ORG */
+      scheme?: string;
+      /** @description Target network, defaults to PEPPOL */
+      network?: string;
+      /** @description List of profile names with extensions */
+      profiles_with_extensions?: string[];
+      /** @description Additional network settings */
+      network_settings?: Record<string, never>;
+    };
+    /** @description EXPERIMENTAL Create extensions for profiles */
+    putV1CompanyProfilesIdExtensions: {
+      /** @description Profile name */
+      profile_name: string;
+      /** @description Extensions */
+      extensions: 'GACCOUNT10'[];
+    };
+    /** @description Update a network registration */
+    patchV1CompanyProfilesId: {
+      /** @description Additional network settings */
+      network_settings?: Record<string, never>;
+    };
+    /** @description API_Entities_CompanySettings_Settings model */
+    API_Entities_CompanySettings_Settings: {
+      details?: components['schemas']['API_Entities_CompanySettings_CompanyDetails'];
+      address?: components['schemas']['API_Entities_CompanySettings_CompanyAddress'];
+      invoice_notifications?: components['schemas']['API_Entities_CompanySettings_CompanyInvoiceNotifications'];
+      send_invoice_email?: components['schemas']['API_Entities_CompanySettings_CompanySendInvoiceEmail'];
+      send_invoice_print?: components['schemas']['API_Entities_CompanySettings_CompanySendInvoicePrintSettings'];
+      send_invoice_general?: components['schemas']['API_Entities_CompanySettings_CompanySendInvoiceGeneralSettings'];
+      logos?: components['schemas']['API_Entities_CompanySettings_CompanyLogos'];
+      email_reports?: components['schemas']['API_Entities_CompanySettings_CompanyEmailReports'];
+      billing_details?: components['schemas']['API_Entities_CompanySettings_CompanyBillingDetails'];
+    };
+    API_Entities_CompanySettings_CompanyDetails: {
+      /** @description Name of the company */
+      name?: string;
+      /** @description Main email address */
+      email?: string;
+      /** @description URL to company web pages */
+      website?: string;
+      /** @description Company's country */
+      country?: string;
+      /** @description Company's business id */
+      bid?: string;
+      /** @description Company's VAT number */
+      vat_number?: string;
+    };
+    API_Entities_CompanySettings_CompanyAddress: {
+      /** @description Street address */
+      street_address?: string;
+      /** @description Post code */
+      post_code?: string;
+      /** @description Post office */
+      post_office?: string;
+      /** @description City */
+      city?: string;
+      /** @description Country as a two letter country code */
+      country?: string;
+    };
+    API_Entities_CompanySettings_CompanyInvoiceNotifications: {
+      on_receiving?: components['schemas']['API_Entities_CompanySettings_CompanySendInvoiceEmailOnReceivingData'];
+      on_send_errors?: components['schemas']['API_Entities_CompanySettings_CompanySendInvoiceEmailOnSendErrorsData'];
+    };
+    API_Entities_CompanySettings_CompanySendInvoiceEmailOnReceivingData: {
+      /** @description Enable notifications for incoming invoices */
+      enabled?: boolean;
+      /** @description Sent to company email or other email */
+      how_to_send?: string;
+      /** @description Email address for receiving notifications for incoming invoices */
+      other_email?: string;
+    };
+    API_Entities_CompanySettings_CompanySendInvoiceEmailOnSendErrorsData: {
+      /** @description Users get informed on invoice send errors */
+      to_user?: boolean;
+      /** @description Email addresses for sending related errors */
+      to_emails?: string[];
+    };
+    API_Entities_CompanySettings_CompanySendInvoiceEmail: {
+      /** @description Describe if send via email is enabled */
+      enabled?: boolean;
+      /**
+       * @description Describe which method to use to send invoices via email.
+       * @enum {string}
+       */
+      how_to_send?:
+        | 'EMBEDDED'
+        | 'WITH_OBJECTIONS'
+        | 'WITH_LINK'
+        | 'EMBEDDED_MERGE';
+      /** @description Describes the frequency of email reminder’s for open invoices in days. */
+      reminder_frequency?: number;
+      content_data?: components['schemas']['API_Entities_CompanySettings_CompanySendInvoiceEmailContentData'];
+    };
+    API_Entities_CompanySettings_CompanySendInvoiceEmailContentData: {
+      /** @description What message to be added to the sent email */
+      note_to_receiver?: string;
+      contact?: components['schemas']['API_Entities_CompanySettings_CompanySendInvoiceEmailContentDataContactData'];
+    };
+    API_Entities_CompanySettings_CompanySendInvoiceEmailContentDataContactData: {
+      /** @description reply-to email, which needs to be verified */
+      email?: string;
+      /** @description Name of the person to be contacted */
+      name?: string;
+      /** @description Phone number to be contacted */
+      phone?: string;
+    };
+    API_Entities_CompanySettings_CompanySendInvoicePrintSettings: {
+      /** @description Print service enabled */
+      enabled?: boolean;
+      /** @description Print service letter class (FI SE NL only) */
+      letter_class?: string;
+      /** @description Print color (FI SE NO DK only) */
+      color_scheme?: string;
+      /** @description Attachment print */
+      attachment_print?: boolean;
+      /** @description Automatic e-invoice marketing page (FI only) */
+      marketing_page?: boolean;
+      /** @description Use own PDFs for print service (FI NO SE DK only). NL has always on. */
+      use_own_pdf?: boolean;
+    };
+    API_Entities_CompanySettings_CompanySendInvoiceGeneralSettings: {
+      /** @description Stop duplicate invoice numbers */
+      stop_duplicate_numbers?: boolean;
+      /** @description Hold invoices on multiple recipients */
+      hold_multiple_recipients?: boolean;
+    };
+    API_Entities_CompanySettings_CompanyLogos: {
+      pdf?: components['schemas']['API_Entities_CompanySettings_CompanyLogoData'];
+      email_header?: components['schemas']['API_Entities_CompanySettings_CompanyHeaderImage'];
+    };
+    API_Entities_CompanySettings_CompanyLogoData: {
+      /** @description Base64-encoded content for logo */
+      content: string;
+    };
+    API_Entities_CompanySettings_CompanyHeaderImage: {
+      /** @description Base64-encoded content for header image. PNG only */
+      content: string;
+    };
+    API_Entities_CompanySettings_CompanyEmailReports: {
+      /** @description Email reports interval */
+      report_interval?: string;
+      /** @description Email address for reports */
+      email_reports?: string[];
+    };
+    API_Entities_CompanySettings_CompanyBillingDetails: {
+      electronic_invoicing_details?: components['schemas']['API_Entities_CompanySettings_CompanyBillingDetailsElectronicInvoicingData'];
+      /** @description Email address for billing */
+      invoicing_email?: string;
+      /** @description Street address for billing */
+      invoicing_street_address1?: string;
+      /** @description Additional street address for billing */
+      invoicing_street_address2?: string;
+      /** @description Postal code for billing */
+      invoicing_post_code?: string;
+      /** @description Postal office for billing */
+      invoicing_post_office?: string;
+      /** @description Billing company UUID */
+      billing_company_id?: string;
+    };
+    API_Entities_CompanySettings_CompanyBillingDetailsElectronicInvoicingData: {
+      /** @description Company electronic invoicing address */
+      invoicing_eia?: string;
+      /** @description Company electronic invoicing operator */
+      invoicing_operator?: string;
+    };
+    /** @description Modify company settings */
+    patchV1CompanySettings: {
+      details: components['schemas']['API_Entities_CompanySettings_CompanyDetails'];
+      address: components['schemas']['API_Entities_CompanySettings_CompanyAddress'];
+      invoice_notifications: components['schemas']['API_Entities_CompanySettings_CompanyInvoiceNotifications'];
+      send_invoice_email?: components['schemas']['API_Entities_CompanySettings_CompanySendInvoiceEmail'];
+      send_invoice_print?: components['schemas']['API_Entities_CompanySettings_CompanySendInvoicePrintSettings'];
+      send_invoice_general?: components['schemas']['API_Entities_CompanySettings_CompanySendInvoiceGeneralSettings'];
+      logos?: components['schemas']['API_Entities_CompanySettings_CompanyLogos'];
+      email_reports?: components['schemas']['API_Entities_CompanySettings_CompanyEmailReports'];
+      billing_details?: components['schemas']['API_Entities_CompanySettings_CompanyBillingDetails'];
+    };
+    /** @description API_Entities_Notifications_Notification model */
+    API_Entities_Notifications_Notification: {
+      /** @description Notification id */
+      id: string;
+      /** @description Type of notification. Possible values: WEBHOOK, VENDOR_WEBHOOK */
+      destination_type: string;
+      /** @description Notification destination. e.g. URL for webhooks. */
+      destination: string;
+      /** @description Name/Key of registered vendor key */
+      vendor_key?: string;
+      /** @description Type of events */
+      events: string[];
+    };
+    /** @description Create new notification subscription */
+    postV1CompanyNotifications: {
+      /** @description Type of notification. Possible values: WEBHOOK, VENDOR_WEBHOOK */
+      destination_type: string;
+      /** @description Notification destination. e.g. URL for webhooks. */
+      destination: string;
+      /** @description Name/Key of registered vendor key */
+      vendor_key?: string;
+      /** @description Type of events */
+      events: string[];
+    };
+    /** @description API_Entities_LinkVendorAPIKey model */
+    API_Entities_LinkVendorAPIKey: {
+      /** @description Link result */
+      state: string;
+    };
+    /** @description API_Entities_CompanyAuthorizationStatus model */
+    API_Entities_CompanyAuthorizationStatus: {
+      /** @description The authorization state. Possible values are PENDING,SENT,SIGNED,CANCELED,NONE */
+      auth_state: string;
+      /** @description The authorization email */
+      auth_email: string;
+      /** @description Trustated state of the company. Possible values are VERIFIED,UNVERIFIED,UNKNOWN */
+      company_state: string;
+    };
+    /** @description Authorize your company. Required to complete KYC process and take company account into use */
+    postV1CompanyAuthorization: {
+      /** @description Email to send the Visma sign request to. The person signing will be strongly authenticated. */
+      auth_email: string;
+      /**
+       * @description Locale to use on the signin invitation email, visma sign portal and agreement PDF.
+       * @enum {string}
+       */
+      locale: 'FI' | 'NO' | 'SE' | 'EN' | 'NL' | 'BE';
+      /** @description JSON string used to provide proof of KYC process. Mandatory when partner has own KYC process. */
+      options?: string;
+    };
+    /** @description API_Entities_CompanyAuthorization model */
+    API_Entities_CompanyAuthorization: {
+      /** @description The authorization result */
+      status: string;
+      /**
+       * Format: int32
+       * @description The number of companies that were authorized
+       */
+      count?: number;
+    };
+    /** @description API_Entities_CompanyUsers_User model */
+    API_Entities_CompanyUsers_User: {
+      /** @description User ID */
+      id: string;
+      /** @description Email */
+      email: string;
+      /** @description If set to 1, user will not receive e-mail notifications for their invoices. */
+      notifications_disabled?: number;
+      /** @description If set to 1, user will not receive any e-mail notifications e.g. invoice send errors and such. */
+      emails_disabled?: number;
+      /** @description User role */
+      role?: string;
+    };
+    /** @description Add a new or existing user to a company */
+    postV1CompanyUsers: {
+      /** @description User email */
+      email: string;
+      /** @description First name */
+      first_name: string;
+      /** @description Last name */
+      last_name?: string;
+      /** @description Phone number */
+      phone?: string;
+      /**
+       * @description User role
+       * @enum {string}
+       */
+      user_role?: 'ADMIN' | 'USER';
+      /** @description If set to true, user will not receive e-mail notifications for their invoices. */
+      notifications_disabled?: boolean;
+      /** @description If set to true, user will not receive any e-mail notifications e.g. invoice send errors and such. */
+      emails_disabled?: boolean;
+    };
+    /** @description API_Entities_CompanyUsers_NewUser model */
+    API_Entities_CompanyUsers_NewUser: {
+      /** @description User ID */
+      id: string;
+      /** @description Email */
+      email: string;
+      /** @description If set to 1, user will not receive e-mail notifications for their invoices. */
+      notifications_disabled?: number;
+      /** @description If set to 1, user will not receive any e-mail notifications e.g. invoice send errors and such. */
+      emails_disabled?: number;
+      /** @description User role */
+      role?: string;
+      /** @description User API key */
+      api_key: string;
+    };
+    /** @description Update user info */
+    patchV1CompanyUsersUserId: {
+      /** @description First name */
+      first_name?: string;
+      /** @description Last name */
+      last_name?: string;
+      /** @description Phone number */
+      phone?: string;
+      /** @description If set to true, user will not receive e-mail notifications for their invoices. */
+      notifications_disabled?: boolean;
+      /** @description If set to true, user will not receive any e-mail notifications e.g. invoice send errors and such. */
+      emails_disabled?: boolean;
+    };
+    /** @description Update user role */
+    postV1CompanyUsersUserIdRoles: {
+      /**
+       * @description User role
+       * @enum {string}
+       */
+      user_role: 'ADMIN' | 'USER';
+    };
+    /** @description API_Entities_Company model */
+    API_Entities_Company: {
+      id: string;
+    };
+    /** @description [EXPERIMENTAL] Query suppliers that could send e-invoices instead PDFs */
+    postV1CompanySuppliersQuery: {
+      /**
+       * @description Include already notified suppliers
+       * @default false
+       */
+      include_notified: boolean;
+      /**
+       * Format: date-time
+       * @description How far back to see for sent PDFss. Max 1 month. In ISO8601 format
+       */
+      oldest_invoice_time?: string;
+    };
+    /** @description Suppliers_HttpApi_Entities_SuppliersQueryResult model */
+    Suppliers_HttpApi_Entities_SuppliersQueryResult: {
+      /** @description Unique query identifier, valid only while query is pending */
+      query_id?: string;
+      /**
+       * @description State of the query
+       * @enum {string}
+       */
+      status: 'pending' | 'completed';
+      /** @description List of suppliers */
+      suppliers?: components['schemas']['Suppliers_HttpApi_Entities_SupplierInfo'][];
+    };
+    Suppliers_HttpApi_Entities_SupplierInfo: {
+      /** @description Business ID */
+      company_bid: string;
+      /** @description Country code (ISO 3166-2) */
+      company_country: string;
+      /** @description Name of the supplier */
+      company_name: string;
+      /** @description Email address of the supplier */
+      email_address?: string;
+      /**
+       * Format: int32
+       * @description Number of invoices the supplier has sent you within the specified time frame
+       */
+      invoice_count?: number;
+    };
+    /** @description [EXPERIMENTAL] Create and send notifications to suppliers */
+    postV1CompanySuppliersNotifications: {
+      /** @description Suppliers related functions */
+      suppliers: {
+        /** @description Supplier email address */
+        email_address: string;
+        /** @description Supplier name */
+        name: string;
+        /** @description Two letter country code. Possible values: en, se, fi, nl */
+        language: string;
+      }[];
+    };
+    /** @description Suppliers_HttpApi_Entities_SuppliersNotificationResult model */
+    Suppliers_HttpApi_Entities_SuppliersNotificationResult: {
+      /** @description List of notifications that failed to send (empty if all succeeded) */
+      failures?: components['schemas']['Suppliers_HttpApi_Entities_NotificationFailure'][];
+    };
+    Suppliers_HttpApi_Entities_NotificationFailure: {
+      /** @description Supplier email address */
+      email?: string;
+      /** @description Reason for failure */
+      reason?: string;
+    };
+    /** @description API_Entities_UserCompany model */
+    API_Entities_UserCompany: {
+      /** @description Unique identifier */
+      id?: string;
+      /** @description Name */
+      name?: string;
+      /** @description Bid */
+      bid?: string;
+    };
+    /** @description Authorize one or multiple companies. Required to complete KYC process and take company account into use */
+    postV1CompaniesAuthorizations: {
+      /** @description Email to send the Visma sign request to. The person signing will be strongly authenticated. */
+      auth_email: string;
+      /** @description Company UUIDs to authorize. Admin user needs to have access to all of the companies given. */
+      company_ids: string[];
+      /**
+       * @description Locale to use on the signin invitation email, visma sign portal and agreement PDF.
+       * @enum {string}
+       */
+      locale: 'FI' | 'NO' | 'SE' | 'EN' | 'NL' | 'BE';
+      /** @description JSON string used to provide proof of KYC process. Mandatory when partner has own KYC process. */
+      options?: string;
+    };
+    /** @description API_Entities_OperatorParticipant model */
+    API_Entities_OperatorParticipant: {
+      /** @description Profile unique id */
+      id?: string;
+      /**
+       * @description Status of profile registration
+       * @enum {string}
+       */
+      status?: 'active' | 'pending' | 'error';
+      last_event?: components['schemas']['API_Entities_CompanyProfileEvent'];
+      /** @description List of profile names */
+      profiles?: string[];
+      /** @description Profile version, eg. EHF30, PEPPOLBIS30 */
+      profile_version?: string;
+      /** @description Endpoint identifier */
+      endpoint_id?: string;
+      /** @description ISO6523 code of the endpoint_id scheme. eg. 0192 for NO:ORG */
+      scheme?: string;
+      /** @description The participants network */
+      network: string;
+      /** @description List of profile names with extensions */
+      profiles_with_extensions?: components['schemas']['API_Entities_CompanyProfileProfilesWithExtensions'][];
+      /** @description Role of the participant in the network. For example SENDER or RECEIVER. */
+      role?: string;
+      /** @description Name of the participant */
+      name: string;
+      /** @description Email address for the participant */
+      email: string;
+      /** @description Two letter country code of the party */
+      country?: string;
+      /** @description Unique external id for the participant */
+      external_id: string;
+      /**
+       * Format: date-time
+       * @description Last update timestamp
+       */
+      updated_at: string;
+    };
+    /** @description Register a participant */
+    postV1OperatorParticipants: {
+      /** @description Profile name (DEPRECATED) */
+      profile?: string;
+      /** @description List of profile names */
+      profiles?: string[];
+      /** @description Profile version, eg. EHF30, PEPPOLBIS30 */
+      profile_version?: string;
+      /** @description Endpoint identifier */
+      endpoint_id?: string;
+      /** @description ISO6523 code of the endpoint_id scheme. eg. 0192 for NO:ORG */
+      scheme?: string;
+      /** @description The participants network */
+      network: string;
+      /** @description List of profile names with extensions */
+      profiles_with_extensions?: string[];
+      /** @description Role of the participant in the network. For example SENDER or RECEIVER. */
+      role?: string;
+      /** @description Name of the participant */
+      name: string;
+      /** @description Email address for the participant */
+      email: string;
+      /** @description Two letter country code of the party */
+      country?: string;
+      /** @description Unique external id for the participant */
+      external_id: string;
+    };
+    /** @description Create new notification subscription */
+    postV1OperatorNotifications: {
+      /** @description Type of notification. Possible values: WEBHOOK, VENDOR_WEBHOOK */
+      destination_type: string;
+      /** @description Notification destination. e.g. URL for webhooks. */
+      destination: string;
+      /** @description Name/Key of registered vendor key */
+      vendor_key?: string;
+      /** @description Type of events */
+      events: string[];
+    };
+    /** @description API_Entities_OperatorCompany model */
+    API_Entities_OperatorCompany: {
+      /** @description unique identifier */
+      id?: string;
+      /** @description Name */
+      name?: string;
+    };
+    /** @description API_Entities_Endpoint model */
+    API_Entities_Endpoint: {
+      /** @description Business ID / Organisation number */
+      bid?: string;
+      /** @description Available options for sending */
+      sending?: string[];
+    };
+    /** @description API_Entities_Consumer model */
+    API_Entities_Consumer: {
+      /** @description Reference to lookup entry */
+      reference_id?: string;
+      routes?: {
+        dpi?: components['schemas']['API_Entities_DpiRoute'];
+        yes2all?: components['schemas']['API_Entities_Yes2AllRoute'];
+      };
+    };
+    API_Entities_DpiRoute: {
+      /** @description Route status. (RECEIVING,NOT_RECEIVING,NOT_AVAILABLE,TEMPORARY_UNAVAILABLE) */
+      status?: string;
+      /** @description Additional details about the route */
+      details?: string;
+    };
+    API_Entities_Yes2AllRoute: {
+      /** @description Route status. (RECEIVING,NOT_RECEIVING,NOT_AVAILABLE,TEMPORARY_UNAVAILABLE) */
+      status?: string;
+      /** @description Additional details about the route */
+      details?: string;
+      efaktura_identifier?: string;
+    };
+    /** @description API_Entities_LookupEntryReceiver model */
+    API_Entities_LookupEntryReceiver: {
+      /** @description Full Electronic Address eg: 0192:123456789 */
+      eia?: string;
+      identifier?: components['schemas']['API_Entities_Identifier'];
+      /** @description Network the address belongs to */
+      network?: string;
+      /** @description Operator the address belongs to */
+      operator?: string;
+      /** @description Document profiles supported */
+      document_types?: components['schemas']['API_Entities_DocumentType'][];
+      participant?: components['schemas']['API_Entities_Participant'];
+    };
+    API_Entities_Identifier: {
+      /** @description The scheme of the identifier */
+      scheme?: string;
+      /** @description Name of the electronic address id */
+      eaid_name?: string;
+      /** @description Code of the electronic address id */
+      eaid_code?: string;
+      /** @description Endpoint id */
+      endpoint_id?: string;
+    };
+    API_Entities_DocumentType: {
+      /** @description The type of document supported */
+      document_type?: string;
+      /** @description Exact definition of the document type */
+      document_identifier?: string;
+      /** @description Exact definition of the process */
+      process_identifier?: string;
+    };
+    API_Entities_Participant: {
+      /** @description A unique id for the participant */
+      id?: string;
+      /** @description Name of the participant */
+      name?: string;
+      /** @description Participants Business ID */
+      bid?: string;
+      /** @description Two letter country code of the participant */
+      country?: string;
+    };
+    /** @description API_Entities_JWKEntries model */
+    API_Entities_JWKEntries: {
+      /** @description Active keys */
+      keys?: components['schemas']['API_Entities_JWKEntry'][];
+    };
+    API_Entities_JWKEntry: {
+      /** @description Key type */
+      kty?: string;
+      /** @description e value */
+      e?: string;
+      /** @description n value */
+      n?: string;
+      /** @description Key ID */
+      kid?: string;
+    };
+    /** @description API_Entities_Operator model */
+    API_Entities_Operator: {
+      /** @description The id of the operator */
+      operator_id?: string;
+      /** @description The name of the operator */
+      name?: string;
+      /** @description The country code for this operator */
+      country?: string;
+    };
+    /** @description CheckDefinitions model */
+    CheckDefinitions: {
+      /** @description Version of the application the definitions correspond to */
+      app_version?: string;
+      /** @description All supported checks with their definitions */
+      checks?: components['schemas']['CheckDefinition'][];
+    };
+    CheckDefinition: {
+      /** @description Check name */
+      name?: string;
+      /** @description Check friendly name */
+      friendly_name?: string;
+      /** @description Check friendly name, translated in all supported languages */
+      friendly_names?: components['schemas']['Translation'][];
+      /** @description Check title */
+      title?: string;
+      /** @description Check title, translated in all supported languages */
+      titles?: components['schemas']['Translation'][];
+      /** @description Check description */
+      description?: string;
+      /** @description Check description, translated in all supported languages */
+      descriptions?: components['schemas']['Translation'][];
+      /** @description Check documentation description */
+      doc_description?: string;
+      /** @description Resource type the check is run for */
+      resource_type?: string;
+      /** @description Resource scope the check is run for */
+      scope?: string;
+      /** @description Resource scope the check is run for, translated in all supported languages */
+      scopes?: components['schemas']['Translation'][];
+      /** @description Sources used when running the check */
+      sources?: components['schemas']['Source'][];
+      metadata?: components['schemas']['WarningListMetadata'];
+      /** @description List of possible results of the check */
+      possible_results?: components['schemas']['ResultDefinition'][];
+    };
+    Source: {
+      /** @description Source name */
+      name?: string;
+      /** @description Source name, translated in all supported languages */
+      names?: components['schemas']['Translation'][];
+    };
+    WarningListMetadata: {
+      /** @description Warning List criteria */
+      criteria?: components['schemas']['Criteria'][];
+    };
+    ResultDefinition: {
+      /** @description Status of the check run */
+      status?: string;
+      /** @description Status of the returned result of the check */
+      result?: string;
+      /** @description Check result reason text */
+      reason?: string;
+      /** @description Check result reason code */
+      reason_code?: string;
+    };
+    /** @description Create a User */
+    postV1Users: {
+      /** @description Vendor API key */
+      vendor_api_key: string;
+      /** @description User email */
+      email: string;
+      /** @description User first name */
+      first_name?: string;
+      /** @description User last name */
+      last_name?: string;
+    };
+    /** @description API_Entities_ApiUser model */
+    API_Entities_ApiUser: {
+      user_api_key?: string;
+    };
+    /** @description API_Entities_DocumentFileInDocument model */
+    API_Entities_DocumentFileInDocument: {
+      /** @description ID of Document File */
+      id: string;
+      /** @description File name */
+      filename?: string;
+      /** @description File format */
+      file_format?: string;
+      /** @description Mime type passed when created or inferred from file extension */
+      mimetype?: string;
+      /** @description Direct link for accesing the file content (ex: "https://ax.maventa.com/v1/files/1234") */
+      href?: string;
+      /**
+       * Format: date-time
+       * @description File creation timestamp
+       */
+      created_at?: string;
+      /** @description File type */
+      type?: string;
+      /** @description Version of file format (ex.: 20) */
+      format_version?: string;
+      /**
+       * @description Array of JSONs, each containing a document_id and the corresponding document's type
+       * @example [
+       *       {
+       *         "document_id": "845fd5a3-d59f-4217-b7ec-c849baefb79e",
+       *         "type": "ATTACHMENT"
+       *       }
+       *     ]
+       */
+      document_file_links?: Record<string, never>[];
+    };
+    /** @description API_Entities_Document model */
+    API_Entities_Document: {
+      /** @description Id as a GUID */
+      id?: string;
+      /**
+       * @description Type of document
+       * @enum {string}
+       */
+      type?:
+        | 'UNKNOWN'
+        | 'INVOICE'
+        | 'CREDIT_NOTE'
+        | 'ORDER'
+        | 'ORDER_RESPONSE'
+        | 'CATALOGUE'
+        | 'CATALOGUE_RESPONSE'
+        | 'SELF_BILLING_INVOICE'
+        | 'DESPATCH_ADVICE'
+        | 'RECEIPT'
+        | 'VOUCHER'
+        | 'BANK_FILE'
+        | 'REMINDER'
+        | 'SCAN'
+        | 'INVOICE_RESPONSE'
+        | 'MESSAGE_LEVEL_RESPONSE'
+        | 'EXPRESSION_OF_INTEREST_REQUEST'
+        | 'EXPRESSION_OF_INTEREST_RESPONSE'
+        | 'TENDER_STATUS_REQUEST'
+        | 'CALL_FOR_TENDERS'
+        | 'TENDER'
+        | 'TENDER_RECEIPT'
+        | 'ORDER_CHANGE'
+        | 'ORDER_CANCELLATION';
+      /** @description Document identifier */
+      document_identifier?: string;
+      /** @description Process identifier */
+      process_identifier?: string;
+      /**
+       * @description Current status of document
+       * @enum {string}
+       */
+      status?:
+        | 'PROCESSING'
+        | 'RESERVED'
+        | 'DELIVERED'
+        | 'CONFIRMED_DELIVERY'
+        | 'FAILED';
+      /** @description Document reference */
+      reference?: string;
+      /** @description Document number */
+      number?: string;
+      sender?: components['schemas']['API_Entities_DocumentParty'];
+      recipient?: components['schemas']['API_Entities_DocumentRecipientParty'];
+      /**
+       * Format: date-time
+       * @description Document creation time
+       */
+      created_at?: string;
+      /**
+       * Format: date-time
+       * @description The timestamp when sent document was delivered to the destination route
+       */
+      delivered_at?: string;
+      /**
+       * Format: date-time
+       * @description The timestamp when received document was delivered to the recipient
+       */
+      received_at?: string;
+      last_event?: components['schemas']['API_Entities_DocumentEvent'];
+      /** @description Source format of the document */
+      source_format?: string;
+      /** @description Supported document formats */
+      supported_formats?: string[];
+      /** @description Transmission id */
+      transmission_id?: string;
+      /**
+       * Format: date-time
+       * @description Document transmission time
+       */
+      transmission_at?: string;
+      /** @description The network document is originated from */
+      network?: string;
+      /** @description The origin of the document */
+      origin?: string;
+      /** @description External identifier linked to the document */
+      external_id?: string;
+      /** @description Files related to the document */
+      files?: components['schemas']['API_Entities_DocumentFileInDocument'][];
+    };
+    API_Entities_DocumentParty: {
+      /** @description Electronic Identifier Address */
+      eia?: string;
+      /** @description Business ID / Organisation number */
+      bid?: string;
+      /** @description Name of party */
+      name?: string;
+      /** @description Two letter country code of the party */
+      country?: string;
+      /** @description VAT number */
+      vat?: string;
+    };
+    API_Entities_DocumentRecipientParty: {
+      /** @description Electronic Identifier Address */
+      eia?: string;
+      /** @description Business ID / Organisation number */
+      bid?: string;
+      /** @description Name of party */
+      name?: string;
+      /** @description Two letter country code of the party */
+      country?: string;
+      /** @description VAT number */
+      vat?: string;
+      /** @description Company operator */
+      operator?: string;
+    };
+    /** @description API_Entities_DocumentEvent model */
+    API_Entities_DocumentEvent: {
+      /** @description Event code */
+      code?: string;
+      /** @description Information about the event */
+      message?: string;
+      /** @description More information about the event */
+      details?: string;
+      /**
+       * Format: date-time
+       * @description Created timestamp
+       */
+      created_at: string;
+    };
+    /** @description Update existing document */
+    patchV1DocumentsId: {
+      /**
+       * @description Change the state of the document.
+       *                                           Possible values: CONFIRMED_DELIVERY
+       */
+      status?: string;
+    };
+    /** @description Analysis model */
+    Analysis: {
+      /** @description Detect status */
+      analysis_id?: string;
+      /** @description Detect type */
+      analysis_type?: string;
+      /** @description Detect check friendly name */
+      friendly_name?: string;
+      /** @description Detect check friendly name, translated in all supported languages */
+      friendly_names?: components['schemas']['Translation'][];
+      /** @description Detect status */
+      analysis_status?: string;
+      /** @description Detect title */
+      analysis_title?: string;
+      /** @description Detect title, translated in all supported languages */
+      analysis_titles?: components['schemas']['Translation'][];
+      /**
+       * Format: date-time
+       * @description Timestamp when check was triggered
+       */
+      analysis_trigger_date?: string;
+      /** @description Detect resource origin */
+      analysis_origin?: string;
+      analysis_result?: components['schemas']['AnalysisResult'];
+      /** @description All results of the detect checks */
+      analysis_results?: components['schemas']['AnalysisResult'][];
+    };
+    AnalysisResult: {
+      /** @description Detect result status */
+      status?: string;
+      /** @description Detect result text */
+      text?: string;
+      /** @description Detect result text, translated in all supported languages */
+      texts?: components['schemas']['Translation'][];
+      /** @description Detect result reason code */
+      reason_code?: string;
+      /**
+       * Format: date-time
+       * @description Timestamp when check was performed
+       */
+      check_date?: string;
+      /** @description Detect metadata */
+      data?: Record<string, never>;
+    };
+    /** @description Partner_HttpApi_Entities_InvoiceEventsReceived model */
+    Partner_HttpApi_Entities_InvoiceEventsReceived: {
+      /** @description Company ID */
+      company_id?: string;
+      /** @description Invoice ID */
+      invoice_id?: string;
+      /**
+       * @description Invoice event state
+       * @enum {string}
+       */
+      state?: 'CREATED' | 'HANDLED';
+      /**
+       * Format: date-time
+       * @description When the event happened
+       */
+      created_at?: string;
+    };
+    /** @description Partner_HttpApi_Entities_InvoiceEventsSentError model */
+    Partner_HttpApi_Entities_InvoiceEventsSentError: {
+      /** @description Company ID */
+      company_id?: string;
+      /** @description Invoice ID */
+      invoice_id?: string;
+    };
+    /** @description Partner_HttpApi_Entities_CompanyLookups model */
+    Partner_HttpApi_Entities_CompanyLookups: {
+      /** @description Company BID */
+      company_bid?: string;
+      /** @description Company status (FREE or RESERVED) */
+      company_status?: string;
+    };
+    /** @description [EXPERIMENTAL] Mark Lyanthe scan service as active. */
+    postV1PartnerScanServiceLyanthe: {
+      /** @description Company id */
+      company_id: string;
+      /** @description Lyanthe scan email address */
+      lyanthe_email_address: string;
+    };
+    /** @description API_Entities_ScanService model */
+    API_Entities_ScanService: {
+      scan_address?: components['schemas']['API_Entities_ScanAddress'];
+    };
+    API_Entities_ScanAddress: {
+      email_address?: string;
+    };
+    /** @description [EXPERIMENTAL] Start takeover process */
+    postV1PartnerTakeovers: {
+      /** @description Id of company to take over */
+      company_id: string;
+    };
+    /** @description FiBankMessages_HttpApi_Entities_FiBankMessageStatus model */
+    FiBankMessages_HttpApi_Entities_FiBankMessageStatus: {
+      /**
+       * @description Current status of message
+       * @enum {string}
+       */
+      status?: 'OK' | 'ERROR';
+      /** @description Id for the associated error message if available. Only when status is ERROR */
+      error_message_id?: string;
+    };
+  };
+  responses: never;
+  parameters: never;
+  requestBodies: never;
+  headers: never;
+  pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    getStatusAuthenticated: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Status requiring authentication */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Status"];
-                };
-            };
-        };
-    };
-    postOauth2Token: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/x-www-form-urlencoded": {
-                    /**
-                     * @description The grant type
-                     * @enum {string}
-                     */
-                    grant_type: "client_credentials";
-                    /** @description The client id */
-                    client_id?: string;
-                    /** @description The client secret */
-                    client_secret?: string;
-                    /** @description Scope of the requested token */
-                    scope?: string;
-                    /** @description Software API key */
-                    vendor_api_key?: string;
-                    /** @description License data */
-                    license_data?: string;
-                };
-            };
-        };
-        responses: {
-            /** @description Granted access token */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_OAuthToken"];
-                };
-            };
-        };
-    };
-    getOauth2Current: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Fetch information about the authenticated user and company */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_OAuthCurrent"];
-                };
-            };
-        };
-    };
-    getOdpCompaniesId: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID of ODP company */
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Fetch ODP company by id */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OdpCompany"];
-                };
-            };
-        };
-    };
-    patchOdpCompaniesId: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID of ODP company */
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "multipart/form-data": {
-                    /** @description Is company trusted */
-                    trusted: boolean;
-                };
-            };
-        };
-        responses: {
-            /** @description Company updated succesfully */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getV2ServicesAmiliReceivables: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Current state of the Amili receivables service */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ReceivablesService"];
-                };
-            };
-        };
-    };
-    putV2ServicesAmiliReceivables: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["putV2ServicesAmiliReceivables"];
-            };
-        };
-        responses: {
-            /** @description Start the Amili Receivables service onboarding */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ReceivablesService"];
-                };
-            };
-        };
-    };
-    deleteV2ServicesAmiliReceivables: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Service disabled */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    patchV2ServicesAmiliReceivables: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["patchV2ServicesAmiliReceivables"];
-            };
-        };
-        responses: {
-            /** @description Update successful */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getV2ServicesIntrumReceivables: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Current state of the Intrum receivables service */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_CompanyServices_Intrum"];
-                };
-            };
-        };
-    };
-    putV2ServicesIntrumReceivables: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["putV2ServicesIntrumReceivables"];
-            };
-        };
-        responses: {
-            /** @description Start the Intrum Receivables service onboarding */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_CompanyServices_Intrum"];
-                };
-            };
-        };
-    };
-    deleteV2ServicesIntrumReceivables: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Service disabled */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    patchV2ServicesIntrumReceivables: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["patchV2ServicesIntrumReceivables"];
-            };
-        };
-        responses: {
-            /** @description Update successful */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getV1ServicesReceivables: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Current state of the receivables service */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ReceivablesService"];
-                };
-            };
-        };
-    };
-    putV1ServicesReceivables: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["putV1ServicesReceivables"];
-            };
-        };
-        responses: {
-            /** @description Start the Receivables service onboarding */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ReceivablesService"];
-                };
-            };
-        };
-    };
-    deleteV1ServicesReceivables: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Service disabled */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    patchV1ServicesReceivables: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["patchV1ServicesReceivables"];
-            };
-        };
-        responses: {
-            /** @description Update successful */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getV1ServicesAtg: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List ATG agreements */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_CompanyAgreements_Atg"][];
-                };
-            };
-        };
-    };
-    postV1ServicesAtg: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["postV1ServicesAtg"];
-            };
-        };
-        responses: {
-            /** @description Create a new ATG agreement */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_CompanyAgreements_Atg"];
-                };
-            };
-        };
-    };
-    getV1ServicesAtgMandates: {
-        parameters: {
-            query?: {
-                /** @description Find by KID or reference */
-                query?: string;
-                /** @description Timestamp for latest update */
-                timestamp?: string;
-                /** @description Status */
-                status?: "ACTIVE" | "INACTIVE";
-                /** @description Parse reference and payment type from KID.Only works for <20 results */
-                parse_values?: "TRUE" | "FALSE";
-                /** @description Page to fetch */
-                page?: number;
-                /** @description Number of items per page, values up to 100 supported */
-                per_page?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List B2C ATG mandates */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_CompanyConsumers_Mandate"][];
-                };
-            };
-        };
-    };
-    getV1ServicesAtgAccountNumber: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Account number */
-                account_number: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Fetch ATG agreement */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_CompanyAgreements_Atg"];
-                };
-            };
-        };
-    };
-    patchV1ServicesAtgAccountNumber: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Account number linked to agreement */
-                account_number: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["patchV1ServicesAtgAccountNumber"];
-            };
-        };
-        responses: {
-            /** @description ATG agreement updated succesfully */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getV1ServicesOpInvoiceCreditOffer: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Get an offer for OP Laskulaina before the activation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OPInvoiceCreditSettingsOffer"];
-                };
-            };
-        };
-    };
-    getV1ServicesOpInvoiceCredit: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Current information about the OP Laskulaina service */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OPInvoiceCredit"];
-                };
-            };
-            /** @description - **op_invoice_credit_not_enabled**: The OP Laskulaina service is not enabled */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-        };
-    };
-    putV1ServicesOpInvoiceCredit: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["putV1ServicesOpInvoiceCredit"];
-            };
-        };
-        responses: {
-            /** @description Start the OP Laskulaina onboarding */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OPInvoiceCredit"];
-                };
-            };
-        };
-    };
-    getV1ServicesOpInvoiceCreditSettings: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Show current settings */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OPInvoiceCreditSettings"];
-                };
-            };
-        };
-    };
-    postV1ServicesOpInvoiceCreditSettings: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["postV1ServicesOpInvoiceCreditSettings"];
-            };
-        };
-        responses: {
-            /** @description Modify settings */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getV1ServicesOpInvoiceCreditAvailableCredit: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Check the credit balance */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OPInvoiceCreditAvailableCredit"];
-                };
-            };
-        };
-    };
-    postV1ServicesOpInvoiceCreditWithdrawal: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["postV1ServicesOpInvoiceCreditWithdrawal"];
-            };
-        };
-        responses: {
-            /** @description Make a withdrawal */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    postV1ServicesOpInvoiceCreditDirectPayment: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["postV1ServicesOpInvoiceCreditDirectPayment"];
-            };
-        };
-        responses: {
-            /** @description Make a direct payment */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getV1ServicesOpInvoiceCreditAccountStatement: {
-        parameters: {
-            query: {
-                /** @description Date for which to fetch transactions */
-                day: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Fetch account statement */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description - **op_invoice_credit_no_account_statement_found**: No account statement found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-        };
-    };
-    getV1ServicesDetectChecks: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List enabled Detect checks */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Detect_Checks"];
-                };
-            };
-        };
-    };
-    patchV1ServicesDetectChecks: {
-        parameters: {
-            query?: {
-                /** @description List of checks to enable. Currently supported checks: SUPPLIER_ACTIVATION, BANK_ACCOUNT_CHANGED, SENDER_BID_STATUS, SENDER_WARNING_LIST, VAT */
-                on_invoice_receive?: ("SUPPLIER_ACTIVATION" | "BANK_ACCOUNT_CHANGED" | "SENDER_BID_STATUS" | "SENDER_WARNING_LIST" | "VAT")[];
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Detect checks updated successfully */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getV1ServicesAutoscan: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Show AutoScan configuration */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AutoScan_HttpApi_Entities_AutoScanConfiguration"];
-                };
-            };
-            /** @description Service unavailable. Try again later. */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    putV1ServicesAutoscan: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["putV1ServicesAutoscan"];
-            };
-        };
-        responses: {
-            /** @description Show activated AutoScan configuration */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AutoScan_HttpApi_Entities_AutoScanConfiguration"];
-                };
-            };
-            /** @description Service unavailable. Try again later. */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    deleteV1ServicesAutoscan: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description AutoScan deactivated */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Service unavailable. Try again later. */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getV1ServicesScan: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Show scan configuration */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Scan_HttpApi_Entities_ScanConfiguration"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Service unavailable. Try again later. */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    putV1ServicesScan: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "multipart/form-data": {
-                    "return_address[email_address]"?: string;
-                    "return_address[postal_address][street_name]"?: string;
-                    "return_address[postal_address][extra_lines]"?: string[];
-                    "return_address[postal_address][city]"?: string;
-                    "return_address[postal_address][post_code]"?: string;
-                    "return_address[postal_address][country_code]"?: string;
-                };
-            };
-        };
-        responses: {
-            /** @description [EXPERIMENTAL] Update scan account */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Service unavailable. Try again later. */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    postV1ServicesScan: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "multipart/form-data": {
-                    "return_address[email_address]"?: string;
-                    "return_address[postal_address][street_name]"?: string;
-                    "return_address[postal_address][extra_lines]"?: string[];
-                    "return_address[postal_address][city]"?: string;
-                    "return_address[postal_address][post_code]"?: string;
-                    "return_address[postal_address][country_code]"?: string;
-                };
-            };
-        };
-        responses: {
-            /** @description [EXPERIMENTAL] Activate scan account */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Service unavailable. Try again later. */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    deleteV1ServicesScan: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Scan account deleted */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Scan account not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Service unavailable. Try again later. */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getV1ServicesB2cnoConsumers: {
-        parameters: {
-            query?: {
-                /** @description List by phonenumber, name, customer_number and reference_number */
-                query?: string;
-                /** @description List of statuses */
-                status?: ("NEW" | "REQUEST_SENT" | "ACCEPTED" | "ACTIVE" | "DELETED" | "REJECTED" | "ERROR")[];
-                /** @description Page to fetch */
-                page?: number;
-                /** @description Number of items per page, values up to 100 supported */
-                per_page?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List B2CNO Consumers - DEPRECATED 2025 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_CompanyConsumers_Consumer"][];
-                };
-            };
-        };
-    };
-    getV1ServicesB2cno: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Information about B2CNO agreement */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_B2CNO_Status"];
-                };
-            };
-        };
-    };
-    getV1ServicesB2cseAgreement: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_B2CSE_Agreement"];
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-        };
-    };
-    postV1ServicesB2cseAgreement: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["postV1ServicesB2cseAgreement"];
-            };
-        };
-        responses: {
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-        };
-    };
-    getV1InvoicesReportsDefinitions: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ReportsDefinitions"];
-                };
-            };
-        };
-    };
-    getV1Invoices: {
-        parameters: {
-            query?: {
-                /** @description Received or sent invoices */
-                direction?: "RECEIVED" | "SENT";
-                /** @description Invoice status */
-                status?: ("PENDING" | "DELIVERED" | "FAILED")[];
-                /** @description Batch of invoice IDs. Maximum of 100 per query */
-                ids?: string[];
-                /** @description Invoice number */
-                number?: string;
-                /** @description Invoice reference */
-                reference?: string;
-                /** @description Received at start timestamp */
-                received_at_start?: string;
-                /** @description Received at end timestamp */
-                received_at_end?: string;
-                /** @description Created at start timestamp */
-                created_at_start?: string;
-                /** @description Created at end timestamp */
-                created_at_end?: string;
-                /**
-                 * @description List of fields used for sorting.
-                 *                                   Ascending by default, include "-" before the field name to reverse the order (descending).
-                 *                                   Supported values: **received_at**
-                 *                                   E.g. -received_at
-                 */
-                sort?: string[];
-                /** @description Page to fetch */
-                page?: number;
-                /** @description Number of items per page, values up to 100 supported */
-                per_page?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List invoices */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Invoices_HttpApi_Entities_Invoice"][];
-                };
-            };
-        };
-    };
-    postV1Invoices: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "multipart/form-data": {
-                    /**
-                     * Format: binary
-                     * @description File content. Please make sure to provide the "filename" Content-Disposition header field as well as specified in the rfc2183.
-                     */
-                    file: string;
-                    /**
-                     * @description File format
-                     * @enum {string}
-                     */
-                    format?: "VISMAXML53" | "VISMAXML60" | "SVEFAKTURA10" | "SEDI" | "E2B" | "EHF20" | "PEPPOLBIS20" | "PEPPOLBIS30" | "SIUBL11" | "SIUBL12" | "SIUBL20" | "OIOUBL" | "OIOUBL21" | "VISMAUBL10" | "VISMAUBL30" | "FINVOICE13" | "FINVOICE20" | "FINVOICE30" | "TEAPPS27" | "TEAPPS30" | "XRECHNUNG23UBL" | "XRECHNUNG23CII" | "XRECHNUNG23EXTUBL" | "XRECHNUNG23EXTCII" | "XRECHNUNG30UBL" | "XRECHNUNG30CII" | "XRECHNUNG30EXTUBL" | "XRECHNUNG30EXTCII" | "FATTURAPA12";
-                    /**
-                     * @description Only in Norway, set to "consumer" to use route_order
-                     * @default b2b
-                     * @enum {string}
-                     */
-                    recipient_type?: "b2b" | "consumer";
-                    /** @description Recipient EIA */
-                    recipient_eia?: string;
-                    /** @description Recipient email address */
-                    recipient_email?: string;
-                    /** @description Recipient operator */
-                    recipient_operator?: string;
-                    /** @description Routes to explicitly disable */
-                    disabled_routes?: ("print" | "email" | "einvoice")[];
-                    /** @description Text that will be added in the email message if invoice is delivered by email */
-                    sender_comment?: string;
-                    /** @description Unique invoice uuid, generated automatically if not specified. */
-                    uuid?: string;
-                    /**
-                     * @description Set language of PDF generated by us and email what recipient receives.
-                     * @enum {string}
-                     */
-                    lang?: "FI" | "SE" | "NO" | "DK" | "NL" | "EN";
-                    /** @description Consumer routes to use. Leave empty to use default. Note! 'netbank_cvl' and 'netbank_cvl_hold' are deprecated since 05/2022. */
-                    route_order?: ("netbank" | "netbank_cvl" | "netbank_cvl_hold" | "vipps" | "dpi" | "email" | "print" | "silent_failure")[];
-                    /** @description Recipient phone number in international format. Used in Yes2All lookups. */
-                    recipient_phone_number?: string;
-                    /**
-                     * Format: date
-                     * @description Recipient date of birth in YYYY-MM-DD format. Used in Yes2All lookups.
-                     */
-                    recipient_date_of_birth?: string;
-                    /** @description Recipient social security number. Used in Yes2All lookups. */
-                    recipient_ssn?: string;
-                    /** @description Recipient unique eFaktura ID */
-                    recipient_efaktura_id?: string;
-                    /**
-                     * @description B2C document type for special documents
-                     * @enum {string}
-                     */
-                    b2cno_document_type?: "INVOICE" | "CREDIT_NOTE" | "REMINDER" | "COLLECTION_NOTICE";
-                    /** @description PaymentInstructionIdentifier, used in Finnish B2C invoicing only. */
-                    payment_instruction_identifier?: string;
-                    /** @description Enable color printing */
-                    "print_settings[color]"?: boolean;
-                    /**
-                     * @description Letter class
-                     * @enum {string}
-                     */
-                    "print_settings[letter_class]"?: "PRIORITY" | "ECONOMY";
-                    /** @description Prevent invoice from being sent to OmaPosti (Finland only) */
-                    "print_settings[prevent_digital_post]"?: boolean;
-                    /** @description Use own image when printing (overrides company settings) */
-                    "print_settings[print_own_image]"?: boolean;
-                    /** @description Try Kivra FI before printing even if "einvoice" route is disabled in disabled_routes parameter. Only applies for B2C invoices. */
-                    "print_settings[allow_kivra_fi]"?: boolean;
-                    /** @description Prevent routing of the invoice. Invoice will be set to SENT state without actually sending it anywhere. Intended use is for creating assignments without sending an invoice for the Receivables service */
-                    prevent_routing?: boolean;
-                    /**
-                     * @description Forces the invoice to be sent via email and includes the XML attachment in the specified format
-                     * @enum {string}
-                     */
-                    "email_settings[xml_format]"?: "VISMAXML53" | "VISMAXML60" | "SVEFAKTURA10" | "SEDI" | "E2B" | "EHF20" | "PEPPOLBIS20" | "PEPPOLBIS30" | "SIUBL11" | "SIUBL12" | "SIUBL20" | "OIOUBL" | "OIOUBL21" | "VISMAUBL10" | "VISMAUBL30" | "FINVOICE13" | "FINVOICE20" | "FINVOICE30" | "TEAPPS27" | "TEAPPS30" | "XRECHNUNG23UBL" | "XRECHNUNG23CII" | "XRECHNUNG23EXTUBL" | "XRECHNUNG23EXTCII" | "XRECHNUNG30UBL" | "XRECHNUNG30CII" | "XRECHNUNG30EXTUBL" | "XRECHNUNG30EXTCII" | "FATTURAPA12";
-                };
-            };
-        };
-        responses: {
-            /** @description Upload new invoice */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Invoices_HttpApi_Entities_Invoice"];
-                };
-            };
-        };
-    };
-    getV1InvoicesIdDetectResults: {
-        parameters: {
-            query?: {
-                /** @description The language the checks and findings will be presented in */
-                lang?: "FI" | "SE" | "NO" | "DK" | "NL" | "EN";
-            };
-            header?: never;
-            path: {
-                /** @description Invoice ID */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description The Detect service has analysed the invoice and result are available */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Invoices_HttpApi_Entities_InvoiceDetectResults"];
-                };
-            };
-            /** @description The Detect service has not been enabled by the customer */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Invoices_HttpApi_Entities_InvoiceDetectResults"];
-                };
-            };
-        };
-    };
-    getV1InvoicesId: {
-        parameters: {
-            query?: {
-                /** @description Desired format */
-                return_format?: "VISMAXML60" | "PEPPOLBIS30" | "SIUBL20" | "OIOUBL21" | "VISMAUBL30" | "FINVOICE30" | "TEAPPS30" | "XRECHNUNG23UBL" | "XRECHNUNG23CII" | "XRECHNUNG23EXTUBL" | "XRECHNUNG23EXTCII" | "XRECHNUNG30UBL" | "XRECHNUNG30CII" | "XRECHNUNG30EXTUBL" | "XRECHNUNG30EXTCII" | "FATTURAPA12" | "ORIGINAL_IMAGE" | "GENERATED_IMAGE" | "ORIGINAL_OR_GENERATED_IMAGE" | "EXTENDED_DETAILS";
-            };
-            header?: never;
-            path: {
-                /** @description Invoice ID */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Invoice details */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Invoices_HttpApi_Entities_Invoice"];
-                    "application/xml": components["schemas"]["Invoices_HttpApi_Entities_Invoice"];
-                };
-            };
-        };
-    };
-    getV1InvoicesIdActions: {
-        parameters: {
-            query?: {
-                /** @description Action type */
-                type?: ("RECEIVED" | "CREATED" | "SENT" | "DELIVERED" | "INFO" | "ERROR")[];
-                /** @description Version for channel_details */
-                channel_details_version?: 1;
-            };
-            header?: never;
-            path: {
-                /** @description Invoice ID */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List invoice actions */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Invoices_HttpApi_Entities_InvoiceAction"][];
-                };
-            };
-        };
-    };
-    patchV1InvoicesIdInvoiceEvents: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Invoice ID */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["patchV1InvoicesIdInvoiceEvents"];
-            };
-        };
-        responses: {
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getV1InvoicesIdFilesFileId: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Invoice ID */
-                id: string;
-                /** @description Invoice file ID */
-                file_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Fetch file content */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    putV1InvoicesIdRerouteEinvoice: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Invoice ID */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["putV1InvoicesIdRerouteEinvoice"];
-            };
-        };
-        responses: {
-            /** @description Reroutes invoice via einvoice */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    putV1InvoicesIdRerouteEmail: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Invoice ID */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["putV1InvoicesIdRerouteEmail"];
-            };
-        };
-        responses: {
-            /** @description Reroutes invoice via email */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    putV1InvoicesIdReroutePrint: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Invoice ID */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["putV1InvoicesIdReroutePrint"];
-            };
-        };
-        responses: {
-            /** @description Reroutes invoice via print */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getV1InvoicesIdReports: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Invoice ID */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Fetch successfully completed */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UserReport"][];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-            /** @description No user report found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-        };
-    };
-    postV1InvoicesIdReports: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Invoice ID */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["postV1InvoicesIdReports"];
-            };
-        };
-        responses: {
-            /** @description Company successfully reported */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-            /** @description Conflict: company already reported */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-        };
-    };
-    deleteV1InvoicesIdReportsReportId: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Invoice ID */
-                id: string;
-                /** @description Report ID */
-                report_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description User report successfully deleted */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-            /** @description No user report found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-        };
-    };
-    getV1InvoicesIdAssignment: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Invoice ID */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Return only the assignment status and error reason when in pending or error. Ok status returns the link to the assignment in the Receivables API when the assignment request has been completed. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Invoices_HttpApi_Entities_InvoiceAssignment"];
-                };
-            };
-            /** @description - **not_found**: Requested resource not found or you don't have access to it */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-        };
-    };
-    postV1InvoicesIdAssignment: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Invoice ID */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["postV1InvoicesIdAssignment"];
-            };
-        };
-        responses: {
-            /** @description Assignment request has been accepted for processing */
-            202: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description - **invalid_parameters**: Request parameters are invalid */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-            /** @description - **forbidden**: Requested operation for resource is not allowed */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-            /** @description - **not_found**: Requested resource not found or you don't have access to it */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-        };
-    };
-    postV1InvoicesIdResponsesNemhandel: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Invoice ID */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["postV1InvoicesIdResponsesNemhandel"];
-            };
-        };
-        responses: {
-            /** @description Return */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Invoices_HttpApi_Entities_InvoiceResponseNemhandel"];
-                };
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Invoice not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Service unavailable. Try again later. */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getV1CompanyProfiles: {
-        parameters: {
-            query?: {
-                /** @description Network filter */
-                network?: ("VISMA" | "PEPPOL" | "NEMHANDEL" | "AISPROOM" | "BANK" | "SCAN" | "INEXCHANGE" | "VISMASCANNER" | "RECEIVABLES")[];
-                /** @description Status filter */
-                status?: ("active" | "pending" | "error")[];
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List network registrations */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_CompanyProfile"][];
-                };
-            };
-        };
-    };
-    postV1CompanyProfiles: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["postV1CompanyProfiles"];
-            };
-        };
-        responses: {
-            /** @description Create network registration request */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_CompanyProfile"];
-                };
-            };
-            /**
-             * @description - **profile_name_conflict**: Profile is already registered for given endpoint id
-             *     - **profile_eia_conflict**: Endpoint id is already in use
-             *     - **profile_eia_bid_conflict**: Endpoint id does not match the company business id
-             *     - **profile_not_supported**: Profile is not supported
-             */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-        };
-    };
-    putV1CompanyProfilesIdExtensions: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Profile Subscription Id */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["putV1CompanyProfilesIdExtensions"];
-            };
-        };
-        responses: {
-            /** @description EXPERIMENTAL Create extensions for profiles */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getV1CompanyProfilesId: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Profile id */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Fetch a network registration */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_CompanyProfile"];
-                };
-            };
-        };
-    };
-    deleteV1CompanyProfilesId: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Profile id */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Registration deleted succesfully */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description - **profile_deletion_not_allowed**: Deletion of profile is not allowed */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-        };
-    };
-    patchV1CompanyProfilesId: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Profile id */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["patchV1CompanyProfilesId"];
-            };
-        };
-        responses: {
-            /** @description Profile updated succesfully */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getV1CompanySettings: {
-        parameters: {
-            query?: {
-                /**
-                 * @description Filter the response to only include requested fields.
-                 *                                         Possible values: invoice_notifications, send_invoice_email, address, details, send_invoice_print, send_invoice_general, logos, email_reports, billing_details
-                 */
-                fields?: string[];
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Fetch company settings */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_CompanySettings_Settings"];
-                };
-            };
-        };
-    };
-    patchV1CompanySettings: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["patchV1CompanySettings"];
-            };
-        };
-        responses: {
-            /** @description Settings updated successfully */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description - **invalid_parameters**: Request parameters are invalid */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-        };
-    };
-    getV1CompanyConsumers: {
-        parameters: {
-            query?: {
-                /** @description List by phonenumber, name, customer_number and reference_number */
-                query?: string;
-                /** @description List of statuses */
-                status?: ("NEW" | "REQUEST_SENT" | "ACCEPTED" | "ACTIVE" | "DELETED" | "REJECTED" | "ERROR")[];
-                /** @description Page to fetch */
-                page?: number;
-                /** @description Number of items per page, values up to 100 supported */
-                per_page?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List B2CNO Consumers - DEPRECATED 2025 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_CompanyConsumers_Consumer"][];
-                };
-            };
-        };
-    };
-    getV1CompanyNotifications: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List notification subscriptions */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Notifications_Notification"][];
-                };
-            };
-        };
-    };
-    postV1CompanyNotifications: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["postV1CompanyNotifications"];
-            };
-        };
-        responses: {
-            /** @description Create new notification subscription */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Notifications_Notification"];
-                };
-            };
-        };
-    };
-    getV1CompanyNotificationsId: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Notification id */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Notification subscription */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Notifications_Notification"];
-                };
-            };
-        };
-    };
-    deleteV1CompanyNotificationsId: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Notification id */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Notification subscription was deleted */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    postV1CompanyNotificationsResendUnacknowledged: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Request accepted. Unacknowledged webhooks for all subscriptions will get retriggered at a later point */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getV1CompanyVendors: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Vendor API key link status */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_LinkVendorAPIKey"];
-                };
-            };
-        };
-    };
-    postV1CompanyVendors: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Link vendor API key */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_LinkVendorAPIKey"];
-                };
-            };
-        };
-    };
-    deleteV1CompanyVendors: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Vendor unlinked */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getV1CompanyAuthorization: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Company authorization status. In order to use company account to send, receive and activate services status needs to be verified */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_CompanyAuthorizationStatus"];
-                };
-            };
-        };
-    };
-    postV1CompanyAuthorization: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["postV1CompanyAuthorization"];
-            };
-        };
-        responses: {
-            /** @description Sign request sent */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_CompanyAuthorization"];
-                };
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-        };
-    };
-    getV1CompanyUsers: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List existing users */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_CompanyUsers_User"][];
-                };
-            };
-        };
-    };
-    postV1CompanyUsers: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["postV1CompanyUsers"];
-            };
-        };
-        responses: {
-            /** @description User was added to company */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_CompanyUsers_User"];
-                };
-            };
-            /** @description User was successfully created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_CompanyUsers_NewUser"];
-                };
-            };
-        };
-    };
-    getV1CompanyUsersUserId: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                user_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_CompanyUsers_User"];
-                };
-            };
-        };
-    };
-    deleteV1CompanyUsersUserId: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                user_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    patchV1CompanyUsersUserId: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                user_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["patchV1CompanyUsersUserId"];
-            };
-        };
-        responses: {
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    postV1CompanyUsersUserIdRoles: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                user_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["postV1CompanyUsersUserIdRoles"];
-            };
-        };
-        responses: {
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    postV1CompanyKeepActive: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Mark company as active even if no transactions have occurred during the past year. */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getV1CompanyDepartments: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List departments [EXPERIMENTAL] */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Company"][];
-                };
-            };
-        };
-    };
-    postV1CompanyDepartments: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "multipart/form-data": {
-                    /** @description Company name. Name has to be at least 3 characters long */
-                    name: string;
-                    /** @description Company organization number/Business ID/VAT */
-                    bid: string;
-                    /**
-                     * @description Electronic address identifier type
-                     * @enum {string}
-                     */
-                    id_type: "GLN";
-                    /** @description Electronic address identifier */
-                    eaid: string;
-                    /** @description If company_bid is not a VAT-number, this is set to true to skip VAT-check */
-                    no_vat: boolean;
-                    /** @description Street address */
-                    address1: string;
-                    /** @description Additional address */
-                    address2?: string;
-                    /** @description Postal number/code, */
-                    post_code: string;
-                    /** @description Post office */
-                    post_office: string;
-                    /** @description Registered city */
-                    city: string;
-                    /** @description State of address */
-                    state?: string;
-                    /**
-                     * @description Country code for company, mandatory. Allowed countries FI, SE, NO, DK, NL, BE
-                     * @enum {string}
-                     */
-                    country: "FI" | "SE" | "NO" | "DK" | "NL" | "BE";
-                    /** @description Contact email address for company */
-                    email: string;
-                };
-            };
-        };
-        responses: {
-            /** @description Create a department [EXPERIMENTAL] */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Company"];
-                };
-            };
-        };
-    };
-    postV1CompanySuppliersQuery: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["postV1CompanySuppliersQuery"];
-            };
-        };
-        responses: {
-            /** @description Creating query was successful */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Suppliers_HttpApi_Entities_SuppliersQueryResult"];
-                };
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-            /** @description Resource not found or you don't have access to it */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-        };
-    };
-    postV1CompanySuppliersNotifications: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["postV1CompanySuppliersNotifications"];
-            };
-        };
-        responses: {
-            /** @description Request successful, possible failures listed on the response */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Suppliers_HttpApi_Entities_SuppliersNotificationResult"];
-                };
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Expected company data missing */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getV1Companies: {
-        parameters: {
-            query?: {
-                /** @description Business id. */
-                bid?: string;
-                /** @description Country in ISO 3166-1 alpha-2 format (2 letters) */
-                country?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List active companies the user has access to */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_UserCompany"][];
-                };
-            };
-        };
-    };
-    postV1Companies: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "multipart/form-data": {
-                    /** @description Identifies partner/ERP */
-                    vendor_api_key: string;
-                    /** @description The user API key */
-                    user_api_key: string;
-                    /** @description Company name. Name has to be at least 3 characters long */
-                    name: string;
-                    /** @description Company VAT/Business ID/Organization number (VAT preferred) */
-                    bid: string;
-                    /** @description If company_bid is not a VAT-number, this is set to true to skip VAT-check */
-                    no_vat: boolean;
-                    /** @description Street address */
-                    address1: string;
-                    /** @description Additional address */
-                    address2?: string;
-                    /** @description Postal number/code, */
-                    post_code: string;
-                    /** @description Post office */
-                    post_office: string;
-                    /** @description Registered city */
-                    city: string;
-                    /** @description State of address */
-                    state?: string;
-                    /**
-                     * @description Country code for company, mandatory. Allowed countries FI, SE, NO, DK, NL, EE, BE, DE. IT is in experimental mode.
-                     * @enum {string}
-                     */
-                    country: "FI" | "SE" | "NO" | "DK" | "NL" | "EE" | "BE" | "IT" | "DE";
-                    /** @description Contact email address for company */
-                    email: string;
-                };
-            };
-        };
-        responses: {
-            /** @description Create a Company */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Company"];
-                };
-            };
-        };
-    };
-    postV1CompaniesAuthorizations: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["postV1CompaniesAuthorizations"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_CompanyAuthorization"];
-                };
-            };
-            202: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_CompanyAuthorization"];
-                };
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-        };
-    };
-    getV1CompaniesIdStatus: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Company ID */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Company authorization status. In order to use company account to send, receive and activate services status needs to be verified */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_CompanyAuthorizationStatus"];
-                };
-            };
-        };
-    };
-    getV1OperatorParticipants: {
-        parameters: {
-            query?: {
-                /** @description Participants external ids */
-                external_ids?: string[];
-                /** @description Last update time starting from */
-                updated_at_start?: string;
-                /** @description Profiles */
-                profiles?: string[];
-                /** @description Last update time ending at */
-                updated_at_end?: string;
-                /** @description Page to fetch */
-                page?: number;
-                /** @description Number of items per page, values up to 100 supported */
-                per_page?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List participants registered by operator */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_OperatorParticipant"][];
-                };
-            };
-        };
-    };
-    postV1OperatorParticipants: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["postV1OperatorParticipants"];
-            };
-        };
-        responses: {
-            /** @description Register a participant */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_OperatorParticipant"];
-                };
-            };
-            /**
-             * @description - **profile_name_conflict**: Profile is already registered for given endpoint id
-             *     - **profile_eia_conflict**: Endpoint id is already in use
-             *     - **profile_eia_bid_conflict**: Endpoint id does not match the company business id
-             *     - **profile_not_supported**: Profile is not supported
-             *     - **profile_registry_not_supported**: Provided registry not supported
-             */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-        };
-    };
-    getV1OperatorParticipantsId: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Participant UUID */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Requested profile */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_OperatorParticipant"];
-                };
-            };
-        };
-    };
-    deleteV1OperatorParticipantsId: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Participant UUID */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Participant deleted succesfully */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    patchV1OperatorParticipantsId: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Participant UUID */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Participant updated succesfully */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getV1OperatorNotifications: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List notification subscriptions */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Notifications_Notification"][];
-                };
-            };
-        };
-    };
-    postV1OperatorNotifications: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["postV1OperatorNotifications"];
-            };
-        };
-        responses: {
-            /** @description Create new notification subscription */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Notifications_Notification"];
-                };
-            };
-        };
-    };
-    getV1OperatorNotificationsId: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Notification id */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Notification subscription */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Notifications_Notification"];
-                };
-            };
-        };
-    };
-    deleteV1OperatorNotificationsId: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Notification id */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Notification subscription was deleted */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getV1OperatorCompanies: {
-        parameters: {
-            query: {
-                /** @description Company business identifier */
-                bid: string;
-                /** @description Country in ISO 3166-1 alpha-2 format (2 letters) */
-                country: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Get company data */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_OperatorCompany"][];
-                };
-            };
-        };
-    };
-    getV1OperatorReceivablesOpAccountStatement: {
-        parameters: {
-            query: {
-                /** @description Mandator UUID associated with the company */
-                mandator_uuid: string;
-                /** @description Date for which to fetch transactions */
-                day: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Fetch an account statements for a company */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description - **op_invoice_credit_no_account_statement_found**: No account statement found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-        };
-    };
-    getV1OperatorReceivablesInvoiceImageId: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Invoice UUID */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Fetch invoice image for assignment */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description - **not_found**: Requested resource not found or you don't have access to it */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/pdf": components["schemas"]["API_Entities_Error"];
-                };
-            };
-        };
-    };
-    getV1LookupEndpoints: {
-        parameters: {
-            query: {
-                /** @description Business ids. Maximum number of bids: 10 */
-                business_ids: string[];
-                /** @description Types of documents sent. Possible values: invoice */
-                sending?: string[];
-                /** @description Country in ISO 3166-1 alpha-2 format (2 letters) */
-                country?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Fetch sending options for company bid */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Endpoint"][];
-                };
-            };
-        };
-    };
-    getV1LookupConsumers: {
-        parameters: {
-            query?: {
-                /** @description Social security number */
-                ssn?: string;
-                /** @description Date of birth of recipient for Yes2All queries. Format YYYY-MM-DD */
-                date_of_birth?: string;
-                /** @description Phone number for Yes2All queries. International format (e.g. +4791234123) */
-                phone_number?: string;
-                /** @description Email address of recipient for Yes2All queries */
-                email?: string;
-                /** @description First name of recipient for Yes2All queries */
-                first_name?: string;
-                /** @description Last name of recipient for Yes2All queries */
-                last_name?: string;
-                /** @description Postal code of recipient for Yes2All queries */
-                postal_code?: string;
-                /** @description City/post office of recipient for Yes2All queries */
-                city?: string;
-                /** @description Reference number for Yes2All queries */
-                reference_number?: string;
-                /** @description eFaktura ID for Yes2All queries */
-                efaktura_identifier?: string;
-                /**
-                 * @description What registries to check from. Possible values:
-                 *                                                     dpi,yes2all
-                 */
-                routes?: string[];
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lookup for consumer recipients */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Consumer"];
-                };
-            };
-        };
-    };
-    getV1LookupReceivers: {
-        parameters: {
-            query: {
-                /** @description Networks to search from eg. PEPPOL, INTERNAL, EXTERNAL */
-                network: string[];
-                /** @description Full Electronic Address eg: 0192:123456789 */
-                eia?: string;
-                /** @description Business identifier */
-                bid?: string;
-                /** @description Company name */
-                name?: string;
-                /** @description Company country in ISO 3166-1 alpha-2 format (2 letters) */
-                country?: string[];
-                /** @description Document types */
-                document_type?: string[];
-                /** @description Allow lookup to use generated eia variations, when no hits are found using the given eia */
-                allow_eia_variants?: boolean;
-                /** @description Page to fetch */
-                page?: number;
-                /** @description Number of items per page, values up to 100 supported */
-                per_page?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lookup for B2B document receivers */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_LookupEntryReceiver"][];
-                };
-            };
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-        };
-    };
-    getV1Jwk: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List the public keys of this API */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_JWKEntries"][];
-                };
-            };
-        };
-    };
-    getV1DefinitionsOperators: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List operators */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Operator"][];
-                };
-            };
-        };
-    };
-    getV1DefinitionsDetectChecks: {
-        parameters: {
-            query?: {
-                /** @description Filter definitions by checks. Possible values:  SUPPLIER_ACTIVATION, BANK_ACCOUNT_CHANGED, SENDER_BID_STATUS, SENDER_WARNING_LIST, VAT */
-                checks?: ("SUPPLIER_ACTIVATION" | "BANK_ACCOUNT_CHANGED" | "SENDER_BID_STATUS" | "SENDER_WARNING_LIST" | "VAT")[];
-                /** @description Filter only definitions of interest. Possible values:  name, friendly_name, friendly_names, title, titles, description, descriptions, doc_description, resource_type, scope, scopes, sources, metadata, possible_results */
-                check_attributes?: ("name" | "friendly_name" | "friendly_names" | "title" | "titles" | "description" | "descriptions" | "doc_description" | "resource_type" | "scope" | "scopes" | "sources" | "metadata" | "possible_results")[];
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CheckDefinitions"];
-                };
-            };
-        };
-    };
-    postV1Users: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["postV1Users"];
-            };
-        };
-        responses: {
-            /** @description Create a User */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_ApiUser"];
-                };
-            };
-        };
-    };
-    getV1Files: {
-        parameters: {
-            query: {
-                /** @description ID of Document */
-                document_id: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List document files */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_DocumentFileInDocument"];
-                };
-            };
-        };
-    };
-    getV1FilesId: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID of DocumentFile */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Get file content */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getV1Documents: {
-        parameters: {
-            query?: {
-                /** @description Batch of document IDs. Maximum of 100 per query */
-                ids?: string[];
-                /** @description Received or sent documents */
-                direction?: "INCOMING" | "OUTGOING" | "RECEIVED" | "SENT";
-                /**
-                 * @description List of document types.
-                 *                                                         Possible values: UNKNOWN, INVOICE, CREDIT_NOTE, ORDER, ORDER_RESPONSE, CATALOGUE, CATALOGUE_RESPONSE, SELF_BILLING_INVOICE, DESPATCH_ADVICE, RECEIPT, VOUCHER, BANK_FILE, REMINDER, SCAN, INVOICE_RESPONSE, MESSAGE_LEVEL_RESPONSE, EXPRESSION_OF_INTEREST_REQUEST, EXPRESSION_OF_INTEREST_RESPONSE, TENDER_STATUS_REQUEST, CALL_FOR_TENDERS, TENDER, TENDER_RECEIPT, ORDER_CHANGE, ORDER_CANCELLATION
-                 */
-                type?: string[];
-                /**
-                 * @description List of document states.
-                 *                                                         Possible values: PROCESSING, DELIVERED, CONFIRMED_DELIVERY, FAILED
-                 */
-                status?: string[];
-                /** @description Creation time */
-                created_at_start?: string;
-                /** @description Creation time */
-                created_at_end?: string;
-                /** @description Document number */
-                number?: string;
-                /** @description Document reference */
-                reference?: string;
-                /** @description Query Documents on multiple fields. (Exact matches on id, reference and number) */
-                query?: string;
-                /**
-                 * @description List of fields used for sorting.
-                 *       Ascending by default, include "-" before the field name to reverse the order (descending).
-                 *       Supported values: **id, type, status, number, reference, created_at, received_at**
-                 *       E.g. [-created_at, number]
-                 */
-                sort?: string[];
-                /** @description Page to fetch */
-                page?: number;
-                /** @description Number of items per page, values up to 100 supported */
-                per_page?: number;
-                /** @description Fields to return in response */
-                fields?: string[];
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Query documents */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Document"][];
-                };
-            };
-        };
-    };
-    postV1Documents: {
-        parameters: {
-            query?: {
-                /** @description Fields to return in response */
-                fields?: string[];
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "multipart/form-data": {
-                    /**
-                     * Format: binary
-                     * @description File content as a single file
-                     */
-                    file?: string;
-                    /**
-                     * Format: binary
-                     * @description File content as one of multiple
-                     */
-                    "files[n][file]"?: string;
-                    /**
-                     * @description File type
-                     * @enum {string}
-                     */
-                    "files[n][file_type]"?: "PRIMARY_FILE" | "ATTACHMENT" | "OTHER";
-                    /** @description Reference to use for the document */
-                    "references[n][reference_id]"?: string;
-                    /**
-                     * @description Type of reference id
-                     * @enum {string}
-                     */
-                    "references[n][reference_id_type]"?: "document_id" | "external_storage_key";
-                    /** @description Checksum of the referenced content */
-                    "references[n][checksum]"?: string;
-                    /**
-                     * @description File type
-                     * @enum {string}
-                     */
-                    "references[n][file_type]"?: "PRIMARY_FILE" | "ATTACHMENT" | "OTHER";
-                    /**
-                     * @description Type of Document
-                     * @enum {string}
-                     */
-                    type?: "UNKNOWN" | "INVOICE" | "CREDIT_NOTE" | "ORDER" | "ORDER_RESPONSE" | "CATALOGUE" | "CATALOGUE_RESPONSE" | "SELF_BILLING_INVOICE" | "DESPATCH_ADVICE" | "RECEIPT" | "VOUCHER" | "BANK_FILE" | "REMINDER" | "SCAN" | "INVOICE_RESPONSE" | "MESSAGE_LEVEL_RESPONSE" | "EXPRESSION_OF_INTEREST_REQUEST" | "EXPRESSION_OF_INTEREST_RESPONSE" | "TENDER_STATUS_REQUEST" | "CALL_FOR_TENDERS" | "TENDER" | "TENDER_RECEIPT" | "ORDER_CHANGE" | "ORDER_CANCELLATION";
-                    /** @description Unique transmission ID */
-                    transmission_id?: string;
-                    /**
-                     * Format: date-time
-                     * @description Official transmission timestamp
-                     */
-                    transmission_at?: string;
-                    /** @description External identifier linked to the document */
-                    external_id?: string;
-                    /** @description Name of Recipient */
-                    recipient_name?: string;
-                    /** @description Recipient country in ISO 3166-1 alpha-2 format (2 letters) */
-                    recipient_country?: string;
-                    /** @description Electronic Invoicing Address of the recipient */
-                    recipient_eia?: string;
-                    /** @description Operator of Recipient */
-                    recipient_operator?: string;
-                    /** @description Name of Sender */
-                    sender_name?: string;
-                    /** @description Sender country in ISO 3166-1 alpha-2 format (2 letters) */
-                    sender_country?: string;
-                    /** @description Electronic Invoicing Address of the sender */
-                    sender_eia?: string;
-                };
-            };
-        };
-        responses: {
-            /** @description Create document */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Document"];
-                };
-            };
-            /** @description - **document_duplicate_transmission_id**: The provided transmission_id is already in use */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-        };
-    };
-    getV1DocumentsId: {
-        parameters: {
-            query?: {
-                /** @description Content type for the details. Will return the stored metadata as default. */
-                return_format?: string[];
-                /** @description Fields to return in response */
-                fields?: string[];
-            };
-            header?: never;
-            path: {
-                /** @description ID of Document */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Document details */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Document"];
-                };
-            };
-        };
-    };
-    patchV1DocumentsId: {
-        parameters: {
-            query?: {
-                /** @description Fields to return in response */
-                fields?: string[];
-            };
-            header?: never;
-            path: {
-                /** @description ID of Document */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["patchV1DocumentsId"];
-            };
-        };
-        responses: {
-            /** @description Document updated sucessfully */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description - **document_in_invalid_state**: Document must be in the delivered state */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-        };
-    };
-    getV1DocumentsIdEvents: {
-        parameters: {
-            query?: {
-                /** @description Fields to return in response */
-                fields?: string[];
-            };
-            header?: never;
-            path: {
-                /** @description ID of Document */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Document's events */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_DocumentEvent"];
-                };
-            };
-        };
-    };
-    getV1AnalysisDefinitions: {
-        parameters: {
-            query?: {
-                /** @description Filter definitions by checks. Possible values:  SUPPLIER_ACTIVATION, BANK_ACCOUNT_CHANGED, SENDER_BID_STATUS, SENDER_WARNING_LIST, VAT */
-                checks?: ("SUPPLIER_ACTIVATION" | "BANK_ACCOUNT_CHANGED" | "SENDER_BID_STATUS" | "SENDER_WARNING_LIST" | "VAT")[];
-                /** @description Filter only definitions of interest. Possible values:  name, friendly_name, friendly_names, title, titles, description, descriptions, doc_description, resource_type, scope, scopes, sources, metadata, possible_results */
-                check_attributes?: ("name" | "friendly_name" | "friendly_names" | "title" | "titles" | "description" | "descriptions" | "doc_description" | "resource_type" | "scope" | "scopes" | "sources" | "metadata" | "possible_results")[];
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CheckDefinitions"];
-                };
-            };
-        };
-    };
-    postV1Analysis: {
-        parameters: {
-            query: {
-                /** @description The ID of the resource */
-                resource_id: string;
-                /** @description The type of the resource to run checks for */
-                resource_type: "INVOICE";
-                /** @description Which checks to run: e.g. SUPPLIER_ACTIVATION, BANK_ACCOUNT_CHANGED, SENDER_BID_STATUS, SENDER_WARNING_LIST, VAT */
-                checks_to_run: ("SUPPLIER_ACTIVATION" | "BANK_ACCOUNT_CHANGED" | "SENDER_BID_STATUS" | "SENDER_WARNING_LIST" | "VAT")[];
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Analysis was triggered and the status is pending */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Analysis"][];
-                };
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-            /** @description Resource not found or you don't have access to it */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-        };
-    };
-    getV1AnalysisId: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description The ID of the invoice */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /**
-             * @description Possible results:
-             *
-             *     **SUPPLIER_ACTIVATION**
-             *     | <div style="width:150px">Status</div> | <div style="width:150px">Result</div> | <div style="width:390px">Reason</div> | <div style="width:200px">Reason code</div> |
-             *     |------------------|------------------|------------------|-----------------------|
-             *     `                NOT_APPLICABLE`|`NOT_APPLICABLE`|`This is not an invoice. Supplier activation check was not performed.`|`SUPPLIER_ACTIVATION_NOT_AN_INVOICE`|
-             *     `                    RUN_FAILED`|`FAILED`|`Something went wrong when executing the check. Detect could not automatically check if supplier can send electronic invoices.`|`SUPPLIER_ACTIVATION_FAILED`|
-             *     `                       PENDING`||`Check is waiting to be executed.`|`SUPPLIER_ACTIVATION_PENDING`|
-             *     `                NOT_APPLICABLE`|`NOT_APPLICABLE`|`Invoice is not from scan. Supplier activation check was not performed.`|`SUPPLIER_ACTIVATION_INVOICE_NOT_FROM_SCAN`|
-             *     `                RUN_SUCCESSFUL`|`WARNING`|`Sender information is missing from the invoice. Detect could not check if the company can send electronic invoices.`|`SUPPLIER_ACTIVATION_INVALID_INPUT`|
-             *     `                RUN_SUCCESSFUL`|`WARNING`|`According to our data it looks that the company '%{bid}' could also send electronic invoices.`|`SUPPLIER_ACTIVATION_COMPANY_CAN_SEND_ELECTRONIC`|
-             *     `                RUN_SUCCESSFUL`|`OK`|`According to our data, the company '%{bid}' has no record of sending electronic invoices.`|`SUPPLIER_ACTIVATION_COMPANY_CAN_ONLY_SEND_SCAN`
-             *
-             *
-             *     **BANK_ACCOUNT_CHANGED**
-             *     | <div style="width:150px">Status</div> | <div style="width:150px">Result</div> | <div style="width:390px">Reason</div> | <div style="width:200px">Reason code</div> |
-             *     |------------------|------------------|------------------|-----------------------|
-             *     `                NOT_APPLICABLE`|`NOT_APPLICABLE`|`This is not an invoice. Bank account changed check was not performed.`|`BANK_ACCOUNT_CHANGED_NOT_AN_INVOICE`|
-             *     `                    RUN_FAILED`|`FAILED`|`Something went wrong when executing the check. Detect could not automatically check if supplier's bank account has changed.`|`BANK_ACCOUNT_CHANGED_FAILED`|
-             *     `                       PENDING`||`Check is waiting to be executed.`|`BANK_ACCOUNT_CHANGED_PENDING`|
-             *     `                RUN_SUCCESSFUL`|`WARNING`|`No valid bank accounts were found on the invoice. Detect could not check the sender bank account.`|`BANK_ACCOUNT_CHANGED_INVALID_INPUT`|
-             *     `                NOT_APPLICABLE`|`NOT_APPLICABLE`|`No bank account information to check was found on the invoice.`|`BANK_ACCOUNT_CHANGED_NO_BANK_ACCOUNTS`|
-             *     `                RUN_SUCCESSFUL`|`WARNING`|`There are no previously known bank accounts for the sender or use of the data is restricted. Detect could not check if the sender bank account has changed.`|`BANK_ACCOUNT_CHANGED_UNKNOWN`|
-             *     `                RUN_SUCCESSFUL`|`WARNING`|`The bank account %{bank_account} on the invoice is different from what the sender %{bid} has used before.`|`BANK_ACCOUNT_CHANGED_CHANGED`|
-             *     `                RUN_SUCCESSFUL`|`OK`|`The bank account %{bank_account} on the invoice is known to be used by the sender %{bid} before.`|`BANK_ACCOUNT_CHANGED_NOT_CHANGED`
-             *
-             *
-             *     **SENDER_BID_STATUS**
-             *     | <div style="width:150px">Status</div> | <div style="width:150px">Result</div> | <div style="width:390px">Reason</div> | <div style="width:200px">Reason code</div> |
-             *     |------------------|------------------|------------------|-----------------------|
-             *     `                NOT_APPLICABLE`|`NOT_APPLICABLE`|`This is not an invoice. Sender BID check was not performed.`|`SENDER_BID_STATUS_NOT_AN_INVOICE`|
-             *     `                    RUN_FAILED`|`FAILED`|`Something went wrong when executing the check.`|`SENDER_BID_STATUS_FAILED`|
-             *     `                NOT_APPLICABLE`|`NOT_APPLICABLE`|`The sender BID status check is not supported for senders from '%{country}'.`|`SENDER_BID_STATUS_COUNTRY_NOT_SUPPORTED`|
-             *     `                RUN_SUCCESSFUL`|`WARNING`|`The sender '%{bid}' was not found in %{registry_name}.`|`SENDER_BID_STATUS_NOT_FOUND`|
-             *     `                RUN_SUCCESSFUL`|`WARNING`|`Invalid sender bid '%{bid}' for registry '%{registry_name}'.`|`SENDER_BID_STATUS_INVALID_BID`|
-             *     `                RUN_SUCCESSFUL`|`WARNING`|`Sender BID is missing from the invoice. Detect could not check sender BusinessID status.`|`SENDER_BID_STATUS_NOT_FOUND_NO_BID`|
-             *     `                RUN_SUCCESSFUL`|`WARNING`|`The sender '%{bid}' was found in %{registry_name}, but has been closed.`|`SENDER_BID_STATUS_INACTIVE`|
-             *     `                RUN_SUCCESSFUL`|`WARNING`|`The sender '%{bid}' was found in %{registry_name}, but is under liquidation (%{liquidation_state}).`|`SENDER_BID_STATUS_UNDER_LIQUIDATION`|
-             *     `                RUN_SUCCESSFUL`|`WARNING`|`The sender '%{bid}' was found in %{registry_name}, but is under reorganization (%{reorganization_state}).`|`SENDER_BID_STATUS_UNDER_REORGANIZATION`|
-             *     `                RUN_SUCCESSFUL`|`WARNING`|`The sender '%{bid}' was found in %{registry_name}, but is bankrupt (%{bankruptcy_state}).`|`SENDER_BID_STATUS_BANKRUPT`|
-             *     `                RUN_SUCCESSFUL`|`WARNING`|`The sender '%{bid}' was found in %{registry_name}, but is on hold (%{on_hold_state}).`|`SENDER_BID_STATUS_ON_HOLD`|
-             *     `                RUN_SUCCESSFUL`|`WARNING`|`The sender '%{bid}' was found in %{registry_name} but is not in the Prepayment register.`|`SENDER_BID_STATUS_PREPAYMENT_REGISTER_NOT_FOUND`|
-             *     `                RUN_SUCCESSFUL`|`OK`|`The sender '%{bid}' was found in %{registry_name} and is in the Prepayment register.`|`SENDER_BID_STATUS_PREPAYMENT_REGISTER_FOUND`|
-             *     `                RUN_SUCCESSFUL`|`OK`|`The sender '%{bid}' was found in %{registry_name}.`|`SENDER_BID_STATUS_FOUND`|
-             *     `                       PENDING`||`Check is waiting to be executed.`|`SENDER_BID_STATUS_PENDING`
-             *
-             *
-             *     **SENDER_WARNING_LIST**
-             *     | <div style="width:150px">Status</div> | <div style="width:150px">Result</div> | <div style="width:390px">Reason</div> | <div style="width:200px">Reason code</div> |
-             *     |------------------|------------------|------------------|-----------------------|
-             *     `                NOT_APPLICABLE`|`NOT_APPLICABLE`|`This is not an invoice. Sender warning list check was not performed.`|`SENDER_WARNING_LIST_NOT_AN_INVOICE`|
-             *     `                    RUN_FAILED`|`FAILED`|`Something went wrong when executing the check. Detect could not automatically check if sender is found in a warning list.`|`SENDER_WARNING_LIST_FAILED`|
-             *     `                       PENDING`||`Check is waiting to be executed.`|`SENDER_WARNING_LIST_PENDING`|
-             *     `                RUN_SUCCESSFUL`|`WARNING`|`Sender information is missing from the invoice. Detect could not check if the invoice sender is found on the warning list or has been reported suspicious.`|`SENDER_WARNING_LIST_INVALID_INPUT`|
-             *     `                RUN_SUCCESSFUL`|`OK`|`The sender '%{bid} - %{name}' was not found in a warning list.`|`SENDER_WARNING_LIST_NOT_FOUND`|
-             *     `                RUN_SUCCESSFUL`|`WARNING`|`The sender '%{found_search_term}' was found from warning list (sources: %{sources}%{links_to_source_warnings}).`|`SENDER_WARNING_LIST_FOUND`|
-             *     `                RUN_SUCCESSFUL`|`WARNING`|`The sender '%{found_search_term}' was found in warning list (sources: %{sources}%{links_to_source_warnings}), this company has been reported by %{reporter_count} Visma customers.`|`SENDER_WARNING_LIST_USER_REPORTED_FOUND`
-             *
-             *
-             *     **VAT**
-             *     | <div style="width:150px">Status</div> | <div style="width:150px">Result</div> | <div style="width:390px">Reason</div> | <div style="width:200px">Reason code</div> |
-             *     |------------------|------------------|------------------|-----------------------|
-             *     `                NOT_APPLICABLE`|`NOT_APPLICABLE`|`This is not an invoice. Sender VAT check was not performed.`|`VAT_NOT_AN_INVOICE`|
-             *     `                    RUN_FAILED`|`FAILED`|`Something went wrong when executing the check. Detect could not automatically check if sender is found in the VAT register.`|`VAT_FAILED`|
-             *     `                       PENDING`||`Check is waiting to be executed.`|`VAT_PENDING`|
-             *     `                RUN_SUCCESSFUL`|`WARNING`|`Invoice is missing information of sender or VAT amount. Detect could not perform sender VAT check.`|`VAT_INVALID_INPUT`|
-             *     `                RUN_SUCCESSFUL`|`WARNING`|`The sender '%{bid}' is not found in VAT registry.`|`VAT_COMPANY_NOT_REGISTERED`|
-             *     `                NOT_APPLICABLE`|`NOT_APPLICABLE`|`No VAT charged in the invoice.`|`VAT_NO_VAT_CHARGED`|
-             *     `                RUN_SUCCESSFUL`|`OK`|`The sender '%{bid}' is found in VAT registry.`|`VAT_COMPANY_REGISTERED`
-             */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Analysis"][];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-            /** @description Invoice not found or you don't have access to it */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_Error"];
-                };
-            };
-        };
-    };
-    getV1PartnerInvoiceDeliveryActionsInbound: {
-        parameters: {
-            query?: {
-                state?: string;
-                /** @description Page to fetch */
-                page?: number;
-                /** @description Number of items per page, values up to 100 supported */
-                per_page?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List inbound invoice delivery actions */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Partner_HttpApi_Entities_InvoiceEventsReceived"][];
-                };
-            };
-        };
-    };
-    getV1PartnerInvoiceDeliveryActionsOutboundErrors: {
-        parameters: {
-            query: {
-                /** @description Happened after */
-                happened_after: string;
-                /** @description Happened before. Will default to current time. */
-                happened_before?: string;
-                /** @description Page to fetch */
-                page?: number;
-                /** @description Number of items per page, values up to 100 supported */
-                per_page?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List outbound invoice errors */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Partner_HttpApi_Entities_InvoiceEventsSentError"][];
-                };
-            };
-        };
-    };
-    getV1PartnerInvoiceEventsReceived: {
-        parameters: {
-            query?: {
-                state?: string;
-                /** @description Page to fetch */
-                page?: number;
-                /** @description Number of items per page, values up to 100 supported */
-                per_page?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List inbound invoice delivery actions */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Partner_HttpApi_Entities_InvoiceEventsReceived"][];
-                };
-            };
-        };
-    };
-    getV1PartnerInvoiceEventsSentErrors: {
-        parameters: {
-            query: {
-                /** @description Happened after */
-                happened_after: string;
-                /** @description Happened before. Will default to current time. */
-                happened_before?: string;
-                /** @description Page to fetch */
-                page?: number;
-                /** @description Number of items per page, values up to 100 supported */
-                per_page?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List outbound invoice errors */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Partner_HttpApi_Entities_InvoiceEventsSentError"][];
-                };
-            };
-        };
-    };
-    getV1PartnerLookupsCompanies: {
-        parameters: {
-            query: {
-                /** @description Business ids. Maximum number of bids: 10 */
-                bids: string[];
-                /** @description Country in ISO 3166-1 alpha-2 format (2 letters) */
-                country: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List companies availability */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Partner_HttpApi_Entities_CompanyLookups"][];
-                };
-            };
-        };
-    };
-    getV1PartnerScanServiceLyanthe: {
-        parameters: {
-            query: {
-                /** @description Company id */
-                company_id: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description [EXPERIMENTAL] Fetch Lyanthe scan service information */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["API_Entities_ScanService"];
-                };
-            };
-        };
-    };
-    postV1PartnerScanServiceLyanthe: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["postV1PartnerScanServiceLyanthe"];
-            };
-        };
-        responses: {
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    deleteV1PartnerScanServiceLyanthe: {
-        parameters: {
-            query: {
-                /** @description Company id */
-                company_id: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    postV1PartnerTakeovers: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["postV1PartnerTakeovers"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    postV1PartnerTakeoversTakeoverIdComplete: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                takeover_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    deleteV1PartnerTakeoversTakeoverId: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                takeover_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getV1FiBankMessagesRiMessages: {
-        parameters: {
-            query: {
-                /** @description Start timestamp */
-                timestamp_start: string;
-                /** @description End timestamp */
-                timestamp_end: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Array of ids, e.g. ["id1", "id2"] */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getV1FiBankMessagesRiMessagesId: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Message ID */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Get content of single RI message */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    deleteV1FiBankMessagesRiMessagesId: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Message ID */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Message deleted successfully */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getV1FiBankMessagesSentMessages: {
-        parameters: {
-            query: {
-                /** @description Message Type */
-                message_type: "SENDERINFO" | "RECEIVERPROPOSAL";
-                /** @description Start timestamp */
-                timestamp_start: string;
-                /** @description End timestamp */
-                timestamp_end: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Array of ids, e.g. ["id1", "id2"] */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getV1FiBankMessagesSentMessagesId: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Message ID */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Get content of single message */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getV1FiBankMessagesErrorMessages: {
-        parameters: {
-            query: {
-                /** @description Start timestamp */
-                timestamp_start: string;
-                /** @description End timestamp */
-                timestamp_end: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Array of ids, e.g. ["id1", "id2"] */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getV1FiBankMessagesErrorMessagesId: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Message ID */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Get content of single error message */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    postV1FiBankMessages: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "multipart/form-data": {
-                    /**
-                     * Format: binary
-                     * @description File content
-                     */
-                    file: string;
-                };
-            };
-        };
-        responses: {
-            /** @description Message uploaded successfully */
-            204: {
-                headers: {
-                    /** @description url for fetching the bank message */
-                    Location?: string;
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getV1FiBankMessagesId: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Message ID */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Get status of sent message */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FiBankMessages_HttpApi_Entities_FiBankMessageStatus"];
-                };
-            };
-        };
-    };
+  getStatusAuthenticated: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Status requiring authentication */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Status'];
+        };
+      };
+    };
+  };
+  postOauth2Token: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/x-www-form-urlencoded': {
+          /**
+           * @description The grant type
+           * @enum {string}
+           */
+          grant_type: 'client_credentials';
+          /** @description The client id */
+          client_id?: string;
+          /** @description The client secret */
+          client_secret?: string;
+          /** @description Scope of the requested token */
+          scope?: string;
+          /** @description Software API key */
+          vendor_api_key?: string;
+          /** @description License data */
+          license_data?: string;
+        };
+      };
+    };
+    responses: {
+      /** @description Granted access token */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_OAuthToken'];
+        };
+      };
+    };
+  };
+  getOauth2Current: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Fetch information about the authenticated user and company */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_OAuthCurrent'];
+        };
+      };
+    };
+  };
+  getOdpCompaniesId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description ID of ODP company */
+        id: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Fetch ODP company by id */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['OdpCompany'];
+        };
+      };
+    };
+  };
+  patchOdpCompaniesId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description ID of ODP company */
+        id: number;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'multipart/form-data': {
+          /** @description Is company trusted */
+          trusted: boolean;
+        };
+      };
+    };
+    responses: {
+      /** @description Company updated succesfully */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getV2ServicesAmiliReceivables: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Current state of the Amili receivables service */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReceivablesService'];
+        };
+      };
+    };
+  };
+  putV2ServicesAmiliReceivables: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['putV2ServicesAmiliReceivables'];
+      };
+    };
+    responses: {
+      /** @description Start the Amili Receivables service onboarding */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReceivablesService'];
+        };
+      };
+    };
+  };
+  deleteV2ServicesAmiliReceivables: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Service disabled */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  patchV2ServicesAmiliReceivables: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['patchV2ServicesAmiliReceivables'];
+      };
+    };
+    responses: {
+      /** @description Update successful */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getV2ServicesIntrumReceivables: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Current state of the Intrum receivables service */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_CompanyServices_Intrum'];
+        };
+      };
+    };
+  };
+  putV2ServicesIntrumReceivables: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['putV2ServicesIntrumReceivables'];
+      };
+    };
+    responses: {
+      /** @description Start the Intrum Receivables service onboarding */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_CompanyServices_Intrum'];
+        };
+      };
+    };
+  };
+  deleteV2ServicesIntrumReceivables: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Service disabled */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  patchV2ServicesIntrumReceivables: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['patchV2ServicesIntrumReceivables'];
+      };
+    };
+    responses: {
+      /** @description Update successful */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getV1ServicesReceivables: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Current state of the receivables service */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReceivablesService'];
+        };
+      };
+    };
+  };
+  putV1ServicesReceivables: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['putV1ServicesReceivables'];
+      };
+    };
+    responses: {
+      /** @description Start the Receivables service onboarding */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReceivablesService'];
+        };
+      };
+    };
+  };
+  deleteV1ServicesReceivables: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Service disabled */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  patchV1ServicesReceivables: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['patchV1ServicesReceivables'];
+      };
+    };
+    responses: {
+      /** @description Update successful */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getV1ServicesAtg: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description List ATG agreements */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_CompanyAgreements_Atg'][];
+        };
+      };
+    };
+  };
+  postV1ServicesAtg: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['postV1ServicesAtg'];
+      };
+    };
+    responses: {
+      /** @description Create a new ATG agreement */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_CompanyAgreements_Atg'];
+        };
+      };
+    };
+  };
+  getV1ServicesAtgMandates: {
+    parameters: {
+      query?: {
+        /** @description Find by KID or reference */
+        query?: string;
+        /** @description Timestamp for latest update */
+        timestamp?: string;
+        /** @description Status */
+        status?: 'ACTIVE' | 'INACTIVE';
+        /** @description Parse reference and payment type from KID.Only works for <20 results */
+        parse_values?: 'TRUE' | 'FALSE';
+        /** @description Page to fetch */
+        page?: number;
+        /** @description Number of items per page, values up to 100 supported */
+        per_page?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description List B2C ATG mandates */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_CompanyConsumers_Mandate'][];
+        };
+      };
+    };
+  };
+  getV1ServicesAtgAccountNumber: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Account number */
+        account_number: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Fetch ATG agreement */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_CompanyAgreements_Atg'];
+        };
+      };
+    };
+  };
+  patchV1ServicesAtgAccountNumber: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Account number linked to agreement */
+        account_number: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['patchV1ServicesAtgAccountNumber'];
+      };
+    };
+    responses: {
+      /** @description ATG agreement updated succesfully */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getV1ServicesOpInvoiceCreditOffer: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Get an offer for OP Laskulaina before the activation */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['OPInvoiceCreditSettingsOffer'];
+        };
+      };
+    };
+  };
+  getV1ServicesOpInvoiceCredit: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Current information about the OP Laskulaina service */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['OPInvoiceCredit'];
+        };
+      };
+      /** @description - **op_invoice_credit_not_enabled**: The OP Laskulaina service is not enabled */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+    };
+  };
+  putV1ServicesOpInvoiceCredit: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['putV1ServicesOpInvoiceCredit'];
+      };
+    };
+    responses: {
+      /** @description Start the OP Laskulaina onboarding */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['OPInvoiceCredit'];
+        };
+      };
+    };
+  };
+  getV1ServicesOpInvoiceCreditSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Show current settings */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['OPInvoiceCreditSettings'];
+        };
+      };
+    };
+  };
+  postV1ServicesOpInvoiceCreditSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['postV1ServicesOpInvoiceCreditSettings'];
+      };
+    };
+    responses: {
+      /** @description Modify settings */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getV1ServicesOpInvoiceCreditAvailableCredit: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Check the credit balance */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['OPInvoiceCreditAvailableCredit'];
+        };
+      };
+    };
+  };
+  postV1ServicesOpInvoiceCreditWithdrawal: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['postV1ServicesOpInvoiceCreditWithdrawal'];
+      };
+    };
+    responses: {
+      /** @description Make a withdrawal */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  postV1ServicesOpInvoiceCreditDirectPayment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['postV1ServicesOpInvoiceCreditDirectPayment'];
+      };
+    };
+    responses: {
+      /** @description Make a direct payment */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getV1ServicesOpInvoiceCreditAccountStatement: {
+    parameters: {
+      query: {
+        /** @description Date for which to fetch transactions */
+        day: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Fetch account statement */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description - **op_invoice_credit_no_account_statement_found**: No account statement found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+    };
+  };
+  getV1ServicesDetectChecks: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description List enabled Detect checks */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Detect_Checks'];
+        };
+      };
+    };
+  };
+  patchV1ServicesDetectChecks: {
+    parameters: {
+      query?: {
+        /** @description List of checks to enable. Currently supported checks: SUPPLIER_ACTIVATION, BANK_ACCOUNT_CHANGED, SENDER_BID_STATUS, SENDER_WARNING_LIST, VAT */
+        on_invoice_receive?: (
+          | 'SUPPLIER_ACTIVATION'
+          | 'BANK_ACCOUNT_CHANGED'
+          | 'SENDER_BID_STATUS'
+          | 'SENDER_WARNING_LIST'
+          | 'VAT'
+        )[];
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Detect checks updated successfully */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getV1ServicesAutoscan: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Show AutoScan configuration */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AutoScan_HttpApi_Entities_AutoScanConfiguration'];
+        };
+      };
+      /** @description Service unavailable. Try again later. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  putV1ServicesAutoscan: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['putV1ServicesAutoscan'];
+      };
+    };
+    responses: {
+      /** @description Show activated AutoScan configuration */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AutoScan_HttpApi_Entities_AutoScanConfiguration'];
+        };
+      };
+      /** @description Service unavailable. Try again later. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  deleteV1ServicesAutoscan: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description AutoScan deactivated */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Service unavailable. Try again later. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getV1ServicesScan: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Show scan configuration */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Scan_HttpApi_Entities_ScanConfiguration'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Service unavailable. Try again later. */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  putV1ServicesScan: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'multipart/form-data': {
+          'return_address[email_address]'?: string;
+          'return_address[postal_address][street_name]'?: string;
+          'return_address[postal_address][extra_lines]'?: string[];
+          'return_address[postal_address][city]'?: string;
+          'return_address[postal_address][post_code]'?: string;
+          'return_address[postal_address][country_code]'?: string;
+        };
+      };
+    };
+    responses: {
+      /** @description [EXPERIMENTAL] Update scan account */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Bad request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Service unavailable. Try again later. */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  postV1ServicesScan: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'multipart/form-data': {
+          'return_address[email_address]'?: string;
+          'return_address[postal_address][street_name]'?: string;
+          'return_address[postal_address][extra_lines]'?: string[];
+          'return_address[postal_address][city]'?: string;
+          'return_address[postal_address][post_code]'?: string;
+          'return_address[postal_address][country_code]'?: string;
+        };
+      };
+    };
+    responses: {
+      /** @description [EXPERIMENTAL] Activate scan account */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Bad request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Service unavailable. Try again later. */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  deleteV1ServicesScan: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Scan account deleted */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Bad request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Scan account not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Service unavailable. Try again later. */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getV1ServicesB2cnoConsumers: {
+    parameters: {
+      query?: {
+        /** @description List by phonenumber, name, customer_number and reference_number */
+        query?: string;
+        /** @description List of statuses */
+        status?: (
+          | 'NEW'
+          | 'REQUEST_SENT'
+          | 'ACCEPTED'
+          | 'ACTIVE'
+          | 'DELETED'
+          | 'REJECTED'
+          | 'ERROR'
+        )[];
+        /** @description Page to fetch */
+        page?: number;
+        /** @description Number of items per page, values up to 100 supported */
+        per_page?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description List B2CNO Consumers - DEPRECATED 2025 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_CompanyConsumers_Consumer'][];
+        };
+      };
+    };
+  };
+  getV1ServicesB2cno: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Information about B2CNO agreement */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_B2CNO_Status'];
+        };
+      };
+    };
+  };
+  getV1ServicesB2cseAgreement: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_B2CSE_Agreement'];
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+    };
+  };
+  postV1ServicesB2cseAgreement: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['postV1ServicesB2cseAgreement'];
+      };
+    };
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+    };
+  };
+  getV1InvoicesReportsDefinitions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReportsDefinitions'];
+        };
+      };
+    };
+  };
+  getV1Invoices: {
+    parameters: {
+      query?: {
+        /** @description Received or sent invoices */
+        direction?: 'RECEIVED' | 'SENT';
+        /** @description Invoice status */
+        status?: ('PENDING' | 'DELIVERED' | 'FAILED')[];
+        /** @description Batch of invoice IDs. Maximum of 100 per query */
+        ids?: string[];
+        /** @description Invoice number */
+        number?: string;
+        /** @description Invoice reference */
+        reference?: string;
+        /** @description Received at start timestamp */
+        received_at_start?: string;
+        /** @description Received at end timestamp */
+        received_at_end?: string;
+        /** @description Created at start timestamp */
+        created_at_start?: string;
+        /** @description Created at end timestamp */
+        created_at_end?: string;
+        /**
+         * @description List of fields used for sorting.
+         *                                   Ascending by default, include "-" before the field name to reverse the order (descending).
+         *                                   Supported values: **received_at**
+         *                                   E.g. -received_at
+         */
+        sort?: string[];
+        /** @description Page to fetch */
+        page?: number;
+        /** @description Number of items per page, values up to 100 supported */
+        per_page?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description List invoices */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Invoices_HttpApi_Entities_Invoice'][];
+        };
+      };
+    };
+  };
+  postV1Invoices: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'multipart/form-data': {
+          /**
+           * Format: binary
+           * @description File content. Please make sure to provide the "filename" Content-Disposition header field as well as specified in the rfc2183.
+           */
+          file: string;
+          /**
+           * @description File format
+           * @enum {string}
+           */
+          format?:
+            | 'VISMAXML53'
+            | 'VISMAXML60'
+            | 'SVEFAKTURA10'
+            | 'SEDI'
+            | 'E2B'
+            | 'EHF20'
+            | 'PEPPOLBIS20'
+            | 'PEPPOLBIS30'
+            | 'SIUBL11'
+            | 'SIUBL12'
+            | 'SIUBL20'
+            | 'OIOUBL'
+            | 'OIOUBL21'
+            | 'VISMAUBL10'
+            | 'VISMAUBL30'
+            | 'FINVOICE13'
+            | 'FINVOICE20'
+            | 'FINVOICE30'
+            | 'TEAPPS27'
+            | 'TEAPPS30'
+            | 'XRECHNUNG23UBL'
+            | 'XRECHNUNG23CII'
+            | 'XRECHNUNG23EXTUBL'
+            | 'XRECHNUNG23EXTCII'
+            | 'XRECHNUNG30UBL'
+            | 'XRECHNUNG30CII'
+            | 'XRECHNUNG30EXTUBL'
+            | 'XRECHNUNG30EXTCII'
+            | 'FATTURAPA12';
+          /**
+           * @description Only in Norway, set to "consumer" to use route_order
+           * @default b2b
+           * @enum {string}
+           */
+          recipient_type?: 'b2b' | 'consumer';
+          /** @description Recipient EIA */
+          recipient_eia?: string;
+          /** @description Recipient email address */
+          recipient_email?: string;
+          /** @description Recipient operator */
+          recipient_operator?: string;
+          /** @description Routes to explicitly disable */
+          disabled_routes?: ('print' | 'email' | 'einvoice')[];
+          /** @description Text that will be added in the email message if invoice is delivered by email */
+          sender_comment?: string;
+          /** @description Unique invoice uuid, generated automatically if not specified. */
+          uuid?: string;
+          /**
+           * @description Set language of PDF generated by us and email what recipient receives.
+           * @enum {string}
+           */
+          lang?: 'FI' | 'SE' | 'NO' | 'DK' | 'NL' | 'EN';
+          /** @description Consumer routes to use. Leave empty to use default. Note! 'netbank_cvl' and 'netbank_cvl_hold' are deprecated since 05/2022. */
+          route_order?: (
+            | 'netbank'
+            | 'netbank_cvl'
+            | 'netbank_cvl_hold'
+            | 'vipps'
+            | 'dpi'
+            | 'email'
+            | 'print'
+            | 'silent_failure'
+          )[];
+          /** @description Recipient phone number in international format. Used in Yes2All lookups. */
+          recipient_phone_number?: string;
+          /**
+           * Format: date
+           * @description Recipient date of birth in YYYY-MM-DD format. Used in Yes2All lookups.
+           */
+          recipient_date_of_birth?: string;
+          /** @description Recipient social security number. Used in Yes2All lookups. */
+          recipient_ssn?: string;
+          /** @description Recipient unique eFaktura ID */
+          recipient_efaktura_id?: string;
+          /**
+           * @description B2C document type for special documents
+           * @enum {string}
+           */
+          b2cno_document_type?:
+            | 'INVOICE'
+            | 'CREDIT_NOTE'
+            | 'REMINDER'
+            | 'COLLECTION_NOTICE';
+          /** @description PaymentInstructionIdentifier, used in Finnish B2C invoicing only. */
+          payment_instruction_identifier?: string;
+          /** @description Enable color printing */
+          'print_settings[color]'?: boolean;
+          /**
+           * @description Letter class
+           * @enum {string}
+           */
+          'print_settings[letter_class]'?: 'PRIORITY' | 'ECONOMY';
+          /** @description Prevent invoice from being sent to OmaPosti (Finland only) */
+          'print_settings[prevent_digital_post]'?: boolean;
+          /** @description Use own image when printing (overrides company settings) */
+          'print_settings[print_own_image]'?: boolean;
+          /** @description Try Kivra FI before printing even if "einvoice" route is disabled in disabled_routes parameter. Only applies for B2C invoices. */
+          'print_settings[allow_kivra_fi]'?: boolean;
+          /** @description Prevent routing of the invoice. Invoice will be set to SENT state without actually sending it anywhere. Intended use is for creating assignments without sending an invoice for the Receivables service */
+          prevent_routing?: boolean;
+          /**
+           * @description Forces the invoice to be sent via email and includes the XML attachment in the specified format
+           * @enum {string}
+           */
+          'email_settings[xml_format]'?:
+            | 'VISMAXML53'
+            | 'VISMAXML60'
+            | 'SVEFAKTURA10'
+            | 'SEDI'
+            | 'E2B'
+            | 'EHF20'
+            | 'PEPPOLBIS20'
+            | 'PEPPOLBIS30'
+            | 'SIUBL11'
+            | 'SIUBL12'
+            | 'SIUBL20'
+            | 'OIOUBL'
+            | 'OIOUBL21'
+            | 'VISMAUBL10'
+            | 'VISMAUBL30'
+            | 'FINVOICE13'
+            | 'FINVOICE20'
+            | 'FINVOICE30'
+            | 'TEAPPS27'
+            | 'TEAPPS30'
+            | 'XRECHNUNG23UBL'
+            | 'XRECHNUNG23CII'
+            | 'XRECHNUNG23EXTUBL'
+            | 'XRECHNUNG23EXTCII'
+            | 'XRECHNUNG30UBL'
+            | 'XRECHNUNG30CII'
+            | 'XRECHNUNG30EXTUBL'
+            | 'XRECHNUNG30EXTCII'
+            | 'FATTURAPA12';
+        };
+      };
+    };
+    responses: {
+      /** @description Upload new invoice */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Invoices_HttpApi_Entities_Invoice'];
+        };
+      };
+    };
+  };
+  getV1InvoicesIdDetectResults: {
+    parameters: {
+      query?: {
+        /** @description The language the checks and findings will be presented in */
+        lang?: 'FI' | 'SE' | 'NO' | 'DK' | 'NL' | 'EN';
+      };
+      header?: never;
+      path: {
+        /** @description Invoice ID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The Detect service has analysed the invoice and result are available */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Invoices_HttpApi_Entities_InvoiceDetectResults'];
+        };
+      };
+      /** @description The Detect service has not been enabled by the customer */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Invoices_HttpApi_Entities_InvoiceDetectResults'];
+        };
+      };
+    };
+  };
+  getV1InvoicesId: {
+    parameters: {
+      query?: {
+        /** @description Desired format */
+        return_format?:
+          | 'VISMAXML60'
+          | 'PEPPOLBIS30'
+          | 'SIUBL20'
+          | 'OIOUBL21'
+          | 'VISMAUBL30'
+          | 'FINVOICE30'
+          | 'TEAPPS30'
+          | 'XRECHNUNG23UBL'
+          | 'XRECHNUNG23CII'
+          | 'XRECHNUNG23EXTUBL'
+          | 'XRECHNUNG23EXTCII'
+          | 'XRECHNUNG30UBL'
+          | 'XRECHNUNG30CII'
+          | 'XRECHNUNG30EXTUBL'
+          | 'XRECHNUNG30EXTCII'
+          | 'FATTURAPA12'
+          | 'ORIGINAL_IMAGE'
+          | 'GENERATED_IMAGE'
+          | 'ORIGINAL_OR_GENERATED_IMAGE'
+          | 'EXTENDED_DETAILS';
+      };
+      header?: never;
+      path: {
+        /** @description Invoice ID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Invoice details */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Invoices_HttpApi_Entities_Invoice'];
+          'application/xml': components['schemas']['Invoices_HttpApi_Entities_Invoice'];
+        };
+      };
+    };
+  };
+  getV1InvoicesIdActions: {
+    parameters: {
+      query?: {
+        /** @description Action type */
+        type?: (
+          | 'RECEIVED'
+          | 'CREATED'
+          | 'SENT'
+          | 'DELIVERED'
+          | 'INFO'
+          | 'ERROR'
+        )[];
+        /** @description Version for channel_details */
+        channel_details_version?: 1;
+      };
+      header?: never;
+      path: {
+        /** @description Invoice ID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description List invoice actions */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Invoices_HttpApi_Entities_InvoiceAction'][];
+        };
+      };
+    };
+  };
+  patchV1InvoicesIdInvoiceEvents: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Invoice ID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['patchV1InvoicesIdInvoiceEvents'];
+      };
+    };
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getV1InvoicesIdFilesFileId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Invoice ID */
+        id: string;
+        /** @description Invoice file ID */
+        file_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Fetch file content */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  putV1InvoicesIdRerouteEinvoice: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Invoice ID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['putV1InvoicesIdRerouteEinvoice'];
+      };
+    };
+    responses: {
+      /** @description Reroutes invoice via einvoice */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  putV1InvoicesIdRerouteEmail: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Invoice ID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['putV1InvoicesIdRerouteEmail'];
+      };
+    };
+    responses: {
+      /** @description Reroutes invoice via email */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  putV1InvoicesIdReroutePrint: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Invoice ID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['putV1InvoicesIdReroutePrint'];
+      };
+    };
+    responses: {
+      /** @description Reroutes invoice via print */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getV1InvoicesIdReports: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Invoice ID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Fetch successfully completed */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['UserReport'][];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+      /** @description No user report found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+    };
+  };
+  postV1InvoicesIdReports: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Invoice ID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['postV1InvoicesIdReports'];
+      };
+    };
+    responses: {
+      /** @description Company successfully reported */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+      /** @description Conflict: company already reported */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+    };
+  };
+  deleteV1InvoicesIdReportsReportId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Invoice ID */
+        id: string;
+        /** @description Report ID */
+        report_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description User report successfully deleted */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+      /** @description No user report found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+    };
+  };
+  getV1InvoicesIdAssignment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Invoice ID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Return only the assignment status and error reason when in pending or error. Ok status returns the link to the assignment in the Receivables API when the assignment request has been completed. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Invoices_HttpApi_Entities_InvoiceAssignment'];
+        };
+      };
+      /** @description - **not_found**: Requested resource not found or you don't have access to it */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+    };
+  };
+  postV1InvoicesIdAssignment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Invoice ID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['postV1InvoicesIdAssignment'];
+      };
+    };
+    responses: {
+      /** @description Assignment request has been accepted for processing */
+      202: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description - **invalid_parameters**: Request parameters are invalid */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+      /** @description - **forbidden**: Requested operation for resource is not allowed */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+      /** @description - **not_found**: Requested resource not found or you don't have access to it */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+    };
+  };
+  postV1InvoicesIdResponsesNemhandel: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Invoice ID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['postV1InvoicesIdResponsesNemhandel'];
+      };
+    };
+    responses: {
+      /** @description Return */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Invoices_HttpApi_Entities_InvoiceResponseNemhandel'];
+        };
+      };
+      /** @description Bad request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Invoice not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Service unavailable. Try again later. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getV1CompanyProfiles: {
+    parameters: {
+      query?: {
+        /** @description Network filter */
+        network?: (
+          | 'VISMA'
+          | 'PEPPOL'
+          | 'NEMHANDEL'
+          | 'AISPROOM'
+          | 'BANK'
+          | 'SCAN'
+          | 'INEXCHANGE'
+          | 'VISMASCANNER'
+          | 'RECEIVABLES'
+        )[];
+        /** @description Status filter */
+        status?: ('active' | 'pending' | 'error')[];
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description List network registrations */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_CompanyProfile'][];
+        };
+      };
+    };
+  };
+  postV1CompanyProfiles: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['postV1CompanyProfiles'];
+      };
+    };
+    responses: {
+      /** @description Create network registration request */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_CompanyProfile'];
+        };
+      };
+      /**
+       * @description - **profile_name_conflict**: Profile is already registered for given endpoint id
+       *     - **profile_eia_conflict**: Endpoint id is already in use
+       *     - **profile_eia_bid_conflict**: Endpoint id does not match the company business id
+       *     - **profile_not_supported**: Profile is not supported
+       */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+    };
+  };
+  putV1CompanyProfilesIdExtensions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Profile Subscription Id */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['putV1CompanyProfilesIdExtensions'];
+      };
+    };
+    responses: {
+      /** @description EXPERIMENTAL Create extensions for profiles */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getV1CompanyProfilesId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Profile id */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Fetch a network registration */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_CompanyProfile'];
+        };
+      };
+    };
+  };
+  deleteV1CompanyProfilesId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Profile id */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Registration deleted succesfully */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description - **profile_deletion_not_allowed**: Deletion of profile is not allowed */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+    };
+  };
+  patchV1CompanyProfilesId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Profile id */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['patchV1CompanyProfilesId'];
+      };
+    };
+    responses: {
+      /** @description Profile updated succesfully */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getV1CompanySettings: {
+    parameters: {
+      query?: {
+        /**
+         * @description Filter the response to only include requested fields.
+         *                                         Possible values: invoice_notifications, send_invoice_email, address, details, send_invoice_print, send_invoice_general, logos, email_reports, billing_details
+         */
+        fields?: string[];
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Fetch company settings */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_CompanySettings_Settings'];
+        };
+      };
+    };
+  };
+  patchV1CompanySettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['patchV1CompanySettings'];
+      };
+    };
+    responses: {
+      /** @description Settings updated successfully */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description - **invalid_parameters**: Request parameters are invalid */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+    };
+  };
+  getV1CompanyConsumers: {
+    parameters: {
+      query?: {
+        /** @description List by phonenumber, name, customer_number and reference_number */
+        query?: string;
+        /** @description List of statuses */
+        status?: (
+          | 'NEW'
+          | 'REQUEST_SENT'
+          | 'ACCEPTED'
+          | 'ACTIVE'
+          | 'DELETED'
+          | 'REJECTED'
+          | 'ERROR'
+        )[];
+        /** @description Page to fetch */
+        page?: number;
+        /** @description Number of items per page, values up to 100 supported */
+        per_page?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description List B2CNO Consumers - DEPRECATED 2025 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_CompanyConsumers_Consumer'][];
+        };
+      };
+    };
+  };
+  getV1CompanyNotifications: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description List notification subscriptions */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Notifications_Notification'][];
+        };
+      };
+    };
+  };
+  postV1CompanyNotifications: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['postV1CompanyNotifications'];
+      };
+    };
+    responses: {
+      /** @description Create new notification subscription */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Notifications_Notification'];
+        };
+      };
+    };
+  };
+  getV1CompanyNotificationsId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Notification id */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Notification subscription */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Notifications_Notification'];
+        };
+      };
+    };
+  };
+  deleteV1CompanyNotificationsId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Notification id */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Notification subscription was deleted */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  postV1CompanyNotificationsResendUnacknowledged: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Request accepted. Unacknowledged webhooks for all subscriptions will get retriggered at a later point */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getV1CompanyVendors: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Vendor API key link status */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_LinkVendorAPIKey'];
+        };
+      };
+    };
+  };
+  postV1CompanyVendors: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Link vendor API key */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_LinkVendorAPIKey'];
+        };
+      };
+    };
+  };
+  deleteV1CompanyVendors: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Vendor unlinked */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getV1CompanyAuthorization: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Company authorization status. In order to use company account to send, receive and activate services status needs to be verified */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_CompanyAuthorizationStatus'];
+        };
+      };
+    };
+  };
+  postV1CompanyAuthorization: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['postV1CompanyAuthorization'];
+      };
+    };
+    responses: {
+      /** @description Sign request sent */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_CompanyAuthorization'];
+        };
+      };
+      /** @description Bad request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+    };
+  };
+  getV1CompanyUsers: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description List existing users */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_CompanyUsers_User'][];
+        };
+      };
+    };
+  };
+  postV1CompanyUsers: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['postV1CompanyUsers'];
+      };
+    };
+    responses: {
+      /** @description User was added to company */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_CompanyUsers_User'];
+        };
+      };
+      /** @description User was successfully created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_CompanyUsers_NewUser'];
+        };
+      };
+    };
+  };
+  getV1CompanyUsersUserId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        user_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_CompanyUsers_User'];
+        };
+      };
+    };
+  };
+  deleteV1CompanyUsersUserId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        user_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  patchV1CompanyUsersUserId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        user_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['patchV1CompanyUsersUserId'];
+      };
+    };
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  postV1CompanyUsersUserIdRoles: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        user_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['postV1CompanyUsersUserIdRoles'];
+      };
+    };
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  postV1CompanyKeepActive: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Mark company as active even if no transactions have occurred during the past year. */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getV1CompanyDepartments: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description List departments [EXPERIMENTAL] */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Company'][];
+        };
+      };
+    };
+  };
+  postV1CompanyDepartments: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'multipart/form-data': {
+          /** @description Company name. Name has to be at least 3 characters long */
+          name: string;
+          /** @description Company organization number/Business ID/VAT */
+          bid: string;
+          /**
+           * @description Electronic address identifier type
+           * @enum {string}
+           */
+          id_type: 'GLN';
+          /** @description Electronic address identifier */
+          eaid: string;
+          /** @description If company_bid is not a VAT-number, this is set to true to skip VAT-check */
+          no_vat: boolean;
+          /** @description Street address */
+          address1: string;
+          /** @description Additional address */
+          address2?: string;
+          /** @description Postal number/code, */
+          post_code: string;
+          /** @description Post office */
+          post_office: string;
+          /** @description Registered city */
+          city: string;
+          /** @description State of address */
+          state?: string;
+          /**
+           * @description Country code for company, mandatory. Allowed countries FI, SE, NO, DK, NL, BE
+           * @enum {string}
+           */
+          country: 'FI' | 'SE' | 'NO' | 'DK' | 'NL' | 'BE';
+          /** @description Contact email address for company */
+          email: string;
+        };
+      };
+    };
+    responses: {
+      /** @description Create a department [EXPERIMENTAL] */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Company'];
+        };
+      };
+    };
+  };
+  postV1CompanySuppliersQuery: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['postV1CompanySuppliersQuery'];
+      };
+    };
+    responses: {
+      /** @description Creating query was successful */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Suppliers_HttpApi_Entities_SuppliersQueryResult'];
+        };
+      };
+      /** @description Bad request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+      /** @description Resource not found or you don't have access to it */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+    };
+  };
+  postV1CompanySuppliersNotifications: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['postV1CompanySuppliersNotifications'];
+      };
+    };
+    responses: {
+      /** @description Request successful, possible failures listed on the response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Suppliers_HttpApi_Entities_SuppliersNotificationResult'];
+        };
+      };
+      /** @description Bad request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Expected company data missing */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getV1Companies: {
+    parameters: {
+      query?: {
+        /** @description Business id. */
+        bid?: string;
+        /** @description Country in ISO 3166-1 alpha-2 format (2 letters) */
+        country?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description List active companies the user has access to */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_UserCompany'][];
+        };
+      };
+    };
+  };
+  postV1Companies: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'multipart/form-data': {
+          /** @description Identifies partner/ERP */
+          vendor_api_key: string;
+          /** @description The user API key */
+          user_api_key: string;
+          /** @description Company name. Name has to be at least 3 characters long */
+          name: string;
+          /** @description Company VAT/Business ID/Organization number (VAT preferred) */
+          bid: string;
+          /** @description If company_bid is not a VAT-number, this is set to true to skip VAT-check */
+          no_vat: boolean;
+          /** @description Street address */
+          address1: string;
+          /** @description Additional address */
+          address2?: string;
+          /** @description Postal number/code, */
+          post_code: string;
+          /** @description Post office */
+          post_office: string;
+          /** @description Registered city */
+          city: string;
+          /** @description State of address */
+          state?: string;
+          /**
+           * @description Country code for company, mandatory. Allowed countries FI, SE, NO, DK, NL, EE, BE, DE. IT is in experimental mode.
+           * @enum {string}
+           */
+          country: 'FI' | 'SE' | 'NO' | 'DK' | 'NL' | 'EE' | 'BE' | 'IT' | 'DE';
+          /** @description Contact email address for company */
+          email: string;
+        };
+      };
+    };
+    responses: {
+      /** @description Create a Company */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Company'];
+        };
+      };
+    };
+  };
+  postV1CompaniesAuthorizations: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['postV1CompaniesAuthorizations'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_CompanyAuthorization'];
+        };
+      };
+      202: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_CompanyAuthorization'];
+        };
+      };
+      /** @description Bad request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+    };
+  };
+  getV1CompaniesIdStatus: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Company ID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Company authorization status. In order to use company account to send, receive and activate services status needs to be verified */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_CompanyAuthorizationStatus'];
+        };
+      };
+    };
+  };
+  getV1OperatorParticipants: {
+    parameters: {
+      query?: {
+        /** @description Participants external ids */
+        external_ids?: string[];
+        /** @description Last update time starting from */
+        updated_at_start?: string;
+        /** @description Profiles */
+        profiles?: string[];
+        /** @description Last update time ending at */
+        updated_at_end?: string;
+        /** @description Page to fetch */
+        page?: number;
+        /** @description Number of items per page, values up to 100 supported */
+        per_page?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description List participants registered by operator */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_OperatorParticipant'][];
+        };
+      };
+    };
+  };
+  postV1OperatorParticipants: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['postV1OperatorParticipants'];
+      };
+    };
+    responses: {
+      /** @description Register a participant */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_OperatorParticipant'];
+        };
+      };
+      /**
+       * @description - **profile_name_conflict**: Profile is already registered for given endpoint id
+       *     - **profile_eia_conflict**: Endpoint id is already in use
+       *     - **profile_eia_bid_conflict**: Endpoint id does not match the company business id
+       *     - **profile_not_supported**: Profile is not supported
+       *     - **profile_registry_not_supported**: Provided registry not supported
+       */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+    };
+  };
+  getV1OperatorParticipantsId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Participant UUID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Requested profile */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_OperatorParticipant'];
+        };
+      };
+    };
+  };
+  deleteV1OperatorParticipantsId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Participant UUID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Participant deleted succesfully */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  patchV1OperatorParticipantsId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Participant UUID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Participant updated succesfully */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getV1OperatorNotifications: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description List notification subscriptions */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Notifications_Notification'][];
+        };
+      };
+    };
+  };
+  postV1OperatorNotifications: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['postV1OperatorNotifications'];
+      };
+    };
+    responses: {
+      /** @description Create new notification subscription */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Notifications_Notification'];
+        };
+      };
+    };
+  };
+  getV1OperatorNotificationsId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Notification id */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Notification subscription */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Notifications_Notification'];
+        };
+      };
+    };
+  };
+  deleteV1OperatorNotificationsId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Notification id */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Notification subscription was deleted */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getV1OperatorCompanies: {
+    parameters: {
+      query: {
+        /** @description Company business identifier */
+        bid: string;
+        /** @description Country in ISO 3166-1 alpha-2 format (2 letters) */
+        country: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Get company data */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_OperatorCompany'][];
+        };
+      };
+    };
+  };
+  getV1OperatorReceivablesOpAccountStatement: {
+    parameters: {
+      query: {
+        /** @description Mandator UUID associated with the company */
+        mandator_uuid: string;
+        /** @description Date for which to fetch transactions */
+        day: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Fetch an account statements for a company */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description - **op_invoice_credit_no_account_statement_found**: No account statement found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+    };
+  };
+  getV1OperatorReceivablesInvoiceImageId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Invoice UUID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Fetch invoice image for assignment */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description - **not_found**: Requested resource not found or you don't have access to it */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/pdf': components['schemas']['API_Entities_Error'];
+        };
+      };
+    };
+  };
+  getV1LookupEndpoints: {
+    parameters: {
+      query: {
+        /** @description Business ids. Maximum number of bids: 10 */
+        business_ids: string[];
+        /** @description Types of documents sent. Possible values: invoice */
+        sending?: string[];
+        /** @description Country in ISO 3166-1 alpha-2 format (2 letters) */
+        country?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Fetch sending options for company bid */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Endpoint'][];
+        };
+      };
+    };
+  };
+  getV1LookupConsumers: {
+    parameters: {
+      query?: {
+        /** @description Social security number */
+        ssn?: string;
+        /** @description Date of birth of recipient for Yes2All queries. Format YYYY-MM-DD */
+        date_of_birth?: string;
+        /** @description Phone number for Yes2All queries. International format (e.g. +4791234123) */
+        phone_number?: string;
+        /** @description Email address of recipient for Yes2All queries */
+        email?: string;
+        /** @description First name of recipient for Yes2All queries */
+        first_name?: string;
+        /** @description Last name of recipient for Yes2All queries */
+        last_name?: string;
+        /** @description Postal code of recipient for Yes2All queries */
+        postal_code?: string;
+        /** @description City/post office of recipient for Yes2All queries */
+        city?: string;
+        /** @description Reference number for Yes2All queries */
+        reference_number?: string;
+        /** @description eFaktura ID for Yes2All queries */
+        efaktura_identifier?: string;
+        /**
+         * @description What registries to check from. Possible values:
+         *                                                     dpi,yes2all
+         */
+        routes?: string[];
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Lookup for consumer recipients */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Consumer'];
+        };
+      };
+    };
+  };
+  getV1LookupReceivers: {
+    parameters: {
+      query: {
+        /** @description Networks to search from eg. PEPPOL, INTERNAL, EXTERNAL */
+        network: string[];
+        /** @description Full Electronic Address eg: 0192:123456789 */
+        eia?: string;
+        /** @description Business identifier */
+        bid?: string;
+        /** @description Company name */
+        name?: string;
+        /** @description Company country in ISO 3166-1 alpha-2 format (2 letters) */
+        country?: string[];
+        /** @description Document types */
+        document_type?: string[];
+        /** @description Allow lookup to use generated eia variations, when no hits are found using the given eia */
+        allow_eia_variants?: boolean;
+        /** @description Page to fetch */
+        page?: number;
+        /** @description Number of items per page, values up to 100 supported */
+        per_page?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Lookup for B2B document receivers */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_LookupEntryReceiver'][];
+        };
+      };
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+    };
+  };
+  getV1Jwk: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description List the public keys of this API */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_JWKEntries'][];
+        };
+      };
+    };
+  };
+  getV1DefinitionsOperators: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description List operators */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Operator'][];
+        };
+      };
+    };
+  };
+  getV1DefinitionsDetectChecks: {
+    parameters: {
+      query?: {
+        /** @description Filter definitions by checks. Possible values:  SUPPLIER_ACTIVATION, BANK_ACCOUNT_CHANGED, SENDER_BID_STATUS, SENDER_WARNING_LIST, VAT */
+        checks?: (
+          | 'SUPPLIER_ACTIVATION'
+          | 'BANK_ACCOUNT_CHANGED'
+          | 'SENDER_BID_STATUS'
+          | 'SENDER_WARNING_LIST'
+          | 'VAT'
+        )[];
+        /** @description Filter only definitions of interest. Possible values:  name, friendly_name, friendly_names, title, titles, description, descriptions, doc_description, resource_type, scope, scopes, sources, metadata, possible_results */
+        check_attributes?: (
+          | 'name'
+          | 'friendly_name'
+          | 'friendly_names'
+          | 'title'
+          | 'titles'
+          | 'description'
+          | 'descriptions'
+          | 'doc_description'
+          | 'resource_type'
+          | 'scope'
+          | 'scopes'
+          | 'sources'
+          | 'metadata'
+          | 'possible_results'
+        )[];
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CheckDefinitions'];
+        };
+      };
+    };
+  };
+  postV1Users: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['postV1Users'];
+      };
+    };
+    responses: {
+      /** @description Create a User */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_ApiUser'];
+        };
+      };
+    };
+  };
+  getV1Files: {
+    parameters: {
+      query: {
+        /** @description ID of Document */
+        document_id: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description List document files */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_DocumentFileInDocument'];
+        };
+      };
+    };
+  };
+  getV1FilesId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description ID of DocumentFile */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Get file content */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getV1Documents: {
+    parameters: {
+      query?: {
+        /** @description Batch of document IDs. Maximum of 100 per query */
+        ids?: string[];
+        /** @description Received or sent documents */
+        direction?: 'INCOMING' | 'OUTGOING' | 'RECEIVED' | 'SENT';
+        /**
+         * @description List of document types.
+         *                                                         Possible values: UNKNOWN, INVOICE, CREDIT_NOTE, ORDER, ORDER_RESPONSE, CATALOGUE, CATALOGUE_RESPONSE, SELF_BILLING_INVOICE, DESPATCH_ADVICE, RECEIPT, VOUCHER, BANK_FILE, REMINDER, SCAN, INVOICE_RESPONSE, MESSAGE_LEVEL_RESPONSE, EXPRESSION_OF_INTEREST_REQUEST, EXPRESSION_OF_INTEREST_RESPONSE, TENDER_STATUS_REQUEST, CALL_FOR_TENDERS, TENDER, TENDER_RECEIPT, ORDER_CHANGE, ORDER_CANCELLATION
+         */
+        type?: string[];
+        /**
+         * @description List of document states.
+         *                                                         Possible values: PROCESSING, DELIVERED, CONFIRMED_DELIVERY, FAILED
+         */
+        status?: string[];
+        /** @description Creation time */
+        created_at_start?: string;
+        /** @description Creation time */
+        created_at_end?: string;
+        /** @description Document number */
+        number?: string;
+        /** @description Document reference */
+        reference?: string;
+        /** @description Query Documents on multiple fields. (Exact matches on id, reference and number) */
+        query?: string;
+        /**
+         * @description List of fields used for sorting.
+         *       Ascending by default, include "-" before the field name to reverse the order (descending).
+         *       Supported values: **id, type, status, number, reference, created_at, received_at**
+         *       E.g. [-created_at, number]
+         */
+        sort?: string[];
+        /** @description Page to fetch */
+        page?: number;
+        /** @description Number of items per page, values up to 100 supported */
+        per_page?: number;
+        /** @description Fields to return in response */
+        fields?: string[];
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Query documents */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Document'][];
+        };
+      };
+    };
+  };
+  postV1Documents: {
+    parameters: {
+      query?: {
+        /** @description Fields to return in response */
+        fields?: string[];
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'multipart/form-data': {
+          /**
+           * Format: binary
+           * @description File content as a single file
+           */
+          file?: string;
+          /**
+           * Format: binary
+           * @description File content as one of multiple
+           */
+          'files[n][file]'?: string;
+          /**
+           * @description File type
+           * @enum {string}
+           */
+          'files[n][file_type]'?: 'PRIMARY_FILE' | 'ATTACHMENT' | 'OTHER';
+          /** @description Reference to use for the document */
+          'references[n][reference_id]'?: string;
+          /**
+           * @description Type of reference id
+           * @enum {string}
+           */
+          'references[n][reference_id_type]'?:
+            | 'document_id'
+            | 'external_storage_key';
+          /** @description Checksum of the referenced content */
+          'references[n][checksum]'?: string;
+          /**
+           * @description File type
+           * @enum {string}
+           */
+          'references[n][file_type]'?: 'PRIMARY_FILE' | 'ATTACHMENT' | 'OTHER';
+          /**
+           * @description Type of Document
+           * @enum {string}
+           */
+          type?:
+            | 'UNKNOWN'
+            | 'INVOICE'
+            | 'CREDIT_NOTE'
+            | 'ORDER'
+            | 'ORDER_RESPONSE'
+            | 'CATALOGUE'
+            | 'CATALOGUE_RESPONSE'
+            | 'SELF_BILLING_INVOICE'
+            | 'DESPATCH_ADVICE'
+            | 'RECEIPT'
+            | 'VOUCHER'
+            | 'BANK_FILE'
+            | 'REMINDER'
+            | 'SCAN'
+            | 'INVOICE_RESPONSE'
+            | 'MESSAGE_LEVEL_RESPONSE'
+            | 'EXPRESSION_OF_INTEREST_REQUEST'
+            | 'EXPRESSION_OF_INTEREST_RESPONSE'
+            | 'TENDER_STATUS_REQUEST'
+            | 'CALL_FOR_TENDERS'
+            | 'TENDER'
+            | 'TENDER_RECEIPT'
+            | 'ORDER_CHANGE'
+            | 'ORDER_CANCELLATION';
+          /** @description Unique transmission ID */
+          transmission_id?: string;
+          /**
+           * Format: date-time
+           * @description Official transmission timestamp
+           */
+          transmission_at?: string;
+          /** @description External identifier linked to the document */
+          external_id?: string;
+          /** @description Name of Recipient */
+          recipient_name?: string;
+          /** @description Recipient country in ISO 3166-1 alpha-2 format (2 letters) */
+          recipient_country?: string;
+          /** @description Electronic Invoicing Address of the recipient */
+          recipient_eia?: string;
+          /** @description Operator of Recipient */
+          recipient_operator?: string;
+          /** @description Name of Sender */
+          sender_name?: string;
+          /** @description Sender country in ISO 3166-1 alpha-2 format (2 letters) */
+          sender_country?: string;
+          /** @description Electronic Invoicing Address of the sender */
+          sender_eia?: string;
+        };
+      };
+    };
+    responses: {
+      /** @description Create document */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Document'];
+        };
+      };
+      /** @description - **document_duplicate_transmission_id**: The provided transmission_id is already in use */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+    };
+  };
+  getV1DocumentsId: {
+    parameters: {
+      query?: {
+        /** @description Content type for the details. Will return the stored metadata as default. */
+        return_format?: string[];
+        /** @description Fields to return in response */
+        fields?: string[];
+      };
+      header?: never;
+      path: {
+        /** @description ID of Document */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Document details */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Document'];
+        };
+      };
+    };
+  };
+  patchV1DocumentsId: {
+    parameters: {
+      query?: {
+        /** @description Fields to return in response */
+        fields?: string[];
+      };
+      header?: never;
+      path: {
+        /** @description ID of Document */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['patchV1DocumentsId'];
+      };
+    };
+    responses: {
+      /** @description Document updated sucessfully */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description - **document_in_invalid_state**: Document must be in the delivered state */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+    };
+  };
+  getV1DocumentsIdEvents: {
+    parameters: {
+      query?: {
+        /** @description Fields to return in response */
+        fields?: string[];
+      };
+      header?: never;
+      path: {
+        /** @description ID of Document */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Document's events */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_DocumentEvent'];
+        };
+      };
+    };
+  };
+  getV1AnalysisDefinitions: {
+    parameters: {
+      query?: {
+        /** @description Filter definitions by checks. Possible values:  SUPPLIER_ACTIVATION, BANK_ACCOUNT_CHANGED, SENDER_BID_STATUS, SENDER_WARNING_LIST, VAT */
+        checks?: (
+          | 'SUPPLIER_ACTIVATION'
+          | 'BANK_ACCOUNT_CHANGED'
+          | 'SENDER_BID_STATUS'
+          | 'SENDER_WARNING_LIST'
+          | 'VAT'
+        )[];
+        /** @description Filter only definitions of interest. Possible values:  name, friendly_name, friendly_names, title, titles, description, descriptions, doc_description, resource_type, scope, scopes, sources, metadata, possible_results */
+        check_attributes?: (
+          | 'name'
+          | 'friendly_name'
+          | 'friendly_names'
+          | 'title'
+          | 'titles'
+          | 'description'
+          | 'descriptions'
+          | 'doc_description'
+          | 'resource_type'
+          | 'scope'
+          | 'scopes'
+          | 'sources'
+          | 'metadata'
+          | 'possible_results'
+        )[];
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CheckDefinitions'];
+        };
+      };
+    };
+  };
+  postV1Analysis: {
+    parameters: {
+      query: {
+        /** @description The ID of the resource */
+        resource_id: string;
+        /** @description The type of the resource to run checks for */
+        resource_type: 'INVOICE';
+        /** @description Which checks to run: e.g. SUPPLIER_ACTIVATION, BANK_ACCOUNT_CHANGED, SENDER_BID_STATUS, SENDER_WARNING_LIST, VAT */
+        checks_to_run: (
+          | 'SUPPLIER_ACTIVATION'
+          | 'BANK_ACCOUNT_CHANGED'
+          | 'SENDER_BID_STATUS'
+          | 'SENDER_WARNING_LIST'
+          | 'VAT'
+        )[];
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Analysis was triggered and the status is pending */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Analysis'][];
+        };
+      };
+      /** @description Bad request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+      /** @description Resource not found or you don't have access to it */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+    };
+  };
+  getV1AnalysisId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description The ID of the invoice */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /**
+       * @description Possible results:
+       *
+       *     **SUPPLIER_ACTIVATION**
+       *     | <div style="width:150px">Status</div> | <div style="width:150px">Result</div> | <div style="width:390px">Reason</div> | <div style="width:200px">Reason code</div> |
+       *     |------------------|------------------|------------------|-----------------------|
+       *     `                NOT_APPLICABLE`|`NOT_APPLICABLE`|`This is not an invoice. Supplier activation check was not performed.`|`SUPPLIER_ACTIVATION_NOT_AN_INVOICE`|
+       *     `                    RUN_FAILED`|`FAILED`|`Something went wrong when executing the check. Detect could not automatically check if supplier can send electronic invoices.`|`SUPPLIER_ACTIVATION_FAILED`|
+       *     `                       PENDING`||`Check is waiting to be executed.`|`SUPPLIER_ACTIVATION_PENDING`|
+       *     `                NOT_APPLICABLE`|`NOT_APPLICABLE`|`Invoice is not from scan. Supplier activation check was not performed.`|`SUPPLIER_ACTIVATION_INVOICE_NOT_FROM_SCAN`|
+       *     `                RUN_SUCCESSFUL`|`WARNING`|`Sender information is missing from the invoice. Detect could not check if the company can send electronic invoices.`|`SUPPLIER_ACTIVATION_INVALID_INPUT`|
+       *     `                RUN_SUCCESSFUL`|`WARNING`|`According to our data it looks that the company '%{bid}' could also send electronic invoices.`|`SUPPLIER_ACTIVATION_COMPANY_CAN_SEND_ELECTRONIC`|
+       *     `                RUN_SUCCESSFUL`|`OK`|`According to our data, the company '%{bid}' has no record of sending electronic invoices.`|`SUPPLIER_ACTIVATION_COMPANY_CAN_ONLY_SEND_SCAN`
+       *
+       *
+       *     **BANK_ACCOUNT_CHANGED**
+       *     | <div style="width:150px">Status</div> | <div style="width:150px">Result</div> | <div style="width:390px">Reason</div> | <div style="width:200px">Reason code</div> |
+       *     |------------------|------------------|------------------|-----------------------|
+       *     `                NOT_APPLICABLE`|`NOT_APPLICABLE`|`This is not an invoice. Bank account changed check was not performed.`|`BANK_ACCOUNT_CHANGED_NOT_AN_INVOICE`|
+       *     `                    RUN_FAILED`|`FAILED`|`Something went wrong when executing the check. Detect could not automatically check if supplier's bank account has changed.`|`BANK_ACCOUNT_CHANGED_FAILED`|
+       *     `                       PENDING`||`Check is waiting to be executed.`|`BANK_ACCOUNT_CHANGED_PENDING`|
+       *     `                RUN_SUCCESSFUL`|`WARNING`|`No valid bank accounts were found on the invoice. Detect could not check the sender bank account.`|`BANK_ACCOUNT_CHANGED_INVALID_INPUT`|
+       *     `                NOT_APPLICABLE`|`NOT_APPLICABLE`|`No bank account information to check was found on the invoice.`|`BANK_ACCOUNT_CHANGED_NO_BANK_ACCOUNTS`|
+       *     `                RUN_SUCCESSFUL`|`WARNING`|`There are no previously known bank accounts for the sender or use of the data is restricted. Detect could not check if the sender bank account has changed.`|`BANK_ACCOUNT_CHANGED_UNKNOWN`|
+       *     `                RUN_SUCCESSFUL`|`WARNING`|`The bank account %{bank_account} on the invoice is different from what the sender %{bid} has used before.`|`BANK_ACCOUNT_CHANGED_CHANGED`|
+       *     `                RUN_SUCCESSFUL`|`OK`|`The bank account %{bank_account} on the invoice is known to be used by the sender %{bid} before.`|`BANK_ACCOUNT_CHANGED_NOT_CHANGED`
+       *
+       *
+       *     **SENDER_BID_STATUS**
+       *     | <div style="width:150px">Status</div> | <div style="width:150px">Result</div> | <div style="width:390px">Reason</div> | <div style="width:200px">Reason code</div> |
+       *     |------------------|------------------|------------------|-----------------------|
+       *     `                NOT_APPLICABLE`|`NOT_APPLICABLE`|`This is not an invoice. Sender BID check was not performed.`|`SENDER_BID_STATUS_NOT_AN_INVOICE`|
+       *     `                    RUN_FAILED`|`FAILED`|`Something went wrong when executing the check.`|`SENDER_BID_STATUS_FAILED`|
+       *     `                NOT_APPLICABLE`|`NOT_APPLICABLE`|`The sender BID status check is not supported for senders from '%{country}'.`|`SENDER_BID_STATUS_COUNTRY_NOT_SUPPORTED`|
+       *     `                RUN_SUCCESSFUL`|`WARNING`|`The sender '%{bid}' was not found in %{registry_name}.`|`SENDER_BID_STATUS_NOT_FOUND`|
+       *     `                RUN_SUCCESSFUL`|`WARNING`|`Invalid sender bid '%{bid}' for registry '%{registry_name}'.`|`SENDER_BID_STATUS_INVALID_BID`|
+       *     `                RUN_SUCCESSFUL`|`WARNING`|`Sender BID is missing from the invoice. Detect could not check sender BusinessID status.`|`SENDER_BID_STATUS_NOT_FOUND_NO_BID`|
+       *     `                RUN_SUCCESSFUL`|`WARNING`|`The sender '%{bid}' was found in %{registry_name}, but has been closed.`|`SENDER_BID_STATUS_INACTIVE`|
+       *     `                RUN_SUCCESSFUL`|`WARNING`|`The sender '%{bid}' was found in %{registry_name}, but is under liquidation (%{liquidation_state}).`|`SENDER_BID_STATUS_UNDER_LIQUIDATION`|
+       *     `                RUN_SUCCESSFUL`|`WARNING`|`The sender '%{bid}' was found in %{registry_name}, but is under reorganization (%{reorganization_state}).`|`SENDER_BID_STATUS_UNDER_REORGANIZATION`|
+       *     `                RUN_SUCCESSFUL`|`WARNING`|`The sender '%{bid}' was found in %{registry_name}, but is bankrupt (%{bankruptcy_state}).`|`SENDER_BID_STATUS_BANKRUPT`|
+       *     `                RUN_SUCCESSFUL`|`WARNING`|`The sender '%{bid}' was found in %{registry_name}, but is on hold (%{on_hold_state}).`|`SENDER_BID_STATUS_ON_HOLD`|
+       *     `                RUN_SUCCESSFUL`|`WARNING`|`The sender '%{bid}' was found in %{registry_name} but is not in the Prepayment register.`|`SENDER_BID_STATUS_PREPAYMENT_REGISTER_NOT_FOUND`|
+       *     `                RUN_SUCCESSFUL`|`OK`|`The sender '%{bid}' was found in %{registry_name} and is in the Prepayment register.`|`SENDER_BID_STATUS_PREPAYMENT_REGISTER_FOUND`|
+       *     `                RUN_SUCCESSFUL`|`OK`|`The sender '%{bid}' was found in %{registry_name}.`|`SENDER_BID_STATUS_FOUND`|
+       *     `                       PENDING`||`Check is waiting to be executed.`|`SENDER_BID_STATUS_PENDING`
+       *
+       *
+       *     **SENDER_WARNING_LIST**
+       *     | <div style="width:150px">Status</div> | <div style="width:150px">Result</div> | <div style="width:390px">Reason</div> | <div style="width:200px">Reason code</div> |
+       *     |------------------|------------------|------------------|-----------------------|
+       *     `                NOT_APPLICABLE`|`NOT_APPLICABLE`|`This is not an invoice. Sender warning list check was not performed.`|`SENDER_WARNING_LIST_NOT_AN_INVOICE`|
+       *     `                    RUN_FAILED`|`FAILED`|`Something went wrong when executing the check. Detect could not automatically check if sender is found in a warning list.`|`SENDER_WARNING_LIST_FAILED`|
+       *     `                       PENDING`||`Check is waiting to be executed.`|`SENDER_WARNING_LIST_PENDING`|
+       *     `                RUN_SUCCESSFUL`|`WARNING`|`Sender information is missing from the invoice. Detect could not check if the invoice sender is found on the warning list or has been reported suspicious.`|`SENDER_WARNING_LIST_INVALID_INPUT`|
+       *     `                RUN_SUCCESSFUL`|`OK`|`The sender '%{bid} - %{name}' was not found in a warning list.`|`SENDER_WARNING_LIST_NOT_FOUND`|
+       *     `                RUN_SUCCESSFUL`|`WARNING`|`The sender '%{found_search_term}' was found from warning list (sources: %{sources}%{links_to_source_warnings}).`|`SENDER_WARNING_LIST_FOUND`|
+       *     `                RUN_SUCCESSFUL`|`WARNING`|`The sender '%{found_search_term}' was found in warning list (sources: %{sources}%{links_to_source_warnings}), this company has been reported by %{reporter_count} Visma customers.`|`SENDER_WARNING_LIST_USER_REPORTED_FOUND`
+       *
+       *
+       *     **VAT**
+       *     | <div style="width:150px">Status</div> | <div style="width:150px">Result</div> | <div style="width:390px">Reason</div> | <div style="width:200px">Reason code</div> |
+       *     |------------------|------------------|------------------|-----------------------|
+       *     `                NOT_APPLICABLE`|`NOT_APPLICABLE`|`This is not an invoice. Sender VAT check was not performed.`|`VAT_NOT_AN_INVOICE`|
+       *     `                    RUN_FAILED`|`FAILED`|`Something went wrong when executing the check. Detect could not automatically check if sender is found in the VAT register.`|`VAT_FAILED`|
+       *     `                       PENDING`||`Check is waiting to be executed.`|`VAT_PENDING`|
+       *     `                RUN_SUCCESSFUL`|`WARNING`|`Invoice is missing information of sender or VAT amount. Detect could not perform sender VAT check.`|`VAT_INVALID_INPUT`|
+       *     `                RUN_SUCCESSFUL`|`WARNING`|`The sender '%{bid}' is not found in VAT registry.`|`VAT_COMPANY_NOT_REGISTERED`|
+       *     `                NOT_APPLICABLE`|`NOT_APPLICABLE`|`No VAT charged in the invoice.`|`VAT_NO_VAT_CHARGED`|
+       *     `                RUN_SUCCESSFUL`|`OK`|`The sender '%{bid}' is found in VAT registry.`|`VAT_COMPANY_REGISTERED`
+       */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Analysis'][];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+      /** @description Invoice not found or you don't have access to it */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_Error'];
+        };
+      };
+    };
+  };
+  getV1PartnerInvoiceDeliveryActionsInbound: {
+    parameters: {
+      query?: {
+        state?: string;
+        /** @description Page to fetch */
+        page?: number;
+        /** @description Number of items per page, values up to 100 supported */
+        per_page?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description List inbound invoice delivery actions */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Partner_HttpApi_Entities_InvoiceEventsReceived'][];
+        };
+      };
+    };
+  };
+  getV1PartnerInvoiceDeliveryActionsOutboundErrors: {
+    parameters: {
+      query: {
+        /** @description Happened after */
+        happened_after: string;
+        /** @description Happened before. Will default to current time. */
+        happened_before?: string;
+        /** @description Page to fetch */
+        page?: number;
+        /** @description Number of items per page, values up to 100 supported */
+        per_page?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description List outbound invoice errors */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Partner_HttpApi_Entities_InvoiceEventsSentError'][];
+        };
+      };
+    };
+  };
+  getV1PartnerInvoiceEventsReceived: {
+    parameters: {
+      query?: {
+        state?: string;
+        /** @description Page to fetch */
+        page?: number;
+        /** @description Number of items per page, values up to 100 supported */
+        per_page?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description List inbound invoice delivery actions */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Partner_HttpApi_Entities_InvoiceEventsReceived'][];
+        };
+      };
+    };
+  };
+  getV1PartnerInvoiceEventsSentErrors: {
+    parameters: {
+      query: {
+        /** @description Happened after */
+        happened_after: string;
+        /** @description Happened before. Will default to current time. */
+        happened_before?: string;
+        /** @description Page to fetch */
+        page?: number;
+        /** @description Number of items per page, values up to 100 supported */
+        per_page?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description List outbound invoice errors */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Partner_HttpApi_Entities_InvoiceEventsSentError'][];
+        };
+      };
+    };
+  };
+  getV1PartnerLookupsCompanies: {
+    parameters: {
+      query: {
+        /** @description Business ids. Maximum number of bids: 10 */
+        bids: string[];
+        /** @description Country in ISO 3166-1 alpha-2 format (2 letters) */
+        country: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description List companies availability */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Partner_HttpApi_Entities_CompanyLookups'][];
+        };
+      };
+    };
+  };
+  getV1PartnerScanServiceLyanthe: {
+    parameters: {
+      query: {
+        /** @description Company id */
+        company_id: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description [EXPERIMENTAL] Fetch Lyanthe scan service information */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['API_Entities_ScanService'];
+        };
+      };
+    };
+  };
+  postV1PartnerScanServiceLyanthe: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['postV1PartnerScanServiceLyanthe'];
+      };
+    };
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  deleteV1PartnerScanServiceLyanthe: {
+    parameters: {
+      query: {
+        /** @description Company id */
+        company_id: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  postV1PartnerTakeovers: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['postV1PartnerTakeovers'];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  postV1PartnerTakeoversTakeoverIdComplete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        takeover_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  deleteV1PartnerTakeoversTakeoverId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        takeover_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getV1FiBankMessagesRiMessages: {
+    parameters: {
+      query: {
+        /** @description Start timestamp */
+        timestamp_start: string;
+        /** @description End timestamp */
+        timestamp_end: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Array of ids, e.g. ["id1", "id2"] */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getV1FiBankMessagesRiMessagesId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Message ID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Get content of single RI message */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  deleteV1FiBankMessagesRiMessagesId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Message ID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Message deleted successfully */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getV1FiBankMessagesSentMessages: {
+    parameters: {
+      query: {
+        /** @description Message Type */
+        message_type: 'SENDERINFO' | 'RECEIVERPROPOSAL';
+        /** @description Start timestamp */
+        timestamp_start: string;
+        /** @description End timestamp */
+        timestamp_end: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Array of ids, e.g. ["id1", "id2"] */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getV1FiBankMessagesSentMessagesId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Message ID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Get content of single message */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getV1FiBankMessagesErrorMessages: {
+    parameters: {
+      query: {
+        /** @description Start timestamp */
+        timestamp_start: string;
+        /** @description End timestamp */
+        timestamp_end: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Array of ids, e.g. ["id1", "id2"] */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getV1FiBankMessagesErrorMessagesId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Message ID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Get content of single error message */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  postV1FiBankMessages: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'multipart/form-data': {
+          /**
+           * Format: binary
+           * @description File content
+           */
+          file: string;
+        };
+      };
+    };
+    responses: {
+      /** @description Message uploaded successfully */
+      204: {
+        headers: {
+          /** @description url for fetching the bank message */
+          Location?: string;
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getV1FiBankMessagesId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Message ID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Get status of sent message */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FiBankMessages_HttpApi_Entities_FiBankMessageStatus'];
+        };
+      };
+    };
+  };
 }

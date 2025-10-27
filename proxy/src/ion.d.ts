@@ -4,4668 +4,4922 @@
  */
 
 export interface paths {
-    "/api/v2/account/transaction-bundle": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Manage your account bundle */
-        get: operations["account_transaction_bundle_retrieve"];
-        put?: never;
-        /** @description Manage your account bundle */
-        post: operations["account_transaction_bundle_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+  '/api/v2/account/transaction-bundle': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/auth/create_auth_token": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["auth_create_auth_token_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** @description Manage your account bundle */
+    get: operations['account_transaction_bundle_retrieve'];
+    put?: never;
+    /** @description Manage your account bundle */
+    post: operations['account_transaction_bundle_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/auth/create_auth_token': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/auth/delete_auth_token/{key}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete: operations["auth_delete_auth_token_destroy"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['auth_create_auth_token_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/auth/delete_auth_token/{key}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/auth/obtain_jwt_token": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * @description Takes a set of user credentials and returns an access and refresh JSON web
-         *     token pair to prove the authentication of those credentials.
-         */
-        post: operations["auth_obtain_jwt_token_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    delete: operations['auth_delete_auth_token_destroy'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/auth/obtain_jwt_token': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/auth/refresh_jwt_token": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * @description Takes a refresh type JSON web token and returns an access type JSON web
-         *     token if the refresh token is valid.
-         */
-        post: operations["auth_refresh_jwt_token_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * @description Takes a set of user credentials and returns an access and refresh JSON web
+     *     token pair to prove the authentication of those credentials.
+     */
+    post: operations['auth_obtain_jwt_token_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/auth/refresh_jwt_token': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/auth/update_password": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["auth_update_password_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * @description Takes a refresh type JSON web token and returns an access type JSON web
+     *     token if the refresh token is valid.
+     */
+    post: operations['auth_refresh_jwt_token_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/auth/update_password': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/auth/user_data": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["auth_user_data_retrieve"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['auth_update_password_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/auth/user_data': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/discover/{identifier}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * @description This endpoint provides minimal information about the presence of the given participant on the network.
-         *
-         *     It checks whether the participant identifier is registered in the SML, and whether the SMP is reachable.
-         *
-         *     This endpoint does not provide any information on document type or processes of the registered participant.
-         */
-        get: operations["Check Participant Presence"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['auth_user_data_retrieve'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/discover/{identifier}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/discover/{identifier}/document-types": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Find the given identifier on the Peppol network, returning a list of all the document type supported by the participant, if found. */
-        get: operations["Discover Participant Document Types"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * @description This endpoint provides minimal information about the presence of the given participant on the network.
+     *
+     *     It checks whether the participant identifier is registered in the SML, and whether the SMP is reachable.
+     *
+     *     This endpoint does not provide any information on document type or processes of the registered participant.
+     */
+    get: operations['Check Participant Presence'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/discover/{identifier}/document-types': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/discover/{identifier}/endpoints": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * @description Find the given identifier on the Peppol network, returning a list of endpoints if found.
-         *
-         *     This endpoint list contains only the minimal information necessary for a technical connection to the endpoint, such as its URL, and the endpoint certificate.
-         */
-        get: operations["Discover Participant Endpoints"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** @description Find the given identifier on the Peppol network, returning a list of all the document type supported by the participant, if found. */
+    get: operations['Discover Participant Document Types'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/discover/{identifier}/endpoints': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/discover/endpoints-for-document": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * @description Parse the uploaded document, and find the endpoint(s) for the corresponding recipient and document type.
-         *
-         *     This requires a full upload of the document, and may therefore not be the most efficient method, but it is provided in the case where the caller does not have the tools required to extract that information itself.
-         *
-         *     The request Content-Type should be application/xml, and the body should be the XML document itself.
-         *
-         *     Returns a list of potential endpoints, as there may be multiple matches. Results are ordered by most-specific-first.
-         */
-        post: operations["Discover Participant Endpoints For Document"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * @description Find the given identifier on the Peppol network, returning a list of endpoints if found.
+     *
+     *     This endpoint list contains only the minimal information necessary for a technical connection to the endpoint, such as its URL, and the endpoint certificate.
+     */
+    get: operations['Discover Participant Endpoints'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/discover/endpoints-for-document': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/organizations": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * @description Organizations, or Trading Entities, are the senders and receivers of documents on the peppol network.
-         *
-         *     Organizations have one or more Peppol Identifiers, such as a Chamber of Commerce number or a VAT number.
-         *
-         *     Users can, depending on their account type and role permissions, send and receive document on behalf of
-         *     zero, one, or multiple organizations.
-         *
-         *     This endpoint manages the organization entries for an account themselves.
-         */
-        get: operations["organizations_list"];
-        put?: never;
-        /**
-         * @description Organizations, or Trading Entities, are the senders and receivers of documents on the peppol network.
-         *
-         *     Organizations have one or more Peppol Identifiers, such as a Chamber of Commerce number or a VAT number.
-         *
-         *     Users can, depending on their account type and role permissions, send and receive document on behalf of
-         *     zero, one, or multiple organizations.
-         *
-         *     This endpoint manages the organization entries for an account themselves.
-         */
-        post: operations["organizations_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * @description Parse the uploaded document, and find the endpoint(s) for the corresponding recipient and document type.
+     *
+     *     This requires a full upload of the document, and may therefore not be the most efficient method, but it is provided in the case where the caller does not have the tools required to extract that information itself.
+     *
+     *     The request Content-Type should be application/xml, and the body should be the XML document itself.
+     *
+     *     Returns a list of potential endpoints, as there may be multiple matches. Results are ordered by most-specific-first.
+     */
+    post: operations['Discover Participant Endpoints For Document'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/organizations': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/organizations/{organization_pk}/identifiers": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * @description Identifiers, or Peppol Identifiers, are the unique values by which organizations are identified on the Peppol Network.
-         *
-         *     An identifier also contains a general scheme. In the Peppol case you should leave this at the default 'iso6523-actorid-upis'.
-         *
-         *     Identifiers themselves, when using iso6523, consist of their own scheme identifier, such as 0106 for Dutch Chamber of
-         *     Commerce, and a value, such as the actual Chamber of Commerce number. For example: 0106:12345678.
-         *
-         *     An organization can have multiple identifiers, but each identifier must be globally unique.
-         *
-         *     The 'verified' value MUST be set to True in order to be able to use this identifier as a sender. You can set it to False if you have a KYC process that has not been completed yet, but wish to add the identifier already.
-         */
-        get: operations["organizations_identifiers_list"];
-        put?: never;
-        /**
-         * @description Identifiers, or Peppol Identifiers, are the unique values by which organizations are identified on the Peppol Network.
-         *
-         *     An identifier also contains a general scheme. In the Peppol case you should leave this at the default 'iso6523-actorid-upis'.
-         *
-         *     Identifiers themselves, when using iso6523, consist of their own scheme identifier, such as 0106 for Dutch Chamber of
-         *     Commerce, and a value, such as the actual Chamber of Commerce number. For example: 0106:12345678.
-         *
-         *     An organization can have multiple identifiers, but each identifier must be globally unique.
-         *
-         *     The 'verified' value MUST be set to True in order to be able to use this identifier as a sender. You can set it to False if you have a KYC process that has not been completed yet, but wish to add the identifier already.
-         */
-        post: operations["organizations_identifiers_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * @description Organizations, or Trading Entities, are the senders and receivers of documents on the peppol network.
+     *
+     *     Organizations have one or more Peppol Identifiers, such as a Chamber of Commerce number or a VAT number.
+     *
+     *     Users can, depending on their account type and role permissions, send and receive document on behalf of
+     *     zero, one, or multiple organizations.
+     *
+     *     This endpoint manages the organization entries for an account themselves.
+     */
+    get: operations['organizations_list'];
+    put?: never;
+    /**
+     * @description Organizations, or Trading Entities, are the senders and receivers of documents on the peppol network.
+     *
+     *     Organizations have one or more Peppol Identifiers, such as a Chamber of Commerce number or a VAT number.
+     *
+     *     Users can, depending on their account type and role permissions, send and receive document on behalf of
+     *     zero, one, or multiple organizations.
+     *
+     *     This endpoint manages the organization entries for an account themselves.
+     */
+    post: operations['organizations_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/organizations/{organization_pk}/identifiers': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/organizations/{organization_pk}/identifiers/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * @description Identifiers, or Peppol Identifiers, are the unique values by which organizations are identified on the Peppol Network.
-         *
-         *     An identifier also contains a general scheme. In the Peppol case you should leave this at the default 'iso6523-actorid-upis'.
-         *
-         *     Identifiers themselves, when using iso6523, consist of their own scheme identifier, such as 0106 for Dutch Chamber of
-         *     Commerce, and a value, such as the actual Chamber of Commerce number. For example: 0106:12345678.
-         *
-         *     An organization can have multiple identifiers, but each identifier must be globally unique.
-         *
-         *     The 'verified' value MUST be set to True in order to be able to use this identifier as a sender. You can set it to False if you have a KYC process that has not been completed yet, but wish to add the identifier already.
-         */
-        get: operations["organizations_identifiers_retrieve"];
-        /**
-         * @description Identifiers, or Peppol Identifiers, are the unique values by which organizations are identified on the Peppol Network.
-         *
-         *     An identifier also contains a general scheme. In the Peppol case you should leave this at the default 'iso6523-actorid-upis'.
-         *
-         *     Identifiers themselves, when using iso6523, consist of their own scheme identifier, such as 0106 for Dutch Chamber of
-         *     Commerce, and a value, such as the actual Chamber of Commerce number. For example: 0106:12345678.
-         *
-         *     An organization can have multiple identifiers, but each identifier must be globally unique.
-         *
-         *     The 'verified' value MUST be set to True in order to be able to use this identifier as a sender. You can set it to False if you have a KYC process that has not been completed yet, but wish to add the identifier already.
-         */
-        put: operations["organizations_identifiers_update"];
-        post?: never;
-        /**
-         * @description Identifiers, or Peppol Identifiers, are the unique values by which organizations are identified on the Peppol Network.
-         *
-         *     An identifier also contains a general scheme. In the Peppol case you should leave this at the default 'iso6523-actorid-upis'.
-         *
-         *     Identifiers themselves, when using iso6523, consist of their own scheme identifier, such as 0106 for Dutch Chamber of
-         *     Commerce, and a value, such as the actual Chamber of Commerce number. For example: 0106:12345678.
-         *
-         *     An organization can have multiple identifiers, but each identifier must be globally unique.
-         *
-         *     The 'verified' value MUST be set to True in order to be able to use this identifier as a sender. You can set it to False if you have a KYC process that has not been completed yet, but wish to add the identifier already.
-         */
-        delete: operations["organizations_identifiers_destroy"];
-        options?: never;
-        head?: never;
-        /**
-         * @description Identifiers, or Peppol Identifiers, are the unique values by which organizations are identified on the Peppol Network.
-         *
-         *     An identifier also contains a general scheme. In the Peppol case you should leave this at the default 'iso6523-actorid-upis'.
-         *
-         *     Identifiers themselves, when using iso6523, consist of their own scheme identifier, such as 0106 for Dutch Chamber of
-         *     Commerce, and a value, such as the actual Chamber of Commerce number. For example: 0106:12345678.
-         *
-         *     An organization can have multiple identifiers, but each identifier must be globally unique.
-         *
-         *     The 'verified' value MUST be set to True in order to be able to use this identifier as a sender. You can set it to False if you have a KYC process that has not been completed yet, but wish to add the identifier already.
-         */
-        patch: operations["organizations_identifiers_partial_update"];
-        trace?: never;
+    /**
+     * @description Identifiers, or Peppol Identifiers, are the unique values by which organizations are identified on the Peppol Network.
+     *
+     *     An identifier also contains a general scheme. In the Peppol case you should leave this at the default 'iso6523-actorid-upis'.
+     *
+     *     Identifiers themselves, when using iso6523, consist of their own scheme identifier, such as 0106 for Dutch Chamber of
+     *     Commerce, and a value, such as the actual Chamber of Commerce number. For example: 0106:12345678.
+     *
+     *     An organization can have multiple identifiers, but each identifier must be globally unique.
+     *
+     *     The 'verified' value MUST be set to True in order to be able to use this identifier as a sender. You can set it to False if you have a KYC process that has not been completed yet, but wish to add the identifier already.
+     */
+    get: operations['organizations_identifiers_list'];
+    put?: never;
+    /**
+     * @description Identifiers, or Peppol Identifiers, are the unique values by which organizations are identified on the Peppol Network.
+     *
+     *     An identifier also contains a general scheme. In the Peppol case you should leave this at the default 'iso6523-actorid-upis'.
+     *
+     *     Identifiers themselves, when using iso6523, consist of their own scheme identifier, such as 0106 for Dutch Chamber of
+     *     Commerce, and a value, such as the actual Chamber of Commerce number. For example: 0106:12345678.
+     *
+     *     An organization can have multiple identifiers, but each identifier must be globally unique.
+     *
+     *     The 'verified' value MUST be set to True in order to be able to use this identifier as a sender. You can set it to False if you have a KYC process that has not been completed yet, but wish to add the identifier already.
+     */
+    post: operations['organizations_identifiers_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/organizations/{organization_pk}/identifiers/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/organizations/{organization_pk}/logs": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * @description Base class for specific features we want to have consistently
-         *     throughout the entire API, such as pagination that can be disabled
-         *     ('disable_pagination' parameter)
-         */
-        get: operations["organizations_logs_list"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * @description Identifiers, or Peppol Identifiers, are the unique values by which organizations are identified on the Peppol Network.
+     *
+     *     An identifier also contains a general scheme. In the Peppol case you should leave this at the default 'iso6523-actorid-upis'.
+     *
+     *     Identifiers themselves, when using iso6523, consist of their own scheme identifier, such as 0106 for Dutch Chamber of
+     *     Commerce, and a value, such as the actual Chamber of Commerce number. For example: 0106:12345678.
+     *
+     *     An organization can have multiple identifiers, but each identifier must be globally unique.
+     *
+     *     The 'verified' value MUST be set to True in order to be able to use this identifier as a sender. You can set it to False if you have a KYC process that has not been completed yet, but wish to add the identifier already.
+     */
+    get: operations['organizations_identifiers_retrieve'];
+    /**
+     * @description Identifiers, or Peppol Identifiers, are the unique values by which organizations are identified on the Peppol Network.
+     *
+     *     An identifier also contains a general scheme. In the Peppol case you should leave this at the default 'iso6523-actorid-upis'.
+     *
+     *     Identifiers themselves, when using iso6523, consist of their own scheme identifier, such as 0106 for Dutch Chamber of
+     *     Commerce, and a value, such as the actual Chamber of Commerce number. For example: 0106:12345678.
+     *
+     *     An organization can have multiple identifiers, but each identifier must be globally unique.
+     *
+     *     The 'verified' value MUST be set to True in order to be able to use this identifier as a sender. You can set it to False if you have a KYC process that has not been completed yet, but wish to add the identifier already.
+     */
+    put: operations['organizations_identifiers_update'];
+    post?: never;
+    /**
+     * @description Identifiers, or Peppol Identifiers, are the unique values by which organizations are identified on the Peppol Network.
+     *
+     *     An identifier also contains a general scheme. In the Peppol case you should leave this at the default 'iso6523-actorid-upis'.
+     *
+     *     Identifiers themselves, when using iso6523, consist of their own scheme identifier, such as 0106 for Dutch Chamber of
+     *     Commerce, and a value, such as the actual Chamber of Commerce number. For example: 0106:12345678.
+     *
+     *     An organization can have multiple identifiers, but each identifier must be globally unique.
+     *
+     *     The 'verified' value MUST be set to True in order to be able to use this identifier as a sender. You can set it to False if you have a KYC process that has not been completed yet, but wish to add the identifier already.
+     */
+    delete: operations['organizations_identifiers_destroy'];
+    options?: never;
+    head?: never;
+    /**
+     * @description Identifiers, or Peppol Identifiers, are the unique values by which organizations are identified on the Peppol Network.
+     *
+     *     An identifier also contains a general scheme. In the Peppol case you should leave this at the default 'iso6523-actorid-upis'.
+     *
+     *     Identifiers themselves, when using iso6523, consist of their own scheme identifier, such as 0106 for Dutch Chamber of
+     *     Commerce, and a value, such as the actual Chamber of Commerce number. For example: 0106:12345678.
+     *
+     *     An organization can have multiple identifiers, but each identifier must be globally unique.
+     *
+     *     The 'verified' value MUST be set to True in order to be able to use this identifier as a sender. You can set it to False if you have a KYC process that has not been completed yet, but wish to add the identifier already.
+     */
+    patch: operations['organizations_identifiers_partial_update'];
+    trace?: never;
+  };
+  '/api/v2/organizations/{organization_pk}/logs': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/organizations/{organization_pk}/logs/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * @description Base class for specific features we want to have consistently
-         *     throughout the entire API, such as pagination that can be disabled
-         *     ('disable_pagination' parameter)
-         */
-        get: operations["organizations_logs_retrieve"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * @description Base class for specific features we want to have consistently
+     *     throughout the entire API, such as pagination that can be disabled
+     *     ('disable_pagination' parameter)
+     */
+    get: operations['organizations_logs_list'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/organizations/{organization_pk}/logs/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/organizations/{organization_pk}/receive-trigger-options": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["organizations_receive_trigger_options_retrieve"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * @description Base class for specific features we want to have consistently
+     *     throughout the entire API, such as pagination that can be disabled
+     *     ('disable_pagination' parameter)
+     */
+    get: operations['organizations_logs_retrieve'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/organizations/{organization_pk}/receive-trigger-options': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/organizations/{organization_pk}/receive-triggers": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * @description Receive triggers are actions that ion-AP can take when an organization receives a document on the peppol network.
-         *
-         *     To configure a receive trigger, you must set a trigger type and, depending on the type, a number of arguments.
-         *
-         *     Note that these are likely to be expanded, and possibly changed, in the near future. If you have any specific requests,
-         *     please let us know.
-         *
-         *     There are currently two trigger types implemented:
-         *
-         *     - API_CALL: ion-ap performs a web API call to a remote endpoint, to notify of the received document.
-         *     - SEND_EMAIL: ion-ap sends an email to a configured e-mail address, with a notification that a document has been received.
-         *
-         *     API_CALL has the following arguments:
-         *     - url: The remote URL of the call
-         *     - method: GET or POST: the HTTP method that the call will use
-         *     - post_data: one of the following values:
-         *       - document: The HTTP POST method will set the Content-Type header to application/xml, and POST the received document
-         *       - sbdh: The HTTP POST method will set the Content-Type header to application/xml, and POST the entire received SBDH
-         *       - fetch-url-transaction: The HTTP POST method will send an x-www-form-urlencoded data object, with a single field containing the API Resource URL to fetch the transaction data. The name of the field defaults to 'data', but can be set with the argument 'post_field_name'
-         *     - post_field_name: For post_data arguments that send an x-www-form-urlencoded form, this argument specified the name of the field containing the configured data. Defaults to 'data'.
-         *
-         *     SEND_EMAIL has the following arguments:
-         *     - recipient: The email address to which the email messages are sent
-         *     - attach_document: The received document will be attached to the email (as an xml file)
-         *     - attach_sbdh: The full SBDH of the received document will be attached to the email (as an xml file)
-         *     - attach_pdf: A pdf conversion of the received document will be attached to the email (experimental, only for invoices)
-         *     - subject: A template for the subject of the email, defaults to "Peppol document received for %RECEIVER_NAME% from %SENDER_NAME%"
-         *     - body: A template for the body of the email, defaults to "You have received a peppol document from %SENDER_NAME%. The API resource URL is: %API_RESOURCE_URL%"
-         *
-         *     The email subject and body are templates, in which the following keywords are automatically replaced:
-         *     - %SENDER_NAME%: The name of the sending organization
-         *     - %RECEIVER_NAME%: The name of the receiving organization
-         *     - %API_RESOURCE_URL%: The API Resource URL that returns the details of the receive transaction
-         *
-         *
-         *     There are also arguments to all trigger types:
-         *     - only_on_document_type: <string> Only execute the trigger when the full document type from the transaction matches
-         *     - only_on_xml_type: <string> only execute the trigger when the XML of the document in the transaction matches the (optional) namespace and root element, format: xml namespace::<root element>. Yopu can use * to match all XML namespaces, or all root elements (e.g. *::Invoice, or urn:ns:example::*)
-         *     - only_on_sender_id: <string> only execute the trigger if the sender matches this identifier
-         *     - only_on_receiver_id: <string> only execute the trigger if the receiver matches this identifier
-         *     - only_on_no_other_triggers: <boolean> only executes if there were no other triggers executed for this transaction. This excepts other triggers that had this requirement set (i.e. if there are multiple triggers with this setting set, they are all executed).
-         *
-         *     If you specify multiple 'only_on' arguments for a trigger, they must all match in order for the trigger to be executed; their values are a logical AND.
-         *     If you want a logical OR, you can specify multiple triggers, where only the 'only_on' values differ.
-         *
-         *     Note that there is a difference between not specifying any only_on arguments (the trigger will always be executed) and using 'only_otherwise' (the trigger will only be executed if no other triggers were).
-         *
-         *     Example:
-         */
-        get: operations["organizations_receive_triggers_list"];
-        put?: never;
-        /**
-         * @description Receive triggers are actions that ion-AP can take when an organization receives a document on the peppol network.
-         *
-         *     To configure a receive trigger, you must set a trigger type and, depending on the type, a number of arguments.
-         *
-         *     Note that these are likely to be expanded, and possibly changed, in the near future. If you have any specific requests,
-         *     please let us know.
-         *
-         *     There are currently two trigger types implemented:
-         *
-         *     - API_CALL: ion-ap performs a web API call to a remote endpoint, to notify of the received document.
-         *     - SEND_EMAIL: ion-ap sends an email to a configured e-mail address, with a notification that a document has been received.
-         *
-         *     API_CALL has the following arguments:
-         *     - url: The remote URL of the call
-         *     - method: GET or POST: the HTTP method that the call will use
-         *     - post_data: one of the following values:
-         *       - document: The HTTP POST method will set the Content-Type header to application/xml, and POST the received document
-         *       - sbdh: The HTTP POST method will set the Content-Type header to application/xml, and POST the entire received SBDH
-         *       - fetch-url-transaction: The HTTP POST method will send an x-www-form-urlencoded data object, with a single field containing the API Resource URL to fetch the transaction data. The name of the field defaults to 'data', but can be set with the argument 'post_field_name'
-         *     - post_field_name: For post_data arguments that send an x-www-form-urlencoded form, this argument specified the name of the field containing the configured data. Defaults to 'data'.
-         *
-         *     SEND_EMAIL has the following arguments:
-         *     - recipient: The email address to which the email messages are sent
-         *     - attach_document: The received document will be attached to the email (as an xml file)
-         *     - attach_sbdh: The full SBDH of the received document will be attached to the email (as an xml file)
-         *     - attach_pdf: A pdf conversion of the received document will be attached to the email (experimental, only for invoices)
-         *     - subject: A template for the subject of the email, defaults to "Peppol document received for %RECEIVER_NAME% from %SENDER_NAME%"
-         *     - body: A template for the body of the email, defaults to "You have received a peppol document from %SENDER_NAME%. The API resource URL is: %API_RESOURCE_URL%"
-         *
-         *     The email subject and body are templates, in which the following keywords are automatically replaced:
-         *     - %SENDER_NAME%: The name of the sending organization
-         *     - %RECEIVER_NAME%: The name of the receiving organization
-         *     - %API_RESOURCE_URL%: The API Resource URL that returns the details of the receive transaction
-         *
-         *
-         *     There are also arguments to all trigger types:
-         *     - only_on_document_type: <string> Only execute the trigger when the full document type from the transaction matches
-         *     - only_on_xml_type: <string> only execute the trigger when the XML of the document in the transaction matches the (optional) namespace and root element, format: xml namespace::<root element>. Yopu can use * to match all XML namespaces, or all root elements (e.g. *::Invoice, or urn:ns:example::*)
-         *     - only_on_sender_id: <string> only execute the trigger if the sender matches this identifier
-         *     - only_on_receiver_id: <string> only execute the trigger if the receiver matches this identifier
-         *     - only_on_no_other_triggers: <boolean> only executes if there were no other triggers executed for this transaction. This excepts other triggers that had this requirement set (i.e. if there are multiple triggers with this setting set, they are all executed).
-         *
-         *     If you specify multiple 'only_on' arguments for a trigger, they must all match in order for the trigger to be executed; their values are a logical AND.
-         *     If you want a logical OR, you can specify multiple triggers, where only the 'only_on' values differ.
-         *
-         *     Note that there is a difference between not specifying any only_on arguments (the trigger will always be executed) and using 'only_otherwise' (the trigger will only be executed if no other triggers were).
-         *
-         *     Example:
-         */
-        post: operations["organizations_receive_triggers_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['organizations_receive_trigger_options_retrieve'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/organizations/{organization_pk}/receive-triggers': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/organizations/{organization_pk}/receive-triggers/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * @description Receive triggers are actions that ion-AP can take when an organization receives a document on the peppol network.
-         *
-         *     To configure a receive trigger, you must set a trigger type and, depending on the type, a number of arguments.
-         *
-         *     Note that these are likely to be expanded, and possibly changed, in the near future. If you have any specific requests,
-         *     please let us know.
-         *
-         *     There are currently two trigger types implemented:
-         *
-         *     - API_CALL: ion-ap performs a web API call to a remote endpoint, to notify of the received document.
-         *     - SEND_EMAIL: ion-ap sends an email to a configured e-mail address, with a notification that a document has been received.
-         *
-         *     API_CALL has the following arguments:
-         *     - url: The remote URL of the call
-         *     - method: GET or POST: the HTTP method that the call will use
-         *     - post_data: one of the following values:
-         *       - document: The HTTP POST method will set the Content-Type header to application/xml, and POST the received document
-         *       - sbdh: The HTTP POST method will set the Content-Type header to application/xml, and POST the entire received SBDH
-         *       - fetch-url-transaction: The HTTP POST method will send an x-www-form-urlencoded data object, with a single field containing the API Resource URL to fetch the transaction data. The name of the field defaults to 'data', but can be set with the argument 'post_field_name'
-         *     - post_field_name: For post_data arguments that send an x-www-form-urlencoded form, this argument specified the name of the field containing the configured data. Defaults to 'data'.
-         *
-         *     SEND_EMAIL has the following arguments:
-         *     - recipient: The email address to which the email messages are sent
-         *     - attach_document: The received document will be attached to the email (as an xml file)
-         *     - attach_sbdh: The full SBDH of the received document will be attached to the email (as an xml file)
-         *     - attach_pdf: A pdf conversion of the received document will be attached to the email (experimental, only for invoices)
-         *     - subject: A template for the subject of the email, defaults to "Peppol document received for %RECEIVER_NAME% from %SENDER_NAME%"
-         *     - body: A template for the body of the email, defaults to "You have received a peppol document from %SENDER_NAME%. The API resource URL is: %API_RESOURCE_URL%"
-         *
-         *     The email subject and body are templates, in which the following keywords are automatically replaced:
-         *     - %SENDER_NAME%: The name of the sending organization
-         *     - %RECEIVER_NAME%: The name of the receiving organization
-         *     - %API_RESOURCE_URL%: The API Resource URL that returns the details of the receive transaction
-         *
-         *
-         *     There are also arguments to all trigger types:
-         *     - only_on_document_type: <string> Only execute the trigger when the full document type from the transaction matches
-         *     - only_on_xml_type: <string> only execute the trigger when the XML of the document in the transaction matches the (optional) namespace and root element, format: xml namespace::<root element>. Yopu can use * to match all XML namespaces, or all root elements (e.g. *::Invoice, or urn:ns:example::*)
-         *     - only_on_sender_id: <string> only execute the trigger if the sender matches this identifier
-         *     - only_on_receiver_id: <string> only execute the trigger if the receiver matches this identifier
-         *     - only_on_no_other_triggers: <boolean> only executes if there were no other triggers executed for this transaction. This excepts other triggers that had this requirement set (i.e. if there are multiple triggers with this setting set, they are all executed).
-         *
-         *     If you specify multiple 'only_on' arguments for a trigger, they must all match in order for the trigger to be executed; their values are a logical AND.
-         *     If you want a logical OR, you can specify multiple triggers, where only the 'only_on' values differ.
-         *
-         *     Note that there is a difference between not specifying any only_on arguments (the trigger will always be executed) and using 'only_otherwise' (the trigger will only be executed if no other triggers were).
-         *
-         *     Example:
-         */
-        get: operations["organizations_receive_triggers_retrieve"];
-        /**
-         * @description Receive triggers are actions that ion-AP can take when an organization receives a document on the peppol network.
-         *
-         *     To configure a receive trigger, you must set a trigger type and, depending on the type, a number of arguments.
-         *
-         *     Note that these are likely to be expanded, and possibly changed, in the near future. If you have any specific requests,
-         *     please let us know.
-         *
-         *     There are currently two trigger types implemented:
-         *
-         *     - API_CALL: ion-ap performs a web API call to a remote endpoint, to notify of the received document.
-         *     - SEND_EMAIL: ion-ap sends an email to a configured e-mail address, with a notification that a document has been received.
-         *
-         *     API_CALL has the following arguments:
-         *     - url: The remote URL of the call
-         *     - method: GET or POST: the HTTP method that the call will use
-         *     - post_data: one of the following values:
-         *       - document: The HTTP POST method will set the Content-Type header to application/xml, and POST the received document
-         *       - sbdh: The HTTP POST method will set the Content-Type header to application/xml, and POST the entire received SBDH
-         *       - fetch-url-transaction: The HTTP POST method will send an x-www-form-urlencoded data object, with a single field containing the API Resource URL to fetch the transaction data. The name of the field defaults to 'data', but can be set with the argument 'post_field_name'
-         *     - post_field_name: For post_data arguments that send an x-www-form-urlencoded form, this argument specified the name of the field containing the configured data. Defaults to 'data'.
-         *
-         *     SEND_EMAIL has the following arguments:
-         *     - recipient: The email address to which the email messages are sent
-         *     - attach_document: The received document will be attached to the email (as an xml file)
-         *     - attach_sbdh: The full SBDH of the received document will be attached to the email (as an xml file)
-         *     - attach_pdf: A pdf conversion of the received document will be attached to the email (experimental, only for invoices)
-         *     - subject: A template for the subject of the email, defaults to "Peppol document received for %RECEIVER_NAME% from %SENDER_NAME%"
-         *     - body: A template for the body of the email, defaults to "You have received a peppol document from %SENDER_NAME%. The API resource URL is: %API_RESOURCE_URL%"
-         *
-         *     The email subject and body are templates, in which the following keywords are automatically replaced:
-         *     - %SENDER_NAME%: The name of the sending organization
-         *     - %RECEIVER_NAME%: The name of the receiving organization
-         *     - %API_RESOURCE_URL%: The API Resource URL that returns the details of the receive transaction
-         *
-         *
-         *     There are also arguments to all trigger types:
-         *     - only_on_document_type: <string> Only execute the trigger when the full document type from the transaction matches
-         *     - only_on_xml_type: <string> only execute the trigger when the XML of the document in the transaction matches the (optional) namespace and root element, format: xml namespace::<root element>. Yopu can use * to match all XML namespaces, or all root elements (e.g. *::Invoice, or urn:ns:example::*)
-         *     - only_on_sender_id: <string> only execute the trigger if the sender matches this identifier
-         *     - only_on_receiver_id: <string> only execute the trigger if the receiver matches this identifier
-         *     - only_on_no_other_triggers: <boolean> only executes if there were no other triggers executed for this transaction. This excepts other triggers that had this requirement set (i.e. if there are multiple triggers with this setting set, they are all executed).
-         *
-         *     If you specify multiple 'only_on' arguments for a trigger, they must all match in order for the trigger to be executed; their values are a logical AND.
-         *     If you want a logical OR, you can specify multiple triggers, where only the 'only_on' values differ.
-         *
-         *     Note that there is a difference between not specifying any only_on arguments (the trigger will always be executed) and using 'only_otherwise' (the trigger will only be executed if no other triggers were).
-         *
-         *     Example:
-         */
-        put: operations["organizations_receive_triggers_update"];
-        post?: never;
-        /**
-         * @description Receive triggers are actions that ion-AP can take when an organization receives a document on the peppol network.
-         *
-         *     To configure a receive trigger, you must set a trigger type and, depending on the type, a number of arguments.
-         *
-         *     Note that these are likely to be expanded, and possibly changed, in the near future. If you have any specific requests,
-         *     please let us know.
-         *
-         *     There are currently two trigger types implemented:
-         *
-         *     - API_CALL: ion-ap performs a web API call to a remote endpoint, to notify of the received document.
-         *     - SEND_EMAIL: ion-ap sends an email to a configured e-mail address, with a notification that a document has been received.
-         *
-         *     API_CALL has the following arguments:
-         *     - url: The remote URL of the call
-         *     - method: GET or POST: the HTTP method that the call will use
-         *     - post_data: one of the following values:
-         *       - document: The HTTP POST method will set the Content-Type header to application/xml, and POST the received document
-         *       - sbdh: The HTTP POST method will set the Content-Type header to application/xml, and POST the entire received SBDH
-         *       - fetch-url-transaction: The HTTP POST method will send an x-www-form-urlencoded data object, with a single field containing the API Resource URL to fetch the transaction data. The name of the field defaults to 'data', but can be set with the argument 'post_field_name'
-         *     - post_field_name: For post_data arguments that send an x-www-form-urlencoded form, this argument specified the name of the field containing the configured data. Defaults to 'data'.
-         *
-         *     SEND_EMAIL has the following arguments:
-         *     - recipient: The email address to which the email messages are sent
-         *     - attach_document: The received document will be attached to the email (as an xml file)
-         *     - attach_sbdh: The full SBDH of the received document will be attached to the email (as an xml file)
-         *     - attach_pdf: A pdf conversion of the received document will be attached to the email (experimental, only for invoices)
-         *     - subject: A template for the subject of the email, defaults to "Peppol document received for %RECEIVER_NAME% from %SENDER_NAME%"
-         *     - body: A template for the body of the email, defaults to "You have received a peppol document from %SENDER_NAME%. The API resource URL is: %API_RESOURCE_URL%"
-         *
-         *     The email subject and body are templates, in which the following keywords are automatically replaced:
-         *     - %SENDER_NAME%: The name of the sending organization
-         *     - %RECEIVER_NAME%: The name of the receiving organization
-         *     - %API_RESOURCE_URL%: The API Resource URL that returns the details of the receive transaction
-         *
-         *
-         *     There are also arguments to all trigger types:
-         *     - only_on_document_type: <string> Only execute the trigger when the full document type from the transaction matches
-         *     - only_on_xml_type: <string> only execute the trigger when the XML of the document in the transaction matches the (optional) namespace and root element, format: xml namespace::<root element>. Yopu can use * to match all XML namespaces, or all root elements (e.g. *::Invoice, or urn:ns:example::*)
-         *     - only_on_sender_id: <string> only execute the trigger if the sender matches this identifier
-         *     - only_on_receiver_id: <string> only execute the trigger if the receiver matches this identifier
-         *     - only_on_no_other_triggers: <boolean> only executes if there were no other triggers executed for this transaction. This excepts other triggers that had this requirement set (i.e. if there are multiple triggers with this setting set, they are all executed).
-         *
-         *     If you specify multiple 'only_on' arguments for a trigger, they must all match in order for the trigger to be executed; their values are a logical AND.
-         *     If you want a logical OR, you can specify multiple triggers, where only the 'only_on' values differ.
-         *
-         *     Note that there is a difference between not specifying any only_on arguments (the trigger will always be executed) and using 'only_otherwise' (the trigger will only be executed if no other triggers were).
-         *
-         *     Example:
-         */
-        delete: operations["organizations_receive_triggers_destroy"];
-        options?: never;
-        head?: never;
-        /**
-         * @description Receive triggers are actions that ion-AP can take when an organization receives a document on the peppol network.
-         *
-         *     To configure a receive trigger, you must set a trigger type and, depending on the type, a number of arguments.
-         *
-         *     Note that these are likely to be expanded, and possibly changed, in the near future. If you have any specific requests,
-         *     please let us know.
-         *
-         *     There are currently two trigger types implemented:
-         *
-         *     - API_CALL: ion-ap performs a web API call to a remote endpoint, to notify of the received document.
-         *     - SEND_EMAIL: ion-ap sends an email to a configured e-mail address, with a notification that a document has been received.
-         *
-         *     API_CALL has the following arguments:
-         *     - url: The remote URL of the call
-         *     - method: GET or POST: the HTTP method that the call will use
-         *     - post_data: one of the following values:
-         *       - document: The HTTP POST method will set the Content-Type header to application/xml, and POST the received document
-         *       - sbdh: The HTTP POST method will set the Content-Type header to application/xml, and POST the entire received SBDH
-         *       - fetch-url-transaction: The HTTP POST method will send an x-www-form-urlencoded data object, with a single field containing the API Resource URL to fetch the transaction data. The name of the field defaults to 'data', but can be set with the argument 'post_field_name'
-         *     - post_field_name: For post_data arguments that send an x-www-form-urlencoded form, this argument specified the name of the field containing the configured data. Defaults to 'data'.
-         *
-         *     SEND_EMAIL has the following arguments:
-         *     - recipient: The email address to which the email messages are sent
-         *     - attach_document: The received document will be attached to the email (as an xml file)
-         *     - attach_sbdh: The full SBDH of the received document will be attached to the email (as an xml file)
-         *     - attach_pdf: A pdf conversion of the received document will be attached to the email (experimental, only for invoices)
-         *     - subject: A template for the subject of the email, defaults to "Peppol document received for %RECEIVER_NAME% from %SENDER_NAME%"
-         *     - body: A template for the body of the email, defaults to "You have received a peppol document from %SENDER_NAME%. The API resource URL is: %API_RESOURCE_URL%"
-         *
-         *     The email subject and body are templates, in which the following keywords are automatically replaced:
-         *     - %SENDER_NAME%: The name of the sending organization
-         *     - %RECEIVER_NAME%: The name of the receiving organization
-         *     - %API_RESOURCE_URL%: The API Resource URL that returns the details of the receive transaction
-         *
-         *
-         *     There are also arguments to all trigger types:
-         *     - only_on_document_type: <string> Only execute the trigger when the full document type from the transaction matches
-         *     - only_on_xml_type: <string> only execute the trigger when the XML of the document in the transaction matches the (optional) namespace and root element, format: xml namespace::<root element>. Yopu can use * to match all XML namespaces, or all root elements (e.g. *::Invoice, or urn:ns:example::*)
-         *     - only_on_sender_id: <string> only execute the trigger if the sender matches this identifier
-         *     - only_on_receiver_id: <string> only execute the trigger if the receiver matches this identifier
-         *     - only_on_no_other_triggers: <boolean> only executes if there were no other triggers executed for this transaction. This excepts other triggers that had this requirement set (i.e. if there are multiple triggers with this setting set, they are all executed).
-         *
-         *     If you specify multiple 'only_on' arguments for a trigger, they must all match in order for the trigger to be executed; their values are a logical AND.
-         *     If you want a logical OR, you can specify multiple triggers, where only the 'only_on' values differ.
-         *
-         *     Note that there is a difference between not specifying any only_on arguments (the trigger will always be executed) and using 'only_otherwise' (the trigger will only be executed if no other triggers were).
-         *
-         *     Example:
-         */
-        patch: operations["organizations_receive_triggers_partial_update"];
-        trace?: never;
+    /**
+     * @description Receive triggers are actions that ion-AP can take when an organization receives a document on the peppol network.
+     *
+     *     To configure a receive trigger, you must set a trigger type and, depending on the type, a number of arguments.
+     *
+     *     Note that these are likely to be expanded, and possibly changed, in the near future. If you have any specific requests,
+     *     please let us know.
+     *
+     *     There are currently two trigger types implemented:
+     *
+     *     - API_CALL: ion-ap performs a web API call to a remote endpoint, to notify of the received document.
+     *     - SEND_EMAIL: ion-ap sends an email to a configured e-mail address, with a notification that a document has been received.
+     *
+     *     API_CALL has the following arguments:
+     *     - url: The remote URL of the call
+     *     - method: GET or POST: the HTTP method that the call will use
+     *     - post_data: one of the following values:
+     *       - document: The HTTP POST method will set the Content-Type header to application/xml, and POST the received document
+     *       - sbdh: The HTTP POST method will set the Content-Type header to application/xml, and POST the entire received SBDH
+     *       - fetch-url-transaction: The HTTP POST method will send an x-www-form-urlencoded data object, with a single field containing the API Resource URL to fetch the transaction data. The name of the field defaults to 'data', but can be set with the argument 'post_field_name'
+     *     - post_field_name: For post_data arguments that send an x-www-form-urlencoded form, this argument specified the name of the field containing the configured data. Defaults to 'data'.
+     *
+     *     SEND_EMAIL has the following arguments:
+     *     - recipient: The email address to which the email messages are sent
+     *     - attach_document: The received document will be attached to the email (as an xml file)
+     *     - attach_sbdh: The full SBDH of the received document will be attached to the email (as an xml file)
+     *     - attach_pdf: A pdf conversion of the received document will be attached to the email (experimental, only for invoices)
+     *     - subject: A template for the subject of the email, defaults to "Peppol document received for %RECEIVER_NAME% from %SENDER_NAME%"
+     *     - body: A template for the body of the email, defaults to "You have received a peppol document from %SENDER_NAME%. The API resource URL is: %API_RESOURCE_URL%"
+     *
+     *     The email subject and body are templates, in which the following keywords are automatically replaced:
+     *     - %SENDER_NAME%: The name of the sending organization
+     *     - %RECEIVER_NAME%: The name of the receiving organization
+     *     - %API_RESOURCE_URL%: The API Resource URL that returns the details of the receive transaction
+     *
+     *
+     *     There are also arguments to all trigger types:
+     *     - only_on_document_type: <string> Only execute the trigger when the full document type from the transaction matches
+     *     - only_on_xml_type: <string> only execute the trigger when the XML of the document in the transaction matches the (optional) namespace and root element, format: xml namespace::<root element>. Yopu can use * to match all XML namespaces, or all root elements (e.g. *::Invoice, or urn:ns:example::*)
+     *     - only_on_sender_id: <string> only execute the trigger if the sender matches this identifier
+     *     - only_on_receiver_id: <string> only execute the trigger if the receiver matches this identifier
+     *     - only_on_no_other_triggers: <boolean> only executes if there were no other triggers executed for this transaction. This excepts other triggers that had this requirement set (i.e. if there are multiple triggers with this setting set, they are all executed).
+     *
+     *     If you specify multiple 'only_on' arguments for a trigger, they must all match in order for the trigger to be executed; their values are a logical AND.
+     *     If you want a logical OR, you can specify multiple triggers, where only the 'only_on' values differ.
+     *
+     *     Note that there is a difference between not specifying any only_on arguments (the trigger will always be executed) and using 'only_otherwise' (the trigger will only be executed if no other triggers were).
+     *
+     *     Example:
+     */
+    get: operations['organizations_receive_triggers_list'];
+    put?: never;
+    /**
+     * @description Receive triggers are actions that ion-AP can take when an organization receives a document on the peppol network.
+     *
+     *     To configure a receive trigger, you must set a trigger type and, depending on the type, a number of arguments.
+     *
+     *     Note that these are likely to be expanded, and possibly changed, in the near future. If you have any specific requests,
+     *     please let us know.
+     *
+     *     There are currently two trigger types implemented:
+     *
+     *     - API_CALL: ion-ap performs a web API call to a remote endpoint, to notify of the received document.
+     *     - SEND_EMAIL: ion-ap sends an email to a configured e-mail address, with a notification that a document has been received.
+     *
+     *     API_CALL has the following arguments:
+     *     - url: The remote URL of the call
+     *     - method: GET or POST: the HTTP method that the call will use
+     *     - post_data: one of the following values:
+     *       - document: The HTTP POST method will set the Content-Type header to application/xml, and POST the received document
+     *       - sbdh: The HTTP POST method will set the Content-Type header to application/xml, and POST the entire received SBDH
+     *       - fetch-url-transaction: The HTTP POST method will send an x-www-form-urlencoded data object, with a single field containing the API Resource URL to fetch the transaction data. The name of the field defaults to 'data', but can be set with the argument 'post_field_name'
+     *     - post_field_name: For post_data arguments that send an x-www-form-urlencoded form, this argument specified the name of the field containing the configured data. Defaults to 'data'.
+     *
+     *     SEND_EMAIL has the following arguments:
+     *     - recipient: The email address to which the email messages are sent
+     *     - attach_document: The received document will be attached to the email (as an xml file)
+     *     - attach_sbdh: The full SBDH of the received document will be attached to the email (as an xml file)
+     *     - attach_pdf: A pdf conversion of the received document will be attached to the email (experimental, only for invoices)
+     *     - subject: A template for the subject of the email, defaults to "Peppol document received for %RECEIVER_NAME% from %SENDER_NAME%"
+     *     - body: A template for the body of the email, defaults to "You have received a peppol document from %SENDER_NAME%. The API resource URL is: %API_RESOURCE_URL%"
+     *
+     *     The email subject and body are templates, in which the following keywords are automatically replaced:
+     *     - %SENDER_NAME%: The name of the sending organization
+     *     - %RECEIVER_NAME%: The name of the receiving organization
+     *     - %API_RESOURCE_URL%: The API Resource URL that returns the details of the receive transaction
+     *
+     *
+     *     There are also arguments to all trigger types:
+     *     - only_on_document_type: <string> Only execute the trigger when the full document type from the transaction matches
+     *     - only_on_xml_type: <string> only execute the trigger when the XML of the document in the transaction matches the (optional) namespace and root element, format: xml namespace::<root element>. Yopu can use * to match all XML namespaces, or all root elements (e.g. *::Invoice, or urn:ns:example::*)
+     *     - only_on_sender_id: <string> only execute the trigger if the sender matches this identifier
+     *     - only_on_receiver_id: <string> only execute the trigger if the receiver matches this identifier
+     *     - only_on_no_other_triggers: <boolean> only executes if there were no other triggers executed for this transaction. This excepts other triggers that had this requirement set (i.e. if there are multiple triggers with this setting set, they are all executed).
+     *
+     *     If you specify multiple 'only_on' arguments for a trigger, they must all match in order for the trigger to be executed; their values are a logical AND.
+     *     If you want a logical OR, you can specify multiple triggers, where only the 'only_on' values differ.
+     *
+     *     Note that there is a difference between not specifying any only_on arguments (the trigger will always be executed) and using 'only_otherwise' (the trigger will only be executed if no other triggers were).
+     *
+     *     Example:
+     */
+    post: operations['organizations_receive_triggers_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/organizations/{organization_pk}/receive-triggers/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/organizations/{organization_pk}/receive-triggers/{trigger_pk}/options": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * @description Endpoint to configure Receive Trigger arguments.
-         *
-         *     See the documentation for organization_triggers_list for a full list of possible arguments.
-         */
-        get: operations["organizations_receive_triggers_options_list"];
-        put?: never;
-        /**
-         * @description Endpoint to configure Receive Trigger arguments.
-         *
-         *     See the documentation for organization_triggers_list for a full list of possible arguments.
-         */
-        post: operations["organizations_receive_triggers_options_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * @description Receive triggers are actions that ion-AP can take when an organization receives a document on the peppol network.
+     *
+     *     To configure a receive trigger, you must set a trigger type and, depending on the type, a number of arguments.
+     *
+     *     Note that these are likely to be expanded, and possibly changed, in the near future. If you have any specific requests,
+     *     please let us know.
+     *
+     *     There are currently two trigger types implemented:
+     *
+     *     - API_CALL: ion-ap performs a web API call to a remote endpoint, to notify of the received document.
+     *     - SEND_EMAIL: ion-ap sends an email to a configured e-mail address, with a notification that a document has been received.
+     *
+     *     API_CALL has the following arguments:
+     *     - url: The remote URL of the call
+     *     - method: GET or POST: the HTTP method that the call will use
+     *     - post_data: one of the following values:
+     *       - document: The HTTP POST method will set the Content-Type header to application/xml, and POST the received document
+     *       - sbdh: The HTTP POST method will set the Content-Type header to application/xml, and POST the entire received SBDH
+     *       - fetch-url-transaction: The HTTP POST method will send an x-www-form-urlencoded data object, with a single field containing the API Resource URL to fetch the transaction data. The name of the field defaults to 'data', but can be set with the argument 'post_field_name'
+     *     - post_field_name: For post_data arguments that send an x-www-form-urlencoded form, this argument specified the name of the field containing the configured data. Defaults to 'data'.
+     *
+     *     SEND_EMAIL has the following arguments:
+     *     - recipient: The email address to which the email messages are sent
+     *     - attach_document: The received document will be attached to the email (as an xml file)
+     *     - attach_sbdh: The full SBDH of the received document will be attached to the email (as an xml file)
+     *     - attach_pdf: A pdf conversion of the received document will be attached to the email (experimental, only for invoices)
+     *     - subject: A template for the subject of the email, defaults to "Peppol document received for %RECEIVER_NAME% from %SENDER_NAME%"
+     *     - body: A template for the body of the email, defaults to "You have received a peppol document from %SENDER_NAME%. The API resource URL is: %API_RESOURCE_URL%"
+     *
+     *     The email subject and body are templates, in which the following keywords are automatically replaced:
+     *     - %SENDER_NAME%: The name of the sending organization
+     *     - %RECEIVER_NAME%: The name of the receiving organization
+     *     - %API_RESOURCE_URL%: The API Resource URL that returns the details of the receive transaction
+     *
+     *
+     *     There are also arguments to all trigger types:
+     *     - only_on_document_type: <string> Only execute the trigger when the full document type from the transaction matches
+     *     - only_on_xml_type: <string> only execute the trigger when the XML of the document in the transaction matches the (optional) namespace and root element, format: xml namespace::<root element>. Yopu can use * to match all XML namespaces, or all root elements (e.g. *::Invoice, or urn:ns:example::*)
+     *     - only_on_sender_id: <string> only execute the trigger if the sender matches this identifier
+     *     - only_on_receiver_id: <string> only execute the trigger if the receiver matches this identifier
+     *     - only_on_no_other_triggers: <boolean> only executes if there were no other triggers executed for this transaction. This excepts other triggers that had this requirement set (i.e. if there are multiple triggers with this setting set, they are all executed).
+     *
+     *     If you specify multiple 'only_on' arguments for a trigger, they must all match in order for the trigger to be executed; their values are a logical AND.
+     *     If you want a logical OR, you can specify multiple triggers, where only the 'only_on' values differ.
+     *
+     *     Note that there is a difference between not specifying any only_on arguments (the trigger will always be executed) and using 'only_otherwise' (the trigger will only be executed if no other triggers were).
+     *
+     *     Example:
+     */
+    get: operations['organizations_receive_triggers_retrieve'];
+    /**
+     * @description Receive triggers are actions that ion-AP can take when an organization receives a document on the peppol network.
+     *
+     *     To configure a receive trigger, you must set a trigger type and, depending on the type, a number of arguments.
+     *
+     *     Note that these are likely to be expanded, and possibly changed, in the near future. If you have any specific requests,
+     *     please let us know.
+     *
+     *     There are currently two trigger types implemented:
+     *
+     *     - API_CALL: ion-ap performs a web API call to a remote endpoint, to notify of the received document.
+     *     - SEND_EMAIL: ion-ap sends an email to a configured e-mail address, with a notification that a document has been received.
+     *
+     *     API_CALL has the following arguments:
+     *     - url: The remote URL of the call
+     *     - method: GET or POST: the HTTP method that the call will use
+     *     - post_data: one of the following values:
+     *       - document: The HTTP POST method will set the Content-Type header to application/xml, and POST the received document
+     *       - sbdh: The HTTP POST method will set the Content-Type header to application/xml, and POST the entire received SBDH
+     *       - fetch-url-transaction: The HTTP POST method will send an x-www-form-urlencoded data object, with a single field containing the API Resource URL to fetch the transaction data. The name of the field defaults to 'data', but can be set with the argument 'post_field_name'
+     *     - post_field_name: For post_data arguments that send an x-www-form-urlencoded form, this argument specified the name of the field containing the configured data. Defaults to 'data'.
+     *
+     *     SEND_EMAIL has the following arguments:
+     *     - recipient: The email address to which the email messages are sent
+     *     - attach_document: The received document will be attached to the email (as an xml file)
+     *     - attach_sbdh: The full SBDH of the received document will be attached to the email (as an xml file)
+     *     - attach_pdf: A pdf conversion of the received document will be attached to the email (experimental, only for invoices)
+     *     - subject: A template for the subject of the email, defaults to "Peppol document received for %RECEIVER_NAME% from %SENDER_NAME%"
+     *     - body: A template for the body of the email, defaults to "You have received a peppol document from %SENDER_NAME%. The API resource URL is: %API_RESOURCE_URL%"
+     *
+     *     The email subject and body are templates, in which the following keywords are automatically replaced:
+     *     - %SENDER_NAME%: The name of the sending organization
+     *     - %RECEIVER_NAME%: The name of the receiving organization
+     *     - %API_RESOURCE_URL%: The API Resource URL that returns the details of the receive transaction
+     *
+     *
+     *     There are also arguments to all trigger types:
+     *     - only_on_document_type: <string> Only execute the trigger when the full document type from the transaction matches
+     *     - only_on_xml_type: <string> only execute the trigger when the XML of the document in the transaction matches the (optional) namespace and root element, format: xml namespace::<root element>. Yopu can use * to match all XML namespaces, or all root elements (e.g. *::Invoice, or urn:ns:example::*)
+     *     - only_on_sender_id: <string> only execute the trigger if the sender matches this identifier
+     *     - only_on_receiver_id: <string> only execute the trigger if the receiver matches this identifier
+     *     - only_on_no_other_triggers: <boolean> only executes if there were no other triggers executed for this transaction. This excepts other triggers that had this requirement set (i.e. if there are multiple triggers with this setting set, they are all executed).
+     *
+     *     If you specify multiple 'only_on' arguments for a trigger, they must all match in order for the trigger to be executed; their values are a logical AND.
+     *     If you want a logical OR, you can specify multiple triggers, where only the 'only_on' values differ.
+     *
+     *     Note that there is a difference between not specifying any only_on arguments (the trigger will always be executed) and using 'only_otherwise' (the trigger will only be executed if no other triggers were).
+     *
+     *     Example:
+     */
+    put: operations['organizations_receive_triggers_update'];
+    post?: never;
+    /**
+     * @description Receive triggers are actions that ion-AP can take when an organization receives a document on the peppol network.
+     *
+     *     To configure a receive trigger, you must set a trigger type and, depending on the type, a number of arguments.
+     *
+     *     Note that these are likely to be expanded, and possibly changed, in the near future. If you have any specific requests,
+     *     please let us know.
+     *
+     *     There are currently two trigger types implemented:
+     *
+     *     - API_CALL: ion-ap performs a web API call to a remote endpoint, to notify of the received document.
+     *     - SEND_EMAIL: ion-ap sends an email to a configured e-mail address, with a notification that a document has been received.
+     *
+     *     API_CALL has the following arguments:
+     *     - url: The remote URL of the call
+     *     - method: GET or POST: the HTTP method that the call will use
+     *     - post_data: one of the following values:
+     *       - document: The HTTP POST method will set the Content-Type header to application/xml, and POST the received document
+     *       - sbdh: The HTTP POST method will set the Content-Type header to application/xml, and POST the entire received SBDH
+     *       - fetch-url-transaction: The HTTP POST method will send an x-www-form-urlencoded data object, with a single field containing the API Resource URL to fetch the transaction data. The name of the field defaults to 'data', but can be set with the argument 'post_field_name'
+     *     - post_field_name: For post_data arguments that send an x-www-form-urlencoded form, this argument specified the name of the field containing the configured data. Defaults to 'data'.
+     *
+     *     SEND_EMAIL has the following arguments:
+     *     - recipient: The email address to which the email messages are sent
+     *     - attach_document: The received document will be attached to the email (as an xml file)
+     *     - attach_sbdh: The full SBDH of the received document will be attached to the email (as an xml file)
+     *     - attach_pdf: A pdf conversion of the received document will be attached to the email (experimental, only for invoices)
+     *     - subject: A template for the subject of the email, defaults to "Peppol document received for %RECEIVER_NAME% from %SENDER_NAME%"
+     *     - body: A template for the body of the email, defaults to "You have received a peppol document from %SENDER_NAME%. The API resource URL is: %API_RESOURCE_URL%"
+     *
+     *     The email subject and body are templates, in which the following keywords are automatically replaced:
+     *     - %SENDER_NAME%: The name of the sending organization
+     *     - %RECEIVER_NAME%: The name of the receiving organization
+     *     - %API_RESOURCE_URL%: The API Resource URL that returns the details of the receive transaction
+     *
+     *
+     *     There are also arguments to all trigger types:
+     *     - only_on_document_type: <string> Only execute the trigger when the full document type from the transaction matches
+     *     - only_on_xml_type: <string> only execute the trigger when the XML of the document in the transaction matches the (optional) namespace and root element, format: xml namespace::<root element>. Yopu can use * to match all XML namespaces, or all root elements (e.g. *::Invoice, or urn:ns:example::*)
+     *     - only_on_sender_id: <string> only execute the trigger if the sender matches this identifier
+     *     - only_on_receiver_id: <string> only execute the trigger if the receiver matches this identifier
+     *     - only_on_no_other_triggers: <boolean> only executes if there were no other triggers executed for this transaction. This excepts other triggers that had this requirement set (i.e. if there are multiple triggers with this setting set, they are all executed).
+     *
+     *     If you specify multiple 'only_on' arguments for a trigger, they must all match in order for the trigger to be executed; their values are a logical AND.
+     *     If you want a logical OR, you can specify multiple triggers, where only the 'only_on' values differ.
+     *
+     *     Note that there is a difference between not specifying any only_on arguments (the trigger will always be executed) and using 'only_otherwise' (the trigger will only be executed if no other triggers were).
+     *
+     *     Example:
+     */
+    delete: operations['organizations_receive_triggers_destroy'];
+    options?: never;
+    head?: never;
+    /**
+     * @description Receive triggers are actions that ion-AP can take when an organization receives a document on the peppol network.
+     *
+     *     To configure a receive trigger, you must set a trigger type and, depending on the type, a number of arguments.
+     *
+     *     Note that these are likely to be expanded, and possibly changed, in the near future. If you have any specific requests,
+     *     please let us know.
+     *
+     *     There are currently two trigger types implemented:
+     *
+     *     - API_CALL: ion-ap performs a web API call to a remote endpoint, to notify of the received document.
+     *     - SEND_EMAIL: ion-ap sends an email to a configured e-mail address, with a notification that a document has been received.
+     *
+     *     API_CALL has the following arguments:
+     *     - url: The remote URL of the call
+     *     - method: GET or POST: the HTTP method that the call will use
+     *     - post_data: one of the following values:
+     *       - document: The HTTP POST method will set the Content-Type header to application/xml, and POST the received document
+     *       - sbdh: The HTTP POST method will set the Content-Type header to application/xml, and POST the entire received SBDH
+     *       - fetch-url-transaction: The HTTP POST method will send an x-www-form-urlencoded data object, with a single field containing the API Resource URL to fetch the transaction data. The name of the field defaults to 'data', but can be set with the argument 'post_field_name'
+     *     - post_field_name: For post_data arguments that send an x-www-form-urlencoded form, this argument specified the name of the field containing the configured data. Defaults to 'data'.
+     *
+     *     SEND_EMAIL has the following arguments:
+     *     - recipient: The email address to which the email messages are sent
+     *     - attach_document: The received document will be attached to the email (as an xml file)
+     *     - attach_sbdh: The full SBDH of the received document will be attached to the email (as an xml file)
+     *     - attach_pdf: A pdf conversion of the received document will be attached to the email (experimental, only for invoices)
+     *     - subject: A template for the subject of the email, defaults to "Peppol document received for %RECEIVER_NAME% from %SENDER_NAME%"
+     *     - body: A template for the body of the email, defaults to "You have received a peppol document from %SENDER_NAME%. The API resource URL is: %API_RESOURCE_URL%"
+     *
+     *     The email subject and body are templates, in which the following keywords are automatically replaced:
+     *     - %SENDER_NAME%: The name of the sending organization
+     *     - %RECEIVER_NAME%: The name of the receiving organization
+     *     - %API_RESOURCE_URL%: The API Resource URL that returns the details of the receive transaction
+     *
+     *
+     *     There are also arguments to all trigger types:
+     *     - only_on_document_type: <string> Only execute the trigger when the full document type from the transaction matches
+     *     - only_on_xml_type: <string> only execute the trigger when the XML of the document in the transaction matches the (optional) namespace and root element, format: xml namespace::<root element>. Yopu can use * to match all XML namespaces, or all root elements (e.g. *::Invoice, or urn:ns:example::*)
+     *     - only_on_sender_id: <string> only execute the trigger if the sender matches this identifier
+     *     - only_on_receiver_id: <string> only execute the trigger if the receiver matches this identifier
+     *     - only_on_no_other_triggers: <boolean> only executes if there were no other triggers executed for this transaction. This excepts other triggers that had this requirement set (i.e. if there are multiple triggers with this setting set, they are all executed).
+     *
+     *     If you specify multiple 'only_on' arguments for a trigger, they must all match in order for the trigger to be executed; their values are a logical AND.
+     *     If you want a logical OR, you can specify multiple triggers, where only the 'only_on' values differ.
+     *
+     *     Note that there is a difference between not specifying any only_on arguments (the trigger will always be executed) and using 'only_otherwise' (the trigger will only be executed if no other triggers were).
+     *
+     *     Example:
+     */
+    patch: operations['organizations_receive_triggers_partial_update'];
+    trace?: never;
+  };
+  '/api/v2/organizations/{organization_pk}/receive-triggers/{trigger_pk}/options': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/organizations/{organization_pk}/receive-triggers/{trigger_pk}/options/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * @description Endpoint to configure Receive Trigger arguments.
-         *
-         *     See the documentation for organization_triggers_list for a full list of possible arguments.
-         */
-        get: operations["organizations_receive_triggers_options_retrieve"];
-        /**
-         * @description Endpoint to configure Receive Trigger arguments.
-         *
-         *     See the documentation for organization_triggers_list for a full list of possible arguments.
-         */
-        put: operations["organizations_receive_triggers_options_update"];
-        post?: never;
-        /**
-         * @description Endpoint to configure Receive Trigger arguments.
-         *
-         *     See the documentation for organization_triggers_list for a full list of possible arguments.
-         */
-        delete: operations["organizations_receive_triggers_options_destroy"];
-        options?: never;
-        head?: never;
-        /**
-         * @description Endpoint to configure Receive Trigger arguments.
-         *
-         *     See the documentation for organization_triggers_list for a full list of possible arguments.
-         */
-        patch: operations["organizations_receive_triggers_options_partial_update"];
-        trace?: never;
+    /**
+     * @description Endpoint to configure Receive Trigger arguments.
+     *
+     *     See the documentation for organization_triggers_list for a full list of possible arguments.
+     */
+    get: operations['organizations_receive_triggers_options_list'];
+    put?: never;
+    /**
+     * @description Endpoint to configure Receive Trigger arguments.
+     *
+     *     See the documentation for organization_triggers_list for a full list of possible arguments.
+     */
+    post: operations['organizations_receive_triggers_options_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/organizations/{organization_pk}/receive-triggers/{trigger_pk}/options/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/organizations/{organization_pk}/users": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * @description Base class for specific features we want to have consistently
-         *     throughout the entire API, such as pagination that can be disabled
-         *     ('disable_pagination' parameter)
-         */
-        get: operations["organizations_users_list"];
-        put?: never;
-        /**
-         * @description Base class for specific features we want to have consistently
-         *     throughout the entire API, such as pagination that can be disabled
-         *     ('disable_pagination' parameter)
-         */
-        post: operations["organizations_users_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * @description Endpoint to configure Receive Trigger arguments.
+     *
+     *     See the documentation for organization_triggers_list for a full list of possible arguments.
+     */
+    get: operations['organizations_receive_triggers_options_retrieve'];
+    /**
+     * @description Endpoint to configure Receive Trigger arguments.
+     *
+     *     See the documentation for organization_triggers_list for a full list of possible arguments.
+     */
+    put: operations['organizations_receive_triggers_options_update'];
+    post?: never;
+    /**
+     * @description Endpoint to configure Receive Trigger arguments.
+     *
+     *     See the documentation for organization_triggers_list for a full list of possible arguments.
+     */
+    delete: operations['organizations_receive_triggers_options_destroy'];
+    options?: never;
+    head?: never;
+    /**
+     * @description Endpoint to configure Receive Trigger arguments.
+     *
+     *     See the documentation for organization_triggers_list for a full list of possible arguments.
+     */
+    patch: operations['organizations_receive_triggers_options_partial_update'];
+    trace?: never;
+  };
+  '/api/v2/organizations/{organization_pk}/users': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/organizations/{organization_pk}/users/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * @description Base class for specific features we want to have consistently
-         *     throughout the entire API, such as pagination that can be disabled
-         *     ('disable_pagination' parameter)
-         */
-        get: operations["organizations_users_retrieve"];
-        put?: never;
-        post?: never;
-        /**
-         * @description Base class for specific features we want to have consistently
-         *     throughout the entire API, such as pagination that can be disabled
-         *     ('disable_pagination' parameter)
-         */
-        delete: operations["organizations_users_destroy"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * @description Base class for specific features we want to have consistently
+     *     throughout the entire API, such as pagination that can be disabled
+     *     ('disable_pagination' parameter)
+     */
+    get: operations['organizations_users_list'];
+    put?: never;
+    /**
+     * @description Base class for specific features we want to have consistently
+     *     throughout the entire API, such as pagination that can be disabled
+     *     ('disable_pagination' parameter)
+     */
+    post: operations['organizations_users_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/organizations/{organization_pk}/users/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/organizations/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * @description Organizations, or Trading Entities, are the senders and receivers of documents on the peppol network.
-         *
-         *     Organizations have one or more Peppol Identifiers, such as a Chamber of Commerce number or a VAT number.
-         *
-         *     Users can, depending on their account type and role permissions, send and receive document on behalf of
-         *     zero, one, or multiple organizations.
-         *
-         *     This endpoint manages the organization entries for an account themselves.
-         */
-        get: operations["organizations_retrieve"];
-        /**
-         * @description Organizations, or Trading Entities, are the senders and receivers of documents on the peppol network.
-         *
-         *     Organizations have one or more Peppol Identifiers, such as a Chamber of Commerce number or a VAT number.
-         *
-         *     Users can, depending on their account type and role permissions, send and receive document on behalf of
-         *     zero, one, or multiple organizations.
-         *
-         *     This endpoint manages the organization entries for an account themselves.
-         */
-        put: operations["organizations_update"];
-        post?: never;
-        /**
-         * @description Organizations, or Trading Entities, are the senders and receivers of documents on the peppol network.
-         *
-         *     Organizations have one or more Peppol Identifiers, such as a Chamber of Commerce number or a VAT number.
-         *
-         *     Users can, depending on their account type and role permissions, send and receive document on behalf of
-         *     zero, one, or multiple organizations.
-         *
-         *     This endpoint manages the organization entries for an account themselves.
-         */
-        delete: operations["organizations_destroy"];
-        options?: never;
-        head?: never;
-        /**
-         * @description Organizations, or Trading Entities, are the senders and receivers of documents on the peppol network.
-         *
-         *     Organizations have one or more Peppol Identifiers, such as a Chamber of Commerce number or a VAT number.
-         *
-         *     Users can, depending on their account type and role permissions, send and receive document on behalf of
-         *     zero, one, or multiple organizations.
-         *
-         *     This endpoint manages the organization entries for an account themselves.
-         */
-        patch: operations["organizations_partial_update"];
-        trace?: never;
+    /**
+     * @description Base class for specific features we want to have consistently
+     *     throughout the entire API, such as pagination that can be disabled
+     *     ('disable_pagination' parameter)
+     */
+    get: operations['organizations_users_retrieve'];
+    put?: never;
+    post?: never;
+    /**
+     * @description Base class for specific features we want to have consistently
+     *     throughout the entire API, such as pagination that can be disabled
+     *     ('disable_pagination' parameter)
+     */
+    delete: operations['organizations_users_destroy'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/organizations/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/organizations/create-full": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * @description Create a new organization, including identifier(s) and receive trigger(s), in a single call.
-         *
-         *     The data provided is a nested structure of components, similar to the ones used for the CRUD endpoints.
-         */
-        post: operations["organizations_create_full_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * @description Organizations, or Trading Entities, are the senders and receivers of documents on the peppol network.
+     *
+     *     Organizations have one or more Peppol Identifiers, such as a Chamber of Commerce number or a VAT number.
+     *
+     *     Users can, depending on their account type and role permissions, send and receive document on behalf of
+     *     zero, one, or multiple organizations.
+     *
+     *     This endpoint manages the organization entries for an account themselves.
+     */
+    get: operations['organizations_retrieve'];
+    /**
+     * @description Organizations, or Trading Entities, are the senders and receivers of documents on the peppol network.
+     *
+     *     Organizations have one or more Peppol Identifiers, such as a Chamber of Commerce number or a VAT number.
+     *
+     *     Users can, depending on their account type and role permissions, send and receive document on behalf of
+     *     zero, one, or multiple organizations.
+     *
+     *     This endpoint manages the organization entries for an account themselves.
+     */
+    put: operations['organizations_update'];
+    post?: never;
+    /**
+     * @description Organizations, or Trading Entities, are the senders and receivers of documents on the peppol network.
+     *
+     *     Organizations have one or more Peppol Identifiers, such as a Chamber of Commerce number or a VAT number.
+     *
+     *     Users can, depending on their account type and role permissions, send and receive document on behalf of
+     *     zero, one, or multiple organizations.
+     *
+     *     This endpoint manages the organization entries for an account themselves.
+     */
+    delete: operations['organizations_destroy'];
+    options?: never;
+    head?: never;
+    /**
+     * @description Organizations, or Trading Entities, are the senders and receivers of documents on the peppol network.
+     *
+     *     Organizations have one or more Peppol Identifiers, such as a Chamber of Commerce number or a VAT number.
+     *
+     *     Users can, depending on their account type and role permissions, send and receive document on behalf of
+     *     zero, one, or multiple organizations.
+     *
+     *     This endpoint manages the organization entries for an account themselves.
+     */
+    patch: operations['organizations_partial_update'];
+    trace?: never;
+  };
+  '/api/v2/organizations/create-full': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/receive-transactions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Manage receive transactions. These contain the documents that were sent to your organization(s). */
-        get: operations["receive_transactions_list"];
-        put?: never;
-        /** @description Manage receive transactions. These contain the documents that were sent to your organization(s). */
-        post: operations["receive_transactions_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * @description Create a new organization, including identifier(s) and receive trigger(s), in a single call.
+     *
+     *     The data provided is a nested structure of components, similar to the ones used for the CRUD endpoints.
+     */
+    post: operations['organizations_create_full_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/receive-transactions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/receive-transactions/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Manage receive transactions. These contain the documents that were sent to your organization(s). */
-        get: operations["receive_transactions_retrieve"];
-        put?: never;
-        post?: never;
-        /** @description Manage receive transactions. These contain the documents that were sent to your organization(s). */
-        delete: operations["receive_transactions_destroy"];
-        options?: never;
-        head?: never;
-        /** @description Manage receive transactions. These contain the documents that were sent to your organization(s). */
-        patch: operations["receive_transactions_partial_update"];
-        trace?: never;
+    /** @description Manage receive transactions. These contain the documents that were sent to your organization(s). */
+    get: operations['receive_transactions_list'];
+    put?: never;
+    /** @description Manage receive transactions. These contain the documents that were sent to your organization(s). */
+    post: operations['receive_transactions_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/receive-transactions/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/receive-transactions/{id}/document": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Retrieve the XML document that was sent with this transaction */
-        get: operations["receive_transactions_document_retrieve"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** @description Manage receive transactions. These contain the documents that were sent to your organization(s). */
+    get: operations['receive_transactions_retrieve'];
+    put?: never;
+    post?: never;
+    /** @description Manage receive transactions. These contain the documents that were sent to your organization(s). */
+    delete: operations['receive_transactions_destroy'];
+    options?: never;
+    head?: never;
+    /** @description Manage receive transactions. These contain the documents that were sent to your organization(s). */
+    patch: operations['receive_transactions_partial_update'];
+    trace?: never;
+  };
+  '/api/v2/receive-transactions/{id}/document': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/receive-transactions/{id}/execute_triggers": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** @description Execute the currently configured receive triggers (again), as if this transaction was just received. */
-        post: operations["receive_transactions_execute_triggers_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** @description Retrieve the XML document that was sent with this transaction */
+    get: operations['receive_transactions_document_retrieve'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/receive-transactions/{id}/execute_triggers': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/receive-transactions/{id}/mark-read": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** @description Mark the given transaction as read. This is never done automatically by the system, it is up to the (API) client to set a transaction as read. */
-        post: operations["receive_transactions_mark_read_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** @description Execute the currently configured receive triggers (again), as if this transaction was just received. */
+    post: operations['receive_transactions_execute_triggers_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/receive-transactions/{id}/mark-read': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/receive-transactions/{id}/mark-unread": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** @description Mark the given transaction as unread. This has no other effects than setting the state to NEW */
-        post: operations["receive_transactions_mark_unread_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** @description Mark the given transaction as read. This is never done automatically by the system, it is up to the (API) client to set a transaction as read. */
+    post: operations['receive_transactions_mark_read_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/receive-transactions/{id}/mark-unread': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/receive-transactions/{id}/pdf": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Manage receive transactions. These contain the documents that were sent to your organization(s). */
-        get: operations["receive_transactions_pdf_retrieve"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** @description Mark the given transaction as unread. This has no other effects than setting the state to NEW */
+    post: operations['receive_transactions_mark_unread_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/receive-transactions/{id}/pdf': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/receive-transactions/{id}/receipt": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Retrieve the full Standard Business Document Header (SBDH) that was sent with this transaction, both the SBD header and the document itself, as one XML document. */
-        get: operations["receive_transactions_receipt_retrieve"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** @description Manage receive transactions. These contain the documents that were sent to your organization(s). */
+    get: operations['receive_transactions_pdf_retrieve'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/receive-transactions/{id}/receipt': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/receive-transactions/{id}/sbdh": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Retrieve the full Standard Business Document Header (SBDH) that was sent with this transaction, both the SBD header and the document itself, as one XML document. */
-        get: operations["receive_transactions_sbdh_retrieve"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** @description Retrieve the full Standard Business Document Header (SBDH) that was sent with this transaction, both the SBD header and the document itself, as one XML document. */
+    get: operations['receive_transactions_receipt_retrieve'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/receive-transactions/{id}/sbdh': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/receive-transactions/{receive_transaction_pk}/logs": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description View log entries related to a specific receive transaction */
-        get: operations["receive_transactions_logs_list"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** @description Retrieve the full Standard Business Document Header (SBDH) that was sent with this transaction, both the SBD header and the document itself, as one XML document. */
+    get: operations['receive_transactions_sbdh_retrieve'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/receive-transactions/{receive_transaction_pk}/logs': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/receive-transactions/{receive_transaction_pk}/logs/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description View log entries related to a specific receive transaction */
-        get: operations["receive_transactions_logs_retrieve"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** @description View log entries related to a specific receive transaction */
+    get: operations['receive_transactions_logs_list'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/receive-transactions/{receive_transaction_pk}/logs/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/send-document": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * @description Send a document.
-         *
-         *     This can either be a Standard Business Document XML file, including the full SBD Header, or it can be just the document itself, in which
-         *     case the SBD Envelope will be generated automatically. The latter only works for support XML files, such as UBL or CII Invoices and CreditNotes.
-         *
-         *     For supported documents, a number of checks are performed, such as that it is does not have validation errors, and that you are allowed to send
-         *     the document (whether you have the right access for sender identifier in the document).
-         *
-         *     If so, a SendTransaction is created, and the document will be scheduled for sending. You can retrieve the status of the send transaction with
-         *     the relevant resource URI.
-         */
-        post: operations["send_document_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** @description View log entries related to a specific receive transaction */
+    get: operations['receive_transactions_logs_retrieve'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/send-document': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/send-transactions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Manage ongoing and finished send transactions. */
-        get: operations["send_transactions_list"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * @description Send a document.
+     *
+     *     This can either be a Standard Business Document XML file, including the full SBD Header, or it can be just the document itself, in which
+     *     case the SBD Envelope will be generated automatically. The latter only works for support XML files, such as UBL or CII Invoices and CreditNotes.
+     *
+     *     For supported documents, a number of checks are performed, such as that it is does not have validation errors, and that you are allowed to send
+     *     the document (whether you have the right access for sender identifier in the document).
+     *
+     *     If so, a SendTransaction is created, and the document will be scheduled for sending. You can retrieve the status of the send transaction with
+     *     the relevant resource URI.
+     */
+    post: operations['send_document_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/send-transactions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/send-transactions/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Manage ongoing and finished send transactions. */
-        get: operations["send_transactions_retrieve"];
-        put?: never;
-        post?: never;
-        /** @description Remove all information about the send transaction, including information about the sent document and receipt, as well as any related errors or logs. */
-        delete: operations["send_transactions_destroy"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** @description Manage ongoing and finished send transactions. */
+    get: operations['send_transactions_list'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/send-transactions/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/send-transactions/{id}/document": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Retrieve the full Standard Business Document Header (SBDH) that was sent with this transaction, both the SBD header and the document itself, as one XML document. */
-        get: operations["send_transactions_document_retrieve"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** @description Manage ongoing and finished send transactions. */
+    get: operations['send_transactions_retrieve'];
+    put?: never;
+    post?: never;
+    /** @description Remove all information about the send transaction, including information about the sent document and receipt, as well as any related errors or logs. */
+    delete: operations['send_transactions_destroy'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/send-transactions/{id}/document': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/send-transactions/{id}/pdf": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Manage ongoing and finished send transactions. */
-        get: operations["send_transactions_pdf_retrieve"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** @description Retrieve the full Standard Business Document Header (SBDH) that was sent with this transaction, both the SBD header and the document itself, as one XML document. */
+    get: operations['send_transactions_document_retrieve'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/send-transactions/{id}/pdf': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/send-transactions/{id}/receipt": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Retrieve the full Standard Business Document Header (SBDH) that was sent with this transaction, both the SBD header and the document itself, as one XML document. */
-        get: operations["send_transactions_receipt_retrieve"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** @description Manage ongoing and finished send transactions. */
+    get: operations['send_transactions_pdf_retrieve'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/send-transactions/{id}/receipt': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/send-transactions/{id}/sbdh": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Retrieve the full Standard Business Document Header (SBDH) that was sent with this transaction, both the SBD header and the document itself, as one XML document. */
-        get: operations["send_transactions_sbdh_retrieve"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** @description Retrieve the full Standard Business Document Header (SBDH) that was sent with this transaction, both the SBD header and the document itself, as one XML document. */
+    get: operations['send_transactions_receipt_retrieve'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/send-transactions/{id}/sbdh': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/send-transactions/{send_transaction_pk}/errors": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description If the transaction failed, the errors resource contains errors as returned by the remote access point. */
-        get: operations["send_transactions_errors_list"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** @description Retrieve the full Standard Business Document Header (SBDH) that was sent with this transaction, both the SBD header and the document itself, as one XML document. */
+    get: operations['send_transactions_sbdh_retrieve'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/send-transactions/{send_transaction_pk}/errors': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/send-transactions/{send_transaction_pk}/errors/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description If the transaction failed, the errors resource contains errors as returned by the remote access point. */
-        get: operations["send_transactions_errors_retrieve"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** @description If the transaction failed, the errors resource contains errors as returned by the remote access point. */
+    get: operations['send_transactions_errors_list'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/send-transactions/{send_transaction_pk}/errors/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/send-transactions/{send_transaction_pk}/logs": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description View log entries related to a specific send transaction */
-        get: operations["send_transactions_logs_list"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** @description If the transaction failed, the errors resource contains errors as returned by the remote access point. */
+    get: operations['send_transactions_errors_retrieve'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/send-transactions/{send_transaction_pk}/logs': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v2/send-transactions/{send_transaction_pk}/logs/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description View log entries related to a specific send transaction */
-        get: operations["send_transactions_logs_retrieve"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** @description View log entries related to a specific send transaction */
+    get: operations['send_transactions_logs_list'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v2/send-transactions/{send_transaction_pk}/logs/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
+    /** @description View log entries related to a specific send transaction */
+    get: operations['send_transactions_logs_retrieve'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: {
-        /**
-         * @description * `AF` - Afghanistan
-         *     * `AX` - Åland Islands
-         *     * `AL` - Albania
-         *     * `DZ` - Algeria
-         *     * `AS` - American Samoa
-         *     * `AD` - Andorra
-         *     * `AO` - Angola
-         *     * `AI` - Anguilla
-         *     * `AQ` - Antarctica
-         *     * `AG` - Antigua and Barbuda
-         *     * `AR` - Argentina
-         *     * `AM` - Armenia
-         *     * `AW` - Aruba
-         *     * `AU` - Australia
-         *     * `AT` - Austria
-         *     * `AZ` - Azerbaijan
-         *     * `BS` - Bahamas
-         *     * `BH` - Bahrain
-         *     * `BD` - Bangladesh
-         *     * `BB` - Barbados
-         *     * `BY` - Belarus
-         *     * `BE` - Belgium
-         *     * `BZ` - Belize
-         *     * `BJ` - Benin
-         *     * `BM` - Bermuda
-         *     * `BT` - Bhutan
-         *     * `BO` - Bolivia
-         *     * `BQ` - Bonaire, Sint Eustatius and Saba
-         *     * `BA` - Bosnia and Herzegovina
-         *     * `BW` - Botswana
-         *     * `BV` - Bouvet Island
-         *     * `BR` - Brazil
-         *     * `IO` - British Indian Ocean Territory
-         *     * `BN` - Brunei
-         *     * `BG` - Bulgaria
-         *     * `BF` - Burkina Faso
-         *     * `BI` - Burundi
-         *     * `CV` - Cabo Verde
-         *     * `KH` - Cambodia
-         *     * `CM` - Cameroon
-         *     * `CA` - Canada
-         *     * `KY` - Cayman Islands
-         *     * `CF` - Central African Republic
-         *     * `TD` - Chad
-         *     * `CL` - Chile
-         *     * `CN` - China
-         *     * `CX` - Christmas Island
-         *     * `CC` - Cocos (Keeling) Islands
-         *     * `CO` - Colombia
-         *     * `KM` - Comoros
-         *     * `CG` - Congo
-         *     * `CD` - Congo (the Democratic Republic of the)
-         *     * `CK` - Cook Islands
-         *     * `CR` - Costa Rica
-         *     * `CI` - Côte d'Ivoire
-         *     * `HR` - Croatia
-         *     * `CU` - Cuba
-         *     * `CW` - Curaçao
-         *     * `CY` - Cyprus
-         *     * `CZ` - Czechia
-         *     * `DK` - Denmark
-         *     * `DJ` - Djibouti
-         *     * `DM` - Dominica
-         *     * `DO` - Dominican Republic
-         *     * `EC` - Ecuador
-         *     * `EG` - Egypt
-         *     * `SV` - El Salvador
-         *     * `GQ` - Equatorial Guinea
-         *     * `ER` - Eritrea
-         *     * `EE` - Estonia
-         *     * `SZ` - Eswatini
-         *     * `ET` - Ethiopia
-         *     * `FK` - Falkland Islands (Malvinas)
-         *     * `FO` - Faroe Islands
-         *     * `FJ` - Fiji
-         *     * `FI` - Finland
-         *     * `FR` - France
-         *     * `GF` - French Guiana
-         *     * `PF` - French Polynesia
-         *     * `TF` - French Southern Territories
-         *     * `GA` - Gabon
-         *     * `GM` - Gambia
-         *     * `GE` - Georgia
-         *     * `DE` - Germany
-         *     * `GH` - Ghana
-         *     * `GI` - Gibraltar
-         *     * `GR` - Greece
-         *     * `GL` - Greenland
-         *     * `GD` - Grenada
-         *     * `GP` - Guadeloupe
-         *     * `GU` - Guam
-         *     * `GT` - Guatemala
-         *     * `GG` - Guernsey
-         *     * `GN` - Guinea
-         *     * `GW` - Guinea-Bissau
-         *     * `GY` - Guyana
-         *     * `HT` - Haiti
-         *     * `HM` - Heard Island and McDonald Islands
-         *     * `VA` - Holy See
-         *     * `HN` - Honduras
-         *     * `HK` - Hong Kong
-         *     * `HU` - Hungary
-         *     * `IS` - Iceland
-         *     * `IN` - India
-         *     * `ID` - Indonesia
-         *     * `IR` - Iran
-         *     * `IQ` - Iraq
-         *     * `IE` - Ireland
-         *     * `IM` - Isle of Man
-         *     * `IL` - Israel
-         *     * `IT` - Italy
-         *     * `JM` - Jamaica
-         *     * `JP` - Japan
-         *     * `JE` - Jersey
-         *     * `JO` - Jordan
-         *     * `KZ` - Kazakhstan
-         *     * `KE` - Kenya
-         *     * `KI` - Kiribati
-         *     * `KW` - Kuwait
-         *     * `KG` - Kyrgyzstan
-         *     * `LA` - Laos
-         *     * `LV` - Latvia
-         *     * `LB` - Lebanon
-         *     * `LS` - Lesotho
-         *     * `LR` - Liberia
-         *     * `LY` - Libya
-         *     * `LI` - Liechtenstein
-         *     * `LT` - Lithuania
-         *     * `LU` - Luxembourg
-         *     * `MO` - Macao
-         *     * `MG` - Madagascar
-         *     * `MW` - Malawi
-         *     * `MY` - Malaysia
-         *     * `MV` - Maldives
-         *     * `ML` - Mali
-         *     * `MT` - Malta
-         *     * `MH` - Marshall Islands
-         *     * `MQ` - Martinique
-         *     * `MR` - Mauritania
-         *     * `MU` - Mauritius
-         *     * `YT` - Mayotte
-         *     * `MX` - Mexico
-         *     * `FM` - Micronesia
-         *     * `MD` - Moldova
-         *     * `MC` - Monaco
-         *     * `MN` - Mongolia
-         *     * `ME` - Montenegro
-         *     * `MS` - Montserrat
-         *     * `MA` - Morocco
-         *     * `MZ` - Mozambique
-         *     * `MM` - Myanmar
-         *     * `NA` - Namibia
-         *     * `NR` - Nauru
-         *     * `NP` - Nepal
-         *     * `NL` - Netherlands
-         *     * `NC` - New Caledonia
-         *     * `NZ` - New Zealand
-         *     * `NI` - Nicaragua
-         *     * `NE` - Niger
-         *     * `NG` - Nigeria
-         *     * `NU` - Niue
-         *     * `NF` - Norfolk Island
-         *     * `KP` - North Korea
-         *     * `MK` - North Macedonia
-         *     * `MP` - Northern Mariana Islands
-         *     * `NO` - Norway
-         *     * `OM` - Oman
-         *     * `PK` - Pakistan
-         *     * `PW` - Palau
-         *     * `PS` - Palestine, State of
-         *     * `PA` - Panama
-         *     * `PG` - Papua New Guinea
-         *     * `PY` - Paraguay
-         *     * `PE` - Peru
-         *     * `PH` - Philippines
-         *     * `PN` - Pitcairn
-         *     * `PL` - Poland
-         *     * `PT` - Portugal
-         *     * `PR` - Puerto Rico
-         *     * `QA` - Qatar
-         *     * `RE` - Réunion
-         *     * `RO` - Romania
-         *     * `RU` - Russia
-         *     * `RW` - Rwanda
-         *     * `BL` - Saint Barthélemy
-         *     * `SH` - Saint Helena, Ascension and Tristan da Cunha
-         *     * `KN` - Saint Kitts and Nevis
-         *     * `LC` - Saint Lucia
-         *     * `MF` - Saint Martin (French part)
-         *     * `PM` - Saint Pierre and Miquelon
-         *     * `VC` - Saint Vincent and the Grenadines
-         *     * `WS` - Samoa
-         *     * `SM` - San Marino
-         *     * `ST` - Sao Tome and Principe
-         *     * `SA` - Saudi Arabia
-         *     * `SN` - Senegal
-         *     * `RS` - Serbia
-         *     * `SC` - Seychelles
-         *     * `SL` - Sierra Leone
-         *     * `SG` - Singapore
-         *     * `SX` - Sint Maarten (Dutch part)
-         *     * `SK` - Slovakia
-         *     * `SI` - Slovenia
-         *     * `SB` - Solomon Islands
-         *     * `SO` - Somalia
-         *     * `ZA` - South Africa
-         *     * `GS` - South Georgia and the South Sandwich Islands
-         *     * `KR` - South Korea
-         *     * `SS` - South Sudan
-         *     * `ES` - Spain
-         *     * `LK` - Sri Lanka
-         *     * `SD` - Sudan
-         *     * `SR` - Suriname
-         *     * `SJ` - Svalbard and Jan Mayen
-         *     * `SE` - Sweden
-         *     * `CH` - Switzerland
-         *     * `SY` - Syria
-         *     * `TW` - Taiwan
-         *     * `TJ` - Tajikistan
-         *     * `TZ` - Tanzania
-         *     * `TH` - Thailand
-         *     * `TL` - Timor-Leste
-         *     * `TG` - Togo
-         *     * `TK` - Tokelau
-         *     * `TO` - Tonga
-         *     * `TT` - Trinidad and Tobago
-         *     * `TN` - Tunisia
-         *     * `TR` - Türkiye
-         *     * `TM` - Turkmenistan
-         *     * `TC` - Turks and Caicos Islands
-         *     * `TV` - Tuvalu
-         *     * `UG` - Uganda
-         *     * `UA` - Ukraine
-         *     * `AE` - United Arab Emirates
-         *     * `GB` - United Kingdom
-         *     * `UM` - United States Minor Outlying Islands
-         *     * `US` - United States of America
-         *     * `UY` - Uruguay
-         *     * `UZ` - Uzbekistan
-         *     * `VU` - Vanuatu
-         *     * `VE` - Venezuela
-         *     * `VN` - Vietnam
-         *     * `VG` - Virgin Islands (British)
-         *     * `VI` - Virgin Islands (U.S.)
-         *     * `WF` - Wallis and Futuna
-         *     * `EH` - Western Sahara
-         *     * `YE` - Yemen
-         *     * `ZM` - Zambia
-         *     * `ZW` - Zimbabwe
-         * @enum {string}
-         */
-        CountryEnum: "AF" | "AX" | "AL" | "DZ" | "AS" | "AD" | "AO" | "AI" | "AQ" | "AG" | "AR" | "AM" | "AW" | "AU" | "AT" | "AZ" | "BS" | "BH" | "BD" | "BB" | "BY" | "BE" | "BZ" | "BJ" | "BM" | "BT" | "BO" | "BQ" | "BA" | "BW" | "BV" | "BR" | "IO" | "BN" | "BG" | "BF" | "BI" | "CV" | "KH" | "CM" | "CA" | "KY" | "CF" | "TD" | "CL" | "CN" | "CX" | "CC" | "CO" | "KM" | "CG" | "CD" | "CK" | "CR" | "CI" | "HR" | "CU" | "CW" | "CY" | "CZ" | "DK" | "DJ" | "DM" | "DO" | "EC" | "EG" | "SV" | "GQ" | "ER" | "EE" | "SZ" | "ET" | "FK" | "FO" | "FJ" | "FI" | "FR" | "GF" | "PF" | "TF" | "GA" | "GM" | "GE" | "DE" | "GH" | "GI" | "GR" | "GL" | "GD" | "GP" | "GU" | "GT" | "GG" | "GN" | "GW" | "GY" | "HT" | "HM" | "VA" | "HN" | "HK" | "HU" | "IS" | "IN" | "ID" | "IR" | "IQ" | "IE" | "IM" | "IL" | "IT" | "JM" | "JP" | "JE" | "JO" | "KZ" | "KE" | "KI" | "KW" | "KG" | "LA" | "LV" | "LB" | "LS" | "LR" | "LY" | "LI" | "LT" | "LU" | "MO" | "MG" | "MW" | "MY" | "MV" | "ML" | "MT" | "MH" | "MQ" | "MR" | "MU" | "YT" | "MX" | "FM" | "MD" | "MC" | "MN" | "ME" | "MS" | "MA" | "MZ" | "MM" | "NA" | "NR" | "NP" | "NL" | "NC" | "NZ" | "NI" | "NE" | "NG" | "NU" | "NF" | "KP" | "MK" | "MP" | "NO" | "OM" | "PK" | "PW" | "PS" | "PA" | "PG" | "PY" | "PE" | "PH" | "PN" | "PL" | "PT" | "PR" | "QA" | "RE" | "RO" | "RU" | "RW" | "BL" | "SH" | "KN" | "LC" | "MF" | "PM" | "VC" | "WS" | "SM" | "ST" | "SA" | "SN" | "RS" | "SC" | "SL" | "SG" | "SX" | "SK" | "SI" | "SB" | "SO" | "ZA" | "GS" | "KR" | "SS" | "ES" | "LK" | "SD" | "SR" | "SJ" | "SE" | "CH" | "SY" | "TW" | "TJ" | "TZ" | "TH" | "TL" | "TG" | "TK" | "TO" | "TT" | "TN" | "TR" | "TM" | "TC" | "TV" | "UG" | "UA" | "AE" | "GB" | "UM" | "US" | "UY" | "UZ" | "VU" | "VE" | "VN" | "VG" | "VI" | "WF" | "EH" | "YE" | "ZM" | "ZW";
-        /** @description This model represents a basic document type identifier, with some scheme (such as busdox-docid-qns), and an identifier value (such as urn:oasis...::Invoice##urn:fcd:peppol...::2.1). The exact layout and properties of the identifier value depends on the identifier scheme. */
-        DocumentType: {
-            /** @description The scheme of the identifier */
-            scheme: string;
-            /** @description The identifier itself */
-            value: string;
-            /** @description A human-readable name of the document type. This value is only set if it is defined in the network. */
-            name: string;
-        };
-        EndpointData: {
-            /** @description The transport profile */
-            transport_profile: string;
-            document_type: components["schemas"]["DocumentType"];
-            /** @description The URI of the endpoint */
-            uri: string;
-            /** @description The access point certificate, as published by their SMP. This certificate is used for both signing and encryption. */
-            ap_certificate: string;
-        };
-        HTTPBasicError: {
-            /** @description An error description */
-            detail: string;
-        };
-        /**
-         * @description A type of `ModelSerializer` that uses hyperlinked relationships with compound keys instead
-         *     of primary key relationships.  Specifically:
-         *
-         *     * A 'url' field is included instead of the 'id' field.
-         *     * Relationships to other instances are hyperlinks, instead of primary keys.
-         *
-         *     NOTE: this only works with DRF 3.1.0 and above.
-         */
-        Identifier: {
-            readonly id: number;
-            /** @description The identifier scheme that is used, defaults to iso6523-actorid-upis, which is the scheme used for Peppol. Note that this is NOT the Peppol identifier scheme (like 0088 or 0106), that scheme ID is used in the identifier value itself. */
-            scheme?: string;
-            /** @description An organization identifier, such as 0106:12345678 or 0190:000011123003456321. Note that this includes the peppol identifier scheme. */
-            identifier: string;
-            /** @description Set this value to true when KYC procedures have been followed, and this identifier has been verified for this organization. Must be set to true in order for this identifier to be usable when sending documents. */
-            verified?: boolean;
-            /** @description Set this value to true to publish this identifier in ion-SMP with receiving capability for Peppol BIS invoice and creditnote documents */
-            publish_receive_peppolbis?: boolean;
-            /** @description Set this value to true to publish this identifier in ion-SMP with receiving capability for SI-UBL-2.0 (NLCIUS) invoice and creditnote documents */
-            publish_receive_nlcius?: boolean;
-            /** @description Set this value to true to publish this identifier in ion-SMP with receiving capability for Invoice Response documents */
-            publish_receive_invoice_response?: boolean;
-            readonly links: components["schemas"]["IdentifierLink"];
-        };
-        /**
-         * @description A type of `ModelSerializer` that uses hyperlinked relationships with compound keys instead
-         *     of primary key relationships.  Specifically:
-         *
-         *     * A 'url' field is included instead of the 'id' field.
-         *     * Relationships to other instances are hyperlinks, instead of primary keys.
-         *
-         *     NOTE: this only works with DRF 3.1.0 and above.
-         */
-        IdentifierLink: {
-            /**
-             * Format: uri
-             * @description The resource URL for this identifier
-             */
-            readonly self: string;
-        };
-        Log: {
-            /**
-             * Format: date-time
-             * @description The creation date and time of this log entry
-             */
-            readonly timestamp: string;
-            /** @description The organization this log entry is related to */
-            readonly organization: number | null;
-            /** @description The send transaction this log entry is related to */
-            readonly send_transaction: number | null;
-            /** @description The receive transaction this log entry is related to */
-            readonly receive_transaction: number | null;
-            /** @description The name of the specific internal module that created this log entry */
-            readonly name: string;
-            /** @description The severity level of this log entry */
-            readonly level: string;
-            /** @description The main content of this log entry */
-            readonly msg: string;
-            readonly links: components["schemas"]["LogLink"];
-        };
-        LogLink: {
-            /**
-             * Format: uri
-             * @description The receiving organization of this transaction
-             */
-            readonly organization: string;
-            /**
-             * Format: uri
-             * @description The transaction this log entry is related to
-             */
-            readonly send_transaction: string;
-            /**
-             * Format: uri
-             * @description The transaction this log entry is related to
-             */
-            readonly receive_transaction: string;
-        };
-        MyJSONWebToken: {
-            email: string;
-            password: string;
-        };
-        Organization: {
-            readonly id: number;
-            /** @description The name of the organization */
-            name: string;
-            /**
-             * @description The country of this organization, mandatory for Peppol statistics and agreements.
-             *
-             *     * `AF` - Afghanistan
-             *     * `AX` - Åland Islands
-             *     * `AL` - Albania
-             *     * `DZ` - Algeria
-             *     * `AS` - American Samoa
-             *     * `AD` - Andorra
-             *     * `AO` - Angola
-             *     * `AI` - Anguilla
-             *     * `AQ` - Antarctica
-             *     * `AG` - Antigua and Barbuda
-             *     * `AR` - Argentina
-             *     * `AM` - Armenia
-             *     * `AW` - Aruba
-             *     * `AU` - Australia
-             *     * `AT` - Austria
-             *     * `AZ` - Azerbaijan
-             *     * `BS` - Bahamas
-             *     * `BH` - Bahrain
-             *     * `BD` - Bangladesh
-             *     * `BB` - Barbados
-             *     * `BY` - Belarus
-             *     * `BE` - Belgium
-             *     * `BZ` - Belize
-             *     * `BJ` - Benin
-             *     * `BM` - Bermuda
-             *     * `BT` - Bhutan
-             *     * `BO` - Bolivia
-             *     * `BQ` - Bonaire, Sint Eustatius and Saba
-             *     * `BA` - Bosnia and Herzegovina
-             *     * `BW` - Botswana
-             *     * `BV` - Bouvet Island
-             *     * `BR` - Brazil
-             *     * `IO` - British Indian Ocean Territory
-             *     * `BN` - Brunei
-             *     * `BG` - Bulgaria
-             *     * `BF` - Burkina Faso
-             *     * `BI` - Burundi
-             *     * `CV` - Cabo Verde
-             *     * `KH` - Cambodia
-             *     * `CM` - Cameroon
-             *     * `CA` - Canada
-             *     * `KY` - Cayman Islands
-             *     * `CF` - Central African Republic
-             *     * `TD` - Chad
-             *     * `CL` - Chile
-             *     * `CN` - China
-             *     * `CX` - Christmas Island
-             *     * `CC` - Cocos (Keeling) Islands
-             *     * `CO` - Colombia
-             *     * `KM` - Comoros
-             *     * `CG` - Congo
-             *     * `CD` - Congo (the Democratic Republic of the)
-             *     * `CK` - Cook Islands
-             *     * `CR` - Costa Rica
-             *     * `CI` - Côte d'Ivoire
-             *     * `HR` - Croatia
-             *     * `CU` - Cuba
-             *     * `CW` - Curaçao
-             *     * `CY` - Cyprus
-             *     * `CZ` - Czechia
-             *     * `DK` - Denmark
-             *     * `DJ` - Djibouti
-             *     * `DM` - Dominica
-             *     * `DO` - Dominican Republic
-             *     * `EC` - Ecuador
-             *     * `EG` - Egypt
-             *     * `SV` - El Salvador
-             *     * `GQ` - Equatorial Guinea
-             *     * `ER` - Eritrea
-             *     * `EE` - Estonia
-             *     * `SZ` - Eswatini
-             *     * `ET` - Ethiopia
-             *     * `FK` - Falkland Islands (Malvinas)
-             *     * `FO` - Faroe Islands
-             *     * `FJ` - Fiji
-             *     * `FI` - Finland
-             *     * `FR` - France
-             *     * `GF` - French Guiana
-             *     * `PF` - French Polynesia
-             *     * `TF` - French Southern Territories
-             *     * `GA` - Gabon
-             *     * `GM` - Gambia
-             *     * `GE` - Georgia
-             *     * `DE` - Germany
-             *     * `GH` - Ghana
-             *     * `GI` - Gibraltar
-             *     * `GR` - Greece
-             *     * `GL` - Greenland
-             *     * `GD` - Grenada
-             *     * `GP` - Guadeloupe
-             *     * `GU` - Guam
-             *     * `GT` - Guatemala
-             *     * `GG` - Guernsey
-             *     * `GN` - Guinea
-             *     * `GW` - Guinea-Bissau
-             *     * `GY` - Guyana
-             *     * `HT` - Haiti
-             *     * `HM` - Heard Island and McDonald Islands
-             *     * `VA` - Holy See
-             *     * `HN` - Honduras
-             *     * `HK` - Hong Kong
-             *     * `HU` - Hungary
-             *     * `IS` - Iceland
-             *     * `IN` - India
-             *     * `ID` - Indonesia
-             *     * `IR` - Iran
-             *     * `IQ` - Iraq
-             *     * `IE` - Ireland
-             *     * `IM` - Isle of Man
-             *     * `IL` - Israel
-             *     * `IT` - Italy
-             *     * `JM` - Jamaica
-             *     * `JP` - Japan
-             *     * `JE` - Jersey
-             *     * `JO` - Jordan
-             *     * `KZ` - Kazakhstan
-             *     * `KE` - Kenya
-             *     * `KI` - Kiribati
-             *     * `KW` - Kuwait
-             *     * `KG` - Kyrgyzstan
-             *     * `LA` - Laos
-             *     * `LV` - Latvia
-             *     * `LB` - Lebanon
-             *     * `LS` - Lesotho
-             *     * `LR` - Liberia
-             *     * `LY` - Libya
-             *     * `LI` - Liechtenstein
-             *     * `LT` - Lithuania
-             *     * `LU` - Luxembourg
-             *     * `MO` - Macao
-             *     * `MG` - Madagascar
-             *     * `MW` - Malawi
-             *     * `MY` - Malaysia
-             *     * `MV` - Maldives
-             *     * `ML` - Mali
-             *     * `MT` - Malta
-             *     * `MH` - Marshall Islands
-             *     * `MQ` - Martinique
-             *     * `MR` - Mauritania
-             *     * `MU` - Mauritius
-             *     * `YT` - Mayotte
-             *     * `MX` - Mexico
-             *     * `FM` - Micronesia
-             *     * `MD` - Moldova
-             *     * `MC` - Monaco
-             *     * `MN` - Mongolia
-             *     * `ME` - Montenegro
-             *     * `MS` - Montserrat
-             *     * `MA` - Morocco
-             *     * `MZ` - Mozambique
-             *     * `MM` - Myanmar
-             *     * `NA` - Namibia
-             *     * `NR` - Nauru
-             *     * `NP` - Nepal
-             *     * `NL` - Netherlands
-             *     * `NC` - New Caledonia
-             *     * `NZ` - New Zealand
-             *     * `NI` - Nicaragua
-             *     * `NE` - Niger
-             *     * `NG` - Nigeria
-             *     * `NU` - Niue
-             *     * `NF` - Norfolk Island
-             *     * `KP` - North Korea
-             *     * `MK` - North Macedonia
-             *     * `MP` - Northern Mariana Islands
-             *     * `NO` - Norway
-             *     * `OM` - Oman
-             *     * `PK` - Pakistan
-             *     * `PW` - Palau
-             *     * `PS` - Palestine, State of
-             *     * `PA` - Panama
-             *     * `PG` - Papua New Guinea
-             *     * `PY` - Paraguay
-             *     * `PE` - Peru
-             *     * `PH` - Philippines
-             *     * `PN` - Pitcairn
-             *     * `PL` - Poland
-             *     * `PT` - Portugal
-             *     * `PR` - Puerto Rico
-             *     * `QA` - Qatar
-             *     * `RE` - Réunion
-             *     * `RO` - Romania
-             *     * `RU` - Russia
-             *     * `RW` - Rwanda
-             *     * `BL` - Saint Barthélemy
-             *     * `SH` - Saint Helena, Ascension and Tristan da Cunha
-             *     * `KN` - Saint Kitts and Nevis
-             *     * `LC` - Saint Lucia
-             *     * `MF` - Saint Martin (French part)
-             *     * `PM` - Saint Pierre and Miquelon
-             *     * `VC` - Saint Vincent and the Grenadines
-             *     * `WS` - Samoa
-             *     * `SM` - San Marino
-             *     * `ST` - Sao Tome and Principe
-             *     * `SA` - Saudi Arabia
-             *     * `SN` - Senegal
-             *     * `RS` - Serbia
-             *     * `SC` - Seychelles
-             *     * `SL` - Sierra Leone
-             *     * `SG` - Singapore
-             *     * `SX` - Sint Maarten (Dutch part)
-             *     * `SK` - Slovakia
-             *     * `SI` - Slovenia
-             *     * `SB` - Solomon Islands
-             *     * `SO` - Somalia
-             *     * `ZA` - South Africa
-             *     * `GS` - South Georgia and the South Sandwich Islands
-             *     * `KR` - South Korea
-             *     * `SS` - South Sudan
-             *     * `ES` - Spain
-             *     * `LK` - Sri Lanka
-             *     * `SD` - Sudan
-             *     * `SR` - Suriname
-             *     * `SJ` - Svalbard and Jan Mayen
-             *     * `SE` - Sweden
-             *     * `CH` - Switzerland
-             *     * `SY` - Syria
-             *     * `TW` - Taiwan
-             *     * `TJ` - Tajikistan
-             *     * `TZ` - Tanzania
-             *     * `TH` - Thailand
-             *     * `TL` - Timor-Leste
-             *     * `TG` - Togo
-             *     * `TK` - Tokelau
-             *     * `TO` - Tonga
-             *     * `TT` - Trinidad and Tobago
-             *     * `TN` - Tunisia
-             *     * `TR` - Türkiye
-             *     * `TM` - Turkmenistan
-             *     * `TC` - Turks and Caicos Islands
-             *     * `TV` - Tuvalu
-             *     * `UG` - Uganda
-             *     * `UA` - Ukraine
-             *     * `AE` - United Arab Emirates
-             *     * `GB` - United Kingdom
-             *     * `UM` - United States Minor Outlying Islands
-             *     * `US` - United States of America
-             *     * `UY` - Uruguay
-             *     * `UZ` - Uzbekistan
-             *     * `VU` - Vanuatu
-             *     * `VE` - Venezuela
-             *     * `VN` - Vietnam
-             *     * `VG` - Virgin Islands (British)
-             *     * `VI` - Virgin Islands (U.S.)
-             *     * `WF` - Wallis and Futuna
-             *     * `EH` - Western Sahara
-             *     * `YE` - Yemen
-             *     * `ZM` - Zambia
-             *     * `ZW` - Zimbabwe
-             */
-            country: components["schemas"]["CountryEnum"];
-            /** @description Use ion-SMP to automatically publish this organization as a recipient. Set this value to False if this organization is managed through a different SMP or account. */
-            publish_in_smp: boolean;
-            /** @description An accounting reference for this organization. You can use this reference to filter on organizations, and transaction reports will provide a separate tally for each unique reference */
-            reference?: string;
-            readonly identifiers: components["schemas"]["Identifier"][];
-            readonly links: components["schemas"]["OrganizationLink"];
-        };
-        OrganizationLink: {
-            /**
-             * Format: uri
-             * @description The resource URL for this organization
-             */
-            readonly self: string;
-            /**
-             * Format: uri
-             * @description The list of identifiers of this organization
-             */
-            readonly identifiers: string;
-            /**
-             * Format: uri
-             * @description The list of receive triggers for this organization
-             */
-            readonly receive_triggers: string;
-            /**
-             * Format: uri
-             * @description Overview of receive triggers and receive trigger options that can be configured
-             */
-            readonly receive_trigger_options: string;
-            /**
-             * Format: uri
-             * @description The users specific to this organization
-             */
-            readonly users: string;
-            /**
-             * Format: uri
-             * @description The log entries for this organization
-             */
-            readonly logs: string;
-        };
-        /**
-         * @description A type of `ModelSerializer` that uses hyperlinked relationships with compound keys instead
-         *     of primary key relationships.  Specifically:
-         *
-         *     * A 'url' field is included instead of the 'id' field.
-         *     * Relationships to other instances are hyperlinks, instead of primary keys.
-         *
-         *     NOTE: this only works with DRF 3.1.0 and above.
-         */
-        OrganizationReceiveTrigger: {
-            readonly id: number;
-            /**
-             * @description The type of the trigger
-             *
-             *     * `API_CALL` - API call
-             *     * `SEND_EMAIL` - Basic email, a default template and optional document contents as attachments
-             */
-            trigger_type: components["schemas"]["TriggerTypeEnum"];
-            /** @description A description of the receiver trigger */
-            name: string;
-            /** @description Set to true to enable the trigger */
-            enabled?: boolean;
-            readonly links: components["schemas"]["OrganizationReceiveTriggerLink"];
-        };
-        /**
-         * @description A type of `ModelSerializer` that uses hyperlinked relationships with compound keys instead
-         *     of primary key relationships.  Specifically:
-         *
-         *     * A 'url' field is included instead of the 'id' field.
-         *     * Relationships to other instances are hyperlinks, instead of primary keys.
-         *
-         *     NOTE: this only works with DRF 3.1.0 and above.
-         */
-        OrganizationReceiveTriggerArgument: {
-            readonly id: number;
-            /** @description The name of the argument, see the trigger type documentation for possible argument names */
-            name: string;
-            /** @description The argument value, see the trigger type documentation for allowed values */
-            value: string;
-            readonly links: components["schemas"]["OrganizationReceiveTriggerArgumentLink"];
-        };
-        /**
-         * @description A type of `ModelSerializer` that uses hyperlinked relationships with compound keys instead
-         *     of primary key relationships.  Specifically:
-         *
-         *     * A 'url' field is included instead of the 'id' field.
-         *     * Relationships to other instances are hyperlinks, instead of primary keys.
-         *
-         *     NOTE: this only works with DRF 3.1.0 and above.
-         */
-        OrganizationReceiveTriggerArgumentLink: {
-            /**
-             * Format: uri
-             * @description The resource URL for this receive trigger argument
-             */
-            readonly self: string;
-        };
-        /**
-         * @description A type of `ModelSerializer` that uses hyperlinked relationships with compound keys instead
-         *     of primary key relationships.  Specifically:
-         *
-         *     * A 'url' field is included instead of the 'id' field.
-         *     * Relationships to other instances are hyperlinks, instead of primary keys.
-         *
-         *     NOTE: this only works with DRF 3.1.0 and above.
-         */
-        OrganizationReceiveTriggerLink: {
-            /**
-             * Format: uri
-             * @description The resource URL for this receive trigger
-             */
-            readonly self: string;
-            /**
-             * Format: uri
-             * @description The list of options for this receive trigger
-             */
-            readonly options: string;
-        };
-        /**
-         * @description A type of `ModelSerializer` that uses hyperlinked relationships with compound keys instead
-         *     of primary key relationships.  Specifically:
-         *
-         *     * A 'url' field is included instead of the 'id' field.
-         *     * Relationships to other instances are hyperlinks, instead of primary keys.
-         *
-         *     NOTE: this only works with DRF 3.1.0 and above.
-         */
-        OrganizationUser: {
-            readonly id: number;
-            /** Format: email */
-            email: string;
-            readonly email_verified: string;
-            readonly auth_token: string;
-            readonly links: components["schemas"]["OrganizationUserLink"];
-        };
-        /**
-         * @description A type of `ModelSerializer` that uses hyperlinked relationships with compound keys instead
-         *     of primary key relationships.  Specifically:
-         *
-         *     * A 'url' field is included instead of the 'id' field.
-         *     * Relationships to other instances are hyperlinks, instead of primary keys.
-         *
-         *     NOTE: this only works with DRF 3.1.0 and above.
-         */
-        OrganizationUserLink: {
-            /**
-             * Format: uri
-             * @description The resource URL for this identifier
-             */
-            readonly self: string;
-        };
-        PaginatedIdentifierList: {
-            /** @example 123 */
-            count: number;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?offset=400&limit=100
-             */
-            next?: string | null;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?offset=200&limit=100
-             */
-            previous?: string | null;
-            results: components["schemas"]["Identifier"][];
-        };
-        PaginatedLogList: {
-            /** @example 123 */
-            count: number;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?offset=400&limit=100
-             */
-            next?: string | null;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?offset=200&limit=100
-             */
-            previous?: string | null;
-            results: components["schemas"]["Log"][];
-        };
-        PaginatedOrganizationList: {
-            /** @example 123 */
-            count: number;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?offset=400&limit=100
-             */
-            next?: string | null;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?offset=200&limit=100
-             */
-            previous?: string | null;
-            results: components["schemas"]["Organization"][];
-        };
-        PaginatedOrganizationReceiveTriggerArgumentList: {
-            /** @example 123 */
-            count: number;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?offset=400&limit=100
-             */
-            next?: string | null;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?offset=200&limit=100
-             */
-            previous?: string | null;
-            results: components["schemas"]["OrganizationReceiveTriggerArgument"][];
-        };
-        PaginatedOrganizationReceiveTriggerList: {
-            /** @example 123 */
-            count: number;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?offset=400&limit=100
-             */
-            next?: string | null;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?offset=200&limit=100
-             */
-            previous?: string | null;
-            results: components["schemas"]["OrganizationReceiveTrigger"][];
-        };
-        PaginatedOrganizationUserList: {
-            /** @example 123 */
-            count: number;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?offset=400&limit=100
-             */
-            next?: string | null;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?offset=200&limit=100
-             */
-            previous?: string | null;
-            results: components["schemas"]["OrganizationUser"][];
-        };
-        PaginatedReceiveTransactionList: {
-            /** @example 123 */
-            count: number;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?offset=400&limit=100
-             */
-            next?: string | null;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?offset=200&limit=100
-             */
-            previous?: string | null;
-            results: components["schemas"]["ReceiveTransaction"][];
-        };
-        PaginatedSendTransactionErrorList: {
-            /** @example 123 */
-            count: number;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?offset=400&limit=100
-             */
-            next?: string | null;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?offset=200&limit=100
-             */
-            previous?: string | null;
-            results: components["schemas"]["SendTransactionError"][];
-        };
-        PaginatedSendTransactionList: {
-            /** @example 123 */
-            count: number;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?offset=400&limit=100
-             */
-            next?: string | null;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?offset=200&limit=100
-             */
-            previous?: string | null;
-            results: components["schemas"]["SendTransaction"][];
-        };
-        ParticipantEndpoints: {
-            endpoints: components["schemas"]["EndpointData"][];
-            /** @description A list of log lines, if enabled with the log_level parameter. */
-            logs?: string[];
-        };
-        ParticipantPresence: {
-            /** @description true if the participant is present on the network, false if not. */
-            exists: boolean;
-            /** @description A status line providing details about the presence value */
-            detail: string;
-            /** @description A list of log lines, if enabled with the log_level parameter. */
-            logs?: string[];
-        };
-        ParticipantSupportedDocumentTypes: {
-            document_types: components["schemas"]["DocumentType"][];
-        };
-        /**
-         * @description A type of `ModelSerializer` that uses hyperlinked relationships with compound keys instead
-         *     of primary key relationships.  Specifically:
-         *
-         *     * A 'url' field is included instead of the 'id' field.
-         *     * Relationships to other instances are hyperlinks, instead of primary keys.
-         *
-         *     NOTE: this only works with DRF 3.1.0 and above.
-         */
-        PatchedIdentifier: {
-            readonly id?: number;
-            /** @description The identifier scheme that is used, defaults to iso6523-actorid-upis, which is the scheme used for Peppol. Note that this is NOT the Peppol identifier scheme (like 0088 or 0106), that scheme ID is used in the identifier value itself. */
-            scheme?: string;
-            /** @description An organization identifier, such as 0106:12345678 or 0190:000011123003456321. Note that this includes the peppol identifier scheme. */
-            identifier?: string;
-            /** @description Set this value to true when KYC procedures have been followed, and this identifier has been verified for this organization. Must be set to true in order for this identifier to be usable when sending documents. */
-            verified?: boolean;
-            /** @description Set this value to true to publish this identifier in ion-SMP with receiving capability for Peppol BIS invoice and creditnote documents */
-            publish_receive_peppolbis?: boolean;
-            /** @description Set this value to true to publish this identifier in ion-SMP with receiving capability for SI-UBL-2.0 (NLCIUS) invoice and creditnote documents */
-            publish_receive_nlcius?: boolean;
-            /** @description Set this value to true to publish this identifier in ion-SMP with receiving capability for Invoice Response documents */
-            publish_receive_invoice_response?: boolean;
-            readonly links?: components["schemas"]["IdentifierLink"];
-        };
-        PatchedOrganization: {
-            readonly id?: number;
-            /** @description The name of the organization */
-            name?: string;
-            /**
-             * @description The country of this organization, mandatory for Peppol statistics and agreements.
-             *
-             *     * `AF` - Afghanistan
-             *     * `AX` - Åland Islands
-             *     * `AL` - Albania
-             *     * `DZ` - Algeria
-             *     * `AS` - American Samoa
-             *     * `AD` - Andorra
-             *     * `AO` - Angola
-             *     * `AI` - Anguilla
-             *     * `AQ` - Antarctica
-             *     * `AG` - Antigua and Barbuda
-             *     * `AR` - Argentina
-             *     * `AM` - Armenia
-             *     * `AW` - Aruba
-             *     * `AU` - Australia
-             *     * `AT` - Austria
-             *     * `AZ` - Azerbaijan
-             *     * `BS` - Bahamas
-             *     * `BH` - Bahrain
-             *     * `BD` - Bangladesh
-             *     * `BB` - Barbados
-             *     * `BY` - Belarus
-             *     * `BE` - Belgium
-             *     * `BZ` - Belize
-             *     * `BJ` - Benin
-             *     * `BM` - Bermuda
-             *     * `BT` - Bhutan
-             *     * `BO` - Bolivia
-             *     * `BQ` - Bonaire, Sint Eustatius and Saba
-             *     * `BA` - Bosnia and Herzegovina
-             *     * `BW` - Botswana
-             *     * `BV` - Bouvet Island
-             *     * `BR` - Brazil
-             *     * `IO` - British Indian Ocean Territory
-             *     * `BN` - Brunei
-             *     * `BG` - Bulgaria
-             *     * `BF` - Burkina Faso
-             *     * `BI` - Burundi
-             *     * `CV` - Cabo Verde
-             *     * `KH` - Cambodia
-             *     * `CM` - Cameroon
-             *     * `CA` - Canada
-             *     * `KY` - Cayman Islands
-             *     * `CF` - Central African Republic
-             *     * `TD` - Chad
-             *     * `CL` - Chile
-             *     * `CN` - China
-             *     * `CX` - Christmas Island
-             *     * `CC` - Cocos (Keeling) Islands
-             *     * `CO` - Colombia
-             *     * `KM` - Comoros
-             *     * `CG` - Congo
-             *     * `CD` - Congo (the Democratic Republic of the)
-             *     * `CK` - Cook Islands
-             *     * `CR` - Costa Rica
-             *     * `CI` - Côte d'Ivoire
-             *     * `HR` - Croatia
-             *     * `CU` - Cuba
-             *     * `CW` - Curaçao
-             *     * `CY` - Cyprus
-             *     * `CZ` - Czechia
-             *     * `DK` - Denmark
-             *     * `DJ` - Djibouti
-             *     * `DM` - Dominica
-             *     * `DO` - Dominican Republic
-             *     * `EC` - Ecuador
-             *     * `EG` - Egypt
-             *     * `SV` - El Salvador
-             *     * `GQ` - Equatorial Guinea
-             *     * `ER` - Eritrea
-             *     * `EE` - Estonia
-             *     * `SZ` - Eswatini
-             *     * `ET` - Ethiopia
-             *     * `FK` - Falkland Islands (Malvinas)
-             *     * `FO` - Faroe Islands
-             *     * `FJ` - Fiji
-             *     * `FI` - Finland
-             *     * `FR` - France
-             *     * `GF` - French Guiana
-             *     * `PF` - French Polynesia
-             *     * `TF` - French Southern Territories
-             *     * `GA` - Gabon
-             *     * `GM` - Gambia
-             *     * `GE` - Georgia
-             *     * `DE` - Germany
-             *     * `GH` - Ghana
-             *     * `GI` - Gibraltar
-             *     * `GR` - Greece
-             *     * `GL` - Greenland
-             *     * `GD` - Grenada
-             *     * `GP` - Guadeloupe
-             *     * `GU` - Guam
-             *     * `GT` - Guatemala
-             *     * `GG` - Guernsey
-             *     * `GN` - Guinea
-             *     * `GW` - Guinea-Bissau
-             *     * `GY` - Guyana
-             *     * `HT` - Haiti
-             *     * `HM` - Heard Island and McDonald Islands
-             *     * `VA` - Holy See
-             *     * `HN` - Honduras
-             *     * `HK` - Hong Kong
-             *     * `HU` - Hungary
-             *     * `IS` - Iceland
-             *     * `IN` - India
-             *     * `ID` - Indonesia
-             *     * `IR` - Iran
-             *     * `IQ` - Iraq
-             *     * `IE` - Ireland
-             *     * `IM` - Isle of Man
-             *     * `IL` - Israel
-             *     * `IT` - Italy
-             *     * `JM` - Jamaica
-             *     * `JP` - Japan
-             *     * `JE` - Jersey
-             *     * `JO` - Jordan
-             *     * `KZ` - Kazakhstan
-             *     * `KE` - Kenya
-             *     * `KI` - Kiribati
-             *     * `KW` - Kuwait
-             *     * `KG` - Kyrgyzstan
-             *     * `LA` - Laos
-             *     * `LV` - Latvia
-             *     * `LB` - Lebanon
-             *     * `LS` - Lesotho
-             *     * `LR` - Liberia
-             *     * `LY` - Libya
-             *     * `LI` - Liechtenstein
-             *     * `LT` - Lithuania
-             *     * `LU` - Luxembourg
-             *     * `MO` - Macao
-             *     * `MG` - Madagascar
-             *     * `MW` - Malawi
-             *     * `MY` - Malaysia
-             *     * `MV` - Maldives
-             *     * `ML` - Mali
-             *     * `MT` - Malta
-             *     * `MH` - Marshall Islands
-             *     * `MQ` - Martinique
-             *     * `MR` - Mauritania
-             *     * `MU` - Mauritius
-             *     * `YT` - Mayotte
-             *     * `MX` - Mexico
-             *     * `FM` - Micronesia
-             *     * `MD` - Moldova
-             *     * `MC` - Monaco
-             *     * `MN` - Mongolia
-             *     * `ME` - Montenegro
-             *     * `MS` - Montserrat
-             *     * `MA` - Morocco
-             *     * `MZ` - Mozambique
-             *     * `MM` - Myanmar
-             *     * `NA` - Namibia
-             *     * `NR` - Nauru
-             *     * `NP` - Nepal
-             *     * `NL` - Netherlands
-             *     * `NC` - New Caledonia
-             *     * `NZ` - New Zealand
-             *     * `NI` - Nicaragua
-             *     * `NE` - Niger
-             *     * `NG` - Nigeria
-             *     * `NU` - Niue
-             *     * `NF` - Norfolk Island
-             *     * `KP` - North Korea
-             *     * `MK` - North Macedonia
-             *     * `MP` - Northern Mariana Islands
-             *     * `NO` - Norway
-             *     * `OM` - Oman
-             *     * `PK` - Pakistan
-             *     * `PW` - Palau
-             *     * `PS` - Palestine, State of
-             *     * `PA` - Panama
-             *     * `PG` - Papua New Guinea
-             *     * `PY` - Paraguay
-             *     * `PE` - Peru
-             *     * `PH` - Philippines
-             *     * `PN` - Pitcairn
-             *     * `PL` - Poland
-             *     * `PT` - Portugal
-             *     * `PR` - Puerto Rico
-             *     * `QA` - Qatar
-             *     * `RE` - Réunion
-             *     * `RO` - Romania
-             *     * `RU` - Russia
-             *     * `RW` - Rwanda
-             *     * `BL` - Saint Barthélemy
-             *     * `SH` - Saint Helena, Ascension and Tristan da Cunha
-             *     * `KN` - Saint Kitts and Nevis
-             *     * `LC` - Saint Lucia
-             *     * `MF` - Saint Martin (French part)
-             *     * `PM` - Saint Pierre and Miquelon
-             *     * `VC` - Saint Vincent and the Grenadines
-             *     * `WS` - Samoa
-             *     * `SM` - San Marino
-             *     * `ST` - Sao Tome and Principe
-             *     * `SA` - Saudi Arabia
-             *     * `SN` - Senegal
-             *     * `RS` - Serbia
-             *     * `SC` - Seychelles
-             *     * `SL` - Sierra Leone
-             *     * `SG` - Singapore
-             *     * `SX` - Sint Maarten (Dutch part)
-             *     * `SK` - Slovakia
-             *     * `SI` - Slovenia
-             *     * `SB` - Solomon Islands
-             *     * `SO` - Somalia
-             *     * `ZA` - South Africa
-             *     * `GS` - South Georgia and the South Sandwich Islands
-             *     * `KR` - South Korea
-             *     * `SS` - South Sudan
-             *     * `ES` - Spain
-             *     * `LK` - Sri Lanka
-             *     * `SD` - Sudan
-             *     * `SR` - Suriname
-             *     * `SJ` - Svalbard and Jan Mayen
-             *     * `SE` - Sweden
-             *     * `CH` - Switzerland
-             *     * `SY` - Syria
-             *     * `TW` - Taiwan
-             *     * `TJ` - Tajikistan
-             *     * `TZ` - Tanzania
-             *     * `TH` - Thailand
-             *     * `TL` - Timor-Leste
-             *     * `TG` - Togo
-             *     * `TK` - Tokelau
-             *     * `TO` - Tonga
-             *     * `TT` - Trinidad and Tobago
-             *     * `TN` - Tunisia
-             *     * `TR` - Türkiye
-             *     * `TM` - Turkmenistan
-             *     * `TC` - Turks and Caicos Islands
-             *     * `TV` - Tuvalu
-             *     * `UG` - Uganda
-             *     * `UA` - Ukraine
-             *     * `AE` - United Arab Emirates
-             *     * `GB` - United Kingdom
-             *     * `UM` - United States Minor Outlying Islands
-             *     * `US` - United States of America
-             *     * `UY` - Uruguay
-             *     * `UZ` - Uzbekistan
-             *     * `VU` - Vanuatu
-             *     * `VE` - Venezuela
-             *     * `VN` - Vietnam
-             *     * `VG` - Virgin Islands (British)
-             *     * `VI` - Virgin Islands (U.S.)
-             *     * `WF` - Wallis and Futuna
-             *     * `EH` - Western Sahara
-             *     * `YE` - Yemen
-             *     * `ZM` - Zambia
-             *     * `ZW` - Zimbabwe
-             */
-            country?: components["schemas"]["CountryEnum"];
-            /** @description Use ion-SMP to automatically publish this organization as a recipient. Set this value to False if this organization is managed through a different SMP or account. */
-            publish_in_smp?: boolean;
-            /** @description An accounting reference for this organization. You can use this reference to filter on organizations, and transaction reports will provide a separate tally for each unique reference */
-            reference?: string;
-            readonly identifiers?: components["schemas"]["Identifier"][];
-            readonly links?: components["schemas"]["OrganizationLink"];
-        };
-        /**
-         * @description A type of `ModelSerializer` that uses hyperlinked relationships with compound keys instead
-         *     of primary key relationships.  Specifically:
-         *
-         *     * A 'url' field is included instead of the 'id' field.
-         *     * Relationships to other instances are hyperlinks, instead of primary keys.
-         *
-         *     NOTE: this only works with DRF 3.1.0 and above.
-         */
-        PatchedOrganizationReceiveTrigger: {
-            readonly id?: number;
-            /**
-             * @description The type of the trigger
-             *
-             *     * `API_CALL` - API call
-             *     * `SEND_EMAIL` - Basic email, a default template and optional document contents as attachments
-             */
-            trigger_type?: components["schemas"]["TriggerTypeEnum"];
-            /** @description A description of the receiver trigger */
-            name?: string;
-            /** @description Set to true to enable the trigger */
-            enabled?: boolean;
-            readonly links?: components["schemas"]["OrganizationReceiveTriggerLink"];
-        };
-        /**
-         * @description A type of `ModelSerializer` that uses hyperlinked relationships with compound keys instead
-         *     of primary key relationships.  Specifically:
-         *
-         *     * A 'url' field is included instead of the 'id' field.
-         *     * Relationships to other instances are hyperlinks, instead of primary keys.
-         *
-         *     NOTE: this only works with DRF 3.1.0 and above.
-         */
-        PatchedOrganizationReceiveTriggerArgument: {
-            readonly id?: number;
-            /** @description The name of the argument, see the trigger type documentation for possible argument names */
-            name?: string;
-            /** @description The argument value, see the trigger type documentation for allowed values */
-            value?: string;
-            readonly links?: components["schemas"]["OrganizationReceiveTriggerArgumentLink"];
-        };
-        PatchedReceiveTransaction: {
-            readonly id?: number;
-            /**
-             * Format: date-time
-             * @description The creation date and time of this transaction
-             */
-            readonly created_on?: string;
-            /**
-             * Format: date-time
-             * @description The date and time of the last change in this transaction
-             */
-            readonly last_updated_on?: string;
-            /** @description The (globally) unique identifier for this transaction */
-            readonly transaction_id?: string | null;
-            /** @description The identifier of the sending access point. For Peppol this is the Peppol Seat ID of the service provider. */
-            readonly transport_sender?: string;
-            /** @description The identifier of the receiving access point. For Peppol this is the Peppol Seat ID of the service provider. */
-            readonly transport_receiver?: string;
-            /** @description The authority scheme of the sender identifier. For peppol this is iso6523-actorid-upis. */
-            readonly sender_authority?: string;
-            /** @description The identifier of the sender, such as 0106:12345678. */
-            readonly sender_identifier?: string;
-            /** @description The authority scheme of the receiver identifier. For peppol this is iso6523-actorid-upis. */
-            readonly receiver_authority?: string;
-            /** @description The identifier of the receiver, such as 0106:12345678. */
-            readonly receiver_identifier?: string;
-            /** @description The short name for the document type, such as 'Invoice' */
-            readonly document_element?: string;
-            /** @description The full document type identifier sent in this transaction */
-            readonly document_type?: string;
-            /** @description The process identifier for this transaction */
-            readonly process?: string;
-            /** @description The identifier of the document itself, such as the Invoice ID, for supported document types. Empty for document types without a defined ID. */
-            readonly document_id?: string | null;
-            /**
-             * @description The state of this transaction
-             *
-             *     * `NEW` - new
-             *     * `READ` - read
-             */
-            state?: components["schemas"]["ReceiveTransactionStateEnum"];
-            /** @description A user-settable field for additional state. This value is not used by ion-AP, but API clients can use this for central storage of additional state. */
-            client_state?: string | null;
-            readonly links?: components["schemas"]["ReceiveTransactionLink"];
-        };
-        ReceiveTransaction: {
-            readonly id: number;
-            /**
-             * Format: date-time
-             * @description The creation date and time of this transaction
-             */
-            readonly created_on: string;
-            /**
-             * Format: date-time
-             * @description The date and time of the last change in this transaction
-             */
-            readonly last_updated_on: string;
-            /** @description The (globally) unique identifier for this transaction */
-            readonly transaction_id: string | null;
-            /** @description The identifier of the sending access point. For Peppol this is the Peppol Seat ID of the service provider. */
-            readonly transport_sender: string;
-            /** @description The identifier of the receiving access point. For Peppol this is the Peppol Seat ID of the service provider. */
-            readonly transport_receiver: string;
-            /** @description The authority scheme of the sender identifier. For peppol this is iso6523-actorid-upis. */
-            readonly sender_authority: string;
-            /** @description The identifier of the sender, such as 0106:12345678. */
-            readonly sender_identifier: string;
-            /** @description The authority scheme of the receiver identifier. For peppol this is iso6523-actorid-upis. */
-            readonly receiver_authority: string;
-            /** @description The identifier of the receiver, such as 0106:12345678. */
-            readonly receiver_identifier: string;
-            /** @description The short name for the document type, such as 'Invoice' */
-            readonly document_element: string;
-            /** @description The full document type identifier sent in this transaction */
-            readonly document_type: string;
-            /** @description The process identifier for this transaction */
-            readonly process: string;
-            /** @description The identifier of the document itself, such as the Invoice ID, for supported document types. Empty for document types without a defined ID. */
-            readonly document_id: string | null;
-            /**
-             * @description The state of this transaction
-             *
-             *     * `NEW` - new
-             *     * `READ` - read
-             */
-            state?: components["schemas"]["ReceiveTransactionStateEnum"];
-            /** @description A user-settable field for additional state. This value is not used by ion-AP, but API clients can use this for central storage of additional state. */
-            client_state?: string | null;
-            readonly links: components["schemas"]["ReceiveTransactionLink"];
-        };
-        ReceiveTransactionLink: {
-            /**
-             * Format: uri
-             * @description The resource URL for this transaction
-             */
-            readonly self: string;
-            /**
-             * Format: uri
-             * @description The recipient organization of this transaction
-             */
-            readonly organization: string;
-            /**
-             * Format: uri
-             * @description The document that was received
-             */
-            readonly document: string;
-            /**
-             * Format: uri
-             * @description The full Standard Business Header Envelope that was received
-             */
-            readonly sbdh: string;
-            /**
-             * Format: uri
-             * @description A PDF Rendering of the received document (experimental, invoices only at this time)
-             */
-            readonly pdf: string;
-            /**
-             * Format: uri
-             * @description Log messages for this transaction
-             */
-            readonly logs: string;
-            /**
-             * Format: uri
-             * @description (Re-)execute the receive triggers for this transaction.
-             */
-            readonly execute_triggers: string;
-        };
-        /**
-         * @description * `NEW` - new
-         *     * `READ` - read
-         * @enum {string}
-         */
-        ReceiveTransactionStateEnum: "NEW" | "READ";
-        SendTransaction: {
-            readonly id: number;
-            /**
-             * Format: date-time
-             * @description The creation date and time of this transaction
-             */
-            readonly created_on: string;
-            /**
-             * Format: date-time
-             * @description The date and time of the last change in this transaction
-             */
-            readonly last_updated_on: string;
-            /** @description The (globally) unique identifier for this transaction */
-            readonly transaction_id: string | null;
-            /** @description The identifier of the sending access point. For Peppol this is the Peppol Seat ID of the service provider. */
-            readonly transport_sender: string;
-            /** @description The identifier of the receiving access point. For Peppol this is the Peppol Seat ID of the service provider. */
-            readonly transport_receiver: string;
-            /** @description The authority scheme of the sender identifier. For peppol this is iso6523-actorid-upis. */
-            readonly sender_authority: string;
-            /** @description The identifier of the sender, such as 0106:12345678. */
-            readonly sender_identifier: string;
-            /** @description The authority scheme of the receiver identifier. For peppol this is iso6523-actorid-upis. */
-            readonly receiver_authority: string;
-            /** @description The identifier of the receiver, such as 0106:12345678. */
-            readonly receiver_identifier: string;
-            /** @description The short name for the document type, such as 'Invoice' */
-            readonly document_element: string;
-            /** @description The full document type identifier sent in this transaction */
-            readonly document_type: string;
-            /** @description The process identifier for this transaction */
-            readonly process: string;
-            /** @description The identifier of the document itself, such as the Invoice ID, for supported document types. Empty for document types without a defined ID. */
-            readonly document_id: string | null;
-            /**
-             * @description The state of this transaction
-             *
-             *     * `QUEUED` - queued
-             *     * `SENDING` - sending
-             *     * `SENT` - sent
-             *     * `DEFERRED` - deferred
-             *     * `ERROR` - error
-             */
-            state?: components["schemas"]["SendTransactionStateEnum"];
-            readonly links: components["schemas"]["SendTransactionLink"];
-        };
-        SendTransactionError: {
-            /** @description The error code of this error, such as EBMS:0004 */
-            readonly code: string | null;
-            /** @description A detailed description of the error */
-            readonly detail: string;
-        };
-        SendTransactionLink: {
-            /**
-             * Format: uri
-             * @description The resource URL for this transaction
-             */
-            readonly self: string;
-            /**
-             * Format: uri
-             * @description The sending organization of this transaction
-             */
-            readonly organization: string;
-            /**
-             * Format: uri
-             * @description The full Standard Business Header Envelope that was sent
-             */
-            readonly sbdh: string;
-            /**
-             * Format: uri
-             * @description The document that was sent
-             */
-            readonly document: string;
-            /**
-             * Format: uri
-             * @description A PDF Rendering of the sent document (experimental, invoices only at this time)
-             */
-            readonly pdf: string;
-            /**
-             * Format: uri
-             * @description The receipt from the receiving access point, if transaction was successful
-             */
-            readonly receipt: string;
-            /**
-             * Format: uri
-             * @description A list of errors for this transaction
-             */
-            readonly errors: string;
-            /**
-             * Format: uri
-             * @description Log messages for this transaction
-             */
-            readonly logs: string;
-        };
-        /**
-         * @description * `QUEUED` - queued
-         *     * `SENDING` - sending
-         *     * `SENT` - sent
-         *     * `DEFERRED` - deferred
-         *     * `ERROR` - error
-         * @enum {string}
-         */
-        SendTransactionStateEnum: "QUEUED" | "SENDING" | "SENT" | "DEFERRED" | "ERROR";
-        TokenRefresh: {
-            readonly access: string;
-            refresh: string;
-        };
-        /**
-         * @description * `API_CALL` - API call
-         *     * `SEND_EMAIL` - Basic email, a default template and optional document contents as attachments
-         * @enum {string}
-         */
-        TriggerTypeEnum: "API_CALL" | "SEND_EMAIL";
+  schemas: {
+    /**
+     * @description * `AF` - Afghanistan
+     *     * `AX` - Åland Islands
+     *     * `AL` - Albania
+     *     * `DZ` - Algeria
+     *     * `AS` - American Samoa
+     *     * `AD` - Andorra
+     *     * `AO` - Angola
+     *     * `AI` - Anguilla
+     *     * `AQ` - Antarctica
+     *     * `AG` - Antigua and Barbuda
+     *     * `AR` - Argentina
+     *     * `AM` - Armenia
+     *     * `AW` - Aruba
+     *     * `AU` - Australia
+     *     * `AT` - Austria
+     *     * `AZ` - Azerbaijan
+     *     * `BS` - Bahamas
+     *     * `BH` - Bahrain
+     *     * `BD` - Bangladesh
+     *     * `BB` - Barbados
+     *     * `BY` - Belarus
+     *     * `BE` - Belgium
+     *     * `BZ` - Belize
+     *     * `BJ` - Benin
+     *     * `BM` - Bermuda
+     *     * `BT` - Bhutan
+     *     * `BO` - Bolivia
+     *     * `BQ` - Bonaire, Sint Eustatius and Saba
+     *     * `BA` - Bosnia and Herzegovina
+     *     * `BW` - Botswana
+     *     * `BV` - Bouvet Island
+     *     * `BR` - Brazil
+     *     * `IO` - British Indian Ocean Territory
+     *     * `BN` - Brunei
+     *     * `BG` - Bulgaria
+     *     * `BF` - Burkina Faso
+     *     * `BI` - Burundi
+     *     * `CV` - Cabo Verde
+     *     * `KH` - Cambodia
+     *     * `CM` - Cameroon
+     *     * `CA` - Canada
+     *     * `KY` - Cayman Islands
+     *     * `CF` - Central African Republic
+     *     * `TD` - Chad
+     *     * `CL` - Chile
+     *     * `CN` - China
+     *     * `CX` - Christmas Island
+     *     * `CC` - Cocos (Keeling) Islands
+     *     * `CO` - Colombia
+     *     * `KM` - Comoros
+     *     * `CG` - Congo
+     *     * `CD` - Congo (the Democratic Republic of the)
+     *     * `CK` - Cook Islands
+     *     * `CR` - Costa Rica
+     *     * `CI` - Côte d'Ivoire
+     *     * `HR` - Croatia
+     *     * `CU` - Cuba
+     *     * `CW` - Curaçao
+     *     * `CY` - Cyprus
+     *     * `CZ` - Czechia
+     *     * `DK` - Denmark
+     *     * `DJ` - Djibouti
+     *     * `DM` - Dominica
+     *     * `DO` - Dominican Republic
+     *     * `EC` - Ecuador
+     *     * `EG` - Egypt
+     *     * `SV` - El Salvador
+     *     * `GQ` - Equatorial Guinea
+     *     * `ER` - Eritrea
+     *     * `EE` - Estonia
+     *     * `SZ` - Eswatini
+     *     * `ET` - Ethiopia
+     *     * `FK` - Falkland Islands (Malvinas)
+     *     * `FO` - Faroe Islands
+     *     * `FJ` - Fiji
+     *     * `FI` - Finland
+     *     * `FR` - France
+     *     * `GF` - French Guiana
+     *     * `PF` - French Polynesia
+     *     * `TF` - French Southern Territories
+     *     * `GA` - Gabon
+     *     * `GM` - Gambia
+     *     * `GE` - Georgia
+     *     * `DE` - Germany
+     *     * `GH` - Ghana
+     *     * `GI` - Gibraltar
+     *     * `GR` - Greece
+     *     * `GL` - Greenland
+     *     * `GD` - Grenada
+     *     * `GP` - Guadeloupe
+     *     * `GU` - Guam
+     *     * `GT` - Guatemala
+     *     * `GG` - Guernsey
+     *     * `GN` - Guinea
+     *     * `GW` - Guinea-Bissau
+     *     * `GY` - Guyana
+     *     * `HT` - Haiti
+     *     * `HM` - Heard Island and McDonald Islands
+     *     * `VA` - Holy See
+     *     * `HN` - Honduras
+     *     * `HK` - Hong Kong
+     *     * `HU` - Hungary
+     *     * `IS` - Iceland
+     *     * `IN` - India
+     *     * `ID` - Indonesia
+     *     * `IR` - Iran
+     *     * `IQ` - Iraq
+     *     * `IE` - Ireland
+     *     * `IM` - Isle of Man
+     *     * `IL` - Israel
+     *     * `IT` - Italy
+     *     * `JM` - Jamaica
+     *     * `JP` - Japan
+     *     * `JE` - Jersey
+     *     * `JO` - Jordan
+     *     * `KZ` - Kazakhstan
+     *     * `KE` - Kenya
+     *     * `KI` - Kiribati
+     *     * `KW` - Kuwait
+     *     * `KG` - Kyrgyzstan
+     *     * `LA` - Laos
+     *     * `LV` - Latvia
+     *     * `LB` - Lebanon
+     *     * `LS` - Lesotho
+     *     * `LR` - Liberia
+     *     * `LY` - Libya
+     *     * `LI` - Liechtenstein
+     *     * `LT` - Lithuania
+     *     * `LU` - Luxembourg
+     *     * `MO` - Macao
+     *     * `MG` - Madagascar
+     *     * `MW` - Malawi
+     *     * `MY` - Malaysia
+     *     * `MV` - Maldives
+     *     * `ML` - Mali
+     *     * `MT` - Malta
+     *     * `MH` - Marshall Islands
+     *     * `MQ` - Martinique
+     *     * `MR` - Mauritania
+     *     * `MU` - Mauritius
+     *     * `YT` - Mayotte
+     *     * `MX` - Mexico
+     *     * `FM` - Micronesia
+     *     * `MD` - Moldova
+     *     * `MC` - Monaco
+     *     * `MN` - Mongolia
+     *     * `ME` - Montenegro
+     *     * `MS` - Montserrat
+     *     * `MA` - Morocco
+     *     * `MZ` - Mozambique
+     *     * `MM` - Myanmar
+     *     * `NA` - Namibia
+     *     * `NR` - Nauru
+     *     * `NP` - Nepal
+     *     * `NL` - Netherlands
+     *     * `NC` - New Caledonia
+     *     * `NZ` - New Zealand
+     *     * `NI` - Nicaragua
+     *     * `NE` - Niger
+     *     * `NG` - Nigeria
+     *     * `NU` - Niue
+     *     * `NF` - Norfolk Island
+     *     * `KP` - North Korea
+     *     * `MK` - North Macedonia
+     *     * `MP` - Northern Mariana Islands
+     *     * `NO` - Norway
+     *     * `OM` - Oman
+     *     * `PK` - Pakistan
+     *     * `PW` - Palau
+     *     * `PS` - Palestine, State of
+     *     * `PA` - Panama
+     *     * `PG` - Papua New Guinea
+     *     * `PY` - Paraguay
+     *     * `PE` - Peru
+     *     * `PH` - Philippines
+     *     * `PN` - Pitcairn
+     *     * `PL` - Poland
+     *     * `PT` - Portugal
+     *     * `PR` - Puerto Rico
+     *     * `QA` - Qatar
+     *     * `RE` - Réunion
+     *     * `RO` - Romania
+     *     * `RU` - Russia
+     *     * `RW` - Rwanda
+     *     * `BL` - Saint Barthélemy
+     *     * `SH` - Saint Helena, Ascension and Tristan da Cunha
+     *     * `KN` - Saint Kitts and Nevis
+     *     * `LC` - Saint Lucia
+     *     * `MF` - Saint Martin (French part)
+     *     * `PM` - Saint Pierre and Miquelon
+     *     * `VC` - Saint Vincent and the Grenadines
+     *     * `WS` - Samoa
+     *     * `SM` - San Marino
+     *     * `ST` - Sao Tome and Principe
+     *     * `SA` - Saudi Arabia
+     *     * `SN` - Senegal
+     *     * `RS` - Serbia
+     *     * `SC` - Seychelles
+     *     * `SL` - Sierra Leone
+     *     * `SG` - Singapore
+     *     * `SX` - Sint Maarten (Dutch part)
+     *     * `SK` - Slovakia
+     *     * `SI` - Slovenia
+     *     * `SB` - Solomon Islands
+     *     * `SO` - Somalia
+     *     * `ZA` - South Africa
+     *     * `GS` - South Georgia and the South Sandwich Islands
+     *     * `KR` - South Korea
+     *     * `SS` - South Sudan
+     *     * `ES` - Spain
+     *     * `LK` - Sri Lanka
+     *     * `SD` - Sudan
+     *     * `SR` - Suriname
+     *     * `SJ` - Svalbard and Jan Mayen
+     *     * `SE` - Sweden
+     *     * `CH` - Switzerland
+     *     * `SY` - Syria
+     *     * `TW` - Taiwan
+     *     * `TJ` - Tajikistan
+     *     * `TZ` - Tanzania
+     *     * `TH` - Thailand
+     *     * `TL` - Timor-Leste
+     *     * `TG` - Togo
+     *     * `TK` - Tokelau
+     *     * `TO` - Tonga
+     *     * `TT` - Trinidad and Tobago
+     *     * `TN` - Tunisia
+     *     * `TR` - Türkiye
+     *     * `TM` - Turkmenistan
+     *     * `TC` - Turks and Caicos Islands
+     *     * `TV` - Tuvalu
+     *     * `UG` - Uganda
+     *     * `UA` - Ukraine
+     *     * `AE` - United Arab Emirates
+     *     * `GB` - United Kingdom
+     *     * `UM` - United States Minor Outlying Islands
+     *     * `US` - United States of America
+     *     * `UY` - Uruguay
+     *     * `UZ` - Uzbekistan
+     *     * `VU` - Vanuatu
+     *     * `VE` - Venezuela
+     *     * `VN` - Vietnam
+     *     * `VG` - Virgin Islands (British)
+     *     * `VI` - Virgin Islands (U.S.)
+     *     * `WF` - Wallis and Futuna
+     *     * `EH` - Western Sahara
+     *     * `YE` - Yemen
+     *     * `ZM` - Zambia
+     *     * `ZW` - Zimbabwe
+     * @enum {string}
+     */
+    CountryEnum:
+      | 'AF'
+      | 'AX'
+      | 'AL'
+      | 'DZ'
+      | 'AS'
+      | 'AD'
+      | 'AO'
+      | 'AI'
+      | 'AQ'
+      | 'AG'
+      | 'AR'
+      | 'AM'
+      | 'AW'
+      | 'AU'
+      | 'AT'
+      | 'AZ'
+      | 'BS'
+      | 'BH'
+      | 'BD'
+      | 'BB'
+      | 'BY'
+      | 'BE'
+      | 'BZ'
+      | 'BJ'
+      | 'BM'
+      | 'BT'
+      | 'BO'
+      | 'BQ'
+      | 'BA'
+      | 'BW'
+      | 'BV'
+      | 'BR'
+      | 'IO'
+      | 'BN'
+      | 'BG'
+      | 'BF'
+      | 'BI'
+      | 'CV'
+      | 'KH'
+      | 'CM'
+      | 'CA'
+      | 'KY'
+      | 'CF'
+      | 'TD'
+      | 'CL'
+      | 'CN'
+      | 'CX'
+      | 'CC'
+      | 'CO'
+      | 'KM'
+      | 'CG'
+      | 'CD'
+      | 'CK'
+      | 'CR'
+      | 'CI'
+      | 'HR'
+      | 'CU'
+      | 'CW'
+      | 'CY'
+      | 'CZ'
+      | 'DK'
+      | 'DJ'
+      | 'DM'
+      | 'DO'
+      | 'EC'
+      | 'EG'
+      | 'SV'
+      | 'GQ'
+      | 'ER'
+      | 'EE'
+      | 'SZ'
+      | 'ET'
+      | 'FK'
+      | 'FO'
+      | 'FJ'
+      | 'FI'
+      | 'FR'
+      | 'GF'
+      | 'PF'
+      | 'TF'
+      | 'GA'
+      | 'GM'
+      | 'GE'
+      | 'DE'
+      | 'GH'
+      | 'GI'
+      | 'GR'
+      | 'GL'
+      | 'GD'
+      | 'GP'
+      | 'GU'
+      | 'GT'
+      | 'GG'
+      | 'GN'
+      | 'GW'
+      | 'GY'
+      | 'HT'
+      | 'HM'
+      | 'VA'
+      | 'HN'
+      | 'HK'
+      | 'HU'
+      | 'IS'
+      | 'IN'
+      | 'ID'
+      | 'IR'
+      | 'IQ'
+      | 'IE'
+      | 'IM'
+      | 'IL'
+      | 'IT'
+      | 'JM'
+      | 'JP'
+      | 'JE'
+      | 'JO'
+      | 'KZ'
+      | 'KE'
+      | 'KI'
+      | 'KW'
+      | 'KG'
+      | 'LA'
+      | 'LV'
+      | 'LB'
+      | 'LS'
+      | 'LR'
+      | 'LY'
+      | 'LI'
+      | 'LT'
+      | 'LU'
+      | 'MO'
+      | 'MG'
+      | 'MW'
+      | 'MY'
+      | 'MV'
+      | 'ML'
+      | 'MT'
+      | 'MH'
+      | 'MQ'
+      | 'MR'
+      | 'MU'
+      | 'YT'
+      | 'MX'
+      | 'FM'
+      | 'MD'
+      | 'MC'
+      | 'MN'
+      | 'ME'
+      | 'MS'
+      | 'MA'
+      | 'MZ'
+      | 'MM'
+      | 'NA'
+      | 'NR'
+      | 'NP'
+      | 'NL'
+      | 'NC'
+      | 'NZ'
+      | 'NI'
+      | 'NE'
+      | 'NG'
+      | 'NU'
+      | 'NF'
+      | 'KP'
+      | 'MK'
+      | 'MP'
+      | 'NO'
+      | 'OM'
+      | 'PK'
+      | 'PW'
+      | 'PS'
+      | 'PA'
+      | 'PG'
+      | 'PY'
+      | 'PE'
+      | 'PH'
+      | 'PN'
+      | 'PL'
+      | 'PT'
+      | 'PR'
+      | 'QA'
+      | 'RE'
+      | 'RO'
+      | 'RU'
+      | 'RW'
+      | 'BL'
+      | 'SH'
+      | 'KN'
+      | 'LC'
+      | 'MF'
+      | 'PM'
+      | 'VC'
+      | 'WS'
+      | 'SM'
+      | 'ST'
+      | 'SA'
+      | 'SN'
+      | 'RS'
+      | 'SC'
+      | 'SL'
+      | 'SG'
+      | 'SX'
+      | 'SK'
+      | 'SI'
+      | 'SB'
+      | 'SO'
+      | 'ZA'
+      | 'GS'
+      | 'KR'
+      | 'SS'
+      | 'ES'
+      | 'LK'
+      | 'SD'
+      | 'SR'
+      | 'SJ'
+      | 'SE'
+      | 'CH'
+      | 'SY'
+      | 'TW'
+      | 'TJ'
+      | 'TZ'
+      | 'TH'
+      | 'TL'
+      | 'TG'
+      | 'TK'
+      | 'TO'
+      | 'TT'
+      | 'TN'
+      | 'TR'
+      | 'TM'
+      | 'TC'
+      | 'TV'
+      | 'UG'
+      | 'UA'
+      | 'AE'
+      | 'GB'
+      | 'UM'
+      | 'US'
+      | 'UY'
+      | 'UZ'
+      | 'VU'
+      | 'VE'
+      | 'VN'
+      | 'VG'
+      | 'VI'
+      | 'WF'
+      | 'EH'
+      | 'YE'
+      | 'ZM'
+      | 'ZW';
+    /** @description This model represents a basic document type identifier, with some scheme (such as busdox-docid-qns), and an identifier value (such as urn:oasis...::Invoice##urn:fcd:peppol...::2.1). The exact layout and properties of the identifier value depends on the identifier scheme. */
+    DocumentType: {
+      /** @description The scheme of the identifier */
+      scheme: string;
+      /** @description The identifier itself */
+      value: string;
+      /** @description A human-readable name of the document type. This value is only set if it is defined in the network. */
+      name: string;
     };
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+    EndpointData: {
+      /** @description The transport profile */
+      transport_profile: string;
+      document_type: components['schemas']['DocumentType'];
+      /** @description The URI of the endpoint */
+      uri: string;
+      /** @description The access point certificate, as published by their SMP. This certificate is used for both signing and encryption. */
+      ap_certificate: string;
+    };
+    HTTPBasicError: {
+      /** @description An error description */
+      detail: string;
+    };
+    /**
+     * @description A type of `ModelSerializer` that uses hyperlinked relationships with compound keys instead
+     *     of primary key relationships.  Specifically:
+     *
+     *     * A 'url' field is included instead of the 'id' field.
+     *     * Relationships to other instances are hyperlinks, instead of primary keys.
+     *
+     *     NOTE: this only works with DRF 3.1.0 and above.
+     */
+    Identifier: {
+      readonly id: number;
+      /** @description The identifier scheme that is used, defaults to iso6523-actorid-upis, which is the scheme used for Peppol. Note that this is NOT the Peppol identifier scheme (like 0088 or 0106), that scheme ID is used in the identifier value itself. */
+      scheme?: string;
+      /** @description An organization identifier, such as 0106:12345678 or 0190:000011123003456321. Note that this includes the peppol identifier scheme. */
+      identifier: string;
+      /** @description Set this value to true when KYC procedures have been followed, and this identifier has been verified for this organization. Must be set to true in order for this identifier to be usable when sending documents. */
+      verified?: boolean;
+      /** @description Set this value to true to publish this identifier in ion-SMP with receiving capability for Peppol BIS invoice and creditnote documents */
+      publish_receive_peppolbis?: boolean;
+      /** @description Set this value to true to publish this identifier in ion-SMP with receiving capability for SI-UBL-2.0 (NLCIUS) invoice and creditnote documents */
+      publish_receive_nlcius?: boolean;
+      /** @description Set this value to true to publish this identifier in ion-SMP with receiving capability for Invoice Response documents */
+      publish_receive_invoice_response?: boolean;
+      readonly links: components['schemas']['IdentifierLink'];
+    };
+    /**
+     * @description A type of `ModelSerializer` that uses hyperlinked relationships with compound keys instead
+     *     of primary key relationships.  Specifically:
+     *
+     *     * A 'url' field is included instead of the 'id' field.
+     *     * Relationships to other instances are hyperlinks, instead of primary keys.
+     *
+     *     NOTE: this only works with DRF 3.1.0 and above.
+     */
+    IdentifierLink: {
+      /**
+       * Format: uri
+       * @description The resource URL for this identifier
+       */
+      readonly self: string;
+    };
+    Log: {
+      /**
+       * Format: date-time
+       * @description The creation date and time of this log entry
+       */
+      readonly timestamp: string;
+      /** @description The organization this log entry is related to */
+      readonly organization: number | null;
+      /** @description The send transaction this log entry is related to */
+      readonly send_transaction: number | null;
+      /** @description The receive transaction this log entry is related to */
+      readonly receive_transaction: number | null;
+      /** @description The name of the specific internal module that created this log entry */
+      readonly name: string;
+      /** @description The severity level of this log entry */
+      readonly level: string;
+      /** @description The main content of this log entry */
+      readonly msg: string;
+      readonly links: components['schemas']['LogLink'];
+    };
+    LogLink: {
+      /**
+       * Format: uri
+       * @description The receiving organization of this transaction
+       */
+      readonly organization: string;
+      /**
+       * Format: uri
+       * @description The transaction this log entry is related to
+       */
+      readonly send_transaction: string;
+      /**
+       * Format: uri
+       * @description The transaction this log entry is related to
+       */
+      readonly receive_transaction: string;
+    };
+    MyJSONWebToken: {
+      email: string;
+      password: string;
+    };
+    Organization: {
+      readonly id: number;
+      /** @description The name of the organization */
+      name: string;
+      /**
+       * @description The country of this organization, mandatory for Peppol statistics and agreements.
+       *
+       *     * `AF` - Afghanistan
+       *     * `AX` - Åland Islands
+       *     * `AL` - Albania
+       *     * `DZ` - Algeria
+       *     * `AS` - American Samoa
+       *     * `AD` - Andorra
+       *     * `AO` - Angola
+       *     * `AI` - Anguilla
+       *     * `AQ` - Antarctica
+       *     * `AG` - Antigua and Barbuda
+       *     * `AR` - Argentina
+       *     * `AM` - Armenia
+       *     * `AW` - Aruba
+       *     * `AU` - Australia
+       *     * `AT` - Austria
+       *     * `AZ` - Azerbaijan
+       *     * `BS` - Bahamas
+       *     * `BH` - Bahrain
+       *     * `BD` - Bangladesh
+       *     * `BB` - Barbados
+       *     * `BY` - Belarus
+       *     * `BE` - Belgium
+       *     * `BZ` - Belize
+       *     * `BJ` - Benin
+       *     * `BM` - Bermuda
+       *     * `BT` - Bhutan
+       *     * `BO` - Bolivia
+       *     * `BQ` - Bonaire, Sint Eustatius and Saba
+       *     * `BA` - Bosnia and Herzegovina
+       *     * `BW` - Botswana
+       *     * `BV` - Bouvet Island
+       *     * `BR` - Brazil
+       *     * `IO` - British Indian Ocean Territory
+       *     * `BN` - Brunei
+       *     * `BG` - Bulgaria
+       *     * `BF` - Burkina Faso
+       *     * `BI` - Burundi
+       *     * `CV` - Cabo Verde
+       *     * `KH` - Cambodia
+       *     * `CM` - Cameroon
+       *     * `CA` - Canada
+       *     * `KY` - Cayman Islands
+       *     * `CF` - Central African Republic
+       *     * `TD` - Chad
+       *     * `CL` - Chile
+       *     * `CN` - China
+       *     * `CX` - Christmas Island
+       *     * `CC` - Cocos (Keeling) Islands
+       *     * `CO` - Colombia
+       *     * `KM` - Comoros
+       *     * `CG` - Congo
+       *     * `CD` - Congo (the Democratic Republic of the)
+       *     * `CK` - Cook Islands
+       *     * `CR` - Costa Rica
+       *     * `CI` - Côte d'Ivoire
+       *     * `HR` - Croatia
+       *     * `CU` - Cuba
+       *     * `CW` - Curaçao
+       *     * `CY` - Cyprus
+       *     * `CZ` - Czechia
+       *     * `DK` - Denmark
+       *     * `DJ` - Djibouti
+       *     * `DM` - Dominica
+       *     * `DO` - Dominican Republic
+       *     * `EC` - Ecuador
+       *     * `EG` - Egypt
+       *     * `SV` - El Salvador
+       *     * `GQ` - Equatorial Guinea
+       *     * `ER` - Eritrea
+       *     * `EE` - Estonia
+       *     * `SZ` - Eswatini
+       *     * `ET` - Ethiopia
+       *     * `FK` - Falkland Islands (Malvinas)
+       *     * `FO` - Faroe Islands
+       *     * `FJ` - Fiji
+       *     * `FI` - Finland
+       *     * `FR` - France
+       *     * `GF` - French Guiana
+       *     * `PF` - French Polynesia
+       *     * `TF` - French Southern Territories
+       *     * `GA` - Gabon
+       *     * `GM` - Gambia
+       *     * `GE` - Georgia
+       *     * `DE` - Germany
+       *     * `GH` - Ghana
+       *     * `GI` - Gibraltar
+       *     * `GR` - Greece
+       *     * `GL` - Greenland
+       *     * `GD` - Grenada
+       *     * `GP` - Guadeloupe
+       *     * `GU` - Guam
+       *     * `GT` - Guatemala
+       *     * `GG` - Guernsey
+       *     * `GN` - Guinea
+       *     * `GW` - Guinea-Bissau
+       *     * `GY` - Guyana
+       *     * `HT` - Haiti
+       *     * `HM` - Heard Island and McDonald Islands
+       *     * `VA` - Holy See
+       *     * `HN` - Honduras
+       *     * `HK` - Hong Kong
+       *     * `HU` - Hungary
+       *     * `IS` - Iceland
+       *     * `IN` - India
+       *     * `ID` - Indonesia
+       *     * `IR` - Iran
+       *     * `IQ` - Iraq
+       *     * `IE` - Ireland
+       *     * `IM` - Isle of Man
+       *     * `IL` - Israel
+       *     * `IT` - Italy
+       *     * `JM` - Jamaica
+       *     * `JP` - Japan
+       *     * `JE` - Jersey
+       *     * `JO` - Jordan
+       *     * `KZ` - Kazakhstan
+       *     * `KE` - Kenya
+       *     * `KI` - Kiribati
+       *     * `KW` - Kuwait
+       *     * `KG` - Kyrgyzstan
+       *     * `LA` - Laos
+       *     * `LV` - Latvia
+       *     * `LB` - Lebanon
+       *     * `LS` - Lesotho
+       *     * `LR` - Liberia
+       *     * `LY` - Libya
+       *     * `LI` - Liechtenstein
+       *     * `LT` - Lithuania
+       *     * `LU` - Luxembourg
+       *     * `MO` - Macao
+       *     * `MG` - Madagascar
+       *     * `MW` - Malawi
+       *     * `MY` - Malaysia
+       *     * `MV` - Maldives
+       *     * `ML` - Mali
+       *     * `MT` - Malta
+       *     * `MH` - Marshall Islands
+       *     * `MQ` - Martinique
+       *     * `MR` - Mauritania
+       *     * `MU` - Mauritius
+       *     * `YT` - Mayotte
+       *     * `MX` - Mexico
+       *     * `FM` - Micronesia
+       *     * `MD` - Moldova
+       *     * `MC` - Monaco
+       *     * `MN` - Mongolia
+       *     * `ME` - Montenegro
+       *     * `MS` - Montserrat
+       *     * `MA` - Morocco
+       *     * `MZ` - Mozambique
+       *     * `MM` - Myanmar
+       *     * `NA` - Namibia
+       *     * `NR` - Nauru
+       *     * `NP` - Nepal
+       *     * `NL` - Netherlands
+       *     * `NC` - New Caledonia
+       *     * `NZ` - New Zealand
+       *     * `NI` - Nicaragua
+       *     * `NE` - Niger
+       *     * `NG` - Nigeria
+       *     * `NU` - Niue
+       *     * `NF` - Norfolk Island
+       *     * `KP` - North Korea
+       *     * `MK` - North Macedonia
+       *     * `MP` - Northern Mariana Islands
+       *     * `NO` - Norway
+       *     * `OM` - Oman
+       *     * `PK` - Pakistan
+       *     * `PW` - Palau
+       *     * `PS` - Palestine, State of
+       *     * `PA` - Panama
+       *     * `PG` - Papua New Guinea
+       *     * `PY` - Paraguay
+       *     * `PE` - Peru
+       *     * `PH` - Philippines
+       *     * `PN` - Pitcairn
+       *     * `PL` - Poland
+       *     * `PT` - Portugal
+       *     * `PR` - Puerto Rico
+       *     * `QA` - Qatar
+       *     * `RE` - Réunion
+       *     * `RO` - Romania
+       *     * `RU` - Russia
+       *     * `RW` - Rwanda
+       *     * `BL` - Saint Barthélemy
+       *     * `SH` - Saint Helena, Ascension and Tristan da Cunha
+       *     * `KN` - Saint Kitts and Nevis
+       *     * `LC` - Saint Lucia
+       *     * `MF` - Saint Martin (French part)
+       *     * `PM` - Saint Pierre and Miquelon
+       *     * `VC` - Saint Vincent and the Grenadines
+       *     * `WS` - Samoa
+       *     * `SM` - San Marino
+       *     * `ST` - Sao Tome and Principe
+       *     * `SA` - Saudi Arabia
+       *     * `SN` - Senegal
+       *     * `RS` - Serbia
+       *     * `SC` - Seychelles
+       *     * `SL` - Sierra Leone
+       *     * `SG` - Singapore
+       *     * `SX` - Sint Maarten (Dutch part)
+       *     * `SK` - Slovakia
+       *     * `SI` - Slovenia
+       *     * `SB` - Solomon Islands
+       *     * `SO` - Somalia
+       *     * `ZA` - South Africa
+       *     * `GS` - South Georgia and the South Sandwich Islands
+       *     * `KR` - South Korea
+       *     * `SS` - South Sudan
+       *     * `ES` - Spain
+       *     * `LK` - Sri Lanka
+       *     * `SD` - Sudan
+       *     * `SR` - Suriname
+       *     * `SJ` - Svalbard and Jan Mayen
+       *     * `SE` - Sweden
+       *     * `CH` - Switzerland
+       *     * `SY` - Syria
+       *     * `TW` - Taiwan
+       *     * `TJ` - Tajikistan
+       *     * `TZ` - Tanzania
+       *     * `TH` - Thailand
+       *     * `TL` - Timor-Leste
+       *     * `TG` - Togo
+       *     * `TK` - Tokelau
+       *     * `TO` - Tonga
+       *     * `TT` - Trinidad and Tobago
+       *     * `TN` - Tunisia
+       *     * `TR` - Türkiye
+       *     * `TM` - Turkmenistan
+       *     * `TC` - Turks and Caicos Islands
+       *     * `TV` - Tuvalu
+       *     * `UG` - Uganda
+       *     * `UA` - Ukraine
+       *     * `AE` - United Arab Emirates
+       *     * `GB` - United Kingdom
+       *     * `UM` - United States Minor Outlying Islands
+       *     * `US` - United States of America
+       *     * `UY` - Uruguay
+       *     * `UZ` - Uzbekistan
+       *     * `VU` - Vanuatu
+       *     * `VE` - Venezuela
+       *     * `VN` - Vietnam
+       *     * `VG` - Virgin Islands (British)
+       *     * `VI` - Virgin Islands (U.S.)
+       *     * `WF` - Wallis and Futuna
+       *     * `EH` - Western Sahara
+       *     * `YE` - Yemen
+       *     * `ZM` - Zambia
+       *     * `ZW` - Zimbabwe
+       */
+      country: components['schemas']['CountryEnum'];
+      /** @description Use ion-SMP to automatically publish this organization as a recipient. Set this value to False if this organization is managed through a different SMP or account. */
+      publish_in_smp: boolean;
+      /** @description An accounting reference for this organization. You can use this reference to filter on organizations, and transaction reports will provide a separate tally for each unique reference */
+      reference?: string;
+      readonly identifiers: components['schemas']['Identifier'][];
+      readonly links: components['schemas']['OrganizationLink'];
+    };
+    OrganizationLink: {
+      /**
+       * Format: uri
+       * @description The resource URL for this organization
+       */
+      readonly self: string;
+      /**
+       * Format: uri
+       * @description The list of identifiers of this organization
+       */
+      readonly identifiers: string;
+      /**
+       * Format: uri
+       * @description The list of receive triggers for this organization
+       */
+      readonly receive_triggers: string;
+      /**
+       * Format: uri
+       * @description Overview of receive triggers and receive trigger options that can be configured
+       */
+      readonly receive_trigger_options: string;
+      /**
+       * Format: uri
+       * @description The users specific to this organization
+       */
+      readonly users: string;
+      /**
+       * Format: uri
+       * @description The log entries for this organization
+       */
+      readonly logs: string;
+    };
+    /**
+     * @description A type of `ModelSerializer` that uses hyperlinked relationships with compound keys instead
+     *     of primary key relationships.  Specifically:
+     *
+     *     * A 'url' field is included instead of the 'id' field.
+     *     * Relationships to other instances are hyperlinks, instead of primary keys.
+     *
+     *     NOTE: this only works with DRF 3.1.0 and above.
+     */
+    OrganizationReceiveTrigger: {
+      readonly id: number;
+      /**
+       * @description The type of the trigger
+       *
+       *     * `API_CALL` - API call
+       *     * `SEND_EMAIL` - Basic email, a default template and optional document contents as attachments
+       */
+      trigger_type: components['schemas']['TriggerTypeEnum'];
+      /** @description A description of the receiver trigger */
+      name: string;
+      /** @description Set to true to enable the trigger */
+      enabled?: boolean;
+      readonly links: components['schemas']['OrganizationReceiveTriggerLink'];
+    };
+    /**
+     * @description A type of `ModelSerializer` that uses hyperlinked relationships with compound keys instead
+     *     of primary key relationships.  Specifically:
+     *
+     *     * A 'url' field is included instead of the 'id' field.
+     *     * Relationships to other instances are hyperlinks, instead of primary keys.
+     *
+     *     NOTE: this only works with DRF 3.1.0 and above.
+     */
+    OrganizationReceiveTriggerArgument: {
+      readonly id: number;
+      /** @description The name of the argument, see the trigger type documentation for possible argument names */
+      name: string;
+      /** @description The argument value, see the trigger type documentation for allowed values */
+      value: string;
+      readonly links: components['schemas']['OrganizationReceiveTriggerArgumentLink'];
+    };
+    /**
+     * @description A type of `ModelSerializer` that uses hyperlinked relationships with compound keys instead
+     *     of primary key relationships.  Specifically:
+     *
+     *     * A 'url' field is included instead of the 'id' field.
+     *     * Relationships to other instances are hyperlinks, instead of primary keys.
+     *
+     *     NOTE: this only works with DRF 3.1.0 and above.
+     */
+    OrganizationReceiveTriggerArgumentLink: {
+      /**
+       * Format: uri
+       * @description The resource URL for this receive trigger argument
+       */
+      readonly self: string;
+    };
+    /**
+     * @description A type of `ModelSerializer` that uses hyperlinked relationships with compound keys instead
+     *     of primary key relationships.  Specifically:
+     *
+     *     * A 'url' field is included instead of the 'id' field.
+     *     * Relationships to other instances are hyperlinks, instead of primary keys.
+     *
+     *     NOTE: this only works with DRF 3.1.0 and above.
+     */
+    OrganizationReceiveTriggerLink: {
+      /**
+       * Format: uri
+       * @description The resource URL for this receive trigger
+       */
+      readonly self: string;
+      /**
+       * Format: uri
+       * @description The list of options for this receive trigger
+       */
+      readonly options: string;
+    };
+    /**
+     * @description A type of `ModelSerializer` that uses hyperlinked relationships with compound keys instead
+     *     of primary key relationships.  Specifically:
+     *
+     *     * A 'url' field is included instead of the 'id' field.
+     *     * Relationships to other instances are hyperlinks, instead of primary keys.
+     *
+     *     NOTE: this only works with DRF 3.1.0 and above.
+     */
+    OrganizationUser: {
+      readonly id: number;
+      /** Format: email */
+      email: string;
+      readonly email_verified: string;
+      readonly auth_token: string;
+      readonly links: components['schemas']['OrganizationUserLink'];
+    };
+    /**
+     * @description A type of `ModelSerializer` that uses hyperlinked relationships with compound keys instead
+     *     of primary key relationships.  Specifically:
+     *
+     *     * A 'url' field is included instead of the 'id' field.
+     *     * Relationships to other instances are hyperlinks, instead of primary keys.
+     *
+     *     NOTE: this only works with DRF 3.1.0 and above.
+     */
+    OrganizationUserLink: {
+      /**
+       * Format: uri
+       * @description The resource URL for this identifier
+       */
+      readonly self: string;
+    };
+    PaginatedIdentifierList: {
+      /** @example 123 */
+      count: number;
+      /**
+       * Format: uri
+       * @example http://api.example.org/accounts/?offset=400&limit=100
+       */
+      next?: string | null;
+      /**
+       * Format: uri
+       * @example http://api.example.org/accounts/?offset=200&limit=100
+       */
+      previous?: string | null;
+      results: components['schemas']['Identifier'][];
+    };
+    PaginatedLogList: {
+      /** @example 123 */
+      count: number;
+      /**
+       * Format: uri
+       * @example http://api.example.org/accounts/?offset=400&limit=100
+       */
+      next?: string | null;
+      /**
+       * Format: uri
+       * @example http://api.example.org/accounts/?offset=200&limit=100
+       */
+      previous?: string | null;
+      results: components['schemas']['Log'][];
+    };
+    PaginatedOrganizationList: {
+      /** @example 123 */
+      count: number;
+      /**
+       * Format: uri
+       * @example http://api.example.org/accounts/?offset=400&limit=100
+       */
+      next?: string | null;
+      /**
+       * Format: uri
+       * @example http://api.example.org/accounts/?offset=200&limit=100
+       */
+      previous?: string | null;
+      results: components['schemas']['Organization'][];
+    };
+    PaginatedOrganizationReceiveTriggerArgumentList: {
+      /** @example 123 */
+      count: number;
+      /**
+       * Format: uri
+       * @example http://api.example.org/accounts/?offset=400&limit=100
+       */
+      next?: string | null;
+      /**
+       * Format: uri
+       * @example http://api.example.org/accounts/?offset=200&limit=100
+       */
+      previous?: string | null;
+      results: components['schemas']['OrganizationReceiveTriggerArgument'][];
+    };
+    PaginatedOrganizationReceiveTriggerList: {
+      /** @example 123 */
+      count: number;
+      /**
+       * Format: uri
+       * @example http://api.example.org/accounts/?offset=400&limit=100
+       */
+      next?: string | null;
+      /**
+       * Format: uri
+       * @example http://api.example.org/accounts/?offset=200&limit=100
+       */
+      previous?: string | null;
+      results: components['schemas']['OrganizationReceiveTrigger'][];
+    };
+    PaginatedOrganizationUserList: {
+      /** @example 123 */
+      count: number;
+      /**
+       * Format: uri
+       * @example http://api.example.org/accounts/?offset=400&limit=100
+       */
+      next?: string | null;
+      /**
+       * Format: uri
+       * @example http://api.example.org/accounts/?offset=200&limit=100
+       */
+      previous?: string | null;
+      results: components['schemas']['OrganizationUser'][];
+    };
+    PaginatedReceiveTransactionList: {
+      /** @example 123 */
+      count: number;
+      /**
+       * Format: uri
+       * @example http://api.example.org/accounts/?offset=400&limit=100
+       */
+      next?: string | null;
+      /**
+       * Format: uri
+       * @example http://api.example.org/accounts/?offset=200&limit=100
+       */
+      previous?: string | null;
+      results: components['schemas']['ReceiveTransaction'][];
+    };
+    PaginatedSendTransactionErrorList: {
+      /** @example 123 */
+      count: number;
+      /**
+       * Format: uri
+       * @example http://api.example.org/accounts/?offset=400&limit=100
+       */
+      next?: string | null;
+      /**
+       * Format: uri
+       * @example http://api.example.org/accounts/?offset=200&limit=100
+       */
+      previous?: string | null;
+      results: components['schemas']['SendTransactionError'][];
+    };
+    PaginatedSendTransactionList: {
+      /** @example 123 */
+      count: number;
+      /**
+       * Format: uri
+       * @example http://api.example.org/accounts/?offset=400&limit=100
+       */
+      next?: string | null;
+      /**
+       * Format: uri
+       * @example http://api.example.org/accounts/?offset=200&limit=100
+       */
+      previous?: string | null;
+      results: components['schemas']['SendTransaction'][];
+    };
+    ParticipantEndpoints: {
+      endpoints: components['schemas']['EndpointData'][];
+      /** @description A list of log lines, if enabled with the log_level parameter. */
+      logs?: string[];
+    };
+    ParticipantPresence: {
+      /** @description true if the participant is present on the network, false if not. */
+      exists: boolean;
+      /** @description A status line providing details about the presence value */
+      detail: string;
+      /** @description A list of log lines, if enabled with the log_level parameter. */
+      logs?: string[];
+    };
+    ParticipantSupportedDocumentTypes: {
+      document_types: components['schemas']['DocumentType'][];
+    };
+    /**
+     * @description A type of `ModelSerializer` that uses hyperlinked relationships with compound keys instead
+     *     of primary key relationships.  Specifically:
+     *
+     *     * A 'url' field is included instead of the 'id' field.
+     *     * Relationships to other instances are hyperlinks, instead of primary keys.
+     *
+     *     NOTE: this only works with DRF 3.1.0 and above.
+     */
+    PatchedIdentifier: {
+      readonly id?: number;
+      /** @description The identifier scheme that is used, defaults to iso6523-actorid-upis, which is the scheme used for Peppol. Note that this is NOT the Peppol identifier scheme (like 0088 or 0106), that scheme ID is used in the identifier value itself. */
+      scheme?: string;
+      /** @description An organization identifier, such as 0106:12345678 or 0190:000011123003456321. Note that this includes the peppol identifier scheme. */
+      identifier?: string;
+      /** @description Set this value to true when KYC procedures have been followed, and this identifier has been verified for this organization. Must be set to true in order for this identifier to be usable when sending documents. */
+      verified?: boolean;
+      /** @description Set this value to true to publish this identifier in ion-SMP with receiving capability for Peppol BIS invoice and creditnote documents */
+      publish_receive_peppolbis?: boolean;
+      /** @description Set this value to true to publish this identifier in ion-SMP with receiving capability for SI-UBL-2.0 (NLCIUS) invoice and creditnote documents */
+      publish_receive_nlcius?: boolean;
+      /** @description Set this value to true to publish this identifier in ion-SMP with receiving capability for Invoice Response documents */
+      publish_receive_invoice_response?: boolean;
+      readonly links?: components['schemas']['IdentifierLink'];
+    };
+    PatchedOrganization: {
+      readonly id?: number;
+      /** @description The name of the organization */
+      name?: string;
+      /**
+       * @description The country of this organization, mandatory for Peppol statistics and agreements.
+       *
+       *     * `AF` - Afghanistan
+       *     * `AX` - Åland Islands
+       *     * `AL` - Albania
+       *     * `DZ` - Algeria
+       *     * `AS` - American Samoa
+       *     * `AD` - Andorra
+       *     * `AO` - Angola
+       *     * `AI` - Anguilla
+       *     * `AQ` - Antarctica
+       *     * `AG` - Antigua and Barbuda
+       *     * `AR` - Argentina
+       *     * `AM` - Armenia
+       *     * `AW` - Aruba
+       *     * `AU` - Australia
+       *     * `AT` - Austria
+       *     * `AZ` - Azerbaijan
+       *     * `BS` - Bahamas
+       *     * `BH` - Bahrain
+       *     * `BD` - Bangladesh
+       *     * `BB` - Barbados
+       *     * `BY` - Belarus
+       *     * `BE` - Belgium
+       *     * `BZ` - Belize
+       *     * `BJ` - Benin
+       *     * `BM` - Bermuda
+       *     * `BT` - Bhutan
+       *     * `BO` - Bolivia
+       *     * `BQ` - Bonaire, Sint Eustatius and Saba
+       *     * `BA` - Bosnia and Herzegovina
+       *     * `BW` - Botswana
+       *     * `BV` - Bouvet Island
+       *     * `BR` - Brazil
+       *     * `IO` - British Indian Ocean Territory
+       *     * `BN` - Brunei
+       *     * `BG` - Bulgaria
+       *     * `BF` - Burkina Faso
+       *     * `BI` - Burundi
+       *     * `CV` - Cabo Verde
+       *     * `KH` - Cambodia
+       *     * `CM` - Cameroon
+       *     * `CA` - Canada
+       *     * `KY` - Cayman Islands
+       *     * `CF` - Central African Republic
+       *     * `TD` - Chad
+       *     * `CL` - Chile
+       *     * `CN` - China
+       *     * `CX` - Christmas Island
+       *     * `CC` - Cocos (Keeling) Islands
+       *     * `CO` - Colombia
+       *     * `KM` - Comoros
+       *     * `CG` - Congo
+       *     * `CD` - Congo (the Democratic Republic of the)
+       *     * `CK` - Cook Islands
+       *     * `CR` - Costa Rica
+       *     * `CI` - Côte d'Ivoire
+       *     * `HR` - Croatia
+       *     * `CU` - Cuba
+       *     * `CW` - Curaçao
+       *     * `CY` - Cyprus
+       *     * `CZ` - Czechia
+       *     * `DK` - Denmark
+       *     * `DJ` - Djibouti
+       *     * `DM` - Dominica
+       *     * `DO` - Dominican Republic
+       *     * `EC` - Ecuador
+       *     * `EG` - Egypt
+       *     * `SV` - El Salvador
+       *     * `GQ` - Equatorial Guinea
+       *     * `ER` - Eritrea
+       *     * `EE` - Estonia
+       *     * `SZ` - Eswatini
+       *     * `ET` - Ethiopia
+       *     * `FK` - Falkland Islands (Malvinas)
+       *     * `FO` - Faroe Islands
+       *     * `FJ` - Fiji
+       *     * `FI` - Finland
+       *     * `FR` - France
+       *     * `GF` - French Guiana
+       *     * `PF` - French Polynesia
+       *     * `TF` - French Southern Territories
+       *     * `GA` - Gabon
+       *     * `GM` - Gambia
+       *     * `GE` - Georgia
+       *     * `DE` - Germany
+       *     * `GH` - Ghana
+       *     * `GI` - Gibraltar
+       *     * `GR` - Greece
+       *     * `GL` - Greenland
+       *     * `GD` - Grenada
+       *     * `GP` - Guadeloupe
+       *     * `GU` - Guam
+       *     * `GT` - Guatemala
+       *     * `GG` - Guernsey
+       *     * `GN` - Guinea
+       *     * `GW` - Guinea-Bissau
+       *     * `GY` - Guyana
+       *     * `HT` - Haiti
+       *     * `HM` - Heard Island and McDonald Islands
+       *     * `VA` - Holy See
+       *     * `HN` - Honduras
+       *     * `HK` - Hong Kong
+       *     * `HU` - Hungary
+       *     * `IS` - Iceland
+       *     * `IN` - India
+       *     * `ID` - Indonesia
+       *     * `IR` - Iran
+       *     * `IQ` - Iraq
+       *     * `IE` - Ireland
+       *     * `IM` - Isle of Man
+       *     * `IL` - Israel
+       *     * `IT` - Italy
+       *     * `JM` - Jamaica
+       *     * `JP` - Japan
+       *     * `JE` - Jersey
+       *     * `JO` - Jordan
+       *     * `KZ` - Kazakhstan
+       *     * `KE` - Kenya
+       *     * `KI` - Kiribati
+       *     * `KW` - Kuwait
+       *     * `KG` - Kyrgyzstan
+       *     * `LA` - Laos
+       *     * `LV` - Latvia
+       *     * `LB` - Lebanon
+       *     * `LS` - Lesotho
+       *     * `LR` - Liberia
+       *     * `LY` - Libya
+       *     * `LI` - Liechtenstein
+       *     * `LT` - Lithuania
+       *     * `LU` - Luxembourg
+       *     * `MO` - Macao
+       *     * `MG` - Madagascar
+       *     * `MW` - Malawi
+       *     * `MY` - Malaysia
+       *     * `MV` - Maldives
+       *     * `ML` - Mali
+       *     * `MT` - Malta
+       *     * `MH` - Marshall Islands
+       *     * `MQ` - Martinique
+       *     * `MR` - Mauritania
+       *     * `MU` - Mauritius
+       *     * `YT` - Mayotte
+       *     * `MX` - Mexico
+       *     * `FM` - Micronesia
+       *     * `MD` - Moldova
+       *     * `MC` - Monaco
+       *     * `MN` - Mongolia
+       *     * `ME` - Montenegro
+       *     * `MS` - Montserrat
+       *     * `MA` - Morocco
+       *     * `MZ` - Mozambique
+       *     * `MM` - Myanmar
+       *     * `NA` - Namibia
+       *     * `NR` - Nauru
+       *     * `NP` - Nepal
+       *     * `NL` - Netherlands
+       *     * `NC` - New Caledonia
+       *     * `NZ` - New Zealand
+       *     * `NI` - Nicaragua
+       *     * `NE` - Niger
+       *     * `NG` - Nigeria
+       *     * `NU` - Niue
+       *     * `NF` - Norfolk Island
+       *     * `KP` - North Korea
+       *     * `MK` - North Macedonia
+       *     * `MP` - Northern Mariana Islands
+       *     * `NO` - Norway
+       *     * `OM` - Oman
+       *     * `PK` - Pakistan
+       *     * `PW` - Palau
+       *     * `PS` - Palestine, State of
+       *     * `PA` - Panama
+       *     * `PG` - Papua New Guinea
+       *     * `PY` - Paraguay
+       *     * `PE` - Peru
+       *     * `PH` - Philippines
+       *     * `PN` - Pitcairn
+       *     * `PL` - Poland
+       *     * `PT` - Portugal
+       *     * `PR` - Puerto Rico
+       *     * `QA` - Qatar
+       *     * `RE` - Réunion
+       *     * `RO` - Romania
+       *     * `RU` - Russia
+       *     * `RW` - Rwanda
+       *     * `BL` - Saint Barthélemy
+       *     * `SH` - Saint Helena, Ascension and Tristan da Cunha
+       *     * `KN` - Saint Kitts and Nevis
+       *     * `LC` - Saint Lucia
+       *     * `MF` - Saint Martin (French part)
+       *     * `PM` - Saint Pierre and Miquelon
+       *     * `VC` - Saint Vincent and the Grenadines
+       *     * `WS` - Samoa
+       *     * `SM` - San Marino
+       *     * `ST` - Sao Tome and Principe
+       *     * `SA` - Saudi Arabia
+       *     * `SN` - Senegal
+       *     * `RS` - Serbia
+       *     * `SC` - Seychelles
+       *     * `SL` - Sierra Leone
+       *     * `SG` - Singapore
+       *     * `SX` - Sint Maarten (Dutch part)
+       *     * `SK` - Slovakia
+       *     * `SI` - Slovenia
+       *     * `SB` - Solomon Islands
+       *     * `SO` - Somalia
+       *     * `ZA` - South Africa
+       *     * `GS` - South Georgia and the South Sandwich Islands
+       *     * `KR` - South Korea
+       *     * `SS` - South Sudan
+       *     * `ES` - Spain
+       *     * `LK` - Sri Lanka
+       *     * `SD` - Sudan
+       *     * `SR` - Suriname
+       *     * `SJ` - Svalbard and Jan Mayen
+       *     * `SE` - Sweden
+       *     * `CH` - Switzerland
+       *     * `SY` - Syria
+       *     * `TW` - Taiwan
+       *     * `TJ` - Tajikistan
+       *     * `TZ` - Tanzania
+       *     * `TH` - Thailand
+       *     * `TL` - Timor-Leste
+       *     * `TG` - Togo
+       *     * `TK` - Tokelau
+       *     * `TO` - Tonga
+       *     * `TT` - Trinidad and Tobago
+       *     * `TN` - Tunisia
+       *     * `TR` - Türkiye
+       *     * `TM` - Turkmenistan
+       *     * `TC` - Turks and Caicos Islands
+       *     * `TV` - Tuvalu
+       *     * `UG` - Uganda
+       *     * `UA` - Ukraine
+       *     * `AE` - United Arab Emirates
+       *     * `GB` - United Kingdom
+       *     * `UM` - United States Minor Outlying Islands
+       *     * `US` - United States of America
+       *     * `UY` - Uruguay
+       *     * `UZ` - Uzbekistan
+       *     * `VU` - Vanuatu
+       *     * `VE` - Venezuela
+       *     * `VN` - Vietnam
+       *     * `VG` - Virgin Islands (British)
+       *     * `VI` - Virgin Islands (U.S.)
+       *     * `WF` - Wallis and Futuna
+       *     * `EH` - Western Sahara
+       *     * `YE` - Yemen
+       *     * `ZM` - Zambia
+       *     * `ZW` - Zimbabwe
+       */
+      country?: components['schemas']['CountryEnum'];
+      /** @description Use ion-SMP to automatically publish this organization as a recipient. Set this value to False if this organization is managed through a different SMP or account. */
+      publish_in_smp?: boolean;
+      /** @description An accounting reference for this organization. You can use this reference to filter on organizations, and transaction reports will provide a separate tally for each unique reference */
+      reference?: string;
+      readonly identifiers?: components['schemas']['Identifier'][];
+      readonly links?: components['schemas']['OrganizationLink'];
+    };
+    /**
+     * @description A type of `ModelSerializer` that uses hyperlinked relationships with compound keys instead
+     *     of primary key relationships.  Specifically:
+     *
+     *     * A 'url' field is included instead of the 'id' field.
+     *     * Relationships to other instances are hyperlinks, instead of primary keys.
+     *
+     *     NOTE: this only works with DRF 3.1.0 and above.
+     */
+    PatchedOrganizationReceiveTrigger: {
+      readonly id?: number;
+      /**
+       * @description The type of the trigger
+       *
+       *     * `API_CALL` - API call
+       *     * `SEND_EMAIL` - Basic email, a default template and optional document contents as attachments
+       */
+      trigger_type?: components['schemas']['TriggerTypeEnum'];
+      /** @description A description of the receiver trigger */
+      name?: string;
+      /** @description Set to true to enable the trigger */
+      enabled?: boolean;
+      readonly links?: components['schemas']['OrganizationReceiveTriggerLink'];
+    };
+    /**
+     * @description A type of `ModelSerializer` that uses hyperlinked relationships with compound keys instead
+     *     of primary key relationships.  Specifically:
+     *
+     *     * A 'url' field is included instead of the 'id' field.
+     *     * Relationships to other instances are hyperlinks, instead of primary keys.
+     *
+     *     NOTE: this only works with DRF 3.1.0 and above.
+     */
+    PatchedOrganizationReceiveTriggerArgument: {
+      readonly id?: number;
+      /** @description The name of the argument, see the trigger type documentation for possible argument names */
+      name?: string;
+      /** @description The argument value, see the trigger type documentation for allowed values */
+      value?: string;
+      readonly links?: components['schemas']['OrganizationReceiveTriggerArgumentLink'];
+    };
+    PatchedReceiveTransaction: {
+      readonly id?: number;
+      /**
+       * Format: date-time
+       * @description The creation date and time of this transaction
+       */
+      readonly created_on?: string;
+      /**
+       * Format: date-time
+       * @description The date and time of the last change in this transaction
+       */
+      readonly last_updated_on?: string;
+      /** @description The (globally) unique identifier for this transaction */
+      readonly transaction_id?: string | null;
+      /** @description The identifier of the sending access point. For Peppol this is the Peppol Seat ID of the service provider. */
+      readonly transport_sender?: string;
+      /** @description The identifier of the receiving access point. For Peppol this is the Peppol Seat ID of the service provider. */
+      readonly transport_receiver?: string;
+      /** @description The authority scheme of the sender identifier. For peppol this is iso6523-actorid-upis. */
+      readonly sender_authority?: string;
+      /** @description The identifier of the sender, such as 0106:12345678. */
+      readonly sender_identifier?: string;
+      /** @description The authority scheme of the receiver identifier. For peppol this is iso6523-actorid-upis. */
+      readonly receiver_authority?: string;
+      /** @description The identifier of the receiver, such as 0106:12345678. */
+      readonly receiver_identifier?: string;
+      /** @description The short name for the document type, such as 'Invoice' */
+      readonly document_element?: string;
+      /** @description The full document type identifier sent in this transaction */
+      readonly document_type?: string;
+      /** @description The process identifier for this transaction */
+      readonly process?: string;
+      /** @description The identifier of the document itself, such as the Invoice ID, for supported document types. Empty for document types without a defined ID. */
+      readonly document_id?: string | null;
+      /**
+       * @description The state of this transaction
+       *
+       *     * `NEW` - new
+       *     * `READ` - read
+       */
+      state?: components['schemas']['ReceiveTransactionStateEnum'];
+      /** @description A user-settable field for additional state. This value is not used by ion-AP, but API clients can use this for central storage of additional state. */
+      client_state?: string | null;
+      readonly links?: components['schemas']['ReceiveTransactionLink'];
+    };
+    ReceiveTransaction: {
+      readonly id: number;
+      /**
+       * Format: date-time
+       * @description The creation date and time of this transaction
+       */
+      readonly created_on: string;
+      /**
+       * Format: date-time
+       * @description The date and time of the last change in this transaction
+       */
+      readonly last_updated_on: string;
+      /** @description The (globally) unique identifier for this transaction */
+      readonly transaction_id: string | null;
+      /** @description The identifier of the sending access point. For Peppol this is the Peppol Seat ID of the service provider. */
+      readonly transport_sender: string;
+      /** @description The identifier of the receiving access point. For Peppol this is the Peppol Seat ID of the service provider. */
+      readonly transport_receiver: string;
+      /** @description The authority scheme of the sender identifier. For peppol this is iso6523-actorid-upis. */
+      readonly sender_authority: string;
+      /** @description The identifier of the sender, such as 0106:12345678. */
+      readonly sender_identifier: string;
+      /** @description The authority scheme of the receiver identifier. For peppol this is iso6523-actorid-upis. */
+      readonly receiver_authority: string;
+      /** @description The identifier of the receiver, such as 0106:12345678. */
+      readonly receiver_identifier: string;
+      /** @description The short name for the document type, such as 'Invoice' */
+      readonly document_element: string;
+      /** @description The full document type identifier sent in this transaction */
+      readonly document_type: string;
+      /** @description The process identifier for this transaction */
+      readonly process: string;
+      /** @description The identifier of the document itself, such as the Invoice ID, for supported document types. Empty for document types without a defined ID. */
+      readonly document_id: string | null;
+      /**
+       * @description The state of this transaction
+       *
+       *     * `NEW` - new
+       *     * `READ` - read
+       */
+      state?: components['schemas']['ReceiveTransactionStateEnum'];
+      /** @description A user-settable field for additional state. This value is not used by ion-AP, but API clients can use this for central storage of additional state. */
+      client_state?: string | null;
+      readonly links: components['schemas']['ReceiveTransactionLink'];
+    };
+    ReceiveTransactionLink: {
+      /**
+       * Format: uri
+       * @description The resource URL for this transaction
+       */
+      readonly self: string;
+      /**
+       * Format: uri
+       * @description The recipient organization of this transaction
+       */
+      readonly organization: string;
+      /**
+       * Format: uri
+       * @description The document that was received
+       */
+      readonly document: string;
+      /**
+       * Format: uri
+       * @description The full Standard Business Header Envelope that was received
+       */
+      readonly sbdh: string;
+      /**
+       * Format: uri
+       * @description A PDF Rendering of the received document (experimental, invoices only at this time)
+       */
+      readonly pdf: string;
+      /**
+       * Format: uri
+       * @description Log messages for this transaction
+       */
+      readonly logs: string;
+      /**
+       * Format: uri
+       * @description (Re-)execute the receive triggers for this transaction.
+       */
+      readonly execute_triggers: string;
+    };
+    /**
+     * @description * `NEW` - new
+     *     * `READ` - read
+     * @enum {string}
+     */
+    ReceiveTransactionStateEnum: 'NEW' | 'READ';
+    SendTransaction: {
+      readonly id: number;
+      /**
+       * Format: date-time
+       * @description The creation date and time of this transaction
+       */
+      readonly created_on: string;
+      /**
+       * Format: date-time
+       * @description The date and time of the last change in this transaction
+       */
+      readonly last_updated_on: string;
+      /** @description The (globally) unique identifier for this transaction */
+      readonly transaction_id: string | null;
+      /** @description The identifier of the sending access point. For Peppol this is the Peppol Seat ID of the service provider. */
+      readonly transport_sender: string;
+      /** @description The identifier of the receiving access point. For Peppol this is the Peppol Seat ID of the service provider. */
+      readonly transport_receiver: string;
+      /** @description The authority scheme of the sender identifier. For peppol this is iso6523-actorid-upis. */
+      readonly sender_authority: string;
+      /** @description The identifier of the sender, such as 0106:12345678. */
+      readonly sender_identifier: string;
+      /** @description The authority scheme of the receiver identifier. For peppol this is iso6523-actorid-upis. */
+      readonly receiver_authority: string;
+      /** @description The identifier of the receiver, such as 0106:12345678. */
+      readonly receiver_identifier: string;
+      /** @description The short name for the document type, such as 'Invoice' */
+      readonly document_element: string;
+      /** @description The full document type identifier sent in this transaction */
+      readonly document_type: string;
+      /** @description The process identifier for this transaction */
+      readonly process: string;
+      /** @description The identifier of the document itself, such as the Invoice ID, for supported document types. Empty for document types without a defined ID. */
+      readonly document_id: string | null;
+      /**
+       * @description The state of this transaction
+       *
+       *     * `QUEUED` - queued
+       *     * `SENDING` - sending
+       *     * `SENT` - sent
+       *     * `DEFERRED` - deferred
+       *     * `ERROR` - error
+       */
+      state?: components['schemas']['SendTransactionStateEnum'];
+      readonly links: components['schemas']['SendTransactionLink'];
+    };
+    SendTransactionError: {
+      /** @description The error code of this error, such as EBMS:0004 */
+      readonly code: string | null;
+      /** @description A detailed description of the error */
+      readonly detail: string;
+    };
+    SendTransactionLink: {
+      /**
+       * Format: uri
+       * @description The resource URL for this transaction
+       */
+      readonly self: string;
+      /**
+       * Format: uri
+       * @description The sending organization of this transaction
+       */
+      readonly organization: string;
+      /**
+       * Format: uri
+       * @description The full Standard Business Header Envelope that was sent
+       */
+      readonly sbdh: string;
+      /**
+       * Format: uri
+       * @description The document that was sent
+       */
+      readonly document: string;
+      /**
+       * Format: uri
+       * @description A PDF Rendering of the sent document (experimental, invoices only at this time)
+       */
+      readonly pdf: string;
+      /**
+       * Format: uri
+       * @description The receipt from the receiving access point, if transaction was successful
+       */
+      readonly receipt: string;
+      /**
+       * Format: uri
+       * @description A list of errors for this transaction
+       */
+      readonly errors: string;
+      /**
+       * Format: uri
+       * @description Log messages for this transaction
+       */
+      readonly logs: string;
+    };
+    /**
+     * @description * `QUEUED` - queued
+     *     * `SENDING` - sending
+     *     * `SENT` - sent
+     *     * `DEFERRED` - deferred
+     *     * `ERROR` - error
+     * @enum {string}
+     */
+    SendTransactionStateEnum:
+      | 'QUEUED'
+      | 'SENDING'
+      | 'SENT'
+      | 'DEFERRED'
+      | 'ERROR';
+    TokenRefresh: {
+      readonly access: string;
+      refresh: string;
+    };
+    /**
+     * @description * `API_CALL` - API call
+     *     * `SEND_EMAIL` - Basic email, a default template and optional document contents as attachments
+     * @enum {string}
+     */
+    TriggerTypeEnum: 'API_CALL' | 'SEND_EMAIL';
+  };
+  responses: never;
+  parameters: never;
+  requestBodies: never;
+  headers: never;
+  pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    account_transaction_bundle_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No response body */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    account_transaction_bundle_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No response body */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    auth_create_auth_token_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No response body */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    auth_delete_auth_token_destroy: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                key: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No response body */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    auth_obtain_jwt_token_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["MyJSONWebToken"];
-                "application/x-www-form-urlencoded": components["schemas"]["MyJSONWebToken"];
-                "multipart/form-data": components["schemas"]["MyJSONWebToken"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MyJSONWebToken"];
-                };
-            };
-        };
-    };
-    auth_refresh_jwt_token_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["TokenRefresh"];
-                "application/x-www-form-urlencoded": components["schemas"]["TokenRefresh"];
-                "multipart/form-data": components["schemas"]["TokenRefresh"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TokenRefresh"];
-                };
-            };
-        };
-    };
-    auth_update_password_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No response body */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    auth_user_data_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No response body */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    "Check Participant Presence": {
-        parameters: {
-            query?: {
-                /** @description Add log messages from the lookup to the response object. If not set, the 'logs' element is left out of the response. Possible values: `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`, `NOTSET`. */
-                log_level?: string;
-            };
-            header?: never;
-            path: {
-                /**
-                 * @description The identifier of the participant to find.
-                 *
-                 *     Should be of the form `<scheme>:<identifier>`, for example `0106:12345678`
-                 *
-                 *     Optionally, you can provide the participant identifier scheme as well: `iso6523-actorid-upis::0106:12345678`
-                 */
-                identifier: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ParticipantPresence"];
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ParticipantPresence"];
-                };
-            };
-            /** @description Either a remote SMP gave a response this service cannot handle, or there is an internal issue in the lookup service. */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPBasicError"];
-                };
-            };
-        };
-    };
-    "Discover Participant Document Types": {
-        parameters: {
-            query?: {
-                /** @description Add log messages from the lookup to the response object. If not set, the 'logs' element is left out of the response. Possible values: `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`, `NOTSET`. */
-                log_level?: string;
-            };
-            header?: never;
-            path: {
-                /** @description The identifier of the participant to find. Examples: `0106:84418745`, `iso6523-actorid-upis::0106:84418745` */
-                identifier: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ParticipantSupportedDocumentTypes"];
-                };
-            };
-            /** @description The identifier could not be found on the network. Either there is no entry in the SML, or the SMP returned a 404 response. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPBasicError"];
-                };
-            };
-            /** @description Either a remote SMP gave a response this service cannot handle, or there is an internal issue in the lookup service. */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPBasicError"];
-                };
-            };
-        };
-    };
-    "Discover Participant Endpoints": {
-        parameters: {
-            query?: {
-                /** @description Add log messages from the lookup to the response object. If not set, the 'logs' element is left out of the response. Possible values: `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`, `NOTSET`. */
-                log_level?: string;
-            };
-            header?: never;
-            path: {
-                /** @description  */
-                identifier: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ParticipantEndpoints"];
-                };
-            };
-            /** @description The identifier could not be found on the network. Either there is no entry in the SML, or the SMP returned a 404 response. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPBasicError"];
-                };
-            };
-            /** @description Either a remote SMP gave a response this service cannot handle, or there is an internal issue in the lookup service. */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPBasicError"];
-                };
-            };
-        };
-    };
-    "Discover Participant Endpoints For Document": {
-        parameters: {
-            query?: {
-                /** @description Add log messages from the lookup to the response object. If not set, the 'logs' element is left out of the response. Possible values: `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`, `NOTSET`. */
-                log_level?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/xml": {
-                    [key: string]: unknown;
-                };
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ParticipantEndpoints"];
-                };
-            };
-            /** @description The identifier could not be found on the network. Either there is no entry in the SML, or the SMP returned a 404 response. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPBasicError"];
-                };
-            };
-            /** @description Either a remote SMP gave a response this service cannot handle, or there is an internal issue in the lookup service. */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPBasicError"];
-                };
-            };
-        };
-    };
-    organizations_list: {
-        parameters: {
-            query?: {
-                /** @description If set to true, show the results in descending rather than ascending order. Note that if order_by is not specified, the results are already shown in descending order of the id field. */
-                descending?: boolean;
-                /** @description Filter the results by peppol identifier field. Case insensitive partial match. */
-                filter_identifier?: string;
-                /** @description Filter the results by the value of the name field. Case insensitive partial match. */
-                filter_name?: string;
-                /** @description Filter the results by the value of the name field. Case insensitive partial match. */
-                filter_reference?: string;
-                /** @description Number of results to return per page. */
-                limit?: number;
-                /** @description The initial index from which to return the results. */
-                offset?: number;
-                /** @description Order the results by the given attribute. Attribute must be one of "name" or "country". */
-                order_by?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PaginatedOrganizationList"];
-                };
-            };
-        };
-    };
-    organizations_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["Organization"];
-                "application/x-www-form-urlencoded": components["schemas"]["Organization"];
-                "multipart/form-data": components["schemas"]["Organization"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Organization"];
-                };
-            };
-        };
-    };
-    organizations_identifiers_list: {
-        parameters: {
-            query?: {
-                /** @description Number of results to return per page. */
-                limit?: number;
-                /** @description The initial index from which to return the results. */
-                offset?: number;
-            };
-            header?: never;
-            path: {
-                organization_pk: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PaginatedIdentifierList"];
-                };
-            };
-        };
-    };
-    organizations_identifiers_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                organization_pk: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["Identifier"];
-                "application/x-www-form-urlencoded": components["schemas"]["Identifier"];
-                "multipart/form-data": components["schemas"]["Identifier"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Identifier"];
-                };
-            };
-        };
-    };
-    organizations_identifiers_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this identifier. */
-                id: number;
-                organization_pk: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Identifier"];
-                };
-            };
-        };
-    };
-    organizations_identifiers_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this identifier. */
-                id: number;
-                organization_pk: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["Identifier"];
-                "application/x-www-form-urlencoded": components["schemas"]["Identifier"];
-                "multipart/form-data": components["schemas"]["Identifier"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Identifier"];
-                };
-            };
-        };
-    };
-    organizations_identifiers_destroy: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this identifier. */
-                id: number;
-                organization_pk: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No response body */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    organizations_identifiers_partial_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this identifier. */
-                id: number;
-                organization_pk: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["PatchedIdentifier"];
-                "application/x-www-form-urlencoded": components["schemas"]["PatchedIdentifier"];
-                "multipart/form-data": components["schemas"]["PatchedIdentifier"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Identifier"];
-                };
-            };
-        };
-    };
-    organizations_logs_list: {
-        parameters: {
-            query?: {
-                /** @description Number of results to return per page. */
-                limit?: number;
-                /** @description The initial index from which to return the results. */
-                offset?: number;
-            };
-            header?: never;
-            path: {
-                organization_pk: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PaginatedLogList"];
-                };
-            };
-        };
-    };
-    organizations_logs_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this log. */
-                id: number;
-                organization_pk: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Log"];
-                };
-            };
-        };
-    };
-    organizations_receive_trigger_options_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                organization_pk: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No response body */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    organizations_receive_triggers_list: {
-        parameters: {
-            query?: {
-                /** @description Number of results to return per page. */
-                limit?: number;
-                /** @description The initial index from which to return the results. */
-                offset?: number;
-            };
-            header?: never;
-            path: {
-                organization_pk: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PaginatedOrganizationReceiveTriggerList"];
-                };
-            };
-        };
-    };
-    organizations_receive_triggers_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                organization_pk: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["OrganizationReceiveTrigger"];
-                "application/x-www-form-urlencoded": components["schemas"]["OrganizationReceiveTrigger"];
-                "multipart/form-data": components["schemas"]["OrganizationReceiveTrigger"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OrganizationReceiveTrigger"];
-                };
-            };
-        };
-    };
-    organizations_receive_triggers_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this organization receive trigger. */
-                id: number;
-                organization_pk: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OrganizationReceiveTrigger"];
-                };
-            };
-        };
-    };
-    organizations_receive_triggers_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this organization receive trigger. */
-                id: number;
-                organization_pk: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["OrganizationReceiveTrigger"];
-                "application/x-www-form-urlencoded": components["schemas"]["OrganizationReceiveTrigger"];
-                "multipart/form-data": components["schemas"]["OrganizationReceiveTrigger"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OrganizationReceiveTrigger"];
-                };
-            };
-        };
-    };
-    organizations_receive_triggers_destroy: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this organization receive trigger. */
-                id: number;
-                organization_pk: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No response body */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    organizations_receive_triggers_partial_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this organization receive trigger. */
-                id: number;
-                organization_pk: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["PatchedOrganizationReceiveTrigger"];
-                "application/x-www-form-urlencoded": components["schemas"]["PatchedOrganizationReceiveTrigger"];
-                "multipart/form-data": components["schemas"]["PatchedOrganizationReceiveTrigger"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OrganizationReceiveTrigger"];
-                };
-            };
-        };
-    };
-    organizations_receive_triggers_options_list: {
-        parameters: {
-            query?: {
-                /** @description Number of results to return per page. */
-                limit?: number;
-                /** @description The initial index from which to return the results. */
-                offset?: number;
-            };
-            header?: never;
-            path: {
-                organization_pk: string;
-                trigger_pk: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PaginatedOrganizationReceiveTriggerArgumentList"];
-                };
-            };
-        };
-    };
-    organizations_receive_triggers_options_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                organization_pk: string;
-                trigger_pk: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["OrganizationReceiveTriggerArgument"];
-                "application/x-www-form-urlencoded": components["schemas"]["OrganizationReceiveTriggerArgument"];
-                "multipart/form-data": components["schemas"]["OrganizationReceiveTriggerArgument"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OrganizationReceiveTriggerArgument"];
-                };
-            };
-        };
-    };
-    organizations_receive_triggers_options_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this organization receive trigger argument. */
-                id: number;
-                organization_pk: string;
-                trigger_pk: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OrganizationReceiveTriggerArgument"];
-                };
-            };
-        };
-    };
-    organizations_receive_triggers_options_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this organization receive trigger argument. */
-                id: number;
-                organization_pk: string;
-                trigger_pk: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["OrganizationReceiveTriggerArgument"];
-                "application/x-www-form-urlencoded": components["schemas"]["OrganizationReceiveTriggerArgument"];
-                "multipart/form-data": components["schemas"]["OrganizationReceiveTriggerArgument"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OrganizationReceiveTriggerArgument"];
-                };
-            };
-        };
-    };
-    organizations_receive_triggers_options_destroy: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this organization receive trigger argument. */
-                id: number;
-                organization_pk: string;
-                trigger_pk: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No response body */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    organizations_receive_triggers_options_partial_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this organization receive trigger argument. */
-                id: number;
-                organization_pk: string;
-                trigger_pk: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["PatchedOrganizationReceiveTriggerArgument"];
-                "application/x-www-form-urlencoded": components["schemas"]["PatchedOrganizationReceiveTriggerArgument"];
-                "multipart/form-data": components["schemas"]["PatchedOrganizationReceiveTriggerArgument"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OrganizationReceiveTriggerArgument"];
-                };
-            };
-        };
-    };
-    organizations_users_list: {
-        parameters: {
-            query?: {
-                /** @description Number of results to return per page. */
-                limit?: number;
-                /** @description The initial index from which to return the results. */
-                offset?: number;
-            };
-            header?: never;
-            path: {
-                organization_pk: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PaginatedOrganizationUserList"];
-                };
-            };
-        };
-    };
-    organizations_users_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                organization_pk: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["OrganizationUser"];
-                "application/x-www-form-urlencoded": components["schemas"]["OrganizationUser"];
-                "multipart/form-data": components["schemas"]["OrganizationUser"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OrganizationUser"];
-                };
-            };
-        };
-    };
-    organizations_users_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-                organization_pk: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OrganizationUser"];
-                };
-            };
-        };
-    };
-    organizations_users_destroy: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-                organization_pk: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No response body */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    organizations_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this organization. */
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Organization"];
-                };
-            };
-        };
-    };
-    organizations_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this organization. */
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["Organization"];
-                "application/x-www-form-urlencoded": components["schemas"]["Organization"];
-                "multipart/form-data": components["schemas"]["Organization"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Organization"];
-                };
-            };
-        };
-    };
-    organizations_destroy: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this organization. */
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No response body */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    organizations_partial_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this organization. */
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["PatchedOrganization"];
-                "application/x-www-form-urlencoded": components["schemas"]["PatchedOrganization"];
-                "multipart/form-data": components["schemas"]["PatchedOrganization"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Organization"];
-                };
-            };
-        };
-    };
-    organizations_create_full_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["Organization"];
-                "application/x-www-form-urlencoded": components["schemas"]["Organization"];
-                "multipart/form-data": components["schemas"]["Organization"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Organization"];
-                };
-            };
-            /** @description Input validation errors. The result is a dictionary with the keys being the input field that failed validation, and the values are list of error messages for those fields. Note that the errors do not follow the nesting structure of the input. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description If publication of identifiers in the SMP is requested, this error is returned if the SML reported that the identifier was already registered. */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    receive_transactions_list: {
-        parameters: {
-            query?: {
-                /** @description If set to true, show the results in descending rather than ascending order. Note that if order_by is not specified, the results are already shown in descending order of the created_on field. */
-                descending?: boolean;
-                /** @description Filter the results by the value of the document identifier field (in case of invoices: the invoice number). Case insensitive partial match. */
-                filter_document_identifier?: string;
-                /** @description Filter the results by the value of the document type (as defined by the 'Peppol Document Type Identifier Value' field on https://docs.peppol.eu/edelivery/codelists/v9.2/Peppol%20Code%20Lists%20-%20Document%20types%20v9.2.html). Case insensitive partial match. */
-                filter_document_type?: string;
-                /** @description Filter the results to only show elements with a created_on value on or after the given point in time. You can specify a date only (YYYY-MM-DD) or a full date/time format as defined in RFC3339: https://www.rfc-editor.org/rfc/rfc3339#section-5.8 */
-                filter_from_date?: string;
-                /** @description Filter the results by the value of the receiver field. Case insensitive partial match. */
-                filter_receiver?: number;
-                /** @description Filter the results by the value of the sender field. Case insensitive partial match. */
-                filter_sender?: string;
-                /** @description Filter the results by the value of the state field. Case insensitive partial match. */
-                filter_state?: string;
-                /** @description Filter the results to only show elements with a created_on value on or before the given point in time. You can specify a date only (YYYY-MM-DD) or a full date/time format as defined in RFC3339: https://www.rfc-editor.org/rfc/rfc3339#section-5.8 */
-                filter_to_date?: string;
-                /** @description Filter the results by the value of the transaction identifier field (The UUID from the SBDH envelope). Case insensitive partial match. */
-                filter_transaction_identifier?: string;
-                /** @description Number of results to return per page. */
-                limit?: number;
-                /** @description The initial index from which to return the results. */
-                offset?: number;
-                /** @description Order the results by the given attribute. Attribute must be one of "created_on", "sender_identifier", "receiver_identifier", "document_element", "document_id", or "state". */
-                order_by?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PaginatedReceiveTransactionList"];
-                };
-            };
-        };
-    };
-    receive_transactions_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["ReceiveTransaction"];
-                "application/x-www-form-urlencoded": components["schemas"]["ReceiveTransaction"];
-                "multipart/form-data": components["schemas"]["ReceiveTransaction"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ReceiveTransaction"];
-                };
-            };
-        };
-    };
-    receive_transactions_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this receive transaction. */
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ReceiveTransaction"];
-                };
-            };
-        };
-    };
-    receive_transactions_destroy: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this receive transaction. */
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No response body */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    receive_transactions_partial_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this receive transaction. */
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["PatchedReceiveTransaction"];
-                "application/x-www-form-urlencoded": components["schemas"]["PatchedReceiveTransaction"];
-                "multipart/form-data": components["schemas"]["PatchedReceiveTransaction"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ReceiveTransaction"];
-                };
-            };
-        };
-    };
-    receive_transactions_document_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this receive transaction. */
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/xml": components["schemas"]["ReceiveTransaction"];
-                };
-            };
-        };
-    };
-    receive_transactions_execute_triggers_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this receive transaction. */
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["ReceiveTransaction"];
-                "application/x-www-form-urlencoded": components["schemas"]["ReceiveTransaction"];
-                "multipart/form-data": components["schemas"]["ReceiveTransaction"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ReceiveTransaction"];
-                };
-            };
-        };
-    };
-    receive_transactions_mark_read_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this receive transaction. */
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["ReceiveTransaction"];
-                "application/x-www-form-urlencoded": components["schemas"]["ReceiveTransaction"];
-                "multipart/form-data": components["schemas"]["ReceiveTransaction"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ReceiveTransaction"];
-                };
-            };
-        };
-    };
-    receive_transactions_mark_unread_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this receive transaction. */
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["ReceiveTransaction"];
-                "application/x-www-form-urlencoded": components["schemas"]["ReceiveTransaction"];
-                "multipart/form-data": components["schemas"]["ReceiveTransaction"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ReceiveTransaction"];
-                };
-            };
-        };
-    };
-    receive_transactions_pdf_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this receive transaction. */
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/pdf": components["schemas"]["ReceiveTransaction"];
-                };
-            };
-        };
-    };
-    receive_transactions_receipt_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this receive transaction. */
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/xml": components["schemas"]["ReceiveTransaction"];
-                };
-            };
-        };
-    };
-    receive_transactions_sbdh_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this receive transaction. */
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/xml": components["schemas"]["ReceiveTransaction"];
-                };
-            };
-        };
-    };
-    receive_transactions_logs_list: {
-        parameters: {
-            query?: {
-                /** @description Number of results to return per page. */
-                limit?: number;
-                /** @description The initial index from which to return the results. */
-                offset?: number;
-            };
-            header?: never;
-            path: {
-                receive_transaction_pk: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PaginatedLogList"];
-                };
-            };
-        };
-    };
-    receive_transactions_logs_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this log. */
-                id: number;
-                receive_transaction_pk: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Log"];
-                };
-            };
-        };
-    };
-    send_document_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/xml": {
-                    [key: string]: unknown;
-                };
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SendTransaction"];
-                };
-            };
-        };
-    };
-    send_transactions_list: {
-        parameters: {
-            query?: {
-                /** @description If set to true, show the results in descending rather than ascending order. Note that if order_by is not specified, the results are already shown in descending order of the created_on field. */
-                descending?: boolean;
-                /** @description Filter the results by the value of the document identifier field (in case of invoices: the invoice number). Case insensitive partial match. */
-                filter_document_identifier?: string;
-                /** @description Filter the results by the value of the document type (as defined by the 'Peppol Document Type Identifier Value' field on https://docs.peppol.eu/edelivery/codelists/v9.2/Peppol%20Code%20Lists%20-%20Document%20types%20v9.2.html). Case insensitive partial match. */
-                filter_document_type?: string;
-                /** @description Filter the results to only show elements with a created_on value on or after the given point in time. You can specify a date only (YYYY-MM-DD) or a full date/time format as defined in RFC3339: https://www.rfc-editor.org/rfc/rfc3339#section-5.8 */
-                filter_from_date?: string;
-                /** @description Filter the results by the value of the receiver field. Case insensitive partial match. */
-                filter_receiver?: number;
-                /** @description Filter the results by the value of the sender field. Case insensitive partial match. */
-                filter_sender?: string;
-                /** @description Filter the results by the value of the state field. Case insensitive partial match. */
-                filter_state?: string;
-                /** @description Filter the results to only show elements with a created_on value on or before the given point in time. You can specify a date only (YYYY-MM-DD) or a full date/time format as defined in RFC3339: https://www.rfc-editor.org/rfc/rfc3339#section-5.8 */
-                filter_to_date?: string;
-                /** @description Filter the results by the value of the transaction identifier field (The UUID from the SBDH envelope). Case insensitive partial match. */
-                filter_transaction_identifier?: string;
-                /** @description Number of results to return per page. */
-                limit?: number;
-                /** @description The initial index from which to return the results. */
-                offset?: number;
-                /** @description Order the results by the given attribute. Attribute must be one of "created_on", "sender_identifier", "receiver_identifier", "document_element", "document_id", or "state". */
-                order_by?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PaginatedSendTransactionList"];
-                };
-            };
-        };
-    };
-    send_transactions_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this send transaction. */
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SendTransaction"];
-                };
-            };
-        };
-    };
-    send_transactions_destroy: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this send transaction. */
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No response body */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    send_transactions_document_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this send transaction. */
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/xml": components["schemas"]["SendTransaction"];
-                };
-            };
-        };
-    };
-    send_transactions_pdf_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this send transaction. */
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/pdf": components["schemas"]["SendTransaction"];
-                };
-            };
-        };
-    };
-    send_transactions_receipt_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this send transaction. */
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/xml": components["schemas"]["SendTransaction"];
-                };
-            };
-        };
-    };
-    send_transactions_sbdh_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this send transaction. */
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/xml": components["schemas"]["SendTransaction"];
-                };
-            };
-        };
-    };
-    send_transactions_errors_list: {
-        parameters: {
-            query?: {
-                /** @description Number of results to return per page. */
-                limit?: number;
-                /** @description The initial index from which to return the results. */
-                offset?: number;
-            };
-            header?: never;
-            path: {
-                send_transaction_pk: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PaginatedSendTransactionErrorList"];
-                };
-            };
-        };
-    };
-    send_transactions_errors_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this send transaction error. */
-                id: number;
-                send_transaction_pk: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SendTransactionError"];
-                };
-            };
-        };
-    };
-    send_transactions_logs_list: {
-        parameters: {
-            query?: {
-                /** @description Number of results to return per page. */
-                limit?: number;
-                /** @description The initial index from which to return the results. */
-                offset?: number;
-            };
-            header?: never;
-            path: {
-                send_transaction_pk: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PaginatedLogList"];
-                };
-            };
-        };
-    };
-    send_transactions_logs_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A unique integer value identifying this log. */
-                id: number;
-                send_transaction_pk: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Log"];
-                };
-            };
-        };
-    };
+  account_transaction_bundle_retrieve: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No response body */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  account_transaction_bundle_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No response body */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  auth_create_auth_token_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No response body */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  auth_delete_auth_token_destroy: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        key: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No response body */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  auth_obtain_jwt_token_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['MyJSONWebToken'];
+        'application/x-www-form-urlencoded': components['schemas']['MyJSONWebToken'];
+        'multipart/form-data': components['schemas']['MyJSONWebToken'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MyJSONWebToken'];
+        };
+      };
+    };
+  };
+  auth_refresh_jwt_token_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TokenRefresh'];
+        'application/x-www-form-urlencoded': components['schemas']['TokenRefresh'];
+        'multipart/form-data': components['schemas']['TokenRefresh'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TokenRefresh'];
+        };
+      };
+    };
+  };
+  auth_update_password_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No response body */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  auth_user_data_retrieve: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No response body */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  'Check Participant Presence': {
+    parameters: {
+      query?: {
+        /** @description Add log messages from the lookup to the response object. If not set, the 'logs' element is left out of the response. Possible values: `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`, `NOTSET`. */
+        log_level?: string;
+      };
+      header?: never;
+      path: {
+        /**
+         * @description The identifier of the participant to find.
+         *
+         *     Should be of the form `<scheme>:<identifier>`, for example `0106:12345678`
+         *
+         *     Optionally, you can provide the participant identifier scheme as well: `iso6523-actorid-upis::0106:12345678`
+         */
+        identifier: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ParticipantPresence'];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ParticipantPresence'];
+        };
+      };
+      /** @description Either a remote SMP gave a response this service cannot handle, or there is an internal issue in the lookup service. */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPBasicError'];
+        };
+      };
+    };
+  };
+  'Discover Participant Document Types': {
+    parameters: {
+      query?: {
+        /** @description Add log messages from the lookup to the response object. If not set, the 'logs' element is left out of the response. Possible values: `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`, `NOTSET`. */
+        log_level?: string;
+      };
+      header?: never;
+      path: {
+        /** @description The identifier of the participant to find. Examples: `0106:84418745`, `iso6523-actorid-upis::0106:84418745` */
+        identifier: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ParticipantSupportedDocumentTypes'];
+        };
+      };
+      /** @description The identifier could not be found on the network. Either there is no entry in the SML, or the SMP returned a 404 response. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPBasicError'];
+        };
+      };
+      /** @description Either a remote SMP gave a response this service cannot handle, or there is an internal issue in the lookup service. */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPBasicError'];
+        };
+      };
+    };
+  };
+  'Discover Participant Endpoints': {
+    parameters: {
+      query?: {
+        /** @description Add log messages from the lookup to the response object. If not set, the 'logs' element is left out of the response. Possible values: `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`, `NOTSET`. */
+        log_level?: string;
+      };
+      header?: never;
+      path: {
+        /** @description  */
+        identifier: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ParticipantEndpoints'];
+        };
+      };
+      /** @description The identifier could not be found on the network. Either there is no entry in the SML, or the SMP returned a 404 response. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPBasicError'];
+        };
+      };
+      /** @description Either a remote SMP gave a response this service cannot handle, or there is an internal issue in the lookup service. */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPBasicError'];
+        };
+      };
+    };
+  };
+  'Discover Participant Endpoints For Document': {
+    parameters: {
+      query?: {
+        /** @description Add log messages from the lookup to the response object. If not set, the 'logs' element is left out of the response. Possible values: `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`, `NOTSET`. */
+        log_level?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/xml': {
+          [key: string]: unknown;
+        };
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ParticipantEndpoints'];
+        };
+      };
+      /** @description The identifier could not be found on the network. Either there is no entry in the SML, or the SMP returned a 404 response. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPBasicError'];
+        };
+      };
+      /** @description Either a remote SMP gave a response this service cannot handle, or there is an internal issue in the lookup service. */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPBasicError'];
+        };
+      };
+    };
+  };
+  organizations_list: {
+    parameters: {
+      query?: {
+        /** @description If set to true, show the results in descending rather than ascending order. Note that if order_by is not specified, the results are already shown in descending order of the id field. */
+        descending?: boolean;
+        /** @description Filter the results by peppol identifier field. Case insensitive partial match. */
+        filter_identifier?: string;
+        /** @description Filter the results by the value of the name field. Case insensitive partial match. */
+        filter_name?: string;
+        /** @description Filter the results by the value of the name field. Case insensitive partial match. */
+        filter_reference?: string;
+        /** @description Number of results to return per page. */
+        limit?: number;
+        /** @description The initial index from which to return the results. */
+        offset?: number;
+        /** @description Order the results by the given attribute. Attribute must be one of "name" or "country". */
+        order_by?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PaginatedOrganizationList'];
+        };
+      };
+    };
+  };
+  organizations_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['Organization'];
+        'application/x-www-form-urlencoded': components['schemas']['Organization'];
+        'multipart/form-data': components['schemas']['Organization'];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Organization'];
+        };
+      };
+    };
+  };
+  organizations_identifiers_list: {
+    parameters: {
+      query?: {
+        /** @description Number of results to return per page. */
+        limit?: number;
+        /** @description The initial index from which to return the results. */
+        offset?: number;
+      };
+      header?: never;
+      path: {
+        organization_pk: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PaginatedIdentifierList'];
+        };
+      };
+    };
+  };
+  organizations_identifiers_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        organization_pk: number;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['Identifier'];
+        'application/x-www-form-urlencoded': components['schemas']['Identifier'];
+        'multipart/form-data': components['schemas']['Identifier'];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Identifier'];
+        };
+      };
+    };
+  };
+  organizations_identifiers_retrieve: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description A unique integer value identifying this identifier. */
+        id: number;
+        organization_pk: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Identifier'];
+        };
+      };
+    };
+  };
+  organizations_identifiers_update: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description A unique integer value identifying this identifier. */
+        id: number;
+        organization_pk: number;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['Identifier'];
+        'application/x-www-form-urlencoded': components['schemas']['Identifier'];
+        'multipart/form-data': components['schemas']['Identifier'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Identifier'];
+        };
+      };
+    };
+  };
+  organizations_identifiers_destroy: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description A unique integer value identifying this identifier. */
+        id: number;
+        organization_pk: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No response body */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  organizations_identifiers_partial_update: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description A unique integer value identifying this identifier. */
+        id: number;
+        organization_pk: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['PatchedIdentifier'];
+        'application/x-www-form-urlencoded': components['schemas']['PatchedIdentifier'];
+        'multipart/form-data': components['schemas']['PatchedIdentifier'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Identifier'];
+        };
+      };
+    };
+  };
+  organizations_logs_list: {
+    parameters: {
+      query?: {
+        /** @description Number of results to return per page. */
+        limit?: number;
+        /** @description The initial index from which to return the results. */
+        offset?: number;
+      };
+      header?: never;
+      path: {
+        organization_pk: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PaginatedLogList'];
+        };
+      };
+    };
+  };
+  organizations_logs_retrieve: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description A unique integer value identifying this log. */
+        id: number;
+        organization_pk: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Log'];
+        };
+      };
+    };
+  };
+  organizations_receive_trigger_options_retrieve: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        organization_pk: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No response body */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  organizations_receive_triggers_list: {
+    parameters: {
+      query?: {
+        /** @description Number of results to return per page. */
+        limit?: number;
+        /** @description The initial index from which to return the results. */
+        offset?: number;
+      };
+      header?: never;
+      path: {
+        organization_pk: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PaginatedOrganizationReceiveTriggerList'];
+        };
+      };
+    };
+  };
+  organizations_receive_triggers_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        organization_pk: number;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['OrganizationReceiveTrigger'];
+        'application/x-www-form-urlencoded': components['schemas']['OrganizationReceiveTrigger'];
+        'multipart/form-data': components['schemas']['OrganizationReceiveTrigger'];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['OrganizationReceiveTrigger'];
+        };
+      };
+    };
+  };
+  organizations_receive_triggers_retrieve: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description A unique integer value identifying this organization receive trigger. */
+        id: number;
+        organization_pk: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['OrganizationReceiveTrigger'];
+        };
+      };
+    };
+  };
+  organizations_receive_triggers_update: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description A unique integer value identifying this organization receive trigger. */
+        id: number;
+        organization_pk: number;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['OrganizationReceiveTrigger'];
+        'application/x-www-form-urlencoded': components['schemas']['OrganizationReceiveTrigger'];
+        'multipart/form-data': components['schemas']['OrganizationReceiveTrigger'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['OrganizationReceiveTrigger'];
+        };
+      };
+    };
+  };
+  organizations_receive_triggers_destroy: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description A unique integer value identifying this organization receive trigger. */
+        id: number;
+        organization_pk: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No response body */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  organizations_receive_triggers_partial_update: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description A unique integer value identifying this organization receive trigger. */
+        id: number;
+        organization_pk: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['PatchedOrganizationReceiveTrigger'];
+        'application/x-www-form-urlencoded': components['schemas']['PatchedOrganizationReceiveTrigger'];
+        'multipart/form-data': components['schemas']['PatchedOrganizationReceiveTrigger'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['OrganizationReceiveTrigger'];
+        };
+      };
+    };
+  };
+  organizations_receive_triggers_options_list: {
+    parameters: {
+      query?: {
+        /** @description Number of results to return per page. */
+        limit?: number;
+        /** @description The initial index from which to return the results. */
+        offset?: number;
+      };
+      header?: never;
+      path: {
+        organization_pk: string;
+        trigger_pk: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PaginatedOrganizationReceiveTriggerArgumentList'];
+        };
+      };
+    };
+  };
+  organizations_receive_triggers_options_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        organization_pk: string;
+        trigger_pk: number;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['OrganizationReceiveTriggerArgument'];
+        'application/x-www-form-urlencoded': components['schemas']['OrganizationReceiveTriggerArgument'];
+        'multipart/form-data': components['schemas']['OrganizationReceiveTriggerArgument'];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['OrganizationReceiveTriggerArgument'];
+        };
+      };
+    };
+  };
+  organizations_receive_triggers_options_retrieve: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description A unique integer value identifying this organization receive trigger argument. */
+        id: number;
+        organization_pk: string;
+        trigger_pk: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['OrganizationReceiveTriggerArgument'];
+        };
+      };
+    };
+  };
+  organizations_receive_triggers_options_update: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description A unique integer value identifying this organization receive trigger argument. */
+        id: number;
+        organization_pk: string;
+        trigger_pk: number;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['OrganizationReceiveTriggerArgument'];
+        'application/x-www-form-urlencoded': components['schemas']['OrganizationReceiveTriggerArgument'];
+        'multipart/form-data': components['schemas']['OrganizationReceiveTriggerArgument'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['OrganizationReceiveTriggerArgument'];
+        };
+      };
+    };
+  };
+  organizations_receive_triggers_options_destroy: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description A unique integer value identifying this organization receive trigger argument. */
+        id: number;
+        organization_pk: string;
+        trigger_pk: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No response body */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  organizations_receive_triggers_options_partial_update: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description A unique integer value identifying this organization receive trigger argument. */
+        id: number;
+        organization_pk: string;
+        trigger_pk: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['PatchedOrganizationReceiveTriggerArgument'];
+        'application/x-www-form-urlencoded': components['schemas']['PatchedOrganizationReceiveTriggerArgument'];
+        'multipart/form-data': components['schemas']['PatchedOrganizationReceiveTriggerArgument'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['OrganizationReceiveTriggerArgument'];
+        };
+      };
+    };
+  };
+  organizations_users_list: {
+    parameters: {
+      query?: {
+        /** @description Number of results to return per page. */
+        limit?: number;
+        /** @description The initial index from which to return the results. */
+        offset?: number;
+      };
+      header?: never;
+      path: {
+        organization_pk: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PaginatedOrganizationUserList'];
+        };
+      };
+    };
+  };
+  organizations_users_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        organization_pk: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['OrganizationUser'];
+        'application/x-www-form-urlencoded': components['schemas']['OrganizationUser'];
+        'multipart/form-data': components['schemas']['OrganizationUser'];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['OrganizationUser'];
+        };
+      };
+    };
+  };
+  organizations_users_retrieve: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        organization_pk: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['OrganizationUser'];
+        };
+      };
+    };
+  };
+  organizations_users_destroy: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        organization_pk: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No response body */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  organizations_retrieve: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description A unique integer value identifying this organization. */
+        id: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Organization'];
+        };
+      };
+    };
+  };
+  organizations_update: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description A unique integer value identifying this organization. */
+        id: number;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['Organization'];
+        'application/x-www-form-urlencoded': components['schemas']['Organization'];
+        'multipart/form-data': components['schemas']['Organization'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Organization'];
+        };
+      };
+    };
+  };
+  organizations_destroy: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description A unique integer value identifying this organization. */
+        id: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No response body */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  organizations_partial_update: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description A unique integer value identifying this organization. */
+        id: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['PatchedOrganization'];
+        'application/x-www-form-urlencoded': components['schemas']['PatchedOrganization'];
+        'multipart/form-data': components['schemas']['PatchedOrganization'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Organization'];
+        };
+      };
+    };
+  };
+  organizations_create_full_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['Organization'];
+        'application/x-www-form-urlencoded': components['schemas']['Organization'];
+        'multipart/form-data': components['schemas']['Organization'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Organization'];
+        };
+      };
+      /** @description Input validation errors. The result is a dictionary with the keys being the input field that failed validation, and the values are list of error messages for those fields. Note that the errors do not follow the nesting structure of the input. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description If publication of identifiers in the SMP is requested, this error is returned if the SML reported that the identifier was already registered. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  receive_transactions_list: {
+    parameters: {
+      query?: {
+        /** @description If set to true, show the results in descending rather than ascending order. Note that if order_by is not specified, the results are already shown in descending order of the created_on field. */
+        descending?: boolean;
+        /** @description Filter the results by the value of the document identifier field (in case of invoices: the invoice number). Case insensitive partial match. */
+        filter_document_identifier?: string;
+        /** @description Filter the results by the value of the document type (as defined by the 'Peppol Document Type Identifier Value' field on https://docs.peppol.eu/edelivery/codelists/v9.2/Peppol%20Code%20Lists%20-%20Document%20types%20v9.2.html). Case insensitive partial match. */
+        filter_document_type?: string;
+        /** @description Filter the results to only show elements with a created_on value on or after the given point in time. You can specify a date only (YYYY-MM-DD) or a full date/time format as defined in RFC3339: https://www.rfc-editor.org/rfc/rfc3339#section-5.8 */
+        filter_from_date?: string;
+        /** @description Filter the results by the value of the receiver field. Case insensitive partial match. */
+        filter_receiver?: number;
+        /** @description Filter the results by the value of the sender field. Case insensitive partial match. */
+        filter_sender?: string;
+        /** @description Filter the results by the value of the state field. Case insensitive partial match. */
+        filter_state?: string;
+        /** @description Filter the results to only show elements with a created_on value on or before the given point in time. You can specify a date only (YYYY-MM-DD) or a full date/time format as defined in RFC3339: https://www.rfc-editor.org/rfc/rfc3339#section-5.8 */
+        filter_to_date?: string;
+        /** @description Filter the results by the value of the transaction identifier field (The UUID from the SBDH envelope). Case insensitive partial match. */
+        filter_transaction_identifier?: string;
+        /** @description Number of results to return per page. */
+        limit?: number;
+        /** @description The initial index from which to return the results. */
+        offset?: number;
+        /** @description Order the results by the given attribute. Attribute must be one of "created_on", "sender_identifier", "receiver_identifier", "document_element", "document_id", or "state". */
+        order_by?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PaginatedReceiveTransactionList'];
+        };
+      };
+    };
+  };
+  receive_transactions_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['ReceiveTransaction'];
+        'application/x-www-form-urlencoded': components['schemas']['ReceiveTransaction'];
+        'multipart/form-data': components['schemas']['ReceiveTransaction'];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReceiveTransaction'];
+        };
+      };
+    };
+  };
+  receive_transactions_retrieve: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description A unique integer value identifying this receive transaction. */
+        id: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReceiveTransaction'];
+        };
+      };
+    };
+  };
+  receive_transactions_destroy: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description A unique integer value identifying this receive transaction. */
+        id: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No response body */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  receive_transactions_partial_update: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description A unique integer value identifying this receive transaction. */
+        id: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['PatchedReceiveTransaction'];
+        'application/x-www-form-urlencoded': components['schemas']['PatchedReceiveTransaction'];
+        'multipart/form-data': components['schemas']['PatchedReceiveTransaction'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReceiveTransaction'];
+        };
+      };
+    };
+  };
+  receive_transactions_document_retrieve: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description A unique integer value identifying this receive transaction. */
+        id: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/xml': components['schemas']['ReceiveTransaction'];
+        };
+      };
+    };
+  };
+  receive_transactions_execute_triggers_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description A unique integer value identifying this receive transaction. */
+        id: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['ReceiveTransaction'];
+        'application/x-www-form-urlencoded': components['schemas']['ReceiveTransaction'];
+        'multipart/form-data': components['schemas']['ReceiveTransaction'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReceiveTransaction'];
+        };
+      };
+    };
+  };
+  receive_transactions_mark_read_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description A unique integer value identifying this receive transaction. */
+        id: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['ReceiveTransaction'];
+        'application/x-www-form-urlencoded': components['schemas']['ReceiveTransaction'];
+        'multipart/form-data': components['schemas']['ReceiveTransaction'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReceiveTransaction'];
+        };
+      };
+    };
+  };
+  receive_transactions_mark_unread_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description A unique integer value identifying this receive transaction. */
+        id: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['ReceiveTransaction'];
+        'application/x-www-form-urlencoded': components['schemas']['ReceiveTransaction'];
+        'multipart/form-data': components['schemas']['ReceiveTransaction'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReceiveTransaction'];
+        };
+      };
+    };
+  };
+  receive_transactions_pdf_retrieve: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description A unique integer value identifying this receive transaction. */
+        id: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/pdf': components['schemas']['ReceiveTransaction'];
+        };
+      };
+    };
+  };
+  receive_transactions_receipt_retrieve: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description A unique integer value identifying this receive transaction. */
+        id: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/xml': components['schemas']['ReceiveTransaction'];
+        };
+      };
+    };
+  };
+  receive_transactions_sbdh_retrieve: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description A unique integer value identifying this receive transaction. */
+        id: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/xml': components['schemas']['ReceiveTransaction'];
+        };
+      };
+    };
+  };
+  receive_transactions_logs_list: {
+    parameters: {
+      query?: {
+        /** @description Number of results to return per page. */
+        limit?: number;
+        /** @description The initial index from which to return the results. */
+        offset?: number;
+      };
+      header?: never;
+      path: {
+        receive_transaction_pk: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PaginatedLogList'];
+        };
+      };
+    };
+  };
+  receive_transactions_logs_retrieve: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description A unique integer value identifying this log. */
+        id: number;
+        receive_transaction_pk: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Log'];
+        };
+      };
+    };
+  };
+  send_document_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/xml': {
+          [key: string]: unknown;
+        };
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SendTransaction'];
+        };
+      };
+    };
+  };
+  send_transactions_list: {
+    parameters: {
+      query?: {
+        /** @description If set to true, show the results in descending rather than ascending order. Note that if order_by is not specified, the results are already shown in descending order of the created_on field. */
+        descending?: boolean;
+        /** @description Filter the results by the value of the document identifier field (in case of invoices: the invoice number). Case insensitive partial match. */
+        filter_document_identifier?: string;
+        /** @description Filter the results by the value of the document type (as defined by the 'Peppol Document Type Identifier Value' field on https://docs.peppol.eu/edelivery/codelists/v9.2/Peppol%20Code%20Lists%20-%20Document%20types%20v9.2.html). Case insensitive partial match. */
+        filter_document_type?: string;
+        /** @description Filter the results to only show elements with a created_on value on or after the given point in time. You can specify a date only (YYYY-MM-DD) or a full date/time format as defined in RFC3339: https://www.rfc-editor.org/rfc/rfc3339#section-5.8 */
+        filter_from_date?: string;
+        /** @description Filter the results by the value of the receiver field. Case insensitive partial match. */
+        filter_receiver?: number;
+        /** @description Filter the results by the value of the sender field. Case insensitive partial match. */
+        filter_sender?: string;
+        /** @description Filter the results by the value of the state field. Case insensitive partial match. */
+        filter_state?: string;
+        /** @description Filter the results to only show elements with a created_on value on or before the given point in time. You can specify a date only (YYYY-MM-DD) or a full date/time format as defined in RFC3339: https://www.rfc-editor.org/rfc/rfc3339#section-5.8 */
+        filter_to_date?: string;
+        /** @description Filter the results by the value of the transaction identifier field (The UUID from the SBDH envelope). Case insensitive partial match. */
+        filter_transaction_identifier?: string;
+        /** @description Number of results to return per page. */
+        limit?: number;
+        /** @description The initial index from which to return the results. */
+        offset?: number;
+        /** @description Order the results by the given attribute. Attribute must be one of "created_on", "sender_identifier", "receiver_identifier", "document_element", "document_id", or "state". */
+        order_by?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PaginatedSendTransactionList'];
+        };
+      };
+    };
+  };
+  send_transactions_retrieve: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description A unique integer value identifying this send transaction. */
+        id: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SendTransaction'];
+        };
+      };
+    };
+  };
+  send_transactions_destroy: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description A unique integer value identifying this send transaction. */
+        id: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No response body */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  send_transactions_document_retrieve: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description A unique integer value identifying this send transaction. */
+        id: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/xml': components['schemas']['SendTransaction'];
+        };
+      };
+    };
+  };
+  send_transactions_pdf_retrieve: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description A unique integer value identifying this send transaction. */
+        id: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/pdf': components['schemas']['SendTransaction'];
+        };
+      };
+    };
+  };
+  send_transactions_receipt_retrieve: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description A unique integer value identifying this send transaction. */
+        id: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/xml': components['schemas']['SendTransaction'];
+        };
+      };
+    };
+  };
+  send_transactions_sbdh_retrieve: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description A unique integer value identifying this send transaction. */
+        id: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/xml': components['schemas']['SendTransaction'];
+        };
+      };
+    };
+  };
+  send_transactions_errors_list: {
+    parameters: {
+      query?: {
+        /** @description Number of results to return per page. */
+        limit?: number;
+        /** @description The initial index from which to return the results. */
+        offset?: number;
+      };
+      header?: never;
+      path: {
+        send_transaction_pk: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PaginatedSendTransactionErrorList'];
+        };
+      };
+    };
+  };
+  send_transactions_errors_retrieve: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description A unique integer value identifying this send transaction error. */
+        id: number;
+        send_transaction_pk: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SendTransactionError'];
+        };
+      };
+    };
+  };
+  send_transactions_logs_list: {
+    parameters: {
+      query?: {
+        /** @description Number of results to return per page. */
+        limit?: number;
+        /** @description The initial index from which to return the results. */
+        offset?: number;
+      };
+      header?: never;
+      path: {
+        send_transaction_pk: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PaginatedLogList'];
+        };
+      };
+    };
+  };
+  send_transactions_logs_retrieve: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description A unique integer value identifying this log. */
+        id: number;
+        send_transaction_pk: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Log'];
+        };
+      };
+    };
+  };
 }

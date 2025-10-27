@@ -1,6 +1,10 @@
 /* eslint @typescript-eslint/no-explicit-any: 0 */
 import { Client } from 'pg';
-import { ListEntityDocumentsParams, ListItemV1, ListItemV2 } from './Backend.js';
+import {
+  ListEntityDocumentsParams,
+  ListItemV1,
+  ListItemV2,
+} from './Backend.js';
 export { Client } from 'pg';
 
 let client: Client | null = null;
@@ -16,7 +20,7 @@ export async function getPostgresClient(): Promise<Client> {
     connectionString: process.env.DATABASE_URL,
     ssl: {
       rejectUnauthorized: process.env.NODE_ENV === 'production',
-    }
+    },
   });
   await client.connect();
   return client;
@@ -83,7 +87,9 @@ export async function insertData(
   );
 }
 
-export async function listEntityDocuments(params: ListEntityDocumentsParams): Promise<ListItemV1[]> {
+export async function listEntityDocuments(
+  params: ListEntityDocumentsParams,
+): Promise<ListItemV1[]> {
   const { peppolId, direction, type, page, pageSize } = params;
   const offset = (page - 1) * pageSize;
   let constrainedParty;
@@ -113,16 +119,19 @@ export async function listEntityDocuments(params: ListEntityDocumentsParams): Pr
   const result = await client.query(queryStr, queryParams);
 
   // map to camelCase and ListItemV1
-  return result.rows.map((row) => ({
-    platformId: row.platformid,
-    docType: row.doctype,
-    direction: row.direction,
-    senderId: row.senderid,
-    senderName: row.sendername,
-    receiverId: row.receiverid,
-    receiverName: row.receivername,
-    createdAt: row.createdat,
-    amount: row.amount,
-    docId: row.docid,
-  } as ListItemV2));
+  return result.rows.map(
+    (row) =>
+      ({
+        platformId: row.platformid,
+        docType: row.doctype,
+        direction: row.direction,
+        senderId: row.senderid,
+        senderName: row.sendername,
+        receiverId: row.receiverid,
+        receiverName: row.receivername,
+        createdAt: row.createdat,
+        amount: row.amount,
+        docId: row.docid,
+      }) as ListItemV2,
+  );
 }

@@ -4,3938 +4,4059 @@
  */
 
 export interface paths {
-    "/api/peppol/{companyId}/sendDocument": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Send Document
-         * @description Send a document to a customer
-         */
-        post: operations["sendDocument"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+  '/api/peppol/{companyId}/sendDocument': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/peppol/{teamId}/subscription": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["getApiPeppolByTeamIdSubscription"];
-        put?: never;
-        post: operations["postApiPeppolByTeamIdSubscription"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Send Document
+     * @description Send a document to a customer
+     */
+    post: operations['sendDocument'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/peppol/{teamId}/subscription': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/peppol/{teamId}/subscription/cancel": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["postApiPeppolByTeamIdSubscriptionCancel"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['getApiPeppolByTeamIdSubscription'];
+    put?: never;
+    post: operations['postApiPeppolByTeamIdSubscription'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/peppol/{teamId}/subscription/cancel': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/peppol/{teamId}/billing-profile": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["getApiPeppolByTeamIdBilling-profile"];
-        put: operations["putApiPeppolByTeamIdBilling-profile"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['postApiPeppolByTeamIdSubscriptionCancel'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/peppol/{teamId}/billing-profile': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/peppol/{teamId}/billing-profile/end-billing-cycle": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["postApiPeppolByTeamIdBilling-profileEnd-billing-cycle"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['getApiPeppolByTeamIdBilling-profile'];
+    put: operations['putApiPeppolByTeamIdBilling-profile'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/peppol/{teamId}/billing-profile/end-billing-cycle': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/peppol/{teamId}/billing-profile/current-usage": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["getApiPeppolByTeamIdBilling-profileCurrent-usage"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['postApiPeppolByTeamIdBilling-profileEnd-billing-cycle'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/peppol/{teamId}/billing-profile/current-usage': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/peppol/{teamId}/companies": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List Companies
-         * @description Get a list of all companies for a team
-         */
-        get: operations["getCompanies"];
-        put?: never;
-        /**
-         * Create Company
-         * @description Create a new company
-         */
-        post: operations["createCompany"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['getApiPeppolByTeamIdBilling-profileCurrent-usage'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/peppol/{teamId}/companies': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/peppol/{teamId}/companies/{companyId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Company
-         * @description Get a specific company by ID
-         */
-        get: operations["getCompany"];
-        /**
-         * Update Company
-         * @description Update an existing company
-         */
-        put: operations["updateCompany"];
-        post?: never;
-        /**
-         * Delete Company
-         * @description Delete a company
-         */
-        delete: operations["deleteCompany"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * List Companies
+     * @description Get a list of all companies for a team
+     */
+    get: operations['getCompanies'];
+    put?: never;
+    /**
+     * Create Company
+     * @description Create a new company
+     */
+    post: operations['createCompany'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/peppol/{teamId}/companies/{companyId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/peppol/{teamId}/companies/{companyId}/identifiers": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List Company Identifiers
-         * @description Get a list of all identifiers for a specific company
-         */
-        get: operations["getCompanyIdentifiers"];
-        put?: never;
-        /**
-         * Create Company Identifier
-         * @description Create a new company identifier
-         */
-        post: operations["createCompanyIdentifier"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * Get Company
+     * @description Get a specific company by ID
+     */
+    get: operations['getCompany'];
+    /**
+     * Update Company
+     * @description Update an existing company
+     */
+    put: operations['updateCompany'];
+    post?: never;
+    /**
+     * Delete Company
+     * @description Delete a company
+     */
+    delete: operations['deleteCompany'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/peppol/{teamId}/companies/{companyId}/identifiers': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/peppol/{teamId}/companies/{companyId}/identifiers/{identifierId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Company Identifier
-         * @description Get a specific company identifier by ID
-         */
-        get: operations["getCompanyIdentifier"];
-        /**
-         * Update Company Identifier
-         * @description Update an existing company identifier
-         */
-        put: operations["updateCompanyIdentifier"];
-        post?: never;
-        /**
-         * Delete Company Identifier
-         * @description Delete a company identifier
-         */
-        delete: operations["deleteCompanyIdentifier"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * List Company Identifiers
+     * @description Get a list of all identifiers for a specific company
+     */
+    get: operations['getCompanyIdentifiers'];
+    put?: never;
+    /**
+     * Create Company Identifier
+     * @description Create a new company identifier
+     */
+    post: operations['createCompanyIdentifier'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/peppol/{teamId}/companies/{companyId}/identifiers/{identifierId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/peppol/{teamId}/companies/{companyId}/documentTypes": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List Company Document Types
-         * @description Get a list of all document types for a specific company
-         */
-        get: operations["getCompanyDocumentTypes"];
-        put?: never;
-        /**
-         * Create Company Document Type
-         * @description Create a new company document type
-         */
-        post: operations["createCompanyDocumentType"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * Get Company Identifier
+     * @description Get a specific company identifier by ID
+     */
+    get: operations['getCompanyIdentifier'];
+    /**
+     * Update Company Identifier
+     * @description Update an existing company identifier
+     */
+    put: operations['updateCompanyIdentifier'];
+    post?: never;
+    /**
+     * Delete Company Identifier
+     * @description Delete a company identifier
+     */
+    delete: operations['deleteCompanyIdentifier'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/peppol/{teamId}/companies/{companyId}/documentTypes': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/peppol/{teamId}/companies/{companyId}/documentTypes/{documentTypeId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Company Document Type
-         * @description Get a specific company document type by ID
-         */
-        get: operations["getCompanyDocumentType"];
-        /**
-         * Update Company Document Type
-         * @description Update an existing company document type
-         */
-        put: operations["updateCompanyDocumentType"];
-        post?: never;
-        /**
-         * Delete Company Document Type
-         * @description Delete a company document type
-         */
-        delete: operations["deleteCompanyDocumentType"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * List Company Document Types
+     * @description Get a list of all document types for a specific company
+     */
+    get: operations['getCompanyDocumentTypes'];
+    put?: never;
+    /**
+     * Create Company Document Type
+     * @description Create a new company document type
+     */
+    post: operations['createCompanyDocumentType'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/peppol/{teamId}/companies/{companyId}/documentTypes/{documentTypeId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/peppol/internal/receiveDocument": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["postApiPeppolInternalReceiveDocument"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * Get Company Document Type
+     * @description Get a specific company document type by ID
+     */
+    get: operations['getCompanyDocumentType'];
+    /**
+     * Update Company Document Type
+     * @description Update an existing company document type
+     */
+    put: operations['updateCompanyDocumentType'];
+    post?: never;
+    /**
+     * Delete Company Document Type
+     * @description Delete a company document type
+     */
+    delete: operations['deleteCompanyDocumentType'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/peppol/internal/receiveDocument': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/peppol/{teamId}/documents": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List Documents
-         * @description Get a list of transmitted documents with pagination
-         */
-        get: operations["getDocuments"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['postApiPeppolInternalReceiveDocument'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/peppol/{teamId}/documents': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/peppol/{teamId}/documents/{documentId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Document
-         * @description Get a single transmitted document by ID
-         */
-        get: operations["getDocument"];
-        put?: never;
-        post?: never;
-        /**
-         * Delete Document
-         * @description Delete a transmitted document
-         */
-        delete: operations["deleteDocument"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * List Documents
+     * @description Get a list of transmitted documents with pagination
+     */
+    get: operations['getDocuments'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/peppol/{teamId}/documents/{documentId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/peppol/{teamId}/inbox": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Inbox
-         * @description List all unread incoming documents.
-         */
-        get: operations["getInbox"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * Get Document
+     * @description Get a single transmitted document by ID
+     */
+    get: operations['getDocument'];
+    put?: never;
+    post?: never;
+    /**
+     * Delete Document
+     * @description Delete a transmitted document
+     */
+    delete: operations['deleteDocument'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/peppol/{teamId}/inbox': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/peppol/{teamId}/documents/{documentId}/markAsRead": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Mark Document as Read
-         * @description Mark a document as read or unread
-         */
-        post: operations["markAsRead"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * Inbox
+     * @description List all unread incoming documents.
+     */
+    get: operations['getInbox'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/peppol/{teamId}/documents/{documentId}/markAsRead': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/peppol/{teamId}/documents/{documentId}/downloadPackage": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Download Document Package
-         * @description Download a document as a zip file containing the document JSON, XML, and any binary attachments
-         */
-        get: operations["downloadPackage"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Mark Document as Read
+     * @description Mark a document as read or unread
+     */
+    post: operations['markAsRead'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/peppol/{teamId}/documents/{documentId}/downloadPackage': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/peppol/{teamId}/webhooks": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List Webhooks
-         * @description Get a list of all webhooks for a team
-         */
-        get: operations["getWebhooks"];
-        put?: never;
-        /**
-         * Create Webhook
-         * @description Create a new webhook
-         */
-        post: operations["createWebhook"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * Download Document Package
+     * @description Download a document as a zip file containing the document JSON, XML, and any binary attachments
+     */
+    get: operations['downloadPackage'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/peppol/{teamId}/webhooks': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/peppol/{teamId}/webhooks/{webhookId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Webhook
-         * @description Get a specific webhook by ID
-         */
-        get: operations["getWebhook"];
-        /**
-         * Update Webhook
-         * @description Update an existing webhook
-         */
-        put: operations["updateWebhook"];
-        post?: never;
-        /**
-         * Delete Webhook
-         * @description Delete a webhook
-         */
-        delete: operations["deleteWebhook"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * List Webhooks
+     * @description Get a list of all webhooks for a team
+     */
+    get: operations['getWebhooks'];
+    put?: never;
+    /**
+     * Create Webhook
+     * @description Create a new webhook
+     */
+    post: operations['createWebhook'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/peppol/{teamId}/webhooks/{webhookId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/peppol/verify": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Verify Recipient
-         * @description Verify if a recipient address is registered in the Peppol network
-         */
-        post: operations["verifyRecipient"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * Get Webhook
+     * @description Get a specific webhook by ID
+     */
+    get: operations['getWebhook'];
+    /**
+     * Update Webhook
+     * @description Update an existing webhook
+     */
+    put: operations['updateWebhook'];
+    post?: never;
+    /**
+     * Delete Webhook
+     * @description Delete a webhook
+     */
+    delete: operations['deleteWebhook'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/peppol/verify': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/peppol/verifyDocumentSupport": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Verify Document Support
-         * @description Verify if a recipient can receive a specific document type in the Peppol network
-         */
-        post: operations["verifyDocumentSupport"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Verify Recipient
+     * @description Verify if a recipient address is registered in the Peppol network
+     */
+    post: operations['verifyRecipient'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/peppol/verifyDocumentSupport': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/peppol/searchPeppolDirectory": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Search Directory
-         * @description Search for recipients in the Peppol directory
-         */
-        post: operations["searchPeppolDirectory"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Verify Document Support
+     * @description Verify if a recipient can receive a specific document type in the Peppol network
+     */
+    post: operations['verifyDocumentSupport'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/peppol/searchPeppolDirectory': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/peppol/{teamId}/playground": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Playground
-         * @description Get the playground information for a team (if it is a playground).
-         */
-        get: operations["getPlayground"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Search Directory
+     * @description Search for recipients in the Peppol directory
+     */
+    post: operations['searchPeppolDirectory'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/peppol/{teamId}/playground': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/peppol/playgrounds": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Create Playground
-         * @description Create a new playground team and add the current user as a member.
-         */
-        post: operations["createPlayground"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * Get Playground
+     * @description Get the playground information for a team (if it is a playground).
+     */
+    get: operations['getPlayground'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/peppol/playgrounds': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/core/auth/login": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["postApiCoreAuthLogin"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Create Playground
+     * @description Create a new playground team and add the current user as a member.
+     */
+    post: operations['createPlayground'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/core/auth/login': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/core/auth/signup": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["postApiCoreAuthSignup"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['postApiCoreAuthLogin'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/core/auth/signup': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/core/auth/teams": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["postApiCoreAuthTeams"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['postApiCoreAuthSignup'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/core/auth/teams': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/core/auth/request-password-reset": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["postApiCoreAuthRequest-password-reset"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['postApiCoreAuthTeams'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/core/auth/request-password-reset': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/core/auth/confirm-email": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["postApiCoreAuthConfirm-email"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['postApiCoreAuthRequest-password-reset'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/core/auth/confirm-email': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/core/auth/resend-confirmation": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["postApiCoreAuthResend-confirmation"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['postApiCoreAuthConfirm-email'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/core/auth/resend-confirmation': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/core/auth/reset-password": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["postApiCoreAuthReset-password"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['postApiCoreAuthResend-confirmation'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/core/auth/reset-password': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/core/auth/teams/{teamId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put: operations["putApiCoreAuthTeamsByTeamId"];
-        post?: never;
-        delete: operations["deleteApiCoreAuthTeamsByTeamId"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['postApiCoreAuthReset-password'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/core/auth/teams/{teamId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/core/auth/verify": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Verify Authentication
-         * @description Verify if the user is authenticated
-         */
-        get: operations["verifyAuth"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put: operations['putApiCoreAuthTeamsByTeamId'];
+    post?: never;
+    delete: operations['deleteApiCoreAuthTeamsByTeamId'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/core/auth/verify': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/core/auth/teams/{teamId}/members": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["getApiCoreAuthTeamsByTeamIdMembers"];
-        put?: never;
-        post: operations["postApiCoreAuthTeamsByTeamIdMembers"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * Verify Authentication
+     * @description Verify if the user is authenticated
+     */
+    get: operations['verifyAuth'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/core/auth/teams/{teamId}/members': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/core/auth/teams/{teamId}/members/{userId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete: operations["deleteApiCoreAuthTeamsByTeamIdMembersByUserId"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['getApiCoreAuthTeamsByTeamIdMembers'];
+    put?: never;
+    post: operations['postApiCoreAuthTeamsByTeamIdMembers'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/core/auth/teams/{teamId}/members/{userId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/core/{teamId}/api-keys": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["getApiCoreByTeamIdApi-keys"];
-        put?: never;
-        post: operations["postApiCoreByTeamIdApi-keys"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    delete: operations['deleteApiCoreAuthTeamsByTeamIdMembersByUserId'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/core/{teamId}/api-keys': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/core/{teamId}/api-keys/{apiKeyId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete: operations["deleteApiCoreByTeamIdApi-keysByApiKeyId"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['getApiCoreByTeamIdApi-keys'];
+    put?: never;
+    post: operations['postApiCoreByTeamIdApi-keys'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/core/{teamId}/api-keys/{apiKeyId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/core/onboarding/complete": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["postApiCoreOnboardingComplete"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    delete: operations['deleteApiCoreByTeamIdApi-keysByApiKeyId'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/core/onboarding/complete': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/analytics/analytics/team/{teamId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["getApiAnalyticsAnalyticsTeamByTeamId"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['postApiCoreOnboardingComplete'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/analytics/analytics/team/{teamId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/analytics/analytics/company/{companyId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["getApiAnalyticsAnalyticsCompanyByCompanyId"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['getApiAnalyticsAnalyticsTeamByTeamId'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/analytics/analytics/company/{companyId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
+    get: operations['getApiAnalyticsAnalyticsCompanyByCompanyId'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: {
-        /** @description Send your document over email as well. You can choose to always send the email, or only when we cannot reach the recipient via Peppol. Each sent email is counted towards your document quota. When an email is expected to be sent, the request will succeed as long as an email has been sent, even if the Peppol sending failed (e.g. due to a non-existing Peppol address). */
-        Email: {
-            /**
-             * @description When to send the email.
-             * @default on_peppol_failure
-             * @enum {string}
-             */
-            when: "always" | "on_peppol_failure";
-            /**
-             * @description The email addresses to send the document to.
-             * @example [
-             *       "support@recommand.eu"
-             *     ]
-             */
-            to: string[];
-            /**
-             * @description The subject of the email. If not provided, the subject will be autogenerated based on the document type.
-             * @example Invoice SI-001
-             */
-            subject?: string;
-            /**
-             * @description The HTML body of the email. If not provided, the body will be autogenerated based on the document type.
-             * @example Dear customer, you can find your invoice attached.
-             */
-            htmlBody?: string;
-        };
-        Invoice: {
-            /** @example INV-2024-001 */
-            invoiceNumber: string;
-            /**
-             * Format: date
-             * @example 2024-03-20
-             */
-            issueDate: string;
-            /**
-             * Format: date
-             * @example 2024-04-20
-             */
-            dueDate: string;
-            /** @example Thank you for your business */
-            note?: string | null;
-            /** @example PO-2024-001 */
-            buyerReference?: string | null;
-            /** @example PO-2024-001 */
-            purchaseOrderReference?: string | null;
-            seller: components["schemas"]["Party"];
-            buyer: components["schemas"]["Party"];
-            /** @description Optional payment information. For most invoices, this should be provided. For prepaid invoices, this could be omitted. */
-            paymentMeans?: components["schemas"]["PaymentMeans"][] | null;
-            paymentTerms?: {
-                /** @example Net 30 */
-                note: string;
-            } | null;
-            lines: components["schemas"]["Line"][];
-            totals?: components["schemas"]["Totals"] | null;
-            vat?: components["schemas"]["VatTotals"] | null;
-            /** @description Optional attachments to the invoice */
-            attachments?: components["schemas"]["Attachment"][] | null;
-        };
-        Party: {
-            /** @example BE0123456789 */
-            vatNumber?: string | null;
-            /** @example Example Company */
-            name: string;
-            /** @example Example Street 1 */
-            street: string;
-            /** @example Suite 100 */
-            street2?: string | null;
-            /** @example Brussels */
-            city: string;
-            /** @example 1000 */
-            postalZone: string;
-            /** @example BE */
-            country: string;
-        };
-        PaymentMeans: {
-            /**
-             * @default credit_transfer
-             * @example credit_transfer
-             * @enum {string}
-             */
-            paymentMethod: "credit_transfer";
-            /**
-             * @default
-             * @example INV-2026-001
-             */
-            reference: string;
-            /** @example BE1234567890 */
-            iban: string;
-        };
-        Line: {
-            /**
-             * @default
-             * @example Consulting Services
-             */
-            name: string;
-            /** @example Professional consulting services */
-            description?: string | null;
-            /** @example CS-001 */
-            sellersId?: string | null;
-            /**
-             * @description Decimal number as a string with flexible precision
-             * @default 1.00
-             * @example 21.00
-             */
-            quantity: string;
-            /**
-             * @description Recommended unit codes can be found [here](https://docs.peppol.eu/poacc/billing/3.0/codelist/UNECERec20/).
-             * @default C62
-             * @example HUR
-             */
-            unitCode: string;
-            /**
-             * @description Decimal number as a string with flexible precision
-             * @example 21.00
-             */
-            netPriceAmount: string;
-            /**
-             * @description The total net amount of the line: quantity * netPriceAmount. Rounded to 2 decimal places. If not provided, it will be calculated automatically.
-             * @example 21.00
-             */
-            netAmount?: string | null;
-            vat: components["schemas"]["VAT"];
-        };
-        VAT: {
-            /**
-             * @description VAT category code. When sending regular invoices, you should most often use the `S` category. When sending an invoice to another EU country, use the `AE` category for VAT Reverse Charge. In those cases, it is still recommended to include a note in the invoice explaining that the VAT Reverse Charge applies.
-             * @default S
-             * @example S
-             * @enum {string}
-             */
-            category: "AE: Vat Reverse Charge" | "E: Exempt from Tax" | "S: Standard rate" | "Z: Zero rated goods" | "G: Free export item, VAT not charged" | "O: Services outside scope of tax" | "K: VAT exempt for EEA intra-community supply" | "L: Canary Islands general indirect tax" | "M: Tax for production, services and importation in Ceuta and Melilla" | "B: Transferred (VAT), In Italy";
-            /**
-             * @description Decimal number as a string with 2 decimal places
-             * @example 21.00
-             */
-            percentage: string;
-        };
-        /** @description If not provided, the totals will be calculated from the document lines. */
-        Totals: {
-            /**
-             * @description Decimal number as a string with 2 decimal places
-             * @example 21.00
-             */
-            taxExclusiveAmount: string;
-            /**
-             * @description Decimal number as a string with 2 decimal places
-             * @example 21.00
-             */
-            taxInclusiveAmount: string;
-            /**
-             * @description The amount to be paid. If not provided, this will be taxInclusiveAmount. Can be used in combination with paidAmount to indicate partial payment or payment rounding. Rounded to 2 decimal places.
-             * @example 21.00
-             */
-            payableAmount?: string | null;
-            /**
-             * @description The amount paid. If not provided, this will be taxInclusiveAmount - payableAmount. Can be used in combination with payableAmount to indicate partial payment or payment rounding. Rounded to 2 decimal places.
-             * @example 21.00
-             */
-            paidAmount?: string | null;
-        };
-        /** @description If not provided, the VAT totals will be calculated from the document lines. */
-        VatTotals: {
-            /**
-             * @description Decimal number as a string with 2 decimal places
-             * @example 21.00
-             */
-            totalVatAmount: string;
-            subtotals: components["schemas"]["VATSubtotal"][];
-        };
-        VATSubtotal: {
-            /**
-             * @description Decimal number as a string with 2 decimal places
-             * @example 21.00
-             */
-            taxableAmount: string;
-            /**
-             * @description Decimal number as a string with 2 decimal places
-             * @example 21.00
-             */
-            vatAmount: string;
-            /**
-             * @description VAT category code. When sending regular invoices, you should most often use the `S` category. When sending an invoice to another EU country, use the `AE` category for VAT Reverse Charge. In those cases, it is still recommended to include a note in the invoice explaining that the VAT Reverse Charge applies.
-             * @example S
-             * @enum {string}
-             */
-            category: "AE: Vat Reverse Charge" | "E: Exempt from Tax" | "S: Standard rate" | "Z: Zero rated goods" | "G: Free export item, VAT not charged" | "O: Services outside scope of tax" | "K: VAT exempt for EEA intra-community supply" | "L: Canary Islands general indirect tax" | "M: Tax for production, services and importation in Ceuta and Melilla" | "B: Transferred (VAT), In Italy";
-            /**
-             * @description Decimal number as a string with 2 decimal places
-             * @example 21.00
-             */
-            percentage: string;
-            /** @description If the invoice is exempt from VAT, this is required. The exemption reason code identifier must belong to the CEF VATEX code list	found [here](https://docs.peppol.eu/poacc/billing/3.0/2024-Q4/codelist/vatex/). */
-            exemptionReasonCode?: string | null;
-        };
-        Attachment: {
-            /** @example ATT-001 */
-            id: string;
-            /**
-             * @description MIME type of the document (e.g. application/pdf, text/csv, image/png)
-             * @default application/pdf
-             * @example application/pdf
-             */
-            mimeCode: string;
-            /** @example contract.pdf */
-            filename: string;
-            /** @example Signed contract */
-            description?: string | null;
-            /** @description base64 encoded document */
-            embeddedDocument?: string | null;
-            /** @example https://example.com/contract.pdf */
-            url?: string | null;
-        };
-        /**
-         * Invoice to send
-         * @description Invoice to send to a recipient
-         */
-        SendInvoice: {
-            /** @example INV-2024-001 */
-            invoiceNumber: string;
-            /**
-             * Format: date
-             * @description If not provided, the issue date will be the current date.
-             * @example 2024-03-20
-             */
-            issueDate?: string | null;
-            /**
-             * Format: date
-             * @description If not provided, the due date will be 1 month from the issue date.
-             * @example 2024-04-20
-             */
-            dueDate?: string | null;
-            /** @example Thank you for your business */
-            note?: string | null;
-            /** @example PO-2024-001 */
-            buyerReference?: string | null;
-            /** @example PO-2024-001 */
-            purchaseOrderReference?: string | null;
-            /** @description If not provided, the seller will be the company that is sending the invoice. */
-            seller?: components["schemas"]["Party"] | null;
-            buyer: components["schemas"]["Party"];
-            /** @description Optional payment information. For most invoices, this should be provided. For prepaid invoices, this could be omitted. */
-            paymentMeans?: components["schemas"]["PaymentMeans"][] | null;
-            paymentTerms?: {
-                /** @example Net 30 */
-                note: string;
-            } | null;
-            lines: components["schemas"]["Line"][];
-            totals?: components["schemas"]["Totals"] | null;
-            vat?: components["schemas"]["VatTotals"] | null;
-            /** @description Optional attachments to the invoice */
-            attachments?: components["schemas"]["Attachment"][] | null;
-        };
-        CreditNote: {
-            /** @example CN-2024-001 */
-            creditNoteNumber: string;
-            /**
-             * Format: date
-             * @example 2024-03-20
-             */
-            issueDate: string;
-            /** @example Thank you for your business */
-            note?: string | null;
-            /** @example PO-2024-001 */
-            buyerReference?: string | null;
-            /**
-             * @description References to one or more invoices that are being credited
-             * @default []
-             */
-            invoiceReferences: {
-                /**
-                 * @description The reference to the invoice that is being credited
-                 * @example INV-2024-001
-                 */
-                id: string;
-                /**
-                 * Format: date
-                 * @description The issue date of the invoice that is being credited
-                 * @example 2024-03-20
-                 */
-                issueDate?: string | null;
-            }[];
-            /** @example PO-2024-001 */
-            purchaseOrderReference?: string | null;
-            seller: components["schemas"]["Party"];
-            buyer: components["schemas"]["Party"];
-            paymentMeans?: components["schemas"]["PaymentMeans"][] | null;
-            paymentTerms?: {
-                /** @example Net 30 */
-                note: string;
-            } | null;
-            lines: components["schemas"]["Line"][];
-            totals?: components["schemas"]["Totals"] | null;
-            vat?: components["schemas"]["VatTotals"] | null;
-            /** @description Optional attachments to the credit note */
-            attachments?: components["schemas"]["Attachment"][] | null;
-        };
-        /**
-         * Credit Note to send
-         * @description Credit note to send to a recipient
-         */
-        SendCreditNote: {
-            /** @example CN-2024-001 */
-            creditNoteNumber: string;
-            /**
-             * Format: date
-             * @description If not provided, the issue date will be the current date.
-             * @example 2024-03-20
-             */
-            issueDate?: string | null;
-            /** @example Thank you for your business */
-            note?: string | null;
-            /** @example PO-2024-001 */
-            buyerReference?: string | null;
-            /**
-             * @description References to one or more invoices that are being credited
-             * @default []
-             */
-            invoiceReferences: {
-                /**
-                 * @description The reference to the invoice that is being credited
-                 * @example INV-2024-001
-                 */
-                id: string;
-                /**
-                 * Format: date
-                 * @description The issue date of the invoice that is being credited
-                 * @example 2024-03-20
-                 */
-                issueDate?: string | null;
-            }[];
-            /** @example PO-2024-001 */
-            purchaseOrderReference?: string | null;
-            /** @description If not provided, the seller will be the company that is sending the credit note. */
-            seller?: components["schemas"]["Party"] | null;
-            buyer: components["schemas"]["Party"];
-            paymentMeans?: components["schemas"]["PaymentMeans"][] | null;
-            paymentTerms?: {
-                /** @example Net 30 */
-                note: string;
-            } | null;
-            lines: components["schemas"]["Line"][];
-            totals?: components["schemas"]["Totals"] | null;
-            vat?: components["schemas"]["VatTotals"] | null;
-            /** @description Optional attachments to the credit note */
-            attachments?: components["schemas"]["Attachment"][] | null;
-            /**
-             * Format: date
-             * @description If not provided, the due date will be 1 month from the issue date.
-             * @example 2024-04-20
-             */
-            dueDate?: string | null;
-        };
-        /**
-         * Self Billing Invoice to send
-         * @description Self billing invoice to send to a recipient
-         */
-        SendSelfBillingInvoice: {
-            /** @example INV-2024-001 */
-            invoiceNumber: string;
-            /**
-             * Format: date
-             * @description If not provided, the issue date will be the current date.
-             * @example 2024-03-20
-             */
-            issueDate?: string | null;
-            /**
-             * Format: date
-             * @description If not provided, the due date will be 1 month from the issue date.
-             * @example 2024-04-20
-             */
-            dueDate?: string | null;
-            /** @example Thank you for your business */
-            note?: string | null;
-            /** @example PO-2024-001 */
-            buyerReference?: string | null;
-            /** @example PO-2024-001 */
-            purchaseOrderReference?: string | null;
-            /** @description If not provided, the seller will be the company that is sending the invoice. */
-            seller?: components["schemas"]["Party"] | null;
-            buyer: components["schemas"]["Party"];
-            /** @description Optional payment information. For most invoices, this should be provided. For prepaid invoices, this could be omitted. */
-            paymentMeans?: components["schemas"]["PaymentMeans"][] | null;
-            paymentTerms?: {
-                /** @example Net 30 */
-                note: string;
-            } | null;
-            lines: components["schemas"]["Line"][];
-            totals?: components["schemas"]["Totals"] | null;
-            vat?: components["schemas"]["VatTotals"] | null;
-            /** @description Optional attachments to the invoice */
-            attachments?: components["schemas"]["Attachment"][] | null;
-        };
-        /**
-         * Self Billing Credit Note to send
-         * @description Self billing credit note to send to a recipient
-         */
-        SendSelfBillingCreditNote: {
-            /** @example CN-2024-001 */
-            creditNoteNumber: string;
-            /**
-             * Format: date
-             * @description If not provided, the issue date will be the current date.
-             * @example 2024-03-20
-             */
-            issueDate?: string | null;
-            /** @example Thank you for your business */
-            note?: string | null;
-            /** @example PO-2024-001 */
-            buyerReference?: string | null;
-            /**
-             * @description References to one or more invoices that are being credited
-             * @default []
-             */
-            invoiceReferences: {
-                /**
-                 * @description The reference to the invoice that is being credited
-                 * @example INV-2024-001
-                 */
-                id: string;
-                /**
-                 * Format: date
-                 * @description The issue date of the invoice that is being credited
-                 * @example 2024-03-20
-                 */
-                issueDate?: string | null;
-            }[];
-            /** @example PO-2024-001 */
-            purchaseOrderReference?: string | null;
-            /** @description If not provided, the seller will be the company that is sending the credit note. */
-            seller?: components["schemas"]["Party"] | null;
-            buyer: components["schemas"]["Party"];
-            paymentMeans?: components["schemas"]["PaymentMeans"][] | null;
-            paymentTerms?: {
-                /** @example Net 30 */
-                note: string;
-            } | null;
-            lines: components["schemas"]["Line"][];
-            totals?: components["schemas"]["Totals"] | null;
-            vat?: components["schemas"]["VatTotals"] | null;
-            /** @description Optional attachments to the credit note */
-            attachments?: components["schemas"]["Attachment"][] | null;
-            /**
-             * Format: date
-             * @description If not provided, the due date will be 1 month from the issue date.
-             * @example 2024-04-20
-             */
-            dueDate?: string | null;
-        };
-        /**
-         * XML
-         * @description XML document as a string
-         */
-        XML: string;
-        /**
-         * Self Billing Invoice
-         * @description Self billing invoice
-         */
-        SelfBillingInvoice: {
-            /** @example INV-2024-001 */
-            invoiceNumber: string;
-            /**
-             * Format: date
-             * @example 2024-03-20
-             */
-            issueDate: string;
-            /**
-             * Format: date
-             * @example 2024-04-20
-             */
-            dueDate: string;
-            /** @example Thank you for your business */
-            note?: string | null;
-            /** @example PO-2024-001 */
-            buyerReference?: string | null;
-            /** @example PO-2024-001 */
-            purchaseOrderReference?: string | null;
-            seller: components["schemas"]["Party"];
-            buyer: components["schemas"]["Party"];
-            /** @description Optional payment information. For most invoices, this should be provided. For prepaid invoices, this could be omitted. */
-            paymentMeans?: components["schemas"]["PaymentMeans"][] | null;
-            paymentTerms?: {
-                /** @example Net 30 */
-                note: string;
-            } | null;
-            lines: components["schemas"]["Line"][];
-            totals?: components["schemas"]["Totals"] | null;
-            vat?: components["schemas"]["VatTotals"] | null;
-            /** @description Optional attachments to the invoice */
-            attachments?: components["schemas"]["Attachment"][] | null;
-        };
-        /**
-         * Self Billing Credit Note
-         * @description Self billing credit note
-         */
-        SelfBillingCreditNote: {
-            /** @example CN-2024-001 */
-            creditNoteNumber: string;
-            /**
-             * Format: date
-             * @example 2024-03-20
-             */
-            issueDate: string;
-            /** @example Thank you for your business */
-            note?: string | null;
-            /** @example PO-2024-001 */
-            buyerReference?: string | null;
-            /**
-             * @description References to one or more invoices that are being credited
-             * @default []
-             */
-            invoiceReferences: {
-                /**
-                 * @description The reference to the invoice that is being credited
-                 * @example INV-2024-001
-                 */
-                id: string;
-                /**
-                 * Format: date
-                 * @description The issue date of the invoice that is being credited
-                 * @example 2024-03-20
-                 */
-                issueDate?: string | null;
-            }[];
-            /** @example PO-2024-001 */
-            purchaseOrderReference?: string | null;
-            seller: components["schemas"]["Party"];
-            buyer: components["schemas"]["Party"];
-            paymentMeans?: components["schemas"]["PaymentMeans"][] | null;
-            paymentTerms?: {
-                /** @example Net 30 */
-                note: string;
-            } | null;
-            lines: components["schemas"]["Line"][];
-            totals?: components["schemas"]["Totals"] | null;
-            vat?: components["schemas"]["VatTotals"] | null;
-            /** @description Optional attachments to the credit note */
-            attachments?: components["schemas"]["Attachment"][] | null;
-        };
+  schemas: {
+    /** @description Send your document over email as well. You can choose to always send the email, or only when we cannot reach the recipient via Peppol. Each sent email is counted towards your document quota. When an email is expected to be sent, the request will succeed as long as an email has been sent, even if the Peppol sending failed (e.g. due to a non-existing Peppol address). */
+    Email: {
+      /**
+       * @description When to send the email.
+       * @default on_peppol_failure
+       * @enum {string}
+       */
+      when: 'always' | 'on_peppol_failure';
+      /**
+       * @description The email addresses to send the document to.
+       * @example [
+       *       "support@recommand.eu"
+       *     ]
+       */
+      to: string[];
+      /**
+       * @description The subject of the email. If not provided, the subject will be autogenerated based on the document type.
+       * @example Invoice SI-001
+       */
+      subject?: string;
+      /**
+       * @description The HTML body of the email. If not provided, the body will be autogenerated based on the document type.
+       * @example Dear customer, you can find your invoice attached.
+       */
+      htmlBody?: string;
     };
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+    Invoice: {
+      /** @example INV-2024-001 */
+      invoiceNumber: string;
+      /**
+       * Format: date
+       * @example 2024-03-20
+       */
+      issueDate: string;
+      /**
+       * Format: date
+       * @example 2024-04-20
+       */
+      dueDate: string;
+      /** @example Thank you for your business */
+      note?: string | null;
+      /** @example PO-2024-001 */
+      buyerReference?: string | null;
+      /** @example PO-2024-001 */
+      purchaseOrderReference?: string | null;
+      seller: components['schemas']['Party'];
+      buyer: components['schemas']['Party'];
+      /** @description Optional payment information. For most invoices, this should be provided. For prepaid invoices, this could be omitted. */
+      paymentMeans?: components['schemas']['PaymentMeans'][] | null;
+      paymentTerms?: {
+        /** @example Net 30 */
+        note: string;
+      } | null;
+      lines: components['schemas']['Line'][];
+      totals?: components['schemas']['Totals'] | null;
+      vat?: components['schemas']['VatTotals'] | null;
+      /** @description Optional attachments to the invoice */
+      attachments?: components['schemas']['Attachment'][] | null;
+    };
+    Party: {
+      /** @example BE0123456789 */
+      vatNumber?: string | null;
+      /** @example Example Company */
+      name: string;
+      /** @example Example Street 1 */
+      street: string;
+      /** @example Suite 100 */
+      street2?: string | null;
+      /** @example Brussels */
+      city: string;
+      /** @example 1000 */
+      postalZone: string;
+      /** @example BE */
+      country: string;
+    };
+    PaymentMeans: {
+      /**
+       * @default credit_transfer
+       * @example credit_transfer
+       * @enum {string}
+       */
+      paymentMethod: 'credit_transfer';
+      /**
+       * @default
+       * @example INV-2026-001
+       */
+      reference: string;
+      /** @example BE1234567890 */
+      iban: string;
+    };
+    Line: {
+      /**
+       * @default
+       * @example Consulting Services
+       */
+      name: string;
+      /** @example Professional consulting services */
+      description?: string | null;
+      /** @example CS-001 */
+      sellersId?: string | null;
+      /**
+       * @description Decimal number as a string with flexible precision
+       * @default 1.00
+       * @example 21.00
+       */
+      quantity: string;
+      /**
+       * @description Recommended unit codes can be found [here](https://docs.peppol.eu/poacc/billing/3.0/codelist/UNECERec20/).
+       * @default C62
+       * @example HUR
+       */
+      unitCode: string;
+      /**
+       * @description Decimal number as a string with flexible precision
+       * @example 21.00
+       */
+      netPriceAmount: string;
+      /**
+       * @description The total net amount of the line: quantity * netPriceAmount. Rounded to 2 decimal places. If not provided, it will be calculated automatically.
+       * @example 21.00
+       */
+      netAmount?: string | null;
+      vat: components['schemas']['VAT'];
+    };
+    VAT: {
+      /**
+       * @description VAT category code. When sending regular invoices, you should most often use the `S` category. When sending an invoice to another EU country, use the `AE` category for VAT Reverse Charge. In those cases, it is still recommended to include a note in the invoice explaining that the VAT Reverse Charge applies.
+       * @default S
+       * @example S
+       * @enum {string}
+       */
+      category:
+        | 'AE: Vat Reverse Charge'
+        | 'E: Exempt from Tax'
+        | 'S: Standard rate'
+        | 'Z: Zero rated goods'
+        | 'G: Free export item, VAT not charged'
+        | 'O: Services outside scope of tax'
+        | 'K: VAT exempt for EEA intra-community supply'
+        | 'L: Canary Islands general indirect tax'
+        | 'M: Tax for production, services and importation in Ceuta and Melilla'
+        | 'B: Transferred (VAT), In Italy';
+      /**
+       * @description Decimal number as a string with 2 decimal places
+       * @example 21.00
+       */
+      percentage: string;
+    };
+    /** @description If not provided, the totals will be calculated from the document lines. */
+    Totals: {
+      /**
+       * @description Decimal number as a string with 2 decimal places
+       * @example 21.00
+       */
+      taxExclusiveAmount: string;
+      /**
+       * @description Decimal number as a string with 2 decimal places
+       * @example 21.00
+       */
+      taxInclusiveAmount: string;
+      /**
+       * @description The amount to be paid. If not provided, this will be taxInclusiveAmount. Can be used in combination with paidAmount to indicate partial payment or payment rounding. Rounded to 2 decimal places.
+       * @example 21.00
+       */
+      payableAmount?: string | null;
+      /**
+       * @description The amount paid. If not provided, this will be taxInclusiveAmount - payableAmount. Can be used in combination with payableAmount to indicate partial payment or payment rounding. Rounded to 2 decimal places.
+       * @example 21.00
+       */
+      paidAmount?: string | null;
+    };
+    /** @description If not provided, the VAT totals will be calculated from the document lines. */
+    VatTotals: {
+      /**
+       * @description Decimal number as a string with 2 decimal places
+       * @example 21.00
+       */
+      totalVatAmount: string;
+      subtotals: components['schemas']['VATSubtotal'][];
+    };
+    VATSubtotal: {
+      /**
+       * @description Decimal number as a string with 2 decimal places
+       * @example 21.00
+       */
+      taxableAmount: string;
+      /**
+       * @description Decimal number as a string with 2 decimal places
+       * @example 21.00
+       */
+      vatAmount: string;
+      /**
+       * @description VAT category code. When sending regular invoices, you should most often use the `S` category. When sending an invoice to another EU country, use the `AE` category for VAT Reverse Charge. In those cases, it is still recommended to include a note in the invoice explaining that the VAT Reverse Charge applies.
+       * @example S
+       * @enum {string}
+       */
+      category:
+        | 'AE: Vat Reverse Charge'
+        | 'E: Exempt from Tax'
+        | 'S: Standard rate'
+        | 'Z: Zero rated goods'
+        | 'G: Free export item, VAT not charged'
+        | 'O: Services outside scope of tax'
+        | 'K: VAT exempt for EEA intra-community supply'
+        | 'L: Canary Islands general indirect tax'
+        | 'M: Tax for production, services and importation in Ceuta and Melilla'
+        | 'B: Transferred (VAT), In Italy';
+      /**
+       * @description Decimal number as a string with 2 decimal places
+       * @example 21.00
+       */
+      percentage: string;
+      /** @description If the invoice is exempt from VAT, this is required. The exemption reason code identifier must belong to the CEF VATEX code list	found [here](https://docs.peppol.eu/poacc/billing/3.0/2024-Q4/codelist/vatex/). */
+      exemptionReasonCode?: string | null;
+    };
+    Attachment: {
+      /** @example ATT-001 */
+      id: string;
+      /**
+       * @description MIME type of the document (e.g. application/pdf, text/csv, image/png)
+       * @default application/pdf
+       * @example application/pdf
+       */
+      mimeCode: string;
+      /** @example contract.pdf */
+      filename: string;
+      /** @example Signed contract */
+      description?: string | null;
+      /** @description base64 encoded document */
+      embeddedDocument?: string | null;
+      /** @example https://example.com/contract.pdf */
+      url?: string | null;
+    };
+    /**
+     * Invoice to send
+     * @description Invoice to send to a recipient
+     */
+    SendInvoice: {
+      /** @example INV-2024-001 */
+      invoiceNumber: string;
+      /**
+       * Format: date
+       * @description If not provided, the issue date will be the current date.
+       * @example 2024-03-20
+       */
+      issueDate?: string | null;
+      /**
+       * Format: date
+       * @description If not provided, the due date will be 1 month from the issue date.
+       * @example 2024-04-20
+       */
+      dueDate?: string | null;
+      /** @example Thank you for your business */
+      note?: string | null;
+      /** @example PO-2024-001 */
+      buyerReference?: string | null;
+      /** @example PO-2024-001 */
+      purchaseOrderReference?: string | null;
+      /** @description If not provided, the seller will be the company that is sending the invoice. */
+      seller?: components['schemas']['Party'] | null;
+      buyer: components['schemas']['Party'];
+      /** @description Optional payment information. For most invoices, this should be provided. For prepaid invoices, this could be omitted. */
+      paymentMeans?: components['schemas']['PaymentMeans'][] | null;
+      paymentTerms?: {
+        /** @example Net 30 */
+        note: string;
+      } | null;
+      lines: components['schemas']['Line'][];
+      totals?: components['schemas']['Totals'] | null;
+      vat?: components['schemas']['VatTotals'] | null;
+      /** @description Optional attachments to the invoice */
+      attachments?: components['schemas']['Attachment'][] | null;
+    };
+    CreditNote: {
+      /** @example CN-2024-001 */
+      creditNoteNumber: string;
+      /**
+       * Format: date
+       * @example 2024-03-20
+       */
+      issueDate: string;
+      /** @example Thank you for your business */
+      note?: string | null;
+      /** @example PO-2024-001 */
+      buyerReference?: string | null;
+      /**
+       * @description References to one or more invoices that are being credited
+       * @default []
+       */
+      invoiceReferences: {
+        /**
+         * @description The reference to the invoice that is being credited
+         * @example INV-2024-001
+         */
+        id: string;
+        /**
+         * Format: date
+         * @description The issue date of the invoice that is being credited
+         * @example 2024-03-20
+         */
+        issueDate?: string | null;
+      }[];
+      /** @example PO-2024-001 */
+      purchaseOrderReference?: string | null;
+      seller: components['schemas']['Party'];
+      buyer: components['schemas']['Party'];
+      paymentMeans?: components['schemas']['PaymentMeans'][] | null;
+      paymentTerms?: {
+        /** @example Net 30 */
+        note: string;
+      } | null;
+      lines: components['schemas']['Line'][];
+      totals?: components['schemas']['Totals'] | null;
+      vat?: components['schemas']['VatTotals'] | null;
+      /** @description Optional attachments to the credit note */
+      attachments?: components['schemas']['Attachment'][] | null;
+    };
+    /**
+     * Credit Note to send
+     * @description Credit note to send to a recipient
+     */
+    SendCreditNote: {
+      /** @example CN-2024-001 */
+      creditNoteNumber: string;
+      /**
+       * Format: date
+       * @description If not provided, the issue date will be the current date.
+       * @example 2024-03-20
+       */
+      issueDate?: string | null;
+      /** @example Thank you for your business */
+      note?: string | null;
+      /** @example PO-2024-001 */
+      buyerReference?: string | null;
+      /**
+       * @description References to one or more invoices that are being credited
+       * @default []
+       */
+      invoiceReferences: {
+        /**
+         * @description The reference to the invoice that is being credited
+         * @example INV-2024-001
+         */
+        id: string;
+        /**
+         * Format: date
+         * @description The issue date of the invoice that is being credited
+         * @example 2024-03-20
+         */
+        issueDate?: string | null;
+      }[];
+      /** @example PO-2024-001 */
+      purchaseOrderReference?: string | null;
+      /** @description If not provided, the seller will be the company that is sending the credit note. */
+      seller?: components['schemas']['Party'] | null;
+      buyer: components['schemas']['Party'];
+      paymentMeans?: components['schemas']['PaymentMeans'][] | null;
+      paymentTerms?: {
+        /** @example Net 30 */
+        note: string;
+      } | null;
+      lines: components['schemas']['Line'][];
+      totals?: components['schemas']['Totals'] | null;
+      vat?: components['schemas']['VatTotals'] | null;
+      /** @description Optional attachments to the credit note */
+      attachments?: components['schemas']['Attachment'][] | null;
+      /**
+       * Format: date
+       * @description If not provided, the due date will be 1 month from the issue date.
+       * @example 2024-04-20
+       */
+      dueDate?: string | null;
+    };
+    /**
+     * Self Billing Invoice to send
+     * @description Self billing invoice to send to a recipient
+     */
+    SendSelfBillingInvoice: {
+      /** @example INV-2024-001 */
+      invoiceNumber: string;
+      /**
+       * Format: date
+       * @description If not provided, the issue date will be the current date.
+       * @example 2024-03-20
+       */
+      issueDate?: string | null;
+      /**
+       * Format: date
+       * @description If not provided, the due date will be 1 month from the issue date.
+       * @example 2024-04-20
+       */
+      dueDate?: string | null;
+      /** @example Thank you for your business */
+      note?: string | null;
+      /** @example PO-2024-001 */
+      buyerReference?: string | null;
+      /** @example PO-2024-001 */
+      purchaseOrderReference?: string | null;
+      /** @description If not provided, the seller will be the company that is sending the invoice. */
+      seller?: components['schemas']['Party'] | null;
+      buyer: components['schemas']['Party'];
+      /** @description Optional payment information. For most invoices, this should be provided. For prepaid invoices, this could be omitted. */
+      paymentMeans?: components['schemas']['PaymentMeans'][] | null;
+      paymentTerms?: {
+        /** @example Net 30 */
+        note: string;
+      } | null;
+      lines: components['schemas']['Line'][];
+      totals?: components['schemas']['Totals'] | null;
+      vat?: components['schemas']['VatTotals'] | null;
+      /** @description Optional attachments to the invoice */
+      attachments?: components['schemas']['Attachment'][] | null;
+    };
+    /**
+     * Self Billing Credit Note to send
+     * @description Self billing credit note to send to a recipient
+     */
+    SendSelfBillingCreditNote: {
+      /** @example CN-2024-001 */
+      creditNoteNumber: string;
+      /**
+       * Format: date
+       * @description If not provided, the issue date will be the current date.
+       * @example 2024-03-20
+       */
+      issueDate?: string | null;
+      /** @example Thank you for your business */
+      note?: string | null;
+      /** @example PO-2024-001 */
+      buyerReference?: string | null;
+      /**
+       * @description References to one or more invoices that are being credited
+       * @default []
+       */
+      invoiceReferences: {
+        /**
+         * @description The reference to the invoice that is being credited
+         * @example INV-2024-001
+         */
+        id: string;
+        /**
+         * Format: date
+         * @description The issue date of the invoice that is being credited
+         * @example 2024-03-20
+         */
+        issueDate?: string | null;
+      }[];
+      /** @example PO-2024-001 */
+      purchaseOrderReference?: string | null;
+      /** @description If not provided, the seller will be the company that is sending the credit note. */
+      seller?: components['schemas']['Party'] | null;
+      buyer: components['schemas']['Party'];
+      paymentMeans?: components['schemas']['PaymentMeans'][] | null;
+      paymentTerms?: {
+        /** @example Net 30 */
+        note: string;
+      } | null;
+      lines: components['schemas']['Line'][];
+      totals?: components['schemas']['Totals'] | null;
+      vat?: components['schemas']['VatTotals'] | null;
+      /** @description Optional attachments to the credit note */
+      attachments?: components['schemas']['Attachment'][] | null;
+      /**
+       * Format: date
+       * @description If not provided, the due date will be 1 month from the issue date.
+       * @example 2024-04-20
+       */
+      dueDate?: string | null;
+    };
+    /**
+     * XML
+     * @description XML document as a string
+     */
+    XML: string;
+    /**
+     * Self Billing Invoice
+     * @description Self billing invoice
+     */
+    SelfBillingInvoice: {
+      /** @example INV-2024-001 */
+      invoiceNumber: string;
+      /**
+       * Format: date
+       * @example 2024-03-20
+       */
+      issueDate: string;
+      /**
+       * Format: date
+       * @example 2024-04-20
+       */
+      dueDate: string;
+      /** @example Thank you for your business */
+      note?: string | null;
+      /** @example PO-2024-001 */
+      buyerReference?: string | null;
+      /** @example PO-2024-001 */
+      purchaseOrderReference?: string | null;
+      seller: components['schemas']['Party'];
+      buyer: components['schemas']['Party'];
+      /** @description Optional payment information. For most invoices, this should be provided. For prepaid invoices, this could be omitted. */
+      paymentMeans?: components['schemas']['PaymentMeans'][] | null;
+      paymentTerms?: {
+        /** @example Net 30 */
+        note: string;
+      } | null;
+      lines: components['schemas']['Line'][];
+      totals?: components['schemas']['Totals'] | null;
+      vat?: components['schemas']['VatTotals'] | null;
+      /** @description Optional attachments to the invoice */
+      attachments?: components['schemas']['Attachment'][] | null;
+    };
+    /**
+     * Self Billing Credit Note
+     * @description Self billing credit note
+     */
+    SelfBillingCreditNote: {
+      /** @example CN-2024-001 */
+      creditNoteNumber: string;
+      /**
+       * Format: date
+       * @example 2024-03-20
+       */
+      issueDate: string;
+      /** @example Thank you for your business */
+      note?: string | null;
+      /** @example PO-2024-001 */
+      buyerReference?: string | null;
+      /**
+       * @description References to one or more invoices that are being credited
+       * @default []
+       */
+      invoiceReferences: {
+        /**
+         * @description The reference to the invoice that is being credited
+         * @example INV-2024-001
+         */
+        id: string;
+        /**
+         * Format: date
+         * @description The issue date of the invoice that is being credited
+         * @example 2024-03-20
+         */
+        issueDate?: string | null;
+      }[];
+      /** @example PO-2024-001 */
+      purchaseOrderReference?: string | null;
+      seller: components['schemas']['Party'];
+      buyer: components['schemas']['Party'];
+      paymentMeans?: components['schemas']['PaymentMeans'][] | null;
+      paymentTerms?: {
+        /** @example Net 30 */
+        note: string;
+      } | null;
+      lines: components['schemas']['Line'][];
+      totals?: components['schemas']['Totals'] | null;
+      vat?: components['schemas']['VatTotals'] | null;
+      /** @description Optional attachments to the credit note */
+      attachments?: components['schemas']['Attachment'][] | null;
+    };
+  };
+  responses: never;
+  parameters: never;
+  requestBodies: never;
+  headers: never;
+  pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    sendDocument: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                companyId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    /**
-                     * @description The Peppol address of the recipient of the document. If no identifier is provided, 0208 (Belgian Enterprise Number) is assumed.
-                     * @example 0208:987654321
-                     */
-                    recipient: string;
-                    email?: components["schemas"]["Email"];
-                    /**
-                     * @description The type of document.
-                     * @example invoice
-                     * @enum {string}
-                     */
-                    documentType: "invoice" | "creditNote" | "selfBillingInvoice" | "selfBillingCreditNote" | "xml";
-                    document: components["schemas"]["SendInvoice"] | components["schemas"]["SendCreditNote"] | components["schemas"]["SendSelfBillingInvoice"] | components["schemas"]["SendSelfBillingCreditNote"] | components["schemas"]["XML"];
-                    /**
-                     * @description The document type identifier. Not required, only used when documentType is "xml".
-                     * @example urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1
-                     */
-                    doctypeId?: string;
-                };
-            };
-        };
-        responses: {
-            /** @description Successfully sent document */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example true */
-                        success?: boolean;
-                        /** @description Whether the document was sent over Peppol */
-                        sentOverPeppol?: boolean;
-                        /** @description Whether the document was sent over email */
-                        sentOverEmail?: boolean;
-                        /** @description The email addresses that the document was sent to */
-                        emailRecipients?: unknown[];
-                        /** @description The ID of the team that sent the document */
-                        teamId?: string;
-                        /** @description The ID of the company that sent the document */
-                        companyId?: string;
-                        /** @description The ID of the transmitted document */
-                        id?: string;
-                    };
-                };
-            };
-            /** @description Invalid document data provided */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-        };
+  sendDocument: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        companyId: string;
+      };
+      cookie?: never;
     };
-    getApiPeppolByTeamIdSubscription: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-            };
-            cookie?: never;
+    requestBody?: {
+      content: {
+        'application/json': {
+          /**
+           * @description The Peppol address of the recipient of the document. If no identifier is provided, 0208 (Belgian Enterprise Number) is assumed.
+           * @example 0208:987654321
+           */
+          recipient: string;
+          email?: components['schemas']['Email'];
+          /**
+           * @description The type of document.
+           * @example invoice
+           * @enum {string}
+           */
+          documentType:
+            | 'invoice'
+            | 'creditNote'
+            | 'selfBillingInvoice'
+            | 'selfBillingCreditNote'
+            | 'xml';
+          document:
+            | components['schemas']['SendInvoice']
+            | components['schemas']['SendCreditNote']
+            | components['schemas']['SendSelfBillingInvoice']
+            | components['schemas']['SendSelfBillingCreditNote']
+            | components['schemas']['XML'];
+          /**
+           * @description The document type identifier. Not required, only used when documentType is "xml".
+           * @example urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1
+           */
+          doctypeId?: string;
         };
-        requestBody?: never;
-        responses: never;
+      };
     };
-    postApiPeppolByTeamIdSubscription: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-            };
-            cookie?: never;
+    responses: {
+      /** @description Successfully sent document */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    planId: string;
-                };
-            };
+        content: {
+          'application/json': {
+            /** @example true */
+            success?: boolean;
+            /** @description Whether the document was sent over Peppol */
+            sentOverPeppol?: boolean;
+            /** @description Whether the document was sent over email */
+            sentOverEmail?: boolean;
+            /** @description The email addresses that the document was sent to */
+            emailRecipients?: unknown[];
+            /** @description The ID of the team that sent the document */
+            teamId?: string;
+            /** @description The ID of the company that sent the document */
+            companyId?: string;
+            /** @description The ID of the transmitted document */
+            id?: string;
+          };
         };
-        responses: never;
+      };
+      /** @description Invalid document data provided */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
     };
-    postApiPeppolByTeamIdSubscriptionCancel: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: never;
+  };
+  getApiPeppolByTeamIdSubscription: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+      };
+      cookie?: never;
     };
-    "getApiPeppolByTeamIdBilling-profile": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: never;
+    requestBody?: never;
+    responses: never;
+  };
+  postApiPeppolByTeamIdSubscription: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+      };
+      cookie?: never;
     };
-    "putApiPeppolByTeamIdBilling-profile": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-            };
-            cookie?: never;
+    requestBody?: {
+      content: {
+        'application/json': {
+          planId: string;
         };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    companyName: string;
-                    address: string;
-                    postalCode: string;
-                    city: string;
-                    /** @enum {string} */
-                    country: "AU" | "AT" | "BE" | "DK" | "FI" | "FR" | "DE" | "GR" | "IS" | "IE" | "IT" | "JP" | "MY" | "NL" | "NZ" | "NO" | "PL" | "SG" | "SE" | "AE" | "GB" | "US";
-                    vatNumber?: string | null;
-                };
-            };
-        };
-        responses: never;
+      };
     };
-    "postApiPeppolByTeamIdBilling-profileEnd-billing-cycle": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: never;
+    responses: never;
+  };
+  postApiPeppolByTeamIdSubscriptionCancel: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+      };
+      cookie?: never;
     };
-    "getApiPeppolByTeamIdBilling-profileCurrent-usage": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: never;
+    requestBody?: never;
+    responses: never;
+  };
+  'getApiPeppolByTeamIdBilling-profile': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+      };
+      cookie?: never;
     };
-    getCompanies: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successfully retrieved companies */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example true */
-                        success?: boolean;
-                        companies?: {
-                            id?: string;
-                            teamId?: string;
-                            name?: string;
-                            address?: string;
-                            postalCode?: string;
-                            city?: string;
-                            country?: string;
-                            enterpriseNumber?: string;
-                            vatNumber?: string;
-                            isSmpRecipient?: boolean;
-                            /** Format: date-time */
-                            createdAt?: string;
-                            /** Format: date-time */
-                            updatedAt?: string;
-                        }[];
-                    };
-                };
-            };
-            /** @description Failed to fetch companies */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-        };
+    requestBody?: never;
+    responses: never;
+  };
+  'putApiPeppolByTeamIdBilling-profile': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+      };
+      cookie?: never;
     };
-    createCompany: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-            };
-            cookie?: never;
+    requestBody?: {
+      content: {
+        'application/json': {
+          companyName: string;
+          address: string;
+          postalCode: string;
+          city: string;
+          /** @enum {string} */
+          country:
+            | 'AU'
+            | 'AT'
+            | 'BE'
+            | 'DK'
+            | 'FI'
+            | 'FR'
+            | 'DE'
+            | 'GR'
+            | 'IS'
+            | 'IE'
+            | 'IT'
+            | 'JP'
+            | 'MY'
+            | 'NL'
+            | 'NZ'
+            | 'NO'
+            | 'PL'
+            | 'SG'
+            | 'SE'
+            | 'AE'
+            | 'GB'
+            | 'US';
+          vatNumber?: string | null;
         };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    name: string;
-                    address: string;
-                    postalCode: string;
-                    city: string;
-                    /** @enum {string} */
-                    country: "AU" | "AT" | "BE" | "DK" | "FI" | "FR" | "DE" | "GR" | "IS" | "IE" | "IT" | "JP" | "MY" | "NL" | "NZ" | "NO" | "PL" | "SG" | "SE" | "AE" | "GB" | "US";
-                    enterpriseNumber?: string | null;
-                    vatNumber?: string | null;
-                    /** @default true */
-                    isSmpRecipient?: boolean;
-                };
-            };
-        };
-        responses: {
-            /** @description Successfully created company */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example true */
-                        success?: boolean;
-                        company?: {
-                            id?: string;
-                            teamId?: string;
-                            name?: string;
-                            address?: string;
-                            postalCode?: string;
-                            city?: string;
-                            country?: string;
-                            enterpriseNumber?: string;
-                            vatNumber?: string;
-                            isSmpRecipient?: boolean;
-                            /** Format: date-time */
-                            createdAt?: string;
-                            /** Format: date-time */
-                            updatedAt?: string;
-                        };
-                    };
-                };
-            };
-            /** @description Invalid request data */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-            /** @description Failed to create company */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-        };
+      };
     };
-    getCompany: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-                companyId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successfully retrieved company */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example true */
-                        success?: boolean;
-                        company?: {
-                            id?: string;
-                            teamId?: string;
-                            name?: string;
-                            address?: string;
-                            postalCode?: string;
-                            city?: string;
-                            country?: string;
-                            enterpriseNumber?: string;
-                            vatNumber?: string;
-                            isSmpRecipient?: boolean;
-                            /** Format: date-time */
-                            createdAt?: string;
-                            /** Format: date-time */
-                            updatedAt?: string;
-                        };
-                    };
-                };
-            };
-            /** @description Company not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-            /** @description Failed to fetch company */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-        };
+    responses: never;
+  };
+  'postApiPeppolByTeamIdBilling-profileEnd-billing-cycle': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+      };
+      cookie?: never;
     };
-    updateCompany: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-                companyId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    name?: string;
-                    address?: string;
-                    postalCode?: string;
-                    city?: string;
-                    /** @enum {string} */
-                    country?: "AU" | "AT" | "BE" | "DK" | "FI" | "FR" | "DE" | "GR" | "IS" | "IE" | "IT" | "JP" | "MY" | "NL" | "NZ" | "NO" | "PL" | "SG" | "SE" | "AE" | "GB" | "US";
-                    enterpriseNumber?: string | null;
-                    vatNumber?: string | null;
-                    isSmpRecipient?: boolean;
-                };
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example true */
-                        success?: boolean;
-                        company?: {
-                            id?: string;
-                            teamId?: string;
-                            name?: string;
-                            address?: string;
-                            postalCode?: string;
-                            city?: string;
-                            country?: string;
-                            enterpriseNumber?: string;
-                            vatNumber?: string;
-                            isSmpRecipient?: boolean;
-                            /** Format: date-time */
-                            createdAt?: string;
-                            /** Format: date-time */
-                            updatedAt?: string;
-                        };
-                    };
-                };
-            };
-            /** @description Invalid request data */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-            /** @description Company not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-            /** @description Failed to update company */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-        };
+    requestBody?: never;
+    responses: never;
+  };
+  'getApiPeppolByTeamIdBilling-profileCurrent-usage': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+      };
+      cookie?: never;
     };
-    deleteCompany: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-                companyId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successfully deleted company */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example true */
-                        success?: boolean;
-                    };
-                };
-            };
-            /** @description Failed to delete company */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-        };
+    requestBody?: never;
+    responses: never;
+  };
+  getCompanies: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+      };
+      cookie?: never;
     };
-    getCompanyIdentifiers: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-                companyId: string;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successfully retrieved companies */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successfully retrieved company identifiers */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example true */
-                        success?: boolean;
-                        identifiers?: {
-                            id?: string;
-                            companyId?: string;
-                            scheme?: string;
-                            identifier?: string;
-                            /** Format: date-time */
-                            createdAt?: string;
-                            /** Format: date-time */
-                            updatedAt?: string;
-                        }[];
-                    };
-                };
-            };
-            /** @description Company not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-            /** @description Failed to fetch company identifiers */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
+        content: {
+          'application/json': {
+            /** @example true */
+            success?: boolean;
+            companies?: {
+              id?: string;
+              teamId?: string;
+              name?: string;
+              address?: string;
+              postalCode?: string;
+              city?: string;
+              country?: string;
+              enterpriseNumber?: string;
+              vatNumber?: string;
+              isSmpRecipient?: boolean;
+              /** Format: date-time */
+              createdAt?: string;
+              /** Format: date-time */
+              updatedAt?: string;
+            }[];
+          };
         };
+      };
+      /** @description Failed to fetch companies */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
     };
-    createCompanyIdentifier: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-                companyId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    scheme: string;
-                    identifier: string;
-                };
-            };
-        };
-        responses: {
-            /** @description Successfully created company identifier */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example true */
-                        success?: boolean;
-                        identifier?: {
-                            id?: string;
-                            companyId?: string;
-                            scheme?: string;
-                            identifier?: string;
-                            /** Format: date-time */
-                            createdAt?: string;
-                            /** Format: date-time */
-                            updatedAt?: string;
-                        };
-                    };
-                };
-            };
-            /** @description Invalid request data */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-            /** @description Company not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-            /** @description Failed to create company identifier */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-        };
+  };
+  createCompany: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+      };
+      cookie?: never;
     };
-    getCompanyIdentifier: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-                companyId: string;
-                identifierId: string;
-            };
-            cookie?: never;
+    requestBody?: {
+      content: {
+        'application/json': {
+          name: string;
+          address: string;
+          postalCode: string;
+          city: string;
+          /** @enum {string} */
+          country:
+            | 'AU'
+            | 'AT'
+            | 'BE'
+            | 'DK'
+            | 'FI'
+            | 'FR'
+            | 'DE'
+            | 'GR'
+            | 'IS'
+            | 'IE'
+            | 'IT'
+            | 'JP'
+            | 'MY'
+            | 'NL'
+            | 'NZ'
+            | 'NO'
+            | 'PL'
+            | 'SG'
+            | 'SE'
+            | 'AE'
+            | 'GB'
+            | 'US';
+          enterpriseNumber?: string | null;
+          vatNumber?: string | null;
+          /** @default true */
+          isSmpRecipient?: boolean;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successfully retrieved company identifier */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example true */
-                        success?: boolean;
-                        identifier?: {
-                            id?: string;
-                            companyId?: string;
-                            scheme?: string;
-                            identifier?: string;
-                            /** Format: date-time */
-                            createdAt?: string;
-                            /** Format: date-time */
-                            updatedAt?: string;
-                        };
-                    };
-                };
-            };
-            /** @description Company identifier not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-            /** @description Failed to fetch company identifier */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-        };
+      };
     };
-    updateCompanyIdentifier: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-                companyId: string;
-                identifierId: string;
-            };
-            cookie?: never;
+    responses: {
+      /** @description Successfully created company */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    scheme: string;
-                    identifier: string;
-                };
+        content: {
+          'application/json': {
+            /** @example true */
+            success?: boolean;
+            company?: {
+              id?: string;
+              teamId?: string;
+              name?: string;
+              address?: string;
+              postalCode?: string;
+              city?: string;
+              country?: string;
+              enterpriseNumber?: string;
+              vatNumber?: string;
+              isSmpRecipient?: boolean;
+              /** Format: date-time */
+              createdAt?: string;
+              /** Format: date-time */
+              updatedAt?: string;
             };
+          };
         };
-        responses: {
-            /** @description Successfully updated company identifier */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example true */
-                        success?: boolean;
-                        identifier?: {
-                            id?: string;
-                            companyId?: string;
-                            scheme?: string;
-                            identifier?: string;
-                            /** Format: date-time */
-                            createdAt?: string;
-                            /** Format: date-time */
-                            updatedAt?: string;
-                        };
-                    };
-                };
-            };
-            /** @description Company identifier not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-            /** @description Failed to update company identifier */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
+      };
+      /** @description Invalid request data */
+      400: {
+        headers: {
+          [name: string]: unknown;
         };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
+      /** @description Failed to create company */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
     };
-    deleteCompanyIdentifier: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-                companyId: string;
-                identifierId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successfully deleted company identifier */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example true */
-                        success?: boolean;
-                    };
-                };
-            };
-            /** @description Company identifier not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-            /** @description Failed to delete company identifier */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-        };
+  };
+  getCompany: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+        companyId: string;
+      };
+      cookie?: never;
     };
-    getCompanyDocumentTypes: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-                companyId: string;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successfully retrieved company */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successfully retrieved company document types */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example true */
-                        success?: boolean;
-                        documentTypes?: {
-                            id?: string;
-                            companyId?: string;
-                            docTypeId?: string;
-                            processId?: string;
-                            /** Format: date-time */
-                            createdAt?: string;
-                            /** Format: date-time */
-                            updatedAt?: string;
-                        }[];
-                    };
-                };
+        content: {
+          'application/json': {
+            /** @example true */
+            success?: boolean;
+            company?: {
+              id?: string;
+              teamId?: string;
+              name?: string;
+              address?: string;
+              postalCode?: string;
+              city?: string;
+              country?: string;
+              enterpriseNumber?: string;
+              vatNumber?: string;
+              isSmpRecipient?: boolean;
+              /** Format: date-time */
+              createdAt?: string;
+              /** Format: date-time */
+              updatedAt?: string;
             };
-            /** @description Company not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-            /** @description Failed to fetch company document types */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
+          };
         };
+      };
+      /** @description Company not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
+      /** @description Failed to fetch company */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
     };
-    createCompanyDocumentType: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-                companyId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    docTypeId: string;
-                    processId: string;
-                };
-            };
-        };
-        responses: {
-            /** @description Successfully created company document type */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example true */
-                        success?: boolean;
-                        documentType?: {
-                            id?: string;
-                            companyId?: string;
-                            docTypeId?: string;
-                            processId?: string;
-                            /** Format: date-time */
-                            createdAt?: string;
-                            /** Format: date-time */
-                            updatedAt?: string;
-                        };
-                    };
-                };
-            };
-            /** @description Invalid request data */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-            /** @description Company not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-            /** @description Failed to create company document type */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-        };
+  };
+  updateCompany: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+        companyId: string;
+      };
+      cookie?: never;
     };
-    getCompanyDocumentType: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-                companyId: string;
-                documentTypeId: string;
-            };
-            cookie?: never;
+    requestBody?: {
+      content: {
+        'application/json': {
+          name?: string;
+          address?: string;
+          postalCode?: string;
+          city?: string;
+          /** @enum {string} */
+          country?:
+            | 'AU'
+            | 'AT'
+            | 'BE'
+            | 'DK'
+            | 'FI'
+            | 'FR'
+            | 'DE'
+            | 'GR'
+            | 'IS'
+            | 'IE'
+            | 'IT'
+            | 'JP'
+            | 'MY'
+            | 'NL'
+            | 'NZ'
+            | 'NO'
+            | 'PL'
+            | 'SG'
+            | 'SE'
+            | 'AE'
+            | 'GB'
+            | 'US';
+          enterpriseNumber?: string | null;
+          vatNumber?: string | null;
+          isSmpRecipient?: boolean;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successfully retrieved company document type */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example true */
-                        success?: boolean;
-                        documentType?: {
-                            id?: string;
-                            companyId?: string;
-                            docTypeId?: string;
-                            processId?: string;
-                            /** Format: date-time */
-                            createdAt?: string;
-                            /** Format: date-time */
-                            updatedAt?: string;
-                        };
-                    };
-                };
-            };
-            /** @description Company document type not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-            /** @description Failed to fetch company document type */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-        };
+      };
     };
-    updateCompanyDocumentType: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-                companyId: string;
-                documentTypeId: string;
-            };
-            cookie?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    docTypeId: string;
-                    processId: string;
-                };
+        content: {
+          'application/json': {
+            /** @example true */
+            success?: boolean;
+            company?: {
+              id?: string;
+              teamId?: string;
+              name?: string;
+              address?: string;
+              postalCode?: string;
+              city?: string;
+              country?: string;
+              enterpriseNumber?: string;
+              vatNumber?: string;
+              isSmpRecipient?: boolean;
+              /** Format: date-time */
+              createdAt?: string;
+              /** Format: date-time */
+              updatedAt?: string;
             };
+          };
         };
-        responses: {
-            /** @description Successfully updated company document type */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example true */
-                        success?: boolean;
-                        documentType?: {
-                            id?: string;
-                            companyId?: string;
-                            docTypeId?: string;
-                            processId?: string;
-                            /** Format: date-time */
-                            createdAt?: string;
-                            /** Format: date-time */
-                            updatedAt?: string;
-                        };
-                    };
-                };
-            };
-            /** @description Company document type not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-            /** @description Failed to update company document type */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
+      };
+      /** @description Invalid request data */
+      400: {
+        headers: {
+          [name: string]: unknown;
         };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
+      /** @description Company not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
+      /** @description Failed to update company */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
     };
-    deleteCompanyDocumentType: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-                companyId: string;
-                documentTypeId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successfully deleted company document type */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example true */
-                        success?: boolean;
-                    };
-                };
-            };
-            /** @description Company document type not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-            /** @description Failed to delete company document type */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-        };
+  };
+  deleteCompany: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+        companyId: string;
+      };
+      cookie?: never;
     };
-    postApiPeppolInternalReceiveDocument: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successfully deleted company */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    senderId: string;
-                    receiverId: string;
-                    docTypeId: string;
-                    processId: string;
-                    countryC1: string;
-                    body: string;
-                };
+        content: {
+          'application/json': {
+            /** @example true */
+            success?: boolean;
+          };
+        };
+      };
+      /** @description Failed to delete company */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
             };
+          };
         };
-        responses: never;
+      };
     };
-    getDocuments: {
-        parameters: {
-            query?: {
-                page?: number;
-                limit?: number;
-                companyId?: string | string[];
-                direction?: "incoming" | "outgoing";
-                search?: string;
-                type?: "invoice" | "creditNote" | "selfBillingInvoice" | "selfBillingCreditNote" | "unknown";
-            };
-            header?: never;
-            path: {
-                teamId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successfully retrieved transmitted documents */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @constant */
-                        success: true;
-                        documents: {
-                            id: string;
-                            teamId: string;
-                            companyId: string;
-                            /** @enum {string} */
-                            direction: "incoming" | "outgoing";
-                            senderId: string;
-                            receiverId: string;
-                            docTypeId: string;
-                            processId: string;
-                            countryC1: string;
-                            /**
-                             * @description The type of document.
-                             * @example invoice
-                             * @enum {string}
-                             */
-                            type: "invoice" | "creditNote" | "selfBillingInvoice" | "selfBillingCreditNote" | "xml";
-                            readAt: string;
-                            createdAt: string;
-                            updatedAt: string;
-                            xml: string;
-                            parsed: components["schemas"]["Invoice"] | components["schemas"]["CreditNote"] | components["schemas"]["SelfBillingInvoice"] | components["schemas"]["SelfBillingCreditNote"] | null;
-                            sentOverPeppol: boolean;
-                            sentOverEmail: boolean;
-                            emailRecipients: string[];
-                        }[];
-                        pagination: {
-                            total: number;
-                            page: number;
-                            limit: number;
-                            totalPages: number;
-                        };
-                    };
-                };
-            };
-            /** @description Failed to fetch transmitted documents */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-        };
+  };
+  getCompanyIdentifiers: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+        companyId: string;
+      };
+      cookie?: never;
     };
-    getDocument: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-                documentId: string;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successfully retrieved company identifiers */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successfully retrieved the document */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @constant */
-                        success: true;
-                        id: string;
-                        teamId: string;
-                        companyId: string;
-                        /** @enum {string} */
-                        direction: "incoming" | "outgoing";
-                        senderId: string;
-                        receiverId: string;
-                        docTypeId: string;
-                        processId: string;
-                        countryC1: string;
-                        /**
-                         * @description The type of document.
-                         * @example invoice
-                         * @enum {string}
-                         */
-                        type: "invoice" | "creditNote" | "selfBillingInvoice" | "selfBillingCreditNote" | "xml";
-                        readAt: string;
-                        createdAt: string;
-                        updatedAt: string;
-                        xml: string;
-                        parsed: components["schemas"]["Invoice"] | components["schemas"]["CreditNote"] | components["schemas"]["SelfBillingInvoice"] | components["schemas"]["SelfBillingCreditNote"] | null;
-                        sentOverPeppol: boolean;
-                        sentOverEmail: boolean;
-                        emailRecipients: string[];
-                    };
-                };
-            };
-            /** @description Document not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-            /** @description Failed to fetch document */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
+        content: {
+          'application/json': {
+            /** @example true */
+            success?: boolean;
+            identifiers?: {
+              id?: string;
+              companyId?: string;
+              scheme?: string;
+              identifier?: string;
+              /** Format: date-time */
+              createdAt?: string;
+              /** Format: date-time */
+              updatedAt?: string;
+            }[];
+          };
         };
+      };
+      /** @description Company not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
+      /** @description Failed to fetch company identifiers */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
     };
-    deleteDocument: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-                documentId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successfully deleted the document */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example true */
-                        success?: boolean;
-                    };
-                };
-            };
-            /** @description Document not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-            /** @description Failed to delete document */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-        };
+  };
+  createCompanyIdentifier: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+        companyId: string;
+      };
+      cookie?: never;
     };
-    getInbox: {
-        parameters: {
-            query?: {
-                companyId?: string;
-            };
-            header?: never;
-            path: {
-                teamId: string;
-            };
-            cookie?: never;
+    requestBody?: {
+      content: {
+        'application/json': {
+          scheme: string;
+          identifier: string;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successfully retrieved inbox documents */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example true */
-                        success?: boolean;
-                        documents?: {
-                            id?: string;
-                            teamId?: string;
-                            companyId?: string;
-                            /** @enum {string} */
-                            direction?: "incoming";
-                            senderId?: string;
-                            receiverId?: string;
-                            docTypeId?: string;
-                            processId?: string;
-                            countryC1?: string;
-                            type?: string;
-                            /** Format: date-time */
-                            readAt?: string;
-                            /** Format: date-time */
-                            createdAt?: string;
-                            /** Format: date-time */
-                            updatedAt?: string;
-                        }[];
-                    };
-                };
-            };
-            /** @description Failed to fetch inbox documents */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-        };
+      };
     };
-    markAsRead: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-                documentId: string;
-            };
-            cookie?: never;
+    responses: {
+      /** @description Successfully created company identifier */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    /**
-                     * @description Whether to mark the document as read (true) or unread (false). If not provided, defaults to true.
-                     * @default true
-                     * @example true
-                     */
-                    read?: boolean;
-                };
+        content: {
+          'application/json': {
+            /** @example true */
+            success?: boolean;
+            identifier?: {
+              id?: string;
+              companyId?: string;
+              scheme?: string;
+              identifier?: string;
+              /** Format: date-time */
+              createdAt?: string;
+              /** Format: date-time */
+              updatedAt?: string;
             };
+          };
         };
-        responses: {
-            /** @description Successfully updated document read status */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example true */
-                        success?: boolean;
-                    };
-                };
-            };
-            /** @description Document not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-            /** @description Failed to update document read status */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
+      };
+      /** @description Invalid request data */
+      400: {
+        headers: {
+          [name: string]: unknown;
         };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
+      /** @description Company not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
+      /** @description Failed to create company identifier */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
     };
-    downloadPackage: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-                documentId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successfully downloaded the document */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/zip": string;
-                };
-            };
-            /** @description Document not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-            /** @description Failed to download document */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-        };
+  };
+  getCompanyIdentifier: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+        companyId: string;
+        identifierId: string;
+      };
+      cookie?: never;
     };
-    getWebhooks: {
-        parameters: {
-            query?: {
-                companyId?: string | null;
-            };
-            header?: never;
-            path: {
-                teamId: string;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successfully retrieved company identifier */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successfully retrieved webhooks */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example true */
-                        success?: boolean;
-                        webhooks?: {
-                            id?: string;
-                            teamId?: string;
-                            companyId?: string | null;
-                            url?: string;
-                            /** Format: date-time */
-                            createdAt?: string;
-                            /** Format: date-time */
-                            updatedAt?: string;
-                        }[];
-                    };
-                };
+        content: {
+          'application/json': {
+            /** @example true */
+            success?: boolean;
+            identifier?: {
+              id?: string;
+              companyId?: string;
+              scheme?: string;
+              identifier?: string;
+              /** Format: date-time */
+              createdAt?: string;
+              /** Format: date-time */
+              updatedAt?: string;
             };
-            /** @description Failed to fetch webhooks */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
+          };
         };
+      };
+      /** @description Company identifier not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
+      /** @description Failed to fetch company identifier */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
     };
-    createWebhook: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    /** Format: uri */
-                    url: string;
-                    companyId?: string | null;
-                };
-            };
-        };
-        responses: {
-            /** @description Successfully created webhook */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example true */
-                        success?: boolean;
-                        webhook?: {
-                            id?: string;
-                            teamId?: string;
-                            companyId?: string | null;
-                            url?: string;
-                            /** Format: date-time */
-                            createdAt?: string;
-                            /** Format: date-time */
-                            updatedAt?: string;
-                        };
-                    };
-                };
-            };
-            /** @description Invalid request data */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-            /** @description Failed to create webhook */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-        };
+  };
+  updateCompanyIdentifier: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+        companyId: string;
+        identifierId: string;
+      };
+      cookie?: never;
     };
-    getWebhook: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-                webhookId: string;
-            };
-            cookie?: never;
+    requestBody?: {
+      content: {
+        'application/json': {
+          scheme: string;
+          identifier: string;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successfully retrieved webhook */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example true */
-                        success?: boolean;
-                        webhook?: {
-                            id?: string;
-                            teamId?: string;
-                            companyId?: string | null;
-                            url?: string;
-                            /** Format: date-time */
-                            createdAt?: string;
-                            /** Format: date-time */
-                            updatedAt?: string;
-                        };
-                    };
-                };
-            };
-            /** @description Webhook not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-            /** @description Failed to fetch webhook */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-        };
+      };
     };
-    updateWebhook: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-                webhookId: string;
-            };
-            cookie?: never;
+    responses: {
+      /** @description Successfully updated company identifier */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    /** Format: uri */
-                    url: string;
-                    companyId?: string | null;
-                };
+        content: {
+          'application/json': {
+            /** @example true */
+            success?: boolean;
+            identifier?: {
+              id?: string;
+              companyId?: string;
+              scheme?: string;
+              identifier?: string;
+              /** Format: date-time */
+              createdAt?: string;
+              /** Format: date-time */
+              updatedAt?: string;
             };
+          };
         };
-        responses: {
-            /** @description Successfully updated webhook */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example true */
-                        success?: boolean;
-                        webhook?: {
-                            id?: string;
-                            teamId?: string;
-                            companyId?: string | null;
-                            url?: string;
-                            /** Format: date-time */
-                            createdAt?: string;
-                            /** Format: date-time */
-                            updatedAt?: string;
-                        };
-                    };
-                };
-            };
-            /** @description Invalid request data */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-            /** @description Webhook not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-            /** @description Failed to update webhook */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
+      };
+      /** @description Company identifier not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
         };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
+      /** @description Failed to update company identifier */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
     };
-    deleteWebhook: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-                webhookId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successfully deleted webhook */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example true */
-                        success?: boolean;
-                    };
-                };
-            };
-            /** @description Failed to delete webhook */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-        };
+  };
+  deleteCompanyIdentifier: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+        companyId: string;
+        identifierId: string;
+      };
+      cookie?: never;
     };
-    verifyRecipient: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successfully deleted company identifier */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    /**
-                     * @description The Peppol address of the recipient to verify.
-                     * @example 0208:987654321
-                     */
-                    peppolAddress: string;
-                };
+        content: {
+          'application/json': {
+            /** @example true */
+            success?: boolean;
+          };
+        };
+      };
+      /** @description Company identifier not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
             };
+          };
         };
-        responses: {
-            /** @description Successfully verified recipient */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example true */
-                        success?: boolean;
-                        /** @description Whether the recipient is registered in the Peppol network. */
-                        isValid?: boolean;
-                        /** @description The SMP URL of the recipient. */
-                        smpUrl?: string;
-                        /** @description The service metadata references of the recipient. */
-                        serviceMetadataReferences?: string[];
-                        /** @description The SMP hostnames of the recipient. */
-                        smpHostnames?: string[];
-                    };
-                };
+      };
+      /** @description Failed to delete company identifier */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
             };
+          };
         };
+      };
     };
-    verifyDocumentSupport: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    /**
-                     * @description The Peppol address of the recipient to verify.
-                     * @example 0208:987654321
-                     */
-                    peppolAddress: string;
-                    /**
-                     * @description The document type to verify.
-                     * @example urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1
-                     */
-                    documentType: string;
-                };
-            };
-        };
-        responses: {
-            /** @description Successfully verified document Support */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example true */
-                        success?: boolean;
-                        /** @description Whether the recipient supports the document type. */
-                        isValid?: boolean;
-                        /** @description The SMP URL of the recipient. */
-                        smpUrl?: string;
-                    };
-                };
-            };
-        };
+  };
+  getCompanyDocumentTypes: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+        companyId: string;
+      };
+      cookie?: never;
     };
-    searchPeppolDirectory: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successfully retrieved company document types */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    /**
-                     * @description The search query to find recipients.
-                     * @example Company Name
-                     */
-                    query: string;
-                };
+        content: {
+          'application/json': {
+            /** @example true */
+            success?: boolean;
+            documentTypes?: {
+              id?: string;
+              companyId?: string;
+              docTypeId?: string;
+              processId?: string;
+              /** Format: date-time */
+              createdAt?: string;
+              /** Format: date-time */
+              updatedAt?: string;
+            }[];
+          };
+        };
+      };
+      /** @description Company not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
             };
+          };
         };
-        responses: {
-            /** @description Successfully searched directory */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example true */
-                        success?: boolean;
-                        results?: {
-                            /** @description The Peppol address of the recipient. */
-                            peppolAddress?: string;
-                            /** @description The name of the recipient. */
-                            name?: string;
-                            /** @description List of document types supported by the recipient. */
-                            supportedDocumentTypes?: string[];
-                        }[];
-                    };
-                };
+      };
+      /** @description Failed to fetch company document types */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
             };
+          };
         };
+      };
     };
-    getPlayground: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successfully retrieved playground */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example true */
-                        success?: boolean;
-                        playground?: {
-                            /** @description Team ID */
-                            id?: string;
-                            /** @description Team name */
-                            name?: string;
-                            /** @description Team description */
-                            teamDescription?: string;
-                            /** @description Whether the team is a playground */
-                            isPlayground?: boolean;
-                            /** Format: date-time */
-                            createdAt?: string;
-                            /** Format: date-time */
-                            updatedAt?: string;
-                        };
-                    };
-                };
-            };
-            /** @description Playground not found for this team */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-            /** @description Failed to fetch playground */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-        };
+  };
+  createCompanyDocumentType: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+        companyId: string;
+      };
+      cookie?: never;
     };
-    createPlayground: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: {
+      content: {
+        'application/json': {
+          docTypeId: string;
+          processId: string;
         };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    /** @description Playground name */
-                    name: string;
-                };
-            };
-        };
-        responses: {
-            /** @description Successfully created playground */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example true */
-                        success?: boolean;
-                        playground?: {
-                            /** @description Team ID */
-                            id?: string;
-                            /** @description Team name */
-                            name?: string;
-                            /** @description Team description */
-                            teamDescription?: string;
-                            /** @description Whether the team is a playground */
-                            isPlayground?: boolean;
-                            /** Format: date-time */
-                            createdAt?: string;
-                            /** Format: date-time */
-                            updatedAt?: string;
-                        };
-                    };
-                };
-            };
-            /** @description Invalid request data */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-            /** @description Failed to create playground */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-        };
+      };
     };
-    postApiCoreAuthLogin: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    responses: {
+      /** @description Successfully created company document type */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    /** Format: email */
-                    email: string;
-                    password: string;
-                };
+        content: {
+          'application/json': {
+            /** @example true */
+            success?: boolean;
+            documentType?: {
+              id?: string;
+              companyId?: string;
+              docTypeId?: string;
+              processId?: string;
+              /** Format: date-time */
+              createdAt?: string;
+              /** Format: date-time */
+              updatedAt?: string;
             };
+          };
         };
-        responses: never;
+      };
+      /** @description Invalid request data */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
+      /** @description Company not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
+      /** @description Failed to create company document type */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
     };
-    postApiCoreAuthSignup: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    /** Format: email */
-                    email: string;
-                    password: string;
-                };
-            };
-        };
-        responses: never;
+  };
+  getCompanyDocumentType: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+        companyId: string;
+        documentTypeId: string;
+      };
+      cookie?: never;
     };
-    postApiCoreAuthTeams: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successfully retrieved company document type */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    name: string;
-                    teamDescription?: string;
-                };
+        content: {
+          'application/json': {
+            /** @example true */
+            success?: boolean;
+            documentType?: {
+              id?: string;
+              companyId?: string;
+              docTypeId?: string;
+              processId?: string;
+              /** Format: date-time */
+              createdAt?: string;
+              /** Format: date-time */
+              updatedAt?: string;
             };
+          };
         };
-        responses: never;
+      };
+      /** @description Company document type not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
+      /** @description Failed to fetch company document type */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
     };
-    "postApiCoreAuthRequest-password-reset": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    /** Format: email */
-                    email: string;
-                };
-            };
-        };
-        responses: never;
+  };
+  updateCompanyDocumentType: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+        companyId: string;
+        documentTypeId: string;
+      };
+      cookie?: never;
     };
-    "postApiCoreAuthConfirm-email": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: {
+      content: {
+        'application/json': {
+          docTypeId: string;
+          processId: string;
         };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    token: string;
-                };
-            };
-        };
-        responses: never;
+      };
     };
-    "postApiCoreAuthResend-confirmation": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    responses: {
+      /** @description Successfully updated company document type */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    /** Format: email */
-                    email: string;
-                };
+        content: {
+          'application/json': {
+            /** @example true */
+            success?: boolean;
+            documentType?: {
+              id?: string;
+              companyId?: string;
+              docTypeId?: string;
+              processId?: string;
+              /** Format: date-time */
+              createdAt?: string;
+              /** Format: date-time */
+              updatedAt?: string;
             };
+          };
         };
-        responses: never;
+      };
+      /** @description Company document type not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
+      /** @description Failed to update company document type */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
     };
-    "postApiCoreAuthReset-password": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    token: string;
-                    password: string;
-                };
-            };
-        };
-        responses: never;
+  };
+  deleteCompanyDocumentType: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+        companyId: string;
+        documentTypeId: string;
+      };
+      cookie?: never;
     };
-    putApiCoreAuthTeamsByTeamId: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successfully deleted company document type */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    name?: string;
-                    teamDescription?: string;
-                };
-            };
+        content: {
+          'application/json': {
+            /** @example true */
+            success?: boolean;
+          };
         };
-        responses: never;
+      };
+      /** @description Company document type not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
+      /** @description Failed to delete company document type */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
     };
-    deleteApiCoreAuthTeamsByTeamId: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: never;
+  };
+  postApiPeppolInternalReceiveDocument: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    verifyAuth: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: {
+      content: {
+        'application/json': {
+          senderId: string;
+          receiverId: string;
+          docTypeId: string;
+          processId: string;
+          countryC1: string;
+          body: string;
         };
-        requestBody?: never;
-        responses: {
-            /** @description User is authenticated */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example true */
-                        success?: boolean;
-                    };
-                };
-            };
-            /** @description User is not authenticated */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        errors?: {
-                            [key: string]: string[];
-                        };
-                    };
-                };
-            };
-        };
+      };
     };
-    getApiCoreAuthTeamsByTeamIdMembers: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: never;
+    responses: never;
+  };
+  getDocuments: {
+    parameters: {
+      query?: {
+        page?: number;
+        limit?: number;
+        companyId?: string | string[];
+        direction?: 'incoming' | 'outgoing';
+        search?: string;
+        type?:
+          | 'invoice'
+          | 'creditNote'
+          | 'selfBillingInvoice'
+          | 'selfBillingCreditNote'
+          | 'unknown';
+      };
+      header?: never;
+      path: {
+        teamId: string;
+      };
+      cookie?: never;
     };
-    postApiCoreAuthTeamsByTeamIdMembers: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successfully retrieved transmitted documents */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    /** Format: email */
-                    email: string;
-                };
+        content: {
+          'application/json': {
+            /** @constant */
+            success: true;
+            documents: {
+              id: string;
+              teamId: string;
+              companyId: string;
+              /** @enum {string} */
+              direction: 'incoming' | 'outgoing';
+              senderId: string;
+              receiverId: string;
+              docTypeId: string;
+              processId: string;
+              countryC1: string;
+              /**
+               * @description The type of document.
+               * @example invoice
+               * @enum {string}
+               */
+              type:
+                | 'invoice'
+                | 'creditNote'
+                | 'selfBillingInvoice'
+                | 'selfBillingCreditNote'
+                | 'xml';
+              readAt: string;
+              createdAt: string;
+              updatedAt: string;
+              xml: string;
+              parsed:
+                | components['schemas']['Invoice']
+                | components['schemas']['CreditNote']
+                | components['schemas']['SelfBillingInvoice']
+                | components['schemas']['SelfBillingCreditNote']
+                | null;
+              sentOverPeppol: boolean;
+              sentOverEmail: boolean;
+              emailRecipients: string[];
+            }[];
+            pagination: {
+              total: number;
+              page: number;
+              limit: number;
+              totalPages: number;
             };
+          };
         };
-        responses: never;
+      };
+      /** @description Failed to fetch transmitted documents */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
     };
-    deleteApiCoreAuthTeamsByTeamIdMembersByUserId: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-                userId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: never;
+  };
+  getDocument: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+        documentId: string;
+      };
+      cookie?: never;
     };
-    "getApiCoreByTeamIdApi-keys": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successfully retrieved the document */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: never;
+        content: {
+          'application/json': {
+            /** @constant */
+            success: true;
+            id: string;
+            teamId: string;
+            companyId: string;
+            /** @enum {string} */
+            direction: 'incoming' | 'outgoing';
+            senderId: string;
+            receiverId: string;
+            docTypeId: string;
+            processId: string;
+            countryC1: string;
+            /**
+             * @description The type of document.
+             * @example invoice
+             * @enum {string}
+             */
+            type:
+              | 'invoice'
+              | 'creditNote'
+              | 'selfBillingInvoice'
+              | 'selfBillingCreditNote'
+              | 'xml';
+            readAt: string;
+            createdAt: string;
+            updatedAt: string;
+            xml: string;
+            parsed:
+              | components['schemas']['Invoice']
+              | components['schemas']['CreditNote']
+              | components['schemas']['SelfBillingInvoice']
+              | components['schemas']['SelfBillingCreditNote']
+              | null;
+            sentOverPeppol: boolean;
+            sentOverEmail: boolean;
+            emailRecipients: string[];
+          };
+        };
+      };
+      /** @description Document not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
+      /** @description Failed to fetch document */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
     };
-    "postApiCoreByTeamIdApi-keys": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    name: string;
-                };
-            };
-        };
-        responses: never;
+  };
+  deleteDocument: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+        documentId: string;
+      };
+      cookie?: never;
     };
-    "deleteApiCoreByTeamIdApi-keysByApiKeyId": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                teamId: string;
-                apiKeyId: string;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successfully deleted the document */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: never;
+        content: {
+          'application/json': {
+            /** @example true */
+            success?: boolean;
+          };
+        };
+      };
+      /** @description Document not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
+      /** @description Failed to delete document */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
     };
-    postApiCoreOnboardingComplete: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    stepId: string;
-                    teamId: string | null;
-                };
-            };
-        };
-        responses: never;
+  };
+  getInbox: {
+    parameters: {
+      query?: {
+        companyId?: string;
+      };
+      header?: never;
+      path: {
+        teamId: string;
+      };
+      cookie?: never;
     };
-    getApiAnalyticsAnalyticsTeamByTeamId: {
-        parameters: {
-            query?: {
-                month?: string;
-            };
-            header?: never;
-            path: {
-                teamId: string;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successfully retrieved inbox documents */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: never;
-    };
-    getApiAnalyticsAnalyticsCompanyByCompanyId: {
-        parameters: {
-            query?: {
-                page?: number;
-                limit?: number;
-                includeDocuments?: boolean;
-            };
-            header?: never;
-            path: {
-                companyId: string;
-            };
-            cookie?: never;
+        content: {
+          'application/json': {
+            /** @example true */
+            success?: boolean;
+            documents?: {
+              id?: string;
+              teamId?: string;
+              companyId?: string;
+              /** @enum {string} */
+              direction?: 'incoming';
+              senderId?: string;
+              receiverId?: string;
+              docTypeId?: string;
+              processId?: string;
+              countryC1?: string;
+              type?: string;
+              /** Format: date-time */
+              readAt?: string;
+              /** Format: date-time */
+              createdAt?: string;
+              /** Format: date-time */
+              updatedAt?: string;
+            }[];
+          };
         };
-        requestBody?: never;
-        responses: never;
+      };
+      /** @description Failed to fetch inbox documents */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
     };
+  };
+  markAsRead: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+        documentId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': {
+          /**
+           * @description Whether to mark the document as read (true) or unread (false). If not provided, defaults to true.
+           * @default true
+           * @example true
+           */
+          read?: boolean;
+        };
+      };
+    };
+    responses: {
+      /** @description Successfully updated document read status */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example true */
+            success?: boolean;
+          };
+        };
+      };
+      /** @description Document not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
+      /** @description Failed to update document read status */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
+    };
+  };
+  downloadPackage: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+        documentId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successfully downloaded the document */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/zip': string;
+        };
+      };
+      /** @description Document not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
+      /** @description Failed to download document */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
+    };
+  };
+  getWebhooks: {
+    parameters: {
+      query?: {
+        companyId?: string | null;
+      };
+      header?: never;
+      path: {
+        teamId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successfully retrieved webhooks */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example true */
+            success?: boolean;
+            webhooks?: {
+              id?: string;
+              teamId?: string;
+              companyId?: string | null;
+              url?: string;
+              /** Format: date-time */
+              createdAt?: string;
+              /** Format: date-time */
+              updatedAt?: string;
+            }[];
+          };
+        };
+      };
+      /** @description Failed to fetch webhooks */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
+    };
+  };
+  createWebhook: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': {
+          /** Format: uri */
+          url: string;
+          companyId?: string | null;
+        };
+      };
+    };
+    responses: {
+      /** @description Successfully created webhook */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example true */
+            success?: boolean;
+            webhook?: {
+              id?: string;
+              teamId?: string;
+              companyId?: string | null;
+              url?: string;
+              /** Format: date-time */
+              createdAt?: string;
+              /** Format: date-time */
+              updatedAt?: string;
+            };
+          };
+        };
+      };
+      /** @description Invalid request data */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
+      /** @description Failed to create webhook */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
+    };
+  };
+  getWebhook: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+        webhookId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successfully retrieved webhook */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example true */
+            success?: boolean;
+            webhook?: {
+              id?: string;
+              teamId?: string;
+              companyId?: string | null;
+              url?: string;
+              /** Format: date-time */
+              createdAt?: string;
+              /** Format: date-time */
+              updatedAt?: string;
+            };
+          };
+        };
+      };
+      /** @description Webhook not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
+      /** @description Failed to fetch webhook */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
+    };
+  };
+  updateWebhook: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+        webhookId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': {
+          /** Format: uri */
+          url: string;
+          companyId?: string | null;
+        };
+      };
+    };
+    responses: {
+      /** @description Successfully updated webhook */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example true */
+            success?: boolean;
+            webhook?: {
+              id?: string;
+              teamId?: string;
+              companyId?: string | null;
+              url?: string;
+              /** Format: date-time */
+              createdAt?: string;
+              /** Format: date-time */
+              updatedAt?: string;
+            };
+          };
+        };
+      };
+      /** @description Invalid request data */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
+      /** @description Webhook not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
+      /** @description Failed to update webhook */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
+    };
+  };
+  deleteWebhook: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+        webhookId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successfully deleted webhook */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example true */
+            success?: boolean;
+          };
+        };
+      };
+      /** @description Failed to delete webhook */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
+    };
+  };
+  verifyRecipient: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': {
+          /**
+           * @description The Peppol address of the recipient to verify.
+           * @example 0208:987654321
+           */
+          peppolAddress: string;
+        };
+      };
+    };
+    responses: {
+      /** @description Successfully verified recipient */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example true */
+            success?: boolean;
+            /** @description Whether the recipient is registered in the Peppol network. */
+            isValid?: boolean;
+            /** @description The SMP URL of the recipient. */
+            smpUrl?: string;
+            /** @description The service metadata references of the recipient. */
+            serviceMetadataReferences?: string[];
+            /** @description The SMP hostnames of the recipient. */
+            smpHostnames?: string[];
+          };
+        };
+      };
+    };
+  };
+  verifyDocumentSupport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': {
+          /**
+           * @description The Peppol address of the recipient to verify.
+           * @example 0208:987654321
+           */
+          peppolAddress: string;
+          /**
+           * @description The document type to verify.
+           * @example urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1
+           */
+          documentType: string;
+        };
+      };
+    };
+    responses: {
+      /** @description Successfully verified document Support */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example true */
+            success?: boolean;
+            /** @description Whether the recipient supports the document type. */
+            isValid?: boolean;
+            /** @description The SMP URL of the recipient. */
+            smpUrl?: string;
+          };
+        };
+      };
+    };
+  };
+  searchPeppolDirectory: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': {
+          /**
+           * @description The search query to find recipients.
+           * @example Company Name
+           */
+          query: string;
+        };
+      };
+    };
+    responses: {
+      /** @description Successfully searched directory */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example true */
+            success?: boolean;
+            results?: {
+              /** @description The Peppol address of the recipient. */
+              peppolAddress?: string;
+              /** @description The name of the recipient. */
+              name?: string;
+              /** @description List of document types supported by the recipient. */
+              supportedDocumentTypes?: string[];
+            }[];
+          };
+        };
+      };
+    };
+  };
+  getPlayground: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successfully retrieved playground */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example true */
+            success?: boolean;
+            playground?: {
+              /** @description Team ID */
+              id?: string;
+              /** @description Team name */
+              name?: string;
+              /** @description Team description */
+              teamDescription?: string;
+              /** @description Whether the team is a playground */
+              isPlayground?: boolean;
+              /** Format: date-time */
+              createdAt?: string;
+              /** Format: date-time */
+              updatedAt?: string;
+            };
+          };
+        };
+      };
+      /** @description Playground not found for this team */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
+      /** @description Failed to fetch playground */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
+    };
+  };
+  createPlayground: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': {
+          /** @description Playground name */
+          name: string;
+        };
+      };
+    };
+    responses: {
+      /** @description Successfully created playground */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example true */
+            success?: boolean;
+            playground?: {
+              /** @description Team ID */
+              id?: string;
+              /** @description Team name */
+              name?: string;
+              /** @description Team description */
+              teamDescription?: string;
+              /** @description Whether the team is a playground */
+              isPlayground?: boolean;
+              /** Format: date-time */
+              createdAt?: string;
+              /** Format: date-time */
+              updatedAt?: string;
+            };
+          };
+        };
+      };
+      /** @description Invalid request data */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
+      /** @description Failed to create playground */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
+    };
+  };
+  postApiCoreAuthLogin: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': {
+          /** Format: email */
+          email: string;
+          password: string;
+        };
+      };
+    };
+    responses: never;
+  };
+  postApiCoreAuthSignup: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': {
+          /** Format: email */
+          email: string;
+          password: string;
+        };
+      };
+    };
+    responses: never;
+  };
+  postApiCoreAuthTeams: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': {
+          name: string;
+          teamDescription?: string;
+        };
+      };
+    };
+    responses: never;
+  };
+  'postApiCoreAuthRequest-password-reset': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': {
+          /** Format: email */
+          email: string;
+        };
+      };
+    };
+    responses: never;
+  };
+  'postApiCoreAuthConfirm-email': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': {
+          token: string;
+        };
+      };
+    };
+    responses: never;
+  };
+  'postApiCoreAuthResend-confirmation': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': {
+          /** Format: email */
+          email: string;
+        };
+      };
+    };
+    responses: never;
+  };
+  'postApiCoreAuthReset-password': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': {
+          token: string;
+          password: string;
+        };
+      };
+    };
+    responses: never;
+  };
+  putApiCoreAuthTeamsByTeamId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': {
+          name?: string;
+          teamDescription?: string;
+        };
+      };
+    };
+    responses: never;
+  };
+  deleteApiCoreAuthTeamsByTeamId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: never;
+  };
+  verifyAuth: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description User is authenticated */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example true */
+            success?: boolean;
+          };
+        };
+      };
+      /** @description User is not authenticated */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            errors?: {
+              [key: string]: string[];
+            };
+          };
+        };
+      };
+    };
+  };
+  getApiCoreAuthTeamsByTeamIdMembers: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: never;
+  };
+  postApiCoreAuthTeamsByTeamIdMembers: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': {
+          /** Format: email */
+          email: string;
+        };
+      };
+    };
+    responses: never;
+  };
+  deleteApiCoreAuthTeamsByTeamIdMembersByUserId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+        userId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: never;
+  };
+  'getApiCoreByTeamIdApi-keys': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: never;
+  };
+  'postApiCoreByTeamIdApi-keys': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': {
+          name: string;
+        };
+      };
+    };
+    responses: never;
+  };
+  'deleteApiCoreByTeamIdApi-keysByApiKeyId': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        teamId: string;
+        apiKeyId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: never;
+  };
+  postApiCoreOnboardingComplete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': {
+          stepId: string;
+          teamId: string | null;
+        };
+      };
+    };
+    responses: never;
+  };
+  getApiAnalyticsAnalyticsTeamByTeamId: {
+    parameters: {
+      query?: {
+        month?: string;
+      };
+      header?: never;
+      path: {
+        teamId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: never;
+  };
+  getApiAnalyticsAnalyticsCompanyByCompanyId: {
+    parameters: {
+      query?: {
+        page?: number;
+        limit?: number;
+        includeDocuments?: boolean;
+      };
+      header?: never;
+      path: {
+        companyId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: never;
+  };
 }

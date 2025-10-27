@@ -25,7 +25,7 @@ function getAuthMiddleware(secretKey: string): express.RequestHandler {
         res.status(401).json({ error: (err as { message: string }).message });
       }
     }
-  }
+  };
 }
 
 export type ServerOptions = {
@@ -35,7 +35,12 @@ export type ServerOptions = {
   DATABASE_URL: string;
 };
 
-const optionsToRequire = ['PORT', 'PEPPYRUS_TOKEN_TEST', 'ACCESS_TOKEN_KEY', 'DATABASE_URL'];
+const optionsToRequire = [
+  'PORT',
+  'PEPPYRUS_TOKEN_TEST',
+  'ACCESS_TOKEN_KEY',
+  'DATABASE_URL',
+];
 export async function startServer(env: ServerOptions): Promise<number> {
   const checkAuth = getAuthMiddleware(env.ACCESS_TOKEN_KEY);
   // console.error('checking', env);
@@ -52,7 +57,11 @@ export async function startServer(env: ServerOptions): Promise<number> {
   };
   function getBackend(peppolId: string): Backend {
     if (process.env.BACKEND) {
-      console.log('Using backend', process.env.BACKEND, ' because of BACKEND env var');
+      console.log(
+        'Using backend',
+        process.env.BACKEND,
+        ' because of BACKEND env var',
+      );
       return backends[process.env.BACKEND];
     }
     const backendName = 'peppyrus';
@@ -60,35 +69,50 @@ export async function startServer(env: ServerOptions): Promise<number> {
     return backends[backendName];
   }
 
-  async function hello (_req, res): Promise<void> {
+  async function hello(_req, res): Promise<void> {
     res.setHeader('Content-Type', 'text/plain');
-    res.end('Let\'s Peppol!\n');
+    res.end("Let's Peppol!\n");
   }
-  async function listV1 (req, res): Promise<void> {
-    const documents = await listEntityDocuments({ peppolId: req.peppolId, direction: req.params.direction, type: req.params.docType, query: req.query, apiVersion: 'v1', page: req.query.page ? parseInt(req.query.page as string) : 1, pageSize: req.query.pageSize ? parseInt(req.query.pageSize as string) : 20 });
+  async function listV1(req, res): Promise<void> {
+    const documents = await listEntityDocuments({
+      peppolId: req.peppolId,
+      direction: req.params.direction,
+      type: req.params.docType,
+      query: req.query,
+      apiVersion: 'v1',
+      page: req.query.page ? parseInt(req.query.page as string) : 1,
+      pageSize: req.query.pageSize
+        ? parseInt(req.query.pageSize as string)
+        : 20,
+    });
     res.setHeader('Content-Type', 'application/json');
     res.json(documents);
   }
-  async function get (req, res): Promise<void> {
+  async function get(req, res): Promise<void> {
     const backend = getBackend(req.peppolId);
-    const xml = await backend.getDocumentXml({ peppolId: req.peppolId, type: req.params.docType, uuid: req.params.uuid, direction: req.params.direction });
+    const xml = await backend.getDocumentXml({
+      peppolId: req.peppolId,
+      type: req.params.docType,
+      uuid: req.params.uuid,
+      direction: req.params.direction,
+    });
     res.setHeader('Content-Type', 'text/xml');
     res.send(xml);
   }
-  async function send (req, res): Promise<void> {
+  async function send(req, res): Promise<void> {
     const backend = getBackend(req.peppolId);
     const sendingEntity = req.peppolId;
     await backend.sendDocument(req.body, sendingEntity);
     res.end('OK\n');
   }
-  async function reg (req, res): Promise<void> {
+  async function reg(req, res): Promise<void> {
     const backend = getBackend(req.peppolId);
     const sendingEntity = req.peppolId;
     console.log('Registering', sendingEntity);
     await backend.reg(sendingEntity);
     res.end('OK\n');
   }
-  async function unreg (req, res): Promise<void> {
+  async function unreg(req, res): Promise<void> {
     const backend = getBackend(req.peppolId);
     const sendingEntity = req.peppolId;
     await backend.unreg(sendingEntity);
@@ -98,21 +122,23 @@ export async function startServer(env: ServerOptions): Promise<number> {
   const app = express();
   app.use(cors({ origin: true })); // Reflect (enable) the requested origin in the CORS response
   // Apply rate limiting to all requests
-  app.use(rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
-    message: {
-      status: 429,
-      error: 'Too many requests, please try again later.',
-    },
-    headers: true, // Include rate limit info in response headers
-  }));
+  app.use(
+    rateLimit({
+      windowMs: 15 * 60 * 1000, // 15 minutes
+      max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+      message: {
+        status: 429,
+        error: 'Too many requests, please try again later.',
+      },
+      headers: true, // Include rate limit info in response headers
+    }),
+  );
   app.use(express.json());
   return new Promise((resolve, reject) => {
     app.get('/v2/', hello);
     app.get('/v2/:docType/:direction', checkAuth, listV1);
     app.get('/v2/:docType/:direction/:uuid', checkAuth, get);
-    app.post('/v2/send', checkAuth, express.text({type: '*/*'}), send);
+    app.post('/v2/send', checkAuth, express.text({ type: '*/*' }), send);
     app.post('/v2/reg', checkAuth, reg);
     app.post('/v2/unreg', checkAuth, unreg);
 

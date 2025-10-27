@@ -1,13 +1,21 @@
 import { XMLParser } from 'fast-xml-parser';
 
-export function parseDocument(documentXml: string): { sender: string | undefined; recipient: string | undefined; docType: string | undefined, senderName?: string, recipientName?: string, amount?: number, docId?: string } {
+export function parseDocument(documentXml: string): {
+  sender: string | undefined;
+  recipient: string | undefined;
+  docType: string | undefined;
+  senderName?: string;
+  recipientName?: string;
+  amount?: number;
+  docId?: string;
+} {
   const parserOptions = {
     ignoreAttributes: false,
     numberParseOptions: {
       leadingZeros: false,
       hex: true,
-      skipLike: /(?:)/ // Disable number parsing
-    }
+      skipLike: /(?:)/, // Disable number parsing
+    },
   };
   const parser = new XMLParser(parserOptions);
   const jObj = parser.parse(documentXml);
@@ -22,7 +30,8 @@ export function parseDocument(documentXml: string): { sender: string | undefined
     throw new Error('Could not determine document type from XML');
   }
   const sender = jObj[docType]?.['cac:AccountingSupplierParty']?.['cac:Party'];
-  const recipient = jObj[docType]?.['cac:AccountingCustomerParty']?.['cac:Party'];
+  const recipient =
+    jObj[docType]?.['cac:AccountingCustomerParty']?.['cac:Party'];
   if (!sender?.['cbc:EndpointID']?.['#text']) {
     throw new Error('Missing sender EndpointID text');
   }
@@ -34,8 +43,17 @@ export function parseDocument(documentXml: string): { sender: string | undefined
     senderName: sender?.['cac:PartyName']?.['cbc:Name'],
     recipient: recipient?.['cbc:EndpointID']?.['#text'],
     recipientName: recipient?.['cac:PartyName']?.['cbc:Name'],
-    amount: parseFloat(jObj[docType]?.['cac:LegalMonetaryTotal']?.['cbc:PayableAmount']?.['#text']),
-    docType: docType === 'Invoice' ? 'Invoice' : docType === 'CreditNote' ? 'CreditNote' : undefined,
+    amount: parseFloat(
+      jObj[docType]?.['cac:LegalMonetaryTotal']?.['cbc:PayableAmount']?.[
+        '#text'
+      ],
+    ),
+    docType:
+      docType === 'Invoice'
+        ? 'Invoice'
+        : docType === 'CreditNote'
+          ? 'CreditNote'
+          : undefined,
     docId: jObj[docType]?.['cbc:ID'],
   };
 }

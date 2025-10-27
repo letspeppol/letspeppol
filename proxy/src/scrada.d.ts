@@ -4,5518 +4,5586 @@
  */
 
 export interface paths {
-    "/v1/company/{companyID}/cashBook/{cashBookID}/lines": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /**
-         * Add lines to the cash book
-         * @description Add new transaction lines to a cash book.<br/>
-         *     To obtain the current (/start) balance get the current cash book object  (Get cash book function) and use the 'currentBalance' field.
-         */
-        put: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                    cashBookID: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["v1.CashBookAddLinesModel"];
-                    "text/json": components["schemas"]["v1.CashBookAddLinesModel"];
-                    "application/*+json": components["schemas"]["v1.CashBookAddLinesModel"];
-                };
-            };
-            responses: {
-                /** @description Added line GUID ID's. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": string[];
-                    };
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
-        };
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+  '/v1/company/{companyID}/cashBook/{cashBookID}/lines': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/company/{companyID}/journal/{journalID}/lines": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    get?: never;
+    /**
+     * Add lines to the cash book
+     * @description Add new transaction lines to a cash book.<br/>
+     *     To obtain the current (/start) balance get the current cash book object  (Get cash book function) and use the 'currentBalance' field.
+     */
+    put: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
         };
-        get?: never;
-        /**
-         * Add lines to the journal
-         * @description Add new transaction lines to a daily receipts book.<br/>
-         *     To obtain the last journal line ID get the current journal object (Get journal function) and use the 'lastLineID' field.<br/>
-         *     The rules that are defined on VAT category or Payment method are also applied when using the API. This means that if configured that a payment method/VAT category must be positive that also the values in the API must be positive. If configured that it must be positive but the value is negative then there will be an error.<br/>
-         *     It is not always required to have payment methods. More information can be found on the 'PaymentMethods' property.<br/><br/>
-         *     <u>Remark:</u> In case of a correction all lines must be of type Correction and also the remark of all lines must be the same.
-         */
-        put: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                    journalID: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["v1.AddJournalLinesPaymethodsModel"];
-                    "text/json": components["schemas"]["v1.AddJournalLinesPaymethodsModel"];
-                    "application/*+json": components["schemas"]["v1.AddJournalLinesPaymethodsModel"];
-                };
-            };
-            responses: {
-                /** @description Added line information. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["v1.AddJournalLinesReturn"];
-                    };
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
+        path: {
+          companyID: string;
+          cashBookID: string;
         };
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['v1.CashBookAddLinesModel'];
+          'text/json': components['schemas']['v1.CashBookAddLinesModel'];
+          'application/*+json': components['schemas']['v1.CashBookAddLinesModel'];
+        };
+      };
+      responses: {
+        /** @description Added line GUID ID's. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': string[];
+          };
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
     };
-    "/v1/company/{companyID}/cashBook": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get all cash books
-         * @description Get all cash books belonging to this company.
-         */
-        get: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Cash books. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["v1.CashBook"][];
-                    };
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        /**
-         * Create cash book
-         * @description Add a new cash book.
-         */
-        post: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["v1.CashBook"];
-                    "text/json": components["schemas"]["v1.CashBook"];
-                    "application/*+json": components["schemas"]["v1.CashBook"];
-                };
-            };
-            responses: {
-                /** @description Added cash book ID. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": string;
-                    };
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/{companyID}/journal/{journalID}/lines': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/company/{companyID}/cashBook/{cashBookID}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    get?: never;
+    /**
+     * Add lines to the journal
+     * @description Add new transaction lines to a daily receipts book.<br/>
+     *     To obtain the last journal line ID get the current journal object (Get journal function) and use the 'lastLineID' field.<br/>
+     *     The rules that are defined on VAT category or Payment method are also applied when using the API. This means that if configured that a payment method/VAT category must be positive that also the values in the API must be positive. If configured that it must be positive but the value is negative then there will be an error.<br/>
+     *     It is not always required to have payment methods. More information can be found on the 'PaymentMethods' property.<br/><br/>
+     *     <u>Remark:</u> In case of a correction all lines must be of type Correction and also the remark of all lines must be the same.
+     */
+    put: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
         };
-        /**
-         * Get cash book
-         * @description Get the specified cash book.
-         */
-        get: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                    cashBookID: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Cash book. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["v1.CashBook"];
-                    };
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
+        path: {
+          companyID: string;
+          journalID: string;
         };
-        /**
-         * Update cash book
-         * @description Update an existing cash book. <br/>If a property of the cash book is set null or a property is missing then the system assumes that this property must keep its original value. Only in case of property endDate, if this property is missing or has has value null, the system assumes that it has value null.
-         */
-        put: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                    cashBookID: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["v1.CashBook"];
-                    "text/json": components["schemas"]["v1.CashBook"];
-                    "application/*+json": components["schemas"]["v1.CashBook"];
-                };
-            };
-            responses: {
-                /** @description Cash book successfully updated. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['v1.AddJournalLinesPaymethodsModel'];
+          'text/json': components['schemas']['v1.AddJournalLinesPaymethodsModel'];
+          'application/*+json': components['schemas']['v1.AddJournalLinesPaymethodsModel'];
         };
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+      };
+      responses: {
+        /** @description Added line information. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['v1.AddJournalLinesReturn'];
+          };
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
     };
-    "/v1/company/{companyID}/cashBook/{cashBookID}/transactionType": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get all transaction types
-         * @description Get all transaction types belonging to this cash book.
-         */
-        get: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                    cashBookID: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Transaction types. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["v1.CashBookTransactionType"][];
-                    };
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        /**
-         * Create transaction type
-         * @description Add a new cash book transaction type. New transaction types must have line type `14` (Own / custom).
-         */
-        post: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                    cashBookID: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["v1.CashBookTransactionType"];
-                    "text/json": components["schemas"]["v1.CashBookTransactionType"];
-                    "application/*+json": components["schemas"]["v1.CashBookTransactionType"];
-                };
-            };
-            responses: {
-                /** @description Added transaction type ID. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": string;
-                    };
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/{companyID}/cashBook': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/company/{companyID}/cashBook/{cashBookID}/transactionType/{transactionTypeID}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    /**
+     * Get all cash books
+     * @description Get all cash books belonging to this company.
+     */
+    get: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
         };
-        /**
-         * Get transaction type
-         * @description Get the specified cash book transaction type.
-         */
-        get: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                    cashBookID: string;
-                    transactionTypeID: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Transaction type. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["v1.CashBookTransactionType"];
-                    };
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
+        path: {
+          companyID: string;
         };
-        /**
-         * Update transaction type
-         * @description Update an existing cash book transaction type.<br/>If a property of the transaction type is set null or a property is missing then the system assumes that this property must keep its original value.
-         */
-        put: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                    cashBookID: string;
-                    transactionTypeID: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["v1.CashBookTransactionType"];
-                    "text/json": components["schemas"]["v1.CashBookTransactionType"];
-                    "application/*+json": components["schemas"]["v1.CashBookTransactionType"];
-                };
-            };
-            responses: {
-                /** @description Transaction type successfully updated. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Cash books. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['v1.CashBook'][];
+          };
         };
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
     };
-    "/v1/company/{companyID}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    put?: never;
+    /**
+     * Create cash book
+     * @description Add a new cash book.
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
         };
-        /**
-         * Get company
-         * @description Get the specified company.
-         */
-        get: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Company. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["v1.Company"];
-                    };
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
+        path: {
+          companyID: string;
         };
-        /**
-         * Update company
-         * @description Update an existing company.<br/>If a property of the company is set null or a property is missing then the system assumes that this property must keep its original value.
-         */
-        put: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["v1.Company"];
-                    "text/json": components["schemas"]["v1.Company"];
-                    "application/*+json": components["schemas"]["v1.Company"];
-                };
-            };
-            responses: {
-                /** @description Company successfully updated. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['v1.CashBook'];
+          'text/json': components['schemas']['v1.CashBook'];
+          'application/*+json': components['schemas']['v1.CashBook'];
         };
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+      };
+      responses: {
+        /** @description Added cash book ID. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': string;
+          };
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
     };
-    "/v1/company/{companyID}/salesInvoice": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Add sales invoice
-         * @description Add a new sales invoice. The combination `bookYear`, `journal` and `number` must be unique. <b>This cannot be used if you have a Peppol Only subscription. You have to use `Peppol outbound`>`Send sales invoice` instead.</b><br/>
-         *     If a property is set null or a property is missing then we assume that this property must keep its original value.<br/>
-         *     The sum of `lines`.`totalExclVat` must be the same as the sum `vatTotals`.`totalExclVat` and must be the same as `totalExclVat` on header.<br/>
-         *     The VAT is calculated by Scrada by doing a sum of all the `lines`.`totalExclVat` by VAT percentage and calculating the VAT on it. This may have a max of 2% difference with the VAT set in `vatTotals`.`totalVat`.",
-         *
-         *     <u>Peppol / UBL:</u> There are different codes used to identify a company in the UBL or on the Peppol network. Scrada will determine the company identifier in following order. The first identifier that is set is used.
-         *     <ol>
-         *         <li>`customer`.`peppolID`</li>
-         *         <li>`customer`.`glnNumber`</li>
-         *         <li>`customer`.`taxNumber`</li>
-         *         <li>`customer`.`vatNumber`</li>
-         *         <li>`customer`.`accountingCode` (If this is the identifier then this invoice cannot be send over Peppol)</li>
-         *         <li>`customer`.`email` (If this is the identifier then this invoice cannot be send over Peppol)</li>
-         *     </ol>
-         */
-        post: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["v1.SalesInvoice"];
-                    "text/json": components["schemas"]["v1.SalesInvoice"];
-                    "application/*+json": components["schemas"]["v1.SalesInvoice"];
-                };
-            };
-            responses: {
-                /** @description Added invoice ID. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": string;
-                    };
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/{companyID}/cashBook/{cashBookID}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/company/{companyID}/salesInvoice/{salesInvoiceID}/ubl": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    /**
+     * Get cash book
+     * @description Get the specified cash book.
+     */
+    get: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
         };
-        /**
-         * Get sales invoice UBL document
-         * @description Gets the UBL document of a specific sales invoice.
-         */
-        get: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                    salesInvoiceID: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description The UBL document of the sales invoice */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Sales invoice not found or no UBL available. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
+        path: {
+          companyID: string;
+          cashBookID: string;
         };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Cash book. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['v1.CashBook'];
+          };
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
     };
-    "/v1/company/{companyID}/salesInvoice/{salesInvoiceID}/sendStatus": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    /**
+     * Update cash book
+     * @description Update an existing cash book. <br/>If a property of the cash book is set null or a property is missing then the system assumes that this property must keep its original value. Only in case of property endDate, if this property is missing or has has value null, the system assumes that it has value null.
+     */
+    put: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
         };
-        /**
-         * Get sales invoice send status
-         * @description Gets the send status to customer of a specific sales invoice.
-         */
-        get: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                    salesInvoiceID: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description The send status to customer of the requested sales invoice */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["v1.SalesInvoiceSendStatus"];
-                    };
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
+        path: {
+          companyID: string;
+          cashBookID: string;
         };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['v1.CashBook'];
+          'text/json': components['schemas']['v1.CashBook'];
+          'application/*+json': components['schemas']['v1.CashBook'];
+        };
+      };
+      responses: {
+        /** @description Cash book successfully updated. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
     };
-    "/v1/company/{companyID}/invoice": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Add invoice
-         * @deprecated
-         * @description <b>This method is obsolete. Please use the `Add sales invoice` endpoint.</b>
-         *     <br/>Add a new sales/purchase invoice.<br/>
-         *     For a sales invoice the party references to the customer.<br/>
-         *     For a purchase invoice the party references the supplier.<br/><br/>
-         *     <u>Peppol / UBL:</u> There are different codes used to identify a company in the UBL or on the Peppol network. Scrada will use the following information as company identifier.
-         *     <ol>
-         *         <li>`PartyTaxNumber` (Can be used to send invoice over the Peppol network)</li>
-         *         <li>`PartyVatNumber` (Can be used to send invoice over the Peppol network)</li>
-         *         <li>`PartyGlnNumber` (Can be used to send invoice over the Peppol network)</li>
-         *         <li>`partyAccountingCode`</li>
-         *         <li>`partyEmail`</li>
-         *     </ol>
-         */
-        post: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["v1.InvoiceWithDocument"];
-                    "text/json": components["schemas"]["v1.InvoiceWithDocument"];
-                    "application/*+json": components["schemas"]["v1.InvoiceWithDocument"];
-                };
-            };
-            responses: {
-                /** @description Added invoice ID. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": string;
-                    };
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/{companyID}/cashBook/{cashBookID}/transactionType': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/company/{companyID}/invoice/{invoiceID}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    /**
+     * Get all transaction types
+     * @description Get all transaction types belonging to this cash book.
+     */
+    get: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
         };
-        get?: never;
-        /**
-         * Update invoice
-         * @deprecated
-         * @description Update an existing invoice.<br/>If a property of the invoice is set null or a property is missing then the system assumes that this property must keep its original value.<br/>If sending also a document of the invoice then this must always be send for every update. If document is not send then it is removed from the invoice.
-         */
-        put: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                    invoiceID: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["v1.InvoiceWithDocument"];
-                    "text/json": components["schemas"]["v1.InvoiceWithDocument"];
-                    "application/*+json": components["schemas"]["v1.InvoiceWithDocument"];
-                };
-            };
-            responses: {
-                /** @description Invoice successfully updated. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
+        path: {
+          companyID: string;
+          cashBookID: string;
         };
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Transaction types. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['v1.CashBookTransactionType'][];
+          };
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
     };
-    "/v1/company/{companyID}/vatPeriod": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    put?: never;
+    /**
+     * Create transaction type
+     * @description Add a new cash book transaction type. New transaction types must have line type `14` (Own / custom).
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
         };
-        /**
-         * Get all VAT periods
-         * @description Get all VAT periods belonging to this company.
-         */
-        get: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description VAT Periods. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["v1.CompanyVatPeriod"][];
-                    };
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
+        path: {
+          companyID: string;
+          cashBookID: string;
         };
-        put?: never;
-        /**
-         * Create VAT period
-         * @description Add a new journal VAT period.
-         */
-        post: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["v1.CompanyVatPeriod"];
-                    "text/json": components["schemas"]["v1.CompanyVatPeriod"];
-                    "application/*+json": components["schemas"]["v1.CompanyVatPeriod"];
-                };
-            };
-            responses: {
-                /** @description Added VAT period ID. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": string;
-                    };
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['v1.CashBookTransactionType'];
+          'text/json': components['schemas']['v1.CashBookTransactionType'];
+          'application/*+json': components['schemas']['v1.CashBookTransactionType'];
         };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+      };
+      responses: {
+        /** @description Added transaction type ID. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': string;
+          };
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
     };
-    "/v1/company/{companyID}/vatPeriod/{vatPeriodID}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get VAT period
-         * @description Get the specified company VAT period.
-         */
-        get: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                    vatPeriodID: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description VAT period. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["v1.CompanyVatPeriod"];
-                    };
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
-        };
-        /**
-         * Update VAT period
-         * @description Update an existing company VAT period.
-         */
-        put: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                    vatPeriodID: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["v1.CompanyVatPeriodType"];
-                    "text/json": components["schemas"]["v1.CompanyVatPeriodType"];
-                    "application/*+json": components["schemas"]["v1.CompanyVatPeriodType"];
-                };
-            };
-            responses: {
-                /** @description Vat period successfully updated. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
-        };
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/{companyID}/cashBook/{cashBookID}/transactionType/{transactionTypeID}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/company/{companyID}/journal": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    /**
+     * Get transaction type
+     * @description Get the specified cash book transaction type.
+     */
+    get: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
         };
-        /**
-         * Get all journals
-         * @description Get all journals belonging to this company.
-         */
-        get: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Journals. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["v1.Journal"][];
-                    };
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
+        path: {
+          companyID: string;
+          cashBookID: string;
+          transactionTypeID: string;
         };
-        put?: never;
-        /**
-         * Create journal
-         * @description Add a new journal.<br/>
-         *     The new journal will get a default VAT category after creation. This VAT category can be changed, as long as it remains unused, with the 'Update VAT category' API.
-         */
-        post: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["v1.Journal"];
-                    "text/json": components["schemas"]["v1.Journal"];
-                    "application/*+json": components["schemas"]["v1.Journal"];
-                };
-            };
-            responses: {
-                /** @description Added journal ID. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": string;
-                    };
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Transaction type. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['v1.CashBookTransactionType'];
+          };
         };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
     };
-    "/v1/company/{companyID}/journal/{journalID}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    /**
+     * Update transaction type
+     * @description Update an existing cash book transaction type.<br/>If a property of the transaction type is set null or a property is missing then the system assumes that this property must keep its original value.
+     */
+    put: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
         };
-        /**
-         * Get journal
-         * @description Get the specified journal.
-         */
-        get: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                    journalID: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Journal. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["v1.Journal"];
-                    };
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
+        path: {
+          companyID: string;
+          cashBookID: string;
+          transactionTypeID: string;
         };
-        /**
-         * Update journal
-         * @description Update an existing journal.<br/>If a property of the journal is set null or a property is missing then the system assumes that this property must keep its original value. Only in case of property endDate, if this property is missing or has has value null, the system assumes that it has value null.
-         */
-        put: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                    journalID: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["v1.Journal"];
-                    "text/json": components["schemas"]["v1.Journal"];
-                    "application/*+json": components["schemas"]["v1.Journal"];
-                };
-            };
-            responses: {
-                /** @description Journal successfully updated. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['v1.CashBookTransactionType'];
+          'text/json': components['schemas']['v1.CashBookTransactionType'];
+          'application/*+json': components['schemas']['v1.CashBookTransactionType'];
         };
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+      };
+      responses: {
+        /** @description Transaction type successfully updated. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
     };
-    "/v1/company/{companyID}/journal/{journalID}/link": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /**
-         * Link journal to cash book
-         * @description Link an existing journal to an existing cash book. To remove an existing link between a journal and cashbook set the cash book ID to `NULL`.<br/>
-         *     *When experiencing unsupported media type errors with the cash book ID (body) `NULL` add a 'Content-Type' header with value `application/json`.*
-         */
-        put: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                    journalID: string;
-                };
-                cookie?: never;
-            };
-            /** @description The cash book ID or `NULL` to remove the link. */
-            requestBody?: {
-                content: {
-                    "application/json": string;
-                    "text/json": string;
-                    "application/*+json": string;
-                };
-            };
-            responses: {
-                /** @description Journal successfully linked to cash book. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
-        };
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/{companyID}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/company/{companyID}/journal/{journalID}/paymentMethod": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    /**
+     * Get company
+     * @description Get the specified company.
+     */
+    get: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
         };
-        /**
-         * Get all payment methods
-         * @description Get all payment methods belonging to this journal.
-         */
-        get: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                    journalID: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Payment methods. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["v1.JournalPaymentMethod"][];
-                    };
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
+        path: {
+          companyID: string;
         };
-        put?: never;
-        /**
-         * Create payment method
-         * @description Add a new journal payment method.
-         */
-        post: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                    journalID: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["v1.JournalPaymentMethod"];
-                    "text/json": components["schemas"]["v1.JournalPaymentMethod"];
-                    "application/*+json": components["schemas"]["v1.JournalPaymentMethod"];
-                };
-            };
-            responses: {
-                /** @description Added payment method ID. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": string;
-                    };
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Company. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['v1.Company'];
+          };
         };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
     };
-    "/v1/company/{companyID}/journal/{journalID}/paymentMethod/{paymentMethodID}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    /**
+     * Update company
+     * @description Update an existing company.<br/>If a property of the company is set null or a property is missing then the system assumes that this property must keep its original value.
+     */
+    put: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
         };
-        /**
-         * Get payment method
-         * @description Get the specified journal payment method.
-         */
-        get: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                    journalID: string;
-                    paymentMethodID: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Payment method. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["v1.JournalPaymentMethod"];
-                    };
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
+        path: {
+          companyID: string;
         };
-        /**
-         * Update payment method
-         * @description Update an existing journal payment method.<br/>If a property of the journal payment method is set null or a property is missing then the system assumes that this property must keep its original value.
-         */
-        put: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                    journalID: string;
-                    paymentMethodID: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["v1.JournalPaymentMethod"];
-                    "text/json": components["schemas"]["v1.JournalPaymentMethod"];
-                    "application/*+json": components["schemas"]["v1.JournalPaymentMethod"];
-                };
-            };
-            responses: {
-                /** @description Payment method successfully updated. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['v1.Company'];
+          'text/json': components['schemas']['v1.Company'];
+          'application/*+json': components['schemas']['v1.Company'];
         };
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+      };
+      responses: {
+        /** @description Company successfully updated. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
     };
-    "/v1/company/{companyID}/journal/{journalID}/vatCategory": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get all VAT categories
-         * @description Get all VAT categories belonging to this journal.
-         */
-        get: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                    journalID: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description VAT Categories. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["v1.JournalVatCategory"][];
-                    };
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        /**
-         * Create VAT category
-         * @description Add a new journal VAT category.
-         */
-        post: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                    journalID: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["v1.JournalVatCategory"];
-                    "text/json": components["schemas"]["v1.JournalVatCategory"];
-                    "application/*+json": components["schemas"]["v1.JournalVatCategory"];
-                };
-            };
-            responses: {
-                /** @description Added VAT category ID. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": string;
-                    };
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/{companyID}/salesInvoice': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/company/{companyID}/journal/{journalID}/vatCategory/{vatCategoryID}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Add sales invoice
+     * @description Add a new sales invoice. The combination `bookYear`, `journal` and `number` must be unique. <b>This cannot be used if you have a Peppol Only subscription. You have to use `Peppol outbound`>`Send sales invoice` instead.</b><br/>
+     *     If a property is set null or a property is missing then we assume that this property must keep its original value.<br/>
+     *     The sum of `lines`.`totalExclVat` must be the same as the sum `vatTotals`.`totalExclVat` and must be the same as `totalExclVat` on header.<br/>
+     *     The VAT is calculated by Scrada by doing a sum of all the `lines`.`totalExclVat` by VAT percentage and calculating the VAT on it. This may have a max of 2% difference with the VAT set in `vatTotals`.`totalVat`.",
+     *
+     *     <u>Peppol / UBL:</u> There are different codes used to identify a company in the UBL or on the Peppol network. Scrada will determine the company identifier in following order. The first identifier that is set is used.
+     *     <ol>
+     *         <li>`customer`.`peppolID`</li>
+     *         <li>`customer`.`glnNumber`</li>
+     *         <li>`customer`.`taxNumber`</li>
+     *         <li>`customer`.`vatNumber`</li>
+     *         <li>`customer`.`accountingCode` (If this is the identifier then this invoice cannot be send over Peppol)</li>
+     *         <li>`customer`.`email` (If this is the identifier then this invoice cannot be send over Peppol)</li>
+     *     </ol>
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
         };
-        /**
-         * Get VAT category
-         * @description Get the specified journal VAT category.
-         */
-        get: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                    journalID: string;
-                    vatCategoryID: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description VAT category. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["v1.JournalVatCategory"];
-                    };
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
+        path: {
+          companyID: string;
         };
-        /**
-         * Update VAT category
-         * @description Update an existing journal VAT category.<br/>If a property of the journal VAT category is set null or a property is missing then the system assumes that this property must keep its original value.
-         */
-        put: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                    journalID: string;
-                    vatCategoryID: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["v1.JournalVatCategory"];
-                    "text/json": components["schemas"]["v1.JournalVatCategory"];
-                    "application/*+json": components["schemas"]["v1.JournalVatCategory"];
-                };
-            };
-            responses: {
-                /** @description VAT category successfully updated. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['v1.SalesInvoice'];
+          'text/json': components['schemas']['v1.SalesInvoice'];
+          'application/*+json': components['schemas']['v1.SalesInvoice'];
         };
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+      };
+      responses: {
+        /** @description Added invoice ID. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': string;
+          };
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
     };
-    "/v1/company/{companyID}/peppol/lookup/{scheme}/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Participant lookup
-         * @description Search for a participant on the Peppol network. <i>The `businessEntity` can be NULL if this information is not published on the Peppol network.</i>
-         */
-        get: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                    /** @description The scheme. Sample: iso6523-actorid-upis */
-                    scheme: string;
-                    /** @description The id exists of 2 parts separated by a colon. The first part is the type (Participant Identifier Scheme at https://docs.peppol.eu/edelivery/codelists/) and the second part is the value. Sample: 0208:0793904121 */
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Peppol party information. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["v1.PeppolParticipant"];
-                    };
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Participant not found on Peppol. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-                /** @description Participant access point unavailable. */
-                503: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/{companyID}/salesInvoice/{salesInvoiceID}/ubl': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/company/{companyID}/peppol/lookup": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    /**
+     * Get sales invoice UBL document
+     * @description Gets the UBL document of a specific sales invoice.
+     */
+    get: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
         };
-        get?: never;
-        put?: never;
-        /**
-         * Party lookup (JSON)
-         * @description Search for a participant on the Peppol network with a invoice customer or supplier object. This will check if Scrada is able to send a document to the given party.
-         */
-        post: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    "application/json": components["schemas"]["v1.SalesInvoiceCustomer"];
-                    "text/json": components["schemas"]["v1.SalesInvoiceCustomer"];
-                    "application/*+json": components["schemas"]["v1.SalesInvoiceCustomer"];
-                };
-            };
-            responses: {
-                /** @description Peppol party information. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["v1.PeppolSupportedParticipant"];
-                    };
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-                /** @description Participant access point unavailable. */
-                503: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
+        path: {
+          companyID: string;
+          salesInvoiceID: string;
         };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description The UBL document of the sales invoice */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Sales invoice not found or no UBL available. */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
     };
-    "/v1/company/{companyID}/peppol/register": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Register company
-         * @description Register a company on the Peppol network to receive documents. <b>Only possible to call this function if you have a Peppol Only subscription.</b>
-         */
-        post: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["v1.PeppolParticipantRegistration"];
-                    "text/json": components["schemas"]["v1.PeppolParticipantRegistration"];
-                    "application/*+json": components["schemas"]["v1.PeppolParticipantRegistration"];
-                };
-            };
-            responses: {
-                /** @description Company successfully registered on Peppol. The GUID of the registered company is returned. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": string;
-                    };
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/{companyID}/salesInvoice/{salesInvoiceID}/sendStatus': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/company/{companyID}/peppol/deregister/{participantIdentifierScheme}/{participantIdentifierValue}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    /**
+     * Get sales invoice send status
+     * @description Gets the send status to customer of a specific sales invoice.
+     */
+    get: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
         };
-        get?: never;
-        put?: never;
-        post?: never;
-        /**
-         * Deregister company
-         * @description Deregister a company on the Peppol network to receive documents. <b>Only possible to call this function if you have a Peppol Only subscription.</b>
-         */
-        delete: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                    participantIdentifierScheme: string;
-                    participantIdentifierValue: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Company successfully deregistered from Peppol. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": string;
-                    };
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
+        path: {
+          companyID: string;
+          salesInvoiceID: string;
         };
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description The send status to customer of the requested sales invoice */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['v1.SalesInvoiceSendStatus'];
+          };
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
     };
-    "/v1/company/{companyID}/peppol/inbound/document/unconfirmed": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get unconfirmed inbound documents
-         * @description Get all unconfirmed documents received from Peppol. To confirm a document use the `Confirm inbound document` endpoint.
-         */
-        get: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Inbound documents. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["CollectionResult`1[v1.PeppolInboundDocument]"];
-                    };
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/{companyID}/invoice': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/company/{companyID}/peppol/inbound/document/{documentID}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Add invoice
+     * @deprecated
+     * @description <b>This method is obsolete. Please use the `Add sales invoice` endpoint.</b>
+     *     <br/>Add a new sales/purchase invoice.<br/>
+     *     For a sales invoice the party references to the customer.<br/>
+     *     For a purchase invoice the party references the supplier.<br/><br/>
+     *     <u>Peppol / UBL:</u> There are different codes used to identify a company in the UBL or on the Peppol network. Scrada will use the following information as company identifier.
+     *     <ol>
+     *         <li>`PartyTaxNumber` (Can be used to send invoice over the Peppol network)</li>
+     *         <li>`PartyVatNumber` (Can be used to send invoice over the Peppol network)</li>
+     *         <li>`PartyGlnNumber` (Can be used to send invoice over the Peppol network)</li>
+     *         <li>`partyAccountingCode`</li>
+     *         <li>`partyEmail`</li>
+     *     </ol>
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
         };
-        /**
-         * Get inbound document
-         * @description Get the inbound Peppol document. The HTTP headers will contain the following information.
-         *     <table>
-         *       <tr>
-         *         <th>Header</th>
-         *         <th>Description</th>
-         *         <th>Example</th>
-         *       </tr>
-         *       <tr>
-         *         <td>x-scrada-document-id</td>
-         *         <td>Scrada document ID</td>
-         *         <td>497f6eca-6276-4993-bfeb-53cbbbba6f08</td>
-         *       </tr>
-         *       <tr>
-         *         <td>x-scrada-internal-number</td>
-         *         <td>Scrada internal document number</td>
-         *         <td>1</td>
-         *       </tr>
-         *       <tr>
-         *         <td>x-scrada-peppol-sender-scheme</td>
-         *         <td>Sender party scheme</td>
-         *         <td>iso6523-actorid-upis</td>
-         *       </tr>
-         *       <tr>
-         *         <td>x-scrada-peppol-sender-id</td>
-         *         <td>Sender party ID</td>
-         *         <td>0208:0000000097</td>
-         *       </tr>
-         *       <tr>
-         *         <td>x-scrada-peppol-receiver-scheme</td>
-         *         <td>Receiver party scheme</td>
-         *         <td>iso6523-actorid-upis</td>
-         *       </tr>
-         *       <tr>
-         *         <td>x-scrada-peppol-receiver-id</td>
-         *         <td>Receiver party ID</td>
-         *         <td>0208:0000000097</td>
-         *       </tr>
-         *       <tr>
-         *         <td>x-scrada-peppol-c1-country-code</td>
-         *         <td>The country code where the sender party is legally present</td>
-         *         <td>BE</td>
-         *       </tr>
-         *       <tr>
-         *         <td>x-scrada-peppol-c2-timestamp</td>
-         *         <td>The timestamp when the document was send</td>
-         *         <td>2022-12-31T08:00:00.000Z</td>
-         *       </tr>
-         *       <tr>
-         *         <td>x-scrada-peppol-c2-seat-id</td>
-         *         <td>The Peppol seat ID of the sending access point</td>
-         *         <td>PBE000001</td>
-         *       </tr>
-         *       <tr>
-         *         <td>x-scrada-peppol-c2-message-id</td>
-         *         <td>The message ID of the sending access point</td>
-         *         <td>497f6eca-6276-4993-bfeb-53cbbbba6f08@scrada</td>
-         *       </tr>
-         *       <tr>
-         *         <td>x-scrada-peppol-c3-incoming-unique-id</td>
-         *         <td>The incoming unique message ID at the receiving access point</td>
-         *         <td>497f6eca-6276-4993-bfeb-53cbbbba6f08</td>
-         *       </tr>
-         *       <tr>
-         *         <td>x-scrada-peppol-c3-message-id</td>
-         *         <td>The message ID of the receiving access point</td>
-         *         <td>497f6eca-6276-4993-bfeb-53cbbbba6f08@scrada</td>
-         *       </tr>
-         *       <tr>
-         *         <td>x-scrada-peppol-conversation-id</td>
-         *         <td>The conversation ID</td>
-         *         <td>497f6eca-6276-4993-bfeb-53cbbbba6f08</td>
-         *       </tr>
-         *       <tr>
-         *         <td>x-scrada-peppol-sbdh-instance-identifier</td>
-         *         <td>The SBDH instance ID</td>
-         *         <td>497f6eca-6276-4993-bfeb-53cbbbba6f08</td>
-         *       </tr>
-         *       <tr>
-         *         <td>x-scrada-peppol-document-type-scheme</td>
-         *         <td>The document type scheme used</td>
-         *         <td>busdox-docid-qns</td>
-         *       </tr>
-         *       <tr>
-         *         <td>x-scrada-peppol-document-type-value</td>
-         *         <td>The document type used</td>
-         *         <td>urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1</td>
-         *       </tr>
-         *       <tr>
-         *         <td>x-scrada-peppol-process-scheme</td>
-         *         <td>The process scheme used</td>
-         *         <td>cenbii-procid-ubl</td>
-         *       </tr>
-         *       <tr>
-         *         <td>x-scrada-peppol-process-value</td>
-         *         <td>The process used</td>
-         *         <td>urn:fdc:peppol.eu:2017:poacc:billing:01:1.0</td>
-         *       </tr>
-         *     </table>
-         */
-        get: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                    documentID: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description inbound document. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/xml": unknown;
-                    };
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
+        path: {
+          companyID: string;
         };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['v1.InvoiceWithDocument'];
+          'text/json': components['schemas']['v1.InvoiceWithDocument'];
+          'application/*+json': components['schemas']['v1.InvoiceWithDocument'];
+        };
+      };
+      responses: {
+        /** @description Added invoice ID. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': string;
+          };
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
     };
-    "/v1/company/{companyID}/peppol/inbound/document/{documentID}/pdf": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get PDF of inbound document
-         * @description Returns a PDF version of the inbound document.<br />
-         *     In case of a purchase invoice, a formatted invoice PDF is generated.<br />
-         *     Otherwise, the raw UBL/XML document is converted into a simple PDF representation.
-         */
-        get: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                    documentID: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Generated PDF document */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/pdf": unknown;
-                    };
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/{companyID}/invoice/{invoiceID}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/company/{companyID}/peppol/inbound/document/{documentID}/confirm": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    get?: never;
+    /**
+     * Update invoice
+     * @deprecated
+     * @description Update an existing invoice.<br/>If a property of the invoice is set null or a property is missing then the system assumes that this property must keep its original value.<br/>If sending also a document of the invoice then this must always be send for every update. If document is not send then it is removed from the invoice.
+     */
+    put: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
         };
-        get?: never;
-        /**
-         * Confirm inbound document
-         * @description Confirm the successful reception of an inbound document. This allows you to retrieve the following new inbound document with the `Get unconfirmed inbound documents` endpoint.
-         */
-        put: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                    documentID: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Document confirmed. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
+        path: {
+          companyID: string;
+          invoiceID: string;
         };
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['v1.InvoiceWithDocument'];
+          'text/json': components['schemas']['v1.InvoiceWithDocument'];
+          'application/*+json': components['schemas']['v1.InvoiceWithDocument'];
+        };
+      };
+      responses: {
+        /** @description Invoice successfully updated. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
     };
-    "/v1/company/{companyID}/peppol/outbound/document": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Send document
-         * @description Sends a document over the Peppol network. <b>Only possible to call this function if you have a Peppol Only subscription.</b><br/>
-         *     Only XML documents can be send over Peppol using this API. Send the document with content type `application/xml` or `text/xml`. Default charset that is used is utf-8.
-         */
-        post: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                    /** @description The sender party scheme. Example: iso6523-actorid-upis */
-                    "x-scrada-peppol-sender-scheme": string;
-                    /** @description The sender party ID. Example: 0208:0000000097 */
-                    "x-scrada-peppol-sender-id": string;
-                    /** @description The receiver party scheme. Example: iso6523-actorid-upis */
-                    "x-scrada-peppol-receiver-scheme": string;
-                    /** @description The receiver party ID. Example: 0208:0000000097 */
-                    "x-scrada-peppol-receiver-id": string;
-                    /** @description The country code where the sender party is legally present. Example: BE */
-                    "x-scrada-peppol-c1-country-code": string;
-                    /** @description The document type scheme used. Example: busdox-docid-qns */
-                    "x-scrada-peppol-document-type-scheme": string;
-                    /** @description The document type used. Example: urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1 */
-                    "x-scrada-peppol-document-type-value": string;
-                    /** @description The process scheme used. Example: cenbii-procid-ubl */
-                    "x-scrada-peppol-process-scheme": string;
-                    /** @description The process used. Example: urn:fdc:peppol.eu:2017:poacc:billing:01:1.0 */
-                    "x-scrada-peppol-process-value": string;
-                    /** @description The reference you give to the document. This header is not required. This is not used for Peppol but is used in the portal of Scrada and in the webhooks. Example: V1/202400512 */
-                    "x-scrada-external-reference": string;
-                };
-                path: {
-                    companyID: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Added document ID. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": string;
-                    };
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unsupported media type. The content (or content-type header) is not of the type XML. */
-                415: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/{companyID}/vatPeriod': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/company/{companyID}/peppol/outbound/salesInvoice": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    /**
+     * Get all VAT periods
+     * @description Get all VAT periods belonging to this company.
+     */
+    get: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
         };
-        get?: never;
-        put?: never;
-        /**
-         * Send sales invoice
-         * @description Sends a sales invoice in JSON format to Scrada that will be converted by Scrada to a Peppol document and send over the Peppol network.  <b>Only possible to call this function if you have a Peppol Only subscription.</b><br/>
-         *     If a property is set null or a property is missing then we assume that this property must keep its original value.<br/>
-         *
-         *     <b>VAT inclusive or exclusive</b><br/>
-         *     It is possible to enter the item pricing including or excluding VAT to reduce issues with VAT rounding.<br/>
-         *     <ul>
-         *         <li>Excluding VAT (Default)
-         *             <ul>
-         *                 <li>Set `isInclVat` to false or omit from the JSON</li>
-         *                 <li>Enter the `lines`.`itemExclVat`</li>
-         *                 <li>Enter the `lines`.`totalExclVat`</li>
-         *                 <li>When applicable enter the `lines`.`totalDiscountExclVat`</li>
-         *                 <li>Omit any ...InclVat value in `lines`</li>
-         *             </ul>
-         *         </li>
-         *         <liIncluding VAT
-         *             <ul>
-         *                 <li>Set `isInclVat` to true</li>
-         *                 <li>Enter the `lines`.`itemInclVat`</li>
-         *                 <li>Enter the `lines`.`totalInclVat`</li>
-         *                 <li>When applicable enter the `lines`.`totalDiscountInclVat`</li>
-         *                 <li>Omit any ...ExclVat value in `lines`</li>
-         *             </ul>
-         *         </li>
-         *     </ul>
-         *
-         *     <b>Validation rules</b>
-         *     <ul>
-         *         <li>The sum of all `lines.totalExclVat` must exactly match:
-         *             <ul>
-         *                 <li>the sum of all `vatTotals`.`totalExclVat`</li>
-         *                 <li>the invoice `totalExclVat`</li>
-         *             </ul>
-         *         </li>
-         *         <li>VAT amounts in `vatTotals`.`totalVat` may only have a minimal deviation from calculated VAT based on line totals.</li>
-         *         <li>`totalInclVat` must equal `totalExclVat` + `totalVat`</li>
-         *     </ul>
-         *
-         *     <b>Receiver identifier resolution</b><br/>
-         *     The receiver Peppol ID is resolved by Scrada based on the following fields (in order of priority). The first available value will be used:
-         *     <ol>
-         *         <li>`customer`.`peppolID`</li>
-         *         <li>`customer`.`glnNumber`</li>
-         *         <li>`customer`.`taxNumber`</li>
-         *         <li>`customer`.`vatNumber`</li>
-         *     </ol>
-         */
-        post: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["v1.PeppolOnlyInvoice"];
-                    "text/json": components["schemas"]["v1.PeppolOnlyInvoice"];
-                    "application/*+json": components["schemas"]["v1.PeppolOnlyInvoice"];
-                };
-            };
-            responses: {
-                /** @description Added document ID. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": string;
-                    };
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
+        path: {
+          companyID: string;
         };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description VAT Periods. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['v1.CompanyVatPeriod'][];
+          };
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
     };
-    "/v1/company/{companyID}/peppol/outbound/selfBillingInvoice": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    put?: never;
+    /**
+     * Create VAT period
+     * @description Add a new journal VAT period.
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
         };
-        get?: never;
-        put?: never;
-        /**
-         * Send self-billing invoice
-         * @description Sends a self-billing invoice or credit note in JSON format to Scrada that will be converted by Scrada to a Peppol document and send over the Peppol network. <b>Only possible to call this function if you have a Peppol Only subscription.</b><br/>
-         *     This endpoint supports <b>self-billing</b>, which means that you (the buyer) issue an invoice or credit note on behalf of your supplier. The supplier will receive this document via Peppol and book it as a sales invoice or credit note.<br/>
-         *
-         *     <b>VAT inclusive or exclusive</b><br/>
-         *     It is possible to enter the item pricing including or excluding VAT to reduce issues with VAT rounding.<br/>
-         *     <ul>
-         *         <li>Excluding VAT (Default)
-         *             <ul>
-         *                 <li>Set `isInclVat` to false or omit from the JSON</li>
-         *                 <li>Enter the `lines`.`itemExclVat`</li>
-         *                 <li>Enter the `lines`.`totalExclVat`</li>
-         *                 <li>When applicable enter the `lines`.`totalDiscountExclVat`</li>
-         *                 <li>Omit any ...InclVat value in `lines`</li>
-         *             </ul>
-         *         </li>
-         *         <liIncluding VAT
-         *             <ul>
-         *                 <li>Set `isInclVat` to true</li>
-         *                 <li>Enter the `lines`.`itemInclVat`</li>
-         *                 <li>Enter the `lines`.`totalInclVat`</li>
-         *                 <li>When applicable enter the `lines`.`totalDiscountInclVat`</li>
-         *                 <li>Omit any ...ExclVat value in `lines`</li>
-         *             </ul>
-         *         </li>
-         *     </ul>
-         *
-         *     <b>Validation rules</b>
-         *     <ul>
-         *         <li>The sum of all `lines.totalExclVat` must exactly match:
-         *             <ul>
-         *                 <li>the sum of all `vatTotals`.`totalExclVat`</li>
-         *                 <li>the invoice `totalExclVat`</li>
-         *             </ul>
-         *         </li>
-         *         <li>VAT amounts in `vatTotals`.`totalVat` may only have a minimal deviation from calculated VAT based on line totals.</li>
-         *         <li>`totalInclVat` must equal `totalExclVat` + `totalVat`</li>
-         *     </ul>
-         *
-         *     <b>Receiver identifier resolution</b><br/>
-         *     The receiver Peppol ID is resolved by Scrada based on the following fields (in order of priority). The first available value will be used:
-         *     <ol>
-         *         <li>`supplier`.`peppolID`</li>
-         *         <li>`supplier`.`glnNumber`</li>
-         *         <li>`supplier`.`taxNumber`</li>
-         *         <li>`supplier`.`vatNumber`</li>
-         *     </ol>
-         *     <b>Important</b>: Ensure that the supplier has agreed to self-billing.
-         */
-        post: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["v1.PeppolOnlyInvoice"];
-                    "text/json": components["schemas"]["v1.PeppolOnlyInvoice"];
-                    "application/*+json": components["schemas"]["v1.PeppolOnlyInvoice"];
-                };
-            };
-            responses: {
-                /** @description Added document ID. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": string;
-                    };
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
+        path: {
+          companyID: string;
         };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['v1.CompanyVatPeriod'];
+          'text/json': components['schemas']['v1.CompanyVatPeriod'];
+          'application/*+json': components['schemas']['v1.CompanyVatPeriod'];
+        };
+      };
+      responses: {
+        /** @description Added VAT period ID. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': string;
+          };
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
     };
-    "/v1/company/{companyID}/peppol/outbound/document/{documentID}/ubl": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get outbound document
-         * @description Get the document that was delivered to Scrada using the endpoint `Send document` or get the successful delivered document over Peppol in case a JSON was delivered to Scrada (the endpoint `Send sales invoice`). In case of a JSON, only after a successful delivery on Peppol this endpoint can be used to get the delivered document over Peppol (most of the times this is an UBL document).
-         */
-        get: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                    documentID: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description The outbound document */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Document not found or document is not successful deliverd over Peppol. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/{companyID}/vatPeriod/{vatPeriodID}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/company/{companyID}/peppol/outbound/salesInvoice/{documentID}/ubl": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    /**
+     * Get VAT period
+     * @description Get the specified company VAT period.
+     */
+    get: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
         };
-        /**
-         * Get sales invoice UBL document
-         * @deprecated
-         * @description Gets the UBL document of a specific sales invoice. <b>This endpoint is obsolete. Use `Get outbound document` instead.</b>
-         */
-        get: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                    documentID: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description The UBL document of the sales invoice */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Sales invoice not found or no UBL available. */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
+        path: {
+          companyID: string;
+          vatPeriodID: string;
         };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description VAT period. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['v1.CompanyVatPeriod'];
+          };
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
     };
-    "/v1/company/{companyID}/peppol/outbound/document/{documentID}/info": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    /**
+     * Update VAT period
+     * @description Update an existing company VAT period.
+     */
+    put: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
         };
-        /**
-         * Get outbound document status
-         * @description Gets the status of a specific outbound document.
-         */
-        get: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Language */
-                    Language?: string;
-                    /** @description The API Key. */
-                    "X-API-KEY": string;
-                    /** @description The password. */
-                    "X-PASSWORD": string;
-                };
-                path: {
-                    companyID: string;
-                    documentID: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description The status of the requested XML document. */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["v1.PeppolOutboundDocumentStatus"];
-                    };
-                };
-                /** @description Unauthorized. The API Key and/or Password is wrong. */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Too many requests. Please try again later. */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description An error occurred. */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ScradaError"];
-                    };
-                };
-            };
+        path: {
+          companyID: string;
+          vatPeriodID: string;
         };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['v1.CompanyVatPeriodType'];
+          'text/json': components['schemas']['v1.CompanyVatPeriodType'];
+          'application/*+json': components['schemas']['v1.CompanyVatPeriodType'];
+        };
+      };
+      responses: {
+        /** @description Vat period successfully updated. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
     };
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/{companyID}/journal': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get all journals
+     * @description Get all journals belonging to this company.
+     */
+    get: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
+        };
+        path: {
+          companyID: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Journals. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['v1.Journal'][];
+          };
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
+    };
+    put?: never;
+    /**
+     * Create journal
+     * @description Add a new journal.<br/>
+     *     The new journal will get a default VAT category after creation. This VAT category can be changed, as long as it remains unused, with the 'Update VAT category' API.
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
+        };
+        path: {
+          companyID: string;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['v1.Journal'];
+          'text/json': components['schemas']['v1.Journal'];
+          'application/*+json': components['schemas']['v1.Journal'];
+        };
+      };
+      responses: {
+        /** @description Added journal ID. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': string;
+          };
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/{companyID}/journal/{journalID}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get journal
+     * @description Get the specified journal.
+     */
+    get: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
+        };
+        path: {
+          companyID: string;
+          journalID: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Journal. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['v1.Journal'];
+          };
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
+    };
+    /**
+     * Update journal
+     * @description Update an existing journal.<br/>If a property of the journal is set null or a property is missing then the system assumes that this property must keep its original value. Only in case of property endDate, if this property is missing or has has value null, the system assumes that it has value null.
+     */
+    put: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
+        };
+        path: {
+          companyID: string;
+          journalID: string;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['v1.Journal'];
+          'text/json': components['schemas']['v1.Journal'];
+          'application/*+json': components['schemas']['v1.Journal'];
+        };
+      };
+      responses: {
+        /** @description Journal successfully updated. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
+    };
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/{companyID}/journal/{journalID}/link': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /**
+     * Link journal to cash book
+     * @description Link an existing journal to an existing cash book. To remove an existing link between a journal and cashbook set the cash book ID to `NULL`.<br/>
+     *     *When experiencing unsupported media type errors with the cash book ID (body) `NULL` add a 'Content-Type' header with value `application/json`.*
+     */
+    put: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
+        };
+        path: {
+          companyID: string;
+          journalID: string;
+        };
+        cookie?: never;
+      };
+      /** @description The cash book ID or `NULL` to remove the link. */
+      requestBody?: {
+        content: {
+          'application/json': string;
+          'text/json': string;
+          'application/*+json': string;
+        };
+      };
+      responses: {
+        /** @description Journal successfully linked to cash book. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
+    };
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/{companyID}/journal/{journalID}/paymentMethod': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get all payment methods
+     * @description Get all payment methods belonging to this journal.
+     */
+    get: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
+        };
+        path: {
+          companyID: string;
+          journalID: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Payment methods. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['v1.JournalPaymentMethod'][];
+          };
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
+    };
+    put?: never;
+    /**
+     * Create payment method
+     * @description Add a new journal payment method.
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
+        };
+        path: {
+          companyID: string;
+          journalID: string;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['v1.JournalPaymentMethod'];
+          'text/json': components['schemas']['v1.JournalPaymentMethod'];
+          'application/*+json': components['schemas']['v1.JournalPaymentMethod'];
+        };
+      };
+      responses: {
+        /** @description Added payment method ID. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': string;
+          };
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/{companyID}/journal/{journalID}/paymentMethod/{paymentMethodID}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get payment method
+     * @description Get the specified journal payment method.
+     */
+    get: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
+        };
+        path: {
+          companyID: string;
+          journalID: string;
+          paymentMethodID: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Payment method. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['v1.JournalPaymentMethod'];
+          };
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
+    };
+    /**
+     * Update payment method
+     * @description Update an existing journal payment method.<br/>If a property of the journal payment method is set null or a property is missing then the system assumes that this property must keep its original value.
+     */
+    put: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
+        };
+        path: {
+          companyID: string;
+          journalID: string;
+          paymentMethodID: string;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['v1.JournalPaymentMethod'];
+          'text/json': components['schemas']['v1.JournalPaymentMethod'];
+          'application/*+json': components['schemas']['v1.JournalPaymentMethod'];
+        };
+      };
+      responses: {
+        /** @description Payment method successfully updated. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
+    };
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/{companyID}/journal/{journalID}/vatCategory': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get all VAT categories
+     * @description Get all VAT categories belonging to this journal.
+     */
+    get: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
+        };
+        path: {
+          companyID: string;
+          journalID: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description VAT Categories. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['v1.JournalVatCategory'][];
+          };
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
+    };
+    put?: never;
+    /**
+     * Create VAT category
+     * @description Add a new journal VAT category.
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
+        };
+        path: {
+          companyID: string;
+          journalID: string;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['v1.JournalVatCategory'];
+          'text/json': components['schemas']['v1.JournalVatCategory'];
+          'application/*+json': components['schemas']['v1.JournalVatCategory'];
+        };
+      };
+      responses: {
+        /** @description Added VAT category ID. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': string;
+          };
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/{companyID}/journal/{journalID}/vatCategory/{vatCategoryID}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get VAT category
+     * @description Get the specified journal VAT category.
+     */
+    get: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
+        };
+        path: {
+          companyID: string;
+          journalID: string;
+          vatCategoryID: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description VAT category. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['v1.JournalVatCategory'];
+          };
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
+    };
+    /**
+     * Update VAT category
+     * @description Update an existing journal VAT category.<br/>If a property of the journal VAT category is set null or a property is missing then the system assumes that this property must keep its original value.
+     */
+    put: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
+        };
+        path: {
+          companyID: string;
+          journalID: string;
+          vatCategoryID: string;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['v1.JournalVatCategory'];
+          'text/json': components['schemas']['v1.JournalVatCategory'];
+          'application/*+json': components['schemas']['v1.JournalVatCategory'];
+        };
+      };
+      responses: {
+        /** @description VAT category successfully updated. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
+    };
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/{companyID}/peppol/lookup/{scheme}/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Participant lookup
+     * @description Search for a participant on the Peppol network. <i>The `businessEntity` can be NULL if this information is not published on the Peppol network.</i>
+     */
+    get: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
+        };
+        path: {
+          companyID: string;
+          /** @description The scheme. Sample: iso6523-actorid-upis */
+          scheme: string;
+          /** @description The id exists of 2 parts separated by a colon. The first part is the type (Participant Identifier Scheme at https://docs.peppol.eu/edelivery/codelists/) and the second part is the value. Sample: 0208:0793904121 */
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Peppol party information. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['v1.PeppolParticipant'];
+          };
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Participant not found on Peppol. */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+        /** @description Participant access point unavailable. */
+        503: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/{companyID}/peppol/lookup': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Party lookup (JSON)
+     * @description Search for a participant on the Peppol network with a invoice customer or supplier object. This will check if Scrada is able to send a document to the given party.
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
+        };
+        path: {
+          companyID: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: {
+        content: {
+          'application/json': components['schemas']['v1.SalesInvoiceCustomer'];
+          'text/json': components['schemas']['v1.SalesInvoiceCustomer'];
+          'application/*+json': components['schemas']['v1.SalesInvoiceCustomer'];
+        };
+      };
+      responses: {
+        /** @description Peppol party information. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['v1.PeppolSupportedParticipant'];
+          };
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+        /** @description Participant access point unavailable. */
+        503: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/{companyID}/peppol/register': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Register company
+     * @description Register a company on the Peppol network to receive documents. <b>Only possible to call this function if you have a Peppol Only subscription.</b>
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
+        };
+        path: {
+          companyID: string;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['v1.PeppolParticipantRegistration'];
+          'text/json': components['schemas']['v1.PeppolParticipantRegistration'];
+          'application/*+json': components['schemas']['v1.PeppolParticipantRegistration'];
+        };
+      };
+      responses: {
+        /** @description Company successfully registered on Peppol. The GUID of the registered company is returned. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': string;
+          };
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/{companyID}/peppol/deregister/{participantIdentifierScheme}/{participantIdentifierValue}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /**
+     * Deregister company
+     * @description Deregister a company on the Peppol network to receive documents. <b>Only possible to call this function if you have a Peppol Only subscription.</b>
+     */
+    delete: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
+        };
+        path: {
+          companyID: string;
+          participantIdentifierScheme: string;
+          participantIdentifierValue: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Company successfully deregistered from Peppol. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': string;
+          };
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
+    };
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/{companyID}/peppol/inbound/document/unconfirmed': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get unconfirmed inbound documents
+     * @description Get all unconfirmed documents received from Peppol. To confirm a document use the `Confirm inbound document` endpoint.
+     */
+    get: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
+        };
+        path: {
+          companyID: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Inbound documents. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['CollectionResult`1[v1.PeppolInboundDocument]'];
+          };
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/{companyID}/peppol/inbound/document/{documentID}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get inbound document
+     * @description Get the inbound Peppol document. The HTTP headers will contain the following information.
+     *     <table>
+     *       <tr>
+     *         <th>Header</th>
+     *         <th>Description</th>
+     *         <th>Example</th>
+     *       </tr>
+     *       <tr>
+     *         <td>x-scrada-document-id</td>
+     *         <td>Scrada document ID</td>
+     *         <td>497f6eca-6276-4993-bfeb-53cbbbba6f08</td>
+     *       </tr>
+     *       <tr>
+     *         <td>x-scrada-internal-number</td>
+     *         <td>Scrada internal document number</td>
+     *         <td>1</td>
+     *       </tr>
+     *       <tr>
+     *         <td>x-scrada-peppol-sender-scheme</td>
+     *         <td>Sender party scheme</td>
+     *         <td>iso6523-actorid-upis</td>
+     *       </tr>
+     *       <tr>
+     *         <td>x-scrada-peppol-sender-id</td>
+     *         <td>Sender party ID</td>
+     *         <td>0208:0000000097</td>
+     *       </tr>
+     *       <tr>
+     *         <td>x-scrada-peppol-receiver-scheme</td>
+     *         <td>Receiver party scheme</td>
+     *         <td>iso6523-actorid-upis</td>
+     *       </tr>
+     *       <tr>
+     *         <td>x-scrada-peppol-receiver-id</td>
+     *         <td>Receiver party ID</td>
+     *         <td>0208:0000000097</td>
+     *       </tr>
+     *       <tr>
+     *         <td>x-scrada-peppol-c1-country-code</td>
+     *         <td>The country code where the sender party is legally present</td>
+     *         <td>BE</td>
+     *       </tr>
+     *       <tr>
+     *         <td>x-scrada-peppol-c2-timestamp</td>
+     *         <td>The timestamp when the document was send</td>
+     *         <td>2022-12-31T08:00:00.000Z</td>
+     *       </tr>
+     *       <tr>
+     *         <td>x-scrada-peppol-c2-seat-id</td>
+     *         <td>The Peppol seat ID of the sending access point</td>
+     *         <td>PBE000001</td>
+     *       </tr>
+     *       <tr>
+     *         <td>x-scrada-peppol-c2-message-id</td>
+     *         <td>The message ID of the sending access point</td>
+     *         <td>497f6eca-6276-4993-bfeb-53cbbbba6f08@scrada</td>
+     *       </tr>
+     *       <tr>
+     *         <td>x-scrada-peppol-c3-incoming-unique-id</td>
+     *         <td>The incoming unique message ID at the receiving access point</td>
+     *         <td>497f6eca-6276-4993-bfeb-53cbbbba6f08</td>
+     *       </tr>
+     *       <tr>
+     *         <td>x-scrada-peppol-c3-message-id</td>
+     *         <td>The message ID of the receiving access point</td>
+     *         <td>497f6eca-6276-4993-bfeb-53cbbbba6f08@scrada</td>
+     *       </tr>
+     *       <tr>
+     *         <td>x-scrada-peppol-conversation-id</td>
+     *         <td>The conversation ID</td>
+     *         <td>497f6eca-6276-4993-bfeb-53cbbbba6f08</td>
+     *       </tr>
+     *       <tr>
+     *         <td>x-scrada-peppol-sbdh-instance-identifier</td>
+     *         <td>The SBDH instance ID</td>
+     *         <td>497f6eca-6276-4993-bfeb-53cbbbba6f08</td>
+     *       </tr>
+     *       <tr>
+     *         <td>x-scrada-peppol-document-type-scheme</td>
+     *         <td>The document type scheme used</td>
+     *         <td>busdox-docid-qns</td>
+     *       </tr>
+     *       <tr>
+     *         <td>x-scrada-peppol-document-type-value</td>
+     *         <td>The document type used</td>
+     *         <td>urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1</td>
+     *       </tr>
+     *       <tr>
+     *         <td>x-scrada-peppol-process-scheme</td>
+     *         <td>The process scheme used</td>
+     *         <td>cenbii-procid-ubl</td>
+     *       </tr>
+     *       <tr>
+     *         <td>x-scrada-peppol-process-value</td>
+     *         <td>The process used</td>
+     *         <td>urn:fdc:peppol.eu:2017:poacc:billing:01:1.0</td>
+     *       </tr>
+     *     </table>
+     */
+    get: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
+        };
+        path: {
+          companyID: string;
+          documentID: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description inbound document. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/xml': unknown;
+          };
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/{companyID}/peppol/inbound/document/{documentID}/pdf': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get PDF of inbound document
+     * @description Returns a PDF version of the inbound document.<br />
+     *     In case of a purchase invoice, a formatted invoice PDF is generated.<br />
+     *     Otherwise, the raw UBL/XML document is converted into a simple PDF representation.
+     */
+    get: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
+        };
+        path: {
+          companyID: string;
+          documentID: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Generated PDF document */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/pdf': unknown;
+          };
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/{companyID}/peppol/inbound/document/{documentID}/confirm': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /**
+     * Confirm inbound document
+     * @description Confirm the successful reception of an inbound document. This allows you to retrieve the following new inbound document with the `Get unconfirmed inbound documents` endpoint.
+     */
+    put: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
+        };
+        path: {
+          companyID: string;
+          documentID: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Document confirmed. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
+    };
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/{companyID}/peppol/outbound/document': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Send document
+     * @description Sends a document over the Peppol network. <b>Only possible to call this function if you have a Peppol Only subscription.</b><br/>
+     *     Only XML documents can be send over Peppol using this API. Send the document with content type `application/xml` or `text/xml`. Default charset that is used is utf-8.
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
+          /** @description The sender party scheme. Example: iso6523-actorid-upis */
+          'x-scrada-peppol-sender-scheme': string;
+          /** @description The sender party ID. Example: 0208:0000000097 */
+          'x-scrada-peppol-sender-id': string;
+          /** @description The receiver party scheme. Example: iso6523-actorid-upis */
+          'x-scrada-peppol-receiver-scheme': string;
+          /** @description The receiver party ID. Example: 0208:0000000097 */
+          'x-scrada-peppol-receiver-id': string;
+          /** @description The country code where the sender party is legally present. Example: BE */
+          'x-scrada-peppol-c1-country-code': string;
+          /** @description The document type scheme used. Example: busdox-docid-qns */
+          'x-scrada-peppol-document-type-scheme': string;
+          /** @description The document type used. Example: urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1 */
+          'x-scrada-peppol-document-type-value': string;
+          /** @description The process scheme used. Example: cenbii-procid-ubl */
+          'x-scrada-peppol-process-scheme': string;
+          /** @description The process used. Example: urn:fdc:peppol.eu:2017:poacc:billing:01:1.0 */
+          'x-scrada-peppol-process-value': string;
+          /** @description The reference you give to the document. This header is not required. This is not used for Peppol but is used in the portal of Scrada and in the webhooks. Example: V1/202400512 */
+          'x-scrada-external-reference': string;
+        };
+        path: {
+          companyID: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Added document ID. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': string;
+          };
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Unsupported media type. The content (or content-type header) is not of the type XML. */
+        415: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/{companyID}/peppol/outbound/salesInvoice': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Send sales invoice
+     * @description Sends a sales invoice in JSON format to Scrada that will be converted by Scrada to a Peppol document and send over the Peppol network.  <b>Only possible to call this function if you have a Peppol Only subscription.</b><br/>
+     *     If a property is set null or a property is missing then we assume that this property must keep its original value.<br/>
+     *
+     *     <b>VAT inclusive or exclusive</b><br/>
+     *     It is possible to enter the item pricing including or excluding VAT to reduce issues with VAT rounding.<br/>
+     *     <ul>
+     *         <li>Excluding VAT (Default)
+     *             <ul>
+     *                 <li>Set `isInclVat` to false or omit from the JSON</li>
+     *                 <li>Enter the `lines`.`itemExclVat`</li>
+     *                 <li>Enter the `lines`.`totalExclVat`</li>
+     *                 <li>When applicable enter the `lines`.`totalDiscountExclVat`</li>
+     *                 <li>Omit any ...InclVat value in `lines`</li>
+     *             </ul>
+     *         </li>
+     *         <liIncluding VAT
+     *             <ul>
+     *                 <li>Set `isInclVat` to true</li>
+     *                 <li>Enter the `lines`.`itemInclVat`</li>
+     *                 <li>Enter the `lines`.`totalInclVat`</li>
+     *                 <li>When applicable enter the `lines`.`totalDiscountInclVat`</li>
+     *                 <li>Omit any ...ExclVat value in `lines`</li>
+     *             </ul>
+     *         </li>
+     *     </ul>
+     *
+     *     <b>Validation rules</b>
+     *     <ul>
+     *         <li>The sum of all `lines.totalExclVat` must exactly match:
+     *             <ul>
+     *                 <li>the sum of all `vatTotals`.`totalExclVat`</li>
+     *                 <li>the invoice `totalExclVat`</li>
+     *             </ul>
+     *         </li>
+     *         <li>VAT amounts in `vatTotals`.`totalVat` may only have a minimal deviation from calculated VAT based on line totals.</li>
+     *         <li>`totalInclVat` must equal `totalExclVat` + `totalVat`</li>
+     *     </ul>
+     *
+     *     <b>Receiver identifier resolution</b><br/>
+     *     The receiver Peppol ID is resolved by Scrada based on the following fields (in order of priority). The first available value will be used:
+     *     <ol>
+     *         <li>`customer`.`peppolID`</li>
+     *         <li>`customer`.`glnNumber`</li>
+     *         <li>`customer`.`taxNumber`</li>
+     *         <li>`customer`.`vatNumber`</li>
+     *     </ol>
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
+        };
+        path: {
+          companyID: string;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['v1.PeppolOnlyInvoice'];
+          'text/json': components['schemas']['v1.PeppolOnlyInvoice'];
+          'application/*+json': components['schemas']['v1.PeppolOnlyInvoice'];
+        };
+      };
+      responses: {
+        /** @description Added document ID. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': string;
+          };
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/{companyID}/peppol/outbound/selfBillingInvoice': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Send self-billing invoice
+     * @description Sends a self-billing invoice or credit note in JSON format to Scrada that will be converted by Scrada to a Peppol document and send over the Peppol network. <b>Only possible to call this function if you have a Peppol Only subscription.</b><br/>
+     *     This endpoint supports <b>self-billing</b>, which means that you (the buyer) issue an invoice or credit note on behalf of your supplier. The supplier will receive this document via Peppol and book it as a sales invoice or credit note.<br/>
+     *
+     *     <b>VAT inclusive or exclusive</b><br/>
+     *     It is possible to enter the item pricing including or excluding VAT to reduce issues with VAT rounding.<br/>
+     *     <ul>
+     *         <li>Excluding VAT (Default)
+     *             <ul>
+     *                 <li>Set `isInclVat` to false or omit from the JSON</li>
+     *                 <li>Enter the `lines`.`itemExclVat`</li>
+     *                 <li>Enter the `lines`.`totalExclVat`</li>
+     *                 <li>When applicable enter the `lines`.`totalDiscountExclVat`</li>
+     *                 <li>Omit any ...InclVat value in `lines`</li>
+     *             </ul>
+     *         </li>
+     *         <liIncluding VAT
+     *             <ul>
+     *                 <li>Set `isInclVat` to true</li>
+     *                 <li>Enter the `lines`.`itemInclVat`</li>
+     *                 <li>Enter the `lines`.`totalInclVat`</li>
+     *                 <li>When applicable enter the `lines`.`totalDiscountInclVat`</li>
+     *                 <li>Omit any ...ExclVat value in `lines`</li>
+     *             </ul>
+     *         </li>
+     *     </ul>
+     *
+     *     <b>Validation rules</b>
+     *     <ul>
+     *         <li>The sum of all `lines.totalExclVat` must exactly match:
+     *             <ul>
+     *                 <li>the sum of all `vatTotals`.`totalExclVat`</li>
+     *                 <li>the invoice `totalExclVat`</li>
+     *             </ul>
+     *         </li>
+     *         <li>VAT amounts in `vatTotals`.`totalVat` may only have a minimal deviation from calculated VAT based on line totals.</li>
+     *         <li>`totalInclVat` must equal `totalExclVat` + `totalVat`</li>
+     *     </ul>
+     *
+     *     <b>Receiver identifier resolution</b><br/>
+     *     The receiver Peppol ID is resolved by Scrada based on the following fields (in order of priority). The first available value will be used:
+     *     <ol>
+     *         <li>`supplier`.`peppolID`</li>
+     *         <li>`supplier`.`glnNumber`</li>
+     *         <li>`supplier`.`taxNumber`</li>
+     *         <li>`supplier`.`vatNumber`</li>
+     *     </ol>
+     *     <b>Important</b>: Ensure that the supplier has agreed to self-billing.
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
+        };
+        path: {
+          companyID: string;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['v1.PeppolOnlyInvoice'];
+          'text/json': components['schemas']['v1.PeppolOnlyInvoice'];
+          'application/*+json': components['schemas']['v1.PeppolOnlyInvoice'];
+        };
+      };
+      responses: {
+        /** @description Added document ID. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': string;
+          };
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/{companyID}/peppol/outbound/document/{documentID}/ubl': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get outbound document
+     * @description Get the document that was delivered to Scrada using the endpoint `Send document` or get the successful delivered document over Peppol in case a JSON was delivered to Scrada (the endpoint `Send sales invoice`). In case of a JSON, only after a successful delivery on Peppol this endpoint can be used to get the delivered document over Peppol (most of the times this is an UBL document).
+     */
+    get: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
+        };
+        path: {
+          companyID: string;
+          documentID: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description The outbound document */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Document not found or document is not successful deliverd over Peppol. */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/{companyID}/peppol/outbound/salesInvoice/{documentID}/ubl': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get sales invoice UBL document
+     * @deprecated
+     * @description Gets the UBL document of a specific sales invoice. <b>This endpoint is obsolete. Use `Get outbound document` instead.</b>
+     */
+    get: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
+        };
+        path: {
+          companyID: string;
+          documentID: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description The UBL document of the sales invoice */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Sales invoice not found or no UBL available. */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/company/{companyID}/peppol/outbound/document/{documentID}/info': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get outbound document status
+     * @description Gets the status of a specific outbound document.
+     */
+    get: {
+      parameters: {
+        query?: never;
+        header: {
+          /** @description Language */
+          Language?: string;
+          /** @description The API Key. */
+          'X-API-KEY': string;
+          /** @description The password. */
+          'X-PASSWORD': string;
+        };
+        path: {
+          companyID: string;
+          documentID: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description The status of the requested XML document. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['v1.PeppolOutboundDocumentStatus'];
+          };
+        };
+        /** @description Unauthorized. The API Key and/or Password is wrong. */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Too many requests. Please try again later. */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description An error occurred. */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ScradaError'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: {
-        "CollectionResult`1[v1.PeppolInboundDocument]": {
-            /** Result collection */
-            results?: components["schemas"]["v1.PeppolInboundDocument"][] | null;
-            /**
-             * Total number of results
-             * Format: int32
-             * @description Results send back in this request can be limited, this number shows the total number of objects.
-             */
-            __count?: number;
-        };
-        ScradaError: {
-            /**
-             * Format: int32
-             * @description Error code.
-             */
-            readonly errorCode?: number;
-            /** @description Localized error text. */
-            readonly defaultFormat?: string | null;
-            /** @description Inner errors. */
-            readonly innerErrors?: components["schemas"]["ScradaError"][] | null;
-        };
-        /** @description Journal line */
-        "v1.AddJournalLineModel": {
-            lineType: components["schemas"]["v1.JournalLineType"];
-            /**
-             * Format: uuid
-             * @description VAT type ID of the line.<br/>
-             *     <strong>Belgium:</strong><ul>
-             *     <li><b>cbff0b5e-96e3-4201-91d0-51304cee2605:</b> 00 (0%) VAT</li>
-             *     <li><b>7befe0fc-7131-4b15-9fe6-ca4b9280b63c:</b> 01 (6%) VAT</li>
-             *     <li><b>647ed17b-fb6f-4772-baf5-928de98f4db1:</b> 02 (12%) VAT</li>
-             *     <li><b>8424d909-78b9-483c-9b1d-4584fb537846:</b> 03 (21%) VAT</li>
-             *     <li><b>cc9b638f-3b54-44c8-91e5-83d337ae6591:</b> NA</li>
-             *     </ul>
-             *     <strong>The Netherlands:</strong><ul>
-             *     <li><b>fb145f3f-c866-4322-9169-8d8219d40e8a:</b> 00 (0%) VAT</li>
-             *     <li><b>3aa951e7-f307-4902-b315-b764eb81d211:</b> 02 (9%) VAT</li>
-             *     <li><b>aeb8b26c-00b1-4c6a-9cf2-bc1c71d89196:</b> 03 (21%) VAT</li>
-             *     <li><b>a29f353e-5549-460a-97cb-70a607b28581:</b> NA</li>
-             *     </ul>
-             *     <strong>Luxembourg:</strong><ul>
-             *     <li><b>1693aca4-a715-4543-be5d-64f0210f0078:</b> 00 (0%) VAT</li>
-             *     <li><b>03120fb9-18ea-43a1-9119-1af511895e28:</b> 01 (3%) VAT</li>
-             *     <li><b>3f3556ee-6afb-43d1-9545-d309087ac461:</b> 02 (8%) VAT</li>
-             *     <li><b>d5b9db32-49d7-4929-9e60-dec7b00c2e2f:</b> 03 (14%) VAT</li>
-             *     <li><b>e701b521-2ff0-4176-9533-3e297d52809e:</b> 04 (17%) VAT</li>
-             *     <li><b>ea73a071-18dd-4964-8fd7-fe58ff782c2c:</b> NA</li>
-             *     </ul>
-             */
-            vatTypeID: string;
-            /**
-             * Format: double
-             * @description Vat percentage. Must match with the given VAT type ID. Must always be filled in. Only in case of VAT NA then this is null. Max precision is 2.
-             */
-            vatPerc: number | null;
-            /**
-             * Format: double
-             * @description The line amount including VAT. Max precision is 2.
-             */
-            amount: number;
-            /** @description Remark about line. If in the VAT category in Scrada it is defined that the remark is required then it must have a value. In all other cases it is not required. */
-            remark?: string | null;
-            /** @description Only usable for line type Correction. The invoice number related to this correction. */
-            correctionForInvoice?: string | null;
-            /**
-             * Format: date
-             * @description Only usable for line type Correction. The correction for date.
-             */
-            correctionForDate?: string | null;
-            /**
-             * Format: uuid
-             * @description Category ID for the transaction.
-             */
-            categoryID: string;
-            /** @description Line reference from an external system. */
-            externalReference?: string | null;
-            /** @description Line data from an external system. */
-            externalData?: string | null;
-        };
-        /** @description Journal add lines model */
-        "v1.AddJournalLinesPaymethodsModel": {
-            /**
-             * Format: date
-             * @description The transaction date.
-             */
-            date: string;
-            /**
-             * Format: uuid
-             * @description Optional the GUID ID of the last entered line. When provided a check will be performed to verify that this was indeed the last created line ID.
-             */
-            lastJournalLineID?: string | null;
-            /** @description The lines to add in the journal. */
-            lines: components["schemas"]["v1.AddJournalLineModel"][];
-            /**
-             * @description How the daily receipts are paid.<br/>
-             *     The sum of the amounts of the payment methods must be the same as the sum of the amounts of the lines.<br/><br/>
-             *
-             *     If the journal is not linked to a cash book then the payment methods must be blanc.<br/>
-             *     If a journal is linked to a cash book but the journal is configured that payment methods are booked as proposal then it is not required to fill in the payment methods. In all other cases the payments must be set.<br/><br/>
-             *
-             *     A certain payment method can only be used multiple times in this list if configured on the payment method that this is allowed!<br/><br/>
-             *
-             *     On payment method several requirements can be active like remark required or not, amount can be positive, ... This can be configured on the payment method itself. It is checked both when entering manual data or when using the API.
-             */
-            paymentMethods?: components["schemas"]["v1.AddJournalPaymentMethodModel"][] | null;
-            /**
-             * @description Additional cash book transactions.<br/>
-             *
-             *     If the journal is not linked to a cash book then the cash book transactions must be blanc.
-             */
-            cashBookTransactions?: components["schemas"]["v1.CashBookAddLineModel"][] | null;
-        };
-        "v1.AddJournalLinesReturn": {
-            /** @description The added journal line ID's. The last item in the list is also the last created line ID. */
-            journalLines?: string[];
-            /** @description The added cash book line ID's. The last item in the list is also the last created line ID. */
-            cashBookLines?: string[] | null;
-            message?: components["schemas"]["ScradaError"];
-        };
-        /** @description Journal payment method */
-        "v1.AddJournalPaymentMethodModel": {
-            /**
-             * Format: uuid
-             * @description The payment method ID
-             */
-            paymentMethodID: string;
-            /**
-             * Format: double
-             * @description The amount. Max precision is 2.
-             */
-            amount: number;
-            /** @description The remark. Depending of the payment method it can be that the remark is required! */
-            remark?: string | null;
-            /**
-             * Format: uuid
-             * @description Invoice identifier that has been paid. This is the ID of the invoice in Scrada.
-             */
-            invoiceID?: string | null;
-            /** @description Invoice payment reference. This reference should also be present on an invoice in Scrada. */
-            invoiceReference?: string | null;
-            /** @description Line reference from an external system. */
-            externalReference?: string | null;
-            /** @description Line data from an external system. */
-            externalData?: string | null;
-        };
-        /** Address */
-        "v1.Address": {
-            /** @description The street name. */
-            street?: string | null;
-            /** @description The street number. */
-            streetNumber?: string | null;
-            /** @description The street postbox. */
-            streetBox?: string | null;
-            /** @description The city. */
-            city?: string | null;
-            /** @description The ZIP code. */
-            zipCode?: string | null;
-            /** @description The country subentity. */
-            countrySubentity?: string | null;
-            /** @description The party country code according to ISO 3166-1 alpha 2. */
-            countryCode: string;
-        };
-        /**
-         * Cash book
-         * @description If a property is set null or a property is missing then the system assumes that this property must keep its original value. Only in case of property endDate, if this property is missing or has has value null, the system assumes that it has value null.
-         */
-        "v1.CashBook": {
-            /**
-             * Format: uuid
-             * @description The cash book ID.
-             */
-            readonly id?: string | null;
-            /** @description Show the cash book in the dashboard. */
-            active?: boolean | null;
-            /** @description The cash book name. */
-            name: string;
-            /**
-             * Format: date-time
-             * @description The start date.
-             */
-            startDate: string | null;
-            /**
-             * Format: date-time
-             * @description The closing date.
-             */
-            endDate?: string | null;
-            /** @description The IBAN number of the cash book. */
-            readonly iban?: string | null;
-            /**
-             * Format: double
-             * @description The start balance.
-             */
-            startBalance?: number | null;
-            /**
-             * Format: double
-             * @description The current balance.
-             */
-            readonly currentBalance?: number | null;
-            /**
-             * Format: date-time
-             * @description The last line date.
-             */
-            readonly lastLineDate?: string | null;
-            /**
-             * Format: double
-             * @description Optional warning level for high balance.
-             */
-            warnBalanceTooHigh?: number | null;
-            codaFileType?: components["schemas"]["v1.CashBookFormatType"];
-            codaGenerationPeriodType?: components["schemas"]["v1.CashBookCodaGenerationPeriodType"];
-            codaGenerationStartWeekDay?: components["schemas"]["v1.CashBookCodaGenerationDayOfWeek"];
-            /** @description Allow entries in the cash book after a CODA file has been generated. Only applicable when the cash book is linked to a journal. */
-            allowEntryAfterCoda?: boolean | null;
-            /** @description Add journal payment reference to CODA files. */
-            addPaymentReference?: boolean | null;
-            /**
-             * Format: date-time
-             * @description Scrada invoice send till this date.
-             */
-            readonly invoicedTill?: string | null;
-            /**
-             * Format: date-time
-             * @description Scrada invoice paid till this date.
-             */
-            readonly paidTill?: string | null;
-            /**
-             * Format: date-time
-             * @description Earliest possible date for a cash book entry.
-             */
-            readonly minimumPossibleLineDate?: string | null;
-            /**
-             * Format: date-time
-             * @description Latest possible date for a cash book entry.
-             */
-            readonly maximumPossibleLineDate?: string | null;
-        };
-        "v1.CashBookAddLineModel": {
-            lineType?: components["schemas"]["v1.CashBookTransactionTypeLineType"];
-            /**
-             * Format: uuid
-             * @description Transaction type ID of this line. Use either this transaction type ID of use LineType (Recommended).
-             */
-            transactionTypeID?: string | null;
-            /**
-             * Format: double
-             * @description The amount to transfer. Max precision is 2.
-             */
-            amount: number;
-            /** @description Company name is required for transaction 'Customer' and 'Supplier' otherwise leave it empty. */
-            companyName?: string | null;
-            /** @description Invoice number optional for transaction 'Customer' and 'Supplier' otherwise leave it empty. */
-            invoiceNumber?: string | null;
-            /** @description Remark about the transaction. */
-            remark?: string | null;
-            /**
-             * Format: uuid
-             * @description Other cash book ID (within the same company) for transaction 'Transfer cash to cash in' or 'Transfer cash to cash out'.
-             */
-            otherCashBookID?: string | null;
-            /** @description Line reference from an external system. */
-            externalReference?: string | null;
-            /** @description Line data from an external system. */
-            externalData?: string | null;
-        };
-        /** @description Cash book add lines model */
-        "v1.CashBookAddLinesModel": {
-            /**
-             * Format: date
-             * @description The transaction date.
-             */
-            date: string;
-            /**
-             * Format: double
-             * @description The current cash book balance. Max precision is 2.
-             */
-            startBalance: number;
-            /** @description The transaction lines to add in the cash book. */
-            lines: components["schemas"]["v1.CashBookAddLineModel"][];
-            /**
-             * Format: double
-             * @description The cash book balance after the provided line transactions. Max precision is 2.
-             */
-            endBalance: number;
-        };
-        /**
-         * Format: int32
-         * @description Day of the week to generate CODA file.<ul>
-         *     <li><b>0:</b> Sunday</li>
-         *     <li><b>1:</b> Monday</li>
-         *     <li><b>2:</b> Tuesday</li>
-         *     <li><b>3:</b> Wednesday</li>
-         *     <li><b>4:</b> Thursday</li>
-         *     <li><b>5:</b> Friday</li>
-         *     <li><b>6:</b> Saturday</li>
-         *     </ul>
-         * @enum {integer}
-         */
-        "v1.CashBookCodaGenerationDayOfWeek": 0 | 1 | 2 | 3 | 4 | 5 | 6;
-        /**
-         * Format: int32
-         * @description The CODA generation period.<ul>
-         *     <li><b>1:</b> Every day</li>
-         *     <li><b>2:</b> Every week</li>
-         *     <li><b>3:</b> Every month</li>
-         *     </ul>
-         * @enum {integer}
-         */
-        "v1.CashBookCodaGenerationPeriodType": 1 | 2 | 3;
-        /**
-         * Format: int32
-         * @description The CODA format.<ul>
-         *     <li><b>1:</b> Only lines</li>
-         *     <li><b>2:</b> Lines and payment methods</li>
-         *     </ul>
-         * @enum {integer}
-         */
-        "v1.CashBookFormatType": 1 | 2;
-        /**
-         * Transaction type
-         * @description If a property is set null or a property is missing then we assume that this property must keep its original value.
-         */
-        "v1.CashBookTransactionType": {
-            /**
-             * Format: uuid
-             * @description The transaction type ID.
-             */
-            readonly id?: string | null;
-            /** @description The Dutch Transaction Type name. */
-            nameNL: string | null;
-            /** @description The English Transaction Type name. */
-            nameEN: string | null;
-            /** @description The French Transaction Type name. */
-            nameFR: string | null;
-            /** @description The German Transaction Type name. */
-            nameDE: string | null;
-            /**
-             * Format: int32
-             * @description The sorting position. Lowest is shown first.
-             */
-            position?: number | null;
-            inputType?: components["schemas"]["v1.CashBookTransactionTypeInputType"];
-            lineType?: components["schemas"]["v1.CashBookTransactionTypeLineType"];
-            commentType?: components["schemas"]["v1.CashBookTransactionTypeCommentType"];
-        };
-        /**
-         * Format: int32
-         * @description The comment visibility.<ul>
-         *     <li><b>2:</b> Optional</li>
-         *     <li><b>3:</b> Required</li>
-         *     </ul>
-         * @enum {integer}
-         */
-        "v1.CashBookTransactionTypeCommentType": 2 | 3;
-        /**
-         * Format: int32
-         * @description The input visibility.<ul>
-         *     <li><b>1:</b> Not visible</li>
-         *     <li><b>2:</b> Only receive</li>
-         *     <li><b>3:</b> Only expense</li>
-         *     <li><b>4:</b> Receive or expense</li>
-         *     </ul>
-         * @enum {integer}
-         */
-        "v1.CashBookTransactionTypeInputType": 1 | 2 | 3 | 4;
-        /**
-         * Format: int32
-         * @description Transaction type of this line. Use either this line type or use the TransactionTypeID, not supported for custom transaction types.<ul>
-         *     <li><b>1:</b> Private take</li>
-         *     <li><b>2:</b> Private deposit</li>
-         *     <li><b>3:</b> Customer</li>
-         *     <li><b>4:</b> Supplier</li>
-         *     <li><b>5:</b> Transfer bank to cash</li>
-         *     <li><b>6:</b> Transfer cash to bank</li>
-         *     <li><b>7:</b> Cost</li>
-         *     <li><b>8:</b> Cash difference</li>
-         *     <li><b>9:</b> Daily receipts cash (Only allowed when no journal is linked)</li>
-         *     <li><b>12:</b> Transfer cash to cash in</li>
-         *     <li><b>13:</b> Transfer cash to cash out</li>
-         *     <li><b>14:</b> Own/ custom type (Requires TransactionTypeID)</li>
-         *     </ul>
-         * @enum {integer|null}
-         */
-        "v1.CashBookTransactionTypeLineType": 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | null;
-        /**
-         * Company
-         * @description If a property is set null or a property is missing then we assume that this property must keep its original value.
-         */
-        "v1.Company": {
-            /**
-             * Format: uuid
-             * @description The company ID.
-             */
-            readonly id?: string | null;
-            /** @description Show the company in the company overview screen. */
-            active?: boolean | null;
-            /** @description The company code. Is used by Scrada as parameter in emails or integrations */
-            code?: string | null;
-            /** @description The company name. */
-            name: string | null;
-            /** @description The company email. */
-            email: string | null;
-            /** @description The company street. */
-            street: string | null;
-            /** @description The company ZIP code. */
-            zipCode: string | null;
-            /** @description The company city. */
-            city: string | null;
-            /**
-             * Format: uuid
-             * @description The company country ID.<ul>
-             *     <li><b>12b741b9-c0ad-42b5-8471-e720763f3227</b>: België/Belgique</li>
-             *     <li><b>97e88925-b346-4b76-b671-ef1cf7d68733</b>: Nederland</li>
-             *     <li><b>74a68d03-8c08-4074-a41e-59d830024344</b>: France</li>
-             *     <li><b>597fde4e-a4db-42ac-99e1-af3962bbffa4</b>: Deutschland</li>
-             *     </ul>
-             */
-            countryID: string | null;
-            /**
-             * @description The company tax number.<ul>
-             *     <li>België/Belgique: ondernemingsnummer/numéro d’Entreprise</li>
-             *     <li>Nederland: KvK nummer</li>
-             *     <li>France: SIRENE</li>
-             *     <li>Deutschland: Handelsregisternummer</li>
-             *     </ul>
-             */
-            taxNumber?: string | null;
-            /** @description The company VAT number. */
-            vatNumber?: string | null;
-            /** @description The company phone number. */
-            phone: string | null;
-            /**
-             * Format: uuid
-             * @description The language ID in which language the company reports (like daily receipt invoice) need to be generated in.<ul>
-             *     <li><b>e1e8395c-35b3-4282-89db-3feeaacc23bd</b>: Nederlands (nl-BE)</li>
-             *     <li><b>5300381e-f434-4e01-a1f8-53e7676d4cac</b>: Français (fr-BE)</li>
-             *     <li><b>68f89f67-b153-43e6-b9a6-f8d73b56a67a</b>: English (en-US)</li>
-             *     </ul>
-             */
-            reportLanguageID: string | null;
-            invoiceInfo: components["schemas"]["v1.CompanyInvoiceInfo"];
-            /** @description The email address to receive the invoices on. If not provided the invoice will be send to the company email. Not applicable when 'invoiceInfo' is set to `3`. */
-            invoiceEmail?: string | null;
-            /** @description The invoice street. Only applicable when 'invoiceInfo' is set to `2`. */
-            invoiceStreet?: string | null;
-            /** @description The invoice ZIP code. Only applicable when 'invoiceInfo' is set to `2`. */
-            invoiceZipCode?: string | null;
-            /** @description The invoice city. Only applicable when 'invoiceInfo' is set to `2`. */
-            invoiceCity?: string | null;
-            /**
-             * Format: uuid
-             * @description The invoice country ID. Only applicable when 'invoiceInfo' is set to `2`.<ul>
-             *     <li><b>12b741b9-c0ad-42b5-8471-e720763f3227</b>: België/Belgique</li>
-             *     <li><b>97e88925-b346-4b76-b671-ef1cf7d68733</b>: Nederland</li>
-             *     <li><b>74a68d03-8c08-4074-a41e-59d830024344</b>: France</li>
-             *     <li><b>597fde4e-a4db-42ac-99e1-af3962bbffa4</b>: Deutschland</li>
-             *     </ul>
-             */
-            invoiceCountryID?: string | null;
-            /**
-             * Format: uuid
-             * @description The company ID to which the invoice need to be send. Only applicable when 'invoiceInfo' is set to `3`.<br/>
-             *     **Remark:** To set a different invoice company the user needs to have access rights to both companies. The API credentials only provide access to a single company, it is therefore not possible to change this setting using the external API.
-             */
-            invoiceCompanyID?: string | null;
-        };
-        /**
-         * Format: int32
-         * @description The invoice information to use.<ul>
-         *     <li><b>1:</b> Company address</li>
-         *     <li><b>2:</b> Invoice address</li>
-         *     <li><b>3:</b> Other company information</li>
-         *     </ul>
-         * @enum {integer}
-         */
-        "v1.CompanyInvoiceInfo": 1 | 2 | 3;
-        /**
-         * Format: int32
-         * @description The unit of measure type.<ul>
-         *     <li><b>1:</b> One or unit.</li>
-         *     <li><b>2:</b> Piece</li>
-         *     <li><b>3:</b> Pallet</li>
-         *     <li><b>4:</b> Container 20ft</li>
-         *     <li><b>5:</b> Container 40ft</li>
-         *
-         *     <li><b>100:</b> Second</li>
-         *     <li><b>101:</b> Minute</li>
-         *     <li><b>102:</b> Hour</li>
-         *     <li><b>103:</b> Day</li>
-         *     <li><b>104:</b> Month</li>
-         *     <li><b>105:</b> Year</li>
-         *     <li><b>106:</b> Week</li>
-         *
-         *     <li><b>200:</b> Milligram</li>
-         *     <li><b>201:</b> Gram</li>
-         *     <li><b>202:</b> Kilogram</li>
-         *     <li><b>203:</b> Ton</li>
-         *
-         *     <li><b>300:</b> Meter</li>
-         *     <li><b>301:</b> Kilometer</li>
-         *
-         *     <li><b>400:</b> Liter</li>
-         *     <li><b>401:</b> Milliliter</li>
-         *     </ul>
-         *     If your required UOM is not in the list please send email to info@scrada.be
-         * @enum {integer}
-         */
-        "v1.CompanyInvoiceLineUomType": 1 | 2 | 3 | 4 | 5 | 100 | 101 | 102 | 103 | 104 | 105 | 106 | 200 | 201 | 202 | 203 | 300 | 301 | 400 | 401;
-        /**
-         * Format: int32
-         * @description The VAT type. Default is standard rate (1).<ul>
-         *     <li><b>1:</b> Standard rate (If line is 0% VAT then Zero rate must be used. Standard rate cannot be used even if it is the standard rate for this product/service) (Belgium: VAT Box 01, 02 or 03)</li>
-         *     <li><b>2:</b> Zero rate (Belgium: VAT Box 00)</li>
-         *     <li><b>3:</b> Exempt from tax (Diversen na BTW/Divers hors TVA) (Belgium: Not on VAT Declaration)</li>
-         *     <li><b>4:</b> ICD Services B2B (ICL B2B Diensten/LIC Services B2B) (Belgium: VAT Box 44)</li>
-         *     <li><b>5:</b> ICD Goods (ICL Goederen/LIC Marchandises) (Belgium: VAT Box 46)</li>
-         *     <li><b>6:</b> ICD Manufacturing cost (ICL Maakloon/LICTravail à façon) (Belgium: VAT Box 47)</li>
-         *     <li><b>7:</b> ICD Assembly (ICL Montage/LIC Montage) (Belgium: VAT Box 47)</li>
-         *     <li><b>8:</b> ICD Distance (ICL Afstand/LIC Distance) (Belgium: VAT Box 47)</li>
-         *     <li><b>9:</b> ICD Services (ICL Diensten/LIC Services) (Belgium: VAT Box 47)</li>
-         *     <li><b>10:</b> ICD Triangle a-B-c (ICL Driehoek a-B-c/LIC Triangle a-B-c) (Belgium: VAT Box 46)</li>
-         *
-         *     <li><b>20:</b> Export non E.U. (Export niet E.G./Export non C.E.) (Belgium: VAT Box 47)</li>
-         *     <li><b>21:</b> Indirect export (Onrechtstreekse uitvoer/Export indirect) (Belgium: VAT Box 47)</li>
-         *     <li><b>22:</b> Export via E.U. (Export via E.G./Export via C.E.) (Belgium: VAT Box 47)</li>
-         *
-         *     <li><b>50:</b> Reverse charge (Medecontractant/Cocontractant) (Belgium: VAT Box 45)</li>
-         *     <li><b>51:</b> Financial discount (Belgium: Not on VAT Declaration)</li>
-         *     <li><b>52:</b> 0% Clause 44 (Artikel 44/Article 44) (Belgium: VAT Box 00)</li>
-         *     <li><b>53:</b> Standard exchange (Standaardruil/Echange standard) (Belgium: VAT Box 03)</li>
-         *     <li><b>54:</b> Margin (Marge/Marge)<li>
-         *
-         *     <li><b>70:</b> OSS Goods</li>
-         *     <li><b>71:</b> OSS Services</li>
-         *     <li><b>72:</b> OSS Import</li>
-         *     </ul>
-         * @enum {integer}
-         */
-        "v1.CompanyInvoiceLineVatType": 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 20 | 21 | 22 | 50 | 51 | 52 | 53 | 54 | 70 | 71 | 72;
-        /**
-         * Format: int32
-         * @description The payment method type.<ul>
-         *     <li><b>1:</b> Undefined payment method (Unknown)</li>
-         *     <li><b>2:</b> Wire transfer (Overschrijving)</li>
-         *     <li><b>3:</b> Bank card (iDeal)</li>
-         *     <li><b>4:</b> Direct debit (Domiciliëring, automatische incasso)</li>
-         *     <li><b>5:</b> Cash</li>
-         *     <li><b>6:</b> Credit card</li>
-         *     <li><b>7:</b> Online payment provider (Mollie, Stripe)</li>
-         *     <li><b>8:</b> Cheque</li>
-         *     <li><b>9:</b> Debit card (Bancontact)</li>
-         *     </ul>
-         *     If your required payment method is not in the list please send email to info@scrada.be.
-         * @enum {integer}
-         */
-        "v1.CompanyInvoicePaymentMethodType": 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
-        /**
-         * Format: int32
-         * @description The tax number typed used to identify the party.<ul>
-         *     <li><b>1:</b> Numero d'entreprise / ondernemingsnummer / Unternehmensnummer / Enterprise number (Belgium)</li>
-         *     <li><b>2:</b> Kamer van koophandel nummer (the Netherlands)</li>
-         *     <li><b>3:</b> SIRENE (France)</li>
-         *     </ul>
-         * @enum {integer}
-         */
-        "v1.CompanyInvoiceTaxNumberType": 1 | 2 | 3;
-        /**
-         * Format: int32
-         * @description The invoice type.<ul>
-         *     <li><b>1:</b> Sales invoice</li>
-         *     <li><b>2:</b> Purchase invoice*</li>
-         *     * Under development. Contact info@scrada.be for more information.
-         *     </ul>
-         * @enum {integer}
-         */
-        "v1.CompanyInvoiceType": 1;
-        /** @description VAT period */
-        "v1.CompanyVatPeriod": {
-            /**
-             * Format: uuid
-             * @description The VAT period ID.
-             */
-            readonly id?: string | null;
-            /**
-             * Format: date-time
-             * @description The starting date of the VAT period.
-             */
-            fromDate?: string | null;
-            /**
-             * Format: date-time
-             * @description The end date of the VAT period.
-             */
-            readonly tillDate?: string | null;
-            vatPeriodType: components["schemas"]["v1.CompanyVatPeriodType"];
-        };
-        /**
-         * Format: int32
-         * @description The VAT type.<ul>
-         *     <li><b>0:</b> No VAT obligation</li>
-         *     <li><b>1:</b> Monty</li>
-         *     <li><b>3:</b> Quarterly</li>
-         *     <li><b>12:</b> Yearly</li>
-         *     </ul>
-         * @enum {integer}
-         */
-        "v1.CompanyVatPeriodType": 0 | 1 | 3 | 12;
-        /**
-         * Format: int32
-         * @description The VAT status of the company.<ul>
-         *     <li><b>1:</b> Subject to VAT</li>
-         *     <li><b>2:</b> Not subject to VAT</li>
-         *     <li><b>3:</b> Small business VAT exemption</li>
-         *     </ul>
-         * @enum {integer}
-         */
-        "v1.CompanyVatStatus": 1 | 2 | 3;
-        /** Extra party identifier information */
-        "v1.ExtraIdentifier": {
-            /** @description The additional identifier value. Example: ITAA accounting number, farmer number. */
-            identifier: string;
-        };
-        /** Invoice attachment */
-        "v1.InvoiceAttachment": {
-            /** @description The document file name including file extension. */
-            filename: string;
-            fileType: components["schemas"]["v1.InvoiceAttachmentFileType"];
-            /**
-             * @description The document mime type. The following mime types are supported:<ul>
-             *     <li>text/csv</li>
-             *     <li>application/pdf</li>
-             *     <li>image/png</li>
-             *     <li>image/jpeg</li>
-             *     <li>application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</li>
-             *     <li>application/vnd.oasis.opendocument.spreadsheet</li>
-             *     </ul>
-             */
-            mimeType: string;
-            /** @description The document with Base64 encoding. */
-            base64Data: string;
-            /** @description The document comment. */
-            note?: string | null;
-        };
-        /**
-         * Format: int32
-         * @description The attachment file type. Default is `99`.<ul>
-         *     <li><b>1:</b> Invoice or credit note (The main invoice document, there can only be 1 attachment of this type)</li>
-         *     <li><b>2:</b> Terms and conditions</li>
-         *     <li><b>3:</b> Timesheet</li>
-         *     <li><b>99:</b> Other</li>
-         *     </ul>
-         * @enum {integer}
-         */
-        "v1.InvoiceAttachmentFileType": 1 | 2 | 3 | 99;
-        /** Invoice line */
-        "v1.InvoiceLine": {
-            /**
-             * Format: uuid
-             * @description The invoice line ID.
-             */
-            readonly id?: string | null;
-            /** @description The line number, must be unique for each line. */
-            lineNumber: string;
-            /** @description The item code. */
-            itemCode?: string | null;
-            /** @description The accounting general ledger number. Must be empty or fully numeric. */
-            accountingGeneralLedger?: string | null;
-            /** @description The accounting analytical 1. Function depends on the accounting system. */
-            accountingAnalytical1?: string | null;
-            /** @description The accounting analytical 2. Function depends on the accounting system. */
-            accountingAnalytical2?: string | null;
-            /** @description The accounting analytical 3. Function depends on the accounting system. */
-            accountingAnalytical3?: string | null;
-            /** @description The accounting analytical 4. Function depends on the accounting system. */
-            accountingAnalytical4?: string | null;
-            /** @description The accounting analytical 5. Function depends on the accounting system. */
-            accountingAnalytical5?: string | null;
-            /** @description The item name or line description. */
-            itemName: string;
-            /** @description The item group name. */
-            itemGroup?: string | null;
-            /** @description The shipping country of origin according to ISO 3166-1 alpha 2. */
-            itemOriginCountryCode?: string | null;
-            /**
-             * Format: double
-             * @description The quantity of items. Default value is 0. Max precision is 4.
-             */
-            quantity?: number | null;
-            unitType?: components["schemas"]["v1.CompanyInvoiceLineUomType"];
-            /**
-             * Format: double
-             * @description The item price excluding VAT. Default is 0. Max precision is 4.
-             */
-            itemExclVat?: number | null;
-            vatType?: components["schemas"]["v1.CompanyInvoiceLineVatType"];
-            /**
-             * Format: double
-             * @description The VAT percentage. Can be 0% for VAT excluded items. Default is 0. Max precision is 2.
-             */
-            vatPerc?: number | null;
-            /**
-             * Format: double
-             * @description The total discount for the entire line (not per product) excluding VAT. Default is 0. Max precision is 2.
-             */
-            totalDiscountExclVat?: number | null;
-            /**
-             * Format: double
-             * @description The total line price excluding VAT. Default is 0. Max precision is 2
-             */
-            totalExclVat?: number | null;
-            /**
-             * Format: double
-             * @description The total VAT of this line. Default is 0. Max precision is 2
-             */
-            totalVat?: number | null;
-        };
-        /** Invoice payment method */
-        "v1.InvoicePaymentMethod": {
-            /**
-             * Format: uuid
-             * @description The invoice payment method ID.
-             */
-            readonly id?: string | null;
-            paymentType: components["schemas"]["v1.CompanyInvoicePaymentMethodType"];
-            /** @description The payment reference. <b>If multiple payment methods are used, they must share the same 'paymentReference'.</b> */
-            paymentReference?: string | null;
-            /** @description The payment method name. */
-            name: string | null;
-            /** @description The IBAN account. Used and required for payment type wire transfer. */
-            iban?: string | null;
-            /** @description The IBAN account. Used for payment type wire transfer. */
-            bic?: string | null;
-            /** @description The SEPA mandate identifier. Used and required for payment type direct debit. */
-            sepaMandateID?: string | null;
-            /** @description The SEPA IBAN that will be debited by the direct debit. Used and required for payment type direct debit. */
-            sepaIban?: string | null;
-            /**
-             * Format: double
-             * @description The total amount already paid with this payment method.
-             *     <i>Payments are not added to the journal or cash book.</i> Default value is 0. Max precision is 2.
-             */
-            totalPaid?: number | null;
-            /**
-             * Format: double
-             * @description The total amount to get paid with this payment method. Default value is 0. Max precision is 2.
-             */
-            totalToPay?: number | null;
-        };
-        /**
-         * Invoice
-         * @description If a property is set null or a property is missing then we assume that this property must keep its original value.<br/>The currency of the invoice is always EUR.
-         */
-        "v1.InvoiceWithDocument": {
-            /**
-             * Format: uuid
-             * @description The invoice ID.
-             */
-            readonly id?: string | null;
-            /** @description The book year in which the invoice is created. Scrada will check that the following combination is unique: `BookYear`, `Journal`, `Number` and `Type`. This field cannot be 'NULL'. */
-            bookYear: string;
-            /** @description The journal name or code. This field cannot be 'NULL'. */
-            journal: string;
-            /** @description The invoice number. */
-            number: string;
-            type?: components["schemas"]["v1.CompanyInvoiceType"];
-            /** @description The invoice is a credit invoice. Default value is false */
-            creditInvoice?: boolean | null;
-            /**
-             * Format: date
-             * @description The invoice date.
-             */
-            invoiceDate: string;
-            /**
-             * Format: date
-             * @description The invoice expiry date.
-             */
-            invoiceExpiryDate: string;
-            /** @description Indicator if the invoice is already send to the customer. If not (by default) Scrada can send the invoice. */
-            alreadySendToCustomer?: boolean | null;
-            /** @description The buyers reference. */
-            buyerReference?: string | null;
-            /** @description The purchase order reference. */
-            purchaseOrderReference?: string | null;
-            /** @description The sales order reference. */
-            salesOrderReference?: string | null;
-            /** @description The party identification code. */
-            partyCode?: string | null;
-            /** @description The party identification code in the accounting system. This code is used as reference key to this party. */
-            partyAccountingCode?: string | null;
-            /** @description The party language code according to ISO 639-1. */
-            partyLanguageCode?: string | null;
-            /** @description The party name. */
-            partyName: string;
-            /** @description The party street. */
-            partyStreet?: string | null;
-            /** @description The party street number. */
-            partyStreetNumber?: string | null;
-            /** @description The party street postbox. */
-            partyStreetBox?: string | null;
-            /** @description The party city. */
-            partyCity?: string | null;
-            /** @description The party ZIP code. */
-            partyZipCode?: string | null;
-            /** @description The party country code according to ISO 3166-1 alpha 2. */
-            partyCountryCode?: string | null;
-            /** @description The party phone number. */
-            partyPhone?: string | null;
-            /** @description The party email address. */
-            partyEmail?: string | null;
-            /** @description The party invoice email address. */
-            partyInvoiceEmail?: string | null;
-            /** @description The party contact name. */
-            partyContact?: string | null;
-            partyTaxNumberType?: components["schemas"]["v1.CompanyInvoiceTaxNumberType"];
-            /** @description The party tax number according to the type `PartyTaxNumberType`. */
-            partyTaxNumber?: string | null;
-            /** @description The party VAT number. This must be a valid VAT number! */
-            partyVatNumber?: string | null;
-            /** @description The party GLN number. This must be a valid GLN number! */
-            partyGlnNumber?: string | null;
-            /** @description The invoice UBL with UTF-8 encoding. */
-            readonly invoiceUbl?: string | null;
-            /**
-             * Format: double
-             * @description The total invoice amount including VAT. Default value is 0. Max precision is 2.
-             */
-            totalInclVat?: number | null;
-            /**
-             * Format: double
-             * @description The total invoice VAT amount. Default value is 0. Max precision is 2.
-             */
-            totalVat?: number | null;
-            /**
-             * Format: double
-             * @description The total invoice amount excluding VAT. Default value is 0. Max precision is 2.
-             */
-            totalExclVat?: number | null;
-            /**
-             * Format: double
-             * @description The payable rounding amount. The amount to be added to the invoice total to round the amount to be paid. Max precision is 2.
-             */
-            payableRoundingAmount?: number | null;
-            /** @description The invoice comment. */
-            comment?: string | null;
-            lines?: components["schemas"]["v1.InvoiceLine"][] | null;
-            paymentMethods?: components["schemas"]["v1.InvoicePaymentMethod"][] | null;
-            /** @description The invoice document file name including file extension. */
-            filename?: string | null;
-            /**
-             * @description The invoice document mime type. The following mime types are supported:<ul>
-             *     <li>text/csv</li>
-             *     <li>application/pdf</li>
-             *     <li>image/png</li>
-             *     <li>image/jpeg</li>
-             *     <li>application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</li>
-             *     <li>application/vnd.oasis.opendocument.spreadsheet</li>
-             *     </ul>
-             */
-            mimeType?: string | null;
-            /** @description The invoice document with Base64 encoding. */
-            base64Data?: string | null;
-        };
-        /**
-         * Journal
-         * @description If a property is set null or a property is missing then the system assumes that this property must keep its original value. Only in case of property endDate, if this property is missing or has has value null, the system assumes that it has value null.
-         */
-        "v1.Journal": {
-            /**
-             * Format: uuid
-             * @description The journal ID.
-             */
-            readonly id?: string | null;
-            /** @description Show the journal in the dashboard. */
-            active?: boolean | null;
-            /** @description The journal name. */
-            name: string | null;
-            /**
-             * Format: date-time
-             * @description The start date. If new book and not specified then today is used as start date.
-             */
-            startDate?: string | null;
-            /**
-             * Format: date-time
-             * @description The closing date.
-             */
-            endDate?: string | null;
-            /**
-             * Format: date-time
-             * @description The last entry date.
-             */
-            readonly lastLineDate?: string | null;
-            /**
-             * Format: uuid
-             * @description The last entry line ID.
-             */
-            readonly lastLineID?: string | null;
-            invoiceGenerationPeriodType?: components["schemas"]["v1.JournalInvoicePeriodType"];
-            invoiceGenerationStartWeekDay?: components["schemas"]["v1.JournalInvoiceDayOfWeek"];
-            /** @description The journal invoice customer name. */
-            customerName?: string | null;
-            /** @description The journal invoice customer reference. */
-            customerReference?: string | null;
-            /**
-             * @description The journal invoice number format.<br/>
-             *     Own invoice number can contain automatically filled in values like {VATYear}, {VATPeriod}, {InvoiceNumber}, {DateDay}, {DateMonth}, {DateYear} or {DateShortYear} (more info can be found in the FAQ on the website of Scrada). If you want that a value has minimum length then you can use the value format {<valueName>:<length>:<filling char>}. The default filling char 0 is used. Samples are '{VATYear}{VATPeriod:2}' or 'V1/{InvoiceNumber:8}'.
-             */
-            invoiceNumberExternalFormat?: string | null;
-            /**
-             * @description Reset the journal invoice number on a specified day.<br/>
-             *     Format of values is <day>/<month>. Sample 1/5 if reset on the first of May.
-             */
-            invoiceNumberExternalReset?: string | null;
-            /** @description Business is opened on Monday. Default value is true. */
-            openOnMonday?: boolean | null;
-            /** @description Business is opened on Tuesday. Default value is true. */
-            openOnTuesday?: boolean | null;
-            /** @description Business is opened on Wednesday. Default value is true. */
-            openOnWednesday?: boolean | null;
-            /** @description Business is opened on Thursday. Default value is true. */
-            openOnThursday?: boolean | null;
-            /** @description Business is opened on Friday. Default value is true. */
-            openOnFriday?: boolean | null;
-            /** @description Business is opened on Saturday. Default value is true. */
-            openOnSaturday?: boolean | null;
-            /** @description Business is opened on Sunday. Default value is true. */
-            openOnSunday?: boolean | null;
-            /**
-             * Format: uuid
-             * @description The journal linked to a cash book ID.
-             */
-            readonly cashbookID?: string | null;
-            /**
-             * Format: int32
-             * @description Send an email after this number of days no lines entered.
-             */
-            emailNoLinesDays?: number | null;
-            /** @description Allow multiple entries on a single day in the daily receipts book. This doesn't include correction entries. */
-            allowMultipleEntries?: boolean | null;
-            /** @description If value is true then the payment providers (like payconiq, ... ) are filled in automatically when adding manual lines. Default value true. */
-            autoLoadPaymentProvider?: boolean | null;
-            addFiguresUser?: components["schemas"]["v1.JournalAllowAddFiguresUserType"];
-            addFiguresApi?: components["schemas"]["v1.JournalAllowAddFiguresApiType"];
-            /**
-             * Format: date-time
-             * @description Scrada invoice send till this date.
-             */
-            readonly invoicedTill?: string | null;
-            /**
-             * Format: date-time
-             * @description Scrada invoice paid till this date.
-             */
-            readonly paidTill?: string | null;
-            /**
-             * Format: date-time
-             * @description Earliest possible date for creating a regular daily receipts entry.
-             */
-            readonly minimumPossibleLineDate?: string | null;
-            /**
-             * Format: date-time
-             * @description Latest possible date for creating a regular daily receipts entry.
-             */
-            readonly maximumPossibleLineDate?: string | null;
-        };
-        /**
-         * Format: int32
-         * @description Allow API users to add entries to the journal.<ul>
-         *     <li><b>1:</b> Block</li>
-         *     <li><b>2:</b> Directly add figures</li>
-         *     <li><b>3:</b> Directly add daily receipts figures and add payment methods as proposal</li>
-         *     <li><b>4:</b> Add as proposal (requires confirmation by user)</li>
-         *     <li><b>5:</b> Add as proposal and update with payment provider info</li>
-         *     </ul>
-         * @enum {integer}
-         */
-        "v1.JournalAllowAddFiguresApiType": 1 | 2 | 3 | 4 | 5;
-        /**
-         * Format: int32
-         * @description Allow users to add entries to the journal.<ul>
-         *     <li><b>1:</b> Block</li>
-         *     <li><b>2:</b> Directly add figures</li>
-         *     </ul>
-         * @enum {integer}
-         */
-        "v1.JournalAllowAddFiguresUserType": 1 | 2;
-        /**
-         * Format: int32
-         * @description Day of the week to generate journal invoice. Only applicable when 'journalInvoicePeriodType' is set to `2`(EveryWeek).
-         *     <ul>
-         *     <li><b>0:</b> Sunday</li>
-         *     <li><b>1:</b> Monday</li>
-         *     <li><b>2:</b> Tuesday</li>
-         *     <li><b>3:</b> Wednesday</li>
-         *     <li><b>4:</b> Thursday</li>
-         *     <li><b>5:</b> Friday</li>
-         *     <li><b>6:</b> Saturday</li>
-         *     </ul>
-         * @enum {integer}
-         */
-        "v1.JournalInvoiceDayOfWeek": 0 | 1 | 2 | 3 | 4 | 5 | 6;
-        /**
-         * Format: int32
-         * @description The invoice generation period.<ul>
-         *     <li><b>1:</b> Every day</li>
-         *     <li><b>2:</b> Every week</li>
-         *     <li><b>3:</b> Every month</li>
-         *     </ul>
-         * @enum {integer}
-         */
-        "v1.JournalInvoicePeriodType": 1 | 2 | 3;
-        /**
-         * Format: int32
-         * @description Transaction type of this line.<ul>
-         *     <li><b>1:</b> Divers</li>
-         *     <li><b>3:</b> Correction</li>
-         *     </ul>
-         *     <i>Do not combine divers and correction in the same Post/ Put action.</i><br/>
-         *     For type correction: All line remarks should be identical.
-         * @enum {integer}
-         */
-        "v1.JournalLineType": 1 | 3;
-        /**
-         * Payment method
-         * @description If a property is set null or a property is missing then we assume that this property must keep its original value.
-         */
-        "v1.JournalPaymentMethod": {
-            /**
-             * Format: uuid
-             * @description The payment method ID.
-             */
-            readonly id?: string | null;
-            /** @description The Dutch payment method name. */
-            nameNL: string | null;
-            /** @description The English payment method name. */
-            nameEN: string | null;
-            /** @description The French payment method name. */
-            nameFR: string | null;
-            /** @description The German payment method name. */
-            nameDE: string | null;
-            /** @description Mark the payment method as cash payment. Cash payments will get added to the linked cashbook. */
-            isCash?: boolean | null;
-            /**
-             * Format: int32
-             * @description The sorting position. Lowest is shown first.
-             */
-            position?: number | null;
-            /** @description Sets whether this payment method gets calculated in the GUI. */
-            isCalculated?: boolean | null;
-            /** @description Indicator for the default payment method. */
-            isDefault?: boolean | null;
-            inputEntry?: components["schemas"]["v1.JournalPaymentMethodInputType"];
-            inputCorrection?: components["schemas"]["v1.JournalPaymentMethodInputType"];
-            commentType?: components["schemas"]["v1.JournalPaymentMethodCommentType"];
-            /** @description Whether to allow multiple instances of this payment method in a singe daily receipt transaction. Default `false`, cannot be used in combination with a payment provider integration. */
-            allowMultiple?: boolean | null;
-        };
-        /**
-         * Format: int32
-         * @description The comment visibility.<ul>
-         *     <li><b>1:</b> Not visible</li>
-         *     <li><b>2:</b> Optional</li>
-         *     <li><b>3:</b> Required</li>
-         *     </ul>
-         * @enum {integer}
-         */
-        "v1.JournalPaymentMethodCommentType": 1 | 2 | 3;
-        /**
-         * Format: int32
-         * @description The input visibility.<ul>
-         *     <li><b>1:</b> Not visible</li>
-         *     <li><b>2:</b> Always visible</li>
-         *     <li><b>3:</b> Only positive</li>
-         *     <li><b>4:</b> Only negative</li>
-         *     <li><b>5:</b> Warning on positive</li>
-         *     <li><b>6:</b> Warning on negative</li>
-         *     <li><b>7:</b> Always warning</li>
-         *     </ul>
-         * @enum {integer}
-         */
-        "v1.JournalPaymentMethodInputType": 1 | 2 | 3 | 4 | 5 | 6 | 7;
-        /**
-         * VAT category
-         * @description If a property is set null or a property is missing then we assume that this property must keep its original value.
-         */
-        "v1.JournalVatCategory": {
-            /**
-             * Format: uuid
-             * @description The VAT category ID.
-             */
-            readonly id?: string | null;
-            /** @description The Dutch VAT category name. */
-            nameNL: string | null;
-            /** @description The English VAT category name. */
-            nameEN: string | null;
-            /** @description The French VAT category name. */
-            nameFR: string | null;
-            /** @description The German VAT category name. */
-            nameDE: string | null;
-            /**
-             * Format: uuid
-             * @description VAT type ID of the category.<br/>
-             *     <strong>Belgium:</strong><ul>
-             *     <li><b>cbff0b5e-96e3-4201-91d0-51304cee2605:</b> 00 (0%) VAT</li>
-             *     <li><b>7befe0fc-7131-4b15-9fe6-ca4b9280b63c:</b> 01 (6%) VAT</li>
-             *     <li><b>647ed17b-fb6f-4772-baf5-928de98f4db1:</b> 02 (12%) VAT</li>
-             *     <li><b>8424d909-78b9-483c-9b1d-4584fb537846:</b> 03 (21%) VAT</li>
-             *     <li><b>cc9b638f-3b54-44c8-91e5-83d337ae6591:</b> NA</li>
-             *     </ul>
-             *     <strong>The Netherlands:</strong><ul>
-             *     <li><b>fb145f3f-c866-4322-9169-8d8219d40e8a:</b> 00 (0%) VAT</li>
-             *     <li><b>3aa951e7-f307-4902-b315-b764eb81d211:</b> 02 (9%) VAT</li>
-             *     <li><b>aeb8b26c-00b1-4c6a-9cf2-bc1c71d89196:</b> 03 (21%) VAT</li>
-             *     <li><b>a29f353e-5549-460a-97cb-70a607b28581:</b> NA</li>
-             *     </ul>
-             *     <strong>Luxembourg:</strong><ul>
-             *     <li><b>1693aca4-a715-4543-be5d-64f0210f0078:</b> 00 (0%) VAT</li>
-             *     <li><b>03120fb9-18ea-43a1-9119-1af511895e28:</b> 01 (3%) VAT</li>
-             *     <li><b>3f3556ee-6afb-43d1-9545-d309087ac461:</b> 02 (8%) VAT</li>
-             *     <li><b>d5b9db32-49d7-4929-9e60-dec7b00c2e2f:</b> 03 (14%) VAT</li>
-             *     <li><b>e701b521-2ff0-4176-9533-3e297d52809e:</b> 04 (17%) VAT</li>
-             *     <li><b>ea73a071-18dd-4964-8fd7-fe58ff782c2c:</b> NA</li>
-             *     </ul>
-             */
-            vatTypeID?: string | null;
-            /**
-             * Format: int32
-             * @description The sorting position. Lowest is shown first.
-             */
-            position?: number | null;
-            inputEntry?: components["schemas"]["v1.JournalVatCategoryInputType"];
-            inputCorrection?: components["schemas"]["v1.JournalVatCategoryInputType"];
-            commentType?: components["schemas"]["v1.JournalVatCategoryCommentType"];
-            /** @description The accounting general ledger number. Must be empty or fully numeric. */
-            accountingGeneralLedger?: string | null;
-            /** @description The accounting analytical 1. Function depends on the accounting system. */
-            accountingAnalytical1?: string | null;
-            /** @description The accounting analytical 2. Function depends on the accounting system. */
-            accountingAnalytical2?: string | null;
-            /** @description The accounting analytical 3. Function depends on the accounting system. */
-            accountingAnalytical3?: string | null;
-            /** @description The accounting analytical 4. Function depends on the accounting system. */
-            accountingAnalytical4?: string | null;
-            /** @description The accounting analytical 5. Function depends on the accounting system. */
-            accountingAnalytical5?: string | null;
-        };
-        /**
-         * Format: int32
-         * @description The comment visibility.<ul>
-         *     <li><b>1:</b> Not visible</li>
-         *     <li><b>2:</b> Optional</li>
-         *     <li><b>3:</b> Required</li>
-         *     </ul>
-         * @enum {integer}
-         */
-        "v1.JournalVatCategoryCommentType": 1 | 2 | 3;
-        /**
-         * Format: int32
-         * @description The input visibility.<ul>
-         *     <li><b>1:</b> Not visible</li>
-         *     <li><b>2:</b> Always visible</li>
-         *     <li><b>3:</b> Only positive</li>
-         *     <li><b>4:</b> Only negative</li>
-         *     <li><b>5:</b> Warning on positive</li>
-         *     <li><b>6:</b> Warning on negative</li>
-         *     <li><b>7:</b> Always warning</li>
-         *     </ul>
-         * @enum {integer}
-         */
-        "v1.JournalVatCategoryInputType": 1 | 2 | 3 | 4 | 5 | 6 | 7;
-        /** Peppol inbound document */
-        "v1.PeppolInboundDocument": {
-            /**
-             * Format: uuid
-             * @description The document ID.
-             */
-            id?: string | null;
-            /**
-             * Format: int32
-             * @description The internal number.
-             */
-            internalNumber?: number;
-            /** @description The Peppol sender scheme. */
-            peppolSenderScheme?: string | null;
-            /** @description The Peppol sender ID. */
-            peppolSenderID?: string | null;
-            /** @description The Peppol receiver scheme. */
-            peppolReceiverScheme?: string | null;
-            /** @description The Peppol receiver ID. */
-            peppolReceiverID?: string | null;
-            /** @description The Peppol C1 country code. The country code where the sending party is registered. */
-            peppolC1CountryCode?: string | null;
-            /**
-             * Format: date-time
-             * @description The Peppol C2 timestamp. The moment the access point of the sending party tried to send the document over Peppol.
-             */
-            peppolC2Timestamp?: string | null;
-            /** @description The Peppol C2 seat ID. The ID of the sending access point. */
-            peppolC2SeatID?: string | null;
-            /** @description The Peppol C2 message ID. The ID the sending access point has given to the message sent over Peppol */
-            peppolC2MessageID?: string | null;
-            /**
-             * Format: uuid
-             * @description The Peppol C3 incoming unique ID. The internal ID the receiving access point (Scrada) has given to the received message.
-             */
-            peppolC3IncomingUniqueID?: string | null;
-            /** @description The Peppol C3 message ID. The ID the receiving access point (Scrada) has given to the received message and has confirmed to the sending access point as message ID. */
-            peppolC3MessageID?: string | null;
-            /**
-             * Format: date-time
-             * @description The Peppol C3 timestamp. The moment the message was received by the receiving access point (Scrada).
-             */
-            peppolC3Timestamp?: string | null;
-            /** @description The Peppol conversation ID. The ID of the receiving access point (Scrada) */
-            peppolConversationID?: string | null;
-            /** @description The Peppol SBDH instance ID. */
-            peppolSbdhInstanceID?: string | null;
-            /** @description The Peppol process scheme. */
-            peppolProcessScheme?: string | null;
-            /** @description The Peppol process value. */
-            peppolProcessValue?: string | null;
-            /** @description The Peppol document type scheme. */
-            peppolDocumentTypeScheme?: string | null;
-            /** @description The Peppol document type value. */
-            peppolDocumentTypeValue?: string | null;
-        };
-        /** Invoice */
-        "v1.PeppolOnlyInvoice": {
-            /**
-             * Format: uuid
-             * @description The internal ID of the invoice in Scrada.
-             */
-            readonly id?: string | null;
-            /** @description The invoice number. */
-            number: string;
-            /** @description The reference you give to the invoice. This is not required. This is not used for Peppol but is used in the portal of Scrada and in the webhooks. */
-            externalReference?: string | null;
-            /** @description The invoice is a credit invoice. Default value is false. */
-            creditInvoice?: boolean | null;
-            /** @description The invoice is including VAT. Default value is false. */
-            isInclVat?: boolean | null;
-            /** @description The invoice or credit note to which this document refers. This is not required. For example, in the case of a credit note, this is the invoice number credited by the credit note. */
-            invoiceReference?: string | null;
-            /**
-             * Format: date
-             * @description The invoice date.
-             */
-            invoiceDate: string;
-            /**
-             * Format: date
-             * @description The invoice expiry date.
-             */
-            invoiceExpiryDate?: string | null;
-            /** @description The buyer's reference. */
-            buyerReference?: string | null;
-            /** @description The purchase order reference. */
-            purchaseOrderReference?: string | null;
-            /** @description The sales order reference. */
-            salesOrderReference?: string | null;
-            supplier: components["schemas"]["v1.PeppolOnlyInvoiceParty"];
-            customer: components["schemas"]["v1.PeppolOnlyInvoiceParty"];
-            delivery?: components["schemas"]["v1.SalesInvoiceDelivery"];
-            /**
-             * Format: double
-             * @description The total invoice amount excluding VAT. Default value is 0. Max precision is 2.
-             */
-            totalExclVat: number;
-            /**
-             * Format: double
-             * @description The total invoice amount including VAT. Default value is 0. Max precision is 2.
-             */
-            totalInclVat: number;
-            /**
-             * Format: double
-             * @description The total invoice VAT amount. Default value is 0. Max precision is 2.
-             */
-            totalVat: number;
-            /** @description The currency of the invoice according to ISO 4217. Default value is EUR. */
-            currency?: string | null;
-            /**
-             * Format: double
-             * @description The payable rounding amount. The amount to be added to the invoice total to round the amount to be paid. Max precision is 2.
-             */
-            payableRoundingAmount?: number | null;
-            /** @description The invoice comment. */
-            note?: string | null;
-            /** @description The invoice lines. */
-            lines: components["schemas"]["v1.PeppolOnlyInvoiceLine"][];
-            /** @description The VAT totals. */
-            vatTotals: components["schemas"]["v1.SalesInvoiceVatTotal"][];
-            /** @description The payment terms for the invoice. Example: Net within 30 days. */
-            paymentTerms?: string | null;
-            /** @description The payment methods. */
-            paymentMethods?: components["schemas"]["v1.InvoicePaymentMethod"][];
-            /** @description The attachments related to the invoice. */
-            attachments?: components["schemas"]["v1.InvoiceAttachment"][] | null;
-        };
-        /** Invoice line */
-        "v1.PeppolOnlyInvoiceLine": {
-            /**
-             * Format: uuid
-             * @description The invoice line ID.
-             */
-            readonly id?: string | null;
-            /** @description The line number, must be unique for each line. */
-            lineNumber: string;
-            /** @description The seller's item code. */
-            itemCodeSeller?: string | null;
-            /** @description The buyer's item code. */
-            itemCodeBuyer?: string | null;
-            /** @description The item name or line description. */
-            itemName: string;
-            /** @description The shipping country of origin according to ISO 3166-1 alpha 2. */
-            itemOriginCountryCode?: string | null;
-            /**
-             * Format: double
-             * @description The quantity of items. Default value is 0. Max precision is 4.
-             */
-            quantity: number;
-            unitType?: components["schemas"]["v1.CompanyInvoiceLineUomType"];
-            /**
-             * Format: double
-             * @description The item price excluding VAT, required when `isInclVat` is set to false. Default is 0. Max precision is 4.
-             */
-            itemExclVat?: number | null;
-            /**
-             * Format: double
-             * @description The item price including VAT, required when `isInclVat` is set to true. Default is 0. Max precision is 4.
-             */
-            itemInclVat?: number | null;
-            vatType: components["schemas"]["v1.CompanyInvoiceLineVatType"];
-            /**
-             * Format: double
-             * @description The VAT percentage. Can be 0% for VAT excluded items. Default is 0. Max precision is 2.
-             */
-            vatPercentage: number;
-            /**
-             * Format: double
-             * @description The total discount for the entire line (not per product) excluding VAT, can be used when `isInclVat` is set to false. Default is 0. Max precision is 2.
-             */
-            totalDiscountExclVat?: number | null;
-            /**
-             * Format: double
-             * @description The total discount for the entire line (not per product) including VAT, can be used when `isInclVat` is set to true. Default is 0. Max precision is 2.
-             */
-            totalDiscountInclVat?: number | null;
-            /**
-             * Format: double
-             * @description The total line price excluding VAT, should be equal to (`quantity` * `itemExclVat`) - `totalDiscountExclVat`, required when `isInclVat` is set to false. Default is 0. Max precision is 2.
-             */
-            totalExclVat?: number | null;
-            /**
-             * Format: double
-             * @description The total line price excluding VAT, should be equal to (`quantity` * `itemInclVat`) - `totalDiscountInclVat`, required when `isInclVat` is set to true. Default is 0. Max precision is 2.
-             */
-            totalInclVat?: number | null;
-            /**
-             * Format: date
-             * @description The start date of the invoice line period.
-             */
-            invoicePeriodStartDate?: string | null;
-            /**
-             * Format: date
-             * @description The end date of the invoice line period.
-             */
-            invoicePeriodEndDate?: string | null;
-        };
-        /** Invoice party */
-        "v1.PeppolOnlyInvoiceParty": {
-            /** @description The Peppol ID of the party. Example: 0208:0793904121 */
-            peppolID?: string | null;
-            /** @description The party identification code. */
-            code?: string | null;
-            /** @description The party language code according to ISO 639-1. */
-            languageCode?: string | null;
-            /** @description The party name. */
-            name: string;
-            address: components["schemas"]["v1.Address"];
-            /** @description The party phone number. */
-            phone?: string | null;
-            /** @description The party email address. */
-            email?: string | null;
-            /** @description The party invoice email address. */
-            invoiceEmail?: string | null;
-            /** @description The party contact name. */
-            contact?: string | null;
-            vatStatus?: components["schemas"]["v1.CompanyVatStatus"];
-            taxNumberType?: components["schemas"]["v1.CompanyInvoiceTaxNumberType"];
-            /** @description The party tax number according to the `taxNumberType`. */
-            taxNumber?: string | null;
-            /** @description The legal person register details of the party, only applicable for the supplier party. Example: 'RPR Gent, Afdeling Oudenaarde'. */
-            legalPersonRegister?: string | null;
-            /** @description The party VAT number. This must be a valid VAT number! */
-            vatNumber?: string | null;
-            /** @description The party GLN number. This must be a valid GLN number! */
-            glnNumber?: string | null;
-            /** @description Extra identifiers for the party. */
-            extraIdentifiers?: components["schemas"]["v1.ExtraIdentifier"][] | null;
-        };
-        "v1.PeppolOutboundDocumentStatus": {
-            /** @description The document ID. */
-            id?: string | null;
-            /** @description The createdOn timestamp. */
-            createdOn?: string | null;
-            /** @description The external document reference. This is the extern reference that was set when sending the document to Scrada. */
-            externalReference?: string | null;
-            /** @description The Peppol sender ID. */
-            peppolSenderID?: string | null;
-            /** @description The Peppol receiver ID. */
-            peppolReceiverID?: string | null;
-            /** @description The Peppol C1 country code. The country code the sending party is registered. */
-            peppolC1CountryCode?: string | null;
-            /** @description The Peppol corner-2 timestamp. The time the sending access point (Scrada) has sent the document to the receiving access point. */
-            peppolC2Timestamp?: string | null;
-            /** @description The Peppol corner-2 seat ID. The ID of the sending access point (Scrada) */
-            peppolC2SeatID?: string | null;
-            /** @description The Peppol corner-2 message ID. The ID the sending access point (Scrada) has given to the message send over Peppol to the receiving access point. */
-            peppolC2MessageID?: string | null;
-            /** @description The Peppol corner-3 message ID. The ID the receiving access point has given to the received message. */
-            peppolC3MessageID?: string | null;
-            /** @description The Peppol corner-3 timestamp. The time the message is received by the receiving access point. */
-            peppolC3Timestamp?: string | null;
-            /** @description The Peppol corner-3 seat ID. The ID of the receiving access point. */
-            peppolC3SeatID?: string | null;
-            /** @description The Peppol conversation ID. */
-            peppolConversationID?: string | null;
-            /** @description The Peppol SBDH instance ID. */
-            peppolSbdhInstanceID?: string | null;
-            /** @description The Peppol document type scheme. */
-            peppolDocumentTypeScheme?: string | null;
-            /** @description The Peppol document type value. */
-            peppolDocumentTypeValue?: string | null;
-            /** @description The Peppol process scheme. */
-            peppolProcessScheme?: string | null;
-            /** @description The Peppol process value. */
-            peppolProcessValue?: string | null;
-            /** @description The sales invoice ID. This is only set if a JSON sales invoice is sent to Scrada. This is the internal ID of the sales invoice in Scrada. This is NULL if a Peppol document is sent to Scrada to be put on Peppol. */
-            salesInvoiceID?: string | null;
-            /**
-             * @description The document status. <br/>
-             *     Status values that are used in a Peppol Only subscription and Full subscription:
-             *     <ul>
-             *     <li><b>Created</b>: A new document is sent to Scrada to be uploaded to Peppol</li>
-             *     <li><b>Processed</b>: When a document is successful uploaded to Peppol</li>
-             *     <li><b>Retry</b>: When there is an issue uploading to Peppol because maybe the other access point is temporary down. Scrada will retry 10 times. In the property `ErrorMessage` you can find more information why Scrada does a retry.</li>
-             *     <li><b>Canceled</b>: When a document was canceled to be uploaded to Peppol. This can only be done using the GUI of Scrada. Nothing is done with the document. </li>
-             *     <li><b>Error</b>: There is an error sending to Peppol. Nothing is done with the document. Check error message for more details.</li>
-             *     <li><b>Error already sent</b>: This can happen if a document is sent by Scrada to an other access point and the other access point rejects the document or there was a timeout and then if Scrada retries to send the document, Scrada receives message from the other access pont that the document was already processed. Can also happen if document is sent again using the GUI of Scrada. Nothing is done with the document.</li>
-             *     <li><b>Error not on Peppol</b>: The receiverID is not registered on Peppol. Nothing is done with the document. </li>
-             *     </ul>
-             *     Status vales that are only used in case of a full subscription:
-             *     <ul>
-             *     <li><b>Processed - by email</b>: The document is sent successfully by email to the receiver.</li>
-             *     <li><b>Blocked - send by email</b>: A receiverID is in the blocked list for sending to Peppol in Scrada and an email of the receiver is provided. The document will be sent by email to the receiver.</li>
-             *     <li><b>Not on Peppol - send by email</b>: The receiverID is not registered on Peppol. The document will be sent by email to the receiver.</li>
-             *     <li><b>Error - send by email</b>: There was an error sending the document to Peppol. The document will be sent by email to the receiver.</li>
-             *     <li><b>Blocked</b>: A receiverID is in the blocked list for sending to Peppol in Scrada and no email of the receiver is provided. Nothing is done with the document.</li>
-             *     <li><b>Error email</b>: There was an error when sending the document by email to the receiver. Nothing is done with the document.</li>
-             *     </ul>
-             */
-            status?: string | null;
-            /**
-             * Format: int32
-             * @description The number of attempts done to send the document.
-             */
-            attempt?: number;
-            /** @description The error message. */
-            errorMessage?: string | null;
-        };
-        /** Peppol participant */
-        "v1.PeppolParticipant": {
-            participantIdentifier: components["schemas"]["v1.PeppolParticipantIdentifier"];
-            businessEntity?: components["schemas"]["v1.PeppolParticipantBusinessEntity"];
-            /** @description The accepted document types. */
-            documentTypes: components["schemas"]["v1.PeppolParticipantDocumentType"][] | null;
-        };
-        /** Business information */
-        "v1.PeppolParticipantBusinessEntity": {
-            /** @description The participant business name. */
-            name: string | null;
-            /** @description The participant language code according the ISO 639-1. */
-            languageCode: string | null;
-            /** @description The participant country code according the ISO 3166-1 alpha 2. */
-            countryCode: string | null;
-        };
-        /** The Peppol document type */
-        "v1.PeppolParticipantDocumentType": {
-            /** @description The document type scheme. Sample: busdox-docid-qns */
-            scheme: string | null;
-            /** @description The document type value. Document types can be found at https://docs.peppol.eu/edelivery/codelists/. Sample for a BIS 3 Invoice: urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1 */
-            value: string | null;
-            processIdentifier: components["schemas"]["v1.PeppolParticipantProcess"];
-        };
-        /** Peppol participant identifier */
-        "v1.PeppolParticipantIdentifier": {
-            /** @description The participant identifier scheme. Sample: iso6523-actorid-upis */
-            scheme: string | null;
-            /** @description The participant identifier exists of 2 parts separated by a colon. The first part is the type (See Participant Identifier Scheme at https://docs.peppol.eu/edelivery/codelists/) and the second part is the value. Sample: 0208:0793904121 . The type 0208 is the CBE number of Belgium and the type 9925 is a Belgium VAT number. */
-            id: string | null;
-        };
-        /** The Peppol process type */
-        "v1.PeppolParticipantProcess": {
-            /** @description The process type scheme. Sample: cenbii-procid-ubl */
-            scheme: string | null;
-            /** @description The process type value. Sample: urn:fdc:peppol.eu:2017:poacc:billing:01:1.0 */
-            value: string | null;
-            /** @description The access point endpoints. */
-            readonly endpoints?: components["schemas"]["v1.PeppolParticipantProcessEndpoint"][] | null;
-        };
-        "v1.PeppolParticipantProcessEndpoint": {
-            /** @description The endpoint URL. */
-            readonly referenceAddress?: string | null;
-            /** @description The technical contact information URL. */
-            readonly technicalContactUrl?: string | null;
-            /** @description The technical information URL. */
-            readonly technicalInformationUrl?: string | null;
-        };
-        /** Peppol participant registration */
-        "v1.PeppolParticipantRegistration": {
-            participantIdentifier: components["schemas"]["v1.PeppolParticipantIdentifier"];
-            businessEntity: components["schemas"]["v1.PeppolParticipantBusinessEntity"];
-            /** @description The accepted document types. */
-            documentTypes: components["schemas"]["v1.PeppolParticipantDocumentType"][] | null;
-            /** @description Optional migration key to transfer the Peppol registration from an other Peppol access point to Scrada Peppol access point. If you are already registered at an other Peppol access point and you want to register at Scrada, you have to deregister at the other access point or request a migration key from them. The advantage of a migration key is that you can always continue to receive documents. */
-            migrationKey?: string | null;
-        };
-        /** Peppol participant information */
-        "v1.PeppolSupportedParticipant": {
-            /** @description Indicates if the participant is registered on Peppol with any Peppol identifier. */
-            registered?: boolean;
-            /** @description Indicates if an invoice can be sent using the Scrada JSON API. */
-            supportInvoice?: boolean;
-            /** @description Indicates if a credit invoice can be sent using the Scrada JSON API. */
-            supportCreditInvoice?: boolean;
-            /** @description Indicates if a self-billing invoice can be sent using the Scrada JSON API. */
-            supportSelfBillingInvoice?: boolean;
-            /** @description Indicates if a self-billing credit invoice can be sent using the Scrada JSON API. */
-            supportSelfBillingCreditInvoice?: boolean;
-        };
-        /** Sales invoice */
-        "v1.SalesInvoice": {
-            /**
-             * Format: uuid
-             * @description The internal ID of the invoice in Scrada.
-             */
-            readonly id?: string | null;
-            /** @description The book year in which the invoice is created. This is required but can be an empty string. */
-            bookYear: string;
-            /** @description The journal name or code.  This is required but can be an empty string. */
-            journal: string;
-            /** @description The invoice number. Can contain alphanumeric characters. */
-            number: string;
-            /** @description The reference you give to the invoice. This is not required. This is not used for Peppol but is used in the portal of Scrada and in the webhooks. */
-            externalReference?: string | null;
-            /** @description The invoice is a credit invoice. Default value is false. */
-            creditInvoice?: boolean | null;
-            /** @description The invoice pricing is including VAT. Default value is false. When set to true the including VAT pricing on line level are required and excluding VAT pricing must remain 'null', vise versa when set to false. */
-            isInclVat?: boolean | null;
-            /** @description The invoice or credit note to which this document refers. This is not required. For example, in the case of a credit note, this is the invoice number credited by the credit note. */
-            invoiceReference?: string | null;
-            /**
-             * Format: date
-             * @description The invoice date.
-             */
-            invoiceDate: string;
-            /**
-             * Format: date
-             * @description The invoice expiry date.
-             */
-            invoiceExpiryDate?: string | null;
-            /** @description Indicator if the invoice is already sent to the customer. If not (by default) Scrada can send the invoice based on settings in the company. */
-            alreadySendToCustomer?: boolean | null;
-            /** @description The buyer's reference. */
-            buyerReference?: string | null;
-            /** @description The purchase order reference. */
-            purchaseOrderReference?: string | null;
-            /** @description The sales order reference. */
-            salesOrderReference?: string | null;
-            customer: components["schemas"]["v1.SalesInvoiceCustomer"];
-            delivery?: components["schemas"]["v1.SalesInvoiceDelivery"];
-            /**
-             * Format: double
-             * @description The total invoice amount excluding VAT. Default value is 0. Max precision is 2.
-             */
-            totalExclVat: number;
-            /**
-             * Format: double
-             * @description The total invoice amount including VAT. Default value is 0. Max precision is 2.
-             */
-            totalInclVat: number;
-            /**
-             * Format: double
-             * @description The total invoice VAT amount. Default value is 0. Max precision is 2.
-             */
-            totalVat: number;
-            /** @description The currency of the invoice according to ISO 4217. Default value is EUR. */
-            currency?: string | null;
-            /**
-             * Format: double
-             * @description The payable rounding amount. The amount to be added to the invoice total to round the amount to be paid. Max precision is 2.
-             */
-            payableRoundingAmount?: number | null;
-            /** @description The invoice comment. */
-            note?: string | null;
-            /** @description The invoice lines. */
-            lines: components["schemas"]["v1.SalesInvoiceLine"][];
-            /** @description The VAT totals. */
-            vatTotals: components["schemas"]["v1.SalesInvoiceVatTotal"][];
-            /** @description The payment terms for the invoice. Example: Net within 30 days. */
-            paymentTerms?: string | null;
-            /** @description The payment methods. */
-            paymentMethods?: components["schemas"]["v1.InvoicePaymentMethod"][];
-            /** @description The attachments related to the invoice. */
-            attachments?: components["schemas"]["v1.InvoiceAttachment"][] | null;
-        };
-        /** Sales invoice customer */
-        "v1.SalesInvoiceCustomer": {
-            /** @description The Peppol ID of the customer. If this is set then the invoice is sent to this ID on peppol if this ID is registered on Peppol and in Scrada it is configured to send invoice over Peppol. Example: 0208:0793904121 */
-            peppolID?: string | null;
-            /** @description The customer identification code. */
-            code?: string | null;
-            /** @description The customer identification code in the accounting system. This code is used as reference key to this party. */
-            accountingCode?: string | null;
-            /** @description The customer language code according to ISO 639-1. */
-            languageCode?: string | null;
-            /** @description The customer name. */
-            name: string;
-            address: components["schemas"]["v1.Address"];
-            /** @description The customer phone number. */
-            phone?: string | null;
-            /** @description The customer email address. */
-            email?: string | null;
-            /** @description The customer invoice email address. */
-            invoiceEmail?: string | null;
-            /** @description The customer contact name. */
-            contact?: string | null;
-            taxNumberType?: components["schemas"]["v1.CompanyInvoiceTaxNumberType"];
-            /** @description The customer tax number according to the `taxNumberType`. */
-            taxNumber?: string | null;
-            /** @description The customer VAT number. This must be a valid VAT number! */
-            vatNumber?: string | null;
-            /** @description The customer GLN number. This must be a valid GLN number! */
-            glnNumber?: string | null;
-            /** @description Extra identifiers for the customer. */
-            extraIdentifiers?: components["schemas"]["v1.ExtraIdentifier"][] | null;
-        };
-        /** Sales invoice delivery */
-        "v1.SalesInvoiceDelivery": {
-            /**
-             * Format: date
-             * @description The actual delivery date.
-             */
-            deliveryDate?: string | null;
-            address?: components["schemas"]["v1.Address"];
-        };
-        /** Sales invoice line */
-        "v1.SalesInvoiceLine": {
-            /**
-             * Format: uuid
-             * @description The invoice line ID.
-             */
-            readonly id?: string | null;
-            /** @description The line number, must be unique for each line. */
-            lineNumber: string;
-            /** @description The seller's item code. */
-            itemCodeSeller?: string | null;
-            /** @description The buyer's item code. */
-            itemCodeBuyer?: string | null;
-            /** @description The item name or line description. */
-            itemName: string;
-            /** @description The item group name. */
-            itemGroup?: string | null;
-            /** @description The shipping country of origin according to ISO 3166-1 alpha 2. */
-            itemOriginCountryCode?: string | null;
-            /** @description The accounting general ledger number. Must be empty or fully numeric. */
-            accountingGeneralLedger?: string | null;
-            /** @description The accounting analytical 1. Function depends on the accounting system. */
-            accountingAnalytical1?: string | null;
-            /** @description The accounting analytical 2. Function depends on the accounting system. */
-            accountingAnalytical2?: string | null;
-            /** @description The accounting analytical 3. Function depends on the accounting system. */
-            accountingAnalytical3?: string | null;
-            /** @description The accounting analytical 4. Function depends on the accounting system. */
-            accountingAnalytical4?: string | null;
-            /** @description The accounting analytical 5. Function depends on the accounting system. */
-            accountingAnalytical5?: string | null;
-            /**
-             * Format: double
-             * @description The quantity of items. Default value is 0. Max precision is 4.
-             */
-            quantity: number;
-            unitType?: components["schemas"]["v1.CompanyInvoiceLineUomType"];
-            /**
-             * Format: double
-             * @description The item price excluding VAT, required when `isInclVat` is set to false. Default is 0. Max precision is 4.
-             */
-            itemExclVat?: number | null;
-            /**
-             * Format: double
-             * @description The item price including VAT, required when `isInclVat` is set to true. Default is 0. Max precision is 4.
-             */
-            itemInclVat?: number | null;
-            vatType: components["schemas"]["v1.CompanyInvoiceLineVatType"];
-            /**
-             * Format: double
-             * @description The VAT percentage. Can be 0% for VAT excluded items. Default is 0. Max precision is 2.
-             */
-            vatPercentage: number;
-            /**
-             * Format: double
-             * @description The total discount for the entire line (not per product) excluding VAT, can be used when `isInclVat` is set to false. Default is 0. Max precision is 2.
-             */
-            totalDiscountExclVat?: number | null;
-            /**
-             * Format: double
-             * @description The total discount for the entire line (not per product) including VAT, can be used when `isInclVat` is set to true. Default is 0. Max precision is 2.
-             */
-            totalDiscountInclVat?: number | null;
-            /**
-             * Format: double
-             * @description The total line price excluding VAT, should be equal to (`quantity` * `itemExclVat`) - `totalDiscountExclVat`, required when `isInclVat` is set to false. Default is 0. Max precision is 2.
-             */
-            totalExclVat?: number | null;
-            /**
-             * Format: double
-             * @description The total line price excluding VAT, should be equal to (`quantity` * `itemInclVat`) - `totalDiscountInclVat`, required when `isInclVat` is set to true. Default is 0. Max precision is 2.
-             */
-            totalInclVat?: number | null;
-            /**
-             * Format: date
-             * @description The start date of the invoice line period.
-             */
-            invoicePeriodStartDate?: string | null;
-            /**
-             * Format: date
-             * @description The end date of the invoice line period.
-             */
-            invoicePeriodEndDate?: string | null;
-        };
-        "v1.SalesInvoiceSendStatus": {
-            /** @description The sales invoice ID. */
-            id?: string | null;
-            /** @description The createdOn timestamp. */
-            createdOn?: string | null;
-            /** @description The external document reference. This is the extern reference that was set when sending the sales invoice to Scrada. */
-            externalReference?: string | null;
-            /** @description The Peppol sender ID. */
-            peppolSenderID?: string | null;
-            /** @description The Peppol receiver ID. */
-            peppolReceiverID?: string | null;
-            /** @description The Peppol C1 country code. The country code the sending party is registered. */
-            peppolC1CountryCode?: string | null;
-            /** @description The Peppol corner-2 timestamp. The timestamp the message was sent over Peppol by the sending access point (Scrada) */
-            peppolC2Timestamp?: string | null;
-            /** @description The Peppol corner-2 seat ID. The ID of the sending access point (Scrada) */
-            peppolC2SeatID?: string | null;
-            /** @description The Peppol corner-2 message ID. The ID the sending access point (Scrada) has given to the message. */
-            peppolC2MessageID?: string | null;
-            /** @description The Peppol corner-3 message ID. The ID the receiving access point has given to the message. */
-            peppolC3MessageID?: string | null;
-            /** @description The Peppol corner-3 timestamp. The time the message was received by the receiving access point. */
-            peppolC3Timestamp?: string | null;
-            /** @description The Peppol corner-3 seat ID. The ID of the receiving access point. */
-            peppolC3SeatID?: string | null;
-            /** @description The Peppol conversation ID. */
-            peppolConversationID?: string | null;
-            /** @description The Peppol SBDH instance ID. */
-            peppolSbdhInstanceID?: string | null;
-            /** @description The Peppol document type scheme. */
-            peppolDocumentTypeScheme?: string | null;
-            /** @description The Peppol document type value. */
-            peppolDocumentTypeValue?: string | null;
-            /** @description The Peppol process scheme. */
-            peppolProcessScheme?: string | null;
-            /** @description The Peppol process value. */
-            peppolProcessValue?: string | null;
-            /**
-             * @description The status. <br/>
-             *     Status values that are used in a Peppol Only subscription and Full subscription:
-             *     <ul>
-             *     <li><b>Created</b>: A new document is sent to Scrada to be uploaded to Peppo or send by email</li>
-             *     <li><b>Processed</b>: When a document is successful uploaded to Peppol or send by email</li>
-             *     <li><b>Retry</b>: When there is an issue uploading to Peppol because maybe the other access point is temporary down or an issue sending the email. Scrada will retry 10 times. In the property `ErrorMessage` you can find more information why Scrada does a retry.</li>
-             *     <li><b>Canceled</b>: When a document was canceled to be uploaded to Peppol or send by email. This can only be done using the GUI of Scrada. Nothing is done with the document. </li>
-             *     <li><b>Error</b>: There is an error sending to Peppol or by email. Nothing is done with the document. Check error message for more details.</li>
-             *     <li><b>Error already sent</b>: This can happen if a document is sent by Scrada to an other access point and the other access point rejects the document or there was a timeout and then if Scrada retries to send the document, Scrada receives message from the other access pont that the document was already processed. Can also happen if document is sent again using the GUI of Scrada. Nothing is done with the document.</li>
-             *     <li><b>Error not on Peppol</b>: The receiverID is not registered on Peppol. Nothing is done with the document. </li>
-             *     </ul>
-             *     Status vales that are only used in case of a full subscription:
-             *     <ul>
-             *     <li><b>Blocked - send by email</b>: A receiverID is in the blocked list for sending to Peppol in Scrada and an email of the receiver is provided. The document will be sent by email to the receiver.</li>
-             *     <li><b>Not on Peppol - send by email</b>: The receiverID is not registered on Peppol. The document will be sent by email to the receiver.</li>
-             *     <li><b>Error - send by email</b>: There was an error sending the document to Peppol. The document will be sent by email to the receiver.</li>
-             *     <li><b>Blocked</b>: A receiverID is in the blocked list for sending to Peppol in Scrada and no email of the receiver is provided. Nothing is done with the document.</li>
-             *     <li><b>None</b>: This can happen if nothing is configured in Scrada how to send the sales invoice to the customer.
-             *     </ul>
-             */
-            status?: string | null;
-            /**
-             * Format: int32
-             * @description The number of attempts done to send the document.
-             */
-            attempt?: number;
-            /** @description The error message. */
-            errorMessage?: string | null;
-            /** @description The Scrada peppol document ID. This is only set if the sales invoice is sent over Peppol This is NULL if send by email. */
-            peppolOutboundDocumentID?: string | null;
-            /**
-             * @description The way Scrada tries to send the sales invoice to the customer. The possible values are:
-             *     <ul>
-             *     <li><b>Peppol</b>: The sales invoice is sent or trying to send over Peppol.</li>
-             *     <li><b>Email</b>: The sales invoice is sent or trying to send over email.</li>
-             *     <li><b>Peppol and email</b>: The sales invoice is sent by Peppol and a copy is sent by email.</li>
-             *     <li><b>None</b>: There was no configuration how to send the invoice to the customer.</li>
-             *     </ul>
-             */
-            sendMethod?: string | null;
-            /** @description The email address that is used for email */
-            receiverEmailAddress?: string | null;
-            /** @description The time the system tried to send the email */
-            receiverEmailTime?: string | null;
-            /**
-             * @description The status of the email:
-             *     <ul>
-             *     <li><b>Not sent</b>: No email is sent.</li>
-             *     <li><b>Successfully sent</b>: The email is successfully sent.</li>
-             *     <li><b>Error sending</b>: There was an error sending the email.</li>
-             *     </ul>
-             */
-            receiverEmailStatus?: string | null;
-        };
-        /** Sales invoice VAT total */
-        "v1.SalesInvoiceVatTotal": {
-            vatType: components["schemas"]["v1.CompanyInvoiceLineVatType"];
-            /**
-             * Format: double
-             * @description The VAT percentage. Max precision is 2.
-             */
-            vatPercentage: number;
-            /**
-             * Format: double
-             * @description The total amount excluding VAT of this VAT total. Default value is 0. Max precision is 2.
-             */
-            totalExclVat: number;
-            /**
-             * Format: double
-             * @description The total VAT of this VAT total. Default is 0. Max precision is 2
-             */
-            totalVat: number;
-            /**
-             * Format: double
-             * @description The total amount including VAT of this VAT total. Default value is 0. Max precision is 2.
-             */
-            totalInclVat: number;
-            /** @description The invoice note. Example: 'Verlegging van heffing', 'Statiegeld' */
-            note?: string | null;
-        };
+  schemas: {
+    'CollectionResult`1[v1.PeppolInboundDocument]': {
+      /** Result collection */
+      results?: components['schemas']['v1.PeppolInboundDocument'][] | null;
+      /**
+       * Total number of results
+       * Format: int32
+       * @description Results send back in this request can be limited, this number shows the total number of objects.
+       */
+      __count?: number;
     };
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+    ScradaError: {
+      /**
+       * Format: int32
+       * @description Error code.
+       */
+      readonly errorCode?: number;
+      /** @description Localized error text. */
+      readonly defaultFormat?: string | null;
+      /** @description Inner errors. */
+      readonly innerErrors?: components['schemas']['ScradaError'][] | null;
+    };
+    /** @description Journal line */
+    'v1.AddJournalLineModel': {
+      lineType: components['schemas']['v1.JournalLineType'];
+      /**
+       * Format: uuid
+       * @description VAT type ID of the line.<br/>
+       *     <strong>Belgium:</strong><ul>
+       *     <li><b>cbff0b5e-96e3-4201-91d0-51304cee2605:</b> 00 (0%) VAT</li>
+       *     <li><b>7befe0fc-7131-4b15-9fe6-ca4b9280b63c:</b> 01 (6%) VAT</li>
+       *     <li><b>647ed17b-fb6f-4772-baf5-928de98f4db1:</b> 02 (12%) VAT</li>
+       *     <li><b>8424d909-78b9-483c-9b1d-4584fb537846:</b> 03 (21%) VAT</li>
+       *     <li><b>cc9b638f-3b54-44c8-91e5-83d337ae6591:</b> NA</li>
+       *     </ul>
+       *     <strong>The Netherlands:</strong><ul>
+       *     <li><b>fb145f3f-c866-4322-9169-8d8219d40e8a:</b> 00 (0%) VAT</li>
+       *     <li><b>3aa951e7-f307-4902-b315-b764eb81d211:</b> 02 (9%) VAT</li>
+       *     <li><b>aeb8b26c-00b1-4c6a-9cf2-bc1c71d89196:</b> 03 (21%) VAT</li>
+       *     <li><b>a29f353e-5549-460a-97cb-70a607b28581:</b> NA</li>
+       *     </ul>
+       *     <strong>Luxembourg:</strong><ul>
+       *     <li><b>1693aca4-a715-4543-be5d-64f0210f0078:</b> 00 (0%) VAT</li>
+       *     <li><b>03120fb9-18ea-43a1-9119-1af511895e28:</b> 01 (3%) VAT</li>
+       *     <li><b>3f3556ee-6afb-43d1-9545-d309087ac461:</b> 02 (8%) VAT</li>
+       *     <li><b>d5b9db32-49d7-4929-9e60-dec7b00c2e2f:</b> 03 (14%) VAT</li>
+       *     <li><b>e701b521-2ff0-4176-9533-3e297d52809e:</b> 04 (17%) VAT</li>
+       *     <li><b>ea73a071-18dd-4964-8fd7-fe58ff782c2c:</b> NA</li>
+       *     </ul>
+       */
+      vatTypeID: string;
+      /**
+       * Format: double
+       * @description Vat percentage. Must match with the given VAT type ID. Must always be filled in. Only in case of VAT NA then this is null. Max precision is 2.
+       */
+      vatPerc: number | null;
+      /**
+       * Format: double
+       * @description The line amount including VAT. Max precision is 2.
+       */
+      amount: number;
+      /** @description Remark about line. If in the VAT category in Scrada it is defined that the remark is required then it must have a value. In all other cases it is not required. */
+      remark?: string | null;
+      /** @description Only usable for line type Correction. The invoice number related to this correction. */
+      correctionForInvoice?: string | null;
+      /**
+       * Format: date
+       * @description Only usable for line type Correction. The correction for date.
+       */
+      correctionForDate?: string | null;
+      /**
+       * Format: uuid
+       * @description Category ID for the transaction.
+       */
+      categoryID: string;
+      /** @description Line reference from an external system. */
+      externalReference?: string | null;
+      /** @description Line data from an external system. */
+      externalData?: string | null;
+    };
+    /** @description Journal add lines model */
+    'v1.AddJournalLinesPaymethodsModel': {
+      /**
+       * Format: date
+       * @description The transaction date.
+       */
+      date: string;
+      /**
+       * Format: uuid
+       * @description Optional the GUID ID of the last entered line. When provided a check will be performed to verify that this was indeed the last created line ID.
+       */
+      lastJournalLineID?: string | null;
+      /** @description The lines to add in the journal. */
+      lines: components['schemas']['v1.AddJournalLineModel'][];
+      /**
+       * @description How the daily receipts are paid.<br/>
+       *     The sum of the amounts of the payment methods must be the same as the sum of the amounts of the lines.<br/><br/>
+       *
+       *     If the journal is not linked to a cash book then the payment methods must be blanc.<br/>
+       *     If a journal is linked to a cash book but the journal is configured that payment methods are booked as proposal then it is not required to fill in the payment methods. In all other cases the payments must be set.<br/><br/>
+       *
+       *     A certain payment method can only be used multiple times in this list if configured on the payment method that this is allowed!<br/><br/>
+       *
+       *     On payment method several requirements can be active like remark required or not, amount can be positive, ... This can be configured on the payment method itself. It is checked both when entering manual data or when using the API.
+       */
+      paymentMethods?:
+        | components['schemas']['v1.AddJournalPaymentMethodModel'][]
+        | null;
+      /**
+       * @description Additional cash book transactions.<br/>
+       *
+       *     If the journal is not linked to a cash book then the cash book transactions must be blanc.
+       */
+      cashBookTransactions?:
+        | components['schemas']['v1.CashBookAddLineModel'][]
+        | null;
+    };
+    'v1.AddJournalLinesReturn': {
+      /** @description The added journal line ID's. The last item in the list is also the last created line ID. */
+      journalLines?: string[];
+      /** @description The added cash book line ID's. The last item in the list is also the last created line ID. */
+      cashBookLines?: string[] | null;
+      message?: components['schemas']['ScradaError'];
+    };
+    /** @description Journal payment method */
+    'v1.AddJournalPaymentMethodModel': {
+      /**
+       * Format: uuid
+       * @description The payment method ID
+       */
+      paymentMethodID: string;
+      /**
+       * Format: double
+       * @description The amount. Max precision is 2.
+       */
+      amount: number;
+      /** @description The remark. Depending of the payment method it can be that the remark is required! */
+      remark?: string | null;
+      /**
+       * Format: uuid
+       * @description Invoice identifier that has been paid. This is the ID of the invoice in Scrada.
+       */
+      invoiceID?: string | null;
+      /** @description Invoice payment reference. This reference should also be present on an invoice in Scrada. */
+      invoiceReference?: string | null;
+      /** @description Line reference from an external system. */
+      externalReference?: string | null;
+      /** @description Line data from an external system. */
+      externalData?: string | null;
+    };
+    /** Address */
+    'v1.Address': {
+      /** @description The street name. */
+      street?: string | null;
+      /** @description The street number. */
+      streetNumber?: string | null;
+      /** @description The street postbox. */
+      streetBox?: string | null;
+      /** @description The city. */
+      city?: string | null;
+      /** @description The ZIP code. */
+      zipCode?: string | null;
+      /** @description The country subentity. */
+      countrySubentity?: string | null;
+      /** @description The party country code according to ISO 3166-1 alpha 2. */
+      countryCode: string;
+    };
+    /**
+     * Cash book
+     * @description If a property is set null or a property is missing then the system assumes that this property must keep its original value. Only in case of property endDate, if this property is missing or has has value null, the system assumes that it has value null.
+     */
+    'v1.CashBook': {
+      /**
+       * Format: uuid
+       * @description The cash book ID.
+       */
+      readonly id?: string | null;
+      /** @description Show the cash book in the dashboard. */
+      active?: boolean | null;
+      /** @description The cash book name. */
+      name: string;
+      /**
+       * Format: date-time
+       * @description The start date.
+       */
+      startDate: string | null;
+      /**
+       * Format: date-time
+       * @description The closing date.
+       */
+      endDate?: string | null;
+      /** @description The IBAN number of the cash book. */
+      readonly iban?: string | null;
+      /**
+       * Format: double
+       * @description The start balance.
+       */
+      startBalance?: number | null;
+      /**
+       * Format: double
+       * @description The current balance.
+       */
+      readonly currentBalance?: number | null;
+      /**
+       * Format: date-time
+       * @description The last line date.
+       */
+      readonly lastLineDate?: string | null;
+      /**
+       * Format: double
+       * @description Optional warning level for high balance.
+       */
+      warnBalanceTooHigh?: number | null;
+      codaFileType?: components['schemas']['v1.CashBookFormatType'];
+      codaGenerationPeriodType?: components['schemas']['v1.CashBookCodaGenerationPeriodType'];
+      codaGenerationStartWeekDay?: components['schemas']['v1.CashBookCodaGenerationDayOfWeek'];
+      /** @description Allow entries in the cash book after a CODA file has been generated. Only applicable when the cash book is linked to a journal. */
+      allowEntryAfterCoda?: boolean | null;
+      /** @description Add journal payment reference to CODA files. */
+      addPaymentReference?: boolean | null;
+      /**
+       * Format: date-time
+       * @description Scrada invoice send till this date.
+       */
+      readonly invoicedTill?: string | null;
+      /**
+       * Format: date-time
+       * @description Scrada invoice paid till this date.
+       */
+      readonly paidTill?: string | null;
+      /**
+       * Format: date-time
+       * @description Earliest possible date for a cash book entry.
+       */
+      readonly minimumPossibleLineDate?: string | null;
+      /**
+       * Format: date-time
+       * @description Latest possible date for a cash book entry.
+       */
+      readonly maximumPossibleLineDate?: string | null;
+    };
+    'v1.CashBookAddLineModel': {
+      lineType?: components['schemas']['v1.CashBookTransactionTypeLineType'];
+      /**
+       * Format: uuid
+       * @description Transaction type ID of this line. Use either this transaction type ID of use LineType (Recommended).
+       */
+      transactionTypeID?: string | null;
+      /**
+       * Format: double
+       * @description The amount to transfer. Max precision is 2.
+       */
+      amount: number;
+      /** @description Company name is required for transaction 'Customer' and 'Supplier' otherwise leave it empty. */
+      companyName?: string | null;
+      /** @description Invoice number optional for transaction 'Customer' and 'Supplier' otherwise leave it empty. */
+      invoiceNumber?: string | null;
+      /** @description Remark about the transaction. */
+      remark?: string | null;
+      /**
+       * Format: uuid
+       * @description Other cash book ID (within the same company) for transaction 'Transfer cash to cash in' or 'Transfer cash to cash out'.
+       */
+      otherCashBookID?: string | null;
+      /** @description Line reference from an external system. */
+      externalReference?: string | null;
+      /** @description Line data from an external system. */
+      externalData?: string | null;
+    };
+    /** @description Cash book add lines model */
+    'v1.CashBookAddLinesModel': {
+      /**
+       * Format: date
+       * @description The transaction date.
+       */
+      date: string;
+      /**
+       * Format: double
+       * @description The current cash book balance. Max precision is 2.
+       */
+      startBalance: number;
+      /** @description The transaction lines to add in the cash book. */
+      lines: components['schemas']['v1.CashBookAddLineModel'][];
+      /**
+       * Format: double
+       * @description The cash book balance after the provided line transactions. Max precision is 2.
+       */
+      endBalance: number;
+    };
+    /**
+     * Format: int32
+     * @description Day of the week to generate CODA file.<ul>
+     *     <li><b>0:</b> Sunday</li>
+     *     <li><b>1:</b> Monday</li>
+     *     <li><b>2:</b> Tuesday</li>
+     *     <li><b>3:</b> Wednesday</li>
+     *     <li><b>4:</b> Thursday</li>
+     *     <li><b>5:</b> Friday</li>
+     *     <li><b>6:</b> Saturday</li>
+     *     </ul>
+     * @enum {integer}
+     */
+    'v1.CashBookCodaGenerationDayOfWeek': 0 | 1 | 2 | 3 | 4 | 5 | 6;
+    /**
+     * Format: int32
+     * @description The CODA generation period.<ul>
+     *     <li><b>1:</b> Every day</li>
+     *     <li><b>2:</b> Every week</li>
+     *     <li><b>3:</b> Every month</li>
+     *     </ul>
+     * @enum {integer}
+     */
+    'v1.CashBookCodaGenerationPeriodType': 1 | 2 | 3;
+    /**
+     * Format: int32
+     * @description The CODA format.<ul>
+     *     <li><b>1:</b> Only lines</li>
+     *     <li><b>2:</b> Lines and payment methods</li>
+     *     </ul>
+     * @enum {integer}
+     */
+    'v1.CashBookFormatType': 1 | 2;
+    /**
+     * Transaction type
+     * @description If a property is set null or a property is missing then we assume that this property must keep its original value.
+     */
+    'v1.CashBookTransactionType': {
+      /**
+       * Format: uuid
+       * @description The transaction type ID.
+       */
+      readonly id?: string | null;
+      /** @description The Dutch Transaction Type name. */
+      nameNL: string | null;
+      /** @description The English Transaction Type name. */
+      nameEN: string | null;
+      /** @description The French Transaction Type name. */
+      nameFR: string | null;
+      /** @description The German Transaction Type name. */
+      nameDE: string | null;
+      /**
+       * Format: int32
+       * @description The sorting position. Lowest is shown first.
+       */
+      position?: number | null;
+      inputType?: components['schemas']['v1.CashBookTransactionTypeInputType'];
+      lineType?: components['schemas']['v1.CashBookTransactionTypeLineType'];
+      commentType?: components['schemas']['v1.CashBookTransactionTypeCommentType'];
+    };
+    /**
+     * Format: int32
+     * @description The comment visibility.<ul>
+     *     <li><b>2:</b> Optional</li>
+     *     <li><b>3:</b> Required</li>
+     *     </ul>
+     * @enum {integer}
+     */
+    'v1.CashBookTransactionTypeCommentType': 2 | 3;
+    /**
+     * Format: int32
+     * @description The input visibility.<ul>
+     *     <li><b>1:</b> Not visible</li>
+     *     <li><b>2:</b> Only receive</li>
+     *     <li><b>3:</b> Only expense</li>
+     *     <li><b>4:</b> Receive or expense</li>
+     *     </ul>
+     * @enum {integer}
+     */
+    'v1.CashBookTransactionTypeInputType': 1 | 2 | 3 | 4;
+    /**
+     * Format: int32
+     * @description Transaction type of this line. Use either this line type or use the TransactionTypeID, not supported for custom transaction types.<ul>
+     *     <li><b>1:</b> Private take</li>
+     *     <li><b>2:</b> Private deposit</li>
+     *     <li><b>3:</b> Customer</li>
+     *     <li><b>4:</b> Supplier</li>
+     *     <li><b>5:</b> Transfer bank to cash</li>
+     *     <li><b>6:</b> Transfer cash to bank</li>
+     *     <li><b>7:</b> Cost</li>
+     *     <li><b>8:</b> Cash difference</li>
+     *     <li><b>9:</b> Daily receipts cash (Only allowed when no journal is linked)</li>
+     *     <li><b>12:</b> Transfer cash to cash in</li>
+     *     <li><b>13:</b> Transfer cash to cash out</li>
+     *     <li><b>14:</b> Own/ custom type (Requires TransactionTypeID)</li>
+     *     </ul>
+     * @enum {integer|null}
+     */
+    'v1.CashBookTransactionTypeLineType':
+      | 1
+      | 2
+      | 3
+      | 4
+      | 5
+      | 6
+      | 7
+      | 8
+      | 9
+      | 10
+      | 11
+      | 12
+      | 13
+      | 14
+      | null;
+    /**
+     * Company
+     * @description If a property is set null or a property is missing then we assume that this property must keep its original value.
+     */
+    'v1.Company': {
+      /**
+       * Format: uuid
+       * @description The company ID.
+       */
+      readonly id?: string | null;
+      /** @description Show the company in the company overview screen. */
+      active?: boolean | null;
+      /** @description The company code. Is used by Scrada as parameter in emails or integrations */
+      code?: string | null;
+      /** @description The company name. */
+      name: string | null;
+      /** @description The company email. */
+      email: string | null;
+      /** @description The company street. */
+      street: string | null;
+      /** @description The company ZIP code. */
+      zipCode: string | null;
+      /** @description The company city. */
+      city: string | null;
+      /**
+       * Format: uuid
+       * @description The company country ID.<ul>
+       *     <li><b>12b741b9-c0ad-42b5-8471-e720763f3227</b>: België/Belgique</li>
+       *     <li><b>97e88925-b346-4b76-b671-ef1cf7d68733</b>: Nederland</li>
+       *     <li><b>74a68d03-8c08-4074-a41e-59d830024344</b>: France</li>
+       *     <li><b>597fde4e-a4db-42ac-99e1-af3962bbffa4</b>: Deutschland</li>
+       *     </ul>
+       */
+      countryID: string | null;
+      /**
+       * @description The company tax number.<ul>
+       *     <li>België/Belgique: ondernemingsnummer/numéro d’Entreprise</li>
+       *     <li>Nederland: KvK nummer</li>
+       *     <li>France: SIRENE</li>
+       *     <li>Deutschland: Handelsregisternummer</li>
+       *     </ul>
+       */
+      taxNumber?: string | null;
+      /** @description The company VAT number. */
+      vatNumber?: string | null;
+      /** @description The company phone number. */
+      phone: string | null;
+      /**
+       * Format: uuid
+       * @description The language ID in which language the company reports (like daily receipt invoice) need to be generated in.<ul>
+       *     <li><b>e1e8395c-35b3-4282-89db-3feeaacc23bd</b>: Nederlands (nl-BE)</li>
+       *     <li><b>5300381e-f434-4e01-a1f8-53e7676d4cac</b>: Français (fr-BE)</li>
+       *     <li><b>68f89f67-b153-43e6-b9a6-f8d73b56a67a</b>: English (en-US)</li>
+       *     </ul>
+       */
+      reportLanguageID: string | null;
+      invoiceInfo: components['schemas']['v1.CompanyInvoiceInfo'];
+      /** @description The email address to receive the invoices on. If not provided the invoice will be send to the company email. Not applicable when 'invoiceInfo' is set to `3`. */
+      invoiceEmail?: string | null;
+      /** @description The invoice street. Only applicable when 'invoiceInfo' is set to `2`. */
+      invoiceStreet?: string | null;
+      /** @description The invoice ZIP code. Only applicable when 'invoiceInfo' is set to `2`. */
+      invoiceZipCode?: string | null;
+      /** @description The invoice city. Only applicable when 'invoiceInfo' is set to `2`. */
+      invoiceCity?: string | null;
+      /**
+       * Format: uuid
+       * @description The invoice country ID. Only applicable when 'invoiceInfo' is set to `2`.<ul>
+       *     <li><b>12b741b9-c0ad-42b5-8471-e720763f3227</b>: België/Belgique</li>
+       *     <li><b>97e88925-b346-4b76-b671-ef1cf7d68733</b>: Nederland</li>
+       *     <li><b>74a68d03-8c08-4074-a41e-59d830024344</b>: France</li>
+       *     <li><b>597fde4e-a4db-42ac-99e1-af3962bbffa4</b>: Deutschland</li>
+       *     </ul>
+       */
+      invoiceCountryID?: string | null;
+      /**
+       * Format: uuid
+       * @description The company ID to which the invoice need to be send. Only applicable when 'invoiceInfo' is set to `3`.<br/>
+       *     **Remark:** To set a different invoice company the user needs to have access rights to both companies. The API credentials only provide access to a single company, it is therefore not possible to change this setting using the external API.
+       */
+      invoiceCompanyID?: string | null;
+    };
+    /**
+     * Format: int32
+     * @description The invoice information to use.<ul>
+     *     <li><b>1:</b> Company address</li>
+     *     <li><b>2:</b> Invoice address</li>
+     *     <li><b>3:</b> Other company information</li>
+     *     </ul>
+     * @enum {integer}
+     */
+    'v1.CompanyInvoiceInfo': 1 | 2 | 3;
+    /**
+     * Format: int32
+     * @description The unit of measure type.<ul>
+     *     <li><b>1:</b> One or unit.</li>
+     *     <li><b>2:</b> Piece</li>
+     *     <li><b>3:</b> Pallet</li>
+     *     <li><b>4:</b> Container 20ft</li>
+     *     <li><b>5:</b> Container 40ft</li>
+     *
+     *     <li><b>100:</b> Second</li>
+     *     <li><b>101:</b> Minute</li>
+     *     <li><b>102:</b> Hour</li>
+     *     <li><b>103:</b> Day</li>
+     *     <li><b>104:</b> Month</li>
+     *     <li><b>105:</b> Year</li>
+     *     <li><b>106:</b> Week</li>
+     *
+     *     <li><b>200:</b> Milligram</li>
+     *     <li><b>201:</b> Gram</li>
+     *     <li><b>202:</b> Kilogram</li>
+     *     <li><b>203:</b> Ton</li>
+     *
+     *     <li><b>300:</b> Meter</li>
+     *     <li><b>301:</b> Kilometer</li>
+     *
+     *     <li><b>400:</b> Liter</li>
+     *     <li><b>401:</b> Milliliter</li>
+     *     </ul>
+     *     If your required UOM is not in the list please send email to info@scrada.be
+     * @enum {integer}
+     */
+    'v1.CompanyInvoiceLineUomType':
+      | 1
+      | 2
+      | 3
+      | 4
+      | 5
+      | 100
+      | 101
+      | 102
+      | 103
+      | 104
+      | 105
+      | 106
+      | 200
+      | 201
+      | 202
+      | 203
+      | 300
+      | 301
+      | 400
+      | 401;
+    /**
+     * Format: int32
+     * @description The VAT type. Default is standard rate (1).<ul>
+     *     <li><b>1:</b> Standard rate (If line is 0% VAT then Zero rate must be used. Standard rate cannot be used even if it is the standard rate for this product/service) (Belgium: VAT Box 01, 02 or 03)</li>
+     *     <li><b>2:</b> Zero rate (Belgium: VAT Box 00)</li>
+     *     <li><b>3:</b> Exempt from tax (Diversen na BTW/Divers hors TVA) (Belgium: Not on VAT Declaration)</li>
+     *     <li><b>4:</b> ICD Services B2B (ICL B2B Diensten/LIC Services B2B) (Belgium: VAT Box 44)</li>
+     *     <li><b>5:</b> ICD Goods (ICL Goederen/LIC Marchandises) (Belgium: VAT Box 46)</li>
+     *     <li><b>6:</b> ICD Manufacturing cost (ICL Maakloon/LICTravail à façon) (Belgium: VAT Box 47)</li>
+     *     <li><b>7:</b> ICD Assembly (ICL Montage/LIC Montage) (Belgium: VAT Box 47)</li>
+     *     <li><b>8:</b> ICD Distance (ICL Afstand/LIC Distance) (Belgium: VAT Box 47)</li>
+     *     <li><b>9:</b> ICD Services (ICL Diensten/LIC Services) (Belgium: VAT Box 47)</li>
+     *     <li><b>10:</b> ICD Triangle a-B-c (ICL Driehoek a-B-c/LIC Triangle a-B-c) (Belgium: VAT Box 46)</li>
+     *
+     *     <li><b>20:</b> Export non E.U. (Export niet E.G./Export non C.E.) (Belgium: VAT Box 47)</li>
+     *     <li><b>21:</b> Indirect export (Onrechtstreekse uitvoer/Export indirect) (Belgium: VAT Box 47)</li>
+     *     <li><b>22:</b> Export via E.U. (Export via E.G./Export via C.E.) (Belgium: VAT Box 47)</li>
+     *
+     *     <li><b>50:</b> Reverse charge (Medecontractant/Cocontractant) (Belgium: VAT Box 45)</li>
+     *     <li><b>51:</b> Financial discount (Belgium: Not on VAT Declaration)</li>
+     *     <li><b>52:</b> 0% Clause 44 (Artikel 44/Article 44) (Belgium: VAT Box 00)</li>
+     *     <li><b>53:</b> Standard exchange (Standaardruil/Echange standard) (Belgium: VAT Box 03)</li>
+     *     <li><b>54:</b> Margin (Marge/Marge)<li>
+     *
+     *     <li><b>70:</b> OSS Goods</li>
+     *     <li><b>71:</b> OSS Services</li>
+     *     <li><b>72:</b> OSS Import</li>
+     *     </ul>
+     * @enum {integer}
+     */
+    'v1.CompanyInvoiceLineVatType':
+      | 1
+      | 2
+      | 3
+      | 4
+      | 5
+      | 6
+      | 7
+      | 8
+      | 9
+      | 10
+      | 20
+      | 21
+      | 22
+      | 50
+      | 51
+      | 52
+      | 53
+      | 54
+      | 70
+      | 71
+      | 72;
+    /**
+     * Format: int32
+     * @description The payment method type.<ul>
+     *     <li><b>1:</b> Undefined payment method (Unknown)</li>
+     *     <li><b>2:</b> Wire transfer (Overschrijving)</li>
+     *     <li><b>3:</b> Bank card (iDeal)</li>
+     *     <li><b>4:</b> Direct debit (Domiciliëring, automatische incasso)</li>
+     *     <li><b>5:</b> Cash</li>
+     *     <li><b>6:</b> Credit card</li>
+     *     <li><b>7:</b> Online payment provider (Mollie, Stripe)</li>
+     *     <li><b>8:</b> Cheque</li>
+     *     <li><b>9:</b> Debit card (Bancontact)</li>
+     *     </ul>
+     *     If your required payment method is not in the list please send email to info@scrada.be.
+     * @enum {integer}
+     */
+    'v1.CompanyInvoicePaymentMethodType': 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+    /**
+     * Format: int32
+     * @description The tax number typed used to identify the party.<ul>
+     *     <li><b>1:</b> Numero d'entreprise / ondernemingsnummer / Unternehmensnummer / Enterprise number (Belgium)</li>
+     *     <li><b>2:</b> Kamer van koophandel nummer (the Netherlands)</li>
+     *     <li><b>3:</b> SIRENE (France)</li>
+     *     </ul>
+     * @enum {integer}
+     */
+    'v1.CompanyInvoiceTaxNumberType': 1 | 2 | 3;
+    /**
+     * Format: int32
+     * @description The invoice type.<ul>
+     *     <li><b>1:</b> Sales invoice</li>
+     *     <li><b>2:</b> Purchase invoice*</li>
+     *     * Under development. Contact info@scrada.be for more information.
+     *     </ul>
+     * @enum {integer}
+     */
+    'v1.CompanyInvoiceType': 1;
+    /** @description VAT period */
+    'v1.CompanyVatPeriod': {
+      /**
+       * Format: uuid
+       * @description The VAT period ID.
+       */
+      readonly id?: string | null;
+      /**
+       * Format: date-time
+       * @description The starting date of the VAT period.
+       */
+      fromDate?: string | null;
+      /**
+       * Format: date-time
+       * @description The end date of the VAT period.
+       */
+      readonly tillDate?: string | null;
+      vatPeriodType: components['schemas']['v1.CompanyVatPeriodType'];
+    };
+    /**
+     * Format: int32
+     * @description The VAT type.<ul>
+     *     <li><b>0:</b> No VAT obligation</li>
+     *     <li><b>1:</b> Monty</li>
+     *     <li><b>3:</b> Quarterly</li>
+     *     <li><b>12:</b> Yearly</li>
+     *     </ul>
+     * @enum {integer}
+     */
+    'v1.CompanyVatPeriodType': 0 | 1 | 3 | 12;
+    /**
+     * Format: int32
+     * @description The VAT status of the company.<ul>
+     *     <li><b>1:</b> Subject to VAT</li>
+     *     <li><b>2:</b> Not subject to VAT</li>
+     *     <li><b>3:</b> Small business VAT exemption</li>
+     *     </ul>
+     * @enum {integer}
+     */
+    'v1.CompanyVatStatus': 1 | 2 | 3;
+    /** Extra party identifier information */
+    'v1.ExtraIdentifier': {
+      /** @description The additional identifier value. Example: ITAA accounting number, farmer number. */
+      identifier: string;
+    };
+    /** Invoice attachment */
+    'v1.InvoiceAttachment': {
+      /** @description The document file name including file extension. */
+      filename: string;
+      fileType: components['schemas']['v1.InvoiceAttachmentFileType'];
+      /**
+       * @description The document mime type. The following mime types are supported:<ul>
+       *     <li>text/csv</li>
+       *     <li>application/pdf</li>
+       *     <li>image/png</li>
+       *     <li>image/jpeg</li>
+       *     <li>application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</li>
+       *     <li>application/vnd.oasis.opendocument.spreadsheet</li>
+       *     </ul>
+       */
+      mimeType: string;
+      /** @description The document with Base64 encoding. */
+      base64Data: string;
+      /** @description The document comment. */
+      note?: string | null;
+    };
+    /**
+     * Format: int32
+     * @description The attachment file type. Default is `99`.<ul>
+     *     <li><b>1:</b> Invoice or credit note (The main invoice document, there can only be 1 attachment of this type)</li>
+     *     <li><b>2:</b> Terms and conditions</li>
+     *     <li><b>3:</b> Timesheet</li>
+     *     <li><b>99:</b> Other</li>
+     *     </ul>
+     * @enum {integer}
+     */
+    'v1.InvoiceAttachmentFileType': 1 | 2 | 3 | 99;
+    /** Invoice line */
+    'v1.InvoiceLine': {
+      /**
+       * Format: uuid
+       * @description The invoice line ID.
+       */
+      readonly id?: string | null;
+      /** @description The line number, must be unique for each line. */
+      lineNumber: string;
+      /** @description The item code. */
+      itemCode?: string | null;
+      /** @description The accounting general ledger number. Must be empty or fully numeric. */
+      accountingGeneralLedger?: string | null;
+      /** @description The accounting analytical 1. Function depends on the accounting system. */
+      accountingAnalytical1?: string | null;
+      /** @description The accounting analytical 2. Function depends on the accounting system. */
+      accountingAnalytical2?: string | null;
+      /** @description The accounting analytical 3. Function depends on the accounting system. */
+      accountingAnalytical3?: string | null;
+      /** @description The accounting analytical 4. Function depends on the accounting system. */
+      accountingAnalytical4?: string | null;
+      /** @description The accounting analytical 5. Function depends on the accounting system. */
+      accountingAnalytical5?: string | null;
+      /** @description The item name or line description. */
+      itemName: string;
+      /** @description The item group name. */
+      itemGroup?: string | null;
+      /** @description The shipping country of origin according to ISO 3166-1 alpha 2. */
+      itemOriginCountryCode?: string | null;
+      /**
+       * Format: double
+       * @description The quantity of items. Default value is 0. Max precision is 4.
+       */
+      quantity?: number | null;
+      unitType?: components['schemas']['v1.CompanyInvoiceLineUomType'];
+      /**
+       * Format: double
+       * @description The item price excluding VAT. Default is 0. Max precision is 4.
+       */
+      itemExclVat?: number | null;
+      vatType?: components['schemas']['v1.CompanyInvoiceLineVatType'];
+      /**
+       * Format: double
+       * @description The VAT percentage. Can be 0% for VAT excluded items. Default is 0. Max precision is 2.
+       */
+      vatPerc?: number | null;
+      /**
+       * Format: double
+       * @description The total discount for the entire line (not per product) excluding VAT. Default is 0. Max precision is 2.
+       */
+      totalDiscountExclVat?: number | null;
+      /**
+       * Format: double
+       * @description The total line price excluding VAT. Default is 0. Max precision is 2
+       */
+      totalExclVat?: number | null;
+      /**
+       * Format: double
+       * @description The total VAT of this line. Default is 0. Max precision is 2
+       */
+      totalVat?: number | null;
+    };
+    /** Invoice payment method */
+    'v1.InvoicePaymentMethod': {
+      /**
+       * Format: uuid
+       * @description The invoice payment method ID.
+       */
+      readonly id?: string | null;
+      paymentType: components['schemas']['v1.CompanyInvoicePaymentMethodType'];
+      /** @description The payment reference. <b>If multiple payment methods are used, they must share the same 'paymentReference'.</b> */
+      paymentReference?: string | null;
+      /** @description The payment method name. */
+      name: string | null;
+      /** @description The IBAN account. Used and required for payment type wire transfer. */
+      iban?: string | null;
+      /** @description The IBAN account. Used for payment type wire transfer. */
+      bic?: string | null;
+      /** @description The SEPA mandate identifier. Used and required for payment type direct debit. */
+      sepaMandateID?: string | null;
+      /** @description The SEPA IBAN that will be debited by the direct debit. Used and required for payment type direct debit. */
+      sepaIban?: string | null;
+      /**
+       * Format: double
+       * @description The total amount already paid with this payment method.
+       *     <i>Payments are not added to the journal or cash book.</i> Default value is 0. Max precision is 2.
+       */
+      totalPaid?: number | null;
+      /**
+       * Format: double
+       * @description The total amount to get paid with this payment method. Default value is 0. Max precision is 2.
+       */
+      totalToPay?: number | null;
+    };
+    /**
+     * Invoice
+     * @description If a property is set null or a property is missing then we assume that this property must keep its original value.<br/>The currency of the invoice is always EUR.
+     */
+    'v1.InvoiceWithDocument': {
+      /**
+       * Format: uuid
+       * @description The invoice ID.
+       */
+      readonly id?: string | null;
+      /** @description The book year in which the invoice is created. Scrada will check that the following combination is unique: `BookYear`, `Journal`, `Number` and `Type`. This field cannot be 'NULL'. */
+      bookYear: string;
+      /** @description The journal name or code. This field cannot be 'NULL'. */
+      journal: string;
+      /** @description The invoice number. */
+      number: string;
+      type?: components['schemas']['v1.CompanyInvoiceType'];
+      /** @description The invoice is a credit invoice. Default value is false */
+      creditInvoice?: boolean | null;
+      /**
+       * Format: date
+       * @description The invoice date.
+       */
+      invoiceDate: string;
+      /**
+       * Format: date
+       * @description The invoice expiry date.
+       */
+      invoiceExpiryDate: string;
+      /** @description Indicator if the invoice is already send to the customer. If not (by default) Scrada can send the invoice. */
+      alreadySendToCustomer?: boolean | null;
+      /** @description The buyers reference. */
+      buyerReference?: string | null;
+      /** @description The purchase order reference. */
+      purchaseOrderReference?: string | null;
+      /** @description The sales order reference. */
+      salesOrderReference?: string | null;
+      /** @description The party identification code. */
+      partyCode?: string | null;
+      /** @description The party identification code in the accounting system. This code is used as reference key to this party. */
+      partyAccountingCode?: string | null;
+      /** @description The party language code according to ISO 639-1. */
+      partyLanguageCode?: string | null;
+      /** @description The party name. */
+      partyName: string;
+      /** @description The party street. */
+      partyStreet?: string | null;
+      /** @description The party street number. */
+      partyStreetNumber?: string | null;
+      /** @description The party street postbox. */
+      partyStreetBox?: string | null;
+      /** @description The party city. */
+      partyCity?: string | null;
+      /** @description The party ZIP code. */
+      partyZipCode?: string | null;
+      /** @description The party country code according to ISO 3166-1 alpha 2. */
+      partyCountryCode?: string | null;
+      /** @description The party phone number. */
+      partyPhone?: string | null;
+      /** @description The party email address. */
+      partyEmail?: string | null;
+      /** @description The party invoice email address. */
+      partyInvoiceEmail?: string | null;
+      /** @description The party contact name. */
+      partyContact?: string | null;
+      partyTaxNumberType?: components['schemas']['v1.CompanyInvoiceTaxNumberType'];
+      /** @description The party tax number according to the type `PartyTaxNumberType`. */
+      partyTaxNumber?: string | null;
+      /** @description The party VAT number. This must be a valid VAT number! */
+      partyVatNumber?: string | null;
+      /** @description The party GLN number. This must be a valid GLN number! */
+      partyGlnNumber?: string | null;
+      /** @description The invoice UBL with UTF-8 encoding. */
+      readonly invoiceUbl?: string | null;
+      /**
+       * Format: double
+       * @description The total invoice amount including VAT. Default value is 0. Max precision is 2.
+       */
+      totalInclVat?: number | null;
+      /**
+       * Format: double
+       * @description The total invoice VAT amount. Default value is 0. Max precision is 2.
+       */
+      totalVat?: number | null;
+      /**
+       * Format: double
+       * @description The total invoice amount excluding VAT. Default value is 0. Max precision is 2.
+       */
+      totalExclVat?: number | null;
+      /**
+       * Format: double
+       * @description The payable rounding amount. The amount to be added to the invoice total to round the amount to be paid. Max precision is 2.
+       */
+      payableRoundingAmount?: number | null;
+      /** @description The invoice comment. */
+      comment?: string | null;
+      lines?: components['schemas']['v1.InvoiceLine'][] | null;
+      paymentMethods?:
+        | components['schemas']['v1.InvoicePaymentMethod'][]
+        | null;
+      /** @description The invoice document file name including file extension. */
+      filename?: string | null;
+      /**
+       * @description The invoice document mime type. The following mime types are supported:<ul>
+       *     <li>text/csv</li>
+       *     <li>application/pdf</li>
+       *     <li>image/png</li>
+       *     <li>image/jpeg</li>
+       *     <li>application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</li>
+       *     <li>application/vnd.oasis.opendocument.spreadsheet</li>
+       *     </ul>
+       */
+      mimeType?: string | null;
+      /** @description The invoice document with Base64 encoding. */
+      base64Data?: string | null;
+    };
+    /**
+     * Journal
+     * @description If a property is set null or a property is missing then the system assumes that this property must keep its original value. Only in case of property endDate, if this property is missing or has has value null, the system assumes that it has value null.
+     */
+    'v1.Journal': {
+      /**
+       * Format: uuid
+       * @description The journal ID.
+       */
+      readonly id?: string | null;
+      /** @description Show the journal in the dashboard. */
+      active?: boolean | null;
+      /** @description The journal name. */
+      name: string | null;
+      /**
+       * Format: date-time
+       * @description The start date. If new book and not specified then today is used as start date.
+       */
+      startDate?: string | null;
+      /**
+       * Format: date-time
+       * @description The closing date.
+       */
+      endDate?: string | null;
+      /**
+       * Format: date-time
+       * @description The last entry date.
+       */
+      readonly lastLineDate?: string | null;
+      /**
+       * Format: uuid
+       * @description The last entry line ID.
+       */
+      readonly lastLineID?: string | null;
+      invoiceGenerationPeriodType?: components['schemas']['v1.JournalInvoicePeriodType'];
+      invoiceGenerationStartWeekDay?: components['schemas']['v1.JournalInvoiceDayOfWeek'];
+      /** @description The journal invoice customer name. */
+      customerName?: string | null;
+      /** @description The journal invoice customer reference. */
+      customerReference?: string | null;
+      /**
+       * @description The journal invoice number format.<br/>
+       *     Own invoice number can contain automatically filled in values like {VATYear}, {VATPeriod}, {InvoiceNumber}, {DateDay}, {DateMonth}, {DateYear} or {DateShortYear} (more info can be found in the FAQ on the website of Scrada). If you want that a value has minimum length then you can use the value format {<valueName>:<length>:<filling char>}. The default filling char 0 is used. Samples are '{VATYear}{VATPeriod:2}' or 'V1/{InvoiceNumber:8}'.
+       */
+      invoiceNumberExternalFormat?: string | null;
+      /**
+       * @description Reset the journal invoice number on a specified day.<br/>
+       *     Format of values is <day>/<month>. Sample 1/5 if reset on the first of May.
+       */
+      invoiceNumberExternalReset?: string | null;
+      /** @description Business is opened on Monday. Default value is true. */
+      openOnMonday?: boolean | null;
+      /** @description Business is opened on Tuesday. Default value is true. */
+      openOnTuesday?: boolean | null;
+      /** @description Business is opened on Wednesday. Default value is true. */
+      openOnWednesday?: boolean | null;
+      /** @description Business is opened on Thursday. Default value is true. */
+      openOnThursday?: boolean | null;
+      /** @description Business is opened on Friday. Default value is true. */
+      openOnFriday?: boolean | null;
+      /** @description Business is opened on Saturday. Default value is true. */
+      openOnSaturday?: boolean | null;
+      /** @description Business is opened on Sunday. Default value is true. */
+      openOnSunday?: boolean | null;
+      /**
+       * Format: uuid
+       * @description The journal linked to a cash book ID.
+       */
+      readonly cashbookID?: string | null;
+      /**
+       * Format: int32
+       * @description Send an email after this number of days no lines entered.
+       */
+      emailNoLinesDays?: number | null;
+      /** @description Allow multiple entries on a single day in the daily receipts book. This doesn't include correction entries. */
+      allowMultipleEntries?: boolean | null;
+      /** @description If value is true then the payment providers (like payconiq, ... ) are filled in automatically when adding manual lines. Default value true. */
+      autoLoadPaymentProvider?: boolean | null;
+      addFiguresUser?: components['schemas']['v1.JournalAllowAddFiguresUserType'];
+      addFiguresApi?: components['schemas']['v1.JournalAllowAddFiguresApiType'];
+      /**
+       * Format: date-time
+       * @description Scrada invoice send till this date.
+       */
+      readonly invoicedTill?: string | null;
+      /**
+       * Format: date-time
+       * @description Scrada invoice paid till this date.
+       */
+      readonly paidTill?: string | null;
+      /**
+       * Format: date-time
+       * @description Earliest possible date for creating a regular daily receipts entry.
+       */
+      readonly minimumPossibleLineDate?: string | null;
+      /**
+       * Format: date-time
+       * @description Latest possible date for creating a regular daily receipts entry.
+       */
+      readonly maximumPossibleLineDate?: string | null;
+    };
+    /**
+     * Format: int32
+     * @description Allow API users to add entries to the journal.<ul>
+     *     <li><b>1:</b> Block</li>
+     *     <li><b>2:</b> Directly add figures</li>
+     *     <li><b>3:</b> Directly add daily receipts figures and add payment methods as proposal</li>
+     *     <li><b>4:</b> Add as proposal (requires confirmation by user)</li>
+     *     <li><b>5:</b> Add as proposal and update with payment provider info</li>
+     *     </ul>
+     * @enum {integer}
+     */
+    'v1.JournalAllowAddFiguresApiType': 1 | 2 | 3 | 4 | 5;
+    /**
+     * Format: int32
+     * @description Allow users to add entries to the journal.<ul>
+     *     <li><b>1:</b> Block</li>
+     *     <li><b>2:</b> Directly add figures</li>
+     *     </ul>
+     * @enum {integer}
+     */
+    'v1.JournalAllowAddFiguresUserType': 1 | 2;
+    /**
+     * Format: int32
+     * @description Day of the week to generate journal invoice. Only applicable when 'journalInvoicePeriodType' is set to `2`(EveryWeek).
+     *     <ul>
+     *     <li><b>0:</b> Sunday</li>
+     *     <li><b>1:</b> Monday</li>
+     *     <li><b>2:</b> Tuesday</li>
+     *     <li><b>3:</b> Wednesday</li>
+     *     <li><b>4:</b> Thursday</li>
+     *     <li><b>5:</b> Friday</li>
+     *     <li><b>6:</b> Saturday</li>
+     *     </ul>
+     * @enum {integer}
+     */
+    'v1.JournalInvoiceDayOfWeek': 0 | 1 | 2 | 3 | 4 | 5 | 6;
+    /**
+     * Format: int32
+     * @description The invoice generation period.<ul>
+     *     <li><b>1:</b> Every day</li>
+     *     <li><b>2:</b> Every week</li>
+     *     <li><b>3:</b> Every month</li>
+     *     </ul>
+     * @enum {integer}
+     */
+    'v1.JournalInvoicePeriodType': 1 | 2 | 3;
+    /**
+     * Format: int32
+     * @description Transaction type of this line.<ul>
+     *     <li><b>1:</b> Divers</li>
+     *     <li><b>3:</b> Correction</li>
+     *     </ul>
+     *     <i>Do not combine divers and correction in the same Post/ Put action.</i><br/>
+     *     For type correction: All line remarks should be identical.
+     * @enum {integer}
+     */
+    'v1.JournalLineType': 1 | 3;
+    /**
+     * Payment method
+     * @description If a property is set null or a property is missing then we assume that this property must keep its original value.
+     */
+    'v1.JournalPaymentMethod': {
+      /**
+       * Format: uuid
+       * @description The payment method ID.
+       */
+      readonly id?: string | null;
+      /** @description The Dutch payment method name. */
+      nameNL: string | null;
+      /** @description The English payment method name. */
+      nameEN: string | null;
+      /** @description The French payment method name. */
+      nameFR: string | null;
+      /** @description The German payment method name. */
+      nameDE: string | null;
+      /** @description Mark the payment method as cash payment. Cash payments will get added to the linked cashbook. */
+      isCash?: boolean | null;
+      /**
+       * Format: int32
+       * @description The sorting position. Lowest is shown first.
+       */
+      position?: number | null;
+      /** @description Sets whether this payment method gets calculated in the GUI. */
+      isCalculated?: boolean | null;
+      /** @description Indicator for the default payment method. */
+      isDefault?: boolean | null;
+      inputEntry?: components['schemas']['v1.JournalPaymentMethodInputType'];
+      inputCorrection?: components['schemas']['v1.JournalPaymentMethodInputType'];
+      commentType?: components['schemas']['v1.JournalPaymentMethodCommentType'];
+      /** @description Whether to allow multiple instances of this payment method in a singe daily receipt transaction. Default `false`, cannot be used in combination with a payment provider integration. */
+      allowMultiple?: boolean | null;
+    };
+    /**
+     * Format: int32
+     * @description The comment visibility.<ul>
+     *     <li><b>1:</b> Not visible</li>
+     *     <li><b>2:</b> Optional</li>
+     *     <li><b>3:</b> Required</li>
+     *     </ul>
+     * @enum {integer}
+     */
+    'v1.JournalPaymentMethodCommentType': 1 | 2 | 3;
+    /**
+     * Format: int32
+     * @description The input visibility.<ul>
+     *     <li><b>1:</b> Not visible</li>
+     *     <li><b>2:</b> Always visible</li>
+     *     <li><b>3:</b> Only positive</li>
+     *     <li><b>4:</b> Only negative</li>
+     *     <li><b>5:</b> Warning on positive</li>
+     *     <li><b>6:</b> Warning on negative</li>
+     *     <li><b>7:</b> Always warning</li>
+     *     </ul>
+     * @enum {integer}
+     */
+    'v1.JournalPaymentMethodInputType': 1 | 2 | 3 | 4 | 5 | 6 | 7;
+    /**
+     * VAT category
+     * @description If a property is set null or a property is missing then we assume that this property must keep its original value.
+     */
+    'v1.JournalVatCategory': {
+      /**
+       * Format: uuid
+       * @description The VAT category ID.
+       */
+      readonly id?: string | null;
+      /** @description The Dutch VAT category name. */
+      nameNL: string | null;
+      /** @description The English VAT category name. */
+      nameEN: string | null;
+      /** @description The French VAT category name. */
+      nameFR: string | null;
+      /** @description The German VAT category name. */
+      nameDE: string | null;
+      /**
+       * Format: uuid
+       * @description VAT type ID of the category.<br/>
+       *     <strong>Belgium:</strong><ul>
+       *     <li><b>cbff0b5e-96e3-4201-91d0-51304cee2605:</b> 00 (0%) VAT</li>
+       *     <li><b>7befe0fc-7131-4b15-9fe6-ca4b9280b63c:</b> 01 (6%) VAT</li>
+       *     <li><b>647ed17b-fb6f-4772-baf5-928de98f4db1:</b> 02 (12%) VAT</li>
+       *     <li><b>8424d909-78b9-483c-9b1d-4584fb537846:</b> 03 (21%) VAT</li>
+       *     <li><b>cc9b638f-3b54-44c8-91e5-83d337ae6591:</b> NA</li>
+       *     </ul>
+       *     <strong>The Netherlands:</strong><ul>
+       *     <li><b>fb145f3f-c866-4322-9169-8d8219d40e8a:</b> 00 (0%) VAT</li>
+       *     <li><b>3aa951e7-f307-4902-b315-b764eb81d211:</b> 02 (9%) VAT</li>
+       *     <li><b>aeb8b26c-00b1-4c6a-9cf2-bc1c71d89196:</b> 03 (21%) VAT</li>
+       *     <li><b>a29f353e-5549-460a-97cb-70a607b28581:</b> NA</li>
+       *     </ul>
+       *     <strong>Luxembourg:</strong><ul>
+       *     <li><b>1693aca4-a715-4543-be5d-64f0210f0078:</b> 00 (0%) VAT</li>
+       *     <li><b>03120fb9-18ea-43a1-9119-1af511895e28:</b> 01 (3%) VAT</li>
+       *     <li><b>3f3556ee-6afb-43d1-9545-d309087ac461:</b> 02 (8%) VAT</li>
+       *     <li><b>d5b9db32-49d7-4929-9e60-dec7b00c2e2f:</b> 03 (14%) VAT</li>
+       *     <li><b>e701b521-2ff0-4176-9533-3e297d52809e:</b> 04 (17%) VAT</li>
+       *     <li><b>ea73a071-18dd-4964-8fd7-fe58ff782c2c:</b> NA</li>
+       *     </ul>
+       */
+      vatTypeID?: string | null;
+      /**
+       * Format: int32
+       * @description The sorting position. Lowest is shown first.
+       */
+      position?: number | null;
+      inputEntry?: components['schemas']['v1.JournalVatCategoryInputType'];
+      inputCorrection?: components['schemas']['v1.JournalVatCategoryInputType'];
+      commentType?: components['schemas']['v1.JournalVatCategoryCommentType'];
+      /** @description The accounting general ledger number. Must be empty or fully numeric. */
+      accountingGeneralLedger?: string | null;
+      /** @description The accounting analytical 1. Function depends on the accounting system. */
+      accountingAnalytical1?: string | null;
+      /** @description The accounting analytical 2. Function depends on the accounting system. */
+      accountingAnalytical2?: string | null;
+      /** @description The accounting analytical 3. Function depends on the accounting system. */
+      accountingAnalytical3?: string | null;
+      /** @description The accounting analytical 4. Function depends on the accounting system. */
+      accountingAnalytical4?: string | null;
+      /** @description The accounting analytical 5. Function depends on the accounting system. */
+      accountingAnalytical5?: string | null;
+    };
+    /**
+     * Format: int32
+     * @description The comment visibility.<ul>
+     *     <li><b>1:</b> Not visible</li>
+     *     <li><b>2:</b> Optional</li>
+     *     <li><b>3:</b> Required</li>
+     *     </ul>
+     * @enum {integer}
+     */
+    'v1.JournalVatCategoryCommentType': 1 | 2 | 3;
+    /**
+     * Format: int32
+     * @description The input visibility.<ul>
+     *     <li><b>1:</b> Not visible</li>
+     *     <li><b>2:</b> Always visible</li>
+     *     <li><b>3:</b> Only positive</li>
+     *     <li><b>4:</b> Only negative</li>
+     *     <li><b>5:</b> Warning on positive</li>
+     *     <li><b>6:</b> Warning on negative</li>
+     *     <li><b>7:</b> Always warning</li>
+     *     </ul>
+     * @enum {integer}
+     */
+    'v1.JournalVatCategoryInputType': 1 | 2 | 3 | 4 | 5 | 6 | 7;
+    /** Peppol inbound document */
+    'v1.PeppolInboundDocument': {
+      /**
+       * Format: uuid
+       * @description The document ID.
+       */
+      id?: string | null;
+      /**
+       * Format: int32
+       * @description The internal number.
+       */
+      internalNumber?: number;
+      /** @description The Peppol sender scheme. */
+      peppolSenderScheme?: string | null;
+      /** @description The Peppol sender ID. */
+      peppolSenderID?: string | null;
+      /** @description The Peppol receiver scheme. */
+      peppolReceiverScheme?: string | null;
+      /** @description The Peppol receiver ID. */
+      peppolReceiverID?: string | null;
+      /** @description The Peppol C1 country code. The country code where the sending party is registered. */
+      peppolC1CountryCode?: string | null;
+      /**
+       * Format: date-time
+       * @description The Peppol C2 timestamp. The moment the access point of the sending party tried to send the document over Peppol.
+       */
+      peppolC2Timestamp?: string | null;
+      /** @description The Peppol C2 seat ID. The ID of the sending access point. */
+      peppolC2SeatID?: string | null;
+      /** @description The Peppol C2 message ID. The ID the sending access point has given to the message sent over Peppol */
+      peppolC2MessageID?: string | null;
+      /**
+       * Format: uuid
+       * @description The Peppol C3 incoming unique ID. The internal ID the receiving access point (Scrada) has given to the received message.
+       */
+      peppolC3IncomingUniqueID?: string | null;
+      /** @description The Peppol C3 message ID. The ID the receiving access point (Scrada) has given to the received message and has confirmed to the sending access point as message ID. */
+      peppolC3MessageID?: string | null;
+      /**
+       * Format: date-time
+       * @description The Peppol C3 timestamp. The moment the message was received by the receiving access point (Scrada).
+       */
+      peppolC3Timestamp?: string | null;
+      /** @description The Peppol conversation ID. The ID of the receiving access point (Scrada) */
+      peppolConversationID?: string | null;
+      /** @description The Peppol SBDH instance ID. */
+      peppolSbdhInstanceID?: string | null;
+      /** @description The Peppol process scheme. */
+      peppolProcessScheme?: string | null;
+      /** @description The Peppol process value. */
+      peppolProcessValue?: string | null;
+      /** @description The Peppol document type scheme. */
+      peppolDocumentTypeScheme?: string | null;
+      /** @description The Peppol document type value. */
+      peppolDocumentTypeValue?: string | null;
+    };
+    /** Invoice */
+    'v1.PeppolOnlyInvoice': {
+      /**
+       * Format: uuid
+       * @description The internal ID of the invoice in Scrada.
+       */
+      readonly id?: string | null;
+      /** @description The invoice number. */
+      number: string;
+      /** @description The reference you give to the invoice. This is not required. This is not used for Peppol but is used in the portal of Scrada and in the webhooks. */
+      externalReference?: string | null;
+      /** @description The invoice is a credit invoice. Default value is false. */
+      creditInvoice?: boolean | null;
+      /** @description The invoice is including VAT. Default value is false. */
+      isInclVat?: boolean | null;
+      /** @description The invoice or credit note to which this document refers. This is not required. For example, in the case of a credit note, this is the invoice number credited by the credit note. */
+      invoiceReference?: string | null;
+      /**
+       * Format: date
+       * @description The invoice date.
+       */
+      invoiceDate: string;
+      /**
+       * Format: date
+       * @description The invoice expiry date.
+       */
+      invoiceExpiryDate?: string | null;
+      /** @description The buyer's reference. */
+      buyerReference?: string | null;
+      /** @description The purchase order reference. */
+      purchaseOrderReference?: string | null;
+      /** @description The sales order reference. */
+      salesOrderReference?: string | null;
+      supplier: components['schemas']['v1.PeppolOnlyInvoiceParty'];
+      customer: components['schemas']['v1.PeppolOnlyInvoiceParty'];
+      delivery?: components['schemas']['v1.SalesInvoiceDelivery'];
+      /**
+       * Format: double
+       * @description The total invoice amount excluding VAT. Default value is 0. Max precision is 2.
+       */
+      totalExclVat: number;
+      /**
+       * Format: double
+       * @description The total invoice amount including VAT. Default value is 0. Max precision is 2.
+       */
+      totalInclVat: number;
+      /**
+       * Format: double
+       * @description The total invoice VAT amount. Default value is 0. Max precision is 2.
+       */
+      totalVat: number;
+      /** @description The currency of the invoice according to ISO 4217. Default value is EUR. */
+      currency?: string | null;
+      /**
+       * Format: double
+       * @description The payable rounding amount. The amount to be added to the invoice total to round the amount to be paid. Max precision is 2.
+       */
+      payableRoundingAmount?: number | null;
+      /** @description The invoice comment. */
+      note?: string | null;
+      /** @description The invoice lines. */
+      lines: components['schemas']['v1.PeppolOnlyInvoiceLine'][];
+      /** @description The VAT totals. */
+      vatTotals: components['schemas']['v1.SalesInvoiceVatTotal'][];
+      /** @description The payment terms for the invoice. Example: Net within 30 days. */
+      paymentTerms?: string | null;
+      /** @description The payment methods. */
+      paymentMethods?: components['schemas']['v1.InvoicePaymentMethod'][];
+      /** @description The attachments related to the invoice. */
+      attachments?: components['schemas']['v1.InvoiceAttachment'][] | null;
+    };
+    /** Invoice line */
+    'v1.PeppolOnlyInvoiceLine': {
+      /**
+       * Format: uuid
+       * @description The invoice line ID.
+       */
+      readonly id?: string | null;
+      /** @description The line number, must be unique for each line. */
+      lineNumber: string;
+      /** @description The seller's item code. */
+      itemCodeSeller?: string | null;
+      /** @description The buyer's item code. */
+      itemCodeBuyer?: string | null;
+      /** @description The item name or line description. */
+      itemName: string;
+      /** @description The shipping country of origin according to ISO 3166-1 alpha 2. */
+      itemOriginCountryCode?: string | null;
+      /**
+       * Format: double
+       * @description The quantity of items. Default value is 0. Max precision is 4.
+       */
+      quantity: number;
+      unitType?: components['schemas']['v1.CompanyInvoiceLineUomType'];
+      /**
+       * Format: double
+       * @description The item price excluding VAT, required when `isInclVat` is set to false. Default is 0. Max precision is 4.
+       */
+      itemExclVat?: number | null;
+      /**
+       * Format: double
+       * @description The item price including VAT, required when `isInclVat` is set to true. Default is 0. Max precision is 4.
+       */
+      itemInclVat?: number | null;
+      vatType: components['schemas']['v1.CompanyInvoiceLineVatType'];
+      /**
+       * Format: double
+       * @description The VAT percentage. Can be 0% for VAT excluded items. Default is 0. Max precision is 2.
+       */
+      vatPercentage: number;
+      /**
+       * Format: double
+       * @description The total discount for the entire line (not per product) excluding VAT, can be used when `isInclVat` is set to false. Default is 0. Max precision is 2.
+       */
+      totalDiscountExclVat?: number | null;
+      /**
+       * Format: double
+       * @description The total discount for the entire line (not per product) including VAT, can be used when `isInclVat` is set to true. Default is 0. Max precision is 2.
+       */
+      totalDiscountInclVat?: number | null;
+      /**
+       * Format: double
+       * @description The total line price excluding VAT, should be equal to (`quantity` * `itemExclVat`) - `totalDiscountExclVat`, required when `isInclVat` is set to false. Default is 0. Max precision is 2.
+       */
+      totalExclVat?: number | null;
+      /**
+       * Format: double
+       * @description The total line price excluding VAT, should be equal to (`quantity` * `itemInclVat`) - `totalDiscountInclVat`, required when `isInclVat` is set to true. Default is 0. Max precision is 2.
+       */
+      totalInclVat?: number | null;
+      /**
+       * Format: date
+       * @description The start date of the invoice line period.
+       */
+      invoicePeriodStartDate?: string | null;
+      /**
+       * Format: date
+       * @description The end date of the invoice line period.
+       */
+      invoicePeriodEndDate?: string | null;
+    };
+    /** Invoice party */
+    'v1.PeppolOnlyInvoiceParty': {
+      /** @description The Peppol ID of the party. Example: 0208:0793904121 */
+      peppolID?: string | null;
+      /** @description The party identification code. */
+      code?: string | null;
+      /** @description The party language code according to ISO 639-1. */
+      languageCode?: string | null;
+      /** @description The party name. */
+      name: string;
+      address: components['schemas']['v1.Address'];
+      /** @description The party phone number. */
+      phone?: string | null;
+      /** @description The party email address. */
+      email?: string | null;
+      /** @description The party invoice email address. */
+      invoiceEmail?: string | null;
+      /** @description The party contact name. */
+      contact?: string | null;
+      vatStatus?: components['schemas']['v1.CompanyVatStatus'];
+      taxNumberType?: components['schemas']['v1.CompanyInvoiceTaxNumberType'];
+      /** @description The party tax number according to the `taxNumberType`. */
+      taxNumber?: string | null;
+      /** @description The legal person register details of the party, only applicable for the supplier party. Example: 'RPR Gent, Afdeling Oudenaarde'. */
+      legalPersonRegister?: string | null;
+      /** @description The party VAT number. This must be a valid VAT number! */
+      vatNumber?: string | null;
+      /** @description The party GLN number. This must be a valid GLN number! */
+      glnNumber?: string | null;
+      /** @description Extra identifiers for the party. */
+      extraIdentifiers?: components['schemas']['v1.ExtraIdentifier'][] | null;
+    };
+    'v1.PeppolOutboundDocumentStatus': {
+      /** @description The document ID. */
+      id?: string | null;
+      /** @description The createdOn timestamp. */
+      createdOn?: string | null;
+      /** @description The external document reference. This is the extern reference that was set when sending the document to Scrada. */
+      externalReference?: string | null;
+      /** @description The Peppol sender ID. */
+      peppolSenderID?: string | null;
+      /** @description The Peppol receiver ID. */
+      peppolReceiverID?: string | null;
+      /** @description The Peppol C1 country code. The country code the sending party is registered. */
+      peppolC1CountryCode?: string | null;
+      /** @description The Peppol corner-2 timestamp. The time the sending access point (Scrada) has sent the document to the receiving access point. */
+      peppolC2Timestamp?: string | null;
+      /** @description The Peppol corner-2 seat ID. The ID of the sending access point (Scrada) */
+      peppolC2SeatID?: string | null;
+      /** @description The Peppol corner-2 message ID. The ID the sending access point (Scrada) has given to the message send over Peppol to the receiving access point. */
+      peppolC2MessageID?: string | null;
+      /** @description The Peppol corner-3 message ID. The ID the receiving access point has given to the received message. */
+      peppolC3MessageID?: string | null;
+      /** @description The Peppol corner-3 timestamp. The time the message is received by the receiving access point. */
+      peppolC3Timestamp?: string | null;
+      /** @description The Peppol corner-3 seat ID. The ID of the receiving access point. */
+      peppolC3SeatID?: string | null;
+      /** @description The Peppol conversation ID. */
+      peppolConversationID?: string | null;
+      /** @description The Peppol SBDH instance ID. */
+      peppolSbdhInstanceID?: string | null;
+      /** @description The Peppol document type scheme. */
+      peppolDocumentTypeScheme?: string | null;
+      /** @description The Peppol document type value. */
+      peppolDocumentTypeValue?: string | null;
+      /** @description The Peppol process scheme. */
+      peppolProcessScheme?: string | null;
+      /** @description The Peppol process value. */
+      peppolProcessValue?: string | null;
+      /** @description The sales invoice ID. This is only set if a JSON sales invoice is sent to Scrada. This is the internal ID of the sales invoice in Scrada. This is NULL if a Peppol document is sent to Scrada to be put on Peppol. */
+      salesInvoiceID?: string | null;
+      /**
+       * @description The document status. <br/>
+       *     Status values that are used in a Peppol Only subscription and Full subscription:
+       *     <ul>
+       *     <li><b>Created</b>: A new document is sent to Scrada to be uploaded to Peppol</li>
+       *     <li><b>Processed</b>: When a document is successful uploaded to Peppol</li>
+       *     <li><b>Retry</b>: When there is an issue uploading to Peppol because maybe the other access point is temporary down. Scrada will retry 10 times. In the property `ErrorMessage` you can find more information why Scrada does a retry.</li>
+       *     <li><b>Canceled</b>: When a document was canceled to be uploaded to Peppol. This can only be done using the GUI of Scrada. Nothing is done with the document. </li>
+       *     <li><b>Error</b>: There is an error sending to Peppol. Nothing is done with the document. Check error message for more details.</li>
+       *     <li><b>Error already sent</b>: This can happen if a document is sent by Scrada to an other access point and the other access point rejects the document or there was a timeout and then if Scrada retries to send the document, Scrada receives message from the other access pont that the document was already processed. Can also happen if document is sent again using the GUI of Scrada. Nothing is done with the document.</li>
+       *     <li><b>Error not on Peppol</b>: The receiverID is not registered on Peppol. Nothing is done with the document. </li>
+       *     </ul>
+       *     Status vales that are only used in case of a full subscription:
+       *     <ul>
+       *     <li><b>Processed - by email</b>: The document is sent successfully by email to the receiver.</li>
+       *     <li><b>Blocked - send by email</b>: A receiverID is in the blocked list for sending to Peppol in Scrada and an email of the receiver is provided. The document will be sent by email to the receiver.</li>
+       *     <li><b>Not on Peppol - send by email</b>: The receiverID is not registered on Peppol. The document will be sent by email to the receiver.</li>
+       *     <li><b>Error - send by email</b>: There was an error sending the document to Peppol. The document will be sent by email to the receiver.</li>
+       *     <li><b>Blocked</b>: A receiverID is in the blocked list for sending to Peppol in Scrada and no email of the receiver is provided. Nothing is done with the document.</li>
+       *     <li><b>Error email</b>: There was an error when sending the document by email to the receiver. Nothing is done with the document.</li>
+       *     </ul>
+       */
+      status?: string | null;
+      /**
+       * Format: int32
+       * @description The number of attempts done to send the document.
+       */
+      attempt?: number;
+      /** @description The error message. */
+      errorMessage?: string | null;
+    };
+    /** Peppol participant */
+    'v1.PeppolParticipant': {
+      participantIdentifier: components['schemas']['v1.PeppolParticipantIdentifier'];
+      businessEntity?: components['schemas']['v1.PeppolParticipantBusinessEntity'];
+      /** @description The accepted document types. */
+      documentTypes:
+        | components['schemas']['v1.PeppolParticipantDocumentType'][]
+        | null;
+    };
+    /** Business information */
+    'v1.PeppolParticipantBusinessEntity': {
+      /** @description The participant business name. */
+      name: string | null;
+      /** @description The participant language code according the ISO 639-1. */
+      languageCode: string | null;
+      /** @description The participant country code according the ISO 3166-1 alpha 2. */
+      countryCode: string | null;
+    };
+    /** The Peppol document type */
+    'v1.PeppolParticipantDocumentType': {
+      /** @description The document type scheme. Sample: busdox-docid-qns */
+      scheme: string | null;
+      /** @description The document type value. Document types can be found at https://docs.peppol.eu/edelivery/codelists/. Sample for a BIS 3 Invoice: urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1 */
+      value: string | null;
+      processIdentifier: components['schemas']['v1.PeppolParticipantProcess'];
+    };
+    /** Peppol participant identifier */
+    'v1.PeppolParticipantIdentifier': {
+      /** @description The participant identifier scheme. Sample: iso6523-actorid-upis */
+      scheme: string | null;
+      /** @description The participant identifier exists of 2 parts separated by a colon. The first part is the type (See Participant Identifier Scheme at https://docs.peppol.eu/edelivery/codelists/) and the second part is the value. Sample: 0208:0793904121 . The type 0208 is the CBE number of Belgium and the type 9925 is a Belgium VAT number. */
+      id: string | null;
+    };
+    /** The Peppol process type */
+    'v1.PeppolParticipantProcess': {
+      /** @description The process type scheme. Sample: cenbii-procid-ubl */
+      scheme: string | null;
+      /** @description The process type value. Sample: urn:fdc:peppol.eu:2017:poacc:billing:01:1.0 */
+      value: string | null;
+      /** @description The access point endpoints. */
+      readonly endpoints?:
+        | components['schemas']['v1.PeppolParticipantProcessEndpoint'][]
+        | null;
+    };
+    'v1.PeppolParticipantProcessEndpoint': {
+      /** @description The endpoint URL. */
+      readonly referenceAddress?: string | null;
+      /** @description The technical contact information URL. */
+      readonly technicalContactUrl?: string | null;
+      /** @description The technical information URL. */
+      readonly technicalInformationUrl?: string | null;
+    };
+    /** Peppol participant registration */
+    'v1.PeppolParticipantRegistration': {
+      participantIdentifier: components['schemas']['v1.PeppolParticipantIdentifier'];
+      businessEntity: components['schemas']['v1.PeppolParticipantBusinessEntity'];
+      /** @description The accepted document types. */
+      documentTypes:
+        | components['schemas']['v1.PeppolParticipantDocumentType'][]
+        | null;
+      /** @description Optional migration key to transfer the Peppol registration from an other Peppol access point to Scrada Peppol access point. If you are already registered at an other Peppol access point and you want to register at Scrada, you have to deregister at the other access point or request a migration key from them. The advantage of a migration key is that you can always continue to receive documents. */
+      migrationKey?: string | null;
+    };
+    /** Peppol participant information */
+    'v1.PeppolSupportedParticipant': {
+      /** @description Indicates if the participant is registered on Peppol with any Peppol identifier. */
+      registered?: boolean;
+      /** @description Indicates if an invoice can be sent using the Scrada JSON API. */
+      supportInvoice?: boolean;
+      /** @description Indicates if a credit invoice can be sent using the Scrada JSON API. */
+      supportCreditInvoice?: boolean;
+      /** @description Indicates if a self-billing invoice can be sent using the Scrada JSON API. */
+      supportSelfBillingInvoice?: boolean;
+      /** @description Indicates if a self-billing credit invoice can be sent using the Scrada JSON API. */
+      supportSelfBillingCreditInvoice?: boolean;
+    };
+    /** Sales invoice */
+    'v1.SalesInvoice': {
+      /**
+       * Format: uuid
+       * @description The internal ID of the invoice in Scrada.
+       */
+      readonly id?: string | null;
+      /** @description The book year in which the invoice is created. This is required but can be an empty string. */
+      bookYear: string;
+      /** @description The journal name or code.  This is required but can be an empty string. */
+      journal: string;
+      /** @description The invoice number. Can contain alphanumeric characters. */
+      number: string;
+      /** @description The reference you give to the invoice. This is not required. This is not used for Peppol but is used in the portal of Scrada and in the webhooks. */
+      externalReference?: string | null;
+      /** @description The invoice is a credit invoice. Default value is false. */
+      creditInvoice?: boolean | null;
+      /** @description The invoice pricing is including VAT. Default value is false. When set to true the including VAT pricing on line level are required and excluding VAT pricing must remain 'null', vise versa when set to false. */
+      isInclVat?: boolean | null;
+      /** @description The invoice or credit note to which this document refers. This is not required. For example, in the case of a credit note, this is the invoice number credited by the credit note. */
+      invoiceReference?: string | null;
+      /**
+       * Format: date
+       * @description The invoice date.
+       */
+      invoiceDate: string;
+      /**
+       * Format: date
+       * @description The invoice expiry date.
+       */
+      invoiceExpiryDate?: string | null;
+      /** @description Indicator if the invoice is already sent to the customer. If not (by default) Scrada can send the invoice based on settings in the company. */
+      alreadySendToCustomer?: boolean | null;
+      /** @description The buyer's reference. */
+      buyerReference?: string | null;
+      /** @description The purchase order reference. */
+      purchaseOrderReference?: string | null;
+      /** @description The sales order reference. */
+      salesOrderReference?: string | null;
+      customer: components['schemas']['v1.SalesInvoiceCustomer'];
+      delivery?: components['schemas']['v1.SalesInvoiceDelivery'];
+      /**
+       * Format: double
+       * @description The total invoice amount excluding VAT. Default value is 0. Max precision is 2.
+       */
+      totalExclVat: number;
+      /**
+       * Format: double
+       * @description The total invoice amount including VAT. Default value is 0. Max precision is 2.
+       */
+      totalInclVat: number;
+      /**
+       * Format: double
+       * @description The total invoice VAT amount. Default value is 0. Max precision is 2.
+       */
+      totalVat: number;
+      /** @description The currency of the invoice according to ISO 4217. Default value is EUR. */
+      currency?: string | null;
+      /**
+       * Format: double
+       * @description The payable rounding amount. The amount to be added to the invoice total to round the amount to be paid. Max precision is 2.
+       */
+      payableRoundingAmount?: number | null;
+      /** @description The invoice comment. */
+      note?: string | null;
+      /** @description The invoice lines. */
+      lines: components['schemas']['v1.SalesInvoiceLine'][];
+      /** @description The VAT totals. */
+      vatTotals: components['schemas']['v1.SalesInvoiceVatTotal'][];
+      /** @description The payment terms for the invoice. Example: Net within 30 days. */
+      paymentTerms?: string | null;
+      /** @description The payment methods. */
+      paymentMethods?: components['schemas']['v1.InvoicePaymentMethod'][];
+      /** @description The attachments related to the invoice. */
+      attachments?: components['schemas']['v1.InvoiceAttachment'][] | null;
+    };
+    /** Sales invoice customer */
+    'v1.SalesInvoiceCustomer': {
+      /** @description The Peppol ID of the customer. If this is set then the invoice is sent to this ID on peppol if this ID is registered on Peppol and in Scrada it is configured to send invoice over Peppol. Example: 0208:0793904121 */
+      peppolID?: string | null;
+      /** @description The customer identification code. */
+      code?: string | null;
+      /** @description The customer identification code in the accounting system. This code is used as reference key to this party. */
+      accountingCode?: string | null;
+      /** @description The customer language code according to ISO 639-1. */
+      languageCode?: string | null;
+      /** @description The customer name. */
+      name: string;
+      address: components['schemas']['v1.Address'];
+      /** @description The customer phone number. */
+      phone?: string | null;
+      /** @description The customer email address. */
+      email?: string | null;
+      /** @description The customer invoice email address. */
+      invoiceEmail?: string | null;
+      /** @description The customer contact name. */
+      contact?: string | null;
+      taxNumberType?: components['schemas']['v1.CompanyInvoiceTaxNumberType'];
+      /** @description The customer tax number according to the `taxNumberType`. */
+      taxNumber?: string | null;
+      /** @description The customer VAT number. This must be a valid VAT number! */
+      vatNumber?: string | null;
+      /** @description The customer GLN number. This must be a valid GLN number! */
+      glnNumber?: string | null;
+      /** @description Extra identifiers for the customer. */
+      extraIdentifiers?: components['schemas']['v1.ExtraIdentifier'][] | null;
+    };
+    /** Sales invoice delivery */
+    'v1.SalesInvoiceDelivery': {
+      /**
+       * Format: date
+       * @description The actual delivery date.
+       */
+      deliveryDate?: string | null;
+      address?: components['schemas']['v1.Address'];
+    };
+    /** Sales invoice line */
+    'v1.SalesInvoiceLine': {
+      /**
+       * Format: uuid
+       * @description The invoice line ID.
+       */
+      readonly id?: string | null;
+      /** @description The line number, must be unique for each line. */
+      lineNumber: string;
+      /** @description The seller's item code. */
+      itemCodeSeller?: string | null;
+      /** @description The buyer's item code. */
+      itemCodeBuyer?: string | null;
+      /** @description The item name or line description. */
+      itemName: string;
+      /** @description The item group name. */
+      itemGroup?: string | null;
+      /** @description The shipping country of origin according to ISO 3166-1 alpha 2. */
+      itemOriginCountryCode?: string | null;
+      /** @description The accounting general ledger number. Must be empty or fully numeric. */
+      accountingGeneralLedger?: string | null;
+      /** @description The accounting analytical 1. Function depends on the accounting system. */
+      accountingAnalytical1?: string | null;
+      /** @description The accounting analytical 2. Function depends on the accounting system. */
+      accountingAnalytical2?: string | null;
+      /** @description The accounting analytical 3. Function depends on the accounting system. */
+      accountingAnalytical3?: string | null;
+      /** @description The accounting analytical 4. Function depends on the accounting system. */
+      accountingAnalytical4?: string | null;
+      /** @description The accounting analytical 5. Function depends on the accounting system. */
+      accountingAnalytical5?: string | null;
+      /**
+       * Format: double
+       * @description The quantity of items. Default value is 0. Max precision is 4.
+       */
+      quantity: number;
+      unitType?: components['schemas']['v1.CompanyInvoiceLineUomType'];
+      /**
+       * Format: double
+       * @description The item price excluding VAT, required when `isInclVat` is set to false. Default is 0. Max precision is 4.
+       */
+      itemExclVat?: number | null;
+      /**
+       * Format: double
+       * @description The item price including VAT, required when `isInclVat` is set to true. Default is 0. Max precision is 4.
+       */
+      itemInclVat?: number | null;
+      vatType: components['schemas']['v1.CompanyInvoiceLineVatType'];
+      /**
+       * Format: double
+       * @description The VAT percentage. Can be 0% for VAT excluded items. Default is 0. Max precision is 2.
+       */
+      vatPercentage: number;
+      /**
+       * Format: double
+       * @description The total discount for the entire line (not per product) excluding VAT, can be used when `isInclVat` is set to false. Default is 0. Max precision is 2.
+       */
+      totalDiscountExclVat?: number | null;
+      /**
+       * Format: double
+       * @description The total discount for the entire line (not per product) including VAT, can be used when `isInclVat` is set to true. Default is 0. Max precision is 2.
+       */
+      totalDiscountInclVat?: number | null;
+      /**
+       * Format: double
+       * @description The total line price excluding VAT, should be equal to (`quantity` * `itemExclVat`) - `totalDiscountExclVat`, required when `isInclVat` is set to false. Default is 0. Max precision is 2.
+       */
+      totalExclVat?: number | null;
+      /**
+       * Format: double
+       * @description The total line price excluding VAT, should be equal to (`quantity` * `itemInclVat`) - `totalDiscountInclVat`, required when `isInclVat` is set to true. Default is 0. Max precision is 2.
+       */
+      totalInclVat?: number | null;
+      /**
+       * Format: date
+       * @description The start date of the invoice line period.
+       */
+      invoicePeriodStartDate?: string | null;
+      /**
+       * Format: date
+       * @description The end date of the invoice line period.
+       */
+      invoicePeriodEndDate?: string | null;
+    };
+    'v1.SalesInvoiceSendStatus': {
+      /** @description The sales invoice ID. */
+      id?: string | null;
+      /** @description The createdOn timestamp. */
+      createdOn?: string | null;
+      /** @description The external document reference. This is the extern reference that was set when sending the sales invoice to Scrada. */
+      externalReference?: string | null;
+      /** @description The Peppol sender ID. */
+      peppolSenderID?: string | null;
+      /** @description The Peppol receiver ID. */
+      peppolReceiverID?: string | null;
+      /** @description The Peppol C1 country code. The country code the sending party is registered. */
+      peppolC1CountryCode?: string | null;
+      /** @description The Peppol corner-2 timestamp. The timestamp the message was sent over Peppol by the sending access point (Scrada) */
+      peppolC2Timestamp?: string | null;
+      /** @description The Peppol corner-2 seat ID. The ID of the sending access point (Scrada) */
+      peppolC2SeatID?: string | null;
+      /** @description The Peppol corner-2 message ID. The ID the sending access point (Scrada) has given to the message. */
+      peppolC2MessageID?: string | null;
+      /** @description The Peppol corner-3 message ID. The ID the receiving access point has given to the message. */
+      peppolC3MessageID?: string | null;
+      /** @description The Peppol corner-3 timestamp. The time the message was received by the receiving access point. */
+      peppolC3Timestamp?: string | null;
+      /** @description The Peppol corner-3 seat ID. The ID of the receiving access point. */
+      peppolC3SeatID?: string | null;
+      /** @description The Peppol conversation ID. */
+      peppolConversationID?: string | null;
+      /** @description The Peppol SBDH instance ID. */
+      peppolSbdhInstanceID?: string | null;
+      /** @description The Peppol document type scheme. */
+      peppolDocumentTypeScheme?: string | null;
+      /** @description The Peppol document type value. */
+      peppolDocumentTypeValue?: string | null;
+      /** @description The Peppol process scheme. */
+      peppolProcessScheme?: string | null;
+      /** @description The Peppol process value. */
+      peppolProcessValue?: string | null;
+      /**
+       * @description The status. <br/>
+       *     Status values that are used in a Peppol Only subscription and Full subscription:
+       *     <ul>
+       *     <li><b>Created</b>: A new document is sent to Scrada to be uploaded to Peppo or send by email</li>
+       *     <li><b>Processed</b>: When a document is successful uploaded to Peppol or send by email</li>
+       *     <li><b>Retry</b>: When there is an issue uploading to Peppol because maybe the other access point is temporary down or an issue sending the email. Scrada will retry 10 times. In the property `ErrorMessage` you can find more information why Scrada does a retry.</li>
+       *     <li><b>Canceled</b>: When a document was canceled to be uploaded to Peppol or send by email. This can only be done using the GUI of Scrada. Nothing is done with the document. </li>
+       *     <li><b>Error</b>: There is an error sending to Peppol or by email. Nothing is done with the document. Check error message for more details.</li>
+       *     <li><b>Error already sent</b>: This can happen if a document is sent by Scrada to an other access point and the other access point rejects the document or there was a timeout and then if Scrada retries to send the document, Scrada receives message from the other access pont that the document was already processed. Can also happen if document is sent again using the GUI of Scrada. Nothing is done with the document.</li>
+       *     <li><b>Error not on Peppol</b>: The receiverID is not registered on Peppol. Nothing is done with the document. </li>
+       *     </ul>
+       *     Status vales that are only used in case of a full subscription:
+       *     <ul>
+       *     <li><b>Blocked - send by email</b>: A receiverID is in the blocked list for sending to Peppol in Scrada and an email of the receiver is provided. The document will be sent by email to the receiver.</li>
+       *     <li><b>Not on Peppol - send by email</b>: The receiverID is not registered on Peppol. The document will be sent by email to the receiver.</li>
+       *     <li><b>Error - send by email</b>: There was an error sending the document to Peppol. The document will be sent by email to the receiver.</li>
+       *     <li><b>Blocked</b>: A receiverID is in the blocked list for sending to Peppol in Scrada and no email of the receiver is provided. Nothing is done with the document.</li>
+       *     <li><b>None</b>: This can happen if nothing is configured in Scrada how to send the sales invoice to the customer.
+       *     </ul>
+       */
+      status?: string | null;
+      /**
+       * Format: int32
+       * @description The number of attempts done to send the document.
+       */
+      attempt?: number;
+      /** @description The error message. */
+      errorMessage?: string | null;
+      /** @description The Scrada peppol document ID. This is only set if the sales invoice is sent over Peppol This is NULL if send by email. */
+      peppolOutboundDocumentID?: string | null;
+      /**
+       * @description The way Scrada tries to send the sales invoice to the customer. The possible values are:
+       *     <ul>
+       *     <li><b>Peppol</b>: The sales invoice is sent or trying to send over Peppol.</li>
+       *     <li><b>Email</b>: The sales invoice is sent or trying to send over email.</li>
+       *     <li><b>Peppol and email</b>: The sales invoice is sent by Peppol and a copy is sent by email.</li>
+       *     <li><b>None</b>: There was no configuration how to send the invoice to the customer.</li>
+       *     </ul>
+       */
+      sendMethod?: string | null;
+      /** @description The email address that is used for email */
+      receiverEmailAddress?: string | null;
+      /** @description The time the system tried to send the email */
+      receiverEmailTime?: string | null;
+      /**
+       * @description The status of the email:
+       *     <ul>
+       *     <li><b>Not sent</b>: No email is sent.</li>
+       *     <li><b>Successfully sent</b>: The email is successfully sent.</li>
+       *     <li><b>Error sending</b>: There was an error sending the email.</li>
+       *     </ul>
+       */
+      receiverEmailStatus?: string | null;
+    };
+    /** Sales invoice VAT total */
+    'v1.SalesInvoiceVatTotal': {
+      vatType: components['schemas']['v1.CompanyInvoiceLineVatType'];
+      /**
+       * Format: double
+       * @description The VAT percentage. Max precision is 2.
+       */
+      vatPercentage: number;
+      /**
+       * Format: double
+       * @description The total amount excluding VAT of this VAT total. Default value is 0. Max precision is 2.
+       */
+      totalExclVat: number;
+      /**
+       * Format: double
+       * @description The total VAT of this VAT total. Default is 0. Max precision is 2
+       */
+      totalVat: number;
+      /**
+       * Format: double
+       * @description The total amount including VAT of this VAT total. Default value is 0. Max precision is 2.
+       */
+      totalInclVat: number;
+      /** @description The invoice note. Example: 'Verlegging van heffing', 'Statiegeld' */
+      note?: string | null;
+    };
+  };
+  responses: never;
+  parameters: never;
+  requestBodies: never;
+  headers: never;
+  pathItems: never;
 }
 export type $defs = Record<string, never>;
 export type operations = Record<string, never>;

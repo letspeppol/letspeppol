@@ -4,893 +4,893 @@
  */
 
 export interface paths {
-    "/message": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Post a message */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["MessageBody"];
-                };
-            };
-            responses: {
-                /** @description the message */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["Message"];
-                    };
-                };
-                /** @description Authentication failure */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Unprocessable entity */
-                422: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": string;
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+  '/message': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/message/list": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    get?: never;
+    put?: never;
+    /** Post a message */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['MessageBody'];
         };
-        /** Retrieve a list of messages */
-        get: {
-            parameters: {
-                query?: {
-                    /** @description the folder to list, can be: INBOX|OUTBOX|SENT|FAILED */
-                    folder?: string;
-                    /** @description optionally a sender participant ID */
-                    sender?: string;
-                    /** @description optionally a receiver participant ID */
-                    receiver?: string;
-                    /** @description filter on confirmed messages ('true'|'false'|'' for all) */
-                    confirmed?: boolean;
-                    /** @description which page to retrieve */
-                    page?: number;
-                    /** @description how many elements per page (max 100) */
-                    perPage?: number;
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description the message */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["MessageList"];
-                    };
-                };
-                /** @description Authentication failure */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": string;
-                    };
-                };
-            };
+      };
+      responses: {
+        /** @description the message */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Message'];
+          };
         };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+        /** @description Authentication failure */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Unprocessable entity */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': string;
+          };
+        };
+      };
     };
-    "/message/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Retrieve a message and its content */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /** @description ID of the message to fetch */
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description the message */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["Message"];
-                    };
-                };
-                /** @description Authentication failure */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": string;
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/message/list': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/message/{id}/confirm": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    /** Retrieve a list of messages */
+    get: {
+      parameters: {
+        query?: {
+          /** @description the folder to list, can be: INBOX|OUTBOX|SENT|FAILED */
+          folder?: string;
+          /** @description optionally a sender participant ID */
+          sender?: string;
+          /** @description optionally a receiver participant ID */
+          receiver?: string;
+          /** @description filter on confirmed messages ('true'|'false'|'' for all) */
+          confirmed?: boolean;
+          /** @description which page to retrieve */
+          page?: number;
+          /** @description how many elements per page (max 100) */
+          perPage?: number;
         };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Confirm the good reception of a message */
-        patch: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /** @description ID of the message to confirm */
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": boolean;
-                    };
-                };
-                /** @description Authentication failure */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Already confirmed */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": string;
-                    };
-                };
-            };
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description the message */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['MessageList'];
+          };
         };
-        trace?: never;
+        /** @description Authentication failure */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': string;
+          };
+        };
+      };
     };
-    "/message/{id}/report": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get the report of a message */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /** @description ID of the message to get the report from */
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description the message report */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["Message Report"];
-                    };
-                };
-                /** @description Authentication failure */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": string;
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/message/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/organization/info": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    /** Retrieve a message and its content */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          /** @description ID of the message to fetch */
+          id: string;
         };
-        /** Retreive your organization information from Peppyrus */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description The organization info */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["OrganizationInfo"];
-                    };
-                };
-                /** @description Authentication failure */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": string;
-                    };
-                };
-                /** @description Unprocessable entity */
-                422: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": string;
-                    };
-                };
-            };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description the message */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Message'];
+          };
         };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+        /** @description Authentication failure */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': string;
+          };
+        };
+      };
     };
-    "/organization/peppol": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Retreive the specific peppol info for your organization from Peppyrus */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Specific Peppol info linked to your organization */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["Peppol"];
-                    };
-                };
-                /** @description Authentication failure */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": string;
-                    };
-                };
-                /** @description Unprocessable entity */
-                422: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": string;
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/message/{id}/confirm': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/peppol/bestMatch": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** Confirm the good reception of a message */
+    patch: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          /** @description ID of the message to confirm */
+          id: string;
         };
-        /** Get the best participant for a country code and vat number without prefix */
-        get: {
-            parameters: {
-                query?: {
-                    /** @description Without countryCode => 0123456789 */
-                    vatNumber?: string;
-                    /** @description Vat CountryCode => BE, NL, ... */
-                    countryCode?: string;
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["Participant"];
-                    };
-                };
-                /** @description Authentication failure */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': boolean;
+          };
         };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+        /** @description Authentication failure */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Already confirmed */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': string;
+          };
+        };
+      };
     };
-    "/peppol/lookup": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Lookup participant capabilities in SMP */
-        get: {
-            parameters: {
-                query?: {
-                    participantId?: string;
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Participant information */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["Participant"];
-                    };
-                };
-                /** @description Authentication failure */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": string;
-                    };
-                };
-                /** @description Unprocessable entity */
-                422: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": string;
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    trace?: never;
+  };
+  '/message/{id}/report': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/peppol/search": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    /** Get the report of a message */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          /** @description ID of the message to get the report from */
+          id: string;
         };
-        /** Query Peppol Directory for one of the several search criteria proposed */
-        get: {
-            parameters: {
-                query?: {
-                    query?: string;
-                    /** @description Participant id (9925:be0123456789) */
-                    participantId?: string;
-                    name?: string;
-                    country?: string;
-                    geoInfo?: string;
-                    contact?: string;
-                    identifierScheme?: string;
-                    identifierValue?: string;
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["Businesscard"][];
-                    };
-                };
-                /** @description Authentication failure */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description the message report */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Message Report'];
+          };
         };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+        /** @description Authentication failure */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': string;
+          };
+        };
+      };
     };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/organization/info': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Retreive your organization information from Peppyrus */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description The organization info */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['OrganizationInfo'];
+          };
+        };
+        /** @description Authentication failure */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': string;
+          };
+        };
+        /** @description Unprocessable entity */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': string;
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/organization/peppol': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Retreive the specific peppol info for your organization from Peppyrus */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Specific Peppol info linked to your organization */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Peppol'];
+          };
+        };
+        /** @description Authentication failure */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': string;
+          };
+        };
+        /** @description Unprocessable entity */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': string;
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/peppol/bestMatch': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get the best participant for a country code and vat number without prefix */
+    get: {
+      parameters: {
+        query?: {
+          /** @description Without countryCode => 0123456789 */
+          vatNumber?: string;
+          /** @description Vat CountryCode => BE, NL, ... */
+          countryCode?: string;
+        };
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Participant'];
+          };
+        };
+        /** @description Authentication failure */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/peppol/lookup': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Lookup participant capabilities in SMP */
+    get: {
+      parameters: {
+        query?: {
+          participantId?: string;
+        };
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Participant information */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Participant'];
+          };
+        };
+        /** @description Authentication failure */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': string;
+          };
+        };
+        /** @description Unprocessable entity */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': string;
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/peppol/search': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Query Peppol Directory for one of the several search criteria proposed */
+    get: {
+      parameters: {
+        query?: {
+          query?: string;
+          /** @description Participant id (9925:be0123456789) */
+          participantId?: string;
+          name?: string;
+          country?: string;
+          geoInfo?: string;
+          contact?: string;
+          identifierScheme?: string;
+          identifierValue?: string;
+        };
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Businesscard'][];
+          };
+        };
+        /** @description Authentication failure */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: {
-        Businesscard: {
-            participant?: components["schemas"]["BusinesscardParticipant"];
-            /** @description Entities */
-            entities?: components["schemas"]["BusinesscardEntity"][];
-        };
-        BusinesscardEntity: {
-            /** @description Name */
-            name?: components["schemas"]["BusinesscardEntityName"][];
-            /**
-             * @description Country Code
-             * @example BE
-             */
-            countryCode?: string;
-            /**
-             * @description Geo Info
-             * @example Brussels, Belgium
-             */
-            geoInfo?: string;
-            /** @description Identifiers */
-            identifiers?: components["schemas"]["BusinesscardEntityIdentifier"][];
-            /** @description Website */
-            website?: string[];
-            /** @description Contact */
-            contacts?: components["schemas"]["BusinesscardEntityContact"][];
-            /**
-             * @description Additional info
-             * @example Powered by Peppyrus
-             */
-            additionalInfo?: string;
-            /**
-             * @description Registration date
-             * @example 1970-01-01
-             */
-            regDate?: string;
-        };
-        BusinesscardEntityContact: {
-            /**
-             * @description Type
-             * @example Director
-             */
-            type?: string;
-            /**
-             * @description Name
-             * @example John Doe
-             */
-            name?: string;
-            /**
-             * @description Phone
-             * @example +32123456789
-             */
-            phone?: string;
-            /**
-             * @description Email
-             * @example john.doe@email.com
-             */
-            email?: string;
-        };
-        BusinesscardEntityIdentifier: {
-            /**
-             * @description Scheme
-             * @example VAT
-             */
-            scheme?: string;
-            /**
-             * @description Value
-             * @example BE0123456789
-             */
-            value?: string;
-        };
-        BusinesscardEntityName: {
-            /**
-             * @description Name
-             * @example My Company
-             */
-            name?: string;
-            /**
-             * @description Language
-             * @example en
-             */
-            language?: string;
-        };
-        BusinesscardParticipant: {
-            /**
-             * @description Scheme
-             * @example iso6523-actorid-upis
-             */
-            scheme?: string;
-            /**
-             * @description Value
-             * @example 9925:be0123456789
-             */
-            identifier?: string;
-        };
-        ListMeta: {
-            /** @description amount of pages */
-            pages?: number;
-            /** @description current page */
-            currentPage?: number;
-            /** @description amount of total items found */
-            itemCount?: number;
-        };
-        Message: {
-            /**
-             * Format: uuid
-             * @description ID of the message
-             * @example 012345678-9abc-def0-123456789abc
-             */
-            id?: string;
-            /**
-             * @description Participant ID of the sender
-             * @example 9925:be0123456789
-             */
-            sender?: string;
-            /**
-             * @description Participant ID of the recipient
-             * @example 9925:be0123456789
-             */
-            recipient?: string;
-            /**
-             * @description Direction
-             * @example IN
-             * @enum {string}
-             */
-            direction?: "IN" | "OUT";
-            /**
-             * @description Folder
-             * @example Inbox
-             * @enum {string}
-             */
-            folder?: "Inbox" | "Outbox" | "Sent" | "Failed";
-            /**
-             * @description Process Type
-             * @example cenbii-procid-ubl::urn:fdc:peppol.eu:2017:poacc:billing:01:1.0
-             */
-            processType?: string;
-            /**
-             * @description Document Type
-             * @example busdox-docid-qns::urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1
-             */
-            documentType?: string;
-            /**
-             * @description File content base64 encoded
-             * @example File content base64 encoded
-             */
-            fileContent?: string;
-            /**
-             * Format: date-time
-             * @description Date/time created
-             */
-            created?: string;
-            /** @description Indicates confirmed status */
-            confirmed?: boolean;
-        };
-        "Message Report": {
-            /** @description Message validation rules */
-            validationRules?: components["schemas"]["Message validation rule"][];
-            /** @description Message transmission rules */
-            transmissionRules?: string;
-        };
-        "Message validation rule": {
-            /**
-             * @description ID of the rule
-             * @example BR-07
-             */
-            id?: string;
-            /**
-             * @description Type of the rule
-             * @example FATAL
-             * @enum {string}
-             */
-            type?: "WARNING" | "FATAL";
-            /**
-             * @description Location of the rule
-             * @example /*:Invoice[namespace-uri()='urn:oasis:names:specification:ubl:schema:xsd:Invoice-2'][1]
-             */
-            location?: string;
-            /**
-             * @description Message of the rule
-             * @example BR-06]-An Invoice shall contain the Seller name (BT-27).
-             */
-            message?: string;
-        };
-        MessageBody: {
-            /**
-             * @description Participant ID of the sender of the message (format iso6523-actorid-upis)
-             * @example 9925:be0123456789
-             */
-            sender: string;
-            /**
-             * @description Participant ID of the recipient of the message (format iso6523-actorid-upis)
-             * @example 9925:be0123456789
-             */
-            recipient: string;
-            /**
-             * @description Type of process for document transmitted
-             * @example cenbii-procid-ubl::urn:fdc:peppol.eu:2017:poacc:billing:01:1.0
-             */
-            processType: string;
-            /**
-             * @description Type of document transmitted
-             * @example busdox-docid-qns::urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1
-             */
-            documentType: string;
-            /** @description Content of the file base64 encoded */
-            fileContent: string;
-        };
-        MessageList: {
-            /** @description messages */
-            items?: components["schemas"]["Message"][];
-            meta?: components["schemas"]["ListMeta"];
-        };
-        OrganizationInfo: {
-            /**
-             * @description The name of the organization
-             * @example Tigron BV
-             */
-            name?: string;
-            /**
-             * @description The street where the organization is based
-             * @example Excelsiorlaan
-             */
-            street?: string;
-            /**
-             * @description The housenumber for the organization
-             * @example 17
-             */
-            houseNumber?: string;
-            /**
-             * @description The zip code for the organization
-             * @example 1930
-             */
-            zipCode?: string;
-            /**
-             * @description The city for the organization
-             * @example Zaventem
-             */
-            city?: string;
-            /**
-             * @description The country for the organization
-             * @example Belgium
-             */
-            country?: string;
-            /**
-             * @description The VAT number for the organization
-             * @example BE0886776275
-             */
-            VAT?: string;
-        };
-        Participant: {
-            /**
-             * @description Scheme of the identifier of the participant
-             * @example iso6523-actorid-upis
-             */
-            scheme?: string;
-            /**
-             * @description identifier of the participant
-             * @example 9925:be0123456789
-             */
-            participantId?: string;
-            /** @description Services published in SMP */
-            services?: components["schemas"]["Service"][];
-        };
-        Peppol: {
-            participants: components["schemas"]["PeppolParticipant"];
-        };
-        PeppolParticipant: {
-            /**
-             * @description The participant ID registered in SML and in the PEPPOL directory
-             * @example 9925:TIGRON
-             */
-            participantId?: string;
-            /** @description If your organization can be found and you are able to receive messages via PEPPOL */
-            canReceive?: boolean;
-            /** @description If your organization can send messages via PEPPOL */
-            iSender?: boolean;
-        };
-        Service: {
-            /**
-             * @description Document Type
-             * @example busdox-docid-qns::urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1
-             */
-            documentType?: string;
-            /**
-             * @description Process
-             * @example cenbii-procid-ubl::urn:fdc:peppol.eu:2017:poacc:billing:01:1.0
-             */
-            process?: string;
-            /**
-             * @description Transport Profile
-             * @example peppol-transport-as4-v2_0
-             */
-            transportProfile?: string;
-            /**
-             * @description Endpoint url of access point
-             * @example https://ap.peppol.tigron.be
-             */
-            endpoint?: string;
-            /**
-             * @description Description of the service
-             * @example Peppol BIS Billing UBL Invoice V3
-             */
-            description?: string;
-            /**
-             * @description Technical contact for this service
-             * @example support@peppyrus.be
-             */
-            contact?: string;
-        };
+  schemas: {
+    Businesscard: {
+      participant?: components['schemas']['BusinesscardParticipant'];
+      /** @description Entities */
+      entities?: components['schemas']['BusinesscardEntity'][];
     };
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+    BusinesscardEntity: {
+      /** @description Name */
+      name?: components['schemas']['BusinesscardEntityName'][];
+      /**
+       * @description Country Code
+       * @example BE
+       */
+      countryCode?: string;
+      /**
+       * @description Geo Info
+       * @example Brussels, Belgium
+       */
+      geoInfo?: string;
+      /** @description Identifiers */
+      identifiers?: components['schemas']['BusinesscardEntityIdentifier'][];
+      /** @description Website */
+      website?: string[];
+      /** @description Contact */
+      contacts?: components['schemas']['BusinesscardEntityContact'][];
+      /**
+       * @description Additional info
+       * @example Powered by Peppyrus
+       */
+      additionalInfo?: string;
+      /**
+       * @description Registration date
+       * @example 1970-01-01
+       */
+      regDate?: string;
+    };
+    BusinesscardEntityContact: {
+      /**
+       * @description Type
+       * @example Director
+       */
+      type?: string;
+      /**
+       * @description Name
+       * @example John Doe
+       */
+      name?: string;
+      /**
+       * @description Phone
+       * @example +32123456789
+       */
+      phone?: string;
+      /**
+       * @description Email
+       * @example john.doe@email.com
+       */
+      email?: string;
+    };
+    BusinesscardEntityIdentifier: {
+      /**
+       * @description Scheme
+       * @example VAT
+       */
+      scheme?: string;
+      /**
+       * @description Value
+       * @example BE0123456789
+       */
+      value?: string;
+    };
+    BusinesscardEntityName: {
+      /**
+       * @description Name
+       * @example My Company
+       */
+      name?: string;
+      /**
+       * @description Language
+       * @example en
+       */
+      language?: string;
+    };
+    BusinesscardParticipant: {
+      /**
+       * @description Scheme
+       * @example iso6523-actorid-upis
+       */
+      scheme?: string;
+      /**
+       * @description Value
+       * @example 9925:be0123456789
+       */
+      identifier?: string;
+    };
+    ListMeta: {
+      /** @description amount of pages */
+      pages?: number;
+      /** @description current page */
+      currentPage?: number;
+      /** @description amount of total items found */
+      itemCount?: number;
+    };
+    Message: {
+      /**
+       * Format: uuid
+       * @description ID of the message
+       * @example 012345678-9abc-def0-123456789abc
+       */
+      id?: string;
+      /**
+       * @description Participant ID of the sender
+       * @example 9925:be0123456789
+       */
+      sender?: string;
+      /**
+       * @description Participant ID of the recipient
+       * @example 9925:be0123456789
+       */
+      recipient?: string;
+      /**
+       * @description Direction
+       * @example IN
+       * @enum {string}
+       */
+      direction?: 'IN' | 'OUT';
+      /**
+       * @description Folder
+       * @example Inbox
+       * @enum {string}
+       */
+      folder?: 'Inbox' | 'Outbox' | 'Sent' | 'Failed';
+      /**
+       * @description Process Type
+       * @example cenbii-procid-ubl::urn:fdc:peppol.eu:2017:poacc:billing:01:1.0
+       */
+      processType?: string;
+      /**
+       * @description Document Type
+       * @example busdox-docid-qns::urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1
+       */
+      documentType?: string;
+      /**
+       * @description File content base64 encoded
+       * @example File content base64 encoded
+       */
+      fileContent?: string;
+      /**
+       * Format: date-time
+       * @description Date/time created
+       */
+      created?: string;
+      /** @description Indicates confirmed status */
+      confirmed?: boolean;
+    };
+    'Message Report': {
+      /** @description Message validation rules */
+      validationRules?: components['schemas']['Message validation rule'][];
+      /** @description Message transmission rules */
+      transmissionRules?: string;
+    };
+    'Message validation rule': {
+      /**
+       * @description ID of the rule
+       * @example BR-07
+       */
+      id?: string;
+      /**
+       * @description Type of the rule
+       * @example FATAL
+       * @enum {string}
+       */
+      type?: 'WARNING' | 'FATAL';
+      /**
+       * @description Location of the rule
+       * @example /*:Invoice[namespace-uri()='urn:oasis:names:specification:ubl:schema:xsd:Invoice-2'][1]
+       */
+      location?: string;
+      /**
+       * @description Message of the rule
+       * @example BR-06]-An Invoice shall contain the Seller name (BT-27).
+       */
+      message?: string;
+    };
+    MessageBody: {
+      /**
+       * @description Participant ID of the sender of the message (format iso6523-actorid-upis)
+       * @example 9925:be0123456789
+       */
+      sender: string;
+      /**
+       * @description Participant ID of the recipient of the message (format iso6523-actorid-upis)
+       * @example 9925:be0123456789
+       */
+      recipient: string;
+      /**
+       * @description Type of process for document transmitted
+       * @example cenbii-procid-ubl::urn:fdc:peppol.eu:2017:poacc:billing:01:1.0
+       */
+      processType: string;
+      /**
+       * @description Type of document transmitted
+       * @example busdox-docid-qns::urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1
+       */
+      documentType: string;
+      /** @description Content of the file base64 encoded */
+      fileContent: string;
+    };
+    MessageList: {
+      /** @description messages */
+      items?: components['schemas']['Message'][];
+      meta?: components['schemas']['ListMeta'];
+    };
+    OrganizationInfo: {
+      /**
+       * @description The name of the organization
+       * @example Tigron BV
+       */
+      name?: string;
+      /**
+       * @description The street where the organization is based
+       * @example Excelsiorlaan
+       */
+      street?: string;
+      /**
+       * @description The housenumber for the organization
+       * @example 17
+       */
+      houseNumber?: string;
+      /**
+       * @description The zip code for the organization
+       * @example 1930
+       */
+      zipCode?: string;
+      /**
+       * @description The city for the organization
+       * @example Zaventem
+       */
+      city?: string;
+      /**
+       * @description The country for the organization
+       * @example Belgium
+       */
+      country?: string;
+      /**
+       * @description The VAT number for the organization
+       * @example BE0886776275
+       */
+      VAT?: string;
+    };
+    Participant: {
+      /**
+       * @description Scheme of the identifier of the participant
+       * @example iso6523-actorid-upis
+       */
+      scheme?: string;
+      /**
+       * @description identifier of the participant
+       * @example 9925:be0123456789
+       */
+      participantId?: string;
+      /** @description Services published in SMP */
+      services?: components['schemas']['Service'][];
+    };
+    Peppol: {
+      participants: components['schemas']['PeppolParticipant'];
+    };
+    PeppolParticipant: {
+      /**
+       * @description The participant ID registered in SML and in the PEPPOL directory
+       * @example 9925:TIGRON
+       */
+      participantId?: string;
+      /** @description If your organization can be found and you are able to receive messages via PEPPOL */
+      canReceive?: boolean;
+      /** @description If your organization can send messages via PEPPOL */
+      iSender?: boolean;
+    };
+    Service: {
+      /**
+       * @description Document Type
+       * @example busdox-docid-qns::urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1
+       */
+      documentType?: string;
+      /**
+       * @description Process
+       * @example cenbii-procid-ubl::urn:fdc:peppol.eu:2017:poacc:billing:01:1.0
+       */
+      process?: string;
+      /**
+       * @description Transport Profile
+       * @example peppol-transport-as4-v2_0
+       */
+      transportProfile?: string;
+      /**
+       * @description Endpoint url of access point
+       * @example https://ap.peppol.tigron.be
+       */
+      endpoint?: string;
+      /**
+       * @description Description of the service
+       * @example Peppol BIS Billing UBL Invoice V3
+       */
+      description?: string;
+      /**
+       * @description Technical contact for this service
+       * @example support@peppyrus.be
+       */
+      contact?: string;
+    };
+  };
+  responses: never;
+  parameters: never;
+  requestBodies: never;
+  headers: never;
+  pathItems: never;
 }
 export type $defs = Record<string, never>;
 export type operations = Record<string, never>;

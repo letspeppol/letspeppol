@@ -22,7 +22,7 @@ export type ListItemV1 = {
   responseSentAt?: string;
   success: boolean;
   errorCode: string | null;
-}
+};
 
 export type ListItemV2 = {
   platformId: string;
@@ -31,11 +31,19 @@ export type ListItemV2 = {
   senderId: string;
   receiverId: string;
   createdAt: string;
-}
+};
 
 export abstract class Backend {
   abstract reg(identifier: string): Promise<void>;
   abstract unreg(identifier: string): Promise<void>;
-  abstract sendDocument(documentXml: string, sendingEntity: string): Promise<void>;
-  abstract getDocumentXml(query: { peppolId: string; type: string; uuid: string, direction: string }): Promise<string>;
+  abstract sendDocument(
+    documentXml: string,
+    sendingEntity: string,
+  ): Promise<void>;
+  abstract getDocumentXml(query: {
+    peppolId: string;
+    type: string;
+    uuid: string;
+    direction: string;
+  }): Promise<string>;
 }
