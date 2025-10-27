@@ -145,12 +145,7 @@ test-proxy
 ```
 
 ### At a Platform-as-a-Service provider like Heroku
-There is a Heroku instance running at api.letspeppol.org.
+There is an old Heroku instance running at api.letspeppol.org. but it's not up to date.
 You can also deploy staging instances elsewhere.
 
 If you host it on a platform other than Heroku you might need to add your own TLS-offloading proxy, and then the environment variables and `pnpm install; pnpm build; pnpm start` commands will be similar to how it works in development.
-
-### Pushing changes to Heroku
-* Select 'deploy using Heroku git' in the Heroku setting.
-* Do the Heroku git checkout so that a 'letspeppol' folder is added next to the proxy folder in your checkout of this repo.
-* In the `proxy` folder run `./deploy.sh` to push changes to Heroku
