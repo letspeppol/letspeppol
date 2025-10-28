@@ -164,41 +164,6 @@ export class InvoiceComposer {
                 }
             }
         };
-        // return {
-        //     Party :  {
-        //         EndpointID: {
-        //             __schemeID: "0208",
-        //             value: this.customer.companyNumber
-        //         },
-        //         PartyIdentification: [{ ID: {
-        //                 __schemeID: "0208",
-        //                 value: this.customer.companyNumber
-        //             }}],
-        //         PartyName: {
-        //             Name: ""
-        //         },
-        //         PostalAddress: {
-        //             StreetName: this.customer.registeredOffice.street,
-        //             AdditionalStreetName: this.customer.registeredOffice.houseNumber,
-        //             CityName: this.customer.registeredOffice.city,
-        //             PostalZone: this.customer.registeredOffice.postalCode,
-        //             Country: {
-        //                 IdentificationCode: "BE"
-        //             }
-        //         },
-        //         PartyTaxScheme: {
-        //             CompanyID: {
-        //                 value: `BE${this.customer.companyNumber}`
-        //             },
-        //             TaxScheme: {
-        //                 ID: "VAT"
-        //             }
-        //         },
-        //         PartyLegalEntity: {
-        //             RegistrationName: this.customer.name
-        //         }
-        //     }
-        // };
     }
 
     getCompanyNumber() {
@@ -220,7 +185,8 @@ export class InvoiceComposer {
                     Name: this.companyService.myCompany.name
                 },
                 PostalAddress: {
-                    StreetName: `${this.companyService.myCompany.registeredOffice.street} ${this.companyService.myCompany.registeredOffice.houseNumber}`,
+                    StreetName: this.companyService.myCompany.registeredOffice.street,
+                    AdditionalStreetName: this.companyService.myCompany.registeredOffice.houseNumber,
                     CityName: this.companyService.myCompany.registeredOffice.city,
                     PostalZone: this.companyService.myCompany.registeredOffice.postalCode,
                     Country: {

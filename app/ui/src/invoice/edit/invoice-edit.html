@@ -21,7 +21,7 @@
             <button type="button" class="btn" click.trigger="validate()">Validate</button>
             <button type="button" class="btn" click.trigger="saveAsDraft()">${invoiceContext.selectedDraft ? 'Update draft' : 'Save draft'}</button>
             <button type="button" class="btn" click.trigger="invoiceContext.clearSelectedInvoice()">Discard</button>
-            <button type="button" class="btn primary" click.trigger="sendInvoice()">Send invoice</button>
+            <button type="button" class="btn primary" click.trigger="sendInvoice()" disabled.bind="!isValid">Send invoice</button>
         </div>
     </div>
 

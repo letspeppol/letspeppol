@@ -39,12 +39,15 @@ export class InvoiceEdit {
     @bindable invoicePaymentModal: InvoicePaymentModal;
     @bindable validationResultModal: ValidationResultModal;
 
+    invoiceCustomerModalChanged() {
+        console.log('jop');
+    }
 
-    attached() {
+    bound() {
         this.newInvoiceSubscription = this.ea.subscribe('newInvoice', () => this.newInvoice());
     }
 
-    detached() {
+    unbinding() {
         this.newInvoiceSubscription.dispose();
     }
 
@@ -169,14 +172,6 @@ export class InvoiceEdit {
         }
     }
 
-    @computed({ deps: [
-        'invoiceContext.selectedInvoice.ID'
-        ] })
-    get isValid() {
-        const inv = this.invoiceContext.selectedInvoice;
-        return inv.ID;
-    }
-
     // Modals
 
     showInvoiceModal() {
@@ -197,6 +192,31 @@ export class InvoiceEdit {
 
     showPaymentModal() {
         this.invoicePaymentModal.showModal();
+    }
+
+    @computed({
+        deps: [
+            'invoiceContext.selectedInvoice.ID',
+            'invoiceContext.selectedInvoice.BuyerReference',
+            'invoiceContext.selectedInvoice.IssueDate',
+            'invoiceContext.selectedInvoice.DueDate',
+            'invoiceContext.selectedInvoice.PaymentTerms',
+            'invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PartyIdentification[0].ID.value',
+            'invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PartyName.Name',
+            'invoiceContext.selectedInvoice.AccountingCustomerParty.PartyTaxScheme.TaxScheme.ID',
+            'invoiceContext.selectedInvoice.LegalMonetaryTotal.LineExtensionAmount.value',
+
+        ] })
+    get isValid() {
+        const inv = this.invoiceContext.selectedInvoice;
+        console.log('jop');
+        return inv && inv.ID && inv.BuyerReference && inv.IssueDate && (inv.DueDate || inv.PaymentTerms)
+            && inv.AccountingCustomerParty
+            && inv.AccountingCustomerParty.Party.PartyIdentification[0].ID.value
+            && inv.AccountingCustomerParty.Party.PartyName.Name
+            && inv.AccountingCustomerParty.Party.PartyTaxScheme.TaxScheme.ID
+            && inv.LegalMonetaryTotal.LineExtensionAmount.value > 0
+            ;
     }
 
 }
