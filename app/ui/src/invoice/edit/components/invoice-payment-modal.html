@@ -9,12 +9,12 @@
             <div style="display: inline-grid; gap: var(--space-1)">
                 <label class="field">
                     <span>Type</span>
-                    <select name="paymentMeanCode" value.bind="selectedPaymentMeansCode" change.trigger="paymentMeansCodeChanged()" required>
+                    <select name="paymentMeanCode" value.bind="paymentMeansCode" change.trigger="paymentMeansCodeChanged()" required>
                         <option value="">None</option>
-                        <option repeat.for="paymentMeanCode of invoiceContext.paymentMeansCodes" model.bind="paymentMeanCode.value">${paymentMeanCode.__name}</option>
+                        <option repeat.for="paymentMeanCode of invoiceComposer.paymentMeansCodes" model.bind="paymentMeanCode.value">${paymentMeanCode.__name}</option>
                     </select>
                 </label>
-                <template if.bind="paymentMeans.PaymentMeansCode.value === 30">
+                <template if.bind="paymentMeansCode === 30">
                     <label class="field">
                         <span>Name</span>
                         <input type="text" name="payeeFinancialAccountName" placeholder="Acccount name" value.bind="paymentMeans.PayeeFinancialAccount.Name" />
@@ -22,6 +22,10 @@
                     <label class="field">
                         <span>IBAN</span>
                         <input type="text" name="payeeFinancialAccountID" placeholder="IBAN" value.bind="paymentMeans.PayeeFinancialAccount.ID" />
+                    </label>
+                    <label class="field">
+                        <span>Reference</span>
+                        <input type="text" name="reference" placeholder="100-00001-00" value.bind="paymentMeans.PaymentID" />
                     </label>
                 </template>
             </div>

@@ -1,13 +1,5 @@
 import {IEventAggregator, observable, singleton} from "aurelia";
-import {
-    CreditNote,
-    CreditNoteLine,
-    getLines,
-    Invoice,
-    InvoiceLine,
-    PaymentMeansCode,
-    UBLDoc
-} from "../services/peppol/ubl";
+import {CreditNote, CreditNoteLine, getLines, Invoice, InvoiceLine, UBLDoc} from "../services/peppol/ubl";
 import {CompanyService} from "../services/app/company-service";
 import {resolve} from "@aurelia/kernel";
 import {InvoiceComposer} from "./invoice-composer";
@@ -19,11 +11,6 @@ export enum DocumentType {
     Invoice = "invoice",
     CreditNote = "credit-note"
 }
-
-// export interface PaymentMeansCode {
-//     code: number
-//     name: string;
-// }
 
 @singleton()
 export class InvoiceContext {
@@ -49,35 +36,18 @@ export class InvoiceContext {
         if (!this.companyService.myCompany) {
             try {
                 await this.companyService.getAndSetMyCompanyForToken();
-                this.newUBLDocument();
             } catch {
                 this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to get company info"});
             }
         }
     }
 
-    async newUBLDocument(documentType : DocumentType = DocumentType.Invoice) {
+    newUBLDocument(documentType : DocumentType = DocumentType.Invoice) {
         if (documentType === DocumentType.Invoice) {
             this.selectedInvoice = this.invoiceComposer.createInvoice();
         } else {
             this.selectedInvoice = this.invoiceComposer.createCreditNote();
         }
-
-        const line: InvoiceLine = this.invoiceComposer.getInvoiceLine("1");
-        line.InvoicedQuantity.value = 2;
-        line.Item.Description = "item";
-        line.Price.PriceAmount.value = 5.33;
-        line.LineExtensionAmount.value = 10.66;
-
-        const jop = this.selectedInvoice as Invoice;
-        jop.ID = "20250001";
-        jop.BuyerReference = "PO-12345";
-        jop.AccountingCustomerParty.Party.EndpointID.value = "0705969661";
-        jop.AccountingCustomerParty.Party.PartyName.Name = "Ponder Source";
-        jop.InvoiceLine.push(line);
-        jop.PaymentMeans.PayeeFinancialAccount.Name = "Software Oplossing";
-        jop.PaymentMeans.PayeeFinancialAccount.ID = "BE123457807";
-        jop.PaymentTerms = {Note: "jaja"};
         this.invoiceCalculator.calculateTaxAndTotals(this.selectedInvoice);
     }
 
@@ -91,17 +61,8 @@ export class InvoiceContext {
         return "1";
     }
 
-    public paymentMeansCodes: PaymentMeansCode[] = [
-        { value: 10, __name: "In Cash"},
-        { value: 30, __name: "Credit Transfer"}
-    ];
-
     // Drafts
-
-    addDraft(draft) {
-        this.drafts.unshift(draft);
-    }
-
+    
     deleteDraft(draft) {
         const index = this.drafts.findIndex(item => item === draft);
         if (index > -1) {

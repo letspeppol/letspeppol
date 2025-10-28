@@ -55,6 +55,10 @@ export class InvoiceOverview {
         }
     }
 
+    newInvoice() {
+        this.ea.publish('newInvoice');
+    }
+
     selectItem(item: ListItemV1 | InvoiceDraftDto) {
         this.invoiceContext.selectedDraft = undefined;
         if (this.box === 'drafts') {

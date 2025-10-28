@@ -1,12 +1,14 @@
 import {bindable} from "aurelia";
 import {Party} from "../../../services/peppol/ubl";
 import {PartnerDto} from "../../../services/app/partner-service";
+import {CustomerSearch} from "./customer-search";
 
 export class InvoiceCustomerModal {
     @bindable invoiceContext;
-    @bindable customerSearch;
+    @bindable customerSearch: CustomerSearch;
     open = false;
     customer: Party | undefined;
+    customerSavedFunction: () => void;
 
     vatChanged() {
         if (!this.customer) return;
@@ -14,11 +16,12 @@ export class InvoiceCustomerModal {
         this.customer.PartyTaxScheme.CompanyID.value = `BE${this.customer.PartyIdentification[0].ID.value}`;
     }
 
-    showModal() {
+    showModal(customerSavedFunction: () => void) {
         this.customer = JSON.parse(JSON.stringify(this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party));
         this.open = true;
         this.customerSearch.resetSearch();
         this.customerSearch.focusInput();
+        this.customerSavedFunction = customerSavedFunction;
     }
 
     closeModal() {
@@ -31,6 +34,9 @@ export class InvoiceCustomerModal {
         this.open = false;
         this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party = this.customer;
         this.customerSearch.resetSearch();
+        if (this.customerSavedFunction) {
+            this.customerSavedFunction();
+        }
     }
 
     selectCustomer(c: PartnerDto) {

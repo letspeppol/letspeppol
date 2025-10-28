@@ -1,28 +1,40 @@
-import {AccountingParty, CreditNote, CreditNoteLine, Invoice, InvoiceLine, UBLBaseLine,} from "../services/peppol/ubl";
+import {
+    AccountingParty,
+    CreditNote,
+    CreditNoteLine,
+    Invoice,
+    InvoiceLine,
+    PaymentMeans,
+    PaymentMeansCode,
+    PaymentTerms,
+    UBLBaseLine,
+} from "../services/peppol/ubl";
 import moment from "moment/moment";
 import {singleton} from "aurelia";
 import {resolve} from "@aurelia/kernel";
 import {CompanyService} from "../services/app/company-service";
-import {PartnerDto} from "../services/app/partner-service";
+import {I18N} from "@aurelia/i18n";
 
 @singleton()
 export class InvoiceComposer {
+    private i18n = resolve(I18N);
     private companyService = resolve(CompanyService);
-    private customer: PartnerDto = {
-        customer: true,
-        supplier: false,
-        companyNumber: "0705969661",
-        name: "Ponder Source",
-        registeredOffice: {
-            street: "Da street",
-            houseNumber: "3",
-            city: "Amstel",
-            postalCode: "33209"
-        }
-    };
+
+    public paymentMeansCodes: PaymentMeansCode[] = [
+        { value: 10, __name: "In Cash"},
+        { value: 30, __name: "Credit Transfer"}
+    ];
+
+    public getPaymentMeansCode(code: number): PaymentMeansCode {
+        return this.paymentMeansCodes.find(item => item.value === code);
+    }
+
+    public translatePaymentTerm(paymentTerm: string) {
+        return this.i18n.tr(`paymentTerms.${paymentTerm}`)
+    }
 
     createInvoice(): Invoice {
-        return {
+        const invoice = {
             CustomizationID: "urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0",
             ProfileID: "urn:fdc:peppol.eu:2017:poacc:billing:01:1.0",
             ID: "",
@@ -34,22 +46,8 @@ export class InvoiceComposer {
             BuyerReference: undefined,
             AccountingSupplierParty: this.getAccountingSupplierParty(),
             AccountingCustomerParty: this.getAccountingCustomerParty(),
-            PaymentMeans : {
-                PaymentMeansCode: {
-                    __name: "Credit transfer",
-                    value: 30
-                },
-                PayeeFinancialAccount: {
-                    ID: undefined,
-                    Name: undefined,
-                    FinancialInstitutionBranch: {
-                        ID: undefined
-                    }
-                },
-            },
-            PaymentTerms: {
-                Note: "Payment within 10 days, 2% discount"
-            },
+            PaymentMeans : undefined,
+            PaymentTerms: undefined,
             TaxTotal: undefined,
             LegalMonetaryTotal: {
                 PayableAmount: {
@@ -59,6 +57,52 @@ export class InvoiceComposer {
             },
             InvoiceLine: []
         } as Invoice;
+
+        invoice.PaymentMeans = this.getPaymentMeansForMyCompany(30);
+        invoice.PaymentTerms = this.getPaymentTermsForMyCompany();
+
+        return invoice;
+    }
+
+    getDueDate(paymentTerm: string, issueDate: string) {
+        const date = moment(issueDate);
+        switch (paymentTerm) {
+            case '15_DAYS':
+                date.add(15, 'day');
+                break;
+            case '30_DAYS':
+                date.add(30, 'day');
+                break;
+            case '60_DAYS':
+                date.add(60, 'day');
+                break;
+            case 'END_OF_NEXT_MONTH':
+                date.add(1, 'month').endOf('month');
+                break;
+        }
+        return date.format('YYYY-MM-DD');
+    }
+
+    getPaymentMeansForMyCompany(paymentMeansCode: number) : PaymentMeans {
+        const myCompany = this.companyService.myCompany;
+        return {
+            PaymentMeansCode: this.paymentMeansCodes.find(item => item.value === paymentMeansCode),
+            PaymentID: undefined,
+            PayeeFinancialAccount: myCompany.iban ? {
+                ID: myCompany.iban,
+                Name: myCompany.paymentAccountName ?? myCompany.name,
+            } : undefined
+        };
+    }
+
+    getPaymentTermsForMyCompany(): PaymentTerms {
+        const myCompany = this.companyService.myCompany;
+        if (myCompany.paymentTerms) {
+            return {
+                Note: this.translatePaymentTerm(myCompany.paymentTerms)
+            }
+        }
+        return undefined;
     }
 
     createCreditNote(): CreditNote {
@@ -89,37 +133,72 @@ export class InvoiceComposer {
             Party :  {
                 EndpointID: {
                     __schemeID: "0208",
-                    value: this.customer.companyNumber
+                    value: undefined
                 },
                 PartyIdentification: [{ ID: {
                         __schemeID: "0208",
-                        value: this.customer.companyNumber
+                        value: undefined
                     }}],
                 PartyName: {
                     Name: ""
                 },
                 PostalAddress: {
-                    StreetName: this.customer.registeredOffice.street,
-                    AdditionalStreetName: this.customer.registeredOffice.houseNumber,
-                    CityName: this.customer.registeredOffice.city,
-                    PostalZone: this.customer.registeredOffice.postalCode,
+                    StreetName: undefined,
+                    AdditionalStreetName: undefined,
+                    CityName: undefined,
+                    PostalZone: undefined,
                     Country: {
                         IdentificationCode: "BE"
                     }
                 },
                 PartyTaxScheme: {
                     CompanyID: {
-                        value: `BE${this.customer.companyNumber}`
+                        value: undefined
                     },
                     TaxScheme: {
                         ID: "VAT"
                     }
                 },
                 PartyLegalEntity: {
-                    RegistrationName: this.customer.name
+                    RegistrationName: undefined
                 }
             }
         };
+        // return {
+        //     Party :  {
+        //         EndpointID: {
+        //             __schemeID: "0208",
+        //             value: this.customer.companyNumber
+        //         },
+        //         PartyIdentification: [{ ID: {
+        //                 __schemeID: "0208",
+        //                 value: this.customer.companyNumber
+        //             }}],
+        //         PartyName: {
+        //             Name: ""
+        //         },
+        //         PostalAddress: {
+        //             StreetName: this.customer.registeredOffice.street,
+        //             AdditionalStreetName: this.customer.registeredOffice.houseNumber,
+        //             CityName: this.customer.registeredOffice.city,
+        //             PostalZone: this.customer.registeredOffice.postalCode,
+        //             Country: {
+        //                 IdentificationCode: "BE"
+        //             }
+        //         },
+        //         PartyTaxScheme: {
+        //             CompanyID: {
+        //                 value: `BE${this.customer.companyNumber}`
+        //             },
+        //             TaxScheme: {
+        //                 ID: "VAT"
+        //             }
+        //         },
+        //         PartyLegalEntity: {
+        //             RegistrationName: this.customer.name
+        //         }
+        //     }
+        // };
     }
 
     getCompanyNumber() {

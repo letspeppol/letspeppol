@@ -10,11 +10,14 @@
         <div class="modal-body">
             <div style="display: inline-grid; gap: var(--space-1)">
                 <h3 style="margin-bottom: 0px">Search Customer</h3>
-                <customer-search component.ref="customerSearch" select-customer-function.bind="(c) => selectCustomer(c)" ></customer-search>
+                <customer-search component.ref="customerSearch"
+                                 select-customer-function.bind="(c) => selectCustomer(c)"
+                                 confirm-customer-function.bind="() => customer && saveCustomer()">
+                </customer-search>
                 <h3 class="field full" style="margin-bottom: 0px">Customer</h3>
                 <label class="field">
                     <span>VAT Number</span>
-                    <input type="text" name="customerId" placeholder="Search by VAT number" value.bind="customer.PartyIdentification[0].ID.value"  required change.trigger="vatChanged()" style="width: 130px" />
+                    <input type="text" name="customerId" value.bind="customer.PartyIdentification[0].ID.value"  required change.trigger="vatChanged()" style="width: 130px" />
                 </label>
                 <label class="field">
                     <span>Name</span>

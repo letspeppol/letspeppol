@@ -18,11 +18,11 @@
                     </label>
                     <label class="field">
                         <span>Invoice number</span>
-                        <input type="text" name="docNumber" placeholder.bind="selectedDocumentType === 'Invoice' ? 'INV-2025-0001' : 'CRE-2025-0001'" value.bind="id" required />
+                        <input id="docNumber" type="text" name="docNumber" placeholder.bind="selectedDocumentType === 'Invoice' ? 'INV-2025-0001' : 'CRE-2025-0001'" value.bind="id" keydown.trigger="onKeyDown($event)" required />
                     </label>
                     <label class="field">
                         <span>Buyer Reference</span>
-                        <input type="text" name="reference" placeholder="PO-12345" value.bind="buyerReference" required />
+                        <input type="text" name="reference" placeholder="PO-12345" value.bind="buyerReference" keydown.trigger="onKeyDown($event)" required />
                     </label>
                     <label class="field full">
                         <details>

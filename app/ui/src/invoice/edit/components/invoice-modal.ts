@@ -30,6 +30,7 @@ export class InvoiceModal {
             this.note = JSON.parse(JSON.stringify(this.invoiceContext.selectedInvoice.Note));
         }
         this.open = true;
+        setTimeout(() => window.document.getElementById('docNumber')?.focus(), 50);
     }
 
     closeModal() {
@@ -50,5 +51,11 @@ export class InvoiceModal {
         this.invoiceContext.selectedInvoice.BuyerReference = this.buyerReference;
         this.invoiceContext.selectedInvoice.Note = this.note;
         console.log(this.originalDocumentType);
+    }
+
+    onKeyDown(e: KeyboardEvent) {
+        if (e.key === 'Enter') {
+            this.saveInvoiceInfo();
+        }
     }
 }

@@ -1,13 +1,18 @@
 import {bindable} from "aurelia";
 import {PaymentMeans} from "../../../services/peppol/ubl";
+import {InvoiceComposer} from "../../invoice-composer";
+import {resolve} from "@aurelia/kernel";
 
 export class InvoicePaymentModal {
+    invoiceComposer = resolve(InvoiceComposer);
     @bindable invoiceContext;
     @bindable selectedPaymentMeansCode;
+    paymentMeansCode;
     open = false;
     paymentMeans: PaymentMeans | undefined;
 
     showModal() {
+        this.paymentMeansCode = this.selectedPaymentMeansCode;
         this.paymentMeans = JSON.parse(JSON.stringify(this.invoiceContext.selectedInvoice.PaymentMeans));
         this.open = true;
     }
@@ -18,20 +23,21 @@ export class InvoicePaymentModal {
 
     savePaymentMeans() {
         this.open = false;
+        this.selectedPaymentMeansCode = this.paymentMeansCode;
         this.invoiceContext.selectedInvoice.PaymentMeans = this.paymentMeans;
     }
 
     paymentMeansCodeChanged() {
-        if (!this.selectedPaymentMeansCode) {
+        if (!this.paymentMeansCode) {
             this.paymentMeans = null;
             return;
         }
-        console.log(this.selectedPaymentMeansCode);
-        const index = this.invoiceContext.paymentMeansCodes.find(item => item.value === this.selectedPaymentMeansCode);
-        if (index >= 0) {
-            this.paymentMeans.PaymentMeansCode = JSON.parse(JSON.stringify(this.invoiceContext.paymentMeansCodes[index]));
-            console.log(this.paymentMeans.PaymentMeansCode.value);
-            console.log(this.paymentMeans.PaymentMeansCode.__name);
+        if (this.paymentMeansCode === 30) {
+            this.paymentMeans = this.invoiceComposer.getPaymentMeansForMyCompany(this.paymentMeansCode);
+        } else {
+            this.paymentMeans = {
+                PaymentMeansCode: this.invoiceComposer.getPaymentMeansCode(this.paymentMeansCode)
+            };
         }
     }
 }

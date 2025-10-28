@@ -1,7 +1,7 @@
 import {resolve} from "@aurelia/kernel";
 import {ProxyService} from "../../services/proxy/proxy-service";
 import {DocumentType, InvoiceContext} from "../invoice-context";
-import {bindable, IEventAggregator, observable} from "aurelia";
+import {bindable, computed, IDisposable, IEventAggregator, observable} from "aurelia";
 import {
     ClassifiedTaxCategory,
     CreditNote,
@@ -28,6 +28,7 @@ export class InvoiceEdit {
     private invoiceContext = resolve(InvoiceContext);
     private invoiceCalculator = resolve(InvoiceCalculator);
     private invoiceComposer = resolve(InvoiceComposer);
+    private newInvoiceSubscription: IDisposable;
 
     selectedPaymentMeansCode: number | undefined = 30;
     @observable selectedDocumentType = DocumentType.Invoice;
@@ -37,6 +38,15 @@ export class InvoiceEdit {
     @bindable invoiceCustomerModal: InvoiceCustomerModal;
     @bindable invoicePaymentModal: InvoicePaymentModal;
     @bindable validationResultModal: ValidationResultModal;
+
+
+    attached() {
+        this.newInvoiceSubscription = this.ea.subscribe('newInvoice', () => this.newInvoice());
+    }
+
+    detached() {
+        this.newInvoiceSubscription.dispose();
+    }
 
     taxCategories: ClassifiedTaxCategory[] = [
         { ID: "S", Percent: 21, TaxScheme: { ID: 'VAT' } },
@@ -48,6 +58,11 @@ export class InvoiceEdit {
     paymentMeanCodeMatcher = (a: PaymentMeansCode, b: PaymentMeansCode) => {
         return a?.value === b?.value;
     };
+
+    newInvoice() {
+        this.invoiceContext.newUBLDocument();
+        this.showCustomerModal();
+    }
 
     calcLineTotal(line: UBLLine) {
         const quantity = getAmount(line);
@@ -154,6 +169,14 @@ export class InvoiceEdit {
         }
     }
 
+    @computed({ deps: [
+        'invoiceContext.selectedInvoice.ID'
+        ] })
+    get isValid() {
+        const inv = this.invoiceContext.selectedInvoice;
+        return inv.ID;
+    }
+
     // Modals
 
     showInvoiceModal() {
@@ -165,7 +188,11 @@ export class InvoiceEdit {
     }
 
     showCustomerModal() {
-        this.invoiceCustomerModal.showModal();
+        this.invoiceCustomerModal.showModal(() => {
+            if (!this.invoiceContext.selectedInvoice.ID) {
+                this.showInvoiceModal();
+            }
+        });
     }
 
     showPaymentModal() {

@@ -1,8 +1,7 @@
 import {bindable, observable} from "aurelia";
 import {resolve} from "@aurelia/kernel";
-import {I18N} from "@aurelia/i18n";
 import {Account} from "../../../account/account";
-import moment from "moment";
+import {InvoiceComposer} from "../../invoice-composer";
 
 export interface Translation {
     key: string,
@@ -10,7 +9,7 @@ export interface Translation {
 }
 
 export class InvoiceDateModal {
-    private i18n = resolve(I18N);
+    private invoiceComposer = resolve(InvoiceComposer);
     @bindable invoiceContext;
     @observable issueDate;
     @observable selectedPaymentTerm;
@@ -35,23 +34,7 @@ export class InvoiceDateModal {
     }
 
     private recalculateDueDate() {
-        const date = moment(this.issueDate);
-        switch (this.selectedPaymentTerm) {
-            case '15_DAYS':
-                date.add(15, 'day');
-                break;
-            case '30_DAYS':
-                date.add(30, 'day');
-                break;
-            case '60_DAYS':
-                date.add(60, 'day');
-                break;
-            case 'END_OF_NEXT_MONTH':
-                date.add(1, 'month').endOf('month');
-                break;
-        }
-        this.dueDate = date.format('YYYY-MM-DD');
-        console.log(this.dueDate);
+        this.dueDate = this.invoiceComposer.getDueDate(this.selectedPaymentTerm, this.issueDate);
     }
 
     private closeModal() {
@@ -68,15 +51,11 @@ export class InvoiceDateModal {
     private loadPossiblePaymentTerms() {
         this.possiblePaymentTerms = [];
         for (const paymentTerm of Account.PAYMENT_TERMS) {
-            const translation = this.translatePaymentTerm(paymentTerm);
+            const translation = this.invoiceComposer.translatePaymentTerm(paymentTerm);
             if (translation === this.invoiceContext.selectedInvoice.PaymentTerms) {
                 this.selectedPaymentTerm = paymentTerm;
             }
             this.possiblePaymentTerms.push({key: paymentTerm, translation: translation});
         }
-    }
-
-    private translatePaymentTerm(paymentTerm: string) {
-        return this.i18n.tr(`paymentTerms.${paymentTerm}`)
     }
 }

@@ -9,8 +9,8 @@ export class CustomerSearch {
     filteredCustomers: PartnerDto[] = [];
     showSuggestions = false;
     highlightedIndex = -1;
-    customerSearchInput: HTMLInputElement; // ref from template
     @bindable selectCustomerFunction: (c: PartnerDto) => void;
+    @bindable confirmCustomerFunction: () => void;
 
     attached() {
         this.getPartners();
@@ -42,7 +42,15 @@ export class CustomerSearch {
     }
 
     onSearchKeydown(e: KeyboardEvent) {
-        if (!this.showSuggestions) return;
+        if (!this.showSuggestions) {
+            if (e.key === 'Enter') {
+                if (this.confirmCustomerFunction) {
+                    this.confirmCustomerFunction();
+                }
+            } else {
+                return;
+            }
+        }
         if (e.key === 'ArrowDown') {
             e.preventDefault();
             this.highlightedIndex = (this.highlightedIndex + 1) % this.filteredCustomers.length;
@@ -81,7 +89,6 @@ export class CustomerSearch {
     }
 
     public focusInput() {
-        // Use microtask to ensure element is in DOM & visible
-        queueMicrotask(() => this.customerSearchInput?.focus());
+        setTimeout(() => window.document.getElementById('customerSearch')?.focus(), 50);
     }
 }
