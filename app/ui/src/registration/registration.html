@@ -1,6 +1,8 @@
 <import from="../components/view/wizard-view"></import>
+<import from="../components/stepper/stepper"></import>
 
 <wizard-view>
+    <stepper au-slot="stepper" steps.bind="[1,2,3,4]" completed-steps.bind="step"></stepper>
     <h1 if.bind="step === 0" au-slot="header">Register your company</h1>
     <form if.bind="step === 0" class="auth-form">
         <div class="grid">

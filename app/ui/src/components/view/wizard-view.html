@@ -6,7 +6,9 @@
         <theme-selector></theme-selector>
         <language-selector></language-selector>
     </div>
+
     <div class="container">
+        <au-slot name="stepper"></au-slot>
         <div class="card">
             <img src.bind="this.theme.themeDark?'logo-dark.png':'logo.png'" class="logo" height="80" alt="Let's Peppol" click.trigger="goHome()" />
             <div class="section-header">

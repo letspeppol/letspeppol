@@ -1,6 +1,8 @@
 <import from="../components/view/wizard-view"></import>
+<import from="../components/stepper/stepper"></import>
 
 <wizard-view>
+    <stepper if.bind="step !== 3" au-slot="stepper" steps.bind="[1,2,3,4,5]" completed-steps.bind="step+2"></stepper>
     <h1 au-slot="header">Confirm Identity</h1>
     <template if.bind="errorMessage">
         <div class="alert error">${errorMessage}</div>
