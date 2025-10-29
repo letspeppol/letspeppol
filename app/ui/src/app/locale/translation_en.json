@@ -2,17 +2,26 @@
   "label" : {
     "email" : "Email",
     "password" : "Password",
-    "confirm-password" : "Confirm Password"
+    "confirm-password" : "Confirm Password",
+    "vat-number" : "VAT number"
   },
   "placeholder" : {
-    "email" : "you@company.com"
+    "email" : "you@company.com",
+    "vat-number" : "BE0123456789"
   },
   "login" : {
+    "action" : "Log in",
     "title" : "Sign in to your account",
     "new" : "New here?",
     "register" : "Register your company",
     "continue" : "Sign in",
     "forgot" : "Forgot my password"
+  },
+  "registration" : {
+    "title-step0" : "Register your company",
+    "create-account" : "Create account",
+    "already-registered" : "Already registered?",
+    "title-step1" : "Confirm your company<"
   },
   "error" : {
     "login-failed" : "Login failed",

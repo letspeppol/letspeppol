@@ -50,7 +50,8 @@ export class InvoiceCustomerModal {
             PartyIdentification: [{ ID: { value: companyNumber } }],
             PartyName: { Name: c.name },
             PostalAddress: {
-                StreetName: [c.registeredOffice?.street, c.registeredOffice?.houseNumber].filter(Boolean).join(' '),
+                StreetName: c.registeredOffice?.street,
+                AdditionalStreetName: c.registeredOffice?.houseNumber,
                 CityName: c.registeredOffice?.city,
                 PostalZone: c.registeredOffice?.postalCode,
                 Country: { IdentificationCode: 'BE' }

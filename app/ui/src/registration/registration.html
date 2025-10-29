@@ -3,29 +3,29 @@
 
 <wizard-view>
     <stepper au-slot="stepper" steps.bind="[1,2,3,4]" completed-steps.bind="step"></stepper>
-    <h1 if.bind="step === 0" au-slot="header">Register your company</h1>
+    <h1 if.bind="step === 0" au-slot="header" t="registration.title-step0">Register your company</h1>
     <form if.bind="step === 0" class="auth-form">
         <div class="grid">
             <label class="field full">
-                <span>VAT number</span>
-                <input name="companyNumber" type="text" placeholder="BE0123456789" required value.bind="companyNumber"/>
+                <span t="label.vat-number">VAT number</span>
+                <input name="companyNumber" type="text" t="[placeholder]placeholder.vat-number" required value.bind="companyNumber"/>
             </label>
             <label class="field full">
-                <span>Email</span>
-                <input name="email" type="email" placeholder="you@company.com" required value.bind="email"/>
+                <span t="label.email">Email</span>
+                <input name="email" type="email" t="[placeholder]placeholder.email" required value.bind="email"/>
             </label>
         </div>
         <p if.bind="errorCode" class="form-error" aria-live="assertive" t="error.${errorCode}">Login failed</p>
         <div class="auth-actions">
             <button type="submit" class="btn primary" disabled.bind="!email || !companyNumber || companyService.http.isRequesting" click.trigger="checkCompanyNumber()">
                 <span  class="loader"></span>
-                Create account
+                <span t="registration.create-account">Create account</span>
             </button>
         </div>
-        <p class="auth-alt">Already registered? <a href="../login">Log in</a></p>
+        <p class="auth-alt"><span t="registration.already-registered">Already registered?</span> <a href="../login" t="login.action">Log in</a></p>
     </form>
 
-    <h1 if.bind="step === 1" au-slot="header">Confirm your company</h1>
+    <h1 if.bind="step === 1" au-slot="header" t="title-step1">Confirm your company</h1>
     <form if.bind="step === 1" class="auth-form" style="max-width: 400px">
         <div class="grid grid-col-73">
             <label class="field full">

@@ -238,7 +238,7 @@ export class InvoiceComposer {
             },
             Item: {
                 Description: undefined,
-                Name: "VAT",
+                Name: undefined,
                 ClassifiedTaxCategory: {
                     ID: "S",
                     Percent: 21,
