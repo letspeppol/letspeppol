@@ -3,10 +3,10 @@
 
 <div class="invoices-layout">
     <aside class="mailbox">
-        <div class="mailbox-title">Categories</div>
+        <div class="mailbox-title" t="product.categories">Categories</div>
         <nav>
             <button active.class="productContext.selectedProductCategory === undefined" class="mail-item" click.trigger="filterItems(undefined)" style="margin-right: 30px">
-                <span class="label">All</span>
+                <span class="label" t="product.all">All</span>
                 <span class="badge">${productContext.products.length}</span>
             </button>
             <div repeat.for="category of productContext.productCategories" style="display: flex; width: 100%; justify-content: space-between">
@@ -14,22 +14,22 @@
                     <span class="label">${category.name}</span>
                     <span class="badge" background-color.style="category.color">${category | productCount:productContext.products & signal:'productUpdate'}</span>
                 </button>
-                <button class="icon-btn" title="Edit" style="width: 30px" click.trigger="editProductCategory(category)">
+                <button class="icon-btn" title="Edit" t="[title]common.edit" style="width: 30px" click.trigger="editProductCategory(category)">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pen-icon lucide-pen"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>
                 </button>
             </div>
-            <button class="btn primary" click.trigger="newProductCategory()" style="width: fit-content; margin-top: 10px">
+            <button class="btn primary" click.trigger="newProductCategory()" style="width: fit-content; margin-top: 10px" title="Category" t="[title]product.category">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                 </svg>
-                Category
+                <span t="product.category">Category</span>
             </button>
         </nav>
     </aside>
     <div class="invoices-main">
         <div>
             <div class="section-header">
-                <h1>Products</h1>
+                <h1 t="product.title">Products</h1>
                 <div class="actions">
                     <div class="filters">
                         <label class="search">
@@ -37,14 +37,14 @@
                                 <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                                 <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.5"/>
                             </svg>
-                            <input type="search" placeholder="Search product" value.bind="searchQuery"/>
+                            <input type="search" placeholder="Search product" t="[placeholder]placeholder.product-search" />
                         </label>
                     </div>
-                    <button class="btn primary" click.trigger="productContext.newProduct()">
+                    <button class="btn primary" click.trigger="productContext.newProduct()" title="New Product" t="[title]product.new">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                             <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                         </svg>
-                        New Product
+                        <span t="product.new">New Product</span>
                     </button>
                 </div>
             </div>
@@ -54,16 +54,16 @@
                     <table class="data-table" aria-describedby="invoices-title">
                         <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Description</th>
-                            <th>Category</th>
-                            <th>Reference</th>
-                            <th>Barcode</th>
-                            <th>Cost Price</th>
-                            <th>Sale Price</th>
-                            <th>Tax Percentage</th>
-                            <th>Stock Quantity</th>
-                            <th class="actions-col">Actions</th>
+                            <th t="product.table.name">Name</th>
+                            <th t="product.table.description">Description</th>
+                            <th t="product.table.category">Category</th>
+                            <th t="product.table.reference">Reference</th>
+                            <th t="product.table.barcode">Barcode</th>
+                            <th t="product.table.cost-price">Cost Price</th>
+                            <th t="product.table.sale-price">Sale Price</th>
+                            <th t="product.table.tax-percentage">Tax Percentage</th>
+                            <th t="product.table.stock-quantity">Stock Quantity</th>
+                            <th class="actions-col" t="product.table.actions">Actions</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -78,7 +78,7 @@
                             <td>${item.taxPercentage}</td>
                             <td>${item.stockQuantity}</td>
                             <td class="actions-col">
-                                <button class="icon-btn" data-action="remove-line" title="Remove" click.trigger="deleteItem($event, item)">
+                                <button class="icon-btn" data-action="remove-line" title="Remove" t="[title]common.remove" click.trigger="deleteItem($event, item)">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-icon lucide-trash"><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                                 </button>
                             </td>
@@ -93,7 +93,7 @@
                             <path d="M14 3v5h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </div>
-                    <p>No products match your filters.</p>
+                    <p t="product.empty">No products match your filters.</p>
                 </div>
             </div>
         </div>

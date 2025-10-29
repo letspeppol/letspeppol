@@ -2,14 +2,14 @@
     <div class="modal-backdrop"></div>
     <div class="modal-card">
         <header class="modal-header">
-            <h2>Invoice</h2>
-            <button class="icon-btn" click.trigger="closeModal()">×</button>
+            <h2 t="invoice.modal.title">Invoice</h2>
+            <button class="icon-btn" click.trigger="closeModal()" aria-label="Close dialog" t="[aria-label]common.close" title="Close" t="[title]common.close">×</button>
         </header>
         <div class="modal-body">
             <div style="display: inline-grid; gap: var(--space-1)">
                 <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-09);">
                     <label class="field" >
-                        <span>Document</span>
+                        <span t="invoice.modal.document">Document</span>
                         <select name="documentType" value.bind="selectedDocumentType" required>
                             <option repeat.for="type of documentTypes" value.bind="type">
                                 <span t="documentType.${type}"></span>
@@ -17,25 +17,25 @@
                         </select>
                     </label>
                     <label class="field">
-                        <span>Invoice number</span>
+                        <span t="invoice.modal.invoice-number">Invoice number</span>
                         <input id="docNumber" type="text" name="docNumber" placeholder.bind="selectedDocumentType === 'Invoice' ? 'INV-2025-0001' : 'CRE-2025-0001'" value.bind="id" keydown.trigger="onKeyDown($event)" required />
                     </label>
                     <label class="field">
-                        <span>Buyer Reference</span>
+                        <span t="invoice.modal.buyer-reference">Buyer Reference</span>
                         <input type="text" name="reference" placeholder="PO-12345" value.bind="buyerReference" keydown.trigger="onKeyDown($event)" required />
                     </label>
                     <label class="field full">
                         <details>
-                            <summary><span>Note (optional)</span></summary>
-                            <textarea name="note" style="min-width: 100%" placeholder="Additional notes for this invoice" value.bind="note"></textarea>
+                            <summary><span t="invoice.modal.note-optional">Note (optional)</span></summary>
+                            <textarea name="note" style="min-width: 100%" placeholder="Additional notes for this invoice" t="[placeholder]invoice.modal.note-placeholder" value.bind="note"></textarea>
                         </details>
                     </label>
                 </div>
             </div>
         </div>
         <footer class="modal-footer">
-            <button type="button" class="btn" click.trigger="closeModal()">Cancel</button>
-            <button type="button" class="btn primary" click.trigger="saveInvoiceInfo()">Confirm</button>
+            <button type="button" class="btn" click.trigger="closeModal()" title="Cancel" t="[title]common.cancel" t="common.cancel">Cancel</button>
+            <button type="button" class="btn primary" click.trigger="saveInvoiceInfo()" title="Confirm" t="[title]common.confirm" t="common.confirm">Confirm</button>
         </footer>
     </div>
 </div>

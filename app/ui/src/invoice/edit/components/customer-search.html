@@ -1,9 +1,11 @@
 <label class="field" style="position: relative;">
-    <span>Name or VAT Number</span>
+    <span t="invoice.customerModal.search-name-vat">Name or VAT Number</span>
     <input id="customerSearch"
            type="text"
            name="customerSearch"
            placeholder="Search by name or VAT number"
+           t="[placeholder]invoice.customerModal.search-placeholder"
+           title="Search by name or VAT number" t="[title]invoice.customerModal.search-placeholder"
            value.bind="searchQuery"
            input.trigger="onSearchInput()"
            keydown.trigger="onSearchKeydown($event)"
@@ -21,6 +23,6 @@
                 <div class="meta">VAT: ${c.companyNumber}</div>
                 <div class="addr" if.bind="c.registeredOffice">${c.registeredOffice.street} ${c.registeredOffice.houseNumber}, ${c.registeredOffice.postalCode} ${c.registeredOffice.city}</div>
         </li>
-        <li class="autocomplete-empty" if.bind="filteredCustomers.length === 0">No matches</li>
+        <li class="autocomplete-empty" if.bind="filteredCustomers.length === 0" t="invoice.customerModal.no-matches">No matches</li>
     </ul>
 </label>

@@ -4,11 +4,11 @@
     <div class="modal-backdrop"></div>
     <div class="modal-card" style="width: 1000px">
         <header class="modal-header">
-            <h2>Validation</h2>
-            <button class="icon-btn" aria-label="Close dialog" click.trigger="closeModal()">×</button>
+            <h2 t="invoice.validationModal.title">Validation</h2>
+            <button class="icon-btn" aria-label="Close dialog" t="[aria-label]common.close" title="Close" t="[title]common.close" click.trigger="closeModal()">×</button>
         </header>
         <div class="modal-body" style="max-height: 600px; overflow: auto;">
-            <span>Error count: ${validationResult.errorCount}</span>
+            <span t="invoice.validationModal.error-count">Error count</span>: ${validationResult.errorCount}
             <ul>
                 <li repeat.for="error of validationResult.errors">
                     ${error.message}

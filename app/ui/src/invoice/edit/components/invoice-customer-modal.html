@@ -4,54 +4,54 @@
     <div class="modal-backdrop"></div>
     <div class="modal-card" style="width: 400px">
         <header class="modal-header">
-            <h2>Customer</h2>
-            <button class="icon-btn" aria-label="Close dialog" click.trigger="closeModal()">×</button>
+            <h2 t="invoice.customerModal.title">Customer</h2>
+            <button class="icon-btn" aria-label="Close dialog" t="[aria-label]common.close" title="Close" t="[title]common.close" click.trigger="closeModal()">×</button>
         </header>
         <div class="modal-body">
             <div style="display: inline-grid; gap: var(--space-1)">
-                <h3 style="margin-bottom: 0px">Search Customer</h3>
+                <h3 style="margin-bottom: 0px" t="invoice.customerModal.search-title">Search Customer</h3>
                 <customer-search component.ref="customerSearch"
                                  select-customer-function.bind="(c) => selectCustomer(c)"
                                  confirm-customer-function.bind="() => customer && saveCustomer()">
                 </customer-search>
-                <h3 class="field full" style="margin-bottom: 0px">Customer</h3>
+                <h3 class="field full" style="margin-bottom: 0px" t="invoice.customerModal.customer-title">Customer</h3>
                 <label class="field">
-                    <span>VAT Number</span>
-                    <input type="text" name="customerId" value.bind="customer.PartyIdentification[0].ID.value"  required change.trigger="vatChanged()" style="width: 130px" />
+                    <span t="label.vat-number">VAT Number</span>
+                    <input type="text" name="customerId" placeholder="VAT Number" t="[placeholder]label.vat-number" value.bind="customer.PartyIdentification[0].ID.value"  required change.trigger="vatChanged()" style="width: 130px" />
                 </label>
                 <label class="field">
-                    <span>Name</span>
-                    <input type="text" name="customerName" value.bind="customer.PartyName.Name" required />
+                    <span t="label.name">Name</span>
+                    <input type="text" name="customerName" placeholder="Name" t="[placeholder]placeholder.name" value.bind="customer.PartyName.Name" required />
                 </label>
 
                 <div class="grid grid-col-73">
                     <label class="field">
-                        <span>Street</span>
-                        <input type="text" name="customerStreet" value.bind="customer.PostalAddress.StreetName" required />
+                        <span t="label.street">Street</span>
+                        <input type="text" name="customerStreet" placeholder="Street" t="[placeholder]label.street" value.bind="customer.PostalAddress.StreetName" required />
                     </label>
                     <label class="field">
-                        <span>House Number</span>
-                        <input type="text" name="customerAdditionalStreet" value.bind="customer.PostalAddress.AdditionalStreetName" required />
+                        <span t="label.house-number">House Number</span>
+                        <input type="text" name="customerAdditionalStreet" placeholder="House Number" t="[placeholder]label.house-number" value.bind="customer.PostalAddress.AdditionalStreetName" required />
                     </label>
                     <label class="field">
-                        <span>City</span>
-                        <input type="text" name="customerCity" value.bind="customer.PostalAddress.CityName" required />
+                        <span t="label.city">City</span>
+                        <input type="text" name="customerCity" placeholder="City" t="[placeholder]label.city" value.bind="customer.PostalAddress.CityName" required />
                     </label>
                     <label class="field">
-                        <span>Postal Code</span>
-                        <input type="text" name="customerPostalCode" value.bind="customer.PostalAddress.PostalZone" required />
+                        <span t="label.postal-code">Postal Code</span>
+                        <input type="text" name="customerPostalCode" placeholder="Postal Code" t="[placeholder]label.postal-code" value.bind="customer.PostalAddress.PostalZone" required />
                     </label>
                 </div>
 
                 <label class="field">
-                    <span>Country</span>
-                    <input type="text" name="customerCity" value="Belgium" required disabled />
+                    <span t="label.country">Country</span>
+                    <input type="text" name="customerCity" value="Belgium" disabled />
                 </label>
             </div>
         </div>
         <footer class="modal-footer">
-            <button type="button" class="btn" click.trigger="closeModal()">Cancel</button>
-            <button type="button" class="btn primary" click.trigger="saveCustomer()">Confirm</button>
+            <button type="button" class="btn" click.trigger="closeModal()" title="Cancel" t="[title]common.cancel" t="common.cancel">Cancel</button>
+            <button type="button" class="btn primary" click.trigger="saveCustomer()" title="Confirm" t="[title]common.confirm" t="common.confirm">Confirm</button>
         </footer>
     </div>
 </div>

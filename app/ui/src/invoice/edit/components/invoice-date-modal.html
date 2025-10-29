@@ -2,17 +2,17 @@
     <div class="modal-backdrop"></div>
     <div class="modal-card">
         <header class="modal-header">
-            <h2>Date</h2>
-            <button class="icon-btn" click.trigger="closeModal()">×</button>
+            <h2 t="invoice.dateModal.title">Date</h2>
+            <button class="icon-btn" click.trigger="closeModal()" aria-label="Close dialog" t="[aria-label]common.close" title="Close" t="[title]common.close">×</button>
         </header>
         <div class="modal-body">
             <div style="display: inline-grid; gap: var(--space-1)">
                 <label class="field">
-                    <span>Issue Date</span>
+                    <span t="invoice.dateModal.issue-date">Issue Date</span>
                     <input type="date" name="issueDate" value.bind="issueDate" required />
                 </label>
                 <label class="field full">
-                    <span>Payment Terms</span>
+                    <span t="invoice.dateModal.payment-terms">Payment Terms</span>
                     <select value.bind="selectedPaymentTerm">
                         <option repeat.for="term of possiblePaymentTerms" value.bind="term.key">
                             <span>${term.translation}</span>
@@ -20,14 +20,14 @@
                     </select>
                 </label>
                 <label class="field">
-                    <span>Due Date</span>
+                    <span t="invoice.dateModal.due-date">Due Date</span>
                     <input type="date" name="dueDate" value.bind="dueDate" disabled />
                 </label>
             </div>
         </div>
         <footer class="modal-footer">
-            <button type="button" class="btn" click.trigger="closeModal()">Cancel</button>
-            <button type="button" class="btn primary" click.trigger="saveDate()" disabled.bind="!issueDate">Confirm</button>
+            <button type="button" class="btn" click.trigger="closeModal()" title="Cancel" t="[title]common.cancel" t="common.cancel">Cancel</button>
+            <button type="button" class="btn primary" click.trigger="saveDate()" disabled.bind="!issueDate" title="Confirm" t="[title]common.confirm" t="common.confirm">Confirm</button>
         </footer>
     </div>
 </div>

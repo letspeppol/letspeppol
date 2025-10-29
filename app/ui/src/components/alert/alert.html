@@ -19,11 +19,11 @@
         <div class="alert__body">
             <div class="alert__title">
                 <template switch.bind="alertType">
-                    <span case="Success">Success</span>
-                    <span case="Info">Info</span>
-                    <span case="Warning">Warning</span>
-                    <span case="Danger">Error</span>
-                    <span case="Neutral">Message</span>
+                    <span case="Success" t="alert.success">Success</span>
+                    <span case="Info" t="alert.info">Info</span>
+                    <span case="Warning" t="alert.warning">Warning</span>
+                    <span case="Danger" t="alert.danger">Error</span>
+                    <span case="Neutral" t="alert.neutral">Message</span>
                 </template>
             </div>
             <div class="alert__msg">${text}</div>

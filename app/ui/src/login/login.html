@@ -10,15 +10,15 @@
             </label>
             <label class="field full">
                 <div style="display: flex; justify-content: space-between">
-                    <span>Password</span>
+                    <span t="label.password">Password</span>
                     <a href="../forgot-password"><span t="login.forgot">Forgot my password</span></a>
                 </div>
 
-                <input name="password" type="password" required value.bind="password" />
+                <input name="password" type="password" required value.bind="password" t="[placeholder]placeholder.password"/>
             </label>
             <label class="field full checkbox">
                 <input type="checkbox" checked.bind="rememberMe" />
-                <span>Remember me</span>
+                <span t="login.remember">Remember me</span>
             </label>
         </div>
         <p if.bind="error" class="form-error" aria-live="assertive" t="error.login-failed">Login failed</p>

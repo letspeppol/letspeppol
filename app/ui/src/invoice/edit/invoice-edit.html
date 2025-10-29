@@ -15,13 +15,16 @@
 <div class="invoices-main">
     <div class="section-header">
         <div style="display:flex;align-items:center;gap:.5rem">
-            <h1 style="margin:0" >New invoice</h1>
+            <h1 style="margin:0" t="invoice.edit.new">New invoice</h1>
         </div>
         <div class="editor-header-actions">
-            <button type="button" class="btn" click.trigger="validate()">Validate</button>
-            <button type="button" class="btn" click.trigger="saveAsDraft()">${invoiceContext.selectedDraft ? 'Update draft' : 'Save draft'}</button>
-            <button type="button" class="btn" click.trigger="invoiceContext.clearSelectedInvoice()">Discard</button>
-            <button type="button" class="btn primary" click.trigger="sendInvoice()" disabled.bind="!isValid">Send invoice</button>
+            <button type="button" class="btn" click.trigger="validate()" t="invoice.edit.validate">Validate</button>
+            <button type="button" class="btn" click.trigger="saveAsDraft()">
+                <span if.bind="invoiceContext.selectedDraft" t="invoice.edit.update-draft">Update draft</span>
+                <span if.bind="!invoiceContext.selectedDraft" t="invoice.edit.save-draft">Save draft</span>
+            </button>
+            <button type="button" class="btn" click.trigger="invoiceContext.clearSelectedInvoice()" t="invoice.edit.discard">Discard</button>
+            <button type="button" class="btn primary" click.trigger="sendInvoice()" disabled.bind="!isValid" t="invoice.edit.send">Send invoice</button>
         </div>
     </div>
 
@@ -34,45 +37,45 @@
                         <h5 style="margin: 0"><span t="documentType.${selectedDocumentType}"></span></h5>
                     </div>
 
-                    <button class="icon-btn" title="Edit">
+                    <button class="icon-btn" title="Edit" t="[title]common.edit">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pen-icon lucide-pen"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>
                     </button>
                 </div>
-                <div><span t="documentType.${selectedDocumentType}"></span><span> Number</span></div>
+                <div><span t="documentType.${selectedDocumentType}"></span> <span t="invoice.edit.number">Number</span></div>
                 <b>${invoiceContext.selectedInvoice.ID}</b>
-                <span>Buyer Reference</span>
+                <span t="invoice.edit.buyer-reference">Buyer Reference</span>
                 <b>${invoiceContext.selectedInvoice.BuyerReference}</b>
             </div>
             <div class="composer-info">
                 <div style="display: flex; flex-direction: row;" click.trigger="showDateModal()">
                     <div class="card-header">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar-days-icon lucide-calendar-days"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>
-                        <h5 style="margin: 0">Date</h5>
+                        <h5 style="margin: 0" t="invoice.dateModal.title">Date</h5>
                     </div>
 
-                    <button class="icon-btn" title="Edit">
+                    <button class="icon-btn" title="Edit" t="[title]common.edit">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pen-icon lucide-pen"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>
                     </button>
                 </div>
-                <span>Issue Date</span>
+                <span t="invoice.dateModal.issue-date">Issue Date</span>
                 <b>${invoiceContext.selectedInvoice.IssueDate}</b>
-                <span>Due Date</span>
+                <span t="invoice.dateModal.due-date">Due Date</span>
                 <b>${invoiceContext.selectedInvoice.DueDate}</b>
             </div>
             <div class="composer-info">
                 <div style="display: flex; flex-direction: row;" click.trigger="showCustomerModal()">
                     <div class="card-header">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-building-icon lucide-building"><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M12 6h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/><path d="M8 6h.01"/><path d="M9 22v-3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><rect x="4" y="2" width="16" height="20" rx="2"/></svg>
-                        <h5 style="margin: 0">Customer</h5>
+                        <h5 style="margin: 0" t="invoice.customerModal.title">Customer</h5>
                     </div>
 
-                    <button class="icon-btn" title="Edit">
+                    <button class="icon-btn" title="Edit" t="[title]common.edit">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pen-icon lucide-pen"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>
                     </button>
                 </div>
-                <span>Name</span>
+                <span t="label.name">Name</span>
                 <b>${invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PartyName.Name}</b>
-                <span>Address</span>
+                <span t="label.address">Address</span>
                 <b>
                     ${invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PostalAddress.StreetName}
                     ${invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PostalAddress.AdditionalStreetName}
@@ -85,43 +88,42 @@
                 <div style="display: flex; flex-direction: row; margin-bottom: var(--space-025)" click.trigger="showPaymentModal()">
                     <div class="card-header">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-banknote-arrow-down-icon lucide-banknote-arrow-down"><path d="M12 18H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5"/><path d="m16 19 3 3 3-3"/><path d="M18 12h.01"/><path d="M19 16v6"/><path d="M6 12h.01"/><circle cx="12" cy="12" r="2"/></svg>
-                        <h5 style="margin: 0">Payment</h5>
+                        <h5 style="margin: 0" t="invoice.paymentModal.title">Payment</h5>
                     </div>
-                    <button class="icon-btn" title="Edit">
+                    <button class="icon-btn" title="Edit" t="[title]common.edit">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pen-icon lucide-pen"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>
                     </button>
                 </div>
-                <span>Method</span>
+                <span t="invoice.edit.method">Method</span>
                 <b>${invoiceComposer.paymentMeansCodes.find(item => item.value === selectedPaymentMeansCode).__name ?? 'None'}</b>
                 <template if.bind="invoiceContext.selectedInvoice.PaymentMeans.PayeeFinancialAccount">
-                    <span>Account Name</span>
+                    <span t="label.account-name">Account Name</span>
                     <b>${invoiceContext.selectedInvoice.PaymentMeans.PayeeFinancialAccount.Name ?? '/'}</b>
-                    <span>IBAN</span>
+                    <span t="label.iban">IBAN</span>
                     <b>${invoiceContext.selectedInvoice.PaymentMeans.PayeeFinancialAccount.ID ?? '/'}</b>
                 </template>
                 <template if.bind="invoiceContext.selectedInvoice.PaymentMeans.PaymentID">
-                    <span>Reference</span>
+                    <span t="label.reference">Reference</span>
                     <b>${invoiceContext.selectedInvoice.PaymentMeans.PaymentID}</b>
                 </template>
             </div>
             <div></div>
             <div class="head-right">
                 <div class="total-display">
-                    <span>Subtotal</span>
+                    <span t="invoice.edit.subtotal">Subtotal</span>
                     <b>€ ${invoiceContext.selectedInvoice.LegalMonetaryTotal.TaxExclusiveAmount.value.toFixed(2)}</b>
-                    <span>Tax</span>
+                    <span t="invoice.edit.tax">Tax</span>
                     <b>€ ${invoiceContext.selectedInvoice.TaxTotal[0].TaxAmount.value.toFixed(2)}</b>
                 </div>
                 <div class="total-display">
-                    <span>Total</span>
+                    <span t="invoice.edit.total">Total</span>
                     <strong>€ ${invoiceContext.selectedInvoice.LegalMonetaryTotal.PayableAmount.value.toFixed(2)}</strong>
                 </div>
-<!--                <product-name-search></product-name-search>-->
             </div>
         </div>
         <div class="line-items">
             <div class="line-items-head">
-                <h3>Invoice lines</h3>
+                <h3 t="invoice.edit.invoice-lines">Invoice lines</h3>
             </div>
             <div class="table-wrapper">
                 <table class="data-table line-table">
@@ -129,38 +131,37 @@
                     <tr>
                         <th style="width:80px">
                             <div style="display: flex">
-                                Pos
-                                <button class="icon-btn" data-action="remove-line" title="Recreate line positions" click.trigger="recalculateLinePositions()">
+                                <span t="invoice.edit.pos">Pos</span>
+                                <button class="icon-btn" data-action="remove-line" title="Recreate line positions" t="[title]invoice.edit.recreate-positions" click.trigger="recalculateLinePositions()">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-restart-icon lucide-list-restart"><path d="M21 5H3"/><path d="M7 12H3"/><path d="M7 19H3"/><path d="M12 18a5 5 0 0 0 9-3 4.5 4.5 0 0 0-4.5-4.5c-1.33 0-2.54.54-3.41 1.41L11 14"/><path d="M11 10v4h4"/></svg>
                                 </button>
                             </div>
                         </th>
-                        <th style="width:18%">Name</th>
-                        <th>Description</th>
-                        <th class="num" style="width:120px">Amount</th>
-                        <th class="num" style="width:140px">Unit price</th>
-                        <th class="num" style="width:140px">Tax</th>
-                        <th class="num" style="width:140px">Total</th>
-                        <th class="actions-col" style="width:1%">Actions</th>
+                        <th style="width:18%" t="product.table.name">Name</th>
+                        <th t="product.table.description">Description</th>
+                        <th class="num" style="width:120px" t="invoice.edit.amount">Amount</th>
+                        <th class="num" style="width:140px" t="invoice.edit.unit-price">Unit price</th>
+                        <th class="num" style="width:140px" t="invoice.edit.tax">Tax</th>
+                        <th class="num" style="width:140px" t="invoice.edit.total">Total</th>
+                        <th class="actions-col" style="width:1%" t="invoice.edit.actions">Actions</th>
                     </tr>
                     </thead>
                     <tbody if.bind="invoiceContext.selectedInvoice">
                         <tr repeat.for="line of invoiceContext.lines">
                             <td><input class="pos" type="number" min="1" value.bind="line.ID" required/></td>
                             <td>
-<!--                                <input class="name" type="text" placeholder="Item name" value.bind="line.Item.Name"/>-->
                                 <product-name-search input-value.bind="line.Item.Name"></product-name-search>
                             </td>
-                            <td><textarea class="description" placeholder="Description" value.bind="line.Item.Description"></textarea></td>
+                            <td><textarea class="description" placeholder="Description" t="[placeholder]label.description" value.bind="line.Item.Description"></textarea></td>
                             <td class="num">
                                 <template if.bind="line.InvoicedQuantity">
-                                    <input class="qty" type="number" min="0" step="1" value.bind="line.InvoicedQuantity.value" change.trigger="calcLineTotal(line)"/>
+                                    <input class="qty" type="number" min="0" step="1" value.bind="line.InvoicedQuantity.value" change.trigger="calcLineTotal(line)" />
                                 </template>
                                 <template else>
-                                    <input class="qty" type="number" min="0" step="1" value.bind="line.CreditedQuantity.value" change.trigger="calcLineTotal(line)"/>
+                                    <input class="qty" type="number" min="0" step="1" value.bind="line.CreditedQuantity.value" change.trigger="calcLineTotal(line)" />
                                 </template>
                             </td>
-                            <td class="num"><input class="unitPrice" type="number" min="0" step="0.01" value.bind="line.Price.PriceAmount.value" change.trigger="calcLineTotal(line)"/></td>
+                            <td class="num"><input class="unitPrice" type="number" min="0" step="0.01" value.bind="line.Price.PriceAmount.value" change.trigger="calcLineTotal(line)" /></td>
                             <td class="num">
                                 <select value.bind="line.Item.ClassifiedTaxCategory" change.trigger="calcLineTotal(line)">
                                     <option repeat.for="taxCategory of taxCategories" model.bind="taxCategory">${taxCategory.Percent}%</option>
@@ -168,7 +169,7 @@
                             </td>
                             <td class="num"><span class="line-total">€&nbsp;${line.LineExtensionAmount.value}</span></td>
                             <td class="actions-col">
-                                <button class="icon-btn" data-action="remove-line" title="Remove" click.trigger="deleteLine(line)">
+                                <button class="icon-btn" data-action="remove-line" title="Remove" t="[title]common.remove" click.trigger="deleteLine(line)">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-icon lucide-trash"><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                                 </button>
                             </td>
@@ -177,13 +178,13 @@
                 </table>
             </div>
         </div>
-        <button type="button" class="btn primary" click.trigger="addLine()">+ Add line</button>
+        <button type="button" class="btn primary" click.trigger="addLine()">+ <span t="invoice.edit.add-line">Add line</span></button>
         <div if.bind="invoiceContext.selectedInvoice.Note" style="margin-top: 20px">
             <div class="line-items-head">
-                <h3>Note</h3>
+                <h3 t="invoice.edit.note">Note</h3>
             </div>
             <label class="field">
-                <textarea name="note" placeholder="Additional notes for this invoice" value.bind="invoiceContext.selectedInvoice.Note" disabled></textarea>
+                <textarea name="note" placeholder="Additional notes for this invoice" t="[placeholder]invoice.modal.note-placeholder" value.bind="invoiceContext.selectedInvoice.Note" disabled></textarea>
             </label>
         </div>
     </form>
