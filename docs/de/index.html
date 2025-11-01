@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Let's Peppol — Kostenlose Peppol-E-Rechnung für KMU | BARGE vzw</title>
+  <meta name="description" content="Werden Sie bis 2026 in Belgien Peppol-konform. Let's Peppol ist ein kostenloser Open-Source-Access-Point für E-Rechnungen für KMU, Freelancer und Steuerberater. Getragen vom Non-Profit BARGE vzw." />
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="https://letspeppol.org/" />
+  <meta property="og:title" content="Let's Peppol — Kostenlose Peppol-E-Rechnung für KMU" />
+  <meta property="og:description" content="Kostenloser Open-Source-Access-Point für Peppol. Belgien-bereit bis 2026. Posteingangs-ähnliche UI. Ihre Daten bleiben Ihre." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://letspeppol.org/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <style>
+    :root {
+      --primary: #2C3C69; /* Let's Encrypt navy */
+      --accent: #FAA21D;  /* Let's Encrypt orange */
+      --ink: #0f172a;     /* slate-900 */
+      --muted: #475569;   /* slate-600 */
+      --border: #e2e8f0;  /* slate-200 */
+      --bg: #f8fafc;      /* slate-50 */
+      --white: #ffffff;
+    }
+    html, body { margin:0; padding:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji"; color: var(--ink); background: var(--bg); }
+    .container { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+    header.sticky { position: sticky; top: 0; z-index: 40; background: color-mix(in srgb, var(--white) 94%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(255,255,255,.12); }
+    .nav { display:flex; align-items:center; justify-content:space-between; }
+    .brand { display:flex; gap:12px; align-items:center; color:var(--primary); }
+    .nav a { color: var(--primary); text-decoration:none; font-size:14px; margin-left:20px; }
+    .btn { display:inline-flex; align-items:center; gap:8px; text-decoration:none; font-weight:700; border-radius: 12px; padding: 12px 16px; }
+    .btn-accent { background: var(--accent); color: #121212; }
+    .btn-ghost { color:#fff; border:1px solid rgba(255,255,255,.35); background: rgba(255,255,255,.12); }
+    .actions > .btn-ghost { background: var(--primary); color: var(--white); }
+    .actions > .btn-ghost:hover { background: color-mix(in srgb, var(--primary) 80%, transparent); }
+    .bar { background: color-mix(in srgb, var(--primary), var(--accent) 20%); color:#fff; border-bottom:1px solid rgba(255,255,255,.12); }
+    .bar .inner { display:flex; align-items:center; gap:12px; padding: 8px 0; }
+    .pill { display:inline-flex; align-items:center; border-radius:999px; padding:4px 10px; background: rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.18); font-size:12px; }
+    .hero { position:relative; color:#fff; background:
+      radial-gradient(1200px 600px at 10% -10%, color-mix(in srgb, var(--primary) 12%, transparent), transparent 70%),
+      radial-gradient(1200px 600px at 110% 10%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 60%),
+      var(--primary);
+      padding: 56px 0 72px;
+    }
+    h1 { font-size: clamp(28px, 4vw, 48px); line-height:1.1; margin: 0 0 12px; }
+    .lead { font-size: clamp(16px, 2.2vw, 20px); color: #eef2ff; opacity:.9; }
+    .cta-row { display:flex; flex-wrap:wrap; gap:12px; margin-top:16px; }
+    .input { border:1px solid rgba(255,255,255,.3); background: rgba(255,255,255,.12); color:#fff; outline:none; border-radius:12px; padding: 12px 14px; width: min(420px, 100%); }
+    .small { font-size:12px; opacity:.85; }
+    .badges { display:flex; flex-wrap:wrap; gap:8px; margin-top:18px; }
+    .badge { background:#eef2ff; color:#334155; padding:4px 10px; border-radius:999px; font-size:12px; }
+
+    section { padding: 64px 0; }
+    h2 { font-size: clamp(22px, 3vw, 32px); margin:0 0 10px; }
+    p.muted { color: var(--muted); }
+    .grid { display:grid; gap:16px; }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    @media (max-width: 900px){ .grid-3 { grid-template-columns: 1fr; } }
+    .card { background:#fff; border:1px solid var(--border); border-radius: 18px; padding: 20px; box-shadow: 0 2px 10px rgba(2,6,23,.05); }
+    .list { list-style:none; padding:0; margin:12px 0 0; }
+    .list li { display:flex; gap:8px; align-items:flex-start; margin: 8px 0; color: var(--muted); font-size:14px; }
+    .check { color: var(--primary); font-weight:900; }
+
+    .resp{display:grid;gap:40px;grid-template-columns:1fr 1fr;align-items:center}
+    @media (max-width:1000px){.resp{grid-template-columns:1fr}}
+    .preview { background:#fff; border:1px solid rgba(255,255,255,.2); border-radius: 22px; padding: 12px; box-shadow: 0 20px 60px rgba(2,6,23,.2); display:none; }
+    @media(min-width:1000px){.preview{display:block}}
+    .table { display:grid; grid-template-columns: 1fr 2fr; border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+    .left { border-right:1px solid var(--border); max-height:260px; overflow:auto; }
+    .row { padding:10px 12px; border-bottom:1px solid var(--border); }
+    .row:last-child{ border-bottom:0; }
+
+    footer { background:#fff; border-top:1px solid var(--border); }
+    .footer { display:flex; align-items:center; justify-content:space-between; gap:12px; padding: 18px 0; color: var(--muted); font-size:14px; flex-wrap:wrap; }
+    .lang a { color: var(--ink); text-decoration:none; margin-left:12px; }
+    .actions a:hover { filter: brightness(0.95); }
+    .ghost:hover { background: rgba(255,255,255,.2); }
+    .accent:hover { filter: brightness(.96); }
+  </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Let's Peppol",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web",
+    "offers": {"@type": "Offer", "price": "0"},
+    "creator": {"@type": "Organization", "name": "BARGE vzw"},
+    "description": "Kostenloser Open-Source-Peppol-E-Rechnungs-Access-Point für KMU und Freelancer.",
+    "url": "https://letspeppol.org/"
+  }
+  </script>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="sticky">
+    <div class="container nav">
+      <div class="brand">
+        <img src="https://letspeppol.org/logo.png" height="64" aria-label="Let's Peppol-Logo" />
+        <div style="opacity:.8; font-size:12px;">Von BARGE vzw</div>
+      </div>
+      <nav class="actions" aria-label="Hauptnavigation">
+        <a href="#how">So funktioniert es</a>
+        <a href="#features">Funktionen</a>
+        <a href="#compliance">Konformität</a>
+        <a href="#open">Open-Source</a>
+        <a href="#faq">FAQ</a>
+        <a class="btn btn-ghost ghost" href="https://test.letspeppol.org">Demo testen</a>
+        <a class="btn btn-accent accent" href="https://letspeppol.org/join">Zur Warteliste</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Announcement bar -->
+  <div class="bar">
+    <div class="container inner">
+      <span class="pill">Startfenster: Nov–Dez 2025</span>
+      <span>Peppol-E-Rechnungen für KMU und Kleinstunternehmen – Belgien-bereit.</span>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container resp">
+      <div>
+        <h1>Peppol-konform — kostenlos, offen und für jedes KMU gemacht</h1>
+        <p class="lead">Let's Peppol ist ein kostenloser Open-Source-Access-Point, getragen vom belgischen Non-Profit <strong>BARGE vzw</strong>. Senden und empfangen Sie E-Rechnungen über das Peppol-Netzwerk mit einem Posteingang, der sich anfühlt wie E-Mail.</p>
+        <div class="cta-row">
+          <a class="btn btn-accent accent" href="https://letspeppol.org/join">Zur Warteliste →</a>
+          <a class="btn btn-ghost ghost" href="https://test.letspeppol.org">Demo testen ▸</a>
+        </div>
+        <!--div class="cta-row">
+          <div>
+            <input id="invite" class="input" placeholder="Einladungscode (vom Steuerberater/Partner) — optional" />
+            <div class="small">Codes von Sponsoren (z. B. Steuerberatern) erhöhen Ihre Priorität in der Warteschlange.</div>
+          </div>
+          <a id="applyCode" class="btn btn-ghost ghost" href="https://letspeppol.org/join">Code bei Anmeldung anwenden</a>
+        </div-->
+        <div class="badges">
+          <span class="badge">DSGVO-freundlich</span>
+          <span class="badge">Ihre Daten bleiben Ihre</span>
+          <span class="badge">EU-Hosting</span>
+          <span class="badge">Open Source</span>
+        </div>
+      </div>
+      <div>
+        <div class="preview" aria-label="UI-Vorschau (Änderungen vorbehalten)">
+          <a href="https://test.letspeppol.org"><img src="https://letspeppol.org/invoice_example.png" width="563px" /></a>
+          <div class="small" style="text-align:center; color:var(--muted); margin-top:6px;">Vorschau</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Warum / Mehrwert -->
+  <section id="features">
+    <div class="container" style="text-align:center; max-width:800px;">
+      <h2>Eine kostenlose Alternative, um Peppol-konform zu werden</h2>
+      <p class="muted" style="font-size:18px">Speziell für KMU, Freelancer und ihre Steuerberater entwickelt. Kein Lock-in. Ihre Daten bleiben Ihre. Getragen von einer belgischen Non-Profit-Organisation und einer globalen Open-Source-Community.</p>
+    </div>
+    <div class="container grid grid-3" style="margin-top:20px;">
+      <div class="card"><h3>Posteingangs-ähnliche UI</h3><p class="muted">E-Rechnungen und Gutschriften über eine vertraute Weboberfläche senden und empfangen — wie bei E-Mails.</p></div>
+      <div class="card"><h3>Peppol BIS / UBL</h3><p class="muted">Auf den Standards Peppol BIS 3.0 und UBL 2.1 aufgebaut, um vom ersten Tag an mit dem Netzwerk zu interoperieren.</p></div>
+      <div class="card"><h3>Datenhoheit</h3><p class="muted">Sie besitzen Ihre Daten jederzeit. Wir verkaufen, analysieren oder vermarkten Ihre Geschäftsdaten nicht.</p></div>
+      <div class="card"><h3>Vertrauen von Anfang an</h3><p class="muted">DSGVO-freundlich, EU-Hosting, transparenter Code und Prüfungen durch unsere Community-Prozesse.</p></div>
+      <div class="card"><h3>Open-Source</h3><p class="muted">Frei wie in Freiheit. Keine Lizenzgebühren. Bringen Sie gemeinsam mit der Community nach und nach Integrationen ein.</p></div>
+      <div class="card"><h3>Keine Kosten und keine Gebühren</h3><p class="muted">Gestartet und gepflegt von einer Non-Profit-Organisation, getragen von der Community und unterstützt von Spendern und Partnern.</p></div>
+    </div>
+  </section>
+
+  <!-- So funktioniert es -->
+  <section id="how">
+    <div class="container" style="text-align:center;">
+      <h2>So funktioniert es</h2>
+      <p class="muted">Einfach starten. Mit der Community wachsen.</p>
+    </div>
+    <div class="container grid grid-3" style="margin-top:16px;">
+      <div class="card"><div class="pill" style="background:var(--accent); color:#111; border:none;">1</div><h3>Warteliste beitreten</h3><p class="muted">Auf letspeppol.org/join anmelden. Fügen Sie einen Einladungscode Ihres Steuerberaters hinzu, um die Priorität zu erhöhen.</p></div>
+      <div class="card"><div class="pill" style="background:var(--accent); color:#111; border:none;">2</div><h3>Demo testen</h3><p class="muted">Die Testumgebung auf test.letspeppol.org erkunden und den Posteingangs-Workflow kennenlernen.</p></div>
+      <div class="card"><div class="pill" style="background:var(--accent); color:#111; border:none;">3</div><h3>Live gehen</h3><p class="muted">Wenn Sie an der Reihe sind, KYC abschließen und die Non-Profit-Bedingungen akzeptieren. Dann sind Sie Peppol-bereit.</p></div>
+    </div>
+  </section>
+
+  <!-- Konformität & KMU -->
+  <section id="compliance">
+    <div class="container grid grid-3" style="grid-template-columns: 1fr 1fr;">
+      <div class="card">
+        <h3>Konformität &amp; Vertrauen</h3>
+        <ul class="list">
+          <li><span class="check">✔</span> Ausgelegt für den Dokumentenaustausch Peppol BIS 3.0 / UBL 2.1.</li>
+          <li><span class="check">✔</span> Fokus: E-Rechnungs-Bereitschaft Belgien 2026.</li>
+          <li><span class="check">✔</span> DSGVO-freundliche Verarbeitung mit EU-Hosting.</li>
+          <li><span class="check">✔</span> Offener Code, transparente Roadmaps und Community-Review.</li>
+        </ul>
+        <p class="small" style="margin-top:10px; color:var(--muted)">Hinweis: Der Start erfolgt in einer geschlossenen Beta. Der Funktionsumfang wächst mit Beiträgen aus der Community.</p>
+      </div>
+      <div class="card">
+        <h3>Für KMU &amp; Steuerberater</h3>
+        <ul class="list">
+          <li><span class="check">✔</span> Einzelunternehmer, Freelancer und Kleinst-KMU willkommen.</li>
+          <li><span class="check">✔</span> ITAA-Mitglieder können Einladungscodes sponsern und verteilen.</li>
+          <li><span class="check">✔</span> Eigentum an Ihren Daten jederzeit; kein Anbieter-Lock-in.</li>
+        </ul>
+        <div class="badges" style="margin-top:10px;">
+          <span class="badge">Non-Profit: BARGE vzw</span>
+          <span class="badge">Community-getrieben</span>
+          <span class="badge">So frei wie Let's Encrypt</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Open-Source & Unterstützer -->
+  <section id="open">
+    <div class="container card">
+      <h3>Open-Source &amp; Unterstützer</h3>
+      <p class="muted">Let's Peppol wird von <strong>BARGE vzw (Business Applications Research Group Europe)</strong> entwickelt und gepflegt und von Spendern sowie Partnern unterstützt. Beiträge und Sponsoring sind über OpenCollective willkommen.</p>
+      <div class="cta-row">
+        <a class="btn" style="background:var(--primary); color:#fff" href="https://github.com/letspeppol/letspeppol">Code ansehen</a>
+        <a class="btn" style="border:1px solid var(--border); background:#fff; color:var(--ink)" href="https://opencollective.com/letspeppol">Auf OpenCollective unterstützen</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="container" style="max-width:800px;">
+      <h3>Häufig gestellte Fragen</h3>
+      <details class="card" open>
+        <summary><strong>Ist es wirklich kostenlos?</strong></summary>
+        <p class="muted">Ja. Wie Let's Encrypt ist Let's Peppol kostenlos nutzbar. Das Projekt wird durch Spenden und Sponsoren finanziert. Wenn Sie es wertvoll finden, unterstützen Sie uns bitte.</p>
+      </details>
+      <details class="card">
+        <summary><strong>Wie sieht es mit Verfügbarkeit und Support aus?</strong></summary>
+        <p class="muted">Wir streben hohe Verfügbarkeit und schnelle Community-Unterstützung an, aber Zusagen zur Verfügbarkeit sind rechtlich nicht bindend. Formale Support-/SLA-Details stehen im KYC-Vertrag während des Onboardings.</p>
+      </details>
+      <details class="card">
+        <summary><strong>Gehören mir meine Daten?</strong></summary>
+        <p class="muted">Immer. Wir verkaufen, analysieren oder zweckentfremden Ihre Geschäftsdaten nicht.</p>
+      </details>
+      <details class="card">
+        <summary><strong>Welche Sprachen werden unterstützt?</strong></summary>
+        <p class="muted">Englisch, Niederländisch und Französisch zum Start (Deutsch geplant). Unterstützen Sie uns beim Hinzufügen weiterer Sprachen.</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- Kontakt & Rechtliches -->
+  <section id="contact" style="background:#fff; border-top:1px solid var(--border);">
+    <div class="container" style="display:grid; grid-template-columns:1fr 1fr; gap:20px; padding:32px 0;">
+      <div>
+        <h3>Kontakt</h3>
+        <p class="muted">Fragen oder Interesse an einer Partnerschaft? Melden Sie sich per E-Mail oder über das Formular.</p>
+        <p><a href="mailto:contact@letspeppol.org" style="color:var(--primary); text-decoration:none;">contact@letspeppol.org</a></p>
+        <p><a href="https://letspeppol.org/join" style="color:var(--primary); text-decoration:none;">Zur Warteliste</a></p>
+      </div>
+      <div>
+        <h3>Rechtliches</h3>
+        <ul class="list">
+          <li><strong>Organisation:</strong> BARGE vzw — Business Applications Research Group Europe</li>
+          <li><strong>USt-IdNr.:</strong> <em>BE-1029.545.627</em></li>
+          <li><strong>Hosting:</strong> in der EU</li>
+        </ul>
+        <!--p class="small"><a href="#" style="color:var(--primary); text-decoration:none;">Datenschutzerklärung</a> • <a href="#" style="color:var(--primary); text-decoration:none;">Nutzungsbedingungen</a> • <a href="#" style="color:var(--primary); text-decoration:none;">Impressum</a></p-->
+        <p class="small" style="color:var(--muted);">© <span id="year"></span> Let's Peppol / BARGE vzw. Peppol ist eine eingetragene Marke von OpenPeppol AISBL. Dieses Projekt ist unabhängig und community-getrieben.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container footer">
+      <div>Mit ❤️ für europäische KMU gemacht</div>
+      <div class="lang" aria-label="Sprachumschalter">
+        <a href="https://letspeppol.org/en">EN</a>
+        <a href="https://letspeppol.org/nl">NL</a>
+        <a href="https://letspeppol.org/fr">FR</a>
+        <a href="https://letspeppol.org/de">DE</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
