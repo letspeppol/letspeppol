@@ -11,7 +11,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Entity
-@Table(name = "user", indexes = {
+@Table(name = "\"user\"", indexes = {
         @Index(name = "idx_company_email", columnList = "company_id,email"),
         @Index(name = "idx_user_external_id", columnList = "external_id")
 })
