@@ -68,6 +68,12 @@ services:
       DB_PASS: ${DB_PASS}
       SERVER_PORT: ${KYC_PORT:-8084}
       ACCESS_TOKEN_KEY: ${ACCESS_TOKEN_KEY}
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_PORT: ${MAIL_PORT}
+      MAIL_USER: ${MAIL_USER}
+      MAIL_PASS: ${MAIL_PASS}
+      MAIL_FROM: ${MAIL_FROM}
+      UI_URL: ${UI_URL}
     ports:
       - "${KYC_PORT:-8084}:8084"
 

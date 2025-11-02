@@ -35,10 +35,13 @@ export class Registration {
     async confirmCompany() {
         this.errorCode = undefined;
         try {
+            this.ea.publish('showOverlay', "Confirming registration request");
             await this.registrationService.confirmCompany(this.companyNumber, this.email);
             this.step++;
         } catch {
             this.errorCode = "registration-company-already-registered";
+        } finally {
+            this.ea.publish('hideOverlay');
         }
     }
 

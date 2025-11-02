@@ -110,6 +110,7 @@ public class ActivationService {
     }
 
     private void sendEmail(String companyNumber, String to, String token, String languageTag) {
+        log.info("Sending activation email to {} for company {} lang={} ", to, companyNumber, languageTag);
         String activationLink = baseUrl + token;
         try {
             ActivationEmailTemplateProvider.RenderedTemplate tpl = templateProvider.render(companyNumber, activationLink, languageTag);
