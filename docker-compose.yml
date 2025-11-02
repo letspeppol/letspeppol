@@ -30,6 +30,9 @@ services:
       db:
         condition: service_healthy
     environment:
+      PORT: 8000
+      ACUBE_TOKEN: ${ACUBE_TOKEN}
+      PEPPYRUS_TOKEN_TEST: ${PEPPYRUS_TOKEN_TEST}
       ACCESS_TOKEN_KEY: ${ACCESS_TOKEN_KEY}
     ports:
       - "${PROXY_PORT:-8086}:8000"
