@@ -91,6 +91,7 @@ services:
       NODE_ENV: production
     ports:
       - "${UI_PORT:-3000}:80"
+      - "443:443"
     volumes:
       - /var/lib/acme/:/etc/nginx/ssl/:ro
 
