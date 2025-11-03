@@ -53,20 +53,21 @@ public class SigningService {
     private final IdentityVerificationService identityVerificationService;
     private final DirectorRepository directorRepository;
 
-    @Value("${contract.work.dir:#{null}}")
+    @Value("${kyc.data.dir:#{null}}")
+    private String dataDirectory;
+
     private String workingDirectory;
-    @Value("${contract.store.dir:#{null}}")
     private String contractDirectory;
 
     @PostConstruct
     public void init() throws IOException {
-        workingDirectory = initDirectory(workingDirectory, "/kyc/temp");
-        contractDirectory = initDirectory(contractDirectory, "/kyc/contracts");
+        workingDirectory = initDirectory( "/temp");
+        contractDirectory = initDirectory( "/contracts");
     }
 
-    private String initDirectory(String dir, String defaultSubdir) throws IOException {
-        String resolvedDir = (dir == null) ? System.getProperty("java.io.tmpdir") + defaultSubdir : dir;
-        Files.createDirectories(Path.of(resolvedDir));
+    private String initDirectory(String dir) throws IOException {
+        String resolvedDir = (dataDirectory == null || dataDirectory.isBlank()) ? System.getProperty("java.io.tmpdir") : dataDirectory;
+        Files.createDirectories(Path.of(resolvedDir, dir));
         return resolvedDir;
     }
 

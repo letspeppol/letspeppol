@@ -79,6 +79,7 @@ services:
       MAIL_PASS: ${MAIL_PASS}
       MAIL_FROM: ${MAIL_FROM}
       UI_URL: ${UI_URL}
+      KYC_DATA_DIR: ${KYC_DATA_DIR}
     ports:
       - "${KYC_PORT:-8084}:8084"
 
