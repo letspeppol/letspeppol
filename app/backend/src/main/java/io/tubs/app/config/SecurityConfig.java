@@ -26,6 +26,9 @@ public class SecurityConfig {
     public static final String ROLE_SERVICE = "service";
     public static final String ROLE_KYC_USER = "kyc_user";
 
+    @Value("${cors.allowed-origins}")
+    private String[] allowedOrigins;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -66,12 +69,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of(
-                "http://localhost:9000", "http://127.0.0.1:9000",
-                "http://localhost:3000", "http://127.0.0.1:3000",
-                "https://localhost:3000", "https://127.0.0.1:3000",
-                "https://letspeppol.httpsonlan.com:3001"
-        ));
+        config.setAllowedOrigins(List.of(allowedOrigins));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("Location"));
