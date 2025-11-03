@@ -59,6 +59,10 @@ export class InvoiceOverview {
         this.ea.publish('newInvoice');
     }
 
+    newCreditNote() {
+        this.ea.publish('newCreditNote');
+    }
+
     selectItem(item: ListItemV1 | InvoiceDraftDto) {
         this.invoiceContext.selectedDraft = undefined;
         if (this.box === 'drafts') {

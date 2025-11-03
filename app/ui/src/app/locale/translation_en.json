@@ -230,7 +230,10 @@
     "drafts": "Drafts",
     "title": "Invoices",
     "search": "Search customer or reference",
-    "new": "New invoice",
+    "new": {
+      "invoice": "New Invoice",
+      "credit-note": "New Credit Note"
+    },
     "table": {
       "direction": "Direction",
       "type": "Type",
@@ -291,7 +294,6 @@
       "no-matches": "No matches"
     },
     "edit": {
-      "new": "New invoice",
       "validate": "Validate",
       "update-draft": "Update draft",
       "save-draft": "Save draft",

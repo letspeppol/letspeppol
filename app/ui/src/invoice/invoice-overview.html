@@ -40,11 +40,17 @@
                             <input type="search" placeholder="Search customer or reference" t="[placeholder]placeholder.invoice-search" />
                         </label>
                     </div>
-                    <button class="btn primary" click.trigger="newInvoice()" title="New invoice" t="[title]invoice.new">
+                    <button class="btn primary" click.trigger="newCreditNote()" title="New invoice" t="[title]invoice.new.credit-note">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                             <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                         </svg>
-                        <span t="invoice.new">New invoice</span>
+                        <span t="invoice.new.credit-note">New invoice</span>
+                    </button>
+                    <button class="btn primary" click.trigger="newInvoice()" title="New invoice" t="[title]invoice.new.invoice">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                        <span t="invoice.new.invoice">New invoice</span>
                     </button>
                 </div>
             </div>

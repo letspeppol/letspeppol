@@ -18,7 +18,6 @@ export class InvoiceContext {
     private readonly companyService = resolve(CompanyService);
     private readonly invoiceComposer = resolve(InvoiceComposer);
     private readonly invoiceCalculator = resolve(InvoiceCalculator);
-    selectedDocumentType: DocumentType = DocumentType.Invoice;
     lines : undefined | InvoiceLine[] | CreditNoteLine[];
     drafts: InvoiceDraftDto[] = [];
     @observable selectedInvoice:  undefined | Invoice | CreditNote;

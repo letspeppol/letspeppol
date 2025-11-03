@@ -67,8 +67,9 @@ public class SigningService {
 
     private String initDirectory(String dir) throws IOException {
         String resolvedDir = (dataDirectory == null || dataDirectory.isBlank()) ? System.getProperty("java.io.tmpdir") : dataDirectory;
-        Files.createDirectories(Path.of(resolvedDir, dir));
-        return resolvedDir;
+        Path path = Path.of(resolvedDir, dir);
+        Files.createDirectories(path);
+        return path.toString();
     }
 
     public PrepareSigningResponse prepareSigning(PrepareSigningRequest request) {

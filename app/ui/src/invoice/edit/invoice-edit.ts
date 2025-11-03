@@ -29,6 +29,7 @@ export class InvoiceEdit {
     private invoiceCalculator = resolve(InvoiceCalculator);
     private invoiceComposer = resolve(InvoiceComposer);
     private newInvoiceSubscription: IDisposable;
+    private newCreditNoteSubscription: IDisposable;
 
     selectedPaymentMeansCode: number | undefined = 30;
     @observable selectedDocumentType = DocumentType.Invoice;
@@ -45,10 +46,12 @@ export class InvoiceEdit {
 
     bound() {
         this.newInvoiceSubscription = this.ea.subscribe('newInvoice', () => this.newInvoice());
+        this.newCreditNoteSubscription = this.ea.subscribe('newCreditNote', () => this.newCreditNote());
     }
 
     unbinding() {
         this.newInvoiceSubscription.dispose();
+        this.newCreditNoteSubscription.dispose();
     }
 
     taxCategories: ClassifiedTaxCategory[] = [
@@ -63,7 +66,14 @@ export class InvoiceEdit {
     };
 
     newInvoice() {
+        this.selectedDocumentType = DocumentType.Invoice;
         this.invoiceContext.newUBLDocument();
+        this.showCustomerModal();
+    }
+
+    newCreditNote() {
+        this.selectedDocumentType = DocumentType.CreditNote;
+        this.invoiceContext.newUBLDocument(DocumentType.CreditNote);
         this.showCustomerModal();
     }
 
