@@ -39,7 +39,8 @@
     "due-date": "Due Date",
     "type": "Type",
     "number": "Number",
-    "house-number-alt": "House Number"
+    "house-number-alt": "House Number",
+    "peppolId": "Peppol ID"
   },
   "placeholder" : {
     "email" : "you@company.com",
