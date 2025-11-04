@@ -113,7 +113,7 @@ export async function startServer(env: ServerOptions): Promise<number> {
   async function getUbl(req, res): Promise<void> {
     const requestingEntity = req.peppolId;
     const ubl = await getDocumentUbl(requestingEntity, req.params.platformId);
-    res.text(ubl);
+    res.end(ubl);
   }
 
   const port = parseInt(env.PORT);

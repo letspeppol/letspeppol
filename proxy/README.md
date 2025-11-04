@@ -30,23 +30,25 @@ node ./build/src/genDoc.js invoice 0208:0734825676 9944:nl862637223B02 asdf > ./
 curl -X POST --data-binary "@./doc.xml" -H "Authorization: Bearer $ONE" $PROXY_HOST/v2/send
 docker exec -it db psql postgresql://syncables:syncables@localhost:5432/syncables -c "select platformId, userId, counterPartyId, docId, amount from frontdocs"
 curl -H "Authorization: Bearer $TWO" "$PROXY_HOST/v2/documents" | json
-curl -H "Authorization: Bearer $ONE" $PROXY_HOST/v2/documents/scrada/e37b5843-fc55-4b0b-8b8e-73435d9a0363
+curl -H "Authorization: Bearer $ONE" $PROXY_HOST/v2/documents/scrada_e37b5843-fc55-4b0b-8b8e-73435d9a0363
 curl -X POST -H "Authorization: Bearer $ONE" -H 'Content-Type: application/json' $PROXY_HOST/v2/unreg
 ```
 
 The proxy keeps a local database of sent and received documents in which you can search.
 This will give an array of objects that look like this:
 ```json
+[
   {
-    "platformId": "peppyrus_dca93007-6f8c-4ef7-943e-29ceff2c2a57",
+    "platformId": "scrada_81f0b375-3242-4a1c-b472-4c90caacd3a8",
     "docType": "invoice",
     "direction": "outgoing",
     "counterPartyId": "9944:nl862637223B02",
-    "counterPartyName": "SupplierTradingName Ltd.",
-    "createdAt": "2025-09-12T17:18:04.000Z",
-    "amount": "1656.25",
-    "docId": "Snippet1"
-  },
+    "counterPartyName": "Ponder Source Three",
+    "createdAt": null,
+    "amount": "6125",
+    "docId": "asdf"
+  }
+]
 ```
 There is a `page` and a `pageSize` parameter. Default page size is 20.
 Outgoing docs are filtered by senderId, incoming ones by receiverId, based on the authenticated PeppolId.

@@ -88,7 +88,7 @@ export class Scrada implements Backend {
       direction: 'outgoing',
     });
     console.log('ReadBack Check', readBack === documentXml);
-    await storeDocumentInDb(`scrada:${docUuid}`, docDetails, 'invoice', 'outgoing', docId, amount, documentXml);
+    await storeDocumentInDb(`scrada_${docUuid}`, docDetails, 'invoice', 'outgoing', docId, amount, documentXml);
   }
   async getUuid(identifier: string): Promise<string> {
     void identifier;
