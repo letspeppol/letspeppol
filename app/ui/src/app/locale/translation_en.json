@@ -39,7 +39,7 @@
     "due-date": "Due Date",
     "type": "Type",
     "number": "Number",
-    "house-number-alt": "House Number",
+    "house-number-short": "House Nr",
     "peppolId": "Peppol ID"
   },
   "placeholder" : {
@@ -212,6 +212,7 @@
     "edit": {
       "new": "New partner",
       "company-info": "Company Info",
+      "peppol": "Peppol",
       "address": "Address",
       "payment-info": "Payment Info",
       "customer": "Customer",

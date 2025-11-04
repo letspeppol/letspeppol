@@ -38,7 +38,7 @@ public class DataInitializer implements CommandLineRunner {
                     "Hasselt",
                     "3500",
                     "Michiel Wouters",
-                    "michiel@digita.be"
+                    "letspeppol@itaa.be"
             );
             companyService.register(registrationRequest);
             PartnerDto partner = new PartnerDto(
@@ -46,6 +46,7 @@ public class DataInitializer implements CommandLineRunner {
                     "BE123456789",
                     "John Doe",
                     "john@doe.com",
+                    "0208:12345678900",
                     true,
                     false,
                     "Last day 30 days",
@@ -59,6 +60,7 @@ public class DataInitializer implements CommandLineRunner {
                     "BE987654321",
                     "Jane Smith",
                     "jane@smith.com",
+                    "0208:987654321",
                     true,
                     false,
                     "First day 60 days",

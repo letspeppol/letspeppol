@@ -4,8 +4,8 @@ import io.tubs.kyc.model.User;
 import io.tubs.kyc.model.kbo.Company;
 import io.tubs.kyc.model.kbo.Director;
 import io.tubs.kyc.repository.CompanyRepository;
-import io.tubs.kyc.repository.UserRepository;
 import io.tubs.kyc.repository.DirectorRepository;
+import io.tubs.kyc.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -51,8 +51,8 @@ public class DataInitializer implements CommandLineRunner {
             directorRepository.save(new Director("Saskia Verellen", c));
             User user = User.builder()
                     .company(c)
-                    .email("michiel@digita.be")
-                    .passwordHash(passwordEncoder.encode("test"))
+                    .email("letspeppol@itaa.be")
+                    .passwordHash(passwordEncoder.encode("letspeppol"))
                     .externalId(UUID.randomUUID())
                     .build();
             userRepository.save(user);

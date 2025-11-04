@@ -45,16 +45,16 @@ export interface Identifier {
     value: string;
 }
 
-export class RegistrationService {
+export class PeppolDirService {
     public peppolDirApi = resolve(PeppolDirApi);
 
     async findByParticipant(peppolId: string): Promise<PeppolDirectoryResponse> {
-        const response = await this.peppolDirApi.httpClient.get(`/search/1.0/json?participant=iso6523-actorid-upis::${peppolId}`);
+        const response = await this.peppolDirApi.httpClient.get(`/search/1.0/json?participant=iso6523-actorid-upis::${encodeURIComponent(peppolId)}`);
         return response.json();
     }
 
     async findByName(name: string): Promise<PeppolDirectoryResponse> {
-        const response = await this.peppolDirApi.httpClient.get(`/search/1.0/json?name=${name}`);
+        const response = await this.peppolDirApi.httpClient.get(`/search/1.0/json?name=${encodeURIComponent(name)}`);
         return response.json();
     }
 }

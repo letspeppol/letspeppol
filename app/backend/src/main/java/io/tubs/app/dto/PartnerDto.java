@@ -5,6 +5,7 @@ public record PartnerDto(
     String companyNumber,
     String name,
     String email,
+    String peppolId,
     Boolean customer,
     Boolean supplier,
 

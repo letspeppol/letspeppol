@@ -35,6 +35,7 @@ public class PartnerService {
                 partnerDto.companyNumber(),
                 partnerDto.name(),
                 partnerDto.email(),
+                partnerDto.peppolId(),
                 partnerDto.customer(),
                 partnerDto.supplier(),
                 partnerDto.paymentTerms(),
@@ -55,6 +56,7 @@ public class PartnerService {
         partner.setCompanyNumber(companyNumber);
         partner.setName(partnerDto.name());
         partner.setEmail(partnerDto.email());
+        partner.setPeppolId(partnerDto.peppolId());
         partner.setCustomer(partnerDto.customer());
         partner.setSupplier(partnerDto.supplier());
         partner.setPaymentTerms(partnerDto.paymentTerms());
