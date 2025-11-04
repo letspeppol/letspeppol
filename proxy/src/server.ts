@@ -103,7 +103,7 @@ export async function startServer(env: ServerOptions): Promise<number> {
     const backend = getBackend(req.peppolId);
     const sendingEntity = req.peppolId;
     console.log('Registering', sendingEntity);
-    await backend.reg(sendingEntity);
+    await backend.reg(sendingEntity, req.body.name || 'Business Entity Name');
     res.end('OK\n');
   }
   async function unreg(req, res): Promise<void> {

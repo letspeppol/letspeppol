@@ -25,7 +25,7 @@ export PROXY_HOST=http://localhost:3000
 export ACCESS_TOKEN_KEY="something-secret"
 export ONE=`node token.js 0208:0734825676`
 curl $PROXY_HOST/v2
-curl -X POST -H "Authorization: Bearer $ONE" -H 'Content-Type: application/json' $PROXY_HOST/v2/reg
+curl -X POST -d'{"name":"BARGE vzw"}' -H "Authorization: Bearer $ONE" -H 'Content-Type: application/json' $PROXY_HOST/v2/reg
 node ./build/src/genDoc.js invoice 0208:0734825676 9944:nl862637223B02 asdf > ./doc.xml
 curl -X POST --data-binary "@./doc.xml" -H "Authorization: Bearer $ONE" $PROXY_HOST/v2/send
 curl -H "Authorization: Bearer $TWO" "$PROXY_HOST/v2/documents" | json

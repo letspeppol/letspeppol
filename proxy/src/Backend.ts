@@ -34,7 +34,7 @@ export type ListItemV2 = {
 };
 
 export abstract class Backend {
-  abstract reg(identifier: string): Promise<void>;
+  abstract reg(identifier: string, name: string): Promise<void>;
   abstract unreg(identifier: string): Promise<void>;
   abstract sendDocument(
     documentXml: string,
