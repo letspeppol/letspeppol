@@ -131,7 +131,7 @@ export class Scrada implements Backend {
   }
   async unreg(identifier: string): Promise<void> {
     const response = await fetch(
-      `${this.apiUrl}/v1/company/${process.env.SCRADA_COMPANY_ID}/peppol/deregister/${ID_SCHEME}//${identifier}`,
+      `${this.apiUrl}/v1/company/${process.env.SCRADA_COMPANY_ID}/peppol/deregister/${ID_SCHEME}/${identifier}`,
       {
         method: 'DELETE',
         headers: {
