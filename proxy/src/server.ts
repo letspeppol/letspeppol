@@ -4,7 +4,7 @@ import { checkBearerToken } from './auth.js';
 import rateLimit from 'express-rate-limit';
 import { Backend } from './Backend.js';
 import { Scrada } from './scrada.js';
-import { listEntityDocuments } from './db.js';
+import { listEntityDocuments, getDocumentUbl } from './db.js';
 
 function getAuthMiddleware(secretKey: string): express.RequestHandler {
   return async function checkAuth(req, res, next): Promise<void> {
@@ -67,38 +67,6 @@ export async function startServer(env: ServerOptions): Promise<number> {
     res.setHeader('Content-Type', 'text/plain');
     res.end("Let's Peppol!\n");
   }
-  async function listV1(req, res): Promise<void> {
-    const documents = await listEntityDocuments({
-      peppolId: req.peppolId,
-      direction: req.params.direction,
-      type: req.params.docType,
-      query: req.query,
-      apiVersion: 'v1',
-      page: req.query.page ? parseInt(req.query.page as string) : 1,
-      pageSize: req.query.pageSize
-        ? parseInt(req.query.pageSize as string)
-        : 20,
-    });
-    res.setHeader('Content-Type', 'application/json');
-    res.json(documents);
-  }
-  async function get(req, res): Promise<void> {
-    const backend = getBackend(req.peppolId);
-    const xml = await backend.getDocumentXml({
-      peppolId: req.peppolId,
-      type: req.params.docType,
-      uuid: req.params.uuid,
-      direction: req.params.direction,
-    });
-    res.setHeader('Content-Type', 'text/xml');
-    res.send(xml);
-  }
-  async function send(req, res): Promise<void> {
-    const backend = getBackend(req.peppolId);
-    const sendingEntity = req.peppolId;
-    await backend.sendDocument(req.body, sendingEntity);
-    res.end('OK\n');
-  }
   async function reg(req, res): Promise<void> {
     const backend = getBackend(req.peppolId);
     const sendingEntity = req.peppolId;
@@ -112,6 +80,42 @@ export async function startServer(env: ServerOptions): Promise<number> {
     await backend.unreg(sendingEntity);
     res.end('OK\n');
   }
+  async function send(req, res): Promise<void> {
+    const backend = getBackend(req.peppolId);
+    const sendingEntity = req.peppolId;
+    await backend.sendDocument(req.body, sendingEntity);
+    res.end('OK\n');
+  }
+
+  async function list(req, res): Promise<void> {
+    const requestingEntity = req.peppolId;
+    const query = {
+      userId: requestingEntity as string,
+      counterPartyId: req.query.counterPartyId as string | undefined,
+      counterPartyNameLike: req.query.counterPartyNameLike as
+        | string
+        | undefined,
+      docType: req.query.docType as 'invoices' | 'credit-notes' | undefined,
+      direction: req.query.direction as 'incoming' | 'outgoing' | undefined,
+      docId: req.query.docId as string | undefined,
+      sortBy: (req.query.sortBy as
+        | 'amountAsc'
+        | 'amountDesc'
+        | 'createdAtAsc'
+        | 'createdAtDesc'
+        | undefined) || 'createdAtAsc',
+      page: parseInt((req.query.page as string) || '1', 10),
+      pageSize: parseInt((req.query.pageSize as string) || '20', 10),
+    };
+    const list = await listEntityDocuments(query);
+    res.json(list);
+  }
+  async function getUbl(req, res): Promise<void> {
+    const requestingEntity = req.peppolId;
+    const ubl = await getDocumentUbl(requestingEntity, req.params.platformId);
+    res.end(ubl);
+  }
+
   const port = parseInt(env.PORT);
   const app = express();
   app.use(cors({ origin: true })); // Reflect (enable) the requested origin in the CORS response
@@ -130,8 +134,8 @@ export async function startServer(env: ServerOptions): Promise<number> {
   app.use(express.json());
   return new Promise((resolve, reject) => {
     app.get('/v2/', hello);
-    app.get('/v2/:docType/:direction', checkAuth, listV1);
-    app.get('/v2/:docType/:direction/:uuid', checkAuth, get);
+    app.get('/v2/documents', checkAuth, list);
+    app.get('/v2/documents/:platformId', checkAuth, getUbl);
     app.post('/v2/send', checkAuth, express.text({ type: '*/*' }), send);
     app.post('/v2/reg', checkAuth, reg);
     app.post('/v2/unreg', checkAuth, unreg);

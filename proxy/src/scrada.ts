@@ -25,10 +25,10 @@ export class Scrada implements Backend {
     documentXml: string,
     sendingEntity: string,
   ): Promise<void> {
-    const { docDetails, docId, amount } = parseDocument(documentXml);
-    if (docDetails.senderId !== sendingEntity) {
+    const { docDetails, docId, amount } = parseDocument(documentXml, sendingEntity);
+    if (docDetails.userId !== sendingEntity) {
       throw new Error(
-        `Sender ${docDetails.senderId} does not match sending entity ${sendingEntity}`,
+        `Sender ${docDetails.userId} does not match sending entity ${sendingEntity}`,
       );
     }
     const body = Buffer.from(documentXml).toString('utf-8');
@@ -48,9 +48,9 @@ export class Scrada implements Backend {
           'X-Api-Key': process.env.SCRADA_API_KEY!,
           'X-Password': process.env.SCRADA_API_PWD!,
           'X-Scrada-Peppol-Sender-Scheme': ID_SCHEME,
-          'X-Scrada-Peppol-Sender-Id': docDetails.senderId!,
+          'X-Scrada-Peppol-Sender-Id': docDetails.userId!,
           'X-Scrada-Peppol-Receiver-Scheme': ID_SCHEME,
-          'X-Scrada-Peppol-Receiver-Id': docDetails.receiverId!,
+          'X-Scrada-Peppol-Receiver-Id': docDetails.counterPartyId!,
           'X-Scrada-Peppol-C1-Country-Code': 'BE',
           'X-Scrada-Peppol-Document-Type-Scheme': INVOICES.documentTypeScheme,
           'X-Scrada-Peppol-Document-Type-Value': INVOICES.documentType,
@@ -82,13 +82,13 @@ export class Scrada implements Backend {
     );
     console.log('Status check', await statusCheck.text(), statusCheck.status);
     const readBack = await this.getDocumentXml({
-      peppolId: docDetails.senderId!,
+      peppolId: docDetails.userId!,
       type: 'invoices',
       uuid: docUuid,
       direction: 'outgoing',
     });
     console.log('ReadBack Check', readBack === documentXml);
-    await storeDocumentInDb(`scrada:${docUuid}`, docDetails, 'invoice', 'outgoing', docId, amount, documentXml);
+    await storeDocumentInDb(`scrada_${docUuid}`, docDetails, 'invoice', 'outgoing', docId, amount, documentXml);
   }
   async getUuid(identifier: string): Promise<string> {
     void identifier;

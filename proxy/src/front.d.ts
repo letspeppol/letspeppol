@@ -77,10 +77,9 @@ export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
     Document: {
-      senderId?: string;
-      receiverId?: string;
-      senderName?: string;
-      receiverName?: string;
+      userId?: string;
+      counterPartyId?: string;
+      counterPartyName?: string;
       /** @enum {string} */
       docType?: 'invoice' | 'credit-note';
       /** @enum {string} */

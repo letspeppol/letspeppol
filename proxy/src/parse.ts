@@ -1,7 +1,7 @@
 import { XMLParser } from 'fast-xml-parser';
 import { components } from './front.js';
 
-export function parseDocument(documentXml: string): {
+export function parseDocument(documentXml: string, userId: string): {
   docDetails: components['schemas']['Document'];
   docId: string;
   amount: number;
@@ -27,20 +27,34 @@ export function parseDocument(documentXml: string): {
     throw new Error('Could not determine document type from XML');
   }
   const sender = jObj[docType]?.['cac:AccountingSupplierParty']?.['cac:Party'];
-  const recipient =
+  const receiver =
     jObj[docType]?.['cac:AccountingCustomerParty']?.['cac:Party'];
   if (!sender?.['cbc:EndpointID']?.['#text']) {
     throw new Error('Missing sender EndpointID text');
   }
-  if (!recipient?.['cbc:EndpointID']?.['#text']) {
+  if (!receiver?.['cbc:EndpointID']?.['#text']) {
     throw new Error('Missing recipient EndpointID text');
+  }
+  const senderId =sender?.['cbc:EndpointID']?.['#text'];
+  const receiverId = receiver?.['cbc:EndpointID']?.['#text'];
+  let counterPartyId;
+  let counterPartyName;
+  if (userId === senderId) {
+    counterPartyId = receiverId;
+    counterPartyName = receiver?.['cac:PartyName']?.['cbc:Name'];
+  } else if (userId === receiverId) {
+    counterPartyId = senderId;
+    counterPartyName = sender?.['cac:PartyName']?.['cbc:Name'];
+  } else {
+    throw new Error(
+      `User ID ${userId} does not match sender ID ${senderId} or receiver ID ${receiverId}`,
+    );
   }
   return {
     docDetails: {
-      senderId: sender?.['cbc:EndpointID']?.['#text'],
-      senderName: sender?.['cac:PartyName']?.['cbc:Name'],
-      receiverId: recipient?.['cbc:EndpointID']?.['#text'],
-      receiverName: recipient?.['cac:PartyName']?.['cbc:Name'],
+      userId,
+      counterPartyId,
+      counterPartyName,
       docType:
         docType === 'Invoice'
           ? 'invoice'

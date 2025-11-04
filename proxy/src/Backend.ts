@@ -1,36 +1,27 @@
 export type ListEntityDocumentsParams = {
-  peppolId: string;
-  direction: 'incoming' | 'outgoing';
-  type: 'invoices' | 'credit-notes';
-  query: Record<string, string | string[] | undefined>;
-  apiVersion?: 'v1';
+  userId: string;
+  // paging:
   page: number;
   pageSize: number;
+  // filters:
+  counterPartyId?: string | undefined;
+  counterPartyNameLike?: string | undefined;
+  docType: 'invoices' | 'credit-notes' | undefined;
+  direction: 'incoming' | 'outgoing' | undefined;
+  docId?: string | undefined;
+  // sorting:
+  sortBy?: 'amountAsc' | 'amountDesc' | 'createdAtAsc' | 'createdAtDesc';
 };
 
-export type ListItemV1 = {
-  uuid: string;
-  type: 'Invoice' | 'CreditNote' | string;
-  direction: 'incoming' | 'outgoing';
-  format?: string;
-  number?: string;
-  senderId: string;
-  senderName?: string;
-  recipientId: string;
-  recipientName?: string;
-  requestSentAt?: string;
-  responseSentAt?: string;
-  success: boolean;
-  errorCode: string | null;
-};
-
-export type ListItemV2 = {
+export type ListItem = {
   platformId: string;
   docType: 'invoice' | 'credit-note';
   direction: 'incoming' | 'outgoing';
-  senderId: string;
-  receiverId: string;
-  createdAt: string;
+  counterPartyId: string;
+  counterPartyName: string;
+  createdAt: string; // ISO 8601 Date string
+  amount: number;
+  docId: string;
 };
 
 export abstract class Backend {
@@ -40,10 +31,4 @@ export abstract class Backend {
     documentXml: string,
     sendingEntity: string,
   ): Promise<void>;
-  abstract getDocumentXml(query: {
-    peppolId: string;
-    type: string;
-    uuid: string;
-    direction: string;
-  }): Promise<string>;
 }
