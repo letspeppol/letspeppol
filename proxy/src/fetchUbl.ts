@@ -1,8 +1,5 @@
 import { getPostgresClient } from './db.js';
-import { Ion } from './ion.js';
-import { Peppyrus } from './peppyrus.js';
 import { Scrada } from './scrada.js';
-import { Acube } from './acube.js';
 import { parseDocument } from './parse.js';
 
 export async function fetchUbl(): Promise<void> {
@@ -21,10 +18,7 @@ export async function fetchUbl(): Promise<void> {
   }
   console.log('Fetching UBL for document', parts);
   const backends = {
-    peppyrus: new Peppyrus(),
-    acube: new Acube(),
     scrada: new Scrada(),
-    ion: new Ion(),
   };
   const backend = backends[parts[0] as keyof typeof backends];
   if (!backend) {
@@ -53,8 +47,8 @@ export async function fetchUbl(): Promise<void> {
       'update FrontDocs set "docid" = $1, "sendername" = $2, "receivername" = $3, "amount" = $4 where platformid = $5';
     const updateParams = [
       data.docId,
-      data.senderName,
-      data.recipientName,
+      data.docDetails.senderName,
+      data.docDetails.receiverName,
       data.amount,
       row.platformid,
     ];
