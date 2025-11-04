@@ -1,12 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import { checkBearerToken } from './auth.js';
-import { Acube } from './acube.js';
-import { Peppyrus } from './peppyrus.js';
 import rateLimit from 'express-rate-limit';
 import { Backend } from './Backend.js';
 import { Scrada } from './scrada.js';
-import { Ion } from './ion.js';
 import { listEntityDocuments } from './db.js';
 
 function getAuthMiddleware(secretKey: string): express.RequestHandler {
@@ -50,10 +47,7 @@ export async function startServer(env: ServerOptions): Promise<number> {
     }
   }
   const backends = {
-    peppyrus: new Peppyrus(),
-    acube: new Acube(),
     scrada: new Scrada(),
-    ion: new Ion(),
   };
   function getBackend(peppolId: string): Backend {
     if (process.env.BACKEND) {
@@ -64,7 +58,7 @@ export async function startServer(env: ServerOptions): Promise<number> {
       );
       return backends[process.env.BACKEND];
     }
-    const backendName = 'peppyrus';
+    const backendName = 'scrada';
     console.log('Using backend', backendName, 'for', peppolId);
     return backends[backendName];
   }

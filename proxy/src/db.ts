@@ -6,6 +6,7 @@ import {
   ListItemV2,
 } from './Backend.js';
 export { Client } from 'pg';
+import { components } from './front.js';
 
 let client: Client | null = null;
 
@@ -85,6 +86,37 @@ export async function insertData(
       return client.query(insertQuery);
     }),
   );
+}
+
+export async function storeDocumentInDb(
+  platformId: string,
+  docDetails: components['schemas']['Document'],
+  docType: string,
+  direction: string,
+  docId: string,
+  amount: number,
+  xmlContent: string,
+): Promise<void> {
+  const client = await getPostgresClient();
+  const insertQuery = `
+    INSERT INTO FrontDocs (senderId, senderName, receiverId, receiverName, docType, direction, docId, amount, platformId, createdAt, ubl)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+    ON CONFLICT (platformId) DO NOTHING;
+  `;
+  const values = [
+    docDetails.senderId,
+    docDetails.senderName,
+    docDetails.receiverId,
+    docDetails.receiverName,
+    docType,
+    direction,
+    docId,
+    amount,
+    platformId,
+    docDetails.createdAt,
+    xmlContent,
+  ];
+  await client.query(insertQuery, values);
 }
 
 export async function listEntityDocuments(

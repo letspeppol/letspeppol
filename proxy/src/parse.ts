@@ -1,13 +1,10 @@
 import { XMLParser } from 'fast-xml-parser';
+import { components } from './front.js';
 
 export function parseDocument(documentXml: string): {
-  sender: string | undefined;
-  recipient: string | undefined;
-  docType: string | undefined;
-  senderName?: string;
-  recipientName?: string;
-  amount?: number;
-  docId?: string;
+  docDetails: components['schemas']['Document'];
+  docId: string;
+  amount: number;
 } {
   const parserOptions = {
     ignoreAttributes: false,
@@ -39,21 +36,23 @@ export function parseDocument(documentXml: string): {
     throw new Error('Missing recipient EndpointID text');
   }
   return {
-    sender: sender?.['cbc:EndpointID']?.['#text'],
-    senderName: sender?.['cac:PartyName']?.['cbc:Name'],
-    recipient: recipient?.['cbc:EndpointID']?.['#text'],
-    recipientName: recipient?.['cac:PartyName']?.['cbc:Name'],
+    docDetails: {
+      senderId: sender?.['cbc:EndpointID']?.['#text'],
+      senderName: sender?.['cac:PartyName']?.['cbc:Name'],
+      receiverId: recipient?.['cbc:EndpointID']?.['#text'],
+      receiverName: recipient?.['cac:PartyName']?.['cbc:Name'],
+      docType:
+        docType === 'Invoice'
+          ? 'invoice'
+          : docType === 'CreditNote'
+            ? 'credit-note'
+            : (() => { throw new Error(`Unknown document type: ${docType}`); })(),
+    },
+    docId: jObj[docType]?.['cbc:ID'],
     amount: parseFloat(
       jObj[docType]?.['cac:LegalMonetaryTotal']?.['cbc:PayableAmount']?.[
         '#text'
       ],
     ),
-    docType:
-      docType === 'Invoice'
-        ? 'Invoice'
-        : docType === 'CreditNote'
-          ? 'CreditNote'
-          : undefined,
-    docId: jObj[docType]?.['cbc:ID'],
   };
 }

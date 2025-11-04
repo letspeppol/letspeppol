@@ -79,6 +79,8 @@ export interface components {
     Document: {
       senderId?: string;
       receiverId?: string;
+      senderName?: string;
+      receiverName?: string;
       /** @enum {string} */
       docType?: 'invoice' | 'credit-note';
       /** @enum {string} */
@@ -86,6 +88,7 @@ export interface components {
       platformId?: string;
       /** Format: date-time */
       createdAt?: string;
+      ubl?: string;
     };
   };
   responses: never;

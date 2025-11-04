@@ -13,7 +13,7 @@ export ACCESS_TOKEN_KEY="something-secret"
 docker compose up -d
 docker exec -it db psql postgresql://syncables:syncables@localhost:5432/syncables -c "create type direction as enum ('incoming', 'outgoing');"
 docker exec -it db psql postgresql://syncables:syncables@localhost:5432/syncables -c "create type docType as enum ('invoice', 'credit-note');"
-docker exec -it db psql postgresql://syncables:syncables@localhost:5432/syncables -c "create table FrontDocs (senderId text, senderName text, receiverId text, receiverName text, docType docType, direction direction, docId text, amount numeric, platformId text primary key, createdAt timestamp);"
+docker exec -it db psql postgresql://syncables:syncables@localhost:5432/syncables -c "create table FrontDocs (senderId text, senderName text, receiverId text, receiverName text, docType docType, direction direction, docId text, amount numeric, platformId text primary key, createdAt timestamp, ubl text);"
 
 pnpm install
 pnpm build
@@ -23,10 +23,10 @@ In a separate terminal window, do the following to register, send a document, li
 ```sh
 export PROXY_HOST=http://localhost:3000
 export ACCESS_TOKEN_KEY="something-secret"
-export ONE=`node token.js 9944:nl862637223B02`
+export ONE=`node token.js 0208:0734825676`
 curl $PROXY_HOST/v2
 curl -X POST -H "Authorization: Bearer $ONE" -H 'Content-Type: application/json' $PROXY_HOST/v2/reg
-node ./build/src/genDoc.js invoice 9944:nl862637223B02 0208:0734825676 asdf > ./doc.xml
+node ./build/src/genDoc.js invoice 0208:0734825676 9944:nl862637223B02 asdf > ./doc.xml
 curl -X POST --data-binary "@./doc.xml" -H "Authorization: Bearer $ONE" $PROXY_HOST/v2/send
 curl -H "Authorization: Bearer $TWO" "$PROXY_HOST/v2/documents" | json
 curl -H "Authorization: Bearer $ONE" $PROXY_HOST/v2/documents/e37b5843-fc55-4b0b-8b8e-73435d9a0363
