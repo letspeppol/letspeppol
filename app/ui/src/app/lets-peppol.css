@@ -1088,7 +1088,7 @@ main.container .data-table tbody td {
     grid-column: 1 / -1;
 }
 
-.field span {
+.field > span {
     color: var(--muted);
     font-size: .85rem;
 }

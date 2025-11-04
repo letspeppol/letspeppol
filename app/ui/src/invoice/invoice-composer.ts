@@ -202,7 +202,7 @@ export class InvoiceComposer {
                     }
                 },
                 PartyLegalEntity: {
-                    RegistrationName: this.companyService.myCompany.name
+                    RegistrationName: this.companyService.myCompany.name,
                 }
             }
         };

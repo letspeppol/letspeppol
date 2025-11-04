@@ -1,3 +1,5 @@
+<import from="../components/peppol-search/peppol-search"></import>
+
 <div class="invoices-main">
     <div class="section-header">
         <div style="display:flex;align-items:center;gap:.5rem">
@@ -45,12 +47,10 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-globe-icon lucide-globe"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
                 <h2 t="partner.edit.peppol">Peppol</h2>
             </div>
-            <label class="field">
-                <span t="label.peppolId">peppolId</span>
-                <input type="text" value.bind="partnerContext.selectedPartner.peppolId" />
-                <button type="button" class="btn">Search By Company Name</button>
-                <button type="button" class="btn">Search By VAT</button>
-            </label>
+            <peppol-search name.bind="partnerContext.selectedPartner.name"
+                           vat-number.bind="partnerContext.selectedPartner.companyNumber"
+                           peppol-id.bind="partnerContext.selectedPartner.peppolId">
+            </peppol-search>
         </div>
 
         <div class="card" style="min-width: 300px; width: 320px">

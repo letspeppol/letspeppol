@@ -1,4 +1,4 @@
-import {bindable} from "aurelia";
+import {bindable, observable} from "aurelia";
 import {Party} from "../../../services/peppol/ubl";
 import {PartnerDto} from "../../../services/app/partner-service";
 import {CustomerSearch} from "./customer-search";
@@ -6,14 +6,32 @@ import {CustomerSearch} from "./customer-search";
 export class InvoiceCustomerModal {
     @bindable invoiceContext;
     @bindable customerSearch: CustomerSearch;
+    @observable peppolId: string;
     open = false;
     customer: Party | undefined;
     customerSavedFunction: () => void;
 
     vatChanged() {
         if (!this.customer) return;
-        this.customer.EndpointID.value = this.customer.PartyIdentification[0].ID.value;
-        this.customer.PartyTaxScheme.CompanyID.value = `BE${this.customer.PartyIdentification[0].ID.value}`;
+        this.customer.PartyTaxScheme.CompanyID.value = `${this.customer.PartyLegalEntity.CompanyID.value}`;
+        this.customer.PartyIdentification[0].ID.value = this.customer.PartyLegalEntity.CompanyID.value.replace(/\D/g, '');
+    }
+
+    peppolIdChanged() {
+        if (this.peppolId.includes(":")) {
+            const parts = this.peppolId.split(":");
+            this.customer.EndpointID.__schemeID = parts[0];
+            this.customer.EndpointID.value = parts[1];
+            if (!this.customer.PartyLegalEntity.CompanyID.value) {
+                if (parts[0] === '0208') {
+                    this.customer.PartyLegalEntity.CompanyID.value = `BE${parts[1]}`;
+                    this.vatChanged();
+                } else if (parts[0] === '9925') {
+                    this.customer.PartyLegalEntity.CompanyID.value = parts[1].toUpperCase();
+                    this.vatChanged();
+                }
+            }
+        }
     }
 
     showModal(customerSavedFunction: () => void) {

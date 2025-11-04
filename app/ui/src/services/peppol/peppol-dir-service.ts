@@ -1,5 +1,5 @@
-import {PeppolDirApi} from "./peppol-dir-api";
 import {resolve} from "@aurelia/kernel";
+import {AppApi} from "../app/app-api";
 
 export interface PeppolDirectoryResponse {
     version: string;
@@ -31,7 +31,7 @@ export interface DocType {
 }
 
 export interface Entity {
-    name: string;
+    name: Name[];
     countryCode: string;
     websites?: string[];
     geoInfo?: string;
@@ -40,21 +40,27 @@ export interface Entity {
     regDate?: string;
 }
 
+export interface Name {
+    name: string,
+    language: string
+}
+
 export interface Identifier {
     scheme: string;
     value: string;
 }
 
 export class PeppolDirService {
-    public peppolDirApi = resolve(PeppolDirApi);
+    // public peppolDirApi = resolve(PeppolDirApi);
+    public appApi = resolve(AppApi);
 
     async findByParticipant(peppolId: string): Promise<PeppolDirectoryResponse> {
-        const response = await this.peppolDirApi.httpClient.get(`/search/1.0/json?participant=iso6523-actorid-upis::${encodeURIComponent(peppolId)}`);
+        const response = await this.appApi.httpClient.get(`/api/peppol-directory?participant=${peppolId}`);
         return response.json();
     }
 
     async findByName(name: string): Promise<PeppolDirectoryResponse> {
-        const response = await this.peppolDirApi.httpClient.get(`/search/1.0/json?name=${encodeURIComponent(name)}`);
+        const response = await this.appApi.httpClient.get(`/api/peppol-directory?name=${encodeURIComponent(name)}`);
         return response.json();
     }
 }
