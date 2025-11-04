@@ -98,7 +98,8 @@ export class Scrada implements Backend {
     void identifier;
     throw new Error('Method not implemented.');
   }
-  async reg(identifier: string): Promise<void> {
+  async reg(identifier: string, name: string): Promise<void> {
+    console.log('Registering identifier', identifier, 'with name', name);
     const response = await fetch(
       `${this.apiUrl}/v1/company/${process.env.SCRADA_COMPANY_ID}/peppol/register`,
       {
@@ -115,7 +116,7 @@ export class Scrada implements Backend {
           },
           migrationKey: null,
           businessEntity: {
-            name: 'Business Entity Name',
+            name,
             languageCode: 'NL',
             countryCode: 'BE',
           },
