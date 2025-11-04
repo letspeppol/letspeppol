@@ -7,27 +7,29 @@ describe('parseDocument function', () => {
   const creditNoteXml = readFileSync('__tests__/fixtures/credit-note-v1.xml', 'utf-8');
 
   it ('should correctly parse sender and recipient from invoice XML', () => {
-    const parsed = parseDocument(invoiceXml);
+    const parsed = parseDocument(invoiceXml, '0208:0705969661');
     expect(parsed).toEqual({
       amount: 1656.25,
       docId: "Snippet1",
-      recipient: "0208:0705969661",
-      recipientName: "BuyerTradingName AS",
-      sender: "9944:nl862637223B02",
-      senderName: "SupplierTradingName Ltd.",
-      docType: "Invoice",
+      docDetails: {
+        userId: "0208:0705969661",
+        counterPartyId: "9944:nl862637223B02",
+        counterPartyName: "SupplierTradingName Ltd.",
+        docType: "invoice",
+      },
     });
   });
   it ('should correctly parse sender and recipient from credit note XML', () => {
-    const parsed = parseDocument(creditNoteXml);
+    const parsed = parseDocument(creditNoteXml, '0208:0705969661');
     expect(parsed).toEqual({
       amount: 1656.25,
+      docDetails: {
+        userId: "0208:0705969661",
+        counterPartyId: "0208:1023290711",
+        counterPartyName: "SupplierTradingName Ltd.",
+        docType: "credit-note",
+      },
       docId: "Snippet1",
-      recipient: "0208:0705969661",
-      recipientName: "BuyerTradingName AS",
-      sender: "0208:1023290711",
-      senderName: "SupplierTradingName Ltd.",
-      docType: "CreditNote",
     });
   });
 });

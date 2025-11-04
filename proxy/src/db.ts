@@ -2,8 +2,7 @@
 import { Client } from 'pg';
 import {
   ListEntityDocumentsParams,
-  ListItemV1,
-  ListItemV2,
+  ListItem,
 } from './Backend.js';
 export { Client } from 'pg';
 import { components } from './front.js';
@@ -99,15 +98,14 @@ export async function storeDocumentInDb(
 ): Promise<void> {
   const client = await getPostgresClient();
   const insertQuery = `
-    INSERT INTO FrontDocs (senderId, senderName, receiverId, receiverName, docType, direction, docId, amount, platformId, createdAt, ubl)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+    INSERT INTO FrontDocs (userId, counterPartyId, counterPartyName, docType, direction, docId, amount, platformId, createdAt, ubl)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
     ON CONFLICT (platformId) DO NOTHING;
   `;
   const values = [
-    docDetails.senderId,
-    docDetails.senderName,
-    docDetails.receiverId,
-    docDetails.receiverName,
+    docDetails.userId,
+    docDetails.counterPartyId,
+    docDetails.counterPartyName,
     docType,
     direction,
     docId,
@@ -121,31 +119,52 @@ export async function storeDocumentInDb(
 
 export async function listEntityDocuments(
   params: ListEntityDocumentsParams,
-): Promise<ListItemV1[]> {
-  const { peppolId, direction, type, page, pageSize } = params;
+): Promise<ListItem[]> {
+  const { userId, page, pageSize, counterPartyId, counterPartyNameLike, docType, direction, docId, sortBy } = params;
   const offset = (page - 1) * pageSize;
-  let constrainedParty;
-  if (direction === 'incoming') {
-    constrainedParty = 'receiver';
-  } else {
-    constrainedParty = 'sender';
+  const orders = {
+    amountAsc: 'amount ASC',
+    amountDesc: 'amount DESC',
+    createdAtAsc: 'createdAt ASC',
+    createdAtDesc: 'createdAt DESC',
+  };
+  const orderBy = orders[sortBy || 'createdAtAsc'] || 'createdAt ASC';
+  const queryParams = [
+    userId,
+    pageSize,
+    offset,
+    orderBy
+  ];
+  const whereClauses: string[] = [
+    `userId = $1`
+  ];
+  if (typeof counterPartyId === 'string') {
+    queryParams.push(counterPartyId);
+    whereClauses.push(`counterPartyId = $${queryParams.length}`);
   }
-  let singularType;
-  if (type === 'invoices') {
-    singularType = 'invoice';
-  } else if (type === 'credit-notes') {
-    singularType = 'credit-note';
-  } else {
-    throw new Error(`Unknown document type: ${type}`);
+  if (typeof counterPartyNameLike === 'string') {
+    queryParams.push(`%${counterPartyNameLike}%`);
+    whereClauses.push(`counterPartyName ILIKE $${queryParams.length}`);
   }
-
+  if (typeof docType === 'string') {
+    queryParams.push(docType);
+    whereClauses.push(`docType = $${queryParams.length}`);
+  }
+  if (typeof direction === 'string') {
+    queryParams.push(direction);
+    whereClauses.push(`direction = $${queryParams.length}`);
+  }
+  if (typeof docId === 'string') {
+    queryParams.push(docId);
+    whereClauses.push(`docId = $${queryParams.length}`);
+  }
   const queryStr = `
     SELECT * FROM FrontDocs
-    WHERE ${constrainedParty}Id = $1 AND direction = $2 AND docType = $3
-    ORDER BY createdAt DESC
-    LIMIT $4 OFFSET $5
+    WHERE ${whereClauses.join(' AND ')}
+    ORDER BY $4
+    LIMIT $2 OFFSET $3
   `;
-  const queryParams = [peppolId, direction, singularType, pageSize, offset];
+
   console.log('Executing query:', queryStr, 'with params:', queryParams);
   const client = await getPostgresClient();
   const result = await client.query(queryStr, queryParams);
@@ -157,13 +176,25 @@ export async function listEntityDocuments(
         platformId: row.platformid,
         docType: row.doctype,
         direction: row.direction,
-        senderId: row.senderid,
-        senderName: row.sendername,
-        receiverId: row.receiverid,
-        receiverName: row.receivername,
+        counterPartyId: row.counterpartyid,
+        counterPartyName: row.counterpartyname,
         createdAt: row.createdat,
         amount: row.amount,
         docId: row.docid,
-      }) as ListItemV2,
+      }) as ListItem,
   );
+}
+
+export async function getDocumentUbl(requestingEntity: string, platformId: string): Promise<string> {
+  const client = await getPostgresClient();
+  const queryStr = `
+    SELECT ubl FROM FrontDocs
+    WHERE userId = $1 AND platformId = $2
+    LIMIT 1
+  `;
+  const result = await client.query(queryStr, [requestingEntity, platformId]);
+  if (result.rows.length === 0) {
+    throw new Error('Document not found or access denied');
+  }
+  return result.rows[0].ubl;
 }
