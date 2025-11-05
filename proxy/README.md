@@ -3,6 +3,15 @@
 ## Usage
 Apart from a Scrada account you will need a postgres database somewhere (for instance through `docker compose up -d`) and that you have the [`json` CLI tool](https://github.com/trentm/json?tab=readme-ov-file#installation) installed.
 
+Edit compose.yml to set the environment variables. You should get the SCRADA_ credentials from Scrada, and pick a strong ACCESS_TOKEN_KEY yourself, you will need that in a next step:
+```yml
+      SCRADA_API_KEY: your_scrada_api_key_here # edit me!
+      SCRADA_API_PWD: your_scrada_api_pwd_here # edit me!
+      SCRADA_COMPANY_ID: your_scrada_company_id_here # edit me!
+      ACCESS_TOKEN_KEY: something-secret # edit me!
+```
+
+Now you can either do `docker compose up -d`, or if you want to run node on the host, you do:
 ```sh
 export PORT=3000
 export SCRADA_API_KEY="from-scrada"
@@ -10,19 +19,22 @@ export SCRADA_API_PWD="from-scrada"
 export SCRADA_COMPANY_ID="from-scrada"
 export DATABASE_URL="postgres://syncables:syncables@localhost:5432/syncables?sslmode=disable"
 export ACCESS_TOKEN_KEY="something-secret"
-docker compose up -d
-docker exec -it db psql postgresql://syncables:syncables@localhost:5432/syncables -c "create type direction as enum ('incoming', 'outgoing');"
-docker exec -it db psql postgresql://syncables:syncables@localhost:5432/syncables -c "create type docType as enum ('invoice', 'credit-note');"
-docker exec -it db psql postgresql://syncables:syncables@localhost:5432/syncables -c "create table FrontDocs (userId text, counterPartyId text, counterPartyName text, docType docType, direction direction, docId text, amount numeric, platformId text primary key, createdAt timestamp, ubl text);"
-
 pnpm install
 pnpm build
 pnpm start
+docker compose -f compose-db-only.yml up -d
 ```
+In both cases you will need to create the database table before first use (FIXME: make this automatic):
+```sh
+docker exec -it db psql postgresql://syncables:syncables@localhost:5432/syncables -c "create type direction as enum ('incoming', 'outgoing');"
+docker exec -it db psql postgresql://syncables:syncables@localhost:5432/syncables -c "create type docType as enum ('invoice', 'credit-note');"
+docker exec -it db psql postgresql://syncables:syncables@localhost:5432/syncables -c "create table FrontDocs (userId text, counterPartyId text, counterPartyName text, docType docType, direction direction, docId text, amount numeric, platformId text primary key, createdAt timestamp, ubl text, paid text, paymentTerms text);"
+```
+
 In a separate terminal window, do the following to register, send a document, list documents, fetch a single document, and unregister:
 ```sh
 export PROXY_HOST=http://localhost:3000
-export ACCESS_TOKEN_KEY="something-secret"
+export ACCESS_TOKEN_KEY="something-secret" # same as what you put in the compose.yml!
 export ONE=`node token.js 0208:0734825676`
 curl $PROXY_HOST/v2
 curl -X POST -d'{"name":"BARGE vzw"}' -H "Authorization: Bearer $ONE" -H 'Content-Type: application/json' $PROXY_HOST/v2/reg

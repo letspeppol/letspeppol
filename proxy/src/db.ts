@@ -198,3 +198,18 @@ export async function getDocumentUbl(requestingEntity: string, platformId: strin
   }
   return result.rows[0].ubl;
 }
+
+export async function markDocumentAsPaid(
+  userId: string,
+  platformId: string,
+  paid: string,
+): Promise<void> {
+  const client = await getPostgresClient();
+  const updateQuery = `
+    UPDATE FrontDocs
+    SET paid = $1
+    WHERE userId = $2 AND platformId = $3
+  `;
+  const values = [paid, userId, platformId];
+  await client.query(updateQuery, values);
+}
