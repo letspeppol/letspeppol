@@ -25,7 +25,7 @@ export class Scrada implements Backend {
     documentXml: string,
     sendingEntity: string,
   ): Promise<void> {
-    const { docDetails, docId, amount } = parseDocument(documentXml, sendingEntity);
+    const docDetails = parseDocument(documentXml, sendingEntity);
     if (docDetails.userId !== sendingEntity) {
       throw new Error(
         `Sender ${docDetails.userId} does not match sending entity ${sendingEntity}`,
@@ -88,7 +88,8 @@ export class Scrada implements Backend {
       direction: 'outgoing',
     });
     console.log('ReadBack Check', readBack === documentXml);
-    await storeDocumentInDb(`scrada_${docUuid}`, docDetails, 'invoice', 'outgoing', docId, amount, documentXml);
+    docDetails.platformId = `scrada_${docUuid}`;
+    await storeDocumentInDb(docDetails);
   }
   async getUuid(identifier: string): Promise<string> {
     void identifier;

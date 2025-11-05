@@ -84,10 +84,16 @@ export interface components {
       docType?: 'invoice' | 'credit-note';
       /** @enum {string} */
       direction?: 'incoming' | 'outgoing';
+      docId?: string;
+      amount?: number;
+      /** Unique platform identifier for the document */
       platformId?: string;
       /** Format: date-time */
       createdAt?: string;
       ubl?: string;
+      dueDate?: string; // Format: date-time
+      paid?: string;
+      paymentTerms?: string;
     };
   };
   responses: never;
