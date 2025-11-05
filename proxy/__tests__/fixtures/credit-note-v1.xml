@@ -42,7 +42,7 @@
   </cac:AccountingSupplierParty>
   <cac:AccountingCustomerParty>
     <cac:Party>
-      <cbc:EndpointID schemeID="0208">0705969661</cbc:EndpointID>
+      <cbc:EndpointID schemeID="iso6523-actorid-upis">0208:0705969661</cbc:EndpointID>
       <cac:PartyIdentification>
         <cbc:ID schemeID="iso6523-actorid-upis">0208:0705969661</cbc:ID>
       </cac:PartyIdentification>

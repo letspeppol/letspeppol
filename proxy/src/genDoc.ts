@@ -1,8 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?>
+async function genDoc(
+  docType: string,
+  senderId: string,
+  receiverId: string,
+  docId: string,
+): Promise<string> {
+  const [senderScheme, senderSubId] = senderId.split(':');
+  const [receiverScheme, receiverSubId] = receiverId.split(':');
+  if (docType === 'invoice') {
+    return `<?xml version="1.0" encoding="UTF-8"?>
 <Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
   <cbc:CustomizationID>urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0</cbc:CustomizationID>
   <cbc:ProfileID>urn:fdc:peppol.eu:2017:poacc:billing:01:1.0</cbc:ProfileID>
-  <cbc:ID>TickstarAP-BIS3-test-01</cbc:ID>
+  <cbc:ID>${docId}</cbc:ID>
   <cbc:IssueDate>2023-12-19</cbc:IssueDate>
   <cbc:DueDate>2024-01-18</cbc:DueDate>
   <cbc:InvoiceTypeCode>380</cbc:InvoiceTypeCode>
@@ -34,42 +43,9 @@
   </cac:AdditionalDocumentReference>
   <cac:AccountingSupplierParty>
       <cac:Party>
-          <cbc:EndpointID schemeID="9944">nl862637223B02</cbc:EndpointID>
+          <cbc:EndpointID schemeID="iso6523-actorid-upis">${senderScheme}:${senderSubId}</cbc:EndpointID>
           <cac:PartyIdentification>
-              <cbc:ID>nl862637223B02</cbc:ID>
-          </cac:PartyIdentification>
-          <cac:PartyName>
-              <cbc:Name>Ponder Source Two</cbc:Name>
-          </cac:PartyName>
-          <cac:PostalAddress>
-              <cbc:StreetName>Torenlaan 5A</cbc:StreetName>
-              <cbc:CityName>Bussum</cbc:CityName>
-              <cbc:PostalZone>1402 AT</cbc:PostalZone>
-              <cac:Country>
-              <cbc:IdentificationCode>NL</cbc:IdentificationCode>
-              </cac:Country>
-          </cac:PostalAddress>
-          <cac:PartyTaxScheme>
-              <cbc:CompanyID>GB1232434</cbc:CompanyID>
-              <cac:TaxScheme>
-                  <cbc:ID>VAT</cbc:ID>
-              </cac:TaxScheme>
-          </cac:PartyTaxScheme>
-        
-          <cac:PartyLegalEntity>
-              <cbc:RegistrationName>SupplierOfficialName Ltd</cbc:RegistrationName>
-              <cbc:CompanyID schemeID="0106">82875715</cbc:CompanyID>
-              <cbc:CompanyLegalForm>AdditionalLegalInformation</cbc:CompanyLegalForm>   
-          </cac:PartyLegalEntity>
-
-      </cac:Party>
-  </cac:AccountingSupplierParty>
-
-  <cac:AccountingCustomerParty>
-      <cac:Party>
-          <cbc:EndpointID schemeID="0208">0541911284</cbc:EndpointID>
-          <cac:PartyIdentification>
-              <cbc:ID schemeID="0208">0541911284</cbc:ID>
+              <cbc:ID schemeID="iso6523-actorid-upis">${senderScheme}:${senderSubId}</cbc:ID>
           </cac:PartyIdentification>
           <cac:PartyName>
               <cbc:Name>Softwareoplossing.be</cbc:Name>
@@ -91,6 +67,41 @@
           <cac:PartyLegalEntity>
               <cbc:RegistrationName>Buyer Official Name</cbc:RegistrationName>
               <cbc:CompanyID schemeID="0183">39937423947</cbc:CompanyID>
+          </cac:PartyLegalEntity>
+          <cac:Contact>
+              <cbc:Name>Lisa Johnson</cbc:Name>
+              <cbc:Telephone>23434234</cbc:Telephone>
+              <cbc:ElectronicMail>lj@buyer.se</cbc:ElectronicMail>
+          </cac:Contact>
+      </cac:Party>
+  </cac:AccountingSupplierParty>
+
+  <cac:AccountingCustomerParty>
+      <cac:Party>
+          <cbc:EndpointID schemeID="iso6523-actorid-upis">${receiverScheme}:${receiverSubId}</cbc:EndpointID>
+          <cac:PartyIdentification>
+              <cbc:ID schemeID="iso6523-actorid-upis">${receiverScheme}:${receiverSubId}</cbc:ID>
+          </cac:PartyIdentification>
+          <cac:PartyName>
+              <cbc:Name>Ponder Source Three</cbc:Name>
+          </cac:PartyName>
+          <cac:PostalAddress>
+              <cbc:StreetName>Torenlaan 5A</cbc:StreetName>
+              <cbc:CityName>Bussum</cbc:CityName>
+              <cbc:PostalZone>1402 AT</cbc:PostalZone>
+              <cac:Country>
+              <cbc:IdentificationCode>NL</cbc:IdentificationCode>
+              </cac:Country>
+          </cac:PostalAddress>
+          <cac:PartyTaxScheme>
+              <cbc:CompanyID>GB1232434</cbc:CompanyID>
+              <cac:TaxScheme>
+                  <cbc:ID>VAT</cbc:ID>
+              </cac:TaxScheme>
+          </cac:PartyTaxScheme>
+          <cac:PartyLegalEntity>
+              <cbc:RegistrationName>Buyer Official Name</cbc:RegistrationName>
+              <cbc:CompanyID schemeID="0106">82875715</cbc:CompanyID>
           </cac:PartyLegalEntity>
           <cac:Contact>
               <cbc:Name>Lisa Johnson</cbc:Name>
@@ -272,7 +283,7 @@
           <cbc:StartDate>2023-12-01</cbc:StartDate>
           <cbc:EndDate>2032-12-05</cbc:EndDate>
       </cac:InvoicePeriod>
-     
+
       <cac:Item>
           <cbc:Description>Description of item</cbc:Description>
           <cbc:Name>item name</cbc:Name>
@@ -352,5 +363,198 @@
           <cbc:PriceAmount currencyID="EUR">100</cbc:PriceAmount>
       </cac:Price>
 
-  </cac:InvoiceLine>    
-</Invoice>
+  </cac:InvoiceLine>
+</Invoice>`;
+  } else if (docType === 'credit-note') {
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<CreditNote xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+         xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"
+         xmlns="urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2">
+  <cbc:CustomizationID>urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0</cbc:CustomizationID>
+  <cbc:ProfileID>urn:fdc:peppol.eu:2017:poacc:billing:01:1.0</cbc:ProfileID>
+  <cbc:ID>${docId}</cbc:ID>
+  <cbc:IssueDate>2025-11-13</cbc:IssueDate>
+  <cbc:CreditNoteTypeCode>381</cbc:CreditNoteTypeCode>
+  <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
+  <cbc:AccountingCost>4025:123:4343</cbc:AccountingCost>
+  <cbc:BuyerReference>0150abc</cbc:BuyerReference>
+  <cac:AccountingSupplierParty>
+    <cac:Party>
+      <cbc:EndpointID schemeID="iso6523-actorid-upis">${senderScheme}"${senderSubId}</cbc:EndpointID>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="iso6523-actorid-upis">${senderScheme}"${senderSubId}</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyName>
+        <cbc:Name>SupplierTradingName Ltd.</cbc:Name>
+      </cac:PartyName>
+      <cac:PostalAddress>
+        <cbc:StreetName>Main street 1</cbc:StreetName>
+        <cbc:AdditionalStreetName>Postbox 123</cbc:AdditionalStreetName>
+        <cbc:CityName>London</cbc:CityName>
+        <cbc:PostalZone>GB 123 EW</cbc:PostalZone>
+        <cac:Country>
+          <cbc:IdentificationCode>GB</cbc:IdentificationCode>
+        </cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyTaxScheme>
+        <cbc:CompanyID>GB1232434</cbc:CompanyID>
+        <cac:TaxScheme>
+          <cbc:ID>VAT</cbc:ID>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>SupplierOfficialName Ltd</cbc:RegistrationName>
+        <cbc:CompanyID>GB983294</cbc:CompanyID>
+      </cac:PartyLegalEntity>
+    </cac:Party>
+  </cac:AccountingSupplierParty>
+  <cac:AccountingCustomerParty>
+    <cac:Party>
+      <cbc:EndpointID schemeID="iso6523-actorid-upis">${receiverScheme}"${receiverSubId}</cbc:EndpointID>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="iso6523-actorid-upis">${receiverScheme}"${receiverSubId}</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyName>
+        <cbc:Name>BuyerTradingName AS</cbc:Name>
+      </cac:PartyName>
+      <cac:PostalAddress>
+        <cbc:StreetName>Hovedgatan 32</cbc:StreetName>
+        <cbc:AdditionalStreetName>Po box 878</cbc:AdditionalStreetName>
+        <cbc:CityName>Stockholm</cbc:CityName>
+        <cbc:PostalZone>456 34</cbc:PostalZone>
+        <cac:Country>
+          <cbc:IdentificationCode>SE</cbc:IdentificationCode>
+        </cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyTaxScheme>
+        <cbc:CompanyID>SE4598375937</cbc:CompanyID>
+        <cac:TaxScheme>
+          <cbc:ID>VAT</cbc:ID>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>Buyer Official Name</cbc:RegistrationName>
+        <cbc:CompanyID schemeID="0183">39937423947</cbc:CompanyID>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:Name>Lisa Johnson</cbc:Name>
+        <cbc:Telephone>23434234</cbc:Telephone>
+        <cbc:ElectronicMail>lj@buyer.se</cbc:ElectronicMail>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingCustomerParty>
+  <cac:AllowanceCharge>
+    <cbc:ChargeIndicator>true</cbc:ChargeIndicator>
+    <cbc:AllowanceChargeReason>Insurance</cbc:AllowanceChargeReason>
+    <cbc:Amount currencyID="EUR">25</cbc:Amount>
+    <cac:TaxCategory>
+      <cbc:ID>S</cbc:ID>
+      <cbc:Percent>25.0</cbc:Percent>
+      <cac:TaxScheme>
+        <cbc:ID>VAT</cbc:ID>
+      </cac:TaxScheme>
+    </cac:TaxCategory>
+  </cac:AllowanceCharge>
+  <cac:TaxTotal>
+    <cbc:TaxAmount currencyID="EUR">331.25</cbc:TaxAmount>
+    <cac:TaxSubtotal>
+      <cbc:TaxableAmount currencyID="EUR">1325</cbc:TaxableAmount>
+      <cbc:TaxAmount currencyID="EUR">331.25</cbc:TaxAmount>
+      <cac:TaxCategory>
+        <cbc:ID>S</cbc:ID>
+        <cbc:Percent>25.0</cbc:Percent>
+        <cac:TaxScheme>
+          <cbc:ID>VAT</cbc:ID>
+        </cac:TaxScheme>
+      </cac:TaxCategory>
+    </cac:TaxSubtotal>
+  </cac:TaxTotal>
+  <cac:LegalMonetaryTotal>
+    <cbc:LineExtensionAmount currencyID="EUR">1300</cbc:LineExtensionAmount>
+    <cbc:TaxExclusiveAmount currencyID="EUR">1325</cbc:TaxExclusiveAmount>
+    <cbc:TaxInclusiveAmount currencyID="EUR">1656.25</cbc:TaxInclusiveAmount>
+    <cbc:ChargeTotalAmount currencyID="EUR">25</cbc:ChargeTotalAmount>
+    <cbc:PayableAmount currencyID="EUR">1656.25</cbc:PayableAmount>
+  </cac:LegalMonetaryTotal>
+
+  <cac:CreditNoteLine>
+    <cbc:ID>1</cbc:ID>
+    <cbc:CreditedQuantity unitCode="DAY">7</cbc:CreditedQuantity>
+    <cbc:LineExtensionAmount currencyID= "EUR">2800</cbc:LineExtensionAmount>
+    <cbc:AccountingCost>Konteringsstreng</cbc:AccountingCost>
+    <cac:OrderLineReference>
+      <cbc:LineID>123</cbc:LineID>
+    </cac:OrderLineReference>
+    <cac:Item>
+      <cbc:Description>Description of item</cbc:Description>
+      <cbc:Name>item name</cbc:Name>
+      <cac:StandardItemIdentification>
+        <cbc:ID schemeID="0088">21382183120983</cbc:ID>
+      </cac:StandardItemIdentification>
+      <cac:OriginCountry>
+        <cbc:IdentificationCode>NO</cbc:IdentificationCode>
+      </cac:OriginCountry>
+      <cac:CommodityClassification>
+        <cbc:ItemClassificationCode listID="SRV">09348023</cbc:ItemClassificationCode>
+      </cac:CommodityClassification>
+      <cac:ClassifiedTaxCategory>
+        <cbc:ID>S</cbc:ID>
+        <cbc:Percent>25.0</cbc:Percent>
+        <cac:TaxScheme>
+          <cbc:ID>VAT</cbc:ID>
+        </cac:TaxScheme>
+      </cac:ClassifiedTaxCategory>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="EUR">400</cbc:PriceAmount>
+    </cac:Price>
+  </cac:CreditNoteLine>
+  <cac:CreditNoteLine>
+    <cbc:ID>2</cbc:ID>
+    <cbc:CreditedQuantity unitCode="DAY">-3</cbc:CreditedQuantity>
+    <cbc:LineExtensionAmount currencyID="EUR">-1500</cbc:LineExtensionAmount>
+    <cac:OrderLineReference>
+      <cbc:LineID>123</cbc:LineID>
+    </cac:OrderLineReference>
+    <cac:Item>
+      <cbc:Description>Description 2</cbc:Description>
+      <cbc:Name>item name 2</cbc:Name>
+      <cac:StandardItemIdentification>
+        <cbc:ID schemeID="0088">21382183120983</cbc:ID>
+      </cac:StandardItemIdentification>
+      <cac:OriginCountry>
+        <cbc:IdentificationCode>NO</cbc:IdentificationCode>
+      </cac:OriginCountry>
+      <cac:CommodityClassification>
+        <cbc:ItemClassificationCode listID="SRV">09348023</cbc:ItemClassificationCode>
+      </cac:CommodityClassification>
+      <cac:ClassifiedTaxCategory>
+        <cbc:ID>S</cbc:ID>
+        <cbc:Percent>25.0</cbc:Percent>
+        <cac:TaxScheme>
+          <cbc:ID>VAT</cbc:ID>
+        </cac:TaxScheme>
+      </cac:ClassifiedTaxCategory>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="EUR">500</cbc:PriceAmount>
+    </cac:Price>
+  </cac:CreditNoteLine>
+</CreditNote>`;
+  } else {
+    throw new Error(`Unsupported document type: ${docType}`);
+  }
+}
+
+// ...
+if (process.argv.length !== 6) {
+  console.error(
+    'Usage: ts-node src/genDoc.ts <docType> <senderId> <receiverId> <docId>',
+  );
+  process.exit(1);
+}
+genDoc(process.argv[2], process.argv[3], process.argv[4], process.argv[5]).then(
+  (doc) => {
+    console.log(doc);
+  },
+);

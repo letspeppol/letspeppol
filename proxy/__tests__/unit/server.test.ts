@@ -17,9 +17,9 @@ describe('startServer function', () => {
 
     await startServer({
         PORT: '3000',
-        ACUBE_TOKEN: 'test-token',
         PEPPYRUS_TOKEN_TEST: 'test-peppyrus-token',
-        ACCESS_TOKEN_KEY: 'test-access-token-key'
+        ACCESS_TOKEN_KEY: 'test-access-token-key',
+        DATABASE_URL: 'postgres://syncables:syncables@localhost:5432/syncables?sslmode=disable',
     });
 
     expect(consoleMock).toHaveBeenCalledWith(`LetsPeppol listening on port ${port}`);

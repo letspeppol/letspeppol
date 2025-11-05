@@ -1,0 +1,31 @@
+openapi: 3.0.0
+info:
+  description: Add syncables to the Ion Peppol API.
+actions:
+- target: $
+  update:
+    servers:
+    - url: https://test.ion-ap.net
+- target: $
+  update:
+    syncables:
+      documents:
+        description: |-
+          Invoice and Credit Note Documents sent by the authenticated user.
+        type: collection
+        get:
+          path: /api/peppol/{teamId}/documents
+          field: documents
+        paging:
+          pageParam: page
+          pageSizeParam: limit
+      inbox:
+        description: |-
+          Invoice and Credit Note Documents received by the authenticated user.
+        type: collection
+        get:
+          path: /api/peppol/{teamId}/inbox
+          field: documents
+          paging:
+            pageParam: page
+            pageSizeParam: limit

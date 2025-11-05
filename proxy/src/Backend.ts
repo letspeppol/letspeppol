@@ -1,33 +1,34 @@
 export type ListEntityDocumentsParams = {
-  peppolId: string;
-  direction: 'incoming' | 'outgoing';
-  type: 'invoices' | 'credit-notes';
-  query: Record<string, string | string[] | undefined>;
-  apiVersion?: 'v1';
+  userId: string;
+  // paging:
   page: number;
   pageSize: number;
+  // filters:
+  counterPartyId?: string | undefined;
+  counterPartyNameLike?: string | undefined;
+  docType: 'invoices' | 'credit-notes' | undefined;
+  direction: 'incoming' | 'outgoing' | undefined;
+  docId?: string | undefined;
+  // sorting:
+  sortBy?: 'amountAsc' | 'amountDesc' | 'createdAtAsc' | 'createdAtDesc';
 };
 
-export type ListItemV1 = {
-  uuid: string;
-  type: 'Invoice' | 'CreditNote' | string;
+export type ListItem = {
+  platformId: string;
+  docType: 'invoice' | 'credit-note';
   direction: 'incoming' | 'outgoing';
-  format?: string;
-  number?: string;
-  senderId: string;
-  senderName?: string;
-  recipientId: string;
-  recipientName?: string;
-  requestSentAt?: string;
-  responseSentAt?: string;
-  success: boolean;
-  errorCode: string | null;
-}
+  counterPartyId: string;
+  counterPartyName: string;
+  createdAt: string; // ISO 8601 Date string
+  amount: number;
+  docId: string;
+};
 
 export abstract class Backend {
-  abstract reg(identifier: string): Promise<void>;
+  abstract reg(identifier: string, name: string): Promise<void>;
   abstract unreg(identifier: string): Promise<void>;
-  abstract sendDocument(documentXml: string, sendingEntity: string): Promise<void>;
-  abstract listEntityDocuments(options: ListEntityDocumentsParams): Promise<object[]>;
-  abstract getDocumentXml(query: { peppolId: string; type: string; uuid: string, direction: string }): Promise<string>;
+  abstract sendDocument(
+    documentXml: string,
+    sendingEntity: string,
+  ): Promise<void>;
 }

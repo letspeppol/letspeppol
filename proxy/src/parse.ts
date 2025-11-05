@@ -1,13 +1,18 @@
 import { XMLParser } from 'fast-xml-parser';
+import { components } from './front.js';
 
-export function parseDocument(documentXml: string): { sender: string | undefined; recipient: string | undefined; docType: string | undefined } {
+export function parseDocument(documentXml: string, userId: string): {
+  docDetails: components['schemas']['Document'];
+  docId: string;
+  amount: number;
+} {
   const parserOptions = {
     ignoreAttributes: false,
     numberParseOptions: {
       leadingZeros: false,
       hex: true,
-      skipLike: /(?:)/ // Disable number parsing
-    }
+      skipLike: /(?:)/, // Disable number parsing
+    },
   };
   const parser = new XMLParser(parserOptions);
   const jObj = parser.parse(documentXml);
@@ -21,17 +26,47 @@ export function parseDocument(documentXml: string): { sender: string | undefined
   if (!docType) {
     throw new Error('Could not determine document type from XML');
   }
-  const sender = jObj[docType]?.['cac:AccountingSupplierParty']?.['cac:Party']?.['cbc:EndpointID'];
-  const recipient = jObj[docType]?.['cac:AccountingCustomerParty']?.['cac:Party']?.['cbc:EndpointID'];
-  if (!sender['#text']) {
+  const sender = jObj[docType]?.['cac:AccountingSupplierParty']?.['cac:Party'];
+  const receiver =
+    jObj[docType]?.['cac:AccountingCustomerParty']?.['cac:Party'];
+  if (!sender?.['cbc:EndpointID']?.['#text']) {
     throw new Error('Missing sender EndpointID text');
   }
-  if (!recipient['#text']) {
+  if (!receiver?.['cbc:EndpointID']?.['#text']) {
     throw new Error('Missing recipient EndpointID text');
   }
+  const senderId =sender?.['cbc:EndpointID']?.['#text'];
+  const receiverId = receiver?.['cbc:EndpointID']?.['#text'];
+  let counterPartyId;
+  let counterPartyName;
+  if (userId === senderId) {
+    counterPartyId = receiverId;
+    counterPartyName = receiver?.['cac:PartyName']?.['cbc:Name'];
+  } else if (userId === receiverId) {
+    counterPartyId = senderId;
+    counterPartyName = sender?.['cac:PartyName']?.['cbc:Name'];
+  } else {
+    throw new Error(
+      `User ID ${userId} does not match sender ID ${senderId} or receiver ID ${receiverId}`,
+    );
+  }
   return {
-    sender: `${sender['@_schemeID']}:${sender['#text']}`,
-    recipient: `${recipient['@_schemeID']}:${recipient['#text']}`,
-    docType: docType === 'Invoice' ? 'Invoice' : docType === 'CreditNote' ? 'CreditNote' : undefined,
+    docDetails: {
+      userId,
+      counterPartyId,
+      counterPartyName,
+      docType:
+        docType === 'Invoice'
+          ? 'invoice'
+          : docType === 'CreditNote'
+            ? 'credit-note'
+            : (() => { throw new Error(`Unknown document type: ${docType}`); })(),
+    },
+    docId: jObj[docType]?.['cbc:ID'],
+    amount: parseFloat(
+      jObj[docType]?.['cac:LegalMonetaryTotal']?.['cbc:PayableAmount']?.[
+        '#text'
+      ],
+    ),
   };
 }
