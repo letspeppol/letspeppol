@@ -142,7 +142,7 @@ export async function startServer(env: ServerOptions): Promise<number> {
     app.get('/v2/', hello);
     app.get('/v2/documents', checkAuth, list);
     app.get('/v2/documents/:platformId', checkAuth, getUbl);
-    app.get('/v2/paid/:platformId', checkAuth, markPaid);
+    app.post('/v2/documents/:platformId', checkAuth, markPaid);
     app.post('/v2/send', checkAuth, express.text({ type: '*/*' }), send);
     app.post('/v2/reg', checkAuth, reg);
     app.post('/v2/unreg', checkAuth, unreg);

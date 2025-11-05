@@ -40,7 +40,8 @@ curl $PROXY_HOST/v2
 curl -X POST -d'{"name":"BARGE vzw"}' -H "Authorization: Bearer $ONE" -H 'Content-Type: application/json' $PROXY_HOST/v2/reg
 node ./build/src/genDoc.js invoice 0208:0734825676 9944:nl862637223B02 asdf > ./doc.xml
 curl -X POST --data-binary "@./doc.xml" -H "Authorization: Bearer $ONE" $PROXY_HOST/v2/send
-docker exec -it db psql postgresql://syncables:syncables@localhost:5432/syncables -c "select platformId, userId, counterPartyId, docId, amount from frontdocs"
+docker exec -it db psql postgresql://syncables:syncables@localhost:5432/syncables -c "select platformId, userId, counterPartyId, docId, amount, paid from frontdocs"
+curl -X POST -d '{"paid":"yes"}' -H "Authorization: Bearer $ONE" $PROXY_HOST/v2/documents/scrada_d0557ca4-5826-49f3-b9d2-1500a553cdee
 curl -H "Authorization: Bearer $TWO" "$PROXY_HOST/v2/documents" | json
 curl -H "Authorization: Bearer $ONE" $PROXY_HOST/v2/documents/scrada_e37b5843-fc55-4b0b-8b8e-73435d9a0363
 curl -X POST -H "Authorization: Bearer $ONE" -H 'Content-Type: application/json' $PROXY_HOST/v2/unreg
