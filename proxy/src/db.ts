@@ -87,32 +87,27 @@ export async function insertData(
   );
 }
 
-export async function storeDocumentInDb(
-  platformId: string,
-  docDetails: components['schemas']['Document'],
-  docType: string,
-  direction: string,
-  docId: string,
-  amount: number,
-  xmlContent: string,
-): Promise<void> {
+export async function storeDocumentInDb(docDetails: components['schemas']['Document']): Promise<void> {
   const client = await getPostgresClient();
   const insertQuery = `
-    INSERT INTO FrontDocs (userId, counterPartyId, counterPartyName, docType, direction, docId, amount, platformId, createdAt, ubl)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+    INSERT INTO FrontDocs (userId, platformId, createdAt, docType, direction, counterPartyId, counterPartyName, docId, amount, dueDate, paymentTerms, paid, ubl)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
     ON CONFLICT (platformId) DO NOTHING;
   `;
   const values = [
-    docDetails.userId,
-    docDetails.counterPartyId,
-    docDetails.counterPartyName,
-    docType,
-    direction,
-    docId,
-    amount,
-    platformId,
-    docDetails.createdAt,
-    xmlContent,
+    docDetails.userId, // 1
+    docDetails.platformId, // 2
+    docDetails.createdAt, // 3
+    docDetails.docType, // 4
+    docDetails.direction, // 5
+    docDetails.counterPartyId, // 6
+    docDetails.counterPartyName, // 7
+    docDetails.docId, // 8
+    docDetails.amount, // 9
+    docDetails.dueDate || null, // 10
+    docDetails.paymentTerms || null, // 11
+    docDetails.paid || null, // 12
+    docDetails.ubl // 13
   ];
   await client.query(insertQuery, values);
 }
@@ -174,13 +169,16 @@ export async function listEntityDocuments(
     (row) =>
       ({
         platformId: row.platformid,
+        createdAt: row.createdat,
         docType: row.doctype,
         direction: row.direction,
         counterPartyId: row.counterpartyid,
         counterPartyName: row.counterpartyname,
-        createdAt: row.createdat,
-        amount: row.amount,
         docId: row.docid,
+        amount: row.amount,
+        dueDate: row.duedate || undefined,
+        paymentTerms: row.paymentterms || undefined,
+        paid: row.paid || undefined,
       }) as ListItem,
   );
 }

@@ -28,7 +28,7 @@ In both cases you will need to create the database table before first use (FIXME
 ```sh
 docker exec -it db psql postgresql://syncables:syncables@localhost:5432/syncables -c "create type direction as enum ('incoming', 'outgoing');"
 docker exec -it db psql postgresql://syncables:syncables@localhost:5432/syncables -c "create type docType as enum ('invoice', 'credit-note');"
-docker exec -it db psql postgresql://syncables:syncables@localhost:5432/syncables -c "create table FrontDocs (userId text, counterPartyId text, counterPartyName text, docType docType, direction direction, docId text, amount numeric, platformId text primary key, createdAt timestamp, ubl text, paid text, paymentTerms text);"
+docker exec -it db psql postgresql://syncables:syncables@localhost:5432/syncables -c "create table FrontDocs (userId text, platformId text primary key, createdAt timestamp, docType docType, direction direction, counterPartyId text, counterPartyName text, docId text, amount numeric, dueDate timestamp, paymentTerms text, paid text, ubl text);"
 ```
 
 In a separate terminal window, do the following to register, send a document, list documents, fetch a single document, and unregister:
@@ -40,9 +40,9 @@ curl $PROXY_HOST/v2
 curl -X POST -d'{"name":"BARGE vzw"}' -H "Authorization: Bearer $ONE" -H 'Content-Type: application/json' $PROXY_HOST/v2/reg
 node ./build/src/genDoc.js invoice 0208:0734825676 9944:nl862637223B02 asdf > ./doc.xml
 curl -X POST --data-binary "@./doc.xml" -H "Authorization: Bearer $ONE" $PROXY_HOST/v2/send
-docker exec -it db psql postgresql://syncables:syncables@localhost:5432/syncables -c "select platformId, userId, counterPartyId, docId, amount, paid from frontdocs"
-curl -X POST -d '{"paid":"yes"}' -H "Authorization: Bearer $ONE" $PROXY_HOST/v2/documents/scrada_d0557ca4-5826-49f3-b9d2-1500a553cdee
-curl -H "Authorization: Bearer $TWO" "$PROXY_HOST/v2/documents" | json
+docker exec -it db psql postgresql://syncables:syncables@localhost:5432/syncables -c "select userId, platformId, createdAt, docType, direction, counterPartyId, counterPartyName, docId, amount, dueDate, paymentTerms, paid from frontdocs"
+curl -X POST -d '{"paid":"yes"}' -H "Authorization: Bearer $ONE" -H 'Content-Type: application/json' $PROXY_HOST/v2/documents/scrada_9e8912d1-5d42-4cc1-a2c4-176f7d7738d7
+curl -H "Authorization: Bearer $ONE" "$PROXY_HOST/v2/documents" | json
 curl -H "Authorization: Bearer $ONE" $PROXY_HOST/v2/documents/scrada_e37b5843-fc55-4b0b-8b8e-73435d9a0363
 curl -X POST -H "Authorization: Bearer $ONE" -H 'Content-Type: application/json' $PROXY_HOST/v2/unreg
 ```
@@ -52,14 +52,17 @@ This will give an array of objects that look like this:
 ```json
 [
   {
-    "platformId": "scrada_81f0b375-3242-4a1c-b472-4c90caacd3a8",
+    "platformId": "scrada_9e8912d1-5d42-4cc1-a2c4-176f7d7738d7",
+    "createdAt": "2025-11-05T12:19:47.028Z",
     "docType": "invoice",
     "direction": "outgoing",
     "counterPartyId": "9944:nl862637223B02",
     "counterPartyName": "Ponder Source Three",
-    "createdAt": null,
+    "docId": "asdf",
     "amount": "6125",
-    "docId": "asdf"
+    "dueDate": "2024-01-17T23:00:00.000Z",
+    "paymentTerms": "Payment within 10 days, 2% discount",
+    "paid": "yes"
   }
 ]
 ```

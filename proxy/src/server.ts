@@ -86,6 +86,7 @@ export async function startServer(env: ServerOptions): Promise<number> {
   }
 
   async function markPaid(req, res): Promise<void> {
+    console.log('Marking document as paid', req.peppolId, req.params.platformId, req.body);
     await markDocumentAsPaid(
       req.peppolId,
       req.params.platformId,
