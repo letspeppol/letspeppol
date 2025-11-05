@@ -15,7 +15,7 @@ else
 fi
 
 # Ensure databases exist and have correct owner
-for db in app kyc; do
+for db in app kyc proxy; do
   DB_EXISTS=$(psql -U "$POSTGRES_USER" -tAc "SELECT 1 FROM pg_database WHERE datname='${db}'" || true)
   if [ "$DB_EXISTS" = "1" ]; then
     echo "[init] Database $db already exists -> ensuring owner $DB_USER"

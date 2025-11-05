@@ -28,7 +28,7 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) {
-        String companyNumber = "1023290711"; // Belgian style sample
+        String companyNumber = "1023290711";
         if (companyRepository.findByCompanyNumber(companyNumber).isEmpty()) {
             Company c = new Company(companyNumber, "SoftwareOplossing.be", "Bruxelles", "1000", "Rue Example", "1");
             companyRepository.save(c);

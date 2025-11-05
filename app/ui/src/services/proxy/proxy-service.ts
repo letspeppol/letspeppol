@@ -2,39 +2,41 @@ import {resolve} from "@aurelia/kernel";
 import {ProxyApi} from "./proxy-api";
 import sleep from "@web-eid/web-eid-library/utils/sleep";
 
-export type ListItemV1 = {
-    uuid: string;
-    type: 'Invoice' | 'CreditNote' | string;
+export type ListItem = {
+    platformId: string;
+    docType: 'invoice' | 'credit-note';
     direction: 'incoming' | 'outgoing';
-    format: string;
-    number: string;
-    senderId: string;
-    senderName?: string;
-    recipientId: string;
-    recipientName?: string;
-    requestSentAt?: string;
-    responseSentAt?: string;
-    success: boolean;
-    errorCode: string | null;
-}
+    counterPartyId: string;
+    counterPartyName: string;
+    createdAt: string; // ISO 8601 Date string
+    amount: number;
+    docId: string;
+};
 
 export class ProxyService {
     private letsPeppolApi = resolve(ProxyApi);
 
-    async getIncomingInvoices(page: number) : Promise<ListItemV1[]> {
+    async getDocuments(page: number, counterPartyNameLike: string = undefined) {
+        let url = `/v2/documents?page=${page}&`;
+        if (counterPartyNameLike) {
+            url += `counterPartyNameLike=${counterPartyNameLike}`;
+        }
+
+        return await this.letsPeppolApi.httpClient.get(url).then(response => response.json());
+    }
+
+    async getIncomingInvoices(page: number) : Promise<ListItem[]> {
         return Promise.resolve([]);
         // return await this.letsPeppolApi.httpClient.get(`/v1/invoices/incoming?page=${page}&itemsPerPage=10`).then(response => response.json());
     }
 
-    async getOutgoingInvoices(page: number): Promise<ListItemV1[]> {
+    async getOutgoingInvoices(page: number): Promise<ListItem[]> {
         return Promise.resolve([]);
         // return await this.letsPeppolApi.httpClient.get(`/v1/invoices/outgoing?page=${page}&itemsPerPage=10`).then(response => response.json());
     }
 
     async sendDocument(xml: string) {
-        await sleep(1000);
-        return Promise.resolve();
-        // return await this.letsPeppolApi.httpClient.post('/v1/send', xml);
+        return await this.letsPeppolApi.httpClient.post('/v2/send', xml);
     }
 
     async getDocument(docType: string, direction: string, uuid: string) {

@@ -43,14 +43,14 @@ public class DataInitializer implements CommandLineRunner {
             companyService.register(registrationRequest);
             PartnerDto partner = new PartnerDto(
                     null,
-                    "BE0740991809",
+                    "BE1023290711",
                     "John Doe",
                     "john@doe.com",
-                    "0208:0740991809",
+                    "0208:1023290711",
                     true,
                     false,
                     "Last day 30 days",
-                    "BE12345678900",
+                    "BE1023290711",
                     "1000",
                     new AddressDto(null,"Bree", "3960", "Kerkstraat", "15")
             );

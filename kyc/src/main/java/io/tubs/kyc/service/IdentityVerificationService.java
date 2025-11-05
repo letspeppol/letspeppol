@@ -67,7 +67,7 @@ public class IdentityVerificationService {
         civRepository.save(civ);
 
         String token = jwtService.generateToken("0208:" + req.director().getCompany().getCompanyNumber().replaceAll("BE", ""), user.getExternalId()); // TODO ?
-        letsPeppolProxyService.registerCompany(token);
+        letsPeppolProxyService.registerCompany(token, req.director().getCompany().getName());
         appService.register(req);
 
         log.info("Identity verified for email={} director={} serial={}", user.getEmail(), req.director().getName(), req.x509Certificate().getSerialNumber());

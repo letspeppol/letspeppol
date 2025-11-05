@@ -3,7 +3,7 @@ import {InvoiceContext} from "./invoice-context";
 import {parseInvoice} from "../services/peppol/ubl-parser";
 import {AlertType} from "../components/alert/alert";
 import {IEventAggregator} from "aurelia";
-import {ListItemV1, ProxyService} from "../services/proxy/proxy-service";
+import {ListItem, ListItemV1, ProxyService} from "../services/proxy/proxy-service";
 import {InvoiceDraftDto, InvoiceService} from "../services/app/invoice-service";
 
 export class InvoiceOverview {
@@ -11,9 +11,9 @@ export class InvoiceOverview {
     private letsPeppolService = resolve(ProxyService);
     private invoiceService = resolve(InvoiceService);
     private invoiceContext = resolve(InvoiceContext);
-    all: ListItemV1[] = [];
-    incoming: ListItemV1[] = [];
-    outgoing: ListItemV1[] = [];
+    all: ListItem[] = [];
+    // incoming: ListItemV1[] = [];
+    // outgoing: ListItemV1[] = [];
     activeItems: ListItemV1[] | InvoiceDraftDto[] = [];
     box = 'all'
     page = 1;
@@ -25,12 +25,15 @@ export class InvoiceOverview {
     }
 
     loadInvoices() {
+        this.letsPeppolService.getDocuments(this.page).then(items => this.all = items);
+        /*
         const ip = this.letsPeppolService.getIncomingInvoices(this.page).then(items => this.incoming = items);
         const op = this.letsPeppolService.getOutgoingInvoices(this.page).then(items => this.outgoing = items);
         Promise.all([ip, op]).then(([incoming, outgoing]) => {
             this.all = [...incoming, ...outgoing].sort((a, b) => Date.parse(b.requestSentAt) - Date.parse(a.requestSentAt));
             this.setActiveItems('all');
         }).catch(() => this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to get invoices"}));
+         */
     }
 
     async loadDrafts() {
@@ -43,15 +46,15 @@ export class InvoiceOverview {
             case 'all':
                 this.activeItems = this.all;
                 break;
-            case 'outgoing':
-                this.activeItems = this.outgoing;
-                break;
-            case 'incoming':
-                this.activeItems = this.incoming;
-                break;
-            case 'drafts':
-                this.activeItems = this.invoiceContext.drafts;
-                break;
+            // case 'outgoing':
+            //     this.activeItems = this.outgoing;
+            //     break;
+            // case 'incoming':
+            //     this.activeItems = this.incoming;
+            //     break;
+            // case 'drafts':
+            //     this.activeItems = this.invoiceContext.drafts;
+            //     break;
         }
     }
 

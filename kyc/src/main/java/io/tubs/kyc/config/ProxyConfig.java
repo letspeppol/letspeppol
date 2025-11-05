@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
-public class LetsPeppolConfig {
+public class ProxyConfig {
 
     @Bean(name = "ProxyWebClient")
     public WebClient webClient(@Value("${proxy.api.url}") String apiUrl) {
