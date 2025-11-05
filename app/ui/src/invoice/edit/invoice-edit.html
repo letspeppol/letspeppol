@@ -7,7 +7,7 @@
 <import from="./components/product-name-search"></import>
 
 <invoice-modal component.ref="invoiceModal" invoice-context.bind="invoiceContext" original-document-type.two-way="selectedDocumentType"></invoice-modal>
-<invoice-date-modal component.ref="invoiceDateModal" invoice-context.bind="invoiceContext"></invoice-date-modal>
+<invoice-date-modal component.ref="invoiceDateModal" invoice-context.bind="invoiceContext" document-type.bind="selectedDocumentType"></invoice-date-modal>
 <invoice-customer-modal component.ref="invoiceCustomerModal" invoice-context.bind="invoiceContext"></invoice-customer-modal>
 <invoice-payment-modal component.ref="invoicePaymentModal" invoice-context.bind="invoiceContext" selected-payment-means-code.two-way="selectedPaymentMeansCode"></invoice-payment-modal>
 <validation-result-modal component.ref="validationResultModal"></validation-result-modal>
@@ -24,7 +24,7 @@
                 <span if.bind="!invoiceContext.selectedDraft" t="invoice.edit.save-draft">Save draft</span>
             </button>
             <button type="button" class="btn" click.trigger="invoiceContext.clearSelectedInvoice()" t="invoice.edit.discard">Discard</button>
-            <button type="button" class="btn primary" click.trigger="sendInvoice()" disabled.bind="!isValid" t="invoice.edit.send">Send invoice</button>
+            <button type="button" class="btn primary" click.trigger="sendInvoice()" disabled.bind="!isValid" t="invoice.edit.send.${selectedDocumentType}">Send invoice</button>
         </div>
     </div>
 
@@ -59,8 +59,14 @@
                 </div>
                 <span t="invoice.dateModal.issue-date">Issue Date</span>
                 <b>${invoiceContext.selectedInvoice.IssueDate}</b>
-                <span t="invoice.dateModal.due-date">Due Date</span>
-                <b>${invoiceContext.selectedInvoice.DueDate}</b>
+                <template if.bind="selectedDocumentType === 'invoice'">
+                    <span t="invoice.dateModal.due-date">Due Date</span>
+                    <b>${invoiceContext.selectedInvoice.DueDate}</b>
+                </template>
+                <template else>
+                    <span t="invoice.dateModal.payment-terms">Payment Terms</span>
+                    <b>${invoiceContext.selectedInvoice.PaymentTerms.Note}</b>
+                </template>
             </div>
             <div class="composer-info">
                 <div style="display: flex; flex-direction: row;" click.trigger="showCustomerModal()">
@@ -154,7 +160,7 @@
                             </td>
                             <td><textarea class="description" placeholder="Description" t="[placeholder]label.description" value.bind="line.Item.Description"></textarea></td>
                             <td class="num">
-                                <template if.bind="line.InvoicedQuantity">
+                                <template if.bind="selectedDocumentType === 'invoice'">
                                     <input class="qty" type="number" min="0" step="1" value.bind="line.InvoicedQuantity.value" change.trigger="calcLineTotal(line)" />
                                 </template>
                                 <template else>

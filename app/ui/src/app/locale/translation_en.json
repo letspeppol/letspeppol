@@ -300,7 +300,10 @@
       "update-draft": "Update draft",
       "save-draft": "Save draft",
       "discard": "Discard",
-      "send": "Send invoice",
+      "send": {
+        "invoice": "Send invoice",
+        "credit-note": "Send credit note"
+      },
       "number": "Number",
       "buyer-reference": "Buyer Reference",
       "payment": "Payment",

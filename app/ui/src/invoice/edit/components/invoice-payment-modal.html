@@ -32,7 +32,8 @@
         </div>
         <footer class="modal-footer">
             <button type="button" class="btn" click.trigger="closeModal()" title="Cancel" t="[title]common.cancel" t="common.cancel">Cancel</button>
-            <button type="button" class="btn primary" click.trigger="savePaymentMeans()" title="Confirm" t="[title]common.confirm" t="common.confirm">Confirm</button>
+            <button type="button" class="btn primary" click.trigger="savePaymentMeans()" title="Confirm" t="[title]common.confirm" t="common.confirm"
+            disabled.bind="paymentMeansCode === 30 && !paymentMeans.PayeeFinancialAccount.ID">Confirm</button>
         </footer>
     </div>
 </div>

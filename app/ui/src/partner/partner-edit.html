@@ -92,9 +92,14 @@
                     <span t="label.account-name">Account Name</span>
                     <input type="text" value.bind="partnerContext.selectedPartner.paymentAccountName" />
                 </label>
-                <label class="field full">
+                <label class="field full" if.bind="partnerContext.selectedPartner">
                     <span t="label.payment-terms">Payment Terms</span>
-                    <input type="text" value.bind="partnerContext.selectedPartner.paymentTerms" />
+                    <select value.bind="partnerContext.selectedPartner.paymentTerms">
+                        <option value="">-</option>
+                        <option repeat.for="terms of getPaymentTerms()" value.bind="terms">
+                            <span t="paymentTerms.${terms}"></span>
+                        </option>
+                    </select>
                 </label>
             </div>
         </div>

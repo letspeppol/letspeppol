@@ -14,6 +14,7 @@ import {singleton} from "aurelia";
 import {resolve} from "@aurelia/kernel";
 import {CompanyService} from "../services/app/company-service";
 import {I18N} from "@aurelia/i18n";
+import {DocumentType} from "./invoice-context";
 
 @singleton()
 export class InvoiceComposer {
@@ -59,7 +60,7 @@ export class InvoiceComposer {
         } as Invoice;
 
         invoice.PaymentMeans = this.getPaymentMeansForMyCompany(30);
-        invoice.PaymentTerms = this.getPaymentTermsForMyCompany();
+        invoice.PaymentTerms = this.getPaymentTermsForMyCompany(DocumentType.Invoice);
 
         return invoice;
     }
@@ -95,28 +96,35 @@ export class InvoiceComposer {
         } as PaymentMeans;
     }
 
-    getPaymentTermsForMyCompany(): PaymentTerms {
+    getPaymentTermsForMyCompany(documentType: DocumentType): PaymentTerms {
         const myCompany = this.companyService.myCompany;
         if (myCompany.paymentTerms) {
             return {
                 Note: this.translatePaymentTerm(myCompany.paymentTerms)
+            }
+        } else if (documentType === DocumentType.CreditNote) {
+            return {
+                Note: this.translatePaymentTerm('15_DAYS')
             }
         }
         return undefined;
     }
 
     createCreditNote(): CreditNote {
-        return {
+        const creditNote = {
             CustomizationID: "urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0",
             ProfileID: "urn:fdc:peppol.eu:2017:poacc:billing:01:1.0",
             ID: "",
             IssueDate: moment().format('YYYY-MM-DD'),
-            DueDate: moment().add(30, 'day').format('YYYY-MM-DD'),
             CreditNoteTypeCode: 381,
             Note: undefined,
             DocumentCurrencyCode: "EUR",
+            BuyerReference: undefined,
             AccountingSupplierParty: this.getAccountingSupplierParty(),
             AccountingCustomerParty: this.getAccountingCustomerParty(),
+            PaymentMeans : undefined,
+            PaymentTerms: undefined,
+            TaxTotal: undefined,
             LegalMonetaryTotal: {
                 PayableAmount: {
                     __currencyID: 'EUR',
@@ -124,8 +132,11 @@ export class InvoiceComposer {
                 }
             },
             CreditNoteLine: []
-
         } as CreditNote;
+
+        creditNote.PaymentTerms = this.getPaymentTermsForMyCompany(DocumentType.CreditNote);
+
+        return creditNote;
     }
 
     getAccountingCustomerParty(): AccountingParty {

@@ -40,10 +40,6 @@ export class InvoiceEdit {
     @bindable invoicePaymentModal: InvoicePaymentModal;
     @bindable validationResultModal: ValidationResultModal;
 
-    invoiceCustomerModalChanged() {
-        console.log('jop');
-    }
-
     bound() {
         this.newInvoiceSubscription = this.ea.subscribe('newInvoice', () => this.newInvoice());
         this.newCreditNoteSubscription = this.ea.subscribe('newCreditNote', () => this.newCreditNote());
@@ -221,7 +217,6 @@ export class InvoiceEdit {
         ] })
     get isValid() {
         const inv = this.invoiceContext.selectedInvoice;
-        console.log('jop');
         return inv && inv.ID && inv.BuyerReference && inv.IssueDate && (inv.DueDate || inv.PaymentTerms)
             && inv.AccountingCustomerParty
             && inv.AccountingCustomerParty.Party.PartyIdentification[0].ID.value

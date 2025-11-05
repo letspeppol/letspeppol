@@ -38,6 +38,7 @@ export class InvoiceCustomerModal {
     }
 
     showModal(customerSavedFunction: () => void) {
+        this.peppolId = undefined;
         this.customer = JSON.parse(JSON.stringify(this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party));
         this.open = true;
         this.customerSearch.resetSearch();

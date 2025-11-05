@@ -3,7 +3,7 @@ import {InvoiceContext} from "./invoice-context";
 import {parseInvoice} from "../services/peppol/ubl-parser";
 import {AlertType} from "../components/alert/alert";
 import {IEventAggregator} from "aurelia";
-import {ListItem, ListItemV1, ProxyService} from "../services/proxy/proxy-service";
+import {ListItem, ProxyService} from "../services/proxy/proxy-service";
 import {InvoiceDraftDto, InvoiceService} from "../services/app/invoice-service";
 
 export class InvoiceOverview {
@@ -14,7 +14,7 @@ export class InvoiceOverview {
     all: ListItem[] = [];
     // incoming: ListItemV1[] = [];
     // outgoing: ListItemV1[] = [];
-    activeItems: ListItemV1[] | InvoiceDraftDto[] = [];
+    activeItems: ListItem[] | InvoiceDraftDto[] = [];
     box = 'all'
     page = 1;
 
@@ -66,17 +66,17 @@ export class InvoiceOverview {
         this.ea.publish('newCreditNote');
     }
 
-    selectItem(item: ListItemV1 | InvoiceDraftDto) {
+    selectItem(item: ListItem | InvoiceDraftDto) {
         this.invoiceContext.selectedDraft = undefined;
         if (this.box === 'drafts') {
             const doc = item as InvoiceDraftDto;
             this.invoiceContext.selectedInvoice = parseInvoice(doc.xml);
             this.invoiceContext.selectedDraft = doc;
         } else {
-            const doc = item as ListItemV1;
-            this.letsPeppolService.getDocument(doc.type, doc.direction, doc.uuid).then((response) => {
-                this.invoiceContext.selectedInvoice = parseInvoice(response);
-            });
+            // const doc = item as ListItem;
+            // this.letsPeppolService.getDocument(doc.type, doc.direction, doc.uuid).then((response) => {
+            //     this.invoiceContext.selectedInvoice = parseInvoice(response);
+            // });
         }
     }
 

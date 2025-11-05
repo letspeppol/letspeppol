@@ -3,6 +3,7 @@ import {IEventAggregator} from "aurelia";
 import {resolve} from "@aurelia/kernel";
 import {PartnerService} from "../services/app/partner-service";
 import {PartnerContext} from "./partner-context";
+import {Account} from "../account/account";
 
 export class PartnerEdit {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -27,5 +28,8 @@ export class PartnerEdit {
         }
     }
 
+    getPaymentTerms() {
+        return Account.PAYMENT_TERMS;
+    }
 
 }

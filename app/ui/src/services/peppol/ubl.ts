@@ -29,6 +29,7 @@ export interface InvoiceLine extends UBLBaseLine {
 
 export interface Invoice extends UBLBase {
     InvoiceTypeCode: number;
+    PaymentMeans?: PaymentMeans;
     InvoiceLine: InvoiceLine[];
 }
 
@@ -38,6 +39,7 @@ export interface CreditNoteLine extends UBLBaseLine {
 
 export interface CreditNote extends UBLBase {
     CreditNoteTypeCode: number;
+    PaymentMeans?: CreditNotePaymentMeans;
     CreditNoteLine: CreditNoteLine[];
 }
 
@@ -55,7 +57,6 @@ export interface UBLBase {
     AccountingSupplierParty: AccountingParty;
     AccountingCustomerParty: AccountingParty;
     Delivery?: Delivery;
-    PaymentMeans?: PaymentMeans;
     PaymentTerms?: PaymentTerms;
     AllowanceCharge?: AllowanceCharge[];
     TaxTotal?: TaxTotal[];
@@ -220,6 +221,13 @@ export interface PaymentMeansCode {
 
 export interface PaymentMeans {
     PaymentMeansCode?: PaymentMeansCode;
+    PaymentID?: string;
+    PayeeFinancialAccount?: PayeeFinancialAccount;
+}
+
+export interface CreditNotePaymentMeans {
+    PaymentMeansCode?: PaymentMeansCode;
+    PaymentDueDate?: string;
     PaymentID?: string;
     PayeeFinancialAccount?: PayeeFinancialAccount;
 }
