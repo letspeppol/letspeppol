@@ -150,7 +150,7 @@
                         <tr repeat.for="line of invoiceContext.lines">
                             <td><input class="pos" type="number" min="1" value.bind="line.ID" required/></td>
                             <td>
-                                <product-name-search input-value.bind="line.Item.Name"></product-name-search>
+                                <product-name-search input-value.two-way="line.Item.Name"></product-name-search>
                             </td>
                             <td><textarea class="description" placeholder="Description" t="[placeholder]label.description" value.bind="line.Item.Description"></textarea></td>
                             <td class="num">

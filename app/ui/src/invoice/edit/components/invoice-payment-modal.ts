@@ -2,9 +2,11 @@ import {bindable} from "aurelia";
 import {PaymentMeans} from "../../../services/peppol/ubl";
 import {InvoiceComposer} from "../../invoice-composer";
 import {resolve} from "@aurelia/kernel";
+import {CompanyService} from "../../../services/app/company-service";
 
 export class InvoicePaymentModal {
     invoiceComposer = resolve(InvoiceComposer);
+    companyService = resolve(CompanyService);
     @bindable invoiceContext;
     @bindable selectedPaymentMeansCode;
     paymentMeansCode;
@@ -13,7 +15,8 @@ export class InvoicePaymentModal {
 
     showModal() {
         this.paymentMeansCode = this.selectedPaymentMeansCode;
-        this.paymentMeans = JSON.parse(JSON.stringify(this.invoiceContext.selectedInvoice.PaymentMeans));
+        this.paymentMeans = structuredClone(this.invoiceContext.selectedInvoice.PaymentMeans);
+        console.log(this.paymentMeans);
         this.open = true;
     }
 

@@ -32,7 +32,7 @@ public class PartnerService {
     public PartnerDto createPartner(String companyNumber, PartnerDto partnerDto) {
         Company company = companyRepository.findByCompanyNumber(companyNumber).orElseThrow(() -> new NotFoundException("Company does not exist"));
         Partner partner = new Partner(
-                partnerDto.companyNumber(),
+                partnerDto.vatNumber(),
                 partnerDto.name(),
                 partnerDto.email(),
                 partnerDto.peppolId(),
@@ -51,9 +51,9 @@ public class PartnerService {
         return PartnerMapper.toDto(partner);
     }
 
-    public PartnerDto updatePartner(String companyNumber, Long id, PartnerDto partnerDto) {
+    public PartnerDto updatePartner(Long id, PartnerDto partnerDto) {
         Partner partner = partnerRepository.findById(id).orElseThrow(() -> new NotFoundException("Partner does not exist"));
-        partner.setCompanyNumber(companyNumber);
+        partner.setVatNumber(partnerDto.vatNumber());
         partner.setName(partnerDto.name());
         partner.setEmail(partnerDto.email());
         partner.setPeppolId(partnerDto.peppolId());

@@ -43,10 +43,10 @@ public class DataInitializer implements CommandLineRunner {
             companyService.register(registrationRequest);
             PartnerDto partner = new PartnerDto(
                     null,
-                    "BE123456789",
+                    "BE0740991809",
                     "John Doe",
                     "john@doe.com",
-                    "0208:12345678900",
+                    "0208:0740991809",
                     true,
                     false,
                     "Last day 30 days",
@@ -57,14 +57,14 @@ public class DataInitializer implements CommandLineRunner {
             partnerService.createPartner(companyNumber, partner);
             PartnerDto partner2 = new PartnerDto(
                     null,
-                    "BE987654321",
+                    "BE0202239951",
                     "Jane Smith",
                     "jane@smith.com",
-                    "0208:987654321",
+                    "0208:0202239951",
                     true,
                     false,
                     "First day 60 days",
-                    "BE98765432100",
+                    "BE876543215",
                     "2000",
                     new AddressDto(null,"Genk", "3600", "Stationsstraat", "22")
             );

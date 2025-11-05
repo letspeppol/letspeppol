@@ -3,19 +3,12 @@ import {resolve} from "@aurelia/kernel";
 import {Address} from "./company-service";
 import {AppApi} from "./app-api";
 
-export interface CustomerResponse {
-    name: string,
-    companyNumber?: string,
-    iban?: string,
-    paymentAccountName?: string,
-    registeredOffice?: Address
-}
-
 export interface PartnerDto {
     id?: number,
-    companyNumber?: string,
+    vatNumber?: string,
     name: string,
     email?: string,
+    peppolId: string,
     customer: boolean,
     supplier: boolean,
 

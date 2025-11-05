@@ -2,6 +2,7 @@ package io.tubs.app.dto;
 
 public record CompanyDto(
         String companyNumber,
+        String vatNumber,
         String name,
         String subscriber,
         String subscriberEmail,

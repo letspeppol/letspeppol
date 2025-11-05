@@ -38,6 +38,9 @@ export class InvoiceModal {
     }
 
     saveInvoiceInfo() {
+        if (!this.id || !this.buyerReference) {
+            return;
+        }
         this.open = false;
         if (this.selectedDocumentType !== this.originalDocumentType) {
             this.originalDocumentType = this.selectedDocumentType;

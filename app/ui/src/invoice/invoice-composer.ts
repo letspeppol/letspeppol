@@ -88,11 +88,11 @@ export class InvoiceComposer {
         return {
             PaymentMeansCode: this.paymentMeansCodes.find(item => item.value === paymentMeansCode),
             PaymentID: undefined,
-            PayeeFinancialAccount: myCompany.iban ? {
+            PayeeFinancialAccount: {
                 ID: myCompany.iban,
                 Name: myCompany.paymentAccountName ?? myCompany.name,
-            } : undefined
-        };
+            }
+        } as PaymentMeans;
     }
 
     getPaymentTermsForMyCompany(): PaymentTerms {
@@ -167,7 +167,11 @@ export class InvoiceComposer {
     }
 
     getCompanyNumber() {
-        return `${this.companyService.myCompany.companyNumber}`; // TODO BE prefix?
+        return `${this.companyService.myCompany.companyNumber}`;
+    }
+
+    getVatNumber() {
+        return this.companyService.myCompany.vatNumber;
     }
 
     getAccountingSupplierParty(): AccountingParty {
@@ -195,7 +199,7 @@ export class InvoiceComposer {
                 },
                 PartyTaxScheme: {
                     CompanyID: {
-                        value: `BE${this.getCompanyNumber()}`
+                        value: this.getVatNumber()
                     },
                     TaxScheme: {
                         ID: "VAT"

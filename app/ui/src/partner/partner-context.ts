@@ -9,7 +9,7 @@ export class PartnerContext {
 
     newPartner() {
         this.selectedPartner = {
-            companyNumber: "",
+            vatNumber: "",
             name: "",
             email: "",
             customer: true,

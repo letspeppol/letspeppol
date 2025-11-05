@@ -2,7 +2,7 @@ package io.tubs.app.dto;
 
 public record PartnerDto(
     Long id,
-    String companyNumber,
+    String vatNumber,
     String name,
     String email,
     String peppolId,

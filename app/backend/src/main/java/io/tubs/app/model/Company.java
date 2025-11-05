@@ -41,4 +41,8 @@ public class Company extends GenericEntity{
         this.registeredOffice = new Address(street, houseNumber, city, postalCode);
         this.registeredOnPeppol = true;
     }
+
+    public String getVatNumber() {
+        return "BE" + companyNumber;
+    }
 }

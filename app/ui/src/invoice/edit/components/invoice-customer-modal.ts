@@ -22,6 +22,9 @@ export class InvoiceCustomerModal {
             const parts = this.peppolId.split(":");
             this.customer.EndpointID.__schemeID = parts[0];
             this.customer.EndpointID.value = parts[1];
+            if (!this.customer.PartyLegalEntity.CompanyID) {
+                this.customer.PartyLegalEntity.CompanyID = { value: undefined};
+            }
             if (!this.customer.PartyLegalEntity.CompanyID.value) {
                 if (parts[0] === '0208') {
                     this.customer.PartyLegalEntity.CompanyID.value = `BE${parts[1]}`;
@@ -57,14 +60,30 @@ export class InvoiceCustomerModal {
         }
     }
 
-    selectCustomer(c: PartnerDto) {
-        this.customer = this.toParty(c);
+    selectMatchFunction(name: string, participantID: string) {
+        this.peppolId = participantID;
+        if (!this.customer.PartyName.Name) {
+            this.customer.PartyName.Name = name;
+        }
     }
 
-    private toParty(c: PartnerDto): Party {
-        const companyNumber = c.companyNumber || '';
+    selectCustomer(c: PartnerDto) {
+        this.peppolId = c.peppolId;
+        let scheme = undefined;
+        let identifier = undefined;
+        if (this.peppolId.includes(":")) {
+            const parts = this.peppolId.split(":");
+            scheme = parts[0];
+            identifier = parts[1];
+        }
+        this.customer = this.toParty(c, scheme, identifier);
+    }
+
+    private toParty(c: PartnerDto, scheme: string, identifier: string): Party {
+        const companyNumber = (c.vatNumber || '').replace(/\D/g, '');
+
         return {
-            EndpointID: { value: companyNumber },
+            EndpointID: { __schemeID: scheme, value: identifier },
             PartyIdentification: [{ ID: { value: companyNumber } }],
             PartyName: { Name: c.name },
             PostalAddress: {
@@ -74,8 +93,8 @@ export class InvoiceCustomerModal {
                 PostalZone: c.registeredOffice?.postalCode,
                 Country: { IdentificationCode: 'BE' }
             },
-            PartyTaxScheme: { CompanyID: { value: `BE${companyNumber}` }, TaxScheme: { ID: 'VAT' } },
-            PartyLegalEntity: { RegistrationName: c.name, CompanyID: { value: companyNumber } },
+            PartyTaxScheme: { CompanyID: { value: c.vatNumber }, TaxScheme: { ID: 'VAT' } },
+            PartyLegalEntity: { RegistrationName: c.name, CompanyID: { value: c.vatNumber } },
             Contact: { Name: c.paymentAccountName }
         };
     }

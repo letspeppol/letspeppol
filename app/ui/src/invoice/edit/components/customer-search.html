@@ -20,7 +20,7 @@
             click.trigger="selectCustomer(c)"
             mousedown.trigger="$event.preventDefault()">
                 <div class="title">${c.name}</div>
-                <div class="meta">VAT: ${c.companyNumber}</div>
+                <div class="meta">VAT: ${c.vatNumber}</div>
                 <div class="addr" if.bind="c.registeredOffice">${c.registeredOffice.street} ${c.registeredOffice.houseNumber}, ${c.registeredOffice.postalCode} ${c.registeredOffice.city}</div>
         </li>
         <li class="autocomplete-empty" if.bind="filteredCustomers.length === 0" t="invoice.customerModal.no-matches">No matches</li>

@@ -7,7 +7,7 @@
         </div>
         <div class="editor-header-actions">
             <button type="button" class="btn" click.trigger="partnerContext.clearSelectedPartner()" t="partner.edit.discard">Discard</button>
-            <button type="button" class="btn primary" click.trigger="savePartner()" disabled.bind="!partnerContext.selectedPartner.name" t="partner.edit.save">Save partner</button>
+            <button type="button" class="btn primary" click.trigger="savePartner()" disabled.bind="!partnerContext.selectedPartner.name || !partnerContext.selectedPartner.peppolId" t="partner.edit.save">Save partner</button>
         </div>
     </div>
 </div>
@@ -21,7 +21,7 @@
             <div style="display: grid; gap: var(--space-1)">
                 <label class="field">
                     <span t="label.vat-number">VAT Number</span>
-                    <input type="text" value.bind="partnerContext.selectedPartner.companyNumber" />
+                    <input type="text" value.bind="partnerContext.selectedPartner.vatNumber" />
                 </label>
                 <label class="field">
                     <span t="label.company-name">Company name</span>
@@ -48,7 +48,7 @@
                 <h2 t="partner.edit.peppol">Peppol</h2>
             </div>
             <peppol-search name.bind="partnerContext.selectedPartner.name"
-                           vat-number.bind="partnerContext.selectedPartner.companyNumber"
+                           vat-number.bind="partnerContext.selectedPartner.vatNumber"
                            peppol-id.bind="partnerContext.selectedPartner.peppolId">
             </peppol-search>
         </div>

@@ -27,7 +27,9 @@
                         <div style="display: grid; gap: var(--space-1)">
                             <peppol-search name.bind="customer.PartyName.Name"
                                            vat-number.bind="customer.PartyLegalEntity.CompanyID.value"
-                                           peppol-id.two-way="peppolId">
+                                           peppol-id.two-way="peppolId"
+                                           select-match-function.bind="(name, participantID) => selectMatchFunction(name, participantID)"
+                            >
                             </peppol-search>
                             <label class="field">
                                 <span t="label.vat-number">VAT Number</span>
@@ -74,8 +76,9 @@
             </div>
         </div>
         <footer class="modal-footer">
-            <button type="button" class="btn" click.trigger="closeModal()" title="Cancel" t="[title]common.cancel" t="common.cancel">Cancel</button>
-            <button type="button" class="btn primary" click.trigger="saveCustomer()" title="Confirm" t="[title]common.confirm" t="common.confirm">Confirm</button>
+            <button type="button" class="btn" click.trigger="closeModal()" t="[title]common.cancel" t="common.cancel">Cancel</button>
+            <button type="button" class="btn primary" click.trigger="saveCustomer()" t="[title]common.confirm" t="common.confirm"
+                    disabled.bind="!customer.PartyName.Name || !customer.PartyLegalEntity.CompanyID.value || !peppolId || !peppolId.includes(':')">Confirm</button>
         </footer>
     </div>
 </div>

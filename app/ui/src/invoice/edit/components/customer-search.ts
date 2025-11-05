@@ -35,7 +35,7 @@ export class CustomerSearch {
         }
         this.filteredCustomers = this.customers.filter(c =>
             (c.name && c.name.toLowerCase().includes(q)) ||
-            (c.companyNumber && c.companyNumber.toLowerCase().includes(q))
+            (c.vatNumber && c.vatNumber.toLowerCase().includes(q))
         ).slice(0, 8);
         this.showSuggestions = this.filteredCustomers.length > 0;
         this.highlightedIndex = this.filteredCustomers.length ? 0 : -1;
@@ -77,7 +77,7 @@ export class CustomerSearch {
         if (this.selectCustomerFunction) {
             this.selectCustomerFunction(c);
         }
-        this.searchQuery = `${c.name} (${c.companyNumber})`;
+        this.searchQuery = `${c.name} (${c.vatNumber})`;
         this.showSuggestions = false;
     }
 

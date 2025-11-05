@@ -163,6 +163,7 @@ export class InvoiceEdit {
             form.reportValidity();
             return;
         }
+        console.log(JSON.stringify(this.invoiceContext.selectedInvoice));
         const xml = this.buildXml();
         const response = await this.invoiceService.validate(xml);
         this.validationResultModal.showModal(response);
@@ -215,7 +216,8 @@ export class InvoiceEdit {
             'invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PartyName.Name',
             'invoiceContext.selectedInvoice.AccountingCustomerParty.PartyTaxScheme.TaxScheme.ID',
             'invoiceContext.selectedInvoice.LegalMonetaryTotal.LineExtensionAmount.value',
-
+            'invoiceContext.selectedInvoice.PaymentMeans.PaymentMeansCode.value',
+            'invoiceContext.selectedInvoice.PaymentMeans.PayeeFinancialAccount.ID'
         ] })
     get isValid() {
         const inv = this.invoiceContext.selectedInvoice;
@@ -226,7 +228,8 @@ export class InvoiceEdit {
             && inv.AccountingCustomerParty.Party.PartyName.Name
             && inv.AccountingCustomerParty.Party.PartyTaxScheme.TaxScheme.ID
             && inv.LegalMonetaryTotal.LineExtensionAmount.value > 0
-            ;
+            && (!inv.PaymentMeans || (inv.PaymentMeans.PaymentMeansCode.value != 30|| (inv.PaymentMeans.PaymentMeansCode.value === 30 && inv.PaymentMeans.PayeeFinancialAccount.ID)))
+        ;
     }
 
 }

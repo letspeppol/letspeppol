@@ -28,7 +28,7 @@ public class PartnerController {
     @PutMapping("{id}")
     public PartnerDto updatePartner(@AuthenticationPrincipal Jwt jwt, @PathVariable Long id, @RequestBody PartnerDto partnerDto) {
         String companyNumber = JwtUtil.getCompanyNumber(jwt);
-        return partnerService.updatePartner(companyNumber, id, partnerDto);
+        return partnerService.updatePartner(id, partnerDto);
     }
 
     @PostMapping

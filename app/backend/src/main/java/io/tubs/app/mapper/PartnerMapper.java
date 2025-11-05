@@ -8,7 +8,7 @@ public class PartnerMapper {
     public static PartnerDto toDto(Partner partner) {
         return new PartnerDto(
                 partner.getId(),
-                partner.getCompanyNumber(),
+                partner.getVatNumber(),
                 partner.getName(),
                 partner.getEmail(),
                 partner.getPeppolId(),

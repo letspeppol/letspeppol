@@ -5,6 +5,7 @@ import {AppApi} from "./app-api";
 export interface CompanyDto {
     name: string,
     companyNumber: string,
+    vatNumber: string,
     subscriber: string,
     subscriberEmail: string,
     paymentTerms: string,

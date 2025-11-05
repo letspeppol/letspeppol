@@ -11,7 +11,7 @@ export class PeppolSearch {
     @bindable name;
     @bindable vatNumber;
     @bindable peppolId;
-    @bindable selectPeppolMatchFunction: (name: string) => void;
+    @bindable selectMatchFunction: (name: string, participantID: string) => void;
 
     async searchPeppolIdByName() {
         try {
@@ -56,8 +56,8 @@ export class PeppolSearch {
     select(match: Match) {
         this.showSuggestions = false;
         this.peppolId = match.participantID.value;
-        if (this.selectPeppolMatchFunction) {
-            this.selectPeppolMatchFunction(this.getName(match));
+        if (this.selectMatchFunction) {
+            this.selectMatchFunction(this.getName(match), this.peppolId);
         }
     }
 
