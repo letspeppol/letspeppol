@@ -7,7 +7,7 @@
         </div>
         <div class="editor-header-actions">
             <button type="button" class="btn" click.trigger="partnerContext.clearSelectedPartner()" t="partner.edit.discard">Discard</button>
-            <button type="button" class="btn primary" click.trigger="savePartner()" disabled.bind="!partnerContext.selectedPartner.name || !partnerContext.selectedPartner.peppolId" t="partner.edit.save">Save partner</button>
+            <button type="button" class="btn primary" click.trigger="savePartner()" disabled.bind="!partnerContext.selectedPartner.name || !partnerContext.selectedPartner.peppolId || !partnerContext.selectedPartner.peppolId.includes(':')" t="partner.edit.save">Save partner</button>
         </div>
     </div>
 </div>
@@ -49,7 +49,7 @@
             </div>
             <peppol-search name.bind="partnerContext.selectedPartner.name"
                            vat-number.bind="partnerContext.selectedPartner.vatNumber"
-                           peppol-id.bind="partnerContext.selectedPartner.peppolId">
+                           peppol-id.two-way="partnerContext.selectedPartner.peppolId">
             </peppol-search>
         </div>
 
