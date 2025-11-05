@@ -15,13 +15,16 @@ export type ListEntityDocumentsParams = {
 
 export type ListItem = {
   platformId: string;
+  createdAt: string; // ISO 8601 Date string
   docType: 'invoice' | 'credit-note';
   direction: 'incoming' | 'outgoing';
   counterPartyId: string;
   counterPartyName: string;
-  createdAt: string; // ISO 8601 Date string
-  amount: number;
   docId: string;
+  amount: number;
+  dueDate?: string; // ISO 8601 Date string
+  paymentTerms?: string;
+  paid?: string;
 };
 
 export abstract class Backend {

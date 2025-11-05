@@ -87,32 +87,27 @@ export async function insertData(
   );
 }
 
-export async function storeDocumentInDb(
-  platformId: string,
-  docDetails: components['schemas']['Document'],
-  docType: string,
-  direction: string,
-  docId: string,
-  amount: number,
-  xmlContent: string,
-): Promise<void> {
+export async function storeDocumentInDb(docDetails: components['schemas']['Document']): Promise<void> {
   const client = await getPostgresClient();
   const insertQuery = `
-    INSERT INTO FrontDocs (userId, counterPartyId, counterPartyName, docType, direction, docId, amount, platformId, createdAt, ubl)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+    INSERT INTO FrontDocs (userId, platformId, createdAt, docType, direction, counterPartyId, counterPartyName, docId, amount, dueDate, paymentTerms, paid, ubl)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
     ON CONFLICT (platformId) DO NOTHING;
   `;
   const values = [
-    docDetails.userId,
-    docDetails.counterPartyId,
-    docDetails.counterPartyName,
-    docType,
-    direction,
-    docId,
-    amount,
-    platformId,
-    docDetails.createdAt,
-    xmlContent,
+    docDetails.userId, // 1
+    docDetails.platformId, // 2
+    docDetails.createdAt, // 3
+    docDetails.docType, // 4
+    docDetails.direction, // 5
+    docDetails.counterPartyId, // 6
+    docDetails.counterPartyName, // 7
+    docDetails.docId, // 8
+    docDetails.amount, // 9
+    docDetails.dueDate || null, // 10
+    docDetails.paymentTerms || null, // 11
+    docDetails.paid || null, // 12
+    docDetails.ubl // 13
   ];
   await client.query(insertQuery, values);
 }
@@ -174,13 +169,16 @@ export async function listEntityDocuments(
     (row) =>
       ({
         platformId: row.platformid,
+        createdAt: row.createdat,
         docType: row.doctype,
         direction: row.direction,
         counterPartyId: row.counterpartyid,
         counterPartyName: row.counterpartyname,
-        createdAt: row.createdat,
-        amount: row.amount,
         docId: row.docid,
+        amount: row.amount,
+        dueDate: row.duedate || undefined,
+        paymentTerms: row.paymentterms || undefined,
+        paid: row.paid || undefined,
       }) as ListItem,
   );
 }
@@ -197,4 +195,42 @@ export async function getDocumentUbl(requestingEntity: string, platformId: strin
     throw new Error('Document not found or access denied');
   }
   return result.rows[0].ubl;
+}
+
+export async function markDocumentAsPaid(
+  userId: string,
+  platformId: string,
+  paid: string,
+): Promise<void> {
+  const client = await getPostgresClient();
+  const updateQuery = `
+    UPDATE FrontDocs
+    SET paid = $1
+    WHERE userId = $2 AND platformId = $3
+  `;
+  const values = [paid, userId, platformId];
+  await client.query(updateQuery, values);
+}
+
+export async function getTotalsForUser(userId: string): Promise<{
+  totalPayable: number;
+  totalReceivable: number;
+}> {
+  const client = await getPostgresClient();
+  const queryStr = `
+    SELECT
+      SUM(CASE WHEN direction = 'incoming' THEN amount ELSE 0 END) AS totalPayable,
+      SUM(CASE WHEN direction = 'outgoing' THEN amount ELSE 0 END) AS totalReceivable
+    FROM FrontDocs
+    WHERE userId = $1
+  `;
+  console.log('Executing totals query:', queryStr, 'with userId:', userId);
+  const result = await client.query(queryStr, [userId]);
+  if (result.rows.length === 0) {
+    return { totalPayable: 0, totalReceivable: 0 };
+  }
+  return {
+    totalPayable: result.rows[0].totalpayable || 0,
+    totalReceivable: result.rows[0].totalreceivable || 0,
+  };
 }

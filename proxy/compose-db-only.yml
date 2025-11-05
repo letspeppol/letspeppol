@@ -1,0 +1,15 @@
+services:
+  db:
+    build:
+      context: ./docker/db
+    container_name: db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+      POSTGRES_APP_DB: syncables
+      POSTGRES_APP_USER: syncables
+      POSTGRES_APP_PASSWORD: syncables

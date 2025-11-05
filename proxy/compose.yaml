@@ -13,3 +13,19 @@ services:
       POSTGRES_APP_DB: syncables
       POSTGRES_APP_USER: syncables
       POSTGRES_APP_PASSWORD: syncables
+  proxy:
+    build:
+      context: .
+    container_name: proxy
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      DATABASE_URL: postgresql://syncables:syncables@db:5432/syncables
+      SCRADA_API_KEY: your_scrada_api_key_here # edit me!
+      SCRADA_API_PWD: your_scrada_api_pwd_here # edit me!
+      SCRADA_COMPANY_ID: your_scrada_company_id_here # edit me!
+      ACCESS_TOKEN_KEY: something-secret # edit me!
+    depends_on:
+      - db
