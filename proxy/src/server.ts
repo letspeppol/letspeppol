@@ -4,7 +4,7 @@ import { checkBearerToken } from './auth.js';
 import rateLimit from 'express-rate-limit';
 import { Backend } from './Backend.js';
 import { Scrada } from './scrada.js';
-import { listEntityDocuments, getDocumentUbl } from './db.js';
+import { listEntityDocuments, getDocumentUbl, markDocumentAsPaid, getTotalsForUser } from './db.js';
 
 function getAuthMiddleware(secretKey: string): express.RequestHandler {
   return async function checkAuth(req, res, next): Promise<void> {
@@ -85,6 +85,15 @@ export async function startServer(env: ServerOptions): Promise<number> {
     res.end('OK\n');
   }
 
+  async function markPaid(req, res): Promise<void> {
+    console.log('Marking document as paid', req.peppolId, req.params.platformId, req.body);
+    await markDocumentAsPaid(
+      req.peppolId,
+      req.params.platformId,
+      req.body.paid,
+    );
+    res.end('OK\n');
+  }
   async function list(req, res): Promise<void> {
     const requestingEntity = req.peppolId;
     const query = {
@@ -113,7 +122,11 @@ export async function startServer(env: ServerOptions): Promise<number> {
     const ubl = await getDocumentUbl(requestingEntity, req.params.platformId);
     res.end(ubl);
   }
-
+  async function getTotals(req, res): Promise<void> {
+    const requestingEntity = req.peppolId;
+    const totals = await getTotalsForUser(requestingEntity);
+    res.json(totals);
+  }
   const port = parseInt(env.PORT);
   const app = express();
   app.use(cors({ origin: true })); // Reflect (enable) the requested origin in the CORS response
@@ -132,8 +145,10 @@ export async function startServer(env: ServerOptions): Promise<number> {
   app.use(express.json());
   return new Promise((resolve, reject) => {
     app.get('/v2/', hello);
+    app.get('/v2/totals', checkAuth, getTotals);
     app.get('/v2/documents', checkAuth, list);
     app.get('/v2/documents/:platformId', checkAuth, getUbl);
+    app.post('/v2/documents/:platformId', checkAuth, markPaid);
     app.post('/v2/send', checkAuth, express.text({ type: '*/*' }), send);
     app.post('/v2/reg', checkAuth, reg);
     app.post('/v2/unreg', checkAuth, unreg);

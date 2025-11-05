@@ -1,11 +1,7 @@
 import { XMLParser } from 'fast-xml-parser';
 import { components } from './front.js';
 
-export function parseDocument(documentXml: string, userId: string): {
-  docDetails: components['schemas']['Document'];
-  docId: string;
-  amount: number;
-} {
+export function parseDocument(documentXml: string, userId: string): components['schemas']['Document'] {
   const parserOptions = {
     ignoreAttributes: false,
     numberParseOptions: {
@@ -51,22 +47,27 @@ export function parseDocument(documentXml: string, userId: string): {
     );
   }
   return {
-    docDetails: {
-      userId,
-      counterPartyId,
-      counterPartyName,
-      docType:
-        docType === 'Invoice'
-          ? 'invoice'
-          : docType === 'CreditNote'
-            ? 'credit-note'
-            : (() => { throw new Error(`Unknown document type: ${docType}`); })(),
-    },
+    // platformId is assigned by the platform
+    userId,
+    createdAt: new Date().toISOString(),
+    docType:
+      docType === 'Invoice'
+        ? 'invoice'
+        : docType === 'CreditNote'
+          ? 'credit-note'
+          : (() => { throw new Error(`Unknown document type: ${docType}`); })(),
+    direction: userId === senderId ? 'outgoing' : 'incoming',
+    counterPartyId,
+    counterPartyName,
     docId: jObj[docType]?.['cbc:ID'],
     amount: parseFloat(
       jObj[docType]?.['cac:LegalMonetaryTotal']?.['cbc:PayableAmount']?.[
         '#text'
       ],
     ),
+    paymentTerms: jObj[docType]?.['cac:PaymentTerms']?.['cbc:Note'] || undefined,
+    dueDate: jObj[docType]?.['cbc:DueDate'] || undefined,
+    // paid: initially undefined
+    ubl: documentXml,
   };
 }
