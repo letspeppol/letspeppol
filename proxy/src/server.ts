@@ -27,14 +27,12 @@ function getAuthMiddleware(secretKey: string): express.RequestHandler {
 
 export type ServerOptions = {
   PORT: string;
-  PEPPYRUS_TOKEN_TEST: string;
   ACCESS_TOKEN_KEY: string;
   DATABASE_URL: string;
 };
 
 const optionsToRequire = [
   'PORT',
-  'PEPPYRUS_TOKEN_TEST',
   'ACCESS_TOKEN_KEY',
   'DATABASE_URL',
 ];
