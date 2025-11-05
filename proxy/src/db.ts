@@ -211,3 +211,26 @@ export async function markDocumentAsPaid(
   const values = [paid, userId, platformId];
   await client.query(updateQuery, values);
 }
+
+export async function getTotalsForUser(userId: string): Promise<{
+  totalPayable: number;
+  totalReceivable: number;
+}> {
+  const client = await getPostgresClient();
+  const queryStr = `
+    SELECT
+      SUM(CASE WHEN direction = 'incoming' THEN amount ELSE 0 END) AS totalPayable,
+      SUM(CASE WHEN direction = 'outgoing' THEN amount ELSE 0 END) AS totalReceivable
+    FROM FrontDocs
+    WHERE userId = $1
+  `;
+  console.log('Executing totals query:', queryStr, 'with userId:', userId);
+  const result = await client.query(queryStr, [userId]);
+  if (result.rows.length === 0) {
+    return { totalPayable: 0, totalReceivable: 0 };
+  }
+  return {
+    totalPayable: result.rows[0].totalpayable || 0,
+    totalReceivable: result.rows[0].totalreceivable || 0,
+  };
+}

@@ -44,6 +44,7 @@ docker exec -it db psql postgresql://syncables:syncables@localhost:5432/syncable
 curl -X POST -d '{"paid":"yes"}' -H "Authorization: Bearer $ONE" -H 'Content-Type: application/json' $PROXY_HOST/v2/documents/scrada_9e8912d1-5d42-4cc1-a2c4-176f7d7738d7
 curl -H "Authorization: Bearer $ONE" "$PROXY_HOST/v2/documents" | json
 curl -H "Authorization: Bearer $ONE" $PROXY_HOST/v2/documents/scrada_e37b5843-fc55-4b0b-8b8e-73435d9a0363
+curl -H "Authorization: Bearer $ONE" "$PROXY_HOST/v2/totals" | json
 curl -X POST -H "Authorization: Bearer $ONE" -H 'Content-Type: application/json' $PROXY_HOST/v2/unreg
 ```
 
@@ -75,6 +76,14 @@ Examples:
 curl -H "Authorization: Bearer $TWO" "$PROXY_HOST/v2/documents?direction=outgoing" | json
 curl -H "Authorization: Bearer $THREE" "$PROXY_HOST/v2/documents?docType=credit-notes&page=2&pageSize=2" | json
 curl -H "Authorization: Bearer $ONE" "$PROXY_HOST/v2/documents?direction=outgoing&receiverName=Business Appl&sortBy=amountDesc" | json
+```
+
+The output of the `/v2/totals` call looks like this:
+```json
+{
+  "totalPayable": "0",
+  "totalReceivable": "18375"
+}
 ```
 
 ### With Nix
