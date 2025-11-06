@@ -118,11 +118,19 @@ describe("Invoice XML round-trip", () => {
         expect(line.Item.ClassifiedTaxCategory?.Percent).toBe(25);
         expect(line.Price.PriceAmount.value).toBe(400);
 
+        // --- Attachment ---
+        expect(invoiceObj.AdditionalDocumentReference.length).toBe(1);
+        const additionalDocumentReference = invoiceObj.AdditionalDocumentReference[0];
+        expect(additionalDocumentReference.ID).toBe("ATTACHMENT-099");
+        expect(additionalDocumentReference.Attachment.EmbeddedDocumentBinaryObject.__mimeCode).toBe("application/text");
+        expect(additionalDocumentReference.Attachment.EmbeddedDocumentBinaryObject.__filename).toBe("ATTACHMENT-099.txt");
+        expect(additionalDocumentReference.Attachment.EmbeddedDocumentBinaryObject.value).toBe("RGl0IGlzIGVlbiB0ZXN0");
+
         // Build XML from Invoice object
         const rebuiltXml = buildInvoice(invoiceObj);
 
         // Normalize whitespace for comparison
-        const originalNormalized = normalizeXml(sampleInvoiceXml);
+        const originalNormalized = `<?xml version="1.0" encoding="UTF-8"?>` + normalizeXml(sampleInvoiceXml);
         const rebuiltNormalized = normalizeXml(rebuiltXml);
 
         expect(rebuiltNormalized).toBe(originalNormalized);
@@ -378,6 +386,12 @@ const sampleInvoiceXml = `
   <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
   <cbc:AccountingCost>4025:123:4343</cbc:AccountingCost>
   <cbc:BuyerReference>0150abc</cbc:BuyerReference>
+  <cac:AdditionalDocumentReference>
+    <cbc:ID>ATTACHMENT-099</cbc:ID>
+    <cac:Attachment>
+      <cbc:EmbeddedDocumentBinaryObject mimeCode="application/text" filename="ATTACHMENT-099.txt">RGl0IGlzIGVlbiB0ZXN0</cbc:EmbeddedDocumentBinaryObject>
+    </cac:Attachment>
+  </cac:AdditionalDocumentReference>
   <cac:AccountingSupplierParty>
     <cac:Party>
       <cbc:EndpointID schemeID="0208">1023290711</cbc:EndpointID>

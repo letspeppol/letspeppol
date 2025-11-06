@@ -31,6 +31,7 @@ export interface Invoice extends UBLBase {
     InvoiceTypeCode: number;
     PaymentMeans?: PaymentMeans;
     InvoiceLine: InvoiceLine[];
+    AdditionalDocumentReference: AdditionalDocumentReference[];
 }
 
 export interface CreditNoteLine extends UBLBaseLine {
@@ -41,6 +42,7 @@ export interface CreditNote extends UBLBase {
     CreditNoteTypeCode: number;
     PaymentMeans?: CreditNotePaymentMeans;
     CreditNoteLine: CreditNoteLine[];
+    AdditionalDocumentReference: AdditionalDocumentReference[];
 }
 
 export interface UBLBase {
@@ -93,6 +95,27 @@ export interface Address {
     CityName?: string;
     PostalZone?: string;
     Country?: { IdentificationCode: string };
+}
+
+export interface AdditionalDocumentReference {
+    ID: string;
+    DocumentDescription?: string;
+    Attachment?: Attachment;
+}
+
+export interface Attachment {
+    EmbeddedDocumentBinaryObject?: EmbeddedDocumentBinaryObject;
+    ExternalReference?: ExternalReference;
+}
+
+export interface ExternalReference {
+    URI: string
+}
+
+export interface EmbeddedDocumentBinaryObject {
+    __mimeCode: string;
+    __filename: string;
+    value: string;
 }
 
 export interface PartyTaxScheme {

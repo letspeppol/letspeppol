@@ -1,4 +1,3 @@
-// mapper-ns.ts
 import {XMLBuilder, XMLParser} from "fast-xml-parser";
 import {CreditNote, Invoice} from "./ubl";
 
@@ -75,7 +74,7 @@ function addPrefixes(obj: any): any {
 export function parseInvoice(xml: string): Invoice {
     const obj = parser.parse(xml);
     const invoiceObj = stripPrefixes(obj["Invoice"]);
-    normalizeArrays(invoiceObj, ["TaxTotal", "TaxSubtotal", "AllowanceCharge", "InvoiceLine"]);
+    normalizeArrays(invoiceObj, ["TaxTotal", "TaxSubtotal", "AllowanceCharge", "InvoiceLine", "AdditionalDocumentReference"]);
     return invoiceObj;
 }
 
@@ -90,7 +89,7 @@ export function buildInvoice(invoice: Invoice): string {
 export function parseCreditNote(xml: string): CreditNote {
     const obj = parser.parse(xml);
     const creditObj = stripPrefixes(obj["CreditNote"]);
-    normalizeArrays(creditObj, ["TaxTotal", "TaxSubtotal", "AllowanceCharge", "CreditNoteLine"]);
+    normalizeArrays(creditObj, ["TaxTotal", "TaxSubtotal", "AllowanceCharge", "CreditNoteLine", "AdditionalDocumentReference"]);
     return creditObj;
 }
 
@@ -243,11 +242,12 @@ const PREFIX_MAP: Record<string, "cbc" | "cac"> = {
     "ActualDeliveryDate": "cbc",
     "Telephone": "cbc",
     "ElectronicMail": "cbc",
-    "Fax": "cbc", // if used
+    "Fax": "cbc",
     "Email": "cbc",
     "TaxableAmount": "cbc",
     "ChargeIndicator": "cbc",
     "AllowanceChargeReason": "cbc",
+    "EmbeddedDocumentBinaryObject": "cbc",
 
     // Everything else is aggregate (cac)
 };
