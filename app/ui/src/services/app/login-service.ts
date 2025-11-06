@@ -1,6 +1,6 @@
 import {resolve} from "@aurelia/kernel";
 import {singleton} from "aurelia";
-import jwt, {JwtPayload} from "jsonwebtoken";
+import {jwtDecode} from "jwt-decode";
 import {KYCApi} from "../kyc/kyc-api";
 import {ProxyApi} from "../proxy/proxy-api";
 import {AppApi} from "./app-api";
@@ -24,7 +24,7 @@ export class LoginService {
     }
 
     getTokenExpiryDateInSeconds(token: string): number {
-        const decoded = jwt.decode(token) as JwtPayload | null;
+        const decoded = jwtDecode(token);
         if (!decoded || !decoded.exp) {
             return 0;
         }
@@ -40,14 +40,14 @@ export class LoginService {
     }
 
     async auth(username: string, password: string) : Promise<void> {
-        let token = await this.getJwtToken(username, password);
+        const token = await this.getJwtToken(username, password);
         localStorage.setItem('token', token);
         this.setAuthHeader(token);
         this.authenticated = true;
     }
 
     async getJwtToken(username: string, password: string) {
-        let authHeaders: Headers = new Headers;
+        const authHeaders: Headers = new Headers;
         authHeaders.append('Authorization', `Basic ${Buffer.from(username + ":" + password).toString('base64')}` );
         const requestInit: RequestInit = { headers: authHeaders }
         const response = await this.kycApi.httpClient.post(`/api/jwt/auth`, undefined, requestInit);

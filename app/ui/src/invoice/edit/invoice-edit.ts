@@ -16,7 +16,7 @@ import {InvoicePaymentModal} from "./components/invoice-payment-modal";
 import {InvoiceCustomerModal} from "./components/invoice-customer-modal";
 import {InvoiceCalculator, roundTwoDecimals} from "../invoice-calculator";
 import {InvoiceComposer} from "../invoice-composer";
-import {downloadInvoicePdf} from "../pdf/invoice-pdf";
+// import {downloadInvoicePdf} from "../pdf/invoice-pdf";
 import {InvoiceDraftDto, InvoiceService} from "../../services/app/invoice-service";
 import {ValidationResultModal} from "./components/validation-result-modal";
 import {InvoiceModal} from "./components/invoice-modal";
@@ -111,10 +111,10 @@ export class InvoiceEdit {
         }
     }
 
-    downloadPdf() {
-        if (!this.invoiceContext.selectedInvoice) return;
-        downloadInvoicePdf(this.invoiceContext.selectedInvoice);
-    }
+    // downloadPdf() {
+    //     if (!this.invoiceContext.selectedInvoice) return;
+    //     downloadInvoicePdf(this.invoiceContext.selectedInvoice);
+    // }
 
     buildXml(): string {
         if  (this.selectedDocumentType === DocumentType.Invoice)  {
