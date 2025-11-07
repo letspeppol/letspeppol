@@ -28,7 +28,7 @@ In both cases you will need to create the database table before first use (FIXME
 ```sh
 docker exec -it db psql postgresql://syncables:syncables@localhost:5432/syncables -c "create type direction as enum ('incoming', 'outgoing');"
 docker exec -it db psql postgresql://syncables:syncables@localhost:5432/syncables -c "create type docType as enum ('invoice', 'credit-note');"
-docker exec -it db psql postgresql://syncables:syncables@localhost:5432/syncables -c "create table FrontDocs (userId text, platformId text primary key, createdAt timestamp, docType docType, direction direction, counterPartyId text, counterPartyName text, docId text, amount numeric, dueDate timestamp, paymentTerms text, paid text, ubl text);"
+docker exec -it db psql postgresql://syncables:syncables@localhost:5432/syncables -c "create table FrontDocs (userId text, platformId text primary key, createdAt timestamp, docType docType, direction direction, counterPartyId text, counterPartyName text, docId text, amount numeric, dueDate timestamp, paymentTerms text, paid text, ubl text, status text);"
 ```
 
 In a separate terminal window, do the following to register, send a document, list documents, fetch a single document, and unregister:
@@ -40,7 +40,7 @@ curl $PROXY_HOST/v2
 curl -X POST -d'{"name":"BARGE vzw"}' -H "Authorization: Bearer $ONE" -H 'Content-Type: application/json' $PROXY_HOST/v2/reg
 node ./build/src/genDoc.js invoice 0208:0734825676 0208:1029545627 asdf > ./doc.xml
 curl -X POST --data-binary "@./doc.xml" -H "Authorization: Bearer $ONE" $PROXY_HOST/v2/send
-docker exec -it db psql postgresql://syncables:syncables@localhost:5432/syncables -c "select userId, platformId, createdAt, docType, direction, counterPartyId, counterPartyName, docId, amount, dueDate, paymentTerms, paid from frontdocs"
+docker exec -it db psql postgresql://syncables:syncables@localhost:5432/syncables -c "select userId, platformId, createdAt, docType, direction, counterPartyId, counterPartyName, docId, amount, dueDate, paymentTerms, paid, status from frontdocs"
 curl -X POST -d '{"paid":"yes"}' -H "Authorization: Bearer $ONE" -H 'Content-Type: application/json' $PROXY_HOST/v2/documents/scrada_9e8912d1-5d42-4cc1-a2c4-176f7d7738d7
 curl -H "Authorization: Bearer $ONE" "$PROXY_HOST/v2/documents" | json
 curl -H "Authorization: Bearer $ONE" $PROXY_HOST/v2/documents/scrada_e37b5843-fc55-4b0b-8b8e-73435d9a0363
@@ -63,7 +63,8 @@ This will give an array of objects that look like this:
     "amount": "6125",
     "dueDate": "2024-01-17T23:00:00.000Z",
     "paymentTerms": "Payment within 10 days, 2% discount",
-    "paid": "yes"
+    "paid": "yes",
+    "status": "Created"
   }
 ]
 ```
@@ -85,6 +86,17 @@ The output of the `/v2/totals` call looks like this:
   "totalReceivable": "18375"
 }
 ```
+
+### Webhooks
+To let the webhooks from Scrada arrive at your laptop locally, you can do the following:
+```sh
+npm install -g localtunnel
+lt --port 3000
+curl -X POST -d'{"test":true}' -H 'Content-Type: application/json' -H 'X-Scrada-HMAC-SHA256: 2abe5bb975969de69687e1a8fd7b5dbee7217e07a8b3161acb96614b5f94df8c' https://fuzzy-suns-march.loca.lt/v2/webhook/outgoing/scrada
+```
+This will give you a domain name like https://yummy-rings-cut.loca.lt and then you can go to [the integration settings in your Scrada dashboard](https://mytest.scrada.be/nl/company/f932b7c4-b4fe-40d1-a981-a338b4478f78/settings/integrations/webhook) and configure:
+* `peppolInboundDocument/new` to go to https://yummy-rings-cut.loca.lt/v2/webhook/incoming
+* `peppolOutboundDocument/statusUpdate` to go to https://yummy-rings-cut.loca.lt/v2/webhook/outgoing
 
 ### With Nix
 A `devenv` environment is available in the `dev/proxy` directory to host the proxy locally and run a small test. Make sure you have [`devenv`](https://devenv.sh/getting-started/) installed, and optionally install [`direnv`](https://devenv.sh/automatic-shell-activation/) for automatic shell activation. If you don’t use `direnv`, you’ll need to run `devenv shell` manually in the `dev/proxy` directory. Next, create a `dev/.env` file with the following contents (without quotes):

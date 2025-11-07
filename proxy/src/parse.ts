@@ -3,7 +3,7 @@ import { components } from './front.js';
 
 export function parseDocument(
   documentXml: string,
-  userId: string,
+  direction: string,
 ): components['schemas']['Document'] {
   const parserOptions = {
     ignoreAttributes: false,
@@ -36,32 +36,36 @@ export function parseDocument(
   }
   const senderId = `${sender?.['cbc:EndpointID']?.['@_schemeID']}:${sender?.['cbc:EndpointID']?.['#text']}`;
   const receiverId = `${receiver?.['cbc:EndpointID']?.['@_schemeID']}:${receiver?.['cbc:EndpointID']?.['#text']}`;
+  let userId;
   let counterPartyId;
   let counterPartyName;
-  if (userId === senderId) {
+  if (direction === 'outgoing') {
+    userId = senderId;
     counterPartyId = receiverId;
     counterPartyName = receiver?.['cac:PartyName']?.['cbc:Name'];
-  } else if (userId === receiverId) {
+  } else if (direction === 'incoming') {
+    userId = receiverId;
     counterPartyId = senderId;
     counterPartyName = sender?.['cac:PartyName']?.['cbc:Name'];
   } else {
     throw new Error(
-      `User ID ${userId} does not match sender ID ${senderId} or receiver ID ${receiverId}`,
+      `Please specify valid direction 'incoming' or 'outgoing', got: ${direction}`,
     );
   }
+  const docTypeMap: { [key: string]: 'invoice' | 'credit-note' } = {
+    Invoice: 'invoice',
+    CreditNote: 'credit-note',
+    'ubl:Invoice': 'invoice',
+    'ubl:CreditNote': 'credit-note',
+  };
   return {
     // platformId is assigned by the platform
     userId,
     createdAt: new Date().toISOString(),
-    docType:
-      docType === 'Invoice'
-        ? 'invoice'
-        : docType === 'CreditNote'
-          ? 'credit-note'
-          : (() => {
-              throw new Error(`Unknown document type: ${docType}`);
+    docType: docTypeMap[docType] || (() => {
+      throw new Error(`Unknown document type: ${docType}`);
             })(),
-    direction: userId === senderId ? 'outgoing' : 'incoming',
+    direction,
     counterPartyId,
     counterPartyName,
     docId: jObj[docType]?.['cbc:ID'],

@@ -1,3 +1,4 @@
+import { createHmac } from 'crypto';
 import express from 'express';
 import cors from 'cors';
 import { checkBearerToken } from './auth.js';
@@ -9,22 +10,38 @@ import {
   getDocumentUbl,
   markDocumentAsPaid,
   getTotalsForUser,
+  setDocumentStatus,
 } from './db.js';
 
-function getAuthMiddleware(secretKey: string): express.RequestHandler {
-  return async function checkAuth(req, res, next): Promise<void> {
-    const authorization = req.headers['authorization'];
-    if (!authorization) {
-      res.status(401).json({ error: 'Unauthorized' });
-    } else {
-      const token = authorization.replace('Bearer ', '');
-      try {
-        const peppolId = await checkBearerToken(token, secretKey);
-        req.peppolId = peppolId;
+function getAuthMiddleware(secretKey: string): { checkAuth: express.RequestHandler, checkWebhook: express.RequestHandler } {
+  return {
+    checkAuth: async function checkAuth(req, res, next): Promise<void> {
+      const authorization = req.headers['authorization'];
+      if (!authorization) {
+        res.status(401).json({ error: 'Unauthorized' });
+      } else {
+        const token = authorization.replace('Bearer ', '');
+        try {
+          const peppolId = await checkBearerToken(token, secretKey);
+          req.peppolId = peppolId;
+          next();
+        } catch (err: { message: string } | unknown) {
+          console.error('Error verifying token:', err);
+          res.status(401).json({ error: (err as { message: string }).message });
+        }
+      }
+    },
+    checkWebhook: async function checkWebhook(req, res, next): Promise<void> {
+      const key = process.env.SCRADA_COMPANY_KEY!;
+      console.log('Checking webhook with key', JSON.stringify(key), 'and body', JSON.stringify(req.body));
+      const signatureComputed = createHmac('sha256', key).update(req.body).digest('hex');
+      const signatureGiven = req.headers['x-scrada-hmac-sha256'];
+      if (signatureComputed !== signatureGiven) {
+        console.error('Invalid webhook signature:', { signatureComputed, signatureGiven });
+        res.status(401).json({ error: 'Unauthorized' });
+      } else {
+        req.body = JSON.parse(req.body);
         next();
-      } catch (err: { message: string } | unknown) {
-        console.error('Error verifying token:', err);
-        res.status(401).json({ error: (err as { message: string }).message });
       }
     }
   };
@@ -38,7 +55,7 @@ export type ServerOptions = {
 
 const optionsToRequire = ['PORT', 'ACCESS_TOKEN_KEY', 'DATABASE_URL'];
 export async function startServer(env: ServerOptions): Promise<number> {
-  const checkAuth = getAuthMiddleware(env.ACCESS_TOKEN_KEY);
+  const { checkAuth, checkWebhook } = getAuthMiddleware(env.ACCESS_TOKEN_KEY);
   // console.error('checking', env);
   for (const option of optionsToRequire) {
     if (!env[option]) {
@@ -149,16 +166,24 @@ export async function startServer(env: ServerOptions): Promise<number> {
       headers: true, // Include rate limit info in response headers
     }),
   );
-  app.use(express.json());
   return new Promise((resolve, reject) => {
     app.get('/v2/', hello);
     app.get('/v2/totals', checkAuth, getTotals);
     app.get('/v2/documents', checkAuth, list);
     app.get('/v2/documents/:platformId', checkAuth, getUbl);
-    app.post('/v2/documents/:platformId', checkAuth, markPaid);
+    app.post('/v2/documents/:platformId', checkAuth, express.json(), markPaid);
     app.post('/v2/send', checkAuth, express.text({ type: '*/*' }), send);
-    app.post('/v2/reg', checkAuth, reg);
-    app.post('/v2/unreg', checkAuth, unreg);
+    app.post('/v2/reg', checkAuth, express.json(), reg);
+    app.post('/v2/unreg', checkAuth, express.json(), unreg);
+    app.post('/v2/webhook/outgoing/scrada', express.text({ type: '*/*' }), checkWebhook, async (req, res) => {
+      console.log('Received outgoing webhook from Scrada', req.body);
+      setDocumentStatus(req.body)
+      res.status(200).end('OK\n');
+    });
+    // app.post('/v2/webhook/incoming/scrada', express.text({ type: '*/*' }), checkWebhook, async (req, res) => {
+    //   console.log('Received incoming webhook from Scrada', req.body);
+    //   res.status(200).end('OK\n');
+    // });
 
     app.listen(port, (error) => {
       if (error) {
