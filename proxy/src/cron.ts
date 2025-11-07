@@ -1,16 +1,74 @@
-import { run } from 'syncables';
+import { storeDocumentInDb } from "./db.js";
+import { parseDocument } from "./parse.js";
 
-// ...
-run();
+export async function checkForIncomingDocs(): Promise<void> {
+  console.log('Checking for incoming documents...');
+  const res = await fetch(
+      `https://apitest.scrada.be/v1/company/${process.env.SCRADA_COMPANY_ID}/peppol/inbound/document/unconfirmed`,
+    {
+        headers: {
+          'X-Api-Key': process.env.SCRADA_API_KEY!,
+          'X-Password': process.env.SCRADA_API_PWD!,
+        },
+      },
+    );
+  if (!res.ok) {
+    console.error('Failed to fetch incoming documents:', res.statusText);
+    return;
+  }
+  const { results } = await res.json();
+  const docIds = results.map((doc: { id: string }) => doc.id);
+  await Promise.all(docIds.map(async (docId: string) => {
+    console.log('Processing incoming document:', docId);
+    const res = await fetch(
+      `https://apitest.scrada.be/v1/company/${process.env.SCRADA_COMPANY_ID}/peppol/inbound/document/${docId}`,
+    {
+        headers: {
+          'X-Api-Key': process.env.SCRADA_API_KEY!,
+          'X-Password': process.env.SCRADA_API_PWD!,
+        },
+      },
+    );
+    if (!res.ok) {
+      console.error('Failed to fetch incoming document:', docId, res.statusText);
+      return;
+    }
+    const ubl = await res.text();
+    const expect = {
+      userId: res.headers.get('x-scrada-peppol-receiver-id')!,
+      counterPartyId: res.headers.get('x-scrada-peppol-sender-id')!,
+    };
+    let docDetails;
+    try {
+      docDetails = parseDocument(ubl, 'incoming');
+    } catch (error) {
+      console.error('Failed to parse document:', docId, error);
+      return;
+    }
+    Object.keys(expect).forEach(key => {
+      if (docDetails[key] !== expect[key]) {
+        console.error(`Document ${docId} does not match expected ${key}:`, docDetails[key]);
+      }
+    });
+    if (docDetails.direction !== 'incoming') {
+      console.error('Document is not incoming, skipping:', docId);
+      return;
+    }
+    docDetails.platformId = `scrada_${res.headers.get('x-scrada-document-id')!}`;
+    await storeDocumentInDb(docDetails);
+    const confirmRes = await fetch(`https://apitest.scrada.be/v1/company/${process.env.SCRADA_COMPANY_ID}/peppol/inbound/document/${docId}/confirm`, {
+      method: 'PUT',
+      headers: {
+        'X-Api-Key': process.env.SCRADA_API_KEY!,
+        'X-Password': process.env.SCRADA_API_PWD!,
+      },
+    });
 
-// ...
-// runOAuthClient({
-//   authorizationURL: 'https://accounts.google.com/o/oauth2/v2/auth',
-//   tokenURL: 'https://oauth2.googleapis.com/token',
-//   clientID: process.env.GOOGLE_CLIENT_ID || ((): void => { throw new Error('GOOGLE_CLIENT_ID not set') })(),
-//   clientSecret: process.env.GOOGLE_CLIENT_SECRET || ((): void => { throw new Error('GOOGLE_CLIENT_SECRET not set') })(),
-//   callbackURL: 'http://localhost:8000/callback'
-// }, 8000, async (token) => {
-//   console.log(`Received OAuth token: ${token}`);
-// }); // Start the OAuth client on port 8000
-// console.log('Data fetched and inserted. Visit http://localhost:8000/ if you need to renew the GOOGLE_OAUTH_TOKEN env var.');
+    if (!confirmRes.ok) {
+      console.error('Failed to confirm incoming document:', docId, confirmRes.statusText);
+      return;
+    }
+    console.log('Incoming document:', docDetails.platformId);
+  }));
+  console.log('Incoming documents:', docIds);
+}
