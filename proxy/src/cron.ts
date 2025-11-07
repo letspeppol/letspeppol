@@ -56,6 +56,18 @@ export async function checkForIncomingDocs(): Promise<void> {
     }
     docDetails.platformId = `scrada_${res.headers.get('x-scrada-document-id')!}`;
     await storeDocumentInDb(docDetails);
+    const confirmRes = await fetch(`https://apitest.scrada.be/v1/company/${process.env.SCRADA_COMPANY_ID}/peppol/inbound/document/${docId}/confirm`, {
+      method: 'PUT',
+      headers: {
+        'X-Api-Key': process.env.SCRADA_API_KEY!,
+        'X-Password': process.env.SCRADA_API_PWD!,
+      },
+    });
+
+    if (!confirmRes.ok) {
+      console.error('Failed to confirm incoming document:', docId, confirmRes.statusText);
+      return;
+    }
     console.log('Incoming document:', docDetails.platformId);
   }));
   console.log('Incoming documents:', docIds);
