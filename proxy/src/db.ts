@@ -181,6 +181,7 @@ export async function listEntityDocuments(
         dueDate: row.duedate || undefined,
         paymentTerms: row.paymentterms || undefined,
         paid: row.paid || undefined,
+        status: row.status || undefined,
       }) as ListItem,
   );
 }
@@ -238,4 +239,15 @@ export async function getTotalsForUser(userId: string): Promise<{
     totalPayable: result.rows[0].totalpayable || 0,
     totalReceivable: result.rows[0].totalreceivable || 0,
   };
+}
+
+export async function setDocumentStatus({ id, status }: { id: string; status: string }): Promise<void> {
+  const client = await getPostgresClient();
+  const updateQuery = `
+    UPDATE FrontDocs
+    SET status = $1
+    WHERE platformId = $2
+  `;
+  const values = [status, `scrada_${id}`];
+  await client.query(updateQuery, values);
 }
