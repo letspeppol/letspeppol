@@ -25,7 +25,12 @@ export class Scrada implements Backend {
     documentXml: string,
     sendingEntity: string,
   ): Promise<void> {
-    const docDetails = parseDocument(documentXml, sendingEntity);
+    const docDetails = parseDocument(documentXml, 'outgoing');
+    if (docDetails.userId !== sendingEntity) {
+      throw new Error(
+        `Sender ${docDetails.userId} does not match sending entity ${sendingEntity}`,
+      );
+    }
     if (docDetails.userId !== sendingEntity) {
       throw new Error(
         `Sender ${docDetails.userId} does not match sending entity ${sendingEntity}`,

@@ -7,7 +7,7 @@ describe('parseDocument function', () => {
   const creditNoteXml = readFileSync('__tests__/fixtures/credit-note-v1.xml', 'utf-8');
 
   it ('should correctly parse sender and recipient from invoice XML', () => {
-    const parsed = parseDocument(invoiceXml, '0208:0705969661');
+    const parsed = parseDocument(invoiceXml, 'incoming');
     expect(parsed).toEqual({
       userId: "0208:0705969661",
       createdAt: expect.any(String),
@@ -23,7 +23,7 @@ describe('parseDocument function', () => {
     });
   });
   it ('should correctly parse sender and recipient from credit note XML', () => {
-    const parsed = parseDocument(creditNoteXml, '0208:0705969661');
+    const parsed = parseDocument(creditNoteXml, 'incoming');
     expect(parsed).toEqual({
       userId: "0208:0705969661",
       createdAt: expect.any(String),

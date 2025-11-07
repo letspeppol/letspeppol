@@ -34,14 +34,22 @@ export async function checkForIncomingDocs(): Promise<void> {
       return;
     }
     const ubl = await res.text();
-    const userId = res.headers.get('x-scrada-receiver-id')!;
+    const expect = {
+      userId: res.headers.get('x-scrada-peppol-receiver-id')!,
+      counterPartyId: res.headers.get('x-scrada-peppol-sender-id')!,
+    };
     let docDetails;
     try {
-      docDetails = parseDocument(ubl, userId);
+      docDetails = parseDocument(ubl, 'incoming');
     } catch (error) {
       console.error('Failed to parse document:', docId, error);
       return;
     }
+    Object.keys(expect).forEach(key => {
+      if (docDetails[key] !== expect[key]) {
+        console.error(`Document ${docId} does not match expected ${key}:`, docDetails[key]);
+      }
+    });
     if (docDetails.direction !== 'incoming') {
       console.error('Document is not incoming, skipping:', docId);
       return;
