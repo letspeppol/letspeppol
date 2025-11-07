@@ -5,6 +5,7 @@ import {AlertType} from "../components/alert/alert";
 import {IEventAggregator} from "aurelia";
 import {ListItem, ProxyService} from "../services/proxy/proxy-service";
 import {InvoiceDraftDto, InvoiceService} from "../services/app/invoice-service";
+import {Attachment} from "../services/peppol/ubl";
 
 export class InvoiceOverview {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -52,9 +53,9 @@ export class InvoiceOverview {
             // case 'incoming':
             //     this.activeItems = this.incoming;
             //     break;
-            // case 'drafts':
-            //     this.activeItems = this.invoiceContext.drafts;
-            //     break;
+            case 'drafts':
+                this.activeItems = this.invoiceContext.drafts;
+                break;
         }
     }
 
@@ -71,6 +72,26 @@ export class InvoiceOverview {
         if (this.box === 'drafts') {
             const doc = item as InvoiceDraftDto;
             this.invoiceContext.selectedInvoice = parseInvoice(doc.xml);
+            this.invoiceContext.selectedInvoice.AdditionalDocumentReference = [{
+                ID: 'jop',
+                DocumentDescription : "dit is de description",
+                Attachment : {
+                    EmbeddedDocumentBinaryObject: {
+                        __mimeCode: "application/pdf",
+                        __filename: "test.html",
+                        value: "PGh0bWw+Cjxib2R5Pgo8cD50ZXN0PC9wPgo8L2JvZHk+CjwvaHRtbD4K"
+                    }
+                }
+            },{
+                ID: 'jop',
+                DocumentDescription : "dit is de description",
+                Attachment: {
+                    ExternalReference: {
+                        URI: "http://google.com"
+                    }
+                }
+            }
+            ];
             this.invoiceContext.selectedDraft = doc;
         } else {
             // const doc = item as ListItem;
@@ -108,5 +129,4 @@ export class InvoiceOverview {
         }
         return false;
     }
-
 }

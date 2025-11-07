@@ -3,6 +3,7 @@ import {ProxyService} from "../../services/proxy/proxy-service";
 import {DocumentType, InvoiceContext} from "../invoice-context";
 import {bindable, computed, IDisposable, IEventAggregator, observable} from "aurelia";
 import {
+    Attachment,
     ClassifiedTaxCategory,
     CreditNote,
     getAmount,
@@ -225,6 +226,22 @@ export class InvoiceEdit {
             && inv.LegalMonetaryTotal.LineExtensionAmount.value > 0
             && (!inv.PaymentMeans || (inv.PaymentMeans.PaymentMeansCode.value != 30|| (inv.PaymentMeans.PaymentMeansCode.value === 30 && inv.PaymentMeans.PayeeFinancialAccount.ID)))
         ;
+    }
+
+    downloadAttachment(attachment: Attachment) {
+        if (attachment.EmbeddedDocumentBinaryObject) {
+            const source = `data:${attachment.EmbeddedDocumentBinaryObject.__mimeCode};base64,${attachment.EmbeddedDocumentBinaryObject.value}`;
+            const link = document.createElement('a');
+            document.body.appendChild(link);
+            link.href = source;
+            link.target = '_self';
+            link.download = attachment.EmbeddedDocumentBinaryObject.__filename;
+            link.click();
+            this.ea.publish('alert', {alertType: AlertType.Info, text: `File '${attachment.EmbeddedDocumentBinaryObject.__filename}' downloaded`});
+        }
+        if (attachment.ExternalReference && attachment.ExternalReference.URI) {
+            window.open(attachment.ExternalReference.URI, '_blank');
+        }
     }
 
 }

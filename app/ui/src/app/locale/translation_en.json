@@ -318,7 +318,8 @@
       "actions": "Actions",
       "add-line": "Add line",
       "note": "Note",
-      "recreate-positions": "Recreate line positions"
+      "recreate-positions": "Recreate line positions",
+      "attachments": "Attachments"
     }
   },
   "account": {

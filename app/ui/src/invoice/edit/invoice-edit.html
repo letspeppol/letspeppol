@@ -113,7 +113,29 @@
                     <b>${invoiceContext.selectedInvoice.PaymentMeans.PaymentID}</b>
                 </template>
             </div>
-            <div></div>
+            <div class="composer-info">
+                <div style="display: flex; flex-direction: row; margin-bottom: var(--space-025)" >
+                    <div class="card-header">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-paperclip-icon lucide-paperclip"><path d="m16 6-8.414 8.586a2 2 0 0 0 2.829 2.829l8.414-8.586a4 4 0 1 0-5.657-5.657l-8.379 8.551a6 6 0 1 0 8.485 8.485l8.379-8.551"/></svg>
+                        <h5 style="margin: 0" t="invoice.edit.attachments">Attachments</h5>
+                    </div>
+                    <button class="icon-btn" title="Edit" t="[title]common.edit">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pen-icon lucide-pen"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>
+                    </button>
+                </div>
+                <template repeat.for="additionalDocumentReference of invoiceContext.selectedInvoice.AdditionalDocumentReference">
+                    <button if.bind="additionalDocumentReference.Attachment" class="btn" title.bind="additionalDocumentReference.DocumentDescription" click.trigger="downloadAttachment(additionalDocumentReference.Attachment)">
+                        <template if.bind="additionalDocumentReference.Attachment.EmbeddedDocumentBinaryObject">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-down-icon lucide-file-down"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg>
+                            <span>${additionalDocumentReference.Attachment.EmbeddedDocumentBinaryObject.__filename}</span>
+                        </template>
+                        <template else>
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg>
+                            <span>${additionalDocumentReference.Attachment.ExternalReference.URI}</span>
+                        </template>
+                    </button>
+                </template>
+            </div>
             <div class="head-right">
                 <div class="total-display">
                     <span t="invoice.edit.subtotal">Subtotal</span>
