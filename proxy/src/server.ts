@@ -180,10 +180,10 @@ export async function startServer(env: ServerOptions): Promise<number> {
       setDocumentStatus(req.body)
       res.status(200).end('OK\n');
     });
-    app.post('/v2/webhook/incoming/scrada', express.text({ type: '*/*' }), checkWebhook, async (req, res) => {
-      console.log('Received incoming webhook from Scrada', req.body);
-      res.status(200).end('OK\n');
-    });
+    // app.post('/v2/webhook/incoming/scrada', express.text({ type: '*/*' }), checkWebhook, async (req, res) => {
+    //   console.log('Received incoming webhook from Scrada', req.body);
+    //   res.status(200).end('OK\n');
+    // });
 
     app.listen(port, (error) => {
       if (error) {
