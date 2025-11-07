@@ -91,6 +91,7 @@ To let the webhooks from Scrada arrive at your laptop locally, you can do the fo
 ```sh
 npm install -g localtunnel
 lt --port 3000
+curl -X POST -d'{"test":true}' -H 'Content-Type: application/json' -H 'X-Scrada-HMAC-SHA256: 2abe5bb975969de69687e1a8fd7b5dbee7217e07a8b3161acb96614b5f94df8c' https://fuzzy-suns-march.loca.lt/v2/webhook/outgoing/scrada
 ```
 This will give you a domain name like https://yummy-rings-cut.loca.lt and then you can go to [the integration settings in your Scrada dashboard](https://mytest.scrada.be/nl/company/f932b7c4-b4fe-40d1-a981-a338b4478f78/settings/integrations/webhook) and configure:
 * `peppolInboundDocument/new` to go to https://yummy-rings-cut.loca.lt/v2/webhook/incoming
