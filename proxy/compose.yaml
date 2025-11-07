@@ -26,6 +26,7 @@ services:
       SCRADA_API_KEY: your_scrada_api_key_here # edit me!
       SCRADA_API_PWD: your_scrada_api_pwd_here # edit me!
       SCRADA_COMPANY_ID: your_scrada_company_id_here # edit me!
+      SCRADA_COMPANY_KEY: your_scrada_company_key_here # edit me!
       ACCESS_TOKEN_KEY: something-secret # edit me!
     depends_on:
       - db
