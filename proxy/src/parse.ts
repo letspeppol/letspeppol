@@ -1,7 +1,10 @@
 import { XMLParser } from 'fast-xml-parser';
 import { components } from './front.js';
 
-export function parseDocument(documentXml: string, userId: string): components['schemas']['Document'] {
+export function parseDocument(
+  documentXml: string,
+  userId: string,
+): components['schemas']['Document'] {
   const parserOptions = {
     ignoreAttributes: false,
     numberParseOptions: {
@@ -31,8 +34,8 @@ export function parseDocument(documentXml: string, userId: string): components['
   if (!receiver?.['cbc:EndpointID']?.['#text']) {
     throw new Error('Missing recipient EndpointID text');
   }
-  const senderId =sender?.['cbc:EndpointID']?.['#text'];
-  const receiverId = receiver?.['cbc:EndpointID']?.['#text'];
+  const senderId = `${sender?.['cbc:EndpointID']?.['@_schemeID']}:${sender?.['cbc:EndpointID']?.['#text']}`;
+  const receiverId = `${receiver?.['cbc:EndpointID']?.['@_schemeID']}:${receiver?.['cbc:EndpointID']?.['#text']}`;
   let counterPartyId;
   let counterPartyName;
   if (userId === senderId) {
@@ -55,7 +58,9 @@ export function parseDocument(documentXml: string, userId: string): components['
         ? 'invoice'
         : docType === 'CreditNote'
           ? 'credit-note'
-          : (() => { throw new Error(`Unknown document type: ${docType}`); })(),
+          : (() => {
+              throw new Error(`Unknown document type: ${docType}`);
+            })(),
     direction: userId === senderId ? 'outgoing' : 'incoming',
     counterPartyId,
     counterPartyName,
@@ -65,7 +70,8 @@ export function parseDocument(documentXml: string, userId: string): components['
         '#text'
       ],
     ),
-    paymentTerms: jObj[docType]?.['cac:PaymentTerms']?.['cbc:Note'] || undefined,
+    paymentTerms:
+      jObj[docType]?.['cac:PaymentTerms']?.['cbc:Note'] || undefined,
     dueDate: jObj[docType]?.['cbc:DueDate'] || undefined,
     // paid: initially undefined
     ubl: documentXml,

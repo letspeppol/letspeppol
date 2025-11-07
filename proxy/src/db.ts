@@ -1,9 +1,6 @@
 /* eslint @typescript-eslint/no-explicit-any: 0 */
 import { Client } from 'pg';
-import {
-  ListEntityDocumentsParams,
-  ListItem,
-} from './Backend.js';
+import { ListEntityDocumentsParams, ListItem } from './Backend.js';
 export { Client } from 'pg';
 import { components } from './front.js';
 
@@ -87,7 +84,9 @@ export async function insertData(
   );
 }
 
-export async function storeDocumentInDb(docDetails: components['schemas']['Document']): Promise<void> {
+export async function storeDocumentInDb(
+  docDetails: components['schemas']['Document'],
+): Promise<void> {
   const client = await getPostgresClient();
   const insertQuery = `
     INSERT INTO FrontDocs (userId, platformId, createdAt, docType, direction, counterPartyId, counterPartyName, docId, amount, dueDate, paymentTerms, paid, ubl)
@@ -107,7 +106,7 @@ export async function storeDocumentInDb(docDetails: components['schemas']['Docum
     docDetails.dueDate || null, // 10
     docDetails.paymentTerms || null, // 11
     docDetails.paid || null, // 12
-    docDetails.ubl // 13
+    docDetails.ubl, // 13
   ];
   await client.query(insertQuery, values);
 }
@@ -115,7 +114,17 @@ export async function storeDocumentInDb(docDetails: components['schemas']['Docum
 export async function listEntityDocuments(
   params: ListEntityDocumentsParams,
 ): Promise<ListItem[]> {
-  const { userId, page, pageSize, counterPartyId, counterPartyNameLike, docType, direction, docId, sortBy } = params;
+  const {
+    userId,
+    page,
+    pageSize,
+    counterPartyId,
+    counterPartyNameLike,
+    docType,
+    direction,
+    docId,
+    sortBy,
+  } = params;
   const offset = (page - 1) * pageSize;
   const orders = {
     amountAsc: 'amount ASC',
@@ -124,15 +133,8 @@ export async function listEntityDocuments(
     createdAtDesc: 'createdAt DESC',
   };
   const orderBy = orders[sortBy || 'createdAtAsc'] || 'createdAt ASC';
-  const queryParams = [
-    userId,
-    pageSize,
-    offset,
-    orderBy
-  ];
-  const whereClauses: string[] = [
-    `userId = $1`
-  ];
+  const queryParams = [userId, pageSize, offset, orderBy];
+  const whereClauses: string[] = [`userId = $1`];
   if (typeof counterPartyId === 'string') {
     queryParams.push(counterPartyId);
     whereClauses.push(`counterPartyId = $${queryParams.length}`);
@@ -183,7 +185,10 @@ export async function listEntityDocuments(
   );
 }
 
-export async function getDocumentUbl(requestingEntity: string, platformId: string): Promise<string> {
+export async function getDocumentUbl(
+  requestingEntity: string,
+  platformId: string,
+): Promise<string> {
   const client = await getPostgresClient();
   const queryStr = `
     SELECT ubl FROM FrontDocs

@@ -9,27 +9,33 @@ describe('parseDocument function', () => {
   it ('should correctly parse sender and recipient from invoice XML', () => {
     const parsed = parseDocument(invoiceXml, '0208:0705969661');
     expect(parsed).toEqual({
-      amount: 1656.25,
+      userId: "0208:0705969661",
+      createdAt: expect.any(String),
+      docType: "invoice",
+      direction: "incoming",
+      counterPartyId: "9944:nl862637223B02",
+      counterPartyName: "SupplierTradingName Ltd.",
       docId: "Snippet1",
-      docDetails: {
-        userId: "0208:0705969661",
-        counterPartyId: "9944:nl862637223B02",
-        counterPartyName: "SupplierTradingName Ltd.",
-        docType: "invoice",
-      },
+      dueDate: "2025-12-01",
+      paymentTerms: "Payment within 10 days, 2% discount",
+      amount: 1656.25,
+      ubl: invoiceXml,
     });
   });
   it ('should correctly parse sender and recipient from credit note XML', () => {
     const parsed = parseDocument(creditNoteXml, '0208:0705969661');
     expect(parsed).toEqual({
-      amount: 1656.25,
-      docDetails: {
-        userId: "0208:0705969661",
-        counterPartyId: "0208:1023290711",
-        counterPartyName: "SupplierTradingName Ltd.",
-        docType: "credit-note",
-      },
+      userId: "0208:0705969661",
+      createdAt: expect.any(String),
+      docType: "credit-note",
+      direction: "incoming",
+      counterPartyId: "0208:1023290711",
+      counterPartyName: "SupplierTradingName Ltd.",
       docId: "Snippet1",
+      dueDate: undefined,
+      paymentTerms: undefined,
+      amount: 1656.25,
+      ubl: creditNoteXml,
     });
   });
 });
