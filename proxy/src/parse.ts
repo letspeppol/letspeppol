@@ -31,8 +31,8 @@ export function parseDocument(documentXml: string, userId: string): components['
   if (!receiver?.['cbc:EndpointID']?.['#text']) {
     throw new Error('Missing recipient EndpointID text');
   }
-  const senderId =sender?.['cbc:EndpointID']?.['#text'];
-  const receiverId = receiver?.['cbc:EndpointID']?.['#text'];
+  const senderId =`${sender?.['cbc:EndpointID']?.['@_schemeID']}:${sender?.['cbc:EndpointID']?.['#text']}`;
+  const receiverId =`${receiver?.['cbc:EndpointID']?.['@_schemeID']}:${receiver?.['cbc:EndpointID']?.['#text']}`;
   let counterPartyId;
   let counterPartyName;
   if (userId === senderId) {
