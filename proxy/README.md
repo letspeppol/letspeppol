@@ -38,7 +38,7 @@ export ACCESS_TOKEN_KEY="something-secret" # same as what you put in the compose
 export ONE=`node token.js 0208:0734825676`
 curl $PROXY_HOST/v2
 curl -X POST -d'{"name":"BARGE vzw"}' -H "Authorization: Bearer $ONE" -H 'Content-Type: application/json' $PROXY_HOST/v2/reg
-node ./build/src/genDoc.js invoice 0208:0734825676 9944:nl862637223B02 asdf > ./doc.xml
+node ./build/src/genDoc.js invoice 0208:0734825676 0208:1029545627 asdf > ./doc.xml
 curl -X POST --data-binary "@./doc.xml" -H "Authorization: Bearer $ONE" $PROXY_HOST/v2/send
 docker exec -it db psql postgresql://syncables:syncables@localhost:5432/syncables -c "select userId, platformId, createdAt, docType, direction, counterPartyId, counterPartyName, docId, amount, dueDate, paymentTerms, paid from frontdocs"
 curl -X POST -d '{"paid":"yes"}' -H "Authorization: Bearer $ONE" -H 'Content-Type: application/json' $PROXY_HOST/v2/documents/scrada_9e8912d1-5d42-4cc1-a2c4-176f7d7738d7
@@ -57,7 +57,7 @@ This will give an array of objects that look like this:
     "createdAt": "2025-11-05T12:19:47.028Z",
     "docType": "invoice",
     "direction": "outgoing",
-    "counterPartyId": "9944:nl862637223B02",
+    "counterPartyId": "0208:1029545627",
     "counterPartyName": "Ponder Source Three",
     "docId": "asdf",
     "amount": "6125",
