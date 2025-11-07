@@ -34,9 +34,9 @@
   </cac:AdditionalDocumentReference>
   <cac:AccountingSupplierParty>
       <cac:Party>
-          <cbc:EndpointID schemeID="iso6523-actorid-upis">0208:0734825676</cbc:EndpointID>
+          <cbc:EndpointID schemeID="0208">0734825676</cbc:EndpointID>
           <cac:PartyIdentification>
-              <cbc:ID schemeID="iso6523-actorid-upis">0208:0734825676</cbc:ID>
+              <cbc:ID schemeID="0208">0734825676</cbc:ID>
           </cac:PartyIdentification>
           <cac:PartyName>
               <cbc:Name>Softwareoplossing.be</cbc:Name>
@@ -69,9 +69,9 @@
 
   <cac:AccountingCustomerParty>
       <cac:Party>
-          <cbc:EndpointID schemeID="iso6523-actorid-upis">9944:nl862637223B02</cbc:EndpointID>
+          <cbc:EndpointID schemeID="0208">1029545627</cbc:EndpointID>
           <cac:PartyIdentification>
-              <cbc:ID schemeID="iso6523-actorid-upis">9944:nl862637223B02</cbc:ID>
+              <cbc:ID schemeID="0208">1029545627</cbc:ID>
           </cac:PartyIdentification>
           <cac:PartyName>
               <cbc:Name>Ponder Source Three</cbc:Name>

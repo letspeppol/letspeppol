@@ -4,7 +4,12 @@ import { checkBearerToken } from './auth.js';
 import rateLimit from 'express-rate-limit';
 import { Backend } from './Backend.js';
 import { Scrada } from './scrada.js';
-import { listEntityDocuments, getDocumentUbl, markDocumentAsPaid, getTotalsForUser } from './db.js';
+import {
+  listEntityDocuments,
+  getDocumentUbl,
+  markDocumentAsPaid,
+  getTotalsForUser,
+} from './db.js';
 
 function getAuthMiddleware(secretKey: string): express.RequestHandler {
   return async function checkAuth(req, res, next): Promise<void> {
@@ -31,11 +36,7 @@ export type ServerOptions = {
   DATABASE_URL: string;
 };
 
-const optionsToRequire = [
-  'PORT',
-  'ACCESS_TOKEN_KEY',
-  'DATABASE_URL',
-];
+const optionsToRequire = ['PORT', 'ACCESS_TOKEN_KEY', 'DATABASE_URL'];
 export async function startServer(env: ServerOptions): Promise<number> {
   const checkAuth = getAuthMiddleware(env.ACCESS_TOKEN_KEY);
   // console.error('checking', env);
@@ -86,7 +87,12 @@ export async function startServer(env: ServerOptions): Promise<number> {
   }
 
   async function markPaid(req, res): Promise<void> {
-    console.log('Marking document as paid', req.peppolId, req.params.platformId, req.body);
+    console.log(
+      'Marking document as paid',
+      req.peppolId,
+      req.params.platformId,
+      req.body,
+    );
     await markDocumentAsPaid(
       req.peppolId,
       req.params.platformId,
@@ -105,12 +111,13 @@ export async function startServer(env: ServerOptions): Promise<number> {
       docType: req.query.docType as 'invoices' | 'credit-notes' | undefined,
       direction: req.query.direction as 'incoming' | 'outgoing' | undefined,
       docId: req.query.docId as string | undefined,
-      sortBy: (req.query.sortBy as
-        | 'amountAsc'
-        | 'amountDesc'
-        | 'createdAtAsc'
-        | 'createdAtDesc'
-        | undefined) || 'createdAtAsc',
+      sortBy:
+        (req.query.sortBy as
+          | 'amountAsc'
+          | 'amountDesc'
+          | 'createdAtAsc'
+          | 'createdAtDesc'
+          | undefined) || 'createdAtAsc',
       page: parseInt((req.query.page as string) || '1', 10),
       pageSize: parseInt((req.query.pageSize as string) || '20', 10),
     };
