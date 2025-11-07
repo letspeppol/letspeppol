@@ -159,6 +159,14 @@ export async function startServer(env: ServerOptions): Promise<number> {
     app.post('/v2/send', checkAuth, express.text({ type: '*/*' }), send);
     app.post('/v2/reg', checkAuth, reg);
     app.post('/v2/unreg', checkAuth, unreg);
+    app.post('/v2/webhook/outgoing/scrada', express.text({ type: '*/*' }), async (req, res) => {
+      console.log('Received outgoing webhook from Scrada', req.body);
+      res.status(200).end();
+    });
+    app.post('/v2/webhook/incoming/scrada', express.text({ type: '*/*' }), async (req, res) => {
+      console.log('Received incoming webhook from Scrada', req.body);
+      res.status(200).end();
+    });
 
     app.listen(port, (error) => {
       if (error) {

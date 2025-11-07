@@ -86,6 +86,16 @@ The output of the `/v2/totals` call looks like this:
 }
 ```
 
+### Webhooks
+To let the webhooks from Scrada arrive at your laptop locally, you can do the following:
+```sh
+npm install -g localtunnel
+lt --port 3000
+```
+This will give you a domain name like https://yummy-rings-cut.loca.lt and then you can go to [the integration settings in your Scrada dashboard](https://mytest.scrada.be/nl/company/f932b7c4-b4fe-40d1-a981-a338b4478f78/settings/integrations/webhook) and configure:
+* `peppolInboundDocument/new` to go to https://yummy-rings-cut.loca.lt/v2/webhook/incoming
+* `peppolOutboundDocument/statusUpdate` to go to https://yummy-rings-cut.loca.lt/v2/webhook/outgoing
+
 ### With Nix
 A `devenv` environment is available in the `dev/proxy` directory to host the proxy locally and run a small test. Make sure you have [`devenv`](https://devenv.sh/getting-started/) installed, and optionally install [`direnv`](https://devenv.sh/automatic-shell-activation/) for automatic shell activation. If you don’t use `direnv`, you’ll need to run `devenv shell` manually in the `dev/proxy` directory. Next, create a `dev/.env` file with the following contents (without quotes):
 ```sh
