@@ -12,9 +12,9 @@
   <cbc:BuyerReference>0150abc</cbc:BuyerReference>
   <cac:AccountingSupplierParty>
     <cac:Party>
-      <cbc:EndpointID schemeID="iso6523-actorid-upis">0208:1023290711</cbc:EndpointID>
+      <cbc:EndpointID schemeID="0208">1023290711</cbc:EndpointID>
       <cac:PartyIdentification>
-        <cbc:ID schemeID="iso6523-actorid-upis">0208:1023290711</cbc:ID>
+        <cbc:ID schemeID="0208">1023290711</cbc:ID>
       </cac:PartyIdentification>
       <cac:PartyName>
         <cbc:Name>SupplierTradingName Ltd.</cbc:Name>
@@ -42,9 +42,9 @@
   </cac:AccountingSupplierParty>
   <cac:AccountingCustomerParty>
     <cac:Party>
-      <cbc:EndpointID schemeID="iso6523-actorid-upis">0208:0705969661</cbc:EndpointID>
+      <cbc:EndpointID schemeID="0208">0705969661</cbc:EndpointID>
       <cac:PartyIdentification>
-        <cbc:ID schemeID="iso6523-actorid-upis">0208:0705969661</cbc:ID>
+        <cbc:ID schemeID="0208">0705969661</cbc:ID>
       </cac:PartyIdentification>
       <cac:PartyName>
         <cbc:Name>BuyerTradingName AS</cbc:Name>

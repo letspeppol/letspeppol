@@ -19,10 +19,10 @@ export SCRADA_API_PWD="from-scrada"
 export SCRADA_COMPANY_ID="from-scrada"
 export DATABASE_URL="postgres://syncables:syncables@localhost:5432/syncables?sslmode=disable"
 export ACCESS_TOKEN_KEY="something-secret"
+docker compose -f compose-db-only.yml up -d
 pnpm install
 pnpm build
 pnpm start
-docker compose -f compose-db-only.yml up -d
 ```
 In both cases you will need to create the database table before first use (FIXME: make this automatic):
 ```sh
