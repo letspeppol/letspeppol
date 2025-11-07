@@ -94,6 +94,7 @@ export interface components {
       dueDate?: string; // Format: date-time
       paid?: string;
       paymentTerms?: string;
+      status?: string;
     };
   };
   responses: never;

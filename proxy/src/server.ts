@@ -10,6 +10,7 @@ import {
   getDocumentUbl,
   markDocumentAsPaid,
   getTotalsForUser,
+  setDocumentStatus,
 } from './db.js';
 
 function getAuthMiddleware(secretKey: string): { checkAuth: express.RequestHandler, checkWebhook: express.RequestHandler } {
@@ -176,6 +177,7 @@ export async function startServer(env: ServerOptions): Promise<number> {
     app.post('/v2/unreg', checkAuth, express.json(), unreg);
     app.post('/v2/webhook/outgoing/scrada', express.text({ type: '*/*' }), checkWebhook, async (req, res) => {
       console.log('Received outgoing webhook from Scrada', req.body);
+      setDocumentStatus(req.body)
       res.status(200).end('OK\n');
     });
     app.post('/v2/webhook/incoming/scrada', express.text({ type: '*/*' }), checkWebhook, async (req, res) => {
