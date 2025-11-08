@@ -18,11 +18,32 @@ fi
 for db in app kyc proxy; do
   DB_EXISTS=$(psql -U "$POSTGRES_USER" -tAc "SELECT 1 FROM pg_database WHERE datname='${db}'" || true)
   if [ "$DB_EXISTS" = "1" ]; then
-    echo "[init] Database $db already exists -> ensuring owner $DB_USER"
-    psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -c "ALTER DATABASE \"${db}\" OWNER TO \"${DB_USER}\";" || true
+    echo "[init] Database $db already exists -> skipping creation"
   else
     echo "[init] Creating database $db owned by $DB_USER"
     psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -c "CREATE DATABASE \"${db}\" OWNER \"${DB_USER}\";"
+    if [ "$db" = "proxy" ]; then
+      psql -U "$POSTGRES_USER" -d "$db" -v ON_ERROR_STOP=1 <<SQL
+CREATE TYPE direction AS ENUM ('incoming', 'outgoing');
+CREATE TYPE docType AS ENUM ('invoice', 'credit-note');
+CREATE TABLE FrontDocs (
+    userId text,
+    platformId text PRIMARY KEY,
+    createdAt timestamp,
+    docType docType,
+    direction direction,
+    counterPartyId text,
+    counterPartyName text,
+    docId text,
+    amount numeric,
+    dueDate timestamp,
+    paymentTerms text,
+    paid text,
+    ubl text,
+    status text
+);
+SQL
+    fi
   fi
 done
 
