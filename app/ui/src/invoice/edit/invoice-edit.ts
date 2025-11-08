@@ -107,6 +107,13 @@ export class InvoiceEdit {
             this.ea.publish('showOverlay', "Sending invoice");
             console.log(JSON.stringify(this.invoiceContext.selectedInvoice));
             const xml = this.buildXml();
+
+            const response = await this.invoiceService.validate(xml);
+            if (!response.isValid) {
+                this.validationResultModal.showModal(response);
+                return;
+            }
+
             await this.proxyService.sendDocument(xml);
             console.log(xml);
             console.log(parseInvoice(xml));
