@@ -5,16 +5,20 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Entity
 @Setter
 @Getter
 @NoArgsConstructor
 public class InvoiceDraft extends GenericEntity {
 
-    private String type;
-    private String number;
-    private String customer;
-    private String date;
+    private String docType;
+    private String docId;
+    private String counterPartyName;
+    private String createdAt;
+    private String dueDate;
+    private BigDecimal amount;
     @Lob
     private String xml;
 
@@ -22,12 +26,13 @@ public class InvoiceDraft extends GenericEntity {
     @JoinColumn(name = "company_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_partner_company"))
     private Company company;
 
-    public InvoiceDraft(String type, String number, String customer, String date, String xml) {
-        this.type = type;
-        this.number = number;
-        this.customer = customer;
-        this.date = date;
+    public InvoiceDraft(String docType, String docId, String counterPartyName, String createdAt, String dueDate, BigDecimal amount, String xml) {
+        this.docType = docType;
+        this.docId = docId;
+        this.counterPartyName = counterPartyName;
+        this.createdAt = createdAt;
+        this.dueDate = dueDate;
+        this.amount = amount;
         this.xml = xml;
     }
-
 }

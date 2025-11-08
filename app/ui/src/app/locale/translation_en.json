@@ -48,7 +48,10 @@
     "password": "••••••••",
     "product-search": "Search product",
     "partner-search": "Search partner",
-    "invoice-search": "Search customer or reference",
+    "invoice-search": {
+      "doc": "Search doc",
+      "customer": "Search customer"
+    },
     "customer-search": "Search by name or VAT number",
     "name": "Name"
   },
@@ -240,8 +243,10 @@
       "direction": "Direction",
       "type": "Type",
       "doc": "Doc",
-      "date": "Date",
+      "issue-date": "Issue Date",
+      "due-date": "Due Date",
       "customer": "Customer",
+      "total": "Total",
       "actions": "Actions"
     },
     "filter": {

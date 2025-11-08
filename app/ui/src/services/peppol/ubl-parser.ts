@@ -6,6 +6,13 @@ const parser = new XMLParser({
     attributeNamePrefix: "__",
     textNodeName: "value",
     parseTagValue: false,
+    isArray: (name, jpath, isLeafNode, isAttribute) => {
+        return (
+            name === "cac:InvoiceLine" ||
+            name === "cac:AdditionalDocumentReference" ||
+            false
+        );
+    },
     tagValueProcessor: (tagName, value) => {
         const bare = tagName.replace(/^[^:]*:/, '');
         if (numberFields.includes(bare)) {
@@ -26,7 +33,6 @@ export const builder = new XMLBuilder({
     format: true,
     suppressEmptyNode: true,
     textNodeName: "value",
-    oneListGroup: true
     // tagValueProcessor: (a) => a, // prevent automatic type coercion
     // attributeValueProcessor: (a) => a,
 });
@@ -74,7 +80,9 @@ function addPrefixes(obj: any): any {
 export function parseInvoice(xml: string): Invoice {
     const obj = parser.parse(xml);
     const invoiceObj = stripPrefixes(obj["Invoice"]);
-    normalizeArrays(invoiceObj, ["TaxTotal", "TaxSubtotal", "AllowanceCharge", "InvoiceLine", "AdditionalDocumentReference"]);
+    console.log(JSON.stringify(invoiceObj));
+    normalizeArrays(invoiceObj, ["TaxTotal", "TaxSubtotal", "AllowanceCharge", "cac:InvoiceLine", "cac:AdditionalDocumentReference"]);
+    console.log(JSON.stringify(invoiceObj));
     return invoiceObj;
 }
 
@@ -248,7 +256,8 @@ const PREFIX_MAP: Record<string, "cbc" | "cac"> = {
     "ChargeIndicator": "cbc",
     "AllowanceChargeReason": "cbc",
     "EmbeddedDocumentBinaryObject": "cbc",
-
+    "DocumentDescription": "cbc",
+    "URI": "cbc"
     // Everything else is aggregate (cac)
 };
 

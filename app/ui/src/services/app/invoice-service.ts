@@ -4,10 +4,12 @@ import {AppApi} from "./app-api";
 
 export interface InvoiceDraftDto {
     id?: number,
-    type: string,
-    number?: string,
-    customer?: string,
-    date?: string,
+    docType: string,
+    docId: string,
+    counterPartyName?: string,
+    createdAt?: string,
+    dueDate?: string,
+    amount: number,
     xml: string
 }
 

@@ -25,6 +25,7 @@ export class InvoiceContext {
 
     clearSelectedInvoice() {
         this.selectedInvoice = undefined;
+        this.selectedDraft = undefined;
     }
 
     selectedInvoiceChanged(newValue: UBLDoc) {

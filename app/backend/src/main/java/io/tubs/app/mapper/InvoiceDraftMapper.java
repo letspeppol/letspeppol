@@ -8,10 +8,12 @@ public class InvoiceDraftMapper {
     public static InvoiceDraftDto toDto(InvoiceDraft invoiceDraft) {
         return new InvoiceDraftDto(
                 invoiceDraft.getId(),
-                invoiceDraft.getType(),
-                invoiceDraft.getNumber(),
-                invoiceDraft.getCustomer(),
-                invoiceDraft.getDate(),
+                invoiceDraft.getDocType(),
+                invoiceDraft.getDocId(),
+                invoiceDraft.getCounterPartyName(),
+                invoiceDraft.getCreatedAt(),
+                invoiceDraft.getDueDate(),
+                invoiceDraft.getAmount(),
                 invoiceDraft.getXml()
         );
     }

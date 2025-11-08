@@ -1,0 +1,57 @@
+<div class="modal" role="dialog" aria-modal="true" show.bind="open">
+    <div class="modal-backdrop"></div>
+    <div class="modal-card" style="width: 800px">
+        <header class="modal-header">
+            <h2>Attachments</h2>
+            <button class="icon-btn" click.trigger="closeModal()" aria-label="Close dialog" title="Close" t="[title]common.close">×</button>
+        </header>
+        <div class="modal-body">
+            <div class="upload-wrapper"
+                 dragover.trigger="dragOver($event)"
+                 drop.trigger="dragDrop($event)"
+            >
+                <p>Upload File</p>
+                <svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-up-icon lucide-file-up"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M12 12v6"/><path d="m15 15-3-3-3 3"/></svg>
+            </div>
+            <div class="table-wrapper">
+                <table class="data-table line-table">
+                    <thead>
+                    <tr>
+                        <th style="width:50px">Type</th>
+                        <th style="min-width:150px">ID</th>
+                        <th style="width:100%">Description</th>
+                        <th style="width:100%">Link/Filename</th>
+                        <th class="actions-col" style="width:1%" t="invoice.edit.actions">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr repeat.for="line of additionalDocumentReference">
+                        <template if.bind="line.Attachment.EmbeddedDocumentBinaryObject">
+                            <td>File</td>
+                            <td><input type="text" value.bind="line.ID" change.trigger="validate()"/></td>
+                            <td><input type="text" value.bind="line.DocumentDescription" change.trigger="validate()"/></td>
+                            <td>${line.Attachment.EmbeddedDocumentBinaryObject.__filename}</td>
+                        </template>
+                        <template else>
+                            <td>Link</td>
+                            <td><input type="text" value.bind="line.ID" change.trigger="validate()"/></td>
+                            <td><input type="text" value.bind="line.DocumentDescription" change.trigger="validate()"/></td>
+                            <td><input type="text" value.bind="line.Attachment.ExternalReference.URI" change.trigger="validate()"/></td>
+                        </template>
+                        <td class="actions-col">
+                            <button class="icon-btn" data-action="remove-line" title="Remove" t="[title]common.remove" click.trigger="deleteAttachment(line)">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-icon lucide-trash"><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <button type="button" class="btn primary" click.trigger="addExternalLink()">+ <span>Add Link</span></button>
+            </div>
+        </div>
+        <footer class="modal-footer">
+            <button type="button" class="btn" click.trigger="closeModal()" title="Cancel" t="[title]common.cancel" t="common.cancel">Cancel</button>
+            <button type="button" class="btn primary" click.trigger="saveAttachments()" disabled.bind="!validated" title="Confirm" t="[title]common.confirm" t="common.confirm">Confirm</button>
+        </footer>
+    </div>
+</div>

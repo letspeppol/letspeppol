@@ -125,7 +125,7 @@ export async function startServer(env: ServerOptions): Promise<number> {
       counterPartyNameLike: req.query.counterPartyNameLike as
         | string
         | undefined,
-      docType: req.query.docType as 'invoices' | 'credit-notes' | undefined,
+      docType: req.query.docType as 'invoice' | 'credit-note' | undefined,
       direction: req.query.direction as 'incoming' | 'outgoing' | undefined,
       docId: req.query.docId as string | undefined,
       sortBy:

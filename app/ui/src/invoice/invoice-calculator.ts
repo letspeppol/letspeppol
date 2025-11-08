@@ -11,7 +11,7 @@ export class InvoiceCalculator {
         let totalWithoutTax = 0;
         const taxSubtotals: TaxSubtotal[] = [];
         for (const line of lines) {
-            let taxSubtotal = taxSubtotals.find(item => item.TaxCategory.ID === line.Item.ClassifiedTaxCategory.ID);
+            let taxSubtotal = taxSubtotals.find(item => item.TaxCategory.Percent === line.Item.ClassifiedTaxCategory.Percent);
             if (!taxSubtotal) {
                 taxSubtotal = {
                     TaxableAmount: {
@@ -38,6 +38,12 @@ export class InvoiceCalculator {
             taxSubtotal.TaxAmount.value += tax;
             taxTotal += tax;
         }
+        taxTotal = roundTwoDecimals(taxTotal);
+        totalWithoutTax = roundTwoDecimals(totalWithoutTax);
+        taxSubtotals.forEach(item => {
+            item.TaxableAmount.value = roundTwoDecimals(item.TaxableAmount.value);
+            item.TaxAmount.value = roundTwoDecimals(item.TaxAmount.value);
+        })
 
         doc.TaxTotal = [{
             TaxAmount: {

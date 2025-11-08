@@ -1,0 +1,15 @@
+.upload-wrapper {
+    display: flex;
+    flex-direction: column;
+    border: 2px dashed black;
+    justify-content: center;
+    align-items: center;
+    padding: var(--space-14);
+    margin: var(--space-14) 0;
+    font-size: var(--space-125);
+    font-weight: bold;
+}
+
+.upload-wrapper p {
+    margin-top: 0;
+}

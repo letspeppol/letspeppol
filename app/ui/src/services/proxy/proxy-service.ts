@@ -1,6 +1,5 @@
 import {resolve} from "@aurelia/kernel";
 import {ProxyApi} from "./proxy-api";
-import sleep from "@web-eid/web-eid-library/utils/sleep";
 
 export type ListItem = {
     platformId: string;
@@ -9,42 +8,70 @@ export type ListItem = {
     counterPartyId: string;
     counterPartyName: string;
     createdAt: string; // ISO 8601 Date string
+    dueDate: string; // ISO 8601 Date string
     amount: number;
     docId: string;
 };
 
+export type Totals = {
+    totalPayable: number;
+    totalReceivable: number;
+}
+
+export type DocumentQuery = {
+    userId?: string;
+    counterPartyId?: string;
+    counterPartyNameLike?: string;
+    docType?: 'invoice' | 'credit-note';
+    direction?: 'incoming' | 'outgoing';
+    docId?: string;
+    sortBy?: 'amountAsc' | 'amountDesc' | 'createdAtAsc' | 'createdAtDesc';
+    page?: number;
+    pageSize?: number;
+};
+
+
 export class ProxyService {
     private letsPeppolApi = resolve(ProxyApi);
 
-    async getDocuments(page: number, counterPartyNameLike: string = undefined) {
-        let url = `/v2/documents?page=${page}&`;
-        if (counterPartyNameLike) {
-            url += `counterPartyNameLike=${counterPartyNameLike}`;
-        }
+    async getDocuments(query: DocumentQuery = {}) : Promise<ListItem[]> {
+        const defaults = {
+            sortBy: 'createdAtAsc',
+            page: 1,
+            pageSize: 20,
+        };
+
+        const params = { ...defaults, ...query };
+
+        const queryString = new URLSearchParams(
+            Object.entries(params)
+                .filter(([_, v]) => v)
+                .map(([k, v]) => [k, String(v)])
+        ).toString();
+
+        const url = `/v2/documents?${queryString}`;
 
         return await this.letsPeppolApi.httpClient.get(url).then(response => response.json());
     }
 
-    async getIncomingInvoices(page: number) : Promise<ListItem[]> {
-        return Promise.resolve([]);
-        // return await this.letsPeppolApi.httpClient.get(`/v1/invoices/incoming?page=${page}&itemsPerPage=10`).then(response => response.json());
+    async getTotals() : Promise<Totals> {
+        return await this.letsPeppolApi.httpClient.get(`/v2/totals`).then(response => response.json());
     }
 
-    async getOutgoingInvoices(page: number): Promise<ListItem[]> {
-        return Promise.resolve([]);
-        // return await this.letsPeppolApi.httpClient.get(`/v1/invoices/outgoing?page=${page}&itemsPerPage=10`).then(response => response.json());
+    async markPaid(platformId: string, paid: string) {
+        const body = {
+            paid: paid
+        };
+        return await this.letsPeppolApi.httpClient.post(`/v2/documents/${platformId}`, JSON.stringify(body)).then(response => response.text());
     }
 
     async sendDocument(xml: string) {
         return await this.letsPeppolApi.httpClient.post('/v2/send', xml);
     }
 
-    async getDocument(docType: string, direction: string, uuid: string) {
-        let type = 'invoices';
-        if (docType === 'Credit-note') {
-            type = 'credit-notes';
-        }
-        return await this.letsPeppolApi.httpClient.get(`/v1/${type}/${direction}/${uuid}`).then(response => response.text());
+    // Gets UBL
+    async getDocument(platformId: string) {
+        return await this.letsPeppolApi.httpClient.get(`/v2/documents/${platformId}`).then(response => response.text());
     }
 
 }

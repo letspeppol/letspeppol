@@ -21,6 +21,7 @@ import {InvoiceComposer} from "../invoice-composer";
 import {InvoiceDraftDto, InvoiceService} from "../../services/app/invoice-service";
 import {ValidationResultModal} from "./components/validation-result-modal";
 import {InvoiceModal} from "./components/invoice-modal";
+import {InvoiceAttachmentModal} from "./components/invoice-attachment-modal";
 
 export class InvoiceEdit {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -39,6 +40,7 @@ export class InvoiceEdit {
     @bindable invoiceDateModal: InvoicePaymentModal;
     @bindable invoiceCustomerModal: InvoiceCustomerModal;
     @bindable invoicePaymentModal: InvoicePaymentModal;
+    @bindable invoiceAttachmentModal: InvoiceAttachmentModal;
     @bindable validationResultModal: ValidationResultModal;
 
     bound() {
@@ -60,6 +62,10 @@ export class InvoiceEdit {
 
     paymentMeanCodeMatcher = (a: PaymentMeansCode, b: PaymentMeansCode) => {
         return a?.value === b?.value;
+    };
+
+    taxCategoryMatcher = (a: ClassifiedTaxCategory, b: ClassifiedTaxCategory) => {
+        return a?.Percent === b?.Percent;
     };
 
     newInvoice() {
@@ -100,7 +106,7 @@ export class InvoiceEdit {
         try {
             this.ea.publish('showOverlay', "Sending invoice");
             console.log(JSON.stringify(this.invoiceContext.selectedInvoice));
-            let xml = this.buildXml();
+            const xml = this.buildXml();
             await this.proxyService.sendDocument(xml);
             console.log(xml);
             console.log(parseInvoice(xml));
@@ -146,10 +152,12 @@ export class InvoiceEdit {
         const xml = this.buildXml();
         return {
             id: this.invoiceContext.selectedDraft?.id,
-            type: this.selectedDocumentType,
-            number: this.invoiceContext.selectedInvoice.ID,
-            customer: this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party?.PartyName.Name,
-            date: this.invoiceContext.selectedInvoice.IssueDate,
+            docType: this.selectedDocumentType,
+            docId: this.invoiceContext.selectedInvoice.ID,
+            counterPartyName: this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party?.PartyName.Name,
+            createdAt: this.invoiceContext.selectedInvoice.IssueDate,
+            dueDate: this.invoiceContext.selectedInvoice.DueDate,
+            amount: this.invoiceContext.selectedInvoice.LegalMonetaryTotal.LineExtensionAmount.value,
             xml: xml
         } as InvoiceDraftDto;
     }
@@ -200,6 +208,10 @@ export class InvoiceEdit {
 
     showPaymentModal() {
         this.invoicePaymentModal.showModal();
+    }
+
+    showAttachmentModal() {
+        this.invoiceAttachmentModal.showModal();
     }
 
     @computed({

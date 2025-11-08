@@ -104,7 +104,7 @@ describe("Invoice XML round-trip", () => {
         expect(monetaryTotal.PayableAmount.value).toBe(1656.25);
 
         // --- InvoiceLine ---
-        expect(invoiceObj.InvoiceLine.length).toBe(1);
+        expect(invoiceObj.InvoiceLine.length).toBe(2);
         const line = invoiceObj.InvoiceLine[0];
         expect(line.ID).toBe("1");
         expect(line.InvoicedQuantity?.value).toBe(7);
@@ -119,12 +119,14 @@ describe("Invoice XML round-trip", () => {
         expect(line.Price.PriceAmount.value).toBe(400);
 
         // --- Attachment ---
-        expect(invoiceObj.AdditionalDocumentReference.length).toBe(1);
-        const additionalDocumentReference = invoiceObj.AdditionalDocumentReference[0];
-        expect(additionalDocumentReference.ID).toBe("ATTACHMENT-099");
-        expect(additionalDocumentReference.Attachment.EmbeddedDocumentBinaryObject.__mimeCode).toBe("application/text");
-        expect(additionalDocumentReference.Attachment.EmbeddedDocumentBinaryObject.__filename).toBe("ATTACHMENT-099.txt");
-        expect(additionalDocumentReference.Attachment.EmbeddedDocumentBinaryObject.value).toBe("RGl0IGlzIGVlbiB0ZXN0");
+        expect(invoiceObj.AdditionalDocumentReference.length).toBe(2);
+        const additionalDocumentReference1 = invoiceObj.AdditionalDocumentReference[0];
+        expect(additionalDocumentReference1.ID).toBe("LINK1");
+        const additionalDocumentReference2 = invoiceObj.AdditionalDocumentReference[1];
+        expect(additionalDocumentReference2.ID).toBe("ATTACHMENT-099");
+        expect(additionalDocumentReference2.Attachment.EmbeddedDocumentBinaryObject.__mimeCode).toBe("application/text");
+        expect(additionalDocumentReference2.Attachment.EmbeddedDocumentBinaryObject.__filename).toBe("ATTACHMENT-099.txt");
+        expect(additionalDocumentReference2.Attachment.EmbeddedDocumentBinaryObject.value).toBe("RGl0IGlzIGVlbiB0ZXN0");
 
         // Build XML from Invoice object
         const rebuiltXml = buildInvoice(invoiceObj);
@@ -387,6 +389,15 @@ const sampleInvoiceXml = `
   <cbc:AccountingCost>4025:123:4343</cbc:AccountingCost>
   <cbc:BuyerReference>0150abc</cbc:BuyerReference>
   <cac:AdditionalDocumentReference>
+    <cbc:ID>LINK1</cbc:ID>
+    <cbc:DocumentDescription>link description1</cbc:DocumentDescription>
+    <cac:Attachment>
+      <cac:ExternalReference>
+        <cbc:URI>https://letspeppol.org</cbc:URI>
+      </cac:ExternalReference>
+    </cac:Attachment>
+  </cac:AdditionalDocumentReference>
+  <cac:AdditionalDocumentReference>
     <cbc:ID>ATTACHMENT-099</cbc:ID>
     <cac:Attachment>
       <cbc:EmbeddedDocumentBinaryObject mimeCode="application/text" filename="ATTACHMENT-099.txt">RGl0IGlzIGVlbiB0ZXN0</cbc:EmbeddedDocumentBinaryObject>
@@ -397,6 +408,8 @@ const sampleInvoiceXml = `
       <cbc:EndpointID schemeID="0208">1023290711</cbc:EndpointID>
       <cac:PartyIdentification>
         <cbc:ID schemeID="0208">1023290711</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyIdentification>
         <cbc:ID schemeID="0203">1023290712</cbc:ID>
       </cac:PartyIdentification>
       <cac:PartyName>
@@ -524,6 +537,38 @@ const sampleInvoiceXml = `
     <cac:Item>
       <cbc:Description>Description of item</cbc:Description>
       <cbc:Name>item name</cbc:Name>
+      <cac:StandardItemIdentification>
+        <cbc:ID schemeID="0088">21382183120983</cbc:ID>
+      </cac:StandardItemIdentification>
+      <cac:OriginCountry>
+        <cbc:IdentificationCode>NO</cbc:IdentificationCode>
+      </cac:OriginCountry>
+      <cac:CommodityClassification>
+        <cbc:ItemClassificationCode listID="SRV">09348023</cbc:ItemClassificationCode>
+      </cac:CommodityClassification>
+      <cac:ClassifiedTaxCategory>
+        <cbc:ID>S</cbc:ID>
+        <cbc:Percent>25</cbc:Percent>
+        <cac:TaxScheme>
+          <cbc:ID>VAT</cbc:ID>
+        </cac:TaxScheme>
+      </cac:ClassifiedTaxCategory>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="EUR">400</cbc:PriceAmount>
+    </cac:Price>
+  </cac:InvoiceLine>
+    <cac:InvoiceLine>
+    <cbc:ID>2</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="DAY">7</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="EUR">2800</cbc:LineExtensionAmount>
+    <cbc:AccountingCost>Konteringsstreng</cbc:AccountingCost>
+    <cac:OrderLineReference>
+      <cbc:LineID>123</cbc:LineID>
+    </cac:OrderLineReference>
+    <cac:Item>
+      <cbc:Description>Description of item</cbc:Description>
+      <cbc:Name>item name2</cbc:Name>
       <cac:StandardItemIdentification>
         <cbc:ID schemeID="0088">21382183120983</cbc:ID>
       </cac:StandardItemIdentification>

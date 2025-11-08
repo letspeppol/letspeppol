@@ -37,7 +37,7 @@
                                 <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                                 <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.5"/>
                             </svg>
-                            <input type="search" placeholder="Search product" t="[placeholder]placeholder.product-search" />
+                            <input type="search" placeholder="Search product" t="[placeholder]placeholder.product-search" value.bind="searchQuery"/>
                         </label>
                     </div>
                     <button class="btn primary" click.trigger="productContext.newProduct()" title="New Product" t="[title]product.new">

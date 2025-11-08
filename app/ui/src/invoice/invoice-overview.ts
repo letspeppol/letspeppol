@@ -2,22 +2,18 @@ import {resolve} from "@aurelia/kernel";
 import {InvoiceContext} from "./invoice-context";
 import {parseInvoice} from "../services/peppol/ubl-parser";
 import {AlertType} from "../components/alert/alert";
-import {IEventAggregator} from "aurelia";
-import {ListItem, ProxyService} from "../services/proxy/proxy-service";
+import {IEventAggregator, watch} from "aurelia";
+import {DocumentQuery, ListItem, ProxyService} from "../services/proxy/proxy-service";
 import {InvoiceDraftDto, InvoiceService} from "../services/app/invoice-service";
-import {Attachment} from "../services/peppol/ubl";
 
 export class InvoiceOverview {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
     private letsPeppolService = resolve(ProxyService);
     private invoiceService = resolve(InvoiceService);
     private invoiceContext = resolve(InvoiceContext);
-    all: ListItem[] = [];
-    // incoming: ListItemV1[] = [];
-    // outgoing: ListItemV1[] = [];
-    activeItems: ListItem[] | InvoiceDraftDto[] = [];
+    invoices: ListItem[] | InvoiceDraftDto[] = [];
     box = 'all'
-    page = 1;
+    query: DocumentQuery = {page: 1};
 
     attached() {
         this.loadInvoices();
@@ -25,36 +21,43 @@ export class InvoiceOverview {
         this.invoiceContext.initCompany();
     }
 
-    loadInvoices() {
-        this.letsPeppolService.getDocuments(this.page).then(items => this.all = items);
-        /*
-        const ip = this.letsPeppolService.getIncomingInvoices(this.page).then(items => this.incoming = items);
-        const op = this.letsPeppolService.getOutgoingInvoices(this.page).then(items => this.outgoing = items);
-        Promise.all([ip, op]).then(([incoming, outgoing]) => {
-            this.all = [...incoming, ...outgoing].sort((a, b) => Date.parse(b.requestSentAt) - Date.parse(a.requestSentAt));
-            this.setActiveItems('all');
-        }).catch(() => this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to get invoices"}));
-         */
-    }
-
     async loadDrafts() {
         this.invoiceContext.drafts = await this.invoiceService.getInvoiceDrafts();
+    }
+
+    @watch((vm) => [vm.query.docId, vm.query.counterPartyNameLike])
+    loadInvoices() {
+        if (this.box === 'drafts') {
+            this.invoices = this.invoiceContext.drafts.filter(i => {
+               return (!this.query.docType || i.docType === this.query.docType) &&
+                (!this.query.counterPartyNameLike || !i.counterPartyName || i.counterPartyName.toLowerCase().includes(this.query.counterPartyNameLike.toLowerCase())) &&
+                (!this.query.docId || !i.docId || i.docId.toLowerCase() === this.query.docId.toLowerCase())
+                ;
+            });
+        } else {
+            this.letsPeppolService.getDocuments(this.query).then(items => this.invoices = items);
+        }
+    }
+
+    changeDocType(value: undefined | "invoice" | "credit-note") {
+        this.query.docType = value;
+        this.loadInvoices();
     }
 
     setActiveItems(box) {
         this.box = box;
         switch (box) {
             case 'all':
-                this.activeItems = this.all;
+                this.query.direction = undefined;
+                this.loadInvoices();
                 break;
-            // case 'outgoing':
-            //     this.activeItems = this.outgoing;
-            //     break;
-            // case 'incoming':
-            //     this.activeItems = this.incoming;
-            //     break;
+            case 'outgoing':
+            case 'incoming':
+                this.query.direction = box;
+                this.loadInvoices();
+                break;
             case 'drafts':
-                this.activeItems = this.invoiceContext.drafts;
+                this.invoices = this.invoiceContext.drafts;
                 break;
         }
     }
@@ -72,26 +75,6 @@ export class InvoiceOverview {
         if (this.box === 'drafts') {
             const doc = item as InvoiceDraftDto;
             this.invoiceContext.selectedInvoice = parseInvoice(doc.xml);
-            this.invoiceContext.selectedInvoice.AdditionalDocumentReference = [{
-                ID: 'jop',
-                DocumentDescription : "dit is de description",
-                Attachment : {
-                    EmbeddedDocumentBinaryObject: {
-                        __mimeCode: "application/pdf",
-                        __filename: "test.html",
-                        value: "PGh0bWw+Cjxib2R5Pgo8cD50ZXN0PC9wPgo8L2JvZHk+CjwvaHRtbD4K"
-                    }
-                }
-            },{
-                ID: 'jop',
-                DocumentDescription : "dit is de description",
-                Attachment: {
-                    ExternalReference: {
-                        URI: "http://google.com"
-                    }
-                }
-            }
-            ];
             this.invoiceContext.selectedDraft = doc;
         } else {
             // const doc = item as ListItem;
@@ -102,18 +85,18 @@ export class InvoiceOverview {
     }
 
     nextPage() {
-        if (this.page > 1 && this.all.length === 0) {
+        if (this.query.page > 1 && this.invoices.length === 0) {
             return;
         }
-        this.page++;
+        this.query.page++;
         this.loadInvoices();
     }
 
     previousPage() {
-        if (this.page === 1) {
+        if (this.query.page === 1) {
             return;
         }
-        this.page--;
+        this.query.page--;
         this.loadInvoices();
     }
 

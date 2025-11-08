@@ -6,7 +6,7 @@ export type ListEntityDocumentsParams = {
   // filters:
   counterPartyId?: string | undefined;
   counterPartyNameLike?: string | undefined;
-  docType: 'invoices' | 'credit-notes' | undefined;
+  docType: 'invoice' | 'credit-note' | undefined;
   direction: 'incoming' | 'outgoing' | undefined;
   docId?: string | undefined;
   // sorting:

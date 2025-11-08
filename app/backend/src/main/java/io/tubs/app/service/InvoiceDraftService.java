@@ -32,10 +32,12 @@ public class InvoiceDraftService {
     public InvoiceDraftDto createDraft(String companyNumber, InvoiceDraftDto draftDto) {
         Company company = companyRepository.findByCompanyNumber(companyNumber).orElseThrow(() -> new NotFoundException("Company does not exist"));
         InvoiceDraft draft = new InvoiceDraft(
-                draftDto.type(),
-                draftDto.number(),
-                draftDto.customer(),
-                draftDto.date(),
+                draftDto.docType(),
+                draftDto.docId(),
+                draftDto.counterPartyName(),
+                draftDto.createdAt(),
+                draftDto.dueDate(),
+                draftDto.amount(),
                 draftDto.xml()
         );
         draft.setCompany(company);
@@ -45,10 +47,12 @@ public class InvoiceDraftService {
 
     public InvoiceDraftDto updateDraft(String companyNumber, Long id, InvoiceDraftDto draftDto) {
         InvoiceDraft draft = invoiceDraftRepository.findById(id).orElseThrow(() -> new NotFoundException("Draft does not exist"));
-        draft.setType(draftDto.type());
-        draft.setNumber(draftDto.number());
-        draft.setCustomer(draftDto.customer());
-        draft.setDate(draftDto.date());
+        draft.setDocType(draftDto.docType());
+        draft.setDocId(draftDto.docId());
+        draft.setCounterPartyName(draftDto.counterPartyName());
+        draft.setCreatedAt(draftDto.createdAt());
+        draft.setDueDate(draftDto.dueDate());
+        draft.setAmount(draftDto.amount());
         draft.setXml(draftDto.xml());
         invoiceDraftRepository.save(draft);
         return InvoiceDraftMapper.toDto(draft);

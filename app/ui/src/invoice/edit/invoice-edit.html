@@ -3,6 +3,7 @@
 <import from="./components/invoice-date-modal"></import>
 <import from="./components/invoice-payment-modal"></import>
 <import from="./components/invoice-customer-modal"></import>
+<import from="./components/invoice-attachment-modal"></import>
 <import from="./components/validation-result-modal"></import>
 <import from="./components/product-name-search"></import>
 
@@ -10,6 +11,7 @@
 <invoice-date-modal component.ref="invoiceDateModal" invoice-context.bind="invoiceContext" document-type.bind="selectedDocumentType"></invoice-date-modal>
 <invoice-customer-modal component.ref="invoiceCustomerModal" invoice-context.bind="invoiceContext"></invoice-customer-modal>
 <invoice-payment-modal component.ref="invoicePaymentModal" invoice-context.bind="invoiceContext" selected-payment-means-code.two-way="selectedPaymentMeansCode"></invoice-payment-modal>
+<invoice-attachment-modal component.ref="invoiceAttachmentModal" invoice-context.bind="invoiceContext"></invoice-attachment-modal>
 <validation-result-modal component.ref="validationResultModal"></validation-result-modal>
 
 <div class="invoices-main">
@@ -114,7 +116,7 @@
                 </template>
             </div>
             <div class="composer-info">
-                <div style="display: flex; flex-direction: row; margin-bottom: var(--space-025)" >
+                <div style="display: flex; flex-direction: row; margin-bottom: var(--space-025)" click.trigger="showAttachmentModal()">
                     <div class="card-header">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-paperclip-icon lucide-paperclip"><path d="m16 6-8.414 8.586a2 2 0 0 0 2.829 2.829l8.414-8.586a4 4 0 1 0-5.657-5.657l-8.379 8.551a6 6 0 1 0 8.485 8.485l8.379-8.551"/></svg>
                         <h5 style="margin: 0" t="invoice.edit.attachments">Attachments</h5>
@@ -191,7 +193,7 @@
                             </td>
                             <td class="num"><input class="unitPrice" type="number" min="0" step="0.01" value.bind="line.Price.PriceAmount.value" change.trigger="calcLineTotal(line)" /></td>
                             <td class="num">
-                                <select value.bind="line.Item.ClassifiedTaxCategory" change.trigger="calcLineTotal(line)">
+                                <select value.bind="line.Item.ClassifiedTaxCategory" change.trigger="calcLineTotal(line)" matcher.bind="taxCategoryMatcher">
                                     <option repeat.for="taxCategory of taxCategories" model.bind="taxCategory">${taxCategory.Percent}%</option>
                                 </select>
                             </td>

@@ -45,6 +45,7 @@ export class InvoiceComposer {
             Note: undefined,
             DocumentCurrencyCode: "EUR",
             BuyerReference: undefined,
+            AdditionalDocumentReference: undefined,
             AccountingSupplierParty: this.getAccountingSupplierParty(),
             AccountingCustomerParty: this.getAccountingCustomerParty(),
             PaymentMeans : undefined,
@@ -120,6 +121,7 @@ export class InvoiceComposer {
             Note: undefined,
             DocumentCurrencyCode: "EUR",
             BuyerReference: undefined,
+            AdditionalDocumentReference: undefined,
             AccountingSupplierParty: this.getAccountingSupplierParty(),
             AccountingCustomerParty: this.getAccountingCustomerParty(),
             PaymentMeans : undefined,
@@ -309,14 +311,6 @@ export class InvoiceComposer {
                 Price: line.Price,
             })),
         } as CreditNote;
-
-        /*
-          <cac:BillingReference>
-            <cac:InvoiceDocumentReference>
-              <cbc:ID>INV-2025-007</cbc:ID>
-            </cac:InvoiceDocumentReference>
-          </cac:BillingReference>
-         */
     }
 
     creditNoteToInvoice(creditNote: CreditNote): Invoice {

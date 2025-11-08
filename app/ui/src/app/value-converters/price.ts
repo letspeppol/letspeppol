@@ -6,6 +6,10 @@ export class PriceConverter {
         if (!value) {
             return '';
         }
-        return Intl.NumberFormat('nl-BE', {style: 'currency', currencyDisplay: "symbol"})
+        return new Intl.NumberFormat('nl-BE', {
+            style: 'currency',
+            currency: 'EUR',
+            currencyDisplay: 'symbol',
+        }).format(value);
     }
 }
