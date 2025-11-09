@@ -1,3 +1,5 @@
+
+name: lp
 services:
   db:
     image: postgres:16-alpine
@@ -34,6 +36,7 @@ services:
       SCRADA_API_KEY: ${SCRADA_API_KEY}
       SCRADA_API_PWD: ${SCRADA_API_PWD}
       SCRADA_COMPANY_ID: ${SCRADA_COMPANY_ID}
+      SCRADA_COMPANY_KEY: ${SCRADA_COMPANY_KEY}
       DATABASE_URL: ${DATABASE_URL}
       ACCESS_TOKEN_KEY: ${ACCESS_TOKEN_KEY}
     ports:
