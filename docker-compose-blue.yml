@@ -1,3 +1,5 @@
+
+name: lp
 services:
   db:
     image: postgres:16-alpine
@@ -30,14 +32,13 @@ services:
       db:
         condition: service_healthy
     environment:
-      PORT: 8000
+      PORT: ${PROXY_PORT:-8086}
       SCRADA_API_KEY: ${SCRADA_API_KEY}
       SCRADA_API_PWD: ${SCRADA_API_PWD}
       SCRADA_COMPANY_ID: ${SCRADA_COMPANY_ID}
+      SCRADA_COMPANY_KEY: ${SCRADA_COMPANY_KEY}
       DATABASE_URL: ${DATABASE_URL}
       ACCESS_TOKEN_KEY: ${ACCESS_TOKEN_KEY}
-    ports:
-      - "${PROXY_PORT:-8086}:8000"
 
   app:
     build:
@@ -55,8 +56,6 @@ services:
       DB_PASS: ${DB_PASS}
       ACCESS_TOKEN_KEY: ${ACCESS_TOKEN_KEY}
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
-    ports:
-      - "${APP_PORT:-8085}:8085"
 
   kyc:
     build:
@@ -82,8 +81,6 @@ services:
       MAIL_FROM: ${MAIL_FROM}
       UI_URL: ${UI_URL}
       KYC_DATA_DIR: ${KYC_DATA_DIR}
-    ports:
-      - "${KYC_PORT:-8084}:8084"
 
   ui:
     build:

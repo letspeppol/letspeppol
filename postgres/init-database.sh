@@ -23,7 +23,7 @@ for db in app kyc proxy; do
     echo "[init] Creating database $db owned by $DB_USER"
     psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -c "CREATE DATABASE \"${db}\" OWNER \"${DB_USER}\";"
     if [ "$db" = "proxy" ]; then
-      psql -U "$POSTGRES_USER" -d "$db" -v ON_ERROR_STOP=1 <<SQL
+      psql -U "$DB_USER" -d "$db" -v ON_ERROR_STOP=1 <<SQL
 CREATE TYPE direction AS ENUM ('incoming', 'outgoing');
 CREATE TYPE docType AS ENUM ('invoice', 'credit-note');
 CREATE TABLE FrontDocs (
