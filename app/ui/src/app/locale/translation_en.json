@@ -83,7 +83,8 @@
   "error" : {
     "login-failed" : "Login failed",
     "registration-company-not-found" : "Company not found",
-    "registration-company-already-registered" : "Company already registered"
+    "registration-company-already-registered" : "Company already registered",
+    "registration-company-already-registered-on-peppol" : "Company already registered on Peppol"
   },
   "paymentTerms" : {
     "15_DAYS" :  "15 days",

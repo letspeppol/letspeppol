@@ -35,6 +35,7 @@ public class SecurityConfig {
             //.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
             .cors(cors -> {})
             .authorizeHttpRequests(auth -> auth
+                    .requestMatchers("/api/peppol-directory/**").permitAll()
                     .requestMatchers("/api/internal/**").hasAuthority(ROLE_SERVICE)
                     .requestMatchers("/api/**").hasAuthority(ROLE_KYC_USER)
                     .anyRequest().denyAll()
