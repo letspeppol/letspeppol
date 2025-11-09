@@ -24,15 +24,14 @@
             </h1>
         </div>
         <div class="editor-header-actions">
-            <button type="button" class="btn" click.trigger="validate()" t="invoice.edit.validate">Validate</button>
-
-            <button if.bind="invoiceContext.selectedDraft && !readOnly" type="button" class="btn" click.trigger="deleteDraft()">
-                <span t="invoice.edit.delete-draft">Delete draft</span>
-            </button>
-
             <button if.bind="!readOnly" type="button" class="btn" click.trigger="saveAsDraft()">
                 <span if.bind="invoiceContext.selectedDraft" t="invoice.edit.update-draft">Update draft</span>
                 <span if.bind="!invoiceContext.selectedDraft" t="invoice.edit.save-draft">Save draft</span>
+            </button>
+            <button if.bind="readOnly" type="button" class="btn" click.trigger="downloadUBL()" t="invoice.edit.download-ubl">Download UBL</button>
+            <button type="button" class="btn" click.trigger="validate()" t="invoice.edit.validate">Validate</button>
+            <button if.bind="invoiceContext.selectedDraft && !readOnly" type="button" class="btn" click.trigger="deleteDraft()">
+                <span t="invoice.edit.delete-draft">Delete draft</span>
             </button>
             <button type="button" class="btn" click.trigger="invoiceContext.clearSelectedInvoice()" t="invoice.edit.discard">Discard</button>
             <button if.bind="!readOnly" type="button" class="btn primary" click.trigger="sendInvoice()" disabled.bind="!isValid" t="invoice.edit.send.${selectedDocumentType}">Send invoice</button>

@@ -146,8 +146,7 @@ export class InvoiceEdit {
                 const invoiceDraftDto = await this.invoiceService.createInvoiceDraft(draft);
                 this.invoiceContext.drafts.unshift(invoiceDraftDto);
             }
-            this.invoiceContext.selectedInvoice = undefined;
-            this.invoiceContext.selectedDraft = undefined;
+            this.invoiceContext.clearSelectedInvoice();
             this.ea.publish('alert', {alertType: AlertType.Success, text: "Invoice draft saved"});
         } catch(e) {
             console.error(e);
@@ -159,8 +158,7 @@ export class InvoiceEdit {
         try {
             await this.invoiceService.deleteInvoiceDraft(this.invoiceContext.selectedDraft.id);
             this.invoiceContext.drafts.splice(this.invoiceContext.drafts.findIndex(item => item.id === this.invoiceContext.selectedDraft.id), 1);
-            this.invoiceContext.selectedInvoice = undefined;
-            this.invoiceContext.selectedDraft = undefined;
+            this.invoiceContext.clearSelectedInvoice();
             this.ea.publish('alert', {alertType: AlertType.Success, text: "Invoice draft removed"});
         } catch(e) {
             console.error(e);
@@ -180,6 +178,23 @@ export class InvoiceEdit {
             amount: this.invoiceContext.selectedInvoice.LegalMonetaryTotal.LineExtensionAmount.value,
             xml: xml
         } as InvoiceDraftDto;
+    }
+
+    downloadUBL() {
+        if (!this.invoiceContext.selectedInvoiceXML) {
+            this.ea.publish('alert', {alertType: AlertType.Warning, text: "No UBL data available"});
+        }
+        const blob = new Blob([this.invoiceContext.selectedInvoiceXML], { type: "application/xml" });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${this.invoiceContext.selectedInvoice.ID}.xml`;
+        document.body.appendChild(a);
+        a.click();
+        
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
     }
 
     async validate() {

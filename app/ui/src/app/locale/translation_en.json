@@ -301,6 +301,7 @@
       "no-matches": "No matches"
     },
     "edit": {
+      "download-ubl": "Download UBL",
       "validate": "Validate",
       "delete-draft": "Delete draft",
       "update-draft": "Update draft",

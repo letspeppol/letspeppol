@@ -22,11 +22,13 @@ export class InvoiceContext {
     drafts: InvoiceDraftDto[] = [];
     @observable selectedInvoice:  undefined | Invoice | CreditNote;
     selectedDraft: InvoiceDraftDto;
+    selectedInvoiceXML: string = undefined;
     readOnly: boolean = false;
 
     clearSelectedInvoice() {
         this.selectedInvoice = undefined;
         this.selectedDraft = undefined;
+        this.selectedInvoiceXML = undefined;
     }
 
     selectedInvoiceChanged(newValue: UBLDoc) {

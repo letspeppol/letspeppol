@@ -77,11 +77,13 @@ export class InvoiceOverview {
             this.invoiceContext.readOnly = false;
             this.invoiceContext.selectedInvoice = parseInvoice(doc.xml);
             this.invoiceContext.selectedDraft = doc;
+            this.invoiceContext.selectedInvoiceXML = doc.xml;
         } else {
             const doc = item as ListItem;
-            this.letsPeppolService.getDocument(doc.platformId).then((response) => {
+            this.letsPeppolService.getDocument(doc.platformId).then((xml) => {
                 this.invoiceContext.readOnly = true;
-                this.invoiceContext.selectedInvoice = parseInvoice(response);
+                this.invoiceContext.selectedInvoice = parseInvoice(xml);
+                this.invoiceContext.selectedInvoiceXML = xml;
             });
         }
     }
