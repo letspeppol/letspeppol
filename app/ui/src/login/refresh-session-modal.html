@@ -1,0 +1,28 @@
+<div class="modal" role="dialog" aria-modal="true" show.bind="open">
+    <div class="modal-backdrop"></div>
+    <div class="modal-card" style="width: 300px">
+        <header class="modal-header">
+            <h3 t="session.continue-title">Continue Session</h3>
+        </header>
+        <div class="modal-body">
+            <div class="auth-card card">
+                <form class="auth-form" submit.trigger="verifyLogin()">
+                    <div class="grid">
+                        <label class="field full">
+                            <span t="label.email">Email</span>
+                            <input name="email" type="email" placeholder="you@company.com" required value.bind="email" t="[placeholder]placeholder.email"/>
+                        </label>
+                        <label class="field full">
+                            <span t="label.password">Password</span>
+                            <input name="password" type="password" required value.bind="password" />
+                        </label>
+                    </div>
+                    <p if.bind="error" class="form-error" aria-live="assertive" t="error.login-failed">Login failed</p>
+                    <div class="auth-actions">
+                        <button type="submit" class="btn primary" t="login.continue">Continue</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,12 +1,14 @@
 package io.tubs.kyc.config;
 
 import jakarta.annotation.PostConstruct;
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Data
 @Component
 @ConfigurationProperties(prefix = "encryption")
 public class EncryptionProperties {
@@ -27,9 +29,4 @@ public class EncryptionProperties {
             }
         }
     }
-
-    public String getActiveKeyId() { return activeKeyId; }
-    public void setActiveKeyId(String activeKeyId) { this.activeKeyId = activeKeyId; }
-    public Map<String, String> getKeys() { return keys; }
-    public void setKeys(Map<String, String> keys) { this.keys = keys; }
 }

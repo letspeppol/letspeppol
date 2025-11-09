@@ -1,0 +1,365 @@
+{
+  "label" : {
+    "email" : "Email",
+    "password" : "Password",
+    "confirm-password" : "Confirm Password",
+    "vat-number" : "VAT number",
+    "name": "Name",
+    "city": "City",
+    "postal-code": "Postal Code",
+    "street": "Street",
+    "house-number": "House Number",
+    "company-name": "Company name",
+    "description": "Description",
+    "reference": "Reference",
+    "barcode": "Barcode",
+    "cost-price": "Cost Price",
+    "sale-price": "Sale Price",
+    "tax-percentage": "Tax Percentage",
+    "stock-quantity": "Stock Quantity",
+    "product-category": "Product Category",
+    "account-name": "Account Name",
+    "payment-terms": "Payment Terms",
+    "address": "Address",
+    "subscriber-info": "Subscriber Info",
+    "download-contract": "Download Contract",
+    "change-password": "Change Password",
+    "company-info": "Company Info",
+    "peppol-registration": "Peppol Registration",
+    "remove-from-peppol": "Remove From Peppol",
+    "not-registered-peppol": "Not registered on Peppol",
+    "iban": "IBAN",
+    "country": "Country",
+    "customer": "Customer",
+    "supplier": "Supplier",
+    "invoice-number": "Invoice number",
+    "buyer-reference": "Buyer Reference",
+    "note-optional": "Note (optional)",
+    "issue-date": "Issue Date",
+    "due-date": "Due Date",
+    "type": "Type",
+    "number": "Number",
+    "house-number-short": "House Nr",
+    "peppolId": "Peppol ID"
+  },
+  "placeholder" : {
+    "email" : "you@company.com",
+    "vat-number" : "BE0123456789",
+    "password": "••••••••",
+    "product-search": "Search product",
+    "partner-search": "Search partner",
+    "invoice-search": {
+      "doc": "Search doc",
+      "customer": "Search customer"
+    },
+    "customer-search": "Search by name or VAT number",
+    "name": "Name"
+  },
+  "login" : {
+    "action" : "Log in",
+    "title" : "Sign in to your account",
+    "new" : "New here?",
+    "register" : "Register your company",
+    "continue" : "Sign in",
+    "forgot" : "Forgot my password",
+    "remember": "Remember me"
+  },
+  "registration" : {
+    "title-step0" : "Register your company",
+    "create-account" : "Create account",
+    "already-registered" : "Already registered?",
+    "title-step1" : "Confirm your company",
+    "confirm-company": "Confirm",
+    "wrong-company": "Wrong company?",
+    "back": "Back",
+    "title-step2": "Account verification",
+    "instructions-intro": "A confirmation email has been sent. But first:",
+    "instructions-install-plugin": "Install the <b>web-eid plugin</b> via <a href=\"https://www.id.ee/en/article/install-id-software/\">https://www.id.ee/en/article/install-id-software/</a>",
+    "instructions-install-extension": "Make sure you install the browser extension, you can find the instructions on the same page",
+    "instructions-restart-browser": "<b>Restart your browser!</b>",
+    "instructions-test-plugin": "Verify whether the plugin works <a href=\"https://www.id.ee/en/article/test-your-id-card/\">here</a>",
+    "instructions-finally": "<b>Finally</b>, check your mails and click on the verification link in the confirmation email"
+  },
+  "error" : {
+    "login-failed" : "Login failed",
+    "registration-company-not-found" : "Company not found",
+    "registration-company-already-registered" : "Company already registered"
+  },
+  "paymentTerms" : {
+    "15_DAYS" :  "15 days",
+    "30_DAYS" :  "30 days",
+    "60_DAYS" : "60 days",
+    "END_OF_NEXT_MONTH" : "End of the month"
+  },
+  "documentType" : {
+    "invoice" : "Invoice",
+    "credit-note" : "Credit Note"
+  },
+  "confirmation": {
+    "header": "Confirm Identity",
+    "loading": "Loading company details…",
+    "company": "Company",
+    "directors": "Directors",
+    "table.name": "Name",
+    "table.action": "Action",
+    "director-confirm": "Confirm",
+    "director-confirmed": "Confirmed",
+    "no-directors": "No directors found.",
+    "read-contract-title": "1. Read the Contract",
+    "read-contract-info": "You will receive a signed copy when the registration flow is complete.",
+    "read-contract-agree": "I have read the contract and agree to the terms",
+    "choose-credentials-title": "2. Choose Credentials",
+    "sign-eid-title": "3. Sign with eID",
+    "anim-caption": "Insert your eID card and press confirm to sign.",
+    "anim-reader-label": "READER",
+    "anim-reader-sr": "Insert eID card into reader slot",
+    "confirm-button": "Confirm",
+    "success-title": "Success!",
+    "success-contract": "The signed contract can be found in your downloads folder",
+    "success-login-prefix": "You can now"
+  },
+  "common": {
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "save": "Save",
+    "discard": "Discard",
+    "clear": "Clear",
+    "apply": "Apply",
+    "previous": "Previous",
+    "next": "Next",
+    "search": "Search",
+    "new": "New",
+    "none": "None",
+    "yes": "Yes",
+    "no": "No",
+    "remove": "Remove",
+    "logout": "Log out",
+    "edit": "Edit",
+    "close": "Close"
+  },
+  "navigation": {
+    "invoices": "Invoices",
+    "partners": "Partners",
+    "products": "Products",
+    "account": "Account",
+    "brand-alt": "Let's Peppol",
+    "toggle-theme": "Toggle theme"
+  },
+  "alert": {
+    "success": "Success",
+    "info": "Info",
+    "warning": "Warning",
+    "danger": "Error",
+    "neutral": "Message"
+  },
+  "overlay": {
+    "saving-account": "Saving account, please wait"
+  },
+  "product": {
+    "categories": "Categories",
+    "category": "Category",
+    "title": "Products",
+    "all": "All",
+    "search": "Search product",
+    "new": "New Product",
+    "table": {
+      "name": "Name",
+      "description": "Description",
+      "category": "Category",
+      "reference": "Reference",
+      "barcode": "Barcode",
+      "cost-price": "Cost Price",
+      "sale-price": "Sale Price",
+      "tax-percentage": "Tax Percentage",
+      "stock-quantity": "Stock Quantity",
+      "actions": "Actions"
+    },
+    "empty": "No products match your filters.",
+    "edit": {
+      "new": "New product",
+      "info": "Product Info",
+      "pricing": "Pricing",
+      "stock": "Stock",
+      "stock-quantity": "Stock Quantity",
+      "product-category": "Product Category",
+      "none": "None",
+      "save": "Save product",
+      "discard": "Discard"
+    },
+    "categoryModal": {
+      "title": "Product Category",
+      "name": "Name",
+      "color": "Color"
+    }
+  },
+  "partner": {
+    "title": "Partners",
+    "customersSuppliers": "Customers & Suppliers",
+    "customers": "Customers",
+    "suppliers": "Suppliers",
+    "search": "Search partner",
+    "new": "New Partner",
+    "all": "All",
+    "table": {
+      "type": "Type",
+      "name": "Name",
+      "address": "Address",
+      "postal-code": "Postal code",
+      "city": "City",
+      "country": "Country",
+      "vat": "VAT",
+      "actions": "Actions"
+    },
+    "empty": "No partners match your filters.",
+    "edit": {
+      "new": "New partner",
+      "company-info": "Company Info",
+      "peppol": "Peppol",
+      "address": "Address",
+      "payment-info": "Payment Info",
+      "customer": "Customer",
+      "supplier": "Supplier",
+      "account-name": "Account Name",
+      "payment-terms": "Payment Terms",
+      "iban": "IBAN",
+      "save": "Save partner",
+      "discard": "Discard"
+    }
+  },
+  "invoice": {
+    "direction": "Direction",
+    "all": "All",
+    "outgoing": "Outgoing",
+    "incoming": "Incoming",
+    "drafts": "Drafts",
+    "title": "Invoices",
+    "search": "Search customer or reference",
+    "new": {
+      "invoice": "New Invoice",
+      "credit-note": "New Credit Note"
+    },
+    "table": {
+      "direction": "Direction",
+      "type": "Type",
+      "doc": "Doc",
+      "issue-date": "Issue Date",
+      "due-date": "Due Date",
+      "customer": "Customer",
+      "total": "Total",
+      "actions": "Actions"
+    },
+    "filter": {
+      "from": "From",
+      "to": "To",
+      "clear": "Clear",
+      "apply": "Apply"
+    },
+    "empty": "No invoices match your filters.",
+    "pager": {
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "modal": {
+      "title": "Invoice",
+      "document": "Document",
+      "invoice-number": "Invoice number",
+      "buyer-reference": "Buyer Reference",
+      "note-optional": "Note (optional)",
+      "note-placeholder": "Additional notes for this invoice"
+    },
+    "dateModal": {
+      "title": "Date",
+      "issue-date": "Issue Date",
+      "payment-terms": "Payment Terms",
+      "due-date": "Due Date"
+    },
+    "paymentModal": {
+      "title": "Payment",
+      "type": "Type",
+      "name": "Name",
+      "iban": "IBAN",
+      "reference": "Reference"
+    },
+    "validationModal": {
+      "title": "Validation",
+      "error-count": "Error count"
+    },
+    "customerModal": {
+      "title": "Customer",
+      "search-title": "Search Customer",
+      "customer-title": "Customer",
+      "country": "Country",
+      "house-number": "House Number",
+      "country-value": "Belgium",
+      "search-name-vat": "Name or VAT Number",
+      "search-placeholder": "Search by name or VAT number",
+      "no-matches": "No matches"
+    },
+    "productSearch": {
+      "placeholder": "name",
+      "no-matches": "No matches"
+    },
+    "edit": {
+      "validate": "Validate",
+      "update-draft": "Update draft",
+      "save-draft": "Save draft",
+      "discard": "Discard",
+      "send": {
+        "invoice": "Send invoice",
+        "credit-note": "Send credit note"
+      },
+      "number": "Number",
+      "buyer-reference": "Buyer Reference",
+      "payment": "Payment",
+      "method": "Method",
+      "subtotal": "Subtotal",
+      "tax": "Tax",
+      "total": "Total",
+      "invoice-lines": "Invoice lines",
+      "pos": "Pos",
+      "amount": "Amount",
+      "unit-price": "Unit price",
+      "actions": "Actions",
+      "add-line": "Add line",
+      "note": "Note",
+      "recreate-positions": "Recreate line positions",
+      "attachments": "Attachments"
+    }
+  },
+  "account": {
+    "title": "Account",
+    "discard": "Discard",
+    "save": "Save",
+    "subscriber-info": "Subscriber Info",
+    "download-contract": "Download Contract",
+    "change-password": "Change Password",
+    "company-info": "Company Info",
+    "company-name": "Company name",
+    "peppol-registration": "Peppol Registration",
+    "remove-from-peppol": "Remove From Peppol",
+    "not-registered-peppol": "Not registered on Peppol",
+    "address": "Address",
+    "number": "Number",
+    "payment-info": "Payment Info",
+    "iban": "IBAN",
+    "account-name": "Account Name",
+    "payment-terms": "Payment Terms"
+  },
+  "forgot": {
+    "title": "Forgot Password",
+    "info-sent": "A password reset link has been sent if the email address is known.",
+    "enter-email": "Enter your e-mail address to reset your password.",
+    "reset-failed": "Reset password failed",
+    "request-link": "Request reset link"
+  },
+  "reset": {
+    "title": "Reset Password",
+    "enter-email": "Enter your e-mail address to reset your password.",
+    "reset-failed": "Reset password failed",
+    "action": "Reset Password"
+  },
+  "session": {
+    "continue-title": "Continue Session"
+  }
+}

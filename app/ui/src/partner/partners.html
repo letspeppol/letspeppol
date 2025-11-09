@@ -1,0 +1,8 @@
+<import from="../components/view/application-view"></import>
+<import from="./partner-overview.ts"></import>
+<import from="./partner-edit.ts"></import>
+
+<application-view>
+    <partner-overview show.bind="!partnerContext.selectedPartner"></partner-overview>
+    <partner-edit show.bind="partnerContext.selectedPartner"></partner-edit>
+</application-view>

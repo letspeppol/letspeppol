@@ -2,11 +2,11 @@ import Aurelia from 'aurelia';
 import {RouterConfiguration} from "@aurelia/router";
 import {I18nConfiguration} from "@aurelia/i18n";
 import { LetsPeppol } from './app/lets-peppol';
-import {Alert} from "./alert/alert";
+import {Alert} from "./components/alert/alert";
 import {AuthenticationHook} from "./app/authentication-hook";
-import * as en from "./locale/translation_en.json";
-import * as fr from "./locale/translation_fr.json";
-import * as nl from "./locale/translation_nl.json";
+import * as en from "./app/locale/translation_en.json";
+import * as fr from "./app/locale/translation_fr.json";
+import * as nl from "./app/locale/translation_nl.json";
 
 Aurelia
     .register(RouterConfiguration.customize({

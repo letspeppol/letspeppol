@@ -1,6 +1,6 @@
-import { lifecycleHooks } from '@aurelia/runtime-html';
+import {lifecycleHooks} from '@aurelia/runtime-html';
 import {IRouteViewModel, NavigationInstruction, Params, RouteNode} from '@aurelia/router';
-import {LoginService} from "../services/login-service";
+import {LoginService} from "../services/app/login-service";
 import {resolve} from "@aurelia/kernel";
 
 @lifecycleHooks()

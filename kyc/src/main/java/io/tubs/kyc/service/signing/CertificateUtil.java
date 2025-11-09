@@ -1,6 +1,7 @@
 package io.tubs.kyc.service.signing;
 
 import io.tubs.kyc.exception.KycException;
+import io.tubs.kyc.exception.KycErrorCodes;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -37,7 +38,7 @@ public class CertificateUtil {
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
             return (X509Certificate) cf.generateCertificate(new java.io.ByteArrayInputStream(der));
         } catch (CertificateException e) {
-            throw new KycException("Invalid certificate: " + e.getMessage());
+            throw new KycException(KycErrorCodes.INVALID_CERTIFICATE);
         }
     }
 

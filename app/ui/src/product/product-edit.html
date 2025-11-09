@@ -1,0 +1,84 @@
+<div class="invoices-main">
+    <div class="section-header">
+        <div style="display:flex;align-items:center;gap:.5rem">
+            <h1 style="margin:0" t="product.edit.new">New product</h1>
+        </div>
+        <div class="editor-header-actions">
+            <button type="button" class="btn" click.trigger="productContext.clearSelectedProduct()" t="product.edit.discard">Discard</button>
+            <button type="button" class="btn primary" click.trigger="saveProduct()" disabled.bind="!productContext.selectedProduct.name" t="product.edit.save">Save product</button>
+        </div>
+    </div>
+</div>
+<section>
+    <div style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(300px, 350px));">
+        <div class="card">
+            <div class="card-header">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-building-icon lucide-building"><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M12 6h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/><path d="M8 6h.01"/><path d="M9 22v-3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><rect x="4" y="2" width="16" height="20" rx="2"/></svg>
+                <h2 t="product.edit.info">Product Info</h2>
+            </div>
+            <div style="display: grid; gap: var(--space-1)">
+                <label class="field">
+                    <span t="label.name">Name</span>
+                    <input type="text" value.bind="productContext.selectedProduct.name" />
+                </label>
+                <label class="field">
+                    <span t="label.description">Description</span>
+                    <input type="text" value.bind="productContext.selectedProduct.description" />
+                </label>
+                <label class="field">
+                    <span t="label.reference">Reference</span>
+                    <input type="text" value.bind="productContext.selectedProduct.reference" />
+                </label>
+                <label class="field">
+                    <span t="label.barcode">Barcode</span>
+                    <input type="text" value.bind="productContext.selectedProduct.barcode" />
+                </label>
+            </div>
+        </div>
+
+        <div class="card" style="min-width: 320px; width: 350px">
+            <div class="card-header">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-badge-euro-icon lucide-badge-euro"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="M7 12h5"/><path d="M15 9.4a4 4 0 1 0 0 5.2"/></svg>
+                <h2 t="product.edit.pricing">Pricing</h2>
+            </div>
+            <div style="display: grid; gap: var(--space-1)">
+                <label class="field">
+                    <span t="label.cost-price">Cost Price</span>
+                    <input type="number" value.bind="productContext.selectedProduct.costPrice" />
+                </label>
+                <label class="field">
+                    <span t="label.sale-price">Sale Price</span>
+                    <input type="number" value.bind="productContext.selectedProduct.salePrice" />
+                </label>
+                <label class="field">
+                    <span t="label.tax-percentage">Tax Percentage</span>
+                    <select if.bind="productContext.selectedProduct"  value.bind="productContext.selectedProduct.taxPercentage">
+                        <option repeat.for="taxPercentage of taxPercentages" model.bind="taxPercentage">${taxPercentage}%</option>
+                    </select>
+                </label>
+            </div>
+        </div>
+
+        <div class="card" style="min-width: 320px; width: 350px">
+            <div class="card-header">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-warehouse-icon lucide-warehouse"><path d="M18 21V10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v11"/><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 1.132-1.803l7.95-3.974a2 2 0 0 1 1.837 0l7.948 3.974A2 2 0 0 1 22 8z"/><path d="M6 13h12"/><path d="M6 17h12"/></svg>
+                <h2 t="product.edit.stock">Stock</h2>
+            </div>
+            <div style="display: grid; gap: var(--space-1)">
+                <label class="field">
+                    <span t="label.stock-quantity">Stock Quantity</span>
+                    <input type="number" value.bind="productContext.selectedProduct.stockQuantity" />
+                </label>
+                <label class="field">
+                    <span t="label.product-category">Product Category</span>
+                    <select if.bind="productContext.selectedProduct" value.bind="productContext.selectedProduct.categoryId" matcher.bind="categoryIdMatcher">
+                        <option value="" t="product.edit.none">None</option>
+                        <option repeat.for="category of productContext.productCategories" value.bind="category.id">${category.name}</option>
+                    </select>
+                </label>
+            </div>
+        </div>
+
+    </div>
+
+</section>

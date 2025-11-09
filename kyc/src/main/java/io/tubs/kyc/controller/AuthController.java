@@ -1,13 +1,16 @@
 package io.tubs.kyc.controller;
 
-import io.tubs.kyc.model.Customer;
-import io.tubs.kyc.service.CustomerService;
+import io.tubs.kyc.model.User;
 import io.tubs.kyc.service.JwtService;
+import io.tubs.kyc.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -20,7 +23,7 @@ public class AuthController {
     public final static String EAS_ONDERNEMINGSNUMMER = "0208";
 
     private final JwtService jwtService;
-    private final CustomerService customerService;
+    private final UserService userService;
 
     @PostMapping("/auth")
     public ResponseEntity<String> auth(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
@@ -38,25 +41,13 @@ public class AuthController {
         }
         String email = values[0];
         String password = values[1];
-        Customer customer = customerService.findCustomerWithCredentials(email, password);
+        User user = userService.findUserWithCredentials(email, password);
 
-        String token = jwtService.generateToken(EAS_ONDERNEMINGSNUMMER + ":" + customer.getCompany().getCompanyNumber());
+        String token = jwtService.generateToken(
+                EAS_ONDERNEMINGSNUMMER + ":" + user.getCompany().getCompanyNumber(),
+                user.getExternalId()
+        );
 
         return ResponseEntity.ok(token);
-    }
-
-    @PostMapping("/generate")
-    public ResponseEntity<String> generateToken(@RequestParam String peppolId) {
-        String token = jwtService.generateToken(peppolId);
-        return ResponseEntity.ok(token);
-    }
-
-    @PostMapping("/validate")
-    public ResponseEntity<String> validateToken(@RequestParam String token) {
-        String peppolId = jwtService.validateToken(token);
-        if (peppolId == null) {
-            return ResponseEntity.status(401).body("Invalid or expired token");
-        }
-        return ResponseEntity.ok(peppolId);
     }
 }

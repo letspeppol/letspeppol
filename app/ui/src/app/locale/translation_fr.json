@@ -1,0 +1,352 @@
+{
+  "label": {
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "vat-number": "Numéro de TVA",
+    "name": "Nom",
+    "city": "Ville",
+    "postal-code": "Code postal",
+    "street": "Rue",
+    "house-number": "Numéro",
+    "confirm-password": "Confirmer le mot de passe",
+    "company-name": "Nom de l'entreprise",
+    "description": "Description",
+    "reference": "Référence",
+    "barcode": "Code-barres",
+    "cost-price": "Prix de revient",
+    "sale-price": "Prix de vente",
+    "tax-percentage": "Pourcentage TVA",
+    "stock-quantity": "Stock",
+    "product-category": "Catégorie de produit",
+    "account-name": "Nom du compte",
+    "payment-terms": "Conditions de paiement",
+    "address": "Adresse",
+    "subscriber-info": "Info abonné",
+    "download-contract": "Télécharger le contrat",
+    "change-password": "Changer le mot de passe",
+    "company-info": "Informations société",
+    "peppol-registration": "Enregistrement Peppol",
+    "remove-from-peppol": "Retirer de Peppol",
+    "not-registered-peppol": "Non enregistré sur Peppol",
+    "iban": "IBAN",
+    "country": "Pays",
+    "customer": "Client",
+    "supplier": "Fournisseur",
+    "invoice-number": "Numéro de facture",
+    "buyer-reference": "Référence acheteur",
+    "note-optional": "Note (optionnel)",
+    "issue-date": "Date d'émission",
+    "due-date": "Date d'échéance",
+    "type": "Type",
+    "number": "Numéro",
+    "price": "Prix",
+    "stock": "Stock"
+  },
+  "placeholder": {
+    "email": "vous@entreprise.com",
+    "vat-number": "BE0123456789",
+    "password": "••••••••",
+    "product-search": "Rechercher produit",
+    "partner-search": "Rechercher partenaire",
+    "invoice-search": "Rechercher client ou référence",
+    "customer-search": "Recherche par nom ou TVA",
+    "name": "Nom"
+  },
+  "login": {
+    "title": "Connexion",
+    "new": "Nouveau ici ?",
+    "register": "Enregistrez votre entreprise",
+    "continue": "Continuer",
+    "remember": "Se souvenir de moi",
+    "forgot": "Mot de passe oublié"
+  },
+  "registration": {
+    "title-step0": "Enregistrez votre entreprise",
+    "title-step1": "Confirmez votre entreprise",
+    "create-account": "Créer un compte",
+    "already-registered": "Déjà enregistré ?",
+    "confirm-company": "Confirmer",
+    "wrong-company": "Mauvaise entreprise ?",
+    "back": "Retour",
+    "title-step2": "Vérification du compte",
+    "instructions-intro": "Un e-mail de confirmation a été envoyé. Mais d'abord :",
+    "instructions-install-plugin": "Installez le <b>plugin web-eid</b> via <a href=\"https://www.id.ee/en/article/install-id-software/\">https://www.id.ee/en/article/install-id-software/</a>",
+    "instructions-install-extension": "Assurez-vous d'installer l'extension de navigateur, les instructions sont sur la même page",
+    "instructions-restart-browser": "<b>Redémarrez votre navigateur !</b>",
+    "instructions-test-plugin": "Vérifiez si le plugin fonctionne <a href=\"https://www.id.ee/en/article/test-your-id-card/\">ici</a>",
+    "instructions-finally": "<b>Enfin</b>, consultez vos e-mails et cliquez sur le lien de vérification dans l'e-mail de confirmation"
+  },
+  "error": {
+    "login-failed": "Échec de la connexion",
+    "registration-company-not-found": "Entreprise introuvable",
+    "registration-company-already-registered": "Entreprise déjà enregistrée"
+  },
+  "confirmation": {
+    "header": "Confirmer l'identité",
+    "loading": "Chargement des détails de l'entreprise…",
+    "company": "Entreprise",
+    "directors": "Directeurs",
+    "table.name": "Nom",
+    "table.action": "Action",
+    "director-confirm": "Confirmer",
+    "director-confirmed": "Confirmé",
+    "no-directors": "Aucun directeur trouvé.",
+    "read-contract-title": "1. Lire le contrat",
+    "read-contract-info": "Vous recevrez une copie signée lorsque l'inscription sera terminée.",
+    "read-contract-agree": "J'ai lu le contrat et j'accepte les conditions",
+    "choose-credentials-title": "2. Choisir les identifiants",
+    "sign-eid-title": "3. Signer avec eID",
+    "anim-caption": "Insérez votre carte eID et appuyez sur confirmer pour signer.",
+    "anim-reader-label": "LECTEUR",
+    "anim-reader-sr": "Insérer la carte eID dans le lecteur",
+    "confirm-button": "Confirmer",
+    "success-title": "Succès !",
+    "success-contract": "Le contrat signé se trouve dans votre dossier de téléchargements",
+    "success-login-prefix": "Vous pouvez maintenant"
+  },
+  "paymentTerms": {
+    "15_DAYS": "15 jours",
+    "30_DAYS": "30 jours",
+    "60_DAYS": "60 jours",
+    "END_OF_NEXT_MONTH": "Fin du mois"
+  },
+  "documentType": {
+    "invoice": "Facture",
+    "credit-note": "Note de crédit"
+  },
+  "common": {
+    "confirm": "Confirmer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "save": "Enregistrer",
+    "discard": "Annuler",
+    "clear": "Effacer",
+    "apply": "Appliquer",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "search": "Rechercher",
+    "new": "Nouveau",
+    "none": "Aucun",
+    "yes": "Oui",
+    "no": "Non",
+    "remove": "Retirer",
+    "logout": "Se déconnecter",
+    "edit": "Éditer",
+    "close": "Fermer"
+  },
+  "navigation": {
+    "invoices": "Factures",
+    "partners": "Partenaires",
+    "products": "Produits",
+    "account": "Compte",
+    "brand-alt": "Let's Peppol",
+    "toggle-theme": "Changer thème"
+  },
+  "alert": {
+    "success": "Succès",
+    "info": "Info",
+    "warning": "Avertissement",
+    "danger": "Erreur",
+    "neutral": "Message"
+  },
+  "overlay": {
+    "saving-account": "Sauvegarde du compte, veuillez patienter"
+  },
+  "product": {
+    "categories": "Catégories",
+    "category": "Catégorie",
+    "title": "Produits",
+    "all": "Tous",
+    "search": "Rechercher produit",
+    "new": "Nouveau produit",
+    "table": {
+      "name": "Nom",
+      "description": "Description",
+      "category": "Catégorie",
+      "reference": "Référence",
+      "barcode": "Code-barres",
+      "cost-price": "Prix de revient",
+      "sale-price": "Prix de vente",
+      "tax-percentage": "Pourcentage TVA",
+      "stock-quantity": "Stock",
+      "actions": "Actions"
+    },
+    "empty": "Aucun produit ne correspond à vos filtres.",
+    "edit": {
+      "new": "Nouveau produit",
+      "info": "Infos produit",
+      "pricing": "Tarification",
+      "stock": "Stock",
+      "stock-quantity": "Stock",
+      "product-category": "Catégorie de produit",
+      "none": "Aucun",
+      "save": "Enregistrer le produit",
+      "discard": "Annuler"
+    },
+    "categoryModal": {
+      "title": "Catégorie de produit",
+      "name": "Nom",
+      "color": "Couleur"
+    }
+  },
+  "partner": {
+    "title": "Partenaires",
+    "customersSuppliers": "Clients & Fournisseurs",
+    "customers": "Clients",
+    "suppliers": "Fournisseurs",
+    "search": "Rechercher partenaire",
+    "new": "Nouveau partenaire",
+    "table": {
+      "type": "Type",
+      "name": "Nom",
+      "address": "Adresse",
+      "postal-code": "Code postal",
+      "city": "Ville",
+      "country": "Pays",
+      "vat": "TVA",
+      "actions": "Actions"
+    },
+    "empty": "Aucun partenaire ne correspond à vos filtres.",
+    "edit": {
+      "new": "Nouveau partenaire",
+      "company-info": "Informations société",
+      "address": "Adresse",
+      "payment-info": "Infos paiement",
+      "customer": "Client",
+      "supplier": "Fournisseur",
+      "account-name": "Nom du compte",
+      "payment-terms": "Conditions de paiement",
+      "iban": "IBAN",
+      "save": "Enregistrer partenaire",
+      "discard": "Annuler"
+    },
+    "all": "Tous"
+  },
+  "invoice": {
+    "direction": "Direction",
+    "all": "Tous",
+    "outgoing": "Sortantes",
+    "incoming": "Entrantes",
+    "drafts": "Brouillons",
+    "title": "Factures",
+    "search": "Rechercher client ou référence",
+    "new": "Nouvelle facture",
+    "table": {
+      "direction": "Direction",
+      "type": "Type",
+      "doc": "Doc",
+      "date": "Date",
+      "customer": "Client",
+      "actions": "Actions"
+    },
+    "filter": {
+      "from": "De",
+      "to": "À",
+      "clear": "Effacer",
+      "apply": "Appliquer"
+    },
+    "empty": "Aucune facture ne correspond à vos filtres.",
+    "pager": {
+      "previous": "Précédent",
+      "next": "Suivant"
+    },
+    "modal": {
+      "title": "Facture",
+      "document": "Document",
+      "invoice-number": "Numéro de facture",
+      "buyer-reference": "Référence acheteur",
+      "note-optional": "Note (optionnel)",
+      "note-placeholder": "Notes supplémentaires pour cette facture"
+    },
+    "dateModal": {
+      "title": "Date",
+      "issue-date": "Date d'émission",
+      "payment-terms": "Conditions de paiement",
+      "due-date": "Date d'échéance"
+    },
+    "paymentModal": {
+      "title": "Paiement",
+      "type": "Type",
+      "name": "Nom",
+      "iban": "IBAN",
+      "reference": "Référence"
+    },
+    "validationModal": {
+      "title": "Validation",
+      "error-count": "Nombre d'erreurs"
+    },
+    "customerModal": {
+      "title": "Client",
+      "search-title": "Rechercher client",
+      "customer-title": "Client",
+      "country": "Pays",
+      "house-number": "Numéro",
+      "country-value": "Belgique",
+      "search-name-vat": "Nom ou numéro TVA",
+      "search-placeholder": "Rechercher par nom ou TVA",
+      "no-matches": "Aucun résultat"
+    },
+    "productSearch": {
+      "placeholder": "nom",
+      "no-matches": "Aucun résultat"
+    },
+    "edit": {
+      "new": "Nouvelle facture",
+      "validate": "Valider",
+      "update-draft": "Mettre à jour le brouillon",
+      "save-draft": "Enregistrer brouillon",
+      "discard": "Annuler",
+      "send": "Envoyer la facture",
+      "number": "Numéro",
+      "buyer-reference": "Référence acheteur",
+      "payment": "Paiement",
+      "method": "Méthode",
+      "subtotal": "Sous-total",
+      "tax": "Taxe",
+      "total": "Total",
+      "invoice-lines": "Lignes de facture",
+      "pos": "Pos",
+      "amount": "Quantité",
+      "unit-price": "Prix unitaire",
+      "actions": "Actions",
+      "add-line": "Ajouter ligne",
+      "note": "Note",
+      "recreate-positions": "Recalculer positions"
+    }
+  },
+  "account": {
+    "title": "Compte",
+    "discard": "Annuler",
+    "save": "Enregistrer",
+    "subscriber-info": "Info abonné",
+    "download-contract": "Télécharger le contrat",
+    "change-password": "Changer le mot de passe",
+    "company-info": "Informations société",
+    "company-name": "Nom de l'entreprise",
+    "peppol-registration": "Enregistrement Peppol",
+    "remove-from-peppol": "Retirer de Peppol",
+    "not-registered-peppol": "Non enregistré sur Peppol",
+    "address": "Adresse",
+    "number": "Numéro",
+    "payment-info": "Infos paiement",
+    "iban": "IBAN",
+    "account-name": "Nom du compte",
+    "payment-terms": "Conditions de paiement"
+  },
+  "forgot": {
+    "title": "Mot de passe oublié",
+    "info-sent": "Un lien de réinitialisation a été envoyé si l'adresse est connue.",
+    "enter-email": "Entrez votre adresse e-mail pour réinitialiser votre mot de passe.",
+    "reset-failed": "Échec de réinitialisation",
+    "request-link": "Demander lien de réinitialisation"
+  },
+  "reset": {
+    "title": "Réinitialiser le mot de passe",
+    "enter-email": "Entrez votre adresse e-mail pour réinitialiser votre mot de passe.",
+    "reset-failed": "Échec de réinitialisation",
+    "action": "Réinitialiser le mot de passe"
+  },
+  "session": {
+    "continue-title": "Continuer la session"
+  }
+}

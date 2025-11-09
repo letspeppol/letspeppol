@@ -1,0 +1,35 @@
+<div  class="alert-container" show.bind="showElement">
+    <div id="alert" class="alert" role="alert"
+         alert--success.class="alertType === 'Success'"
+         alert--info.class="alertType === 'Info'"
+         alert--warning.class="alertType === 'Warning'"
+         alert--danger.class="alertType === 'Danger'"
+         alert--neutral.class="alertType === 'Neutral'"
+    >
+        <div class="alert__icon">
+            <template switch.bind="alertType">
+                <svg case="Success" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-icon lucide-check"><path d="M20 6 9 17l-5-5"/></svg>
+                <svg case="Info" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-info-icon lucide-info"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                <svg case="Warning" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-triangle-alert-icon lucide-triangle-alert"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+                <svg case="Danger" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-x-icon lucide-circle-x"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+                <svg case="Neutral" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis-icon lucide-ellipsis"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+            </template>
+
+        </div>
+        <div class="alert__body">
+            <div class="alert__title">
+                <template switch.bind="alertType">
+                    <span case="Success" t="alert.success">Success</span>
+                    <span case="Info" t="alert.info">Info</span>
+                    <span case="Warning" t="alert.warning">Warning</span>
+                    <span case="Danger" t="alert.danger">Error</span>
+                    <span case="Neutral" t="alert.neutral">Message</span>
+                </template>
+            </div>
+            <div class="alert__msg">${text}</div>
+        </div>
+        <div class="alert__actions">
+            <button class="btn-ghost" click.trigger="closeAlert()">×</button>
+        </div>
+    </div>
+</div>

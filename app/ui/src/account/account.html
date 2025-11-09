@@ -1,0 +1,130 @@
+<import from="../components/view/application-view"></import>
+<import from="../components/confirmation/confirmation-modal"></import>
+<import from="./change-password-modal"></import>
+
+<change-password-modal component.ref="changePasswordModal"></change-password-modal>
+<confirmation-modal></confirmation-modal>
+
+<application-view>
+    <div class="section-header">
+        <h1 t="account.title">Account</h1>
+        <div class="actions">
+            <button type="button" class="btn" click.trigger="discardChanges()" t="account.discard">Discard</button>
+            <button class="btn primary" click.trigger="saveAccount()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save-icon lucide-save"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>
+                <span t="account.save">Save</span>
+            </button>
+        </div>
+    </div>
+    <section>
+        <div style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+            <div class="card">
+                <div class="card-header">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-star-icon lucide-user-star"><path d="M16.051 12.616a1 1 0 0 1 1.909.024l.737 1.452a1 1 0 0 0 .737.535l1.634.256a1 1 0 0 1 .588 1.806l-1.172 1.168a1 1 0 0 0-.282.866l.259 1.613a1 1 0 0 1-1.541 1.134l-1.465-.75a1 1 0 0 0-.912 0l-1.465.75a1 1 0 0 1-1.539-1.133l.258-1.613a1 1 0 0 0-.282-.866l-1.156-1.153a1 1 0 0 1 .572-1.822l1.633-.256a1 1 0 0 0 .737-.535z"/><path d="M8 15H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/></svg>
+                    <h2 t="account.subscriber-info">Subscriber Info</h2>
+                </div>
+                <div class="grid">
+                    <label class="field full">
+                        <span t="label.name">Name</span>
+                        <input type="text" value.bind="company.subscriber" disabled />
+                    </label>
+                    <label class="field full">
+                        <span t="label.email">Email</span>
+                        <input type="text" value.bind="company.subscriberEmail" disabled />
+                    </label>
+                    <label class="field full">
+                        <span t="account.download-contract">Download Contract</span>
+                        <button type="button" class="btn" style="width: fit-content">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-down-icon lucide-file-down"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg>
+                            <span t="account.download-contract">Download Contract</span>
+                        </button>
+                    </label>
+                    <label class="field full">
+                        <span t="account.change-password">Change Password</span>
+                        <button type="button" class="btn" style="width: fit-content" click.trigger="showChangePasswordModal()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-ccw-key-icon lucide-rotate-ccw-key"><path d="m14.5 9.5 1 1"/><path d="m15.5 8.5-4 4"/><path d="M3 12a9 9 0 1 0 9-9 9.74 9.74 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><circle cx="10" cy="14" r="2"/></svg>
+                            <span t="account.change-password">Change Password</span>
+                        </button>
+                    </label>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-building-icon lucide-building"><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M12 6h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/><path d="M8 6h.01"/><path d="M9 22v-3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><rect x="4" y="2" width="16" height="20" rx="2"/></svg>
+                    <h2 t="account.company-info">Company Info</h2>
+                </div>
+                <div style="display: grid; gap: var(--space-1)">
+                    <label class="field">
+                        <span t="label.vat-number">VAT Number</span>
+                        <input type="text" value.bind="company.vatNumber" disabled />
+                    </label>
+                    <label class="field">
+                        <span t="label.company-name">Company name</span>
+                        <input type="text" value.bind="company.name" disabled />
+                    </label>
+                    <label if.bind="company.registeredOnPeppol" class="field full">
+                        <span t="account.peppol-registration">Peppol Registration</span>
+                        <button type="button" class="btn danger" style="width: fit-content" title="Remove this company from Peppol" click.trigger="unregister()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-icon lucide-trash"><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            <span t="account.remove-from-peppol">Remove From Peppol</span>
+                        </button>
+                    </label>
+                    <label if.bind="!company.registeredOnPeppol" class="field full">
+                        <span t="account.peppol-registration">Peppol Registration</span>
+                        <p class="form-error" t="account.not-registered-peppol">Not registered on Peppol</p>
+                    </label>
+                </div>
+            </div>
+            <div class="card" style="min-width: 320px">
+                <div class="card-header">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin-house-icon lucide-map-pin-house"><path d="M15 22a1 1 0 0 1-1-1v-4a1 1 0 0 1 .445-.832l3-2a1 1 0 0 1 1.11 0l3 2A1 1 0 0 1 22 17v4a1 1 0 0 1-1 1z"/><path d="M18 10a8 8 0 0 0-16 0c0 4.993 5.539 10.193 7.399 11.799a1 1 0 0 0 .601.2"/><path d="M18 22v-3"/><circle cx="10" cy="10" r="3"/></svg>
+                    <h2 t="account.address">Address</h2>
+                </div>
+                <div class="grid grid-col-73">
+                    <label class="field">
+                        <span t="label.city">City</span>
+                        <input type="text" value.bind="company.registeredOffice.city" />
+                    </label>
+                    <label class="field">
+                        <span t="label.postal-code">Postal Code</span>
+                        <input type="text" value.bind="company.registeredOffice.postalCode" />
+                    </label>
+                    <label class="field">
+                        <span t="label.street">Street</span>
+                        <input type="text" value.bind="company.registeredOffice.street" />
+                    </label>
+                    <label class="field">
+                        <span t="label.house-number-short">Number</span>
+                        <input type="text" value.bind="company.registeredOffice.houseNumber" />
+                    </label>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-banknote-arrow-down-icon lucide-banknote-arrow-down"><path d="M12 18H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5"/><path d="m16 19 3 3 3-3"/><path d="M18 12h.01"/><path d="M19 16v6"/><path d="M6 12h.01"/><circle cx="12" cy="12" r="2"/></svg>
+                    <h2 t="account.payment-info">Payment Info</h2>
+                </div>
+                <div class="grid">
+                    <label class="field full">
+                        <span t="label.iban">IBAN</span>
+                        <input type="text" value.bind="company.iban" />
+                    </label>
+                    <label class="field full">
+                        <span t="label.account-name">Account Name</span>
+                        <input type="text" value.bind="company.paymentAccountName" />
+                    </label>
+                    <label class="field full">
+                        <span t="label.payment-terms">Payment Terms</span>
+                        <select value.bind="company.paymentTerms">
+                            <option repeat.for="terms of getPaymentTerms()" value.bind="terms">
+                                <span t="paymentTerms.${terms}"></span>
+                            </option>
+                        </select>
+                    </label>
+                </div>
+            </div>
+
+        </div>
+    </section>
+</application-view>

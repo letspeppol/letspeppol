@@ -1,0 +1,20 @@
+<import from="../lang/language-selector"></import>
+<import from="../theme/theme-selector"></import>
+
+<div class="centered">
+    <div class="language">
+        <theme-selector></theme-selector>
+        <language-selector></language-selector>
+    </div>
+
+    <div class="container">
+        <au-slot name="stepper"></au-slot>
+        <div class="card">
+            <img src.bind="this.theme.themeDark?'logo-dark.png':'logo.png'" class="logo" height="80" alt="Let's Peppol" click.trigger="goHome()" />
+            <div class="section-header">
+                <au-slot name="header"></au-slot>
+            </div>
+            <au-slot></au-slot>
+        </div>
+    </div>
+</div>

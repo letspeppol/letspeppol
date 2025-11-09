@@ -1,0 +1,66 @@
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: #00000073;
+    backdrop-filter: blur(2px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000; /* above app content */
+    animation: fade-in .15s ease-out;
+}
+
+.overlay-dialog {
+    background: var(--bg);
+    color: var(--text, #fff);
+    padding: 2rem 2.5rem;
+    border-radius: .75rem;
+    box-shadow: 0 4px 24px -4px #0006;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    min-width: 200px;
+    text-align: center;
+}
+
+.overlay-dialog .overlay-text {
+    font-weight: 500;
+}
+
+.spinner {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 4px solid #ffffff26;
+    border-top-color: var(--primary, #5b8fff);
+    animation: spin 1s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .spinner {
+        animation: none;
+        border: 4px solid var(--primary, #5b8fff);
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Fallback for browsers without inert support */
+[inert] {
+    pointer-events: none !important;
+    user-select: none !important;
+}

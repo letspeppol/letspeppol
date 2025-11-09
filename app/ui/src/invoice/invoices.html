@@ -1,0 +1,8 @@
+<import from="../components/view/application-view"></import>
+<import from="../invoice/invoice-overview"></import>
+<import from="../invoice/edit/invoice-edit"></import>
+
+<application-view>
+    <invoice-overview show.bind="!invoiceContext.selectedInvoice"></invoice-overview>
+    <invoice-edit show.bind="invoiceContext.selectedInvoice"></invoice-edit>
+</application-view>

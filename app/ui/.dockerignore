@@ -1,0 +1,10 @@
+node_modules
+npm-debug.log
+yarn-error.log
+.dockerignore
+.git
+.gitignore
+.dist
+coverage
+dist
+.DS_Store

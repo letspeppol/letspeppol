@@ -1,0 +1,44 @@
+.centered {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.centered .logo {
+    width: 192px;
+    height: 80px;
+    cursor: pointer;
+    display: block;
+    margin: 16px auto;
+}
+
+.centered > .logo {
+    position: absolute;
+    left: 25px;
+    top: 25px;
+    width: 120px;
+    height: 50px;
+    cursor: pointer;
+}
+
+.centered > .language {
+    position: absolute;
+    right: 80px; /*old = 25px*/
+    top: 25px;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    padding: var(--space-09) var(--space-12)
+}
+
+.centered .card {
+    min-width: 360px;
+    min-height: 480px;
+    padding: var(--space-16);
+}
+
+.centered .section-header {
+    justify-content: center;
+}

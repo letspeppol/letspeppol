@@ -1,0 +1,26 @@
+<div >
+    <input id="productSearch"
+           type="text"
+           name="productSearch"
+           placeholder="name"
+           t="[placeholder]invoice.productSearch.placeholder"
+           value.bind="inputValue"
+           input.trigger="onSearchInput($event)"
+           keydown.trigger="onSearchKeydown($event)"
+           blur.trigger="onSearchBlur()"
+           autocomplete="off"
+    />
+    <ul class="autocomplete-list" role="listbox" if.bind="showSuggestions" style="max-width: 200px; top: ${top}; left: ${left}; width: ${width}">
+        <li repeat.for="p of filteredProducts"
+            role="option"
+            class="autocomplete-item"
+            class.bind="$index === highlightedIndex ? 'active' : ''"
+            click.trigger="selectProduct(p)"
+            mousedown.trigger="$event.preventDefault()">
+            <div class="title">${p.name}</div>
+            <div class="meta">${p.description}</div>
+            <div class="addr">Price: ${p.salePrice}, stock: ${p.stockQuantity}</div>
+        </li>
+        <li class="autocomplete-empty" if.bind="filteredProducts.length === 0" t="invoice.productSearch.no-matches">No matches</li>
+    </ul>
+</div>

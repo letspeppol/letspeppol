@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "directors")
+@Table(name = "director")
 @Getter
 @Setter
 @NoArgsConstructor

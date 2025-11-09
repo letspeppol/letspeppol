@@ -1,0 +1,27 @@
+<label class="field">
+    <span t="label.peppolId">peppolId</span>
+    <div style="position: relative;">
+        <input type="text"
+               value.bind="peppolId"
+               blur.trigger="onSearchBlur()"
+               autocomplete="off"
+        />
+        <ul class="autocomplete-list" role="listbox" if.bind="showSuggestions">
+            <li repeat.for="p of peppolMatches"
+                role="option"
+                class="autocomplete-item"
+                class.bind="$index === highlightedIndex ? 'active' : ''"
+                click.trigger="select(p)"
+                mousedown.trigger="$event.preventDefault()">
+                <div class="title">${getName(p)}</div>
+                <div class="meta">Peppol Id: ${p.participantID.value}</div>
+                <div class="addr" if.bind="getCountryCode(p)">${getCountryCode(p)}</div>
+            </li>
+            <li class="autocomplete-empty" if.bind="peppolMatches.length === 0" t="invoice.customerModal.no-matches">No matches</li>
+        </ul>
+    </div>
+    <div>
+        <button type="button" class="btn" click.trigger="searchPeppolIdByName()" disabled.bind="!name">Search By Company Name</button>
+        <button type="button" class="btn" click.trigger="searchPeppolIdByVAT()" disabled.bind="!vatNumber">Search By VAT</button>
+    </div>
+</label>

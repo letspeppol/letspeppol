@@ -1,35 +1,34 @@
-<import from="../lang/language-selector"></import>
+<import from="../components/view/wizard-view"></import>
 
-<div class="centered">
-    <img src="logo.png" class="logo" alt="LetsPeppol"/>
-    <div class="language">
-        <language-selector></language-selector>
-    </div>
-    <div class="container">
-        <div class="auth-card card">
-            <div class="section-header">
-                <h1 t="login.title">Log in</h1>
-            </div>
-            <form class="auth-form" submit.trigger="check()">
-                <div class="grid">
-                    <label class="field full">
-                        <span t="label.email">Emailasdf</span>
-                        <input name="email" type="email" placeholder="you@company.com" required value.bind="email" t="[placeholder]placeholder.email"/>
-                    </label>
-                    <label class="field full">
-                        <span>Password</span>
-                        <input name="email" type="password" required value.bind="password" />
-                    </label>
+<wizard-view>
+    <h1 au-slot="header" t="login.title">Log in</h1>
+    <form class="auth-form" submit.trigger="verifyLogin()">
+        <div class="grid">
+            <label class="field full">
+                <span t="label.email">Email</span>
+                <input name="email" type="email" placeholder="you@company.com" required value.bind="email" t="[placeholder]placeholder.email"/>
+            </label>
+            <label class="field full">
+                <div style="display: flex; justify-content: space-between">
+                    <span t="label.password">Password</span>
+                    <a href="../forgot-password"><span t="login.forgot">Forgot my password</span></a>
                 </div>
-                <p if.bind="error" class="form-error" aria-live="assertive" t="login.failed">Login failed</p>
-                <div class="auth-actions">
-                    <button type="submit" class="btn primary" t="login.continue">Continue</button>
-                </div>
-                <p class="auth-alt">
-                    <span t="login.new">New here?</span>
-                    <a href="../registration"><span t="login.register">Register your company</span></a>
-                </p>
-            </form>
+
+                <input name="password" type="password" required value.bind="password" t="[placeholder]placeholder.password"/>
+            </label>
+            <label class="field full checkbox">
+                <input type="checkbox" checked.bind="rememberMe" />
+                <span t="login.remember">Remember me</span>
+            </label>
         </div>
-    </div>
-</div>
+        <p if.bind="error" class="form-error" aria-live="assertive" t="error.login-failed">Login failed</p>
+        <div class="auth-actions">
+            <button type="submit" class="btn primary" t="login.continue">Sign in</button>
+        </div>
+        <div class="auth-info">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-info-icon lucide-info"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            <span t="login.new">New here?</span>
+            <a href="../registration"><span t="login.register">Register your company</span></a>
+        </div>
+    </form>
+</wizard-view>

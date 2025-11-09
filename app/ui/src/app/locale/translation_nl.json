@@ -1,0 +1,350 @@
+{
+  "label" : {
+    "email" : "E-mail",
+    "password" : "Wachtwoord",
+    "vat-number": "BTW-nummer",
+    "name": "Naam",
+    "city": "Stad",
+    "postal-code": "Postcode",
+    "street": "Straat",
+    "house-number": "Huisnummer",
+    "confirm-password": "Bevestig wachtwoord",
+    "company-name": "Bedrijfsnaam",
+    "description": "Beschrijving",
+    "reference": "Referentie",
+    "barcode": "Barcode",
+    "cost-price": "Kostprijs",
+    "sale-price": "Verkoopprijs",
+    "tax-percentage": "BTW-percentage",
+    "stock-quantity": "Voorraad",
+    "product-category": "Productcategorie",
+    "account-name": "Accountnaam",
+    "payment-terms": "Betalingsvoorwaarden",
+    "address": "Adres",
+    "subscriber-info": "Abonnee-info",
+    "download-contract": "Contract downloaden",
+    "change-password": "Wachtwoord wijzigen",
+    "company-info": "Bedrijfsinfo",
+    "peppol-registration": "Peppol-registratie",
+    "remove-from-peppol": "Verwijderen van Peppol",
+    "not-registered-peppol": "Niet geregistreerd op Peppol",
+    "iban": "IBAN",
+    "country": "Land",
+    "customer": "Klant",
+    "supplier": "Leverancier",
+    "invoice-number": "Factuurnummer",
+    "buyer-reference": "Referentie koper",
+    "note-optional": "Notitie (optioneel)",
+    "issue-date": "Uitgiftedatum",
+    "due-date": "Vervaldatum",
+    "type": "Type",
+    "number": "Nummer"
+  },
+  "placeholder" : {
+    "email" : "naam@bedrijf.be",
+    "vat-number": "BE0123456789",
+    "password": "••••••••",
+    "product-search": "Product zoeken",
+    "partner-search": "Partner zoeken",
+    "invoice-search": "Klant of referentie zoeken",
+    "customer-search": "Zoek op naam of BTW",
+    "name": "Naam"
+  },
+  "login" : {
+    "title" : "Inloggen",
+    "new" : "Nieuw hier?",
+    "register" : "Registreer uw bedrijf",
+    "continue" : "Ga verder",
+    "remember": "Onthoud mij",
+    "forgot": "Wachtwoord vergeten"
+  },
+  "registration" : {
+    "title-step0": "Registreer uw bedrijf",
+    "title-step1": "Bevestig uw bedrijf",
+    "create-account": "Account aanmaken",
+    "already-registered": "Al geregistreerd?",
+    "confirm-company": "Bevestigen",
+    "wrong-company": "Verkeerd bedrijf?",
+    "back": "Terug",
+    "title-step2": "Account verificatie",
+    "instructions-intro": "Een bevestigingsmail is verzonden. Maar eerst:",
+    "instructions-install-plugin": "Installeer de <b>web-eid plugin</b> via <a href=\"https://www.id.ee/en/article/install-id-software/\">https://www.id.ee/en/article/install-id-software/</a>",
+    "instructions-install-extension": "Zorg dat u ook de browserextensie installeert, de instructies staan op dezelfde pagina",
+    "instructions-restart-browser": "<b>Herstart uw browser!</b>",
+    "instructions-test-plugin": "Controleer of de plugin werkt <a href=\"https://www.id.ee/en/article/test-your-id-card/\">hier</a>",
+    "instructions-finally": "<b>Tot slot</b>, controleer uw e-mail en klik op de verificatielink in de bevestigingsmail"
+  },
+  "error" : {
+    "login-failed" : "Inloggen mislukt",
+    "registration-company-not-found": "Bedrijf niet gevonden",
+    "registration-company-already-registered": "Bedrijf al geregistreerd"
+  },
+  "confirmation": {
+    "header": "Identiteit bevestigen",
+    "loading": "Bedrijfsgegevens laden…",
+    "company": "Bedrijf",
+    "directors": "Bestuurders",
+    "table.name": "Naam",
+    "table.action": "Actie",
+    "director-confirm": "Bevestigen",
+    "director-confirmed": "Bevestigd",
+    "no-directors": "Geen bestuurders gevonden.",
+    "read-contract-title": "1. Contract lezen",
+    "read-contract-info": "U ontvangt een getekend exemplaar zodra de registratie is voltooid.",
+    "read-contract-agree": "Ik heb het contract gelezen en ga akkoord met de voorwaarden",
+    "choose-credentials-title": "2. Kies inloggegevens",
+    "sign-eid-title": "3. Onderteken met eID",
+    "anim-caption": "Steek uw eID-kaart in en druk op bevestigen om te ondertekenen.",
+    "anim-reader-label": "LEZER",
+    "anim-reader-sr": "Plaats eID-kaart in de lezerssleuf",
+    "confirm-button": "Bevestigen",
+    "success-title": "Gelukt!",
+    "success-contract": "Het ondertekende contract staat in uw downloadsmap",
+    "success-login-prefix": "U kunt nu"
+  },
+  "paymentTerms" : {
+    "15_DAYS" :  "15 dagen",
+    "30_DAYS" :  "30 dagen",
+    "60_DAYS" : "60 dagen",
+    "END_OF_NEXT_MONTH" : "Einde van de maand"
+  },
+  "documentType" : {
+    "invoice" : "Factuur",
+    "credit-note" : "Creditnota"
+  },
+  "common": {
+    "confirm": "Bevestigen",
+    "cancel": "Annuleren",
+    "delete": "Verwijderen",
+    "save": "Opslaan",
+    "discard": "Annuleren",
+    "clear": "Wissen",
+    "apply": "Toepassen",
+    "previous": "Vorige",
+    "next": "Volgende",
+    "search": "Zoeken",
+    "new": "Nieuw",
+    "none": "Geen",
+    "yes": "Ja",
+    "no": "Nee",
+    "remove": "Verwijderen",
+    "logout": "Uitloggen",
+    "edit": "Bewerken",
+    "close": "Sluiten"
+  },
+  "navigation": {
+    "invoices": "Facturen",
+    "partners": "Partners",
+    "products": "Producten",
+    "account": "Account",
+    "brand-alt": "Let's Peppol",
+    "toggle-theme": "Thema wisselen"
+  },
+  "alert": {
+    "success": "Succes",
+    "info": "Info",
+    "warning": "Waarschuwing",
+    "danger": "Fout",
+    "neutral": "Bericht"
+  },
+  "overlay": {
+    "saving-account": "Account opslaan, een moment geduld"
+  },
+  "product": {
+    "categories": "Categorieën",
+    "category": "Categorie",
+    "title": "Producten",
+    "all": "Alle",
+    "search": "Product zoeken",
+    "new": "Nieuw product",
+    "table": {
+      "name": "Naam",
+      "description": "Beschrijving",
+      "category": "Categorie",
+      "reference": "Referentie",
+      "barcode": "Barcode",
+      "cost-price": "Kostprijs",
+      "sale-price": "Verkoopprijs",
+      "tax-percentage": "BTW-percentage",
+      "stock-quantity": "Voorraad",
+      "actions": "Acties"
+    },
+    "empty": "Geen producten voldoen aan uw filters.",
+    "edit": {
+      "new": "Nieuw product",
+      "info": "Productinfo",
+      "pricing": "Prijzen",
+      "stock": "Voorraad",
+      "stock-quantity": "Voorraad",
+      "product-category": "Productcategorie",
+      "none": "Geen",
+      "save": "Product opslaan",
+      "discard": "Annuleren"
+    },
+    "categoryModal": {
+      "title": "Productcategorie",
+      "name": "Naam",
+      "color": "Kleur"
+    }
+  },
+  "partner": {
+    "title": "Partners",
+    "customersSuppliers": "Klanten & Leveranciers",
+    "customers": "Klanten",
+    "suppliers": "Leveranciers",
+    "search": "Partner zoeken",
+    "new": "Nieuwe partner",
+    "table": {
+      "type": "Type",
+      "name": "Naam",
+      "address": "Adres",
+      "postal-code": "Postcode",
+      "city": "Stad",
+      "country": "Land",
+      "vat": "BTW",
+      "actions": "Acties"
+    },
+    "empty": "Geen partners voldoen aan uw filters.",
+    "edit": {
+      "new": "Nieuwe partner",
+      "company-info": "Bedrijfsinfo",
+      "address": "Adres",
+      "payment-info": "Betaalinformatie",
+      "customer": "Klant",
+      "supplier": "Leverancier",
+      "account-name": "Accountnaam",
+      "payment-terms": "Betalingsvoorwaarden",
+      "iban": "IBAN",
+      "save": "Partner opslaan",
+      "discard": "Annuleren"
+    },
+    "all": "Alle"
+  },
+  "invoice": {
+    "direction": "Richting",
+    "all": "Alle",
+    "outgoing": "Uitgaand",
+    "incoming": "Inkomend",
+    "drafts": "Concepten",
+    "title": "Facturen",
+    "search": "Klant of referentie zoeken",
+    "new": "Nieuwe factuur",
+    "table": {
+      "direction": "Richting",
+      "type": "Type",
+      "doc": "Doc",
+      "date": "Datum",
+      "customer": "Klant",
+      "actions": "Acties"
+    },
+    "filter": {
+      "from": "Van",
+      "to": "Tot",
+      "clear": "Wissen",
+      "apply": "Toepassen"
+    },
+    "empty": "Geen facturen voldoen aan uw filters.",
+    "pager": {
+      "previous": "Vorige",
+      "next": "Volgende"
+    },
+    "modal": {
+      "title": "Factuur",
+      "document": "Document",
+      "invoice-number": "Factuurnummer",
+      "buyer-reference": "Referentie koper",
+      "note-optional": "Notitie (optioneel)",
+      "note-placeholder": "Extra notities voor deze factuur"
+    },
+    "dateModal": {
+      "title": "Datum",
+      "issue-date": "Uitgiftedatum",
+      "payment-terms": "Betalingsvoorwaarden",
+      "due-date": "Vervaldatum"
+    },
+    "paymentModal": {
+      "title": "Betaling",
+      "type": "Type",
+      "name": "Naam",
+      "iban": "IBAN",
+      "reference": "Referentie"
+    },
+    "validationModal": {
+      "title": "Validatie",
+      "error-count": "Aantal fouten"
+    },
+    "customerModal": {
+      "title": "Klant",
+      "search-title": "Zoek klant",
+      "customer-title": "Klant",
+      "country": "Land",
+      "house-number": "Huisnummer",
+      "country-value": "België",
+      "search-name-vat": "Naam of BTW-nummer",
+      "search-placeholder": "Zoek op naam of BTW",
+      "no-matches": "Geen resultaten"
+    },
+    "productSearch": {
+      "placeholder": "naam",
+      "no-matches": "Geen resultaten"
+    },
+    "edit": {
+      "new": "Nieuwe factuur",
+      "validate": "Valideren",
+      "update-draft": "Concept bijwerken",
+      "save-draft": "Concept opslaan",
+      "discard": "Annuleren",
+      "send": "Factuur verzenden",
+      "number": "Nummer",
+      "buyer-reference": "Referentie koper",
+      "payment": "Betaling",
+      "method": "Methode",
+      "subtotal": "Subtotaal",
+      "tax": "BTW",
+      "total": "Totaal",
+      "invoice-lines": "Factuurlijnen",
+      "pos": "Pos",
+      "amount": "Aantal",
+      "unit-price": "Stuksprijs",
+      "actions": "Acties",
+      "add-line": "Lijn toevoegen",
+      "note": "Notitie",
+      "recreate-positions": "Posities herberekenen"
+    }
+  },
+  "account": {
+    "title": "Account",
+    "discard": "Annuleren",
+    "save": "Opslaan",
+    "subscriber-info": "Abonnee-info",
+    "download-contract": "Contract downloaden",
+    "change-password": "Wachtwoord wijzigen",
+    "company-info": "Bedrijfsinfo",
+    "company-name": "Bedrijfsnaam",
+    "peppol-registration": "Peppol-registratie",
+    "remove-from-peppol": "Verwijderen van Peppol",
+    "not-registered-peppol": "Niet geregistreerd op Peppol",
+    "address": "Adres",
+    "number": "Nummer",
+    "payment-info": "Betaalinformatie",
+    "iban": "IBAN",
+    "account-name": "Accountnaam",
+    "payment-terms": "Betalingsvoorwaarden"
+  },
+  "forgot": {
+    "title": "Wachtwoord vergeten",
+    "info-sent": "Een resetlink is verzonden indien het adres bekend is.",
+    "enter-email": "Voer uw e-mailadres in om uw wachtwoord te resetten.",
+    "reset-failed": "Reset mislukt",
+    "request-link": "Resetlink aanvragen"
+  },
+  "reset": {
+    "title": "Wachtwoord resetten",
+    "enter-email": "Voer uw e-mailadres in om uw wachtwoord te resetten.",
+    "reset-failed": "Reset mislukt",
+    "action": "Wachtwoord resetten"
+  },
+  "session": {
+    "continue-title": "Sessies voortzetten"
+  }
+}

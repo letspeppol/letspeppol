@@ -3,12 +3,15 @@ package io.tubs.kyc.service.mail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -17,36 +20,81 @@ public class ActivationEmailTemplateProvider {
 
     public record RenderedTemplate(String subject, String body) {}
 
-    private final Resource templateResource;
+    private final Resource defaultTemplateResource;
     private final String defaultSubject;
-    private String cachedTemplate;
+    private final Environment environment;
+    private final ResourceLoader resourceLoader;
+
+    private final Map<String, String> cache = new HashMap<>(); // key: variant or "default"
 
     public ActivationEmailTemplateProvider(
-            @Value("classpath:mail/activation-email.txt") Resource templateResource,
-            @Value("${app.mail.subject.activation:Confirm your email address}") String defaultSubject) {
-        this.templateResource = templateResource;
+            @Value("classpath:mail/activation-email_en.txt") Resource templateResource, // use English variant as canonical default
+            @Value("${app.mail.subject.activation:Confirm your email address}") String defaultSubject,
+            Environment environment,
+            ResourceLoader resourceLoader) {
+        this.defaultTemplateResource = templateResource;
         this.defaultSubject = defaultSubject;
+        this.environment = environment;
+        this.resourceLoader = resourceLoader;
     }
 
     public RenderedTemplate render(String companyNumber, String activationLink) {
-        String bodyTemplate = loadTemplate();
-        String body = bodyTemplate
-                .replace("{{companyNumber}}", escape(companyNumber))
+        return render(companyNumber, activationLink, null);
+    }
+
+    public RenderedTemplate render(String companyNumber, String activationLink, String languageTag) {
+        String template = loadTemplate(languageTag);
+        String body = template
+                .replace("{{companyNumber}}", safe(companyNumber))
                 .replace("{{activationLink}}", activationLink);
-        return new RenderedTemplate(defaultSubject, body);
+        String subject = resolveSubject(languageTag);
+        return new RenderedTemplate(subject, body);
     }
 
-    private String loadTemplate() {
-        if (cachedTemplate != null) return cachedTemplate;
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(templateResource.getInputStream(), StandardCharsets.UTF_8))) {
-            cachedTemplate = reader.lines().collect(Collectors.joining("\n"));
-        } catch (Exception e) {
-            log.warn("Could not load activation email template, using fallback: {}", e.getMessage());
-            cachedTemplate = "Dear user,\n\nPlease verify your email for company {{companyNumber}} by clicking: {{activationLink}}\n\nRegards";
+    private String resolveSubject(String languageTag) {
+        if (languageTag != null) {
+            String subj = environment.getProperty("app.mail.subject.activation." + languageTag);
+            if (subj == null && languageTag.contains("-")) {
+                String lang = languageTag.split("-",2)[0];
+                subj = environment.getProperty("app.mail.subject.activation." + lang);
+            }
+            if (subj != null) return subj;
         }
-        return cachedTemplate;
+        return defaultSubject;
     }
 
-    private String escape(String v) { return v == null ? "" : v; }
-}
+    private String loadTemplate(String languageTag) {
+        List<String> candidates = new ArrayList<>();
+        if (languageTag != null && !languageTag.isBlank()) {
+            if (languageTag.contains("-")) candidates.add(languageTag);
+            candidates.add(languageTag.split("-",2)[0]);
+        } else {
+            // No explicit language -> attempt English explicit variant first
+            candidates.add("en");
+        }
+        candidates.add("default");
+        for (String key : candidates) {
+            if (cache.containsKey(key)) return cache.get(key);
+            Resource res = selectResourceForKey(key);
+            if (res != null && res.exists() && res.isReadable()) {
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(res.getInputStream(), StandardCharsets.UTF_8))) {
+                    String txt = reader.lines().collect(Collectors.joining("\n"));
+                    cache.put(key, txt);
+                    return txt;
+                } catch (Exception e) {
+                    log.warn("Failed to read activation template for key {}: {}", key, e.getMessage());
+                }
+            }
+        }
+        String fb = "Dear user,\n\nPlease verify your email for company {{companyNumber}} by clicking: {{activationLink}}\n\nRegards";
+        cache.put("default", fb);
+        return fb;
+    }
 
+    private Resource selectResourceForKey(String key) {
+        if ("default".equals(key)) return defaultTemplateResource; // now points to _en variant
+        return resourceLoader.getResource("classpath:mail/activation-email_" + key + ".txt");
+    }
+
+    private String safe(String v) { return v == null ? "" : v; }
+}

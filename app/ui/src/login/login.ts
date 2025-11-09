@@ -1,7 +1,7 @@
 import {resolve} from "@aurelia/kernel";
-import {LoginService} from "../services/login-service";
+import {LoginService} from "../services/app/login-service";
 import {IRouter} from "@aurelia/router";
-import {CompanyService} from "../services/company-service";
+import {CompanyService} from "../services/app/company-service";
 
 export class Login {
     private readonly loginService = resolve(LoginService);
@@ -10,12 +10,19 @@ export class Login {
     email: string;
     password: string;
     error: boolean = false;
+    rememberMe: boolean = false;
 
     attached() {
+        const email = localStorage.getItem("email")
+        if (email) {
+            this.rememberMe = true;
+            this.email = email;
+        }
         this.verifyAuthenticated();
+
     }
 
-    async check() {
+    async verifyLogin() {
         try {
             await this.loginService.auth(this.email, this.password);
             await this.loginSuccess();
@@ -27,7 +34,10 @@ export class Login {
     async loginSuccess() {
         await this.companyService.getAndSetMyCompanyForToken();
         this.error = false;
-        // await this.router.load('invoices');
+        if (this.rememberMe) {
+            localStorage.setItem('email', this.email);
+        }
+        await this.router.load('invoices');
     }
 
     verifyAuthenticated() {

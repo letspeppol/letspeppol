@@ -1,0 +1,154 @@
+<import from="../app/value-converters/date-format.ts"></import>
+<import from="../app/value-converters/price.ts"></import>
+
+<div class="invoices-layout">
+    <aside class="mailbox">
+        <div class="mailbox-title" t="invoice.direction">Direction</div>
+        <nav>
+            <button active.class="box === 'all'" class="mail-item" click.trigger="setActiveItems('all')">
+                <span class="label" t="invoice.all">All</span>
+            </button>
+            <button active.class="box === 'outgoing'" class="mail-item" click.trigger="setActiveItems('outgoing')">
+                <span class="label" t="invoice.outgoing">Outgoing</span>
+            </button>
+            <button active.class="box === 'incoming'" class="mail-item" click.trigger="setActiveItems('incoming')">
+                <span class="label" t="invoice.incoming">Incoming</span>
+            </button>
+            <button active.class="box === 'drafts'" class="mail-item" click.trigger="setActiveItems('drafts')">
+                <span class="label" t="invoice.drafts">Drafts</span>
+                <span class="badge">${invoiceContext.drafts.length}</span>
+            </button>
+        </nav>
+    </aside>
+    <div class="invoices-main">
+        <div>
+            <div class="section-header">
+                <h1 t="invoice.title">Invoices</h1>
+                <div class="actions" style="justify-content: space-between">
+                    <div class="filters">
+                        <label class="select" style="position: relative">
+                            <select change.trigger="changeDocType($event.target.value)">
+                                <option value="" t="invoice.all">All</option>
+                                <option value="invoice" t="documentType.invoice">Invoice</option>
+                                <option value="credit-note" t="documentType.credit-note">Credit note</option>
+                            </select>
+                        </label>
+                        <label class="search">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.5"/>
+                            </svg>
+                            <input type="search" value.bind="query.docId & debounce:300" placeholder="Search customer or reference" t="[placeholder]placeholder.invoice-search.doc" />
+                        </label>
+                        <label class="search">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.5"/>
+                            </svg>
+                            <input type="search" value.bind="query.counterPartyNameLike & debounce:300" placeholder="Search customer or reference" t="[placeholder]placeholder.invoice-search.customer" />
+                        </label>
+                    </div>
+                    <div>
+                        <button class="btn primary" click.trigger="newCreditNote()" title="New invoice" t="[title]invoice.new.credit-note">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                            <span t="invoice.new.credit-note">New invoice</span>
+                        </button>
+                        <button class="btn primary" click.trigger="newInvoice()" title="New invoice" t="[title]invoice.new.invoice">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                            <span t="invoice.new.invoice">New invoice</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card table-card">
+                <div class="table-wrapper">
+                    <table class="data-table" aria-describedby="invoices-title">
+                        <thead>
+                        <tr>
+                            <th t="invoice.table.direction">Direction</th>
+                            <th t="invoice.table.type">Type</th>
+                            <th t="invoice.table.doc">Doc</th>
+                            <th class="th-filter" t="invoice.table.issue-date">
+                                <div class="th-inner">
+                                    <span t="invoice.table.issue-date">Date</span>
+                                </div>
+                                <div class="filter-panel" hidden>
+                                    <label class="field">
+                                        <span t="invoice.filter.from">From</span>
+                                        <input type="date" />
+                                    </label>
+                                    <label class="field">
+                                        <span t="invoice.filter.to">To</span>
+                                        <input type="date" />
+                                    </label>
+                                    <div class="panel-actions">
+                                        <button type="button" class="btn ghost" t="invoice.filter.clear">Clear</button>
+                                        <button type="button" class="btn primary" t="invoice.filter.apply">Apply</button>
+                                    </div>
+                                </div>
+                            </th>
+                            <th class="th-filter" t="invoice.table.due-date">
+                                <div class="th-inner">
+                                    <span t="invoice.table.due-date">Date</span>
+                                </div>
+                                <div class="filter-panel" hidden>
+                                    <label class="field">
+                                        <span t="invoice.filter.from">From</span>
+                                        <input type="date" />
+                                    </label>
+                                    <label class="field">
+                                        <span t="invoice.filter.to">To</span>
+                                        <input type="date" />
+                                    </label>
+                                    <div class="panel-actions">
+                                        <button type="button" class="btn ghost" t="invoice.filter.clear">Clear</button>
+                                        <button type="button" class="btn primary" t="invoice.filter.apply">Apply</button>
+                                    </div>
+                                </div>
+                            </th>
+                            <th t="invoice.table.customer">Customer</th>
+                            <th t="invoice.table.total">Total</th>
+                            <th class="actions-col" t="invoice.table.actions">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <tr repeat.for="item of invoices" click.trigger="selectItem(item)">
+                                <td><span class="pill" class.bind="item.direction === 'incoming' ? 'incoming' : 'sent' ">${item.direction ?? 'outgoing'}</span></td>
+                                <td><span class="pill" class.bind="item.type === 'invoice' ? 'sent' : 'incoming' " t="documentType.${item.docType}">${item.docType}</span></td>
+                                <td>${item.docId}</td>
+                                <td>${item.createdAt | dateFormat}</td>
+                                <td>${item.dueDate | dateFormat}</td>
+                                <td>${item.counterPartyName}</td>
+                                <td>${item.amount | price}</td>
+                                <td class="actions-col">
+                                    <button if.bind="box === 'drafts'" class="icon-btn" data-action="remove-line" title="Remove" t="[title]common.remove" click.trigger="deleteDraft($event, item)">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-icon lucide-trash"><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div if.bind="!invoices || invoices.length === 0" class="empty-state" >
+                    <div class="empty-icon" aria-hidden="true">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                            <path d="M14 3v5h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <p t="invoice.empty">No invoices match your filters.</p>
+                </div>
+                <div class="table-footer pager">
+                    <button type="button" class="btn ghost" click.trigger="previousPage()" disabled.bind="query.page <= 1" t="invoice.pager.previous">← Previous</button>
+                    <span class="pager-range"></span>
+                    <button type="button" class="btn ghost" click.trigger="nextPage()" disabled.bind="invoices.length < 20" t="invoice.pager.next">Next →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

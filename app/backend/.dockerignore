@@ -1,0 +1,14 @@
+# Gradle & build outputs
+.gradle
+build
+out
+
+# IDE
+.idea
+*.iml
+*.ipr
+*.iws
+.vscode
+
+# OS
+.DS_Store

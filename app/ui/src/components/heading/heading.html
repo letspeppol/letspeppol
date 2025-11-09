@@ -1,0 +1,38 @@
+<import from="../lang/language-selector"></import>
+<import from="../theme/theme-selector"></import>
+
+<header class="app-header">
+    <div style="display: flex; justify-content: space-between; align-items: center">
+        <div class="brand">
+            <img src.bind="this.theme.themeDark?'logo-dark.png':'logo.png'" class="logo" height="30" alt="Let's Peppol" t="[alt]navigation.brand-alt" />
+            <i data-lucide="menu"></i>
+        </div>
+
+        <div class="tabs-row">
+            <nav class="tabs" role="tablist">
+                <button load="../invoices" class="btn tab active" aria-selected="false" title="Invoices" t="[title]navigation.invoices">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-landmark-icon lucide-landmark"><path d="M10 18v-7"/><path d="M11.12 2.198a2 2 0 0 1 1.76.006l7.866 3.847c.476.233.31.949-.22.949H3.474c-.53 0-.695-.716-.22-.949z"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M3 22h18"/><path d="M6 18v-7"/></svg>
+                    <span t="navigation.invoices">Invoices</span>
+                </button>
+                <button load="../partners" class="btn tab active" aria-selected="false" title="Partners" t="[title]navigation.partners">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-handshake-icon lucide-handshake"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"/><path d="m21 3 1 11h-2"/><path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"/><path d="M3 4h8"/></svg>
+                    <span t="navigation.partners">Partners</span>
+                </button>
+                <button load="../products" class="btn tab active" aria-selected="false" title="Products" t="[title]navigation.products">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-basket-icon lucide-shopping-basket"><path d="m15 11-1 9"/><path d="m19 11-4-7"/><path d="M2 11h20"/><path d="m3.5 11 1.6 7.4a2 2 0 0 0 2 1.6h9.8a2 2 0 0 0 2-1.6l1.7-7.4"/><path d="M4.5 15.5h15"/><path d="m5 11 4-7"/><path d="m9 11 1 9"/></svg>
+                    <span t="navigation.products">Products</span>
+                </button>
+                <button load="../account" class="btn tab active" aria-selected="false" title="Account" t="[title]navigation.account">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-building-icon lucide-building"><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M12 6h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/><path d="M8 6h.01"/><path d="M9 22v-3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><rect x="4" y="2" width="16" height="20" rx="2"/></svg>
+                    <span t="navigation.account">Account</span>
+                </button>
+            </nav>
+        </div>
+
+        <div style="display: flex; align-items: center; padding: var(--space-09) var(--space-12)">
+            <button class="btn ghost" title="Log out" t="[title]common.logout" click.trigger="logout()" t="common.logout">Log out</button>
+            <theme-selector></theme-selector>
+            <language-selector></language-selector>
+        </div>
+    </div>
+</header>

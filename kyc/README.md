@@ -37,7 +37,8 @@ To run the project follow the next steps:
 6. Right-click on `KycApplication` and select `'Modify run configuration'`
 7. In the `Build and run` section click on `Modify options` and select `Environment variables`
 8. Now add a variable with name `ACCESS_TOKEN_KEY` with the same value as the proxy
-9. If you want to register using the proxy, also add the variables `PROXY_API_URL` and `PROXY_ENABLED=true`
+9. In `active profiles` fill in the profile `sqlite` 
+10. If you want to register using the proxy, also add the variables `PROXY_API_URL` and `PROXY_ENABLED=true`
 
 ### Using CLI
 1. Build the project
@@ -45,7 +46,11 @@ To run the project follow the next steps:
 3. `export ACCESS_TOKEN_KEY=...`
 4. `export PROXY_API_URL=...`
 5. `export PROXY_ENABLED=...`
-6. Execute the command `java -jar kyc-0.0.1-SNAPSHOT.jar`
+6. Execute the command `java -Dspring.profiles.active=sqlite -jar kyc-0.0.1-SNAPSHOT.jar`
+
+### PostgreSQL
+If you want to use PostgreSQL instead of SqLite, set the active spring profile to `postgres` instead of `sqlite`.  
+Also configure these environment variables: `DB_USER`, `DB_PASS`, `DB_HOST` & `DB_PORT`.
 
 ## Nix development environment
 

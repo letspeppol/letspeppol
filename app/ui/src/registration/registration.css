@@ -1,3 +1,8 @@
-.grid {
-    grid-template-columns: 7fr 3fr;
+.card-header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: var(--space-035);
+    color:var(--muted);
+    margin-bottom: var(--space-04);
 }

@@ -1,0 +1,16 @@
+<div class="modal" role="dialog" aria-modal="true" show.bind="confirmationContext.open">
+    <div class="modal-backdrop"></div>
+    <div class="modal-card" style="width: 300px">
+        <header class="modal-header">
+            <h3>${confirmationContext.title}</h3>
+            <button class="icon-btn" aria-label="Close dialog" t="[aria-label]common.close" title="Close" t="[title]common.close" click.trigger="no()">×</button>
+        </header>
+        <div class="modal-body">
+            <p>${confirmationContext.text}</p>
+        </div>
+        <footer class="modal-footer">
+            <button type="button" class="btn" click.trigger="no()" title="No" t="[title]common.no" t="common.no">No</button>
+            <button type="button" class="btn primary" click.trigger="yes()" title="Yes" t="[title]common.yes;common.yes">Yes</button>
+        </footer>
+    </div>
+</div>

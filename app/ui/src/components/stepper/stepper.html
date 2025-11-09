@@ -1,0 +1,9 @@
+<div class="stepper-wrapper">
+
+    <template repeat.for="step of steps">
+        <div class="stepper-item" completed.class="($index) < completedSteps" active.class="$index === completedSteps">
+            <div class="step-counter">${step}</div>
+        </div>
+    </template>
+
+</div>

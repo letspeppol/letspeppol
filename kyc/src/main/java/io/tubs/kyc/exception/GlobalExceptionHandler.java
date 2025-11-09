@@ -1,6 +1,5 @@
 package io.tubs.kyc.exception;
 
-import io.tubs.kyc.dto.SimpleMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,19 +16,23 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<SimpleMessage> handleNotFound(NotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new SimpleMessage(ex.getMessage()));
+    public ResponseEntity<Map<String, Object>> handleNotFound(NotFoundException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("errorCode", ex.getCode());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
     }
 
     @ExceptionHandler(KycException.class)
-    public ResponseEntity<SimpleMessage> handleKycException(KycException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new SimpleMessage(ex.getMessage()));
+    public ResponseEntity<Map<String, Object>> handleKycException(KycException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("errorCode", ex.getCode());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException ex) {
         Map<String, Object> body = new HashMap<>();
-        body.put("message", "Validation failed");
+        body.put("errorCode", "validation_failed");
         Map<String, String> errors = new HashMap<>();
         for (FieldError fe : ex.getBindingResult().getFieldErrors()) {
             errors.put(fe.getField(), fe.getDefaultMessage());
@@ -39,9 +42,10 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<SimpleMessage> handleOther(Exception ex) {
+    public ResponseEntity<Map<String, Object>> handleOther(Exception ex) {
         log.error(ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new SimpleMessage("Unexpected error"));
+        Map<String, Object> body = new HashMap<>();
+        body.put("errorCode", KycErrorCodes.UNEXPECTED_ERROR);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
     }
 }
-

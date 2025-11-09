@@ -1,0 +1,12 @@
+Hallo,
+
+We hebben een verzoek ontvangen om een e-mailadres te verifiëren voor bedrijf {{companyNumber}}.
+
+Om de verificatie te voltooien klikt u op de onderstaande link (2 uur geldig):
+{{activationLink}}
+
+Als u dit niet heeft aangevraagd kunt u dit bericht negeren.
+
+Met vriendelijke groet,
+KYC Portal Team
+

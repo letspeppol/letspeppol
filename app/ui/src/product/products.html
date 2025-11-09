@@ -1,0 +1,10 @@
+<import from="../components/view/application-view"></import>
+<import from="./product-overview"></import>
+<import from="./product-edit"></import>
+<import from="./product-category-modal"></import>
+
+<application-view>
+    <product-overview product-category-modal.bind="productCategoryModal" show.bind="!productContext.selectedProduct"></product-overview>
+    <product-edit show.bind="productContext.selectedProduct"></product-edit>
+    <product-category-modal component.ref="productCategoryModal"></product-category-modal>
+</application-view>

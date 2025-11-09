@@ -1,0 +1,13 @@
+<svg width="320" height="320" xmlns="http://www.w3.org/2000/svg">
+  <!-- Globe -->
+  <g transform="translate(32,32)">
+    <circle cx="128" cy="128" r="128" fill="none" stroke="#2C3C69" stroke-width="16"/>
+    <line x1="0" y1="128" x2="256" y2="128" stroke="#2C3C69" stroke-width="16"/>
+    <line x1="128" y1="0" x2="128" y2="256" stroke="#2C3C69" stroke-width="16"/>
+    <line x1="17" y1="64" x2="239" y2="64" stroke="#2C3C69" stroke-width="16"/>
+    <line x1="17" y1="192" x2="239" y2="192" stroke="#2C3C69" stroke-width="16"/>
+    <path d="m128,0 a32,64 0 0,0 0,256 a32,64 0 0,0 0,-256" fill="none" stroke="#2C3C69" stroke-width="16"/>
+    <!-- Checkmark -->
+    <polyline points="120,120 160,160 264,64" fill="none" stroke="#FAA21D" stroke-width="32" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

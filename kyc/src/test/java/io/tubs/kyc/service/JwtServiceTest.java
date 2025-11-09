@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -17,7 +19,7 @@ public class JwtServiceTest {
     void testGenerateAndValidateToken() {
         String peppolId = "0208:1023290711";
 
-        String token = jwtService.generateToken(peppolId);
+        String token = jwtService.generateToken(peppolId, UUID.randomUUID());
         assertNotNull(token, "Generated token should not be null");
 
         String extractedPeppolId = jwtService.validateToken(token);
@@ -36,7 +38,7 @@ public class JwtServiceTest {
     void testExpiredToken() throws InterruptedException {
         String peppolId = "expired:case";
 
-        String token = jwtService.generateToken(peppolId);
+        String token = jwtService.generateToken(peppolId, UUID.randomUUID());
 
         // Since default expiry is 1h, token should still be valid now
         String result = jwtService.validateToken(token);

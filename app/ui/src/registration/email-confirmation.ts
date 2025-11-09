@@ -1,15 +1,17 @@
 import {Params, RouteNode} from "@aurelia/router";
 import {resolve} from "@aurelia/kernel";
+import * as webeid from '@web-eid/web-eid-library/web-eid';
+import {IEventAggregator} from "aurelia";
+import {AlertType} from "../components/alert/alert";
+import {KYCApi} from "../services/kyc/kyc-api";
 import {
+    Director,
+    PrepareSigningResponse,
     RegistrationService,
     TokenVerificationResponse
-} from "../services/registration-service";
-import { Director} from "../services/company-service";
-import * as webeid from '@web-eid/web-eid-library/web-eid';
-import {KYCApi} from "../services/api/kyc-api";
-import {IEventAggregator} from "aurelia";
-import {AlertType} from "../alert/alert";
-
+} from "../services/kyc/registration-service";
+import {SignatureAlgorithm} from "@web-eid/web-eid-library/models/SignatureAlgorithm";
+import {LibrarySignResponse} from "@web-eid/web-eid-library/models/message/LibraryResponse";
 
 export class EmailConfirmation {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -50,46 +52,53 @@ export class EmailConfirmation {
                 supportedSignatureAlgorithms
             } = await webeid.getSigningCertificate({lang: 'en'});
 
-            const signatureAlgorithm = supportedSignatureAlgorithms.find(item => item.hashFunction === "SHA-256");
-
-            const prepareSigningRequest = {
-                emailToken: this.emailToken,
-                directorId: this.confirmedDirector.id,
-                certificate: certificate,
-                supportedSignatureAlgorithms: supportedSignatureAlgorithms,
-                language: 'en'
-            };
-            const prepareSigningResponse = await this.registrationService.prepareSign(prepareSigningRequest);
-            console.log(prepareSigningResponse);
-            console.log(signatureAlgorithm);
+            const {
+                signatureAlgorithm,
+                prepareSigningResponse
+            } = await this.prepareSigning(supportedSignatureAlgorithms, certificate);
 
             const signResponse = await webeid.sign(
                 certificate,
                 prepareSigningResponse.hashToSign,
                 signatureAlgorithm.hashFunction
             );
-            console.log(signResponse);
-
-            const finalizeSigningRequest = {
-                emailToken: this.emailToken,
-                directorId: this.confirmedDirector.id,
-                certificate: certificate,
-                signature: signResponse.signature,
-                signatureAlgorithm: signResponse.signatureAlgorithm,
-                hashToSign: prepareSigningResponse.hashToSign,
-                hashToFinalize: prepareSigningResponse.hashToFinalize,
-                password: this.password
-            };
-            const response = await this.registrationService.finalizeSign(finalizeSigningRequest);
-            console.log(response);
+            const finalizeSigningResponse = await this.finalizeSigning(certificate, signResponse, prepareSigningResponse);
             this.step = 3;
-            await this.downloadFile(response);
+            await this.downloadFile(finalizeSigningResponse);
             this.ea.publish('alert', {alertType: AlertType.Success, text: "Signed contract downloaded!"});
         } catch (error) {
             const json = await error.json();
             this.ea.publish('alert', {alertType: AlertType.Danger, text: json ? json.message : "Signing failed"}); // TODO error util
         }
 
+    }
+
+    private async prepareSigning(supportedSignatureAlgorithms: Array<SignatureAlgorithm>, certificate: string) {
+        const signatureAlgorithm = supportedSignatureAlgorithms.find(item => item.hashFunction === "SHA-256");
+
+        const prepareSigningRequest = {
+            emailToken: this.emailToken,
+            directorId: this.confirmedDirector.id,
+            certificate: certificate,
+            supportedSignatureAlgorithms: supportedSignatureAlgorithms,
+            language: 'en'
+        };
+        const prepareSigningResponse = await this.registrationService.prepareSign(prepareSigningRequest);
+        return {signatureAlgorithm, prepareSigningResponse};
+    }
+
+    private async finalizeSigning(certificate: string, signResponse: LibrarySignResponse, prepareSigningResponse: PrepareSigningResponse) {
+        const finalizeSigningRequest = {
+            emailToken: this.emailToken,
+            directorId: this.confirmedDirector.id,
+            certificate: certificate,
+            signature: signResponse.signature,
+            signatureAlgorithm: signResponse.signatureAlgorithm,
+            hashToSign: prepareSigningResponse.hashToSign,
+            hashToFinalize: prepareSigningResponse.hashToFinalize,
+            password: this.password
+        };
+        return await this.registrationService.finalizeSign(finalizeSigningRequest);
     }
 
     async downloadFile(response: Response) {

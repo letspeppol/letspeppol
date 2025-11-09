@@ -1,28 +1,31 @@
 import {resolve} from "@aurelia/kernel";
-import {CompanyResponse, CompanyService} from "../services/company-service";
-import {RegistrationService} from "../services/registration-service";
-import {AlertType} from "../alert/alert";
 import {IEventAggregator} from "aurelia";
+import {KycCompanyResponse, RegistrationService} from "../services/kyc/registration-service";
 
 export class Registration {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
-    private companyService = resolve(CompanyService);
     private registrationService = resolve(RegistrationService);
     step = 0;
     email: string | undefined;
     companyNumber : string | undefined;
-    company : CompanyResponse | undefined;
+    company : KycCompanyResponse | undefined;
+    errorCode: string | undefined;
 
     async checkCompanyNumber() {
+        this.errorCode = undefined;
         try {
-            this.company = await this.companyService.getCompany(this.companyNumber);
+            this.ea.publish('showOverlay', "Searching company");
+            this.company = await this.registrationService.getCompany(this.companyNumber);
             this.step++;
         } catch {
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Token invalid"});
+            this.errorCode = "registration-company-not-found";
+        } finally {
+            this.ea.publish('hideOverlay');
         }
     }
 
     restart(e) {
+        this.errorCode = undefined;
         this.companyNumber = undefined;
         this.company = undefined;
         this.step = 0;
@@ -30,11 +33,15 @@ export class Registration {
     }
 
     async confirmCompany() {
+        this.errorCode = undefined;
         try {
+            this.ea.publish('showOverlay', "Confirming registration request");
             await this.registrationService.confirmCompany(this.companyNumber, this.email);
             this.step++;
         } catch {
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Company already registered"});
+            this.errorCode = "registration-company-already-registered";
+        } finally {
+            this.ea.publish('hideOverlay');
         }
     }
 

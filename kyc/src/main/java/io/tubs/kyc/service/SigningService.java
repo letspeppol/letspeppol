@@ -12,6 +12,7 @@ import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.SignerProperties;
 import io.tubs.kyc.dto.*;
+import io.tubs.kyc.model.User;
 import io.tubs.kyc.model.kbo.Director;
 import io.tubs.kyc.repository.DirectorRepository;
 import io.tubs.kyc.service.signing.CertificateUtil;
@@ -52,21 +53,23 @@ public class SigningService {
     private final IdentityVerificationService identityVerificationService;
     private final DirectorRepository directorRepository;
 
-    @Value("${contract.work.dir:#{null}}")
+    @Value("${kyc.data.dir:#{null}}")
+    private String dataDirectory;
+
     private String workingDirectory;
-    @Value("${contract.store.dir:#{null}}")
     private String contractDirectory;
 
     @PostConstruct
     public void init() throws IOException {
-        workingDirectory = initDirectory(workingDirectory, "/kyc/temp");
-        contractDirectory = initDirectory(contractDirectory, "/kyc/contracts");
+        workingDirectory = initDirectory( "/temp");
+        contractDirectory = initDirectory( "/contracts");
     }
 
-    private String initDirectory(String dir, String defaultSubdir) throws IOException {
-        String resolvedDir = (dir == null) ? System.getProperty("java.io.tmpdir") + defaultSubdir : dir;
-        Files.createDirectories(Path.of(resolvedDir));
-        return resolvedDir;
+    private String initDirectory(String dir) throws IOException {
+        String resolvedDir = (dataDirectory == null || dataDirectory.isBlank()) ? System.getProperty("java.io.tmpdir") : dataDirectory;
+        Path path = Path.of(resolvedDir, dir);
+        Files.createDirectories(path);
+        return path.toString();
     }
 
     public PrepareSigningResponse prepareSigning(PrepareSigningRequest request) {
@@ -169,15 +172,23 @@ public class SigningService {
                 signingRequest.certificate(),
                 certificates[0]
         );
-        identityVerificationService.create(identityVerificationRequest);
+        User user = identityVerificationService.create(identityVerificationRequest);
         activationService.setVerified(signingRequest.emailToken());
 
-        return writeContractToFile(tokenVerificationResponse.company().companyNumber(), tokenVerificationResponse.email(), finalPdfBytes);
+        return writeContractToFile(tokenVerificationResponse.company().companyNumber(), user, finalPdfBytes);
     }
 
-    private byte[] writeContractToFile(String companyNumber, String email, byte[] finalPdfBytes) {
+    public byte[] getContract(String companyNumber, Long userId) {
         try {
-            File finalizedPdf = new File(contractDirectory, "contract_en_%s_%s.pdf".formatted(companyNumber, email));
+            return Files.readAllBytes(Path.of(contractDirectory, "contract_%s_%d.pdf".formatted(companyNumber, userId)));
+        } catch (IOException e) {
+            throw new RuntimeException("Error getting contract from file: " + e.getMessage(), e);
+        }
+    }
+
+    private byte[] writeContractToFile(String companyNumber, User user, byte[] finalPdfBytes) {
+        try {
+            File finalizedPdf = new File(contractDirectory, "contract_%s_%d.pdf".formatted(companyNumber, user.getId()));
             Files.write(finalizedPdf.toPath(), finalPdfBytes);
             log.info("PDF signing completed successfully for company: {}, final PDF size: {} bytes", companyNumber, finalPdfBytes.length);
             return finalPdfBytes;
