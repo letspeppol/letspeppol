@@ -74,13 +74,15 @@ export class InvoiceOverview {
         this.invoiceContext.selectedDraft = undefined;
         if (this.box === 'drafts') {
             const doc = item as InvoiceDraftDto;
+            this.invoiceContext.readOnly = false;
             this.invoiceContext.selectedInvoice = parseInvoice(doc.xml);
             this.invoiceContext.selectedDraft = doc;
         } else {
-            // const doc = item as ListItem;
-            // this.letsPeppolService.getDocument(doc.type, doc.direction, doc.uuid).then((response) => {
-            //     this.invoiceContext.selectedInvoice = parseInvoice(response);
-            // });
+            const doc = item as ListItem;
+            this.letsPeppolService.getDocument(doc.platformId).then((response) => {
+                this.invoiceContext.readOnly = true;
+                this.invoiceContext.selectedInvoice = parseInvoice(response);
+            });
         }
     }
 

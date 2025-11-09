@@ -22,6 +22,7 @@ export class InvoiceContext {
     drafts: InvoiceDraftDto[] = [];
     @observable selectedInvoice:  undefined | Invoice | CreditNote;
     selectedDraft: InvoiceDraftDto;
+    readOnly: boolean = false;
 
     clearSelectedInvoice() {
         this.selectedInvoice = undefined;
@@ -49,6 +50,7 @@ export class InvoiceContext {
             this.selectedInvoice = this.invoiceComposer.createCreditNote();
         }
         this.invoiceCalculator.calculateTaxAndTotals(this.selectedInvoice);
+        this.readOnly = false;
     }
 
     getNextPosition(): string {

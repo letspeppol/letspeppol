@@ -1,3 +1,5 @@
+
+<template>
 <div >
     <input id="productSearch"
            type="text"
@@ -9,6 +11,7 @@
            keydown.trigger="onSearchKeydown($event)"
            blur.trigger="onSearchBlur()"
            autocomplete="off"
+           ...$attrs
     />
     <ul class="autocomplete-list" role="listbox" if.bind="showSuggestions" style="max-width: 200px; top: ${top}; left: ${left}; width: ${width}">
         <li repeat.for="p of filteredProducts"
@@ -24,3 +27,4 @@
         <li class="autocomplete-empty" if.bind="filteredProducts.length === 0" t="invoice.productSearch.no-matches">No matches</li>
     </ul>
 </div>
+</template>

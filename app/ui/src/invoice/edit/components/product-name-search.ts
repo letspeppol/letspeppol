@@ -1,8 +1,10 @@
 import {ProductDto, ProductService} from "../../../services/app/product-service";
 import {resolve} from "@aurelia/kernel";
-import {bindable} from "aurelia";
+import {bindable, customElement} from "aurelia";
+import {template} from "./product-name-search.html"
 import {ProductContext} from "../../../product/product-context";
 
+@customElement({name: 'product-name-search', template, capture: true})
 export class ProductNameSearch {
     private productService = resolve(ProductService);
     private productContext = resolve(ProductContext);

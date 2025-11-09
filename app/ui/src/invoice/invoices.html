@@ -4,5 +4,5 @@
 
 <application-view>
     <invoice-overview show.bind="!invoiceContext.selectedInvoice"></invoice-overview>
-    <invoice-edit show.bind="invoiceContext.selectedInvoice"></invoice-edit>
+    <invoice-edit show.bind="invoiceContext.selectedInvoice" read-only.bind="invoiceContext.readOnly"></invoice-edit>
 </application-view>

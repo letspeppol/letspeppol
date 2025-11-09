@@ -34,6 +34,7 @@ export class InvoiceEdit {
     private newCreditNoteSubscription: IDisposable;
 
     selectedPaymentMeansCode: number | undefined = 30;
+    @bindable readOnly;
     @observable selectedDocumentType = DocumentType.Invoice;
     @observable customerCompanyNumber: undefined | string;
     @bindable invoiceModal: InvoiceModal;
@@ -115,8 +116,6 @@ export class InvoiceEdit {
             }
 
             await this.proxyService.sendDocument(xml);
-            console.log(xml);
-            console.log(parseInvoice(xml));
         } catch(e) {
             console.error(e);
             this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to update account"});
@@ -149,9 +148,23 @@ export class InvoiceEdit {
             }
             this.invoiceContext.selectedInvoice = undefined;
             this.invoiceContext.selectedDraft = undefined;
+            this.ea.publish('alert', {alertType: AlertType.Success, text: "Invoice draft saved"});
         } catch(e) {
             console.error(e);
             this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to save invoice as draft"});
+        }
+    }
+
+    async deleteDraft() {
+        try {
+            await this.invoiceService.deleteInvoiceDraft(this.invoiceContext.selectedDraft.id);
+            this.invoiceContext.drafts.splice(this.invoiceContext.drafts.findIndex(item => item.id === this.invoiceContext.selectedDraft.id), 1);
+            this.invoiceContext.selectedInvoice = undefined;
+            this.invoiceContext.selectedDraft = undefined;
+            this.ea.publish('alert', {alertType: AlertType.Success, text: "Invoice draft removed"});
+        } catch(e) {
+            console.error(e);
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to delete invoice draft"});
         }
     }
 

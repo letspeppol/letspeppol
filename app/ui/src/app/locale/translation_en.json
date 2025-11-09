@@ -302,6 +302,7 @@
     },
     "edit": {
       "validate": "Validate",
+      "delete-draft": "Delete draft",
       "update-draft": "Update draft",
       "save-draft": "Save draft",
       "discard": "Discard",
