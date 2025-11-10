@@ -28,8 +28,8 @@ pnpm start
 ```
 In both cases you will need to create the database table before first use (FIXME: make this automatic):
 ```sh
-docker exec -it db psql postgresql://letspeppol:letspeppol@localhost:5432/letspeppol -c "create type direction as enum ('incoming', 'outgoing');"
-docker exec -it db psql postgresql://letspeppol:letspeppol@localhost:5432/letspeppol -c "create type docType as enum ('invoice', 'credit-note');"
+docker exec -it db psql postgresql://letspeppol:letspeppol@localhost:5432/letspeppol -c ""
+docker exec -it db psql postgresql://letspeppol:letspeppol@localhost:5432/letspeppol -c "
 docker exec -it db psql postgresql://letspeppol:letspeppol@localhost:5432/letspeppol -c "create table FrontDocs (userId text, platformId text primary key, createdAt timestamp, docType docType, direction direction, counterPartyId text, counterPartyName text, docId text, amount numeric, dueDate timestamp, paymentTerms text, paid text, ubl text, status text);"
 ```
 
