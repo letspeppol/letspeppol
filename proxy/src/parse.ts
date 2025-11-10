@@ -62,9 +62,11 @@ export function parseDocument(
     // platformId is assigned by the platform
     userId,
     createdAt: new Date().toISOString(),
-    docType: docTypeMap[docType] || (() => {
-      throw new Error(`Unknown document type: ${docType}`);
-            })(),
+    docType:
+      docTypeMap[docType] ||
+      (() => {
+        throw new Error(`Unknown document type: ${docType}`);
+      })(),
     direction,
     counterPartyId,
     counterPartyName,

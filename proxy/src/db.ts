@@ -241,7 +241,13 @@ export async function getTotalsForUser(userId: string): Promise<{
   };
 }
 
-export async function setDocumentStatus({ id, status }: { id: string; status: string }): Promise<void> {
+export async function setDocumentStatus({
+  id,
+  status,
+}: {
+  id: string;
+  status: string;
+}): Promise<void> {
   const client = await getPostgresClient();
   const updateQuery = `
     UPDATE FrontDocs

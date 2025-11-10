@@ -22,6 +22,8 @@ For developing the proxy, you don't need the `kyc` and `app` components, but you
 docker compose -f compose-db-only.yml up -d
 pnpm install
 pnpm build
+pnpm test
+pnpm prettier
 pnpm start
 ```
 In both cases you will need to create the database table before first use (FIXME: make this automatic):
