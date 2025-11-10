@@ -1,7 +1,7 @@
 services:
   db:
     image: postgres:16-alpine
-    container_name: lp-postgres
+    #container_name: lp-postgres
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
@@ -9,11 +9,11 @@ services:
       POSTGRES_DB: postgres
       DB_USER: ${DB_USER}
       DB_PASS: ${DB_PASS}
-    ports:
-      - "5432:5432"
+    #ports:
+      #- "5432:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
-      - ./postgres:/docker-entrypoint-initdb.d:ro
+      - ../../postgres:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 5s
@@ -23,7 +23,7 @@ services:
 
   proxy:
     build:
-      context: ./proxy
+      context: ../../proxy
       dockerfile: Dockerfile
     image: lp-proxy:latest
     depends_on:
@@ -40,7 +40,7 @@ services:
 
   app:
     build:
-      context: ./app/backend
+      context: ../../app/backend
       dockerfile: Dockerfile
     image: lp-app:latest
     depends_on:
@@ -57,7 +57,7 @@ services:
 
   kyc:
     build:
-      context: ./kyc
+      context: ../../kyc
       dockerfile: Dockerfile
     image: lp-kyc:latest
     depends_on:
@@ -77,12 +77,12 @@ services:
       MAIL_USER: ${MAIL_USER}
       MAIL_PASS: ${MAIL_PASS}
       MAIL_FROM: ${MAIL_FROM}
-      UI_URL: ${UI_URL}
+      UI_URL: ${UI_GREEN_URL}
       KYC_DATA_DIR: ${KYC_DATA_DIR}
 
   ui:
     build:
-      context: ./app/ui
+      context: ../../app/ui
       dockerfile: Dockerfile
     image: lp-ui:latest
     depends_on:
@@ -93,10 +93,10 @@ services:
       - "80"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.${ACTIVE_DOMAIN_BLUE}.rule=Host(`${ACTIVE_DOMAIN_BLUE}`)"
-      - "traefik.http.routers.${ACTIVE_DOMAIN_BLUE}.entrypoints=websecure"
-      - "traefik.http.routers.${ACTIVE_DOMAIN_BLUE}.tls.certresolver=${CERT_RESOLVER_BLUE}"
-      - "traefik.http.services.${ACTIVE_DOMAIN_BLUE}.loadbalancer.server.port=80"
+      - "traefik.http.routers.green.rule=Host(`${ACTIVE_DOMAIN_GREEN}`)"
+      - "traefik.http.routers.green.entrypoints=websecure"
+      - "traefik.http.routers.green.tls.certresolver=${CERT_RESOLVER_GREEN}"
+      - "traefik.http.services.green.loadbalancer.server.port=80"
 
 volumes:
   db-data:
