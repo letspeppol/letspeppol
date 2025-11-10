@@ -5,7 +5,7 @@ Note that there is a [`docker-compose.yml`](../docker-compose.yml) file in the r
 
 **If you want to run just this proxy, then keep reading...**
 
-Apart from a Scrada account you will need to have Docker installed, and optionally (for pretty-printing) the [`json` CLI tool](https://github.com/trentm/json?tab=readme-ov-file#installation).
+Apart from a Scrada account you will need to have Docker and Node.js installed, and optionally (for pretty-printing) the [`json` CLI tool](https://github.com/trentm/json?tab=readme-ov-file#installation).
 
 Set some environment variables. You should get the SCRADA_ credentials from Scrada, and pick a strong ACCESS_TOKEN_KEY yourself, you will need that in a next step:
 ```sh
@@ -25,12 +25,6 @@ pnpm build
 pnpm test
 pnpm prettier
 pnpm start
-```
-In both cases you will need to create the database table before first use (FIXME: make this automatic):
-```sh
-docker exec -it db psql postgresql://letspeppol:letspeppol@localhost:5432/letspeppol -c ""
-docker exec -it db psql postgresql://letspeppol:letspeppol@localhost:5432/letspeppol -c "
-docker exec -it db psql postgresql://letspeppol:letspeppol@localhost:5432/letspeppol -c "create table FrontDocs (userId text, platformId text primary key, createdAt timestamp, docType docType, direction direction, counterPartyId text, counterPartyName text, docId text, amount numeric, dueDate timestamp, paymentTerms text, paid text, ubl text, status text);"
 ```
 
 In a separate terminal window, do the following to register, send a document, list documents, fetch a single document, and unregister:
@@ -94,32 +88,8 @@ To let the webhooks from Scrada arrive at your laptop locally, you can do the fo
 ```sh
 npm install -g localtunnel
 lt --port 3000
-curl -X POST -d'{"test":true}' -H 'Content-Type: application/json' -H 'X-Scrada-HMAC-SHA256: 2abe5bb975969de69687e1a8fd7b5dbee7217e07a8b3161acb96614b5f94df8c' https://fuzzy-suns-march.loca.lt/v2/webhook/outgoing/scrada
+curl -X POST -d'{"test":true}' -H 'Content-Type: application/json' -H 'X-Scrada-HMAC-SHA256: 2abe5bb975969de69687e1a8fd7b5dbee7217e07a8b3161acb96614b5f94df8c' https://yummy-rings-cut.loca.lt/v2/webhook/outgoing/scrada
 ```
 This will give you a domain name like https://yummy-rings-cut.loca.lt and then you can go to [the integration settings in your Scrada dashboard](https://mytest.scrada.be/nl/company/f932b7c4-b4fe-40d1-a981-a338b4478f78/settings/integrations/webhook) and configure:
 * `peppolInboundDocument/new` to go to https://yummy-rings-cut.loca.lt/v2/webhook/incoming
 * `peppolOutboundDocument/statusUpdate` to go to https://yummy-rings-cut.loca.lt/v2/webhook/outgoing
-
-### With Nix
-A `devenv` environment is available in the `dev/proxy` directory to host the proxy locally and run a small test. Make sure you have [`devenv`](https://devenv.sh/getting-started/) installed, and optionally install [`direnv`](https://devenv.sh/automatic-shell-activation/) for automatic shell activation. If you don’t use `direnv`, you’ll need to run `devenv shell` manually in the `dev/proxy` directory. Next, create a `dev/.env` file with the following contents (without quotes):
-```sh
-PORT=3000
-SCRADA_API_KEY="from-scrada"
-SCRADA_API_PWD="from-scrada"
-SCRADA_COMPANY_ID="from-scrada"
-ACCESS_TOKEN_KEY=some-other-secret
-DATABASE_URL="postgres://letspeppol:letspeppol@localhost:5432/letspeppol?sslmode=disable"
-```
-Then run:
-```sh
-cd dev
-# if the environment is blocked then run `direnv allow` to approve its content
-# if you don't use direnv then run `devenv shell`
-start-proxy
-```
-
-Open a new shell to test the proxy and run:
-```sh
-cd dev
-test-proxy
-```
