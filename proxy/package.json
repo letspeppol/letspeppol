@@ -1,7 +1,7 @@
 {
   "name": "letspeppol-proxy",
   "version": "1.0.0",
-  "description": "The service that runs on api.letspeppol.org",
+  "description": "The proxy component of Let's Peppol",
   "type": "module",
   "engines": {
     "node": ">= 22.11 < 23"
@@ -28,8 +28,6 @@
   },
   "scripts": {
     "start": "NODE_OPTIONS=--enable-source-maps node build/src/main.js",
-    "cron": "NODE_OPTIONS=--enable-source-maps node build/src/cron.js",
-    "fetchUbl": "NODE_OPTIONS=--enable-source-maps node build/src/fetchUbl.js",
     "clean": "rimraf coverage build tmp",
     "build": "tsc -p tsconfig.json",
     "build:watch": "tsc -w -p tsconfig.json",
