@@ -7,9 +7,9 @@ We improve the Peppol network, writing software and letting people sign up for f
 We are still in the launching phase.
 This repo will contain all the code involved in running the Let's Peppol project:
 * a [docs](./docs/) folder with the website that runs on GitHub Pages at https://letspeppol.org
-* a [proxy](./proxy/) folder with the API proxy that runs on Heroku at https://api.letspeppol.org
-* a `kyc` folder that will contain the Know-Your-Customer component (initially only for Belgian VAT numbers)
-* an `app` folder that will contain our web interface
+* a [proxy](./proxy/) folder that contains the proxy component
+* a [kyc](./kyc/) folder that contains the Know-Your-Customer component (initially only for Belgian VAT numbers)
+* an [app](./app/) folder that contains our web interface
 
 # Sponsored by NLNet
 ![NLNet](./docs/nlnet.svg)
