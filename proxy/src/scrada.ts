@@ -37,13 +37,6 @@ export class Scrada implements Backend {
       );
     }
     const body = Buffer.from(documentXml).toString('utf-8');
-    //   sender,
-    //   recipient,
-    //   processType: `${INVOICES.processScheme}::${INVOICES.process}`,
-    //   documentType: `${INVOICES.documentTypeScheme}::${INVOICES.documentType}`,
-    //   fileName: 'invoice.xml',
-    //   "fileContent": Buffer.from(documentXml).toString('base64'),
-    // });
     const response = await fetch(
       `${this.apiUrl}/v1/company/${process.env.SCRADA_COMPANY_ID}/peppol/outbound/document`,
       {
@@ -72,10 +65,6 @@ export class Scrada implements Backend {
     }
     const docUuid = await response.json();
     console.log('Sent document, got UUID', docUuid);
-    // console.log();
-    // console.log(`curl -H "Authorization: Bearer $TWO" $PROXY_HOST/v1/invoices/outgoing/${docUuid}`);
-    // console.log();
-    // await new Promise(resolve => setTimeout(resolve, 20000));
     const statusCheck = await fetch(
       `${this.apiUrl}/v1/company/${process.env.SCRADA_COMPANY_ID}/peppol/outbound/document/${docUuid}/info`,
       {
@@ -95,14 +84,6 @@ export class Scrada implements Backend {
     console.log('ReadBack Check', readBack === documentXml);
     docDetails.platformId = `scrada_${docUuid}`;
     await storeDocumentInDb(docDetails);
-  }
-  async getUuid(identifier: string): Promise<string> {
-    void identifier;
-    throw new Error('Method not implemented.');
-  }
-  async createLegalEntity(identifier: string): Promise<void> {
-    void identifier;
-    throw new Error('Method not implemented.');
   }
   async reg(identifier: string, name: string): Promise<void> {
     console.log('Registering identifier', identifier, 'with name', name);
