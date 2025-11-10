@@ -1,24 +1,24 @@
 # LetsPeppol Proxy
 
 ## Usage
-Apart from a Scrada account you will need a postgres database somewhere (for instance through `docker compose up -d`) and that you have the [`json` CLI tool](https://github.com/trentm/json?tab=readme-ov-file#installation) installed.
+Note that there is a [`docker-compose.yml`](../docker-compose.yml) file in the root of this repository which includes the database server, this proxy, the web interface app and the KYC component.
 
-Edit compose.yml to set the environment variables. You should get the SCRADA_ credentials from Scrada, and pick a strong ACCESS_TOKEN_KEY yourself, you will need that in a next step:
-```yml
-      SCRADA_API_KEY: your_scrada_api_key_here # edit me!
-      SCRADA_API_PWD: your_scrada_api_pwd_here # edit me!
-      SCRADA_COMPANY_ID: your_scrada_company_id_here # edit me!
-      ACCESS_TOKEN_KEY: something-secret # edit me!
-```
+**If you want to run just this proxy, then keep reading...**
 
-Now you can either do `docker compose up -d`, or if you want to run node on the host, you do:
+Apart from a Scrada account you will need to have Docker installed, and optionally (for pretty-printing) the [`json` CLI tool](https://github.com/trentm/json?tab=readme-ov-file#installation).
+
+Set some environment variables. You should get the SCRADA_ credentials from Scrada, and pick a strong ACCESS_TOKEN_KEY yourself, you will need that in a next step:
 ```sh
 export PORT=3000
 export SCRADA_API_KEY="from-scrada"
 export SCRADA_API_PWD="from-scrada"
 export SCRADA_COMPANY_ID="from-scrada"
-export DATABASE_URL="postgres://syncables:syncables@localhost:5432/syncables?sslmode=disable"
+export SCRADA_COMPANY_KEY="from-scrada"
+export DATABASE_URL="postgres://letspeppol:letspeppol@localhost:5432/letspeppol?sslmode=disable"
 export ACCESS_TOKEN_KEY="something-secret"
+```
+For developing the proxy, you don't need the `kyc` and `app` components, but you do need the `db` component, and you can use `pnpm` to run this proxy as a Node process on the host system, so:
+```sh
 docker compose -f compose-db-only.yml up -d
 pnpm install
 pnpm build
@@ -26,9 +26,9 @@ pnpm start
 ```
 In both cases you will need to create the database table before first use (FIXME: make this automatic):
 ```sh
-docker exec -it db psql postgresql://syncables:syncables@localhost:5432/syncables -c "create type direction as enum ('incoming', 'outgoing');"
-docker exec -it db psql postgresql://syncables:syncables@localhost:5432/syncables -c "create type docType as enum ('invoice', 'credit-note');"
-docker exec -it db psql postgresql://syncables:syncables@localhost:5432/syncables -c "create table FrontDocs (userId text, platformId text primary key, createdAt timestamp, docType docType, direction direction, counterPartyId text, counterPartyName text, docId text, amount numeric, dueDate timestamp, paymentTerms text, paid text, ubl text, status text);"
+docker exec -it db psql postgresql://letspeppol:letspeppol@localhost:5432/letspeppol -c "create type direction as enum ('incoming', 'outgoing');"
+docker exec -it db psql postgresql://letspeppol:letspeppol@localhost:5432/letspeppol -c "create type docType as enum ('invoice', 'credit-note');"
+docker exec -it db psql postgresql://letspeppol:letspeppol@localhost:5432/letspeppol -c "create table FrontDocs (userId text, platformId text primary key, createdAt timestamp, docType docType, direction direction, counterPartyId text, counterPartyName text, docId text, amount numeric, dueDate timestamp, paymentTerms text, paid text, ubl text, status text);"
 ```
 
 In a separate terminal window, do the following to register, send a document, list documents, fetch a single document, and unregister:
@@ -40,7 +40,7 @@ curl $PROXY_HOST/v2
 curl -X POST -d'{"name":"BARGE vzw"}' -H "Authorization: Bearer $ONE" -H 'Content-Type: application/json' $PROXY_HOST/v2/reg
 node ./build/src/genDoc.js invoice 0208:0734825676 0208:1029545627 asdf > ./doc.xml
 curl -X POST --data-binary "@./doc.xml" -H "Authorization: Bearer $ONE" $PROXY_HOST/v2/send
-docker exec -it db psql postgresql://syncables:syncables@localhost:5432/syncables -c "select userId, platformId, createdAt, docType, direction, counterPartyId, counterPartyName, docId, amount, dueDate, paymentTerms, paid, status from frontdocs"
+docker exec -it db psql postgresql://letspeppol:letspeppol@localhost:5432/letspeppol -c "select userId, platformId, createdAt, docType, direction, counterPartyId, counterPartyName, docId, amount, dueDate, paymentTerms, paid, status from frontdocs"
 curl -X POST -d '{"paid":"yes"}' -H "Authorization: Bearer $ONE" -H 'Content-Type: application/json' $PROXY_HOST/v2/documents/scrada_9e8912d1-5d42-4cc1-a2c4-176f7d7738d7
 curl -H "Authorization: Bearer $ONE" "$PROXY_HOST/v2/documents" | json
 curl -H "Authorization: Bearer $ONE" $PROXY_HOST/v2/documents/scrada_e37b5843-fc55-4b0b-8b8e-73435d9a0363
@@ -106,7 +106,7 @@ SCRADA_API_KEY="from-scrada"
 SCRADA_API_PWD="from-scrada"
 SCRADA_COMPANY_ID="from-scrada"
 ACCESS_TOKEN_KEY=some-other-secret
-DATABASE_URL="postgres://syncables:syncables@localhost:5432/syncables?sslmode=disable"
+DATABASE_URL="postgres://letspeppol:letspeppol@localhost:5432/letspeppol?sslmode=disable"
 ```
 Then run:
 ```sh
