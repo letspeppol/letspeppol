@@ -251,10 +251,10 @@ export async function getTotalsForUser(userId: string): Promise<{
     };
   }
   return {
-    totalPayableOpen: result.rows[0].totalpayable || 0,
+    totalPayableOpen: result.rows[0].totalpayableopen || 0,
     totalPayableOverdue: result.rows[0].totalpayableoverdue || 0,
     totalPayableThisYear: result.rows[0].totalpayablethisYear || 0,
-    totalReceivableOpen: result.rows[0].totalreceivable || 0,
+    totalReceivableOpen: result.rows[0].totalreceivableopen || 0,
     totalReceivableOverdue: result.rows[0].totalreceivableoverdue || 0,
     totalReceivableThisYear: result.rows[0].totalreceivablethisyear || 0
   };
