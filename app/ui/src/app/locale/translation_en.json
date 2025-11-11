@@ -140,6 +140,7 @@
     "close": "Close"
   },
   "navigation": {
+    "dashboard": "Dashboard",
     "invoices": "Invoices",
     "partners": "Partners",
     "products": "Products",

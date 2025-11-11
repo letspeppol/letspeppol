@@ -16,8 +16,12 @@ export type ListItem = {
 };
 
 export type Totals = {
-    totalPayable: number;
-    totalReceivable: number;
+    totalPayableOpen: number;
+    totalPayableOverdue: number;
+    totalPayableThisYear: number;
+    totalReceivableOpen: number;
+    totalReceivableOverdue: number;
+    totalReceivableThisYear: number;
 }
 
 export type DocumentQuery = {

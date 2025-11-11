@@ -119,7 +119,7 @@
                         </thead>
                         <tbody>
                             <tr repeat.for="item of invoices" click.trigger="selectItem(item)">
-                                <td><span class="status-dot" class.bind="item.paid ? 'status-ok' : isOverdue(item) ? 'status-overdue' : 'status-open'" title.bind="item.paid ? 'Paid at ' + formatDate(item.paid) : ''"></span></td>
+                                <td><span class="status-dot" class.bind="item.paid ? 'status-ok' : isOverdue(item) ? 'status-overdue' : 'status-open'" title.bind="item.paid ? 'Paid at ' + formatDate(item.paid) : 'Not paid'"></span></td>
                                 <td><span class="pill" class.bind="item.direction === 'incoming' ? 'incoming' : 'sent' ">${item.direction ?? 'outgoing'}</span></td>
                                 <td><span class="pill" class.bind="item.type === 'invoice' ? 'sent' : 'incoming' " t="documentType.${item.docType}">${item.docType}</span></td>
                                 <td>${item.docId}</td>

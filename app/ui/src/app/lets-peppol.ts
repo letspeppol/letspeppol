@@ -10,6 +10,7 @@ import {Account} from "../account/account";
 import {Products} from "../product/products";
 import {ResetPassword} from "../login/reset-password";
 import {ForgotPassword} from "../login/forgot-password";
+import {Dashboard} from "../dashboard/dashboard";
 
 @route({
     routes: [
@@ -22,6 +23,7 @@ import {ForgotPassword} from "../login/forgot-password";
         { path: '/partners',           component: Partners,             title: 'Partners',              },
         { path: '/products',           component: Products,             title: 'Products',              },
         { path: '/account',            component: Account,              title: 'Account',               },
+        { path: '/dashboard',          component: Dashboard,            title: 'Dashboard',             },
     ],
 })
 export class LetsPeppol {

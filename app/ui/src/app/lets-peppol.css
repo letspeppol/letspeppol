@@ -827,6 +827,10 @@ main.container .data-table tbody td {
     border-color: var(--pill-incoming-border);
 }
 
+.kpi-overdue {
+    color: var(--status-overdue)
+}
+
 /* ============================================================================
    10. Row Actions & Empty States
    ============================================================================ */
