@@ -116,6 +116,8 @@ export class InvoiceEdit {
             }
 
             await this.proxyService.sendDocument(xml);
+            this.ea.publish('alert', {alertType: AlertType.Success, text: "Invoice sent successfully"});
+            this.invoiceContext.clearSelectedInvoice();
         } catch(e) {
             console.error(e);
             this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to update account"});

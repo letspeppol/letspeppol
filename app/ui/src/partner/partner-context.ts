@@ -12,6 +12,7 @@ export class PartnerContext {
             vatNumber: "",
             name: "",
             email: "",
+            peppolId: "",
             customer: true,
             supplier: false,
 
@@ -19,7 +20,7 @@ export class PartnerContext {
             iban: "",
             paymentTerms: "",
 
-            registeredOffice: {}
+            registeredOffice: {countryCode: "BE"}
         };
     }
 

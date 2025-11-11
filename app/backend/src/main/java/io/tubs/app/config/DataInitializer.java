@@ -52,7 +52,7 @@ public class DataInitializer implements CommandLineRunner {
                     "Last day 30 days",
                     "BE1023290711",
                     "1000",
-                    new AddressDto(null,"Bree", "3960", "Kerkstraat", "15")
+                    new AddressDto(null,"Bree", "3960", "Kerkstraat", "15", "BE")
             );
             partnerService.createPartner(companyNumber, partner);
             PartnerDto partner2 = new PartnerDto(
@@ -66,7 +66,7 @@ public class DataInitializer implements CommandLineRunner {
                     "First day 60 days",
                     "BE876543215",
                     "2000",
-                    new AddressDto(null,"Genk", "3600", "Stationsstraat", "22")
+                    new AddressDto(null,"Genk", "3600", "Stationsstraat", "22", "BE")
             );
             partnerService.createPartner(companyNumber, partner2);
             ProductCategoryDto productCategory = new ProductCategoryDto(null, "Clothes", "#feeffe", null, null);

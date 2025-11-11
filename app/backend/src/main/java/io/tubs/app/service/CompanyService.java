@@ -26,7 +26,8 @@ public class CompanyService {
                 request.city(),
                 request.postalCode(),
                 request.street(),
-                request.houseNumber()
+                request.houseNumber(),
+                "BE"
         );
         companyRepository.save(account);
     }

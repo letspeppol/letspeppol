@@ -33,7 +33,7 @@ public class Partner extends GenericEntity {
 
     public Partner(String vatNumber, String name, String email, String peppolId, Boolean customer, Boolean supplier,
                    String paymentTerms, String iban, String paymentAccountName,
-                 String city, String postalCode, String street, String houseNumber) {
+                 String city, String postalCode, String street, String houseNumber, String countryCode) {
         this.vatNumber = vatNumber;
         this.name = name;
         this.email = email;
@@ -43,7 +43,7 @@ public class Partner extends GenericEntity {
         this.paymentTerms = paymentTerms;
         this.iban = iban;
         this.paymentAccountName = paymentAccountName;
-        this.registeredOffice = new Address(city, postalCode, street, houseNumber);
+        this.registeredOffice = new Address(city, postalCode, street, houseNumber, countryCode);
     }
 
 }

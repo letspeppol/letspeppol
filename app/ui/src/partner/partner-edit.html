@@ -76,6 +76,12 @@
                     <input type="text" value.bind="partnerContext.selectedPartner.registeredOffice.houseNumber" />
                 </label>
             </div>
+            <label class="field" style="margin-top: 20px">
+                <span t="label.country">Country</span>
+                <select value.bind="partnerContext.selectedPartner.registeredOffice.countryCode">
+                    <option repeat.for="country of Object.entries(countryList)" value.bind="country[0]">${country[1]}</option>
+                </select>
+            </label>
         </div>
 
         <div class="card" >

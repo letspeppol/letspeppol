@@ -52,7 +52,7 @@
                 </label>
                 <label class="field">
                     <span t="label.tax-percentage">Tax Percentage</span>
-                    <select if.bind="productContext.selectedProduct"  value.bind="productContext.selectedProduct.taxPercentage">
+                    <select if.bind="productContext.selectedProduct" value.bind="productContext.selectedProduct.taxPercentage">
                         <option repeat.for="taxPercentage of taxPercentages" model.bind="taxPercentage">${taxPercentage}%</option>
                     </select>
                 </label>

@@ -33,12 +33,12 @@ public class Company extends GenericEntity{
     private Address registeredOffice;
 
     public Company(String companyNumber, String name, String subscriber, String subscriberEmail,
-                   String city, String postalCode, String street, String houseNumber) {
+                   String city, String postalCode, String street, String houseNumber, String countryCode) {
         this.companyNumber = companyNumber;
         this.name = name;
         this.subscriber = subscriber;
         this.subscriberEmail = subscriberEmail;
-        this.registeredOffice = new Address(street, houseNumber, city, postalCode);
+        this.registeredOffice = new Address(street, houseNumber, city, postalCode, countryCode);
         this.registeredOnPeppol = true;
     }
 

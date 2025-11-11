@@ -2,6 +2,7 @@ import {bindable, observable} from "aurelia";
 import {Party} from "../../../services/peppol/ubl";
 import {PartnerDto} from "../../../services/app/partner-service";
 import {CustomerSearch} from "./customer-search";
+import {countryListAlpha2} from "../../../app/countries"
 
 export class InvoiceCustomerModal {
     @bindable invoiceContext;
@@ -10,6 +11,7 @@ export class InvoiceCustomerModal {
     open = false;
     customer: Party | undefined;
     customerSavedFunction: () => void;
+    private countryList = countryListAlpha2;
 
     vatChanged() {
         if (!this.customer) return;
@@ -27,7 +29,7 @@ export class InvoiceCustomerModal {
             }
             if (!this.customer.PartyLegalEntity.CompanyID.value) {
                 if (parts[0] === '0208') {
-                    this.customer.PartyLegalEntity.CompanyID.value = `BE${parts[1]}`;
+                    this.customer.PartyLegalEntity.CompanyID.value = parts[1];
                     this.vatChanged();
                 } else if (parts[0] === '9925') {
                     this.customer.PartyLegalEntity.CompanyID.value = parts[1].toUpperCase();

@@ -69,7 +69,9 @@
 
                         <label class="field" style="margin-top: 20px">
                             <span t="label.country">Country</span>
-                            <input type="text" name="customerCity" value="Belgium" disabled />
+                            <select value.bind="customer.PostalAddress.Country.IdentificationCode">
+                                <option repeat.for="country of Object.entries(countryList)" value.bind="country[0]">${country[1]}</option>
+                            </select>
                         </label>
                     </div>
                 </div>

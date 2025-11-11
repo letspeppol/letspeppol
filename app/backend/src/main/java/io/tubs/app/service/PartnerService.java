@@ -44,7 +44,8 @@ public class PartnerService {
                 partnerDto.registeredOffice().city(),
                 partnerDto.registeredOffice().postalCode(),
                 partnerDto.registeredOffice().street(),
-                partnerDto.registeredOffice().houseNumber()
+                partnerDto.registeredOffice().houseNumber(),
+                partnerDto.registeredOffice().countryCode()
         );
         partner.setCompany(company);
         partnerRepository.save(partner);
@@ -66,6 +67,7 @@ public class PartnerService {
         partner.getRegisteredOffice().setPostalCode(partnerDto.registeredOffice().postalCode());
         partner.getRegisteredOffice().setStreet(partnerDto.registeredOffice().street());
         partner.getRegisteredOffice().setHouseNumber(partnerDto.registeredOffice().houseNumber());
+        partner.getRegisteredOffice().setCountryCode(partnerDto.registeredOffice().countryCode());
         partnerRepository.save(partner);
         return PartnerMapper.toDto(partner);
     }
