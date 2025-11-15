@@ -12,7 +12,7 @@ export default defineConfig({
   },
   plugins: [
     aurelia({
-      useDev: true,
+      useDev: true
     }),
     nodePolyfills(),
   ],

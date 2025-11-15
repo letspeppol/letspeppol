@@ -1,14 +1,13 @@
 import {ProductDto, ProductService} from "../../../services/app/product-service";
 import {resolve} from "@aurelia/kernel";
-import {bindable, customElement} from "aurelia";
-import {template} from "./product-name-search.html"
+import {bindable} from "aurelia";
 import {ProductContext} from "../../../product/product-context";
 
-@customElement({name: 'product-name-search', template, capture: true})
 export class ProductNameSearch {
     private productService = resolve(ProductService);
     private productContext = resolve(ProductContext);
     @bindable inputValue = '';
+    @bindable readonly;
     filteredProducts: ProductDto[] = [];
     showSuggestions = false;
     highlightedIndex = -1;
