@@ -33,7 +33,7 @@ To run the project follow the next steps:
 2. Open IntelliJ
 3. Open project `lp/kyc/`
 4. Wait for Gradle to setup the project
-5. Go to `kyc > src > main > java > io.tubs.kyc > KycApplication`
+5. Go to `kyc > src > main > java > org.letspeppol.kyc > KycApplication`
 6. Right-click on `KycApplication` and select `'Modify run configuration'`
 7. In the `Build and run` section click on `Modify options` and select `Environment variables`
 8. Now add a variable with name `ACCESS_TOKEN_KEY` with the same value as the proxy

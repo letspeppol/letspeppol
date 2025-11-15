@@ -1,0 +1,57 @@
+.donations-sticky {
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    width: 100%;
+    max-width: 700px;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    padding: 0
+}
+
+.donations-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    font-size: 0.9rem;
+    padding: 10px;
+    max-height: 100px;
+    width: 100%;
+}
+
+.donations-stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.donations-icon, .donations-transactions {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.donations-transactions ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.donations-stats-total {
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+}
+
+.donations-stats-total h3 {
+    margin: 0;
+    padding: 0;
+}
+
+.sticky-bottom h3 {
+    margin: 0;
+}

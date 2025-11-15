@@ -270,3 +270,44 @@ export async function setDocumentStatus({ id, status }: { id: string; status: st
   const values = [status, `scrada_${id}`];
   await client.query(updateQuery, values);
 }
+
+export async function getTotalDocumentStats(): Promise<{
+  totalProcessed,
+  totalProcessedToday
+}> {
+  const client = await getPostgresClient();
+  const queryStr = `SELECT
+                      (SELECT COUNT(*) FROM frontdocs) AS totalProcessed,
+                      (SELECT COUNT(*) 
+                        FROM frontdocs
+                        WHERE createdAt >= date_trunc('day', CURRENT_DATE)
+                          AND createdAt < date_trunc('day', CURRENT_DATE + INTERVAL '1 day')
+                      ) AS totalProcessedToday;`
+  const result = await client.query(queryStr);
+  return {
+    totalProcessed: result.rows[0].totalprocessed || 0,
+    totalProcessedToday: result.rows[0].totalprocessedtoday || 0
+  };
+}
+
+export async function getMaxDocumentStats(): Promise<{
+  maxDailyTotal
+}> {
+  const client = await getPostgresClient();
+  const queryStr = `
+    SELECT MAX(day_count) AS maxDailyTotal
+    FROM (
+         SELECT date_trunc('day', createdAt) AS day, COUNT(*) AS day_count
+         FROM frontdocs
+         WHERE createdAt >= date_trunc('day', CURRENT_DATE - INTERVAL '7 days')
+           AND createdAt < date_trunc('day', CURRENT_DATE)
+         GROUP BY 1
+    ) AS daily_counts;
+  `
+  console.log('Executing totals count query:', queryStr);
+  const result = await client.query(queryStr);
+  return {
+    maxDailyTotal: result.rows[0].maxdailytotal || 0
+  };
+}
+
