@@ -39,6 +39,12 @@ services:
       SCRADA_COMPANY_KEY: ${SCRADA_COMPANY_KEY}
       DATABASE_URL: ${DATABASE_URL}
       ACCESS_TOKEN_KEY: ${ACCESS_TOKEN_KEY}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${PROXY_PORT:-8086}/v2/"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
 
   app:
     build:
@@ -47,6 +53,8 @@ services:
     image: lp-app:latest
     depends_on:
       db:
+        condition: service_healthy
+      proxy:
         condition: service_healthy
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
@@ -67,6 +75,8 @@ services:
     image: lp-kyc:latest
     depends_on:
       db:
+        condition: service_healthy
+      proxy:
         condition: service_healthy
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}

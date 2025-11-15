@@ -15,6 +15,7 @@ public class ProxyConfig {
 
     @Bean(name = "ProxyWebClient")
     public WebClient webClient(@Value("${proxy.api.url}") String apiUrl) {
+        System.out.println("JAAAAA:" + apiUrl);
         HttpClient httpClient = HttpClient.create()
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 1000)
                 .responseTimeout(Duration.ofSeconds(3));
