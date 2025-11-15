@@ -17,7 +17,11 @@ RUN rm -rf /usr/share/nginx/html/*
 COPY --from=build /app/dist /usr/share/nginx/html
 
 # Provide a default nginx config (cache headers etc.)
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+RUN if [ "$ENVIRONMENT" = "local" ]; then \
+      cp nginx.dev.conf /etc/nginx/conf.d/default.conf; \
+    else \
+      cp nginx.prod.conf /etc/nginx/conf.d/default.conf; \
+    fi
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
