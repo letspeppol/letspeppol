@@ -1,26 +1,4 @@
 services:
-  db:
-    image: postgres:16-alpine
-    #container_name: lp-postgres
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: postgres
-      DB_USER: ${DB_USER}
-      DB_PASS: ${DB_PASS}
-    #ports:
-      #- "5432:5432"
-    volumes:
-      - db-data:/var/lib/postgresql/data
-      - ../../postgres:/docker-entrypoint-initdb.d:ro
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
-      interval: 5s
-      timeout: 5s
-      retries: 12
-      start_period: 10s
-
   proxy:
     build:
       context: ../../proxy
@@ -97,9 +75,6 @@ services:
       - "traefik.http.routers.green.entrypoints=websecure"
       - "traefik.http.routers.green.tls.certresolver=${CERT_RESOLVER_GREEN}"
       - "traefik.http.services.green.loadbalancer.server.port=80"
-
-volumes:
-  db-data:
 
 networks:
   web:
