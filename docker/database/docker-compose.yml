@@ -1,6 +1,7 @@
 services:
   db:
     image: postgres:16-alpine
+    container_name: lp-postgres
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
@@ -10,13 +11,15 @@ services:
       DB_PASS: ${DB_PASS}
     volumes:
       - db-data:/var/lib/postgresql/data
-      - ./initdb:/docker-entrypoint-initdb.d:ro
+      - ../../postgres:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 5s
       timeout: 5s
       retries: 12
       start_period: 10s
+    networks:
+      - web
 
 volumes:
   db-data:
