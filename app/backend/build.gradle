@@ -4,7 +4,7 @@ plugins {
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
-group = 'io.tubs'
+group = 'org.letspeppol'
 version = '0.0.1-SNAPSHOT'
 description = 'App backend'
 
@@ -32,6 +32,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
 	implementation 'org.springframework.security:spring-security-oauth2-jose'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.graphql:spring-graphql'
+//    implementation 'org.springframework:spring-webflux'
     implementation 'org.hibernate.orm:hibernate-community-dialects'
     implementation 'org.xerial:sqlite-jdbc:3.46.0.0'
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
