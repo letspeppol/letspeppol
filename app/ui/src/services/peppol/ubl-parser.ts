@@ -80,9 +80,7 @@ function addPrefixes(obj: any): any {
 export function parseInvoice(xml: string): Invoice {
     const obj = parser.parse(xml);
     const invoiceObj = stripPrefixes(obj["Invoice"]);
-    console.log(JSON.stringify(invoiceObj));
     normalizeArrays(invoiceObj, ["TaxTotal", "TaxSubtotal", "AllowanceCharge", "cac:InvoiceLine", "cac:AdditionalDocumentReference"]);
-    console.log(JSON.stringify(invoiceObj));
     return invoiceObj;
 }
 
@@ -150,14 +148,6 @@ function stripPrefixes(obj: any): any {
             if (pi.ID) {
                 const ids = Array.isArray(pi.ID) ? pi.ID : [pi.ID];
                 result.PartyIdentification = ids.map(id => ({ ID: id }));
-            }
-        }
-
-        // Normalize PartyTaxScheme.CompanyID to Identifier
-        if (result.PartyTaxScheme && result.PartyTaxScheme.CompanyID) {
-            const cid = result.PartyTaxScheme.CompanyID;
-            if (typeof cid === "string") {
-                result.PartyTaxScheme.CompanyID = { value: cid };
             }
         }
 

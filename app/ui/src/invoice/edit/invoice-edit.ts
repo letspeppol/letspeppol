@@ -12,7 +12,7 @@ import {
     UBLLine
 } from "../../services/peppol/ubl";
 import {AlertType} from "../../components/alert/alert";
-import {buildCreditNote, buildInvoice, parseInvoice} from "../../services/peppol/ubl-parser";
+import {buildCreditNote, buildInvoice} from "../../services/peppol/ubl-parser";
 import {InvoicePaymentModal} from "./components/invoice-payment-modal";
 import {InvoiceCustomerModal} from "./components/invoice-customer-modal";
 import {InvoiceCalculator, roundTwoDecimals} from "../invoice-calculator";
@@ -33,10 +33,8 @@ export class InvoiceEdit {
     private newInvoiceSubscription: IDisposable;
     private newCreditNoteSubscription: IDisposable;
 
-    selectedPaymentMeansCode: number | undefined = 30;
     @bindable readOnly;
-    @observable selectedDocumentType = DocumentType.Invoice;
-    @observable customerCompanyNumber: undefined | string;
+    @bindable selectedDocumentType: DocumentType;
     @bindable invoiceModal: InvoiceModal;
     @bindable invoiceDateModal: InvoicePaymentModal;
     @bindable invoiceCustomerModal: InvoiceCustomerModal;
@@ -106,7 +104,6 @@ export class InvoiceEdit {
     async sendInvoice() {
         try {
             this.ea.publish('showOverlay', "Sending invoice");
-            console.log(JSON.stringify(this.invoiceContext.selectedInvoice));
             const xml = this.buildXml();
 
             const response = await this.invoiceService.validate(xml);
@@ -143,7 +140,8 @@ export class InvoiceEdit {
         try {
             const draft = this.convertInvoiceToDraft();
             if (this.invoiceContext.selectedDraft) {
-                await this.invoiceService.updateInvoiceDraft(draft.id, draft);
+                const newDraft = await this.invoiceService.updateInvoiceDraft(draft.id, draft);
+                this.invoiceContext.drafts.splice(this.invoiceContext.drafts.findIndex(item => item.id === draft.id), 1, newDraft);
             } else {
                 const invoiceDraftDto = await this.invoiceService.createInvoiceDraft(draft);
                 this.invoiceContext.drafts.unshift(invoiceDraftDto);
@@ -205,19 +203,18 @@ export class InvoiceEdit {
             form.reportValidity();
             return;
         }
-        console.log(JSON.stringify(this.invoiceContext.selectedInvoice));
         const xml = this.buildXml();
         const response = await this.invoiceService.validate(xml);
         this.validationResultModal.showModal(response);
         console.log(response);
     }
 
-    customerCompanyNumberChanged(newValue: string) {
-        this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party.EndpointID.value = newValue;
-        this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PartyIdentification[0].ID.value = newValue;
-        this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PartyTaxScheme.CompanyID.value = newValue;
-        console.log(newValue);
-    }
+    // customerCompanyNumberChanged(newValue: string) {
+    //     this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party.EndpointID.value = newValue;
+    //     this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PartyIdentification[0].ID.value = newValue;
+    //     this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PartyTaxScheme.CompanyID = newValue;
+    //     console.log(newValue);
+    // }
 
     recalculateLinePositions() {
         for (let i = 0; i < this.invoiceContext.lines.length; i++) {

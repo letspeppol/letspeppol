@@ -63,7 +63,7 @@
 //     if (cityLine) lines.push(cityLine);
 //     if (addr.Country?.IdentificationCode) lines.push(addr.Country.IdentificationCode);
 //   }
-//   if (p.PartyTaxScheme?.CompanyID?.value) lines.push(`VAT: ${p.PartyTaxScheme.CompanyID.value}`);
+//   if (p.PartyTaxScheme?.CompanyID) lines.push(`VAT: ${p.PartyTaxScheme.CompanyID}`);
 //   if (labelPrefix) {
 //     // Could prepend label, but we embed title separately.
 //   }

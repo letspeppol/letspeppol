@@ -10,7 +10,7 @@
 <invoice-modal component.ref="invoiceModal" invoice-context.bind="invoiceContext" original-document-type.two-way="selectedDocumentType"></invoice-modal>
 <invoice-date-modal component.ref="invoiceDateModal" invoice-context.bind="invoiceContext" document-type.bind="selectedDocumentType"></invoice-date-modal>
 <invoice-customer-modal component.ref="invoiceCustomerModal" invoice-context.bind="invoiceContext"></invoice-customer-modal>
-<invoice-payment-modal component.ref="invoicePaymentModal" invoice-context.bind="invoiceContext" selected-payment-means-code.two-way="selectedPaymentMeansCode"></invoice-payment-modal>
+<invoice-payment-modal component.ref="invoicePaymentModal" invoice-context.bind="invoiceContext"></invoice-payment-modal>
 <invoice-attachment-modal component.ref="invoiceAttachmentModal" invoice-context.bind="invoiceContext"></invoice-attachment-modal>
 <validation-result-modal component.ref="validationResultModal"></validation-result-modal>
 
@@ -111,7 +111,7 @@
                     </button>
                 </div>
                 <span t="invoice.edit.method">Method</span>
-                <b>${invoiceComposer.paymentMeansCodes.find(item => item.value === selectedPaymentMeansCode).__name ?? 'None'}</b>
+                <b>${invoiceComposer.paymentMeansCodes.find(item => item.value === invoiceContext.selectedInvoice.PaymentMeans.PaymentMeansCode.value).__name ?? 'None'}</b>
                 <template if.bind="invoiceContext.selectedInvoice.PaymentMeans.PayeeFinancialAccount">
                     <span t="label.account-name">Account Name</span>
                     <b>${invoiceContext.selectedInvoice.PaymentMeans.PayeeFinancialAccount.Name ?? '/'}</b>

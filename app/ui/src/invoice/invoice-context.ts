@@ -23,6 +23,8 @@ export class InvoiceContext {
     @observable selectedInvoice:  undefined | Invoice | CreditNote;
     selectedDraft: InvoiceDraftDto;
     selectedInvoiceXML: string = undefined;
+    selectedDocumentType: DocumentType = DocumentType.Invoice;
+
     readOnly: boolean = false;
 
     clearSelectedInvoice() {

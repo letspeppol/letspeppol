@@ -1,6 +1,6 @@
 import {resolve} from "@aurelia/kernel";
-import {InvoiceContext} from "./invoice-context";
-import {parseInvoice} from "../services/peppol/ubl-parser";
+import {DocumentType, InvoiceContext} from "./invoice-context";
+import {parseCreditNote, parseInvoice} from "../services/peppol/ubl-parser";
 import {AlertType} from "../components/alert/alert";
 import {IEventAggregator, watch} from "aurelia";
 import {DocumentQuery, ListItem, ProxyService} from "../services/proxy/proxy-service";
@@ -76,7 +76,12 @@ export class InvoiceOverview {
         if (this.box === 'drafts') {
             const doc = item as InvoiceDraftDto;
             this.invoiceContext.readOnly = false;
-            this.invoiceContext.selectedInvoice = parseInvoice(doc.xml);
+            this.invoiceContext.selectedDocumentType = item.docType as DocumentType;
+            if (item.docType === DocumentType.CreditNote) {
+                this.invoiceContext.selectedInvoice = parseCreditNote(doc.xml);
+            } else {
+                this.invoiceContext.selectedInvoice = parseInvoice(doc.xml);
+            }
             this.invoiceContext.selectedDraft = doc;
             this.invoiceContext.selectedInvoiceXML = doc.xml;
         } else {
@@ -84,6 +89,12 @@ export class InvoiceOverview {
             this.proxyService.getDocument(doc.platformId).then((xml) => {
                 this.invoiceContext.readOnly = true;
                 this.invoiceContext.selectedInvoice = parseInvoice(xml);
+                if (!this.invoiceContext.selectedInvoice) { // TODO test
+                    this.invoiceContext.selectedDocumentType = DocumentType.CreditNote;
+                    this.invoiceContext.selectedInvoice = parseCreditNote(xml);
+                } else {
+                    this.invoiceContext.selectedDocumentType = DocumentType.Invoice;
+                }
                 this.invoiceContext.selectedInvoiceXML = xml;
             });
         }

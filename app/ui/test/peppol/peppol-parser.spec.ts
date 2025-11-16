@@ -37,7 +37,7 @@ describe("Invoice XML round-trip", () => {
         expect(supplier.PostalAddress?.StreetName).toBe("Main street 1");
         expect(supplier.PostalAddress?.CityName).toBe("London");
         expect(supplier.PostalAddress?.PostalZone).toBe("GB 123 EW");
-        expect(supplier.PartyTaxScheme?.CompanyID.value).toBe("GB1232434");
+        expect(supplier.PartyTaxScheme?.CompanyID).toBe("GB1232434");
         expect(supplier.PartyLegalEntity?.RegistrationName).toBe(
             "SupplierOfficialName Ltd"
         );
@@ -45,12 +45,13 @@ describe("Invoice XML round-trip", () => {
         // --- Customer ---
         const customer = invoiceObj.AccountingCustomerParty.Party;
         expect(customer.EndpointID?.value).toBe("0705969661");
+        expect(customer.PartyIdentification?.[0].ID.__schemeID).toBe("0208");
         expect(customer.PartyIdentification?.[0].ID.value).toBe("0705969661");
         expect(customer.PartyName?.Name).toBe("BuyerTradingName AS");
         expect(customer.PostalAddress?.StreetName).toBe("Hovedgatan 32");
         expect(customer.PostalAddress?.CityName).toBe("Stockholm");
         expect(customer.PostalAddress?.PostalZone).toBe("456 34");
-        expect(customer.PartyTaxScheme?.CompanyID.value).toBe("SE4598375937");
+        expect(customer.PartyTaxScheme?.CompanyID).toBe("SE4598375937");
         expect(customer.PartyLegalEntity?.CompanyID.value).toBe("39937423947");
         expect(customer.Contact?.Name).toBe("Lisa Johnson");
         expect(customer.Contact?.Telephone).toBe("23434234");
@@ -171,7 +172,9 @@ describe("CreditNote XML round-trip", () => {
 
         // Customer
         const customer = creditNoteObj.AccountingCustomerParty.Party;
+        expect(customer.EndpointID?.__schemeID).toBe("0208");
         expect(customer.EndpointID?.value).toBe("0705969661");
+        expect(customer.PartyIdentification?.[0].ID.__schemeID).toBe("0208");
         expect(customer.PartyIdentification?.[0].ID.value).toBe("0705969661");
         expect(customer.PartyName?.Name).toBe("BuyerTradingName AS");
         expect(customer.PostalAddress?.StreetName).toBe("Hovedgatan 32");
@@ -222,7 +225,7 @@ describe("CreditNote XML round-trip", () => {
         expect(line.Price.PriceAmount.value).toBe(400);
 
         const rebuiltXml = buildCreditNote(creditNoteObj);
-        const originalNormalized = normalizeXml(sampleCreditNoteXml);
+        const originalNormalized = `<?xml version="1.0" encoding="UTF-8"?>` + normalizeXml(sampleCreditNoteXml);
         const rebuiltNormalized = normalizeXml(rebuiltXml);
         expect(rebuiltNormalized).toBe(originalNormalized);
     });

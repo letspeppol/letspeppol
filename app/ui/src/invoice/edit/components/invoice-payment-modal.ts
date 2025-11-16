@@ -8,13 +8,12 @@ export class InvoicePaymentModal {
     invoiceComposer = resolve(InvoiceComposer);
     companyService = resolve(CompanyService);
     @bindable invoiceContext;
-    @bindable selectedPaymentMeansCode;
     paymentMeansCode;
     open = false;
     paymentMeans: PaymentMeans | undefined;
 
     showModal() {
-        this.paymentMeansCode = this.selectedPaymentMeansCode;
+        this.paymentMeansCode = structuredClone(this.invoiceContext.selectedInvoice.PaymentMeans.PaymentMeansCode.value);
         this.paymentMeans = structuredClone(this.invoiceContext.selectedInvoice.PaymentMeans);
         console.log(this.paymentMeans);
         this.open = true;
@@ -26,7 +25,6 @@ export class InvoicePaymentModal {
 
     savePaymentMeans() {
         this.open = false;
-        this.selectedPaymentMeansCode = this.paymentMeansCode;
         this.invoiceContext.selectedInvoice.PaymentMeans = this.paymentMeans;
     }
 
