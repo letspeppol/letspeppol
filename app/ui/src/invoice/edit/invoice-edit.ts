@@ -112,7 +112,7 @@ export class InvoiceEdit {
                 return;
             }
 
-            await this.proxyService.sendDocument(xml);
+            await this.invoiceService.sendDocument(xml);
             this.ea.publish('alert', {alertType: AlertType.Success, text: "Invoice sent successfully"});
             this.invoiceContext.clearSelectedInvoice();
         } catch(e) {

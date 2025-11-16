@@ -1,7 +1,7 @@
-package org.letspeppol.app.exception;
+package org.letspeppol.proxy.exception;
 
-import org.letspeppol.app.dto.SimpleMessage;
 import lombok.extern.slf4j.Slf4j;
+import org.letspeppol.proxy.dto.SimpleMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -9,6 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.lang.SecurityException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,11 +22,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new SimpleMessage(ex.getMessage()));
     }
 
-    @ExceptionHandler(AppException.class)
-    public ResponseEntity<Map<String, Object>> handleKycException(AppException ex) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("errorCode", ex.getCode());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+    @ExceptionHandler(DuplicateRequestException.class)
+    public ResponseEntity<SimpleMessage> handleDuplicateRequestException(DuplicateRequestException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new SimpleMessage(ex.getMessage()));
     }
 
     @ExceptionHandler(SecurityException.class)

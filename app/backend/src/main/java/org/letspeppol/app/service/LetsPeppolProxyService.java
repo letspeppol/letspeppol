@@ -34,36 +34,36 @@ public class LetsPeppolProxyService {
     }
 
     public TotalProcessedDto totalsProcessed() {
-        if (!proxyEnabled) {
+//        if (!proxyEnabled) {
             return null;
-        }
-        try {
-            return this.webClient.get()
-                    .uri("/v2/stats/totals")
-                    .header("Authorization", "Bearer " + activeToken)
-                    .retrieve()
-                    .bodyToMono(TotalProcessedDto.class)
-                    .block();
-        } catch (Exception ex) {
-            log.error("Call to proxy /v2/stats/totals failed", ex);
-            throw new AppException(AppErrorCodes.PROXY_REST_ERROR);
-        }
+//        }
+//        try {
+//            return this.webClient.get()
+//                    .uri("/v2/stats/totals")
+//                    .header("Authorization", "Bearer " + activeToken)
+//                    .retrieve()
+//                    .bodyToMono(TotalProcessedDto.class)
+//                    .block();
+//        } catch (Exception ex) {
+//            log.error("Call to proxy /v2/stats/totals failed", ex);
+//            throw new AppException(AppErrorCodes.PROXY_REST_ERROR);
+//        }
     }
 
     public MaxProcessedDto maxProcessed() {
-        if (!proxyEnabled) {
+//        if (!proxyEnabled) {
             return null;
-        }
-        try {
-            return this.webClient.get()
-                    .uri("/v2/stats/max")
-                    .header("Authorization", "Bearer " + activeToken)
-                    .retrieve()
-                    .bodyToMono(MaxProcessedDto.class)
-                    .block();
-        } catch (Exception ex) {
-            log.error("Call to proxy /v2/stats/max failed", ex);
-            throw new AppException(AppErrorCodes.PROXY_REST_ERROR);
-        }
+//        }
+//        try {
+//            return this.webClient.get()
+//                    .uri("/v2/stats/max")
+//                    .header("Authorization", "Bearer " + activeToken)
+//                    .retrieve()
+//                    .bodyToMono(MaxProcessedDto.class)
+//                    .block();
+//        } catch (Exception ex) {
+//            log.error("Call to proxy /v2/stats/max failed", ex);
+//            throw new AppException(AppErrorCodes.PROXY_REST_ERROR);
+//        }
     }
 }

@@ -59,6 +59,7 @@ public class DonationService {
     @Scheduled(fixedRateString = "PT15M")
     public synchronized void updateDonationStats() {
         TotalProcessedDto totalProcessedDto = proxyService.totalsProcessed();
+        if (totalProcessedDto == null) return;
         OpenCollectiveAccountDto accountInfo = this.queryAccount().block();
 
         Integer invoicesRemaining = accountInfo.getStats().getTotalAmountReceived().getValue()

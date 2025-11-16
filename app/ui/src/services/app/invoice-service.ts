@@ -49,6 +49,10 @@ export class InvoiceService {
         return await this.appApi.httpClient.put(`/api/invoice/draft/${id}`, JSON.stringify(draft)).then(response => response.json());
     }
 
+    async sendDocument(xml: string) {
+        return await this.appApi.httpClient.post('/api/invoice/send', xml);
+    }
+
     async deleteInvoiceDraft(id:number) {
         return await this.appApi.httpClient.delete(`/api/invoice/draft/${id}`);
     }

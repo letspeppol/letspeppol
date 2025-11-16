@@ -23,7 +23,7 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
     private final DirectorRepository directorRepository;
     private final KboLookupService kboLookupService;
-    private final LetsPeppolProxyService letsPeppolProxyService;
+    private final ProxyService proxyService;
     private final AppService appService;
 
     public Optional<CompanyResponse> getByCompanyNumber(String companyNumber) {
@@ -77,7 +77,7 @@ public class CompanyService {
         Company company = companyRepository.findByCompanyNumber(companyNumber).orElseThrow(() -> new KycException(KycErrorCodes.COMPANY_NOT_FOUND));
         company.setRegisteredOnPeppol(false);
         companyRepository.save(company);
-        //letsPeppolProxyService.unregisterCompany(token);
+        //proxyService.unregisterCompany(token);
         appService.unregister(companyNumber);
     }
 }

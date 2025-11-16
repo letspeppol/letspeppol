@@ -32,7 +32,7 @@ public class IdentityVerificationService {
     private final UserRepository userRepository;
     private final EncryptionService encryptionService;
     private final JwtService jwtService;
-    private final LetsPeppolProxyService letsPeppolProxyService;
+    private final ProxyService proxyService;
     private final PasswordEncoder passwordEncoder;
 
     public void verifyNotRegistered(String email) {
@@ -48,6 +48,7 @@ public class IdentityVerificationService {
         user.setEmail(req.email());
         user.setIdentityVerified(true);
         user.setIdentityVerifiedAt(Instant.now());
+        user.setCreatedAt(Instant.now());
         String passwordHash = passwordEncoder.encode(req.password());
         user.setPasswordHash(passwordHash);
         user.setCompany(req.director().getCompany());
@@ -67,7 +68,7 @@ public class IdentityVerificationService {
         civRepository.save(civ);
 
         String token = jwtService.generateToken("0208:" + req.director().getCompany().getCompanyNumber().replaceAll("BE", ""), user.getExternalId()); // TODO ?
-        letsPeppolProxyService.registerCompany(token, req.director().getCompany().getName());
+        proxyService.registerCompany(token, req.director().getCompany().getName());
         appService.register(req);
 
         log.info("Identity verified for email={} director={} serial={}", user.getEmail(), req.director().getName(), req.x509Certificate().getSerialNumber());
