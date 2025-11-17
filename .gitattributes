@@ -1,0 +1,5 @@
+# Keep shell scripts Unix-y everywhere
+*.sh text eol=lf
+
+# (optional, sensible defaults)
+* text=auto
