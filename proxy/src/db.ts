@@ -179,13 +179,13 @@ export async function getTotalsForUser(userId: string): Promise<{
   console.log('Executing totals query:', queryStr, 'with userId:', userId);
   const result = await client.query(queryStr, [userId]);
   if (result.rows.length === 0) {
-    return { 
-      totalPayableOpen: 0, 
-      totalPayableOverdue: 0, 
-      totalPayableThisYear: 0, 
+    return {
+      totalPayableOpen: 0,
+      totalPayableOverdue: 0,
+      totalPayableThisYear: 0,
       totalReceivableOpen: 0,
       totalReceivableOverdue: 0,
-      totalReceivableThisYear: 0
+      totalReceivableThisYear: 0,
     };
   }
   return {
@@ -194,7 +194,7 @@ export async function getTotalsForUser(userId: string): Promise<{
     totalPayableThisYear: result.rows[0].totalpayablethisYear || 0,
     totalReceivableOpen: result.rows[0].totalreceivableopen || 0,
     totalReceivableOverdue: result.rows[0].totalreceivableoverdue || 0,
-    totalReceivableThisYear: result.rows[0].totalreceivablethisyear || 0
+    totalReceivableThisYear: result.rows[0].totalreceivablethisyear || 0,
   };
 }
 
@@ -216,8 +216,8 @@ export async function setDocumentStatus({
 }
 
 export async function getTotalDocumentStats(): Promise<{
-  totalProcessed,
-  totalProcessedToday
+  totalProcessed;
+  totalProcessedToday;
 }> {
   const client = await getPostgresClient();
   const queryStr = `SELECT
@@ -226,16 +226,16 @@ export async function getTotalDocumentStats(): Promise<{
                         FROM frontdocs
                         WHERE createdAt >= date_trunc('day', CURRENT_DATE)
                           AND createdAt < date_trunc('day', CURRENT_DATE + INTERVAL '1 day')
-                      ) AS totalProcessedToday;`
+                      ) AS totalProcessedToday;`;
   const result = await client.query(queryStr);
   return {
     totalProcessed: result.rows[0].totalprocessed || 0,
-    totalProcessedToday: result.rows[0].totalprocessedtoday || 0
+    totalProcessedToday: result.rows[0].totalprocessedtoday || 0,
   };
 }
 
 export async function getMaxDocumentStats(): Promise<{
-  maxDailyTotal
+  maxDailyTotal;
 }> {
   const client = await getPostgresClient();
   const queryStr = `
@@ -247,10 +247,10 @@ export async function getMaxDocumentStats(): Promise<{
            AND createdAt < date_trunc('day', CURRENT_DATE)
          GROUP BY 1
     ) AS daily_counts;
-  `
+  `;
   console.log('Executing totals count query:', queryStr);
   const result = await client.query(queryStr);
   return {
-    maxDailyTotal: result.rows[0].maxdailytotal || 0
+    maxDailyTotal: result.rows[0].maxdailytotal || 0,
   };
 }
