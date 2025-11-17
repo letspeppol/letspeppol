@@ -18,6 +18,9 @@ export function parseDocument(
   if (!jObj) {
     throw new Error('Failed to parse XML document');
   }
+  if (Object.keys(jObj).length !== 2) {
+    throw new Error('XML document must contain exactly one XML declaration (<?xml ...?>) and one root element (<Invoice> or <CreditNote>) at the top level');
+  }
   if (Object.keys(jObj)[0] !== '?xml') {
     throw new Error('Missing top level ?xml declaration');
   }
