@@ -1,0 +1,29 @@
+package org.letspeppol.app.model;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@Table(name = "address")
+@Getter
+@Setter
+@NoArgsConstructor
+public class Address extends GenericEntity {
+
+    private Long id;
+    private String city;
+    private String postalCode;
+    private String street;
+    private String houseNumber;
+    private String countryCode;
+
+    public Address(String city, String postalCode, String street, String houseNumber, String countryCode) {
+        this.city = city;
+        this.postalCode = postalCode;
+        this.street = street;
+        this.houseNumber = houseNumber;
+        this.countryCode = countryCode;
+    }
+}

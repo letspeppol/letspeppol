@@ -22,10 +22,15 @@ export class InvoiceContext {
     drafts: InvoiceDraftDto[] = [];
     @observable selectedInvoice:  undefined | Invoice | CreditNote;
     selectedDraft: InvoiceDraftDto;
+    selectedInvoiceXML: string = undefined;
+    selectedDocumentType: DocumentType = DocumentType.Invoice;
+
+    readOnly: boolean = false;
 
     clearSelectedInvoice() {
         this.selectedInvoice = undefined;
         this.selectedDraft = undefined;
+        this.selectedInvoiceXML = undefined;
     }
 
     selectedInvoiceChanged(newValue: UBLDoc) {
@@ -49,6 +54,7 @@ export class InvoiceContext {
             this.selectedInvoice = this.invoiceComposer.createCreditNote();
         }
         this.invoiceCalculator.calculateTaxAndTotals(this.selectedInvoice);
+        this.readOnly = false;
     }
 
     getNextPosition(): string {

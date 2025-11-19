@@ -4,11 +4,13 @@ import {resolve} from "@aurelia/kernel";
 import {PartnerService} from "../services/app/partner-service";
 import {PartnerContext} from "./partner-context";
 import {Account} from "../account/account";
+import {countryListAlpha2} from "../app/countries"
 
 export class PartnerEdit {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
     private readonly partnerService = resolve(PartnerService);
     private readonly partnerContext = resolve(PartnerContext);
+    private countryList = countryListAlpha2;
 
     async savePartner() {
         try {

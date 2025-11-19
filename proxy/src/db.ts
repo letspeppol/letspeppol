@@ -1,7 +1,6 @@
 /* eslint @typescript-eslint/no-explicit-any: 0 */
 import { Client } from 'pg';
 import { ListEntityDocumentsParams, ListItem } from './Backend.js';
-export { Client } from 'pg';
 import { components } from './front.js';
 
 let client: Client | null = null;
@@ -21,67 +20,6 @@ export async function getPostgresClient(): Promise<Client> {
   });
   await client.connect();
   return client;
-}
-
-export function getFields(
-  openApiSpec: any,
-  endPoint: string,
-  rowsFrom: string | undefined,
-): { [key: string]: { type: string } } | undefined {
-  const successResponseProperties =
-    openApiSpec.paths[endPoint]?.get?.responses?.['200']?.content;
-  // console.log(openApiSpec.paths, endPoint);
-  const schema =
-    successResponseProperties?.['application/ld+json']?.schema ||
-    successResponseProperties?.['application/json']?.schema;
-  // console.log(`Schema for ${endPoint}:`, JSON.stringify(schema, null, 2));
-  // const whatWeWant = schema?.properties?.[rowsFrom].items?.properties;
-  const whatWeWant =
-    typeof rowsFrom === 'string'
-      ? schema?.properties?.[rowsFrom]?.items?.properties
-      : schema?.items?.properties;
-  // console.log(`What we want (getFields ${endPoint} ${rowsFrom}):`, JSON.stringify(whatWeWant, null, 2));
-  return whatWeWant;
-}
-export async function createSqlTable(
-  client: Client,
-  tableName: string,
-  whatWeWant: { [key: string]: { type: string } },
-): Promise<void> {
-  const rowSpecs: string[] = [];
-  // console.log(`What we want (createSqlTable ${tableName}):`, JSON.stringify(whatWeWant, null, 2));
-  Object.entries(whatWeWant).forEach(([key, value]) => {
-    const type = (value as { type: string }).type;
-    if (type === 'string') {
-      rowSpecs.push(`"S${key}" TEXT`);
-    } else if (type === 'integer') {
-      rowSpecs.push(`"S${key}" INTEGER`);
-      // } else if (type === 'boolean') {
-      //   rowSpecs.push(`"S${key}" BOOLEAN`);
-    }
-  });
-  const createTableQuery = `
-CREATE TABLE IF NOT EXISTS ${tableName.replace('-', '_')} (
-  ${rowSpecs.join(',\n  ')}\n
-);
-`;
-  console.log(createTableQuery);
-  await client.query(createTableQuery);
-}
-export async function insertData(
-  client: Client,
-  tableName: string,
-  items: any[],
-  fields: string[],
-): Promise<void> {
-  console.log(`Fetched data:`, items);
-  await Promise.all(
-    items.map((item: any) => {
-      const insertQuery = `INSERT INTO ${tableName.replace('-', '_')} (${fields.map((x) => `"S${x}"`).join(', ')}) VALUES (${fields.map((field) => `'${item[field]}'`).join(', ')})`;
-      // console.log(`Executing insert query: ${insertQuery}`);
-      return client.query(insertQuery);
-    }),
-  );
 }
 
 export async function storeDocumentInDb(
@@ -219,29 +157,54 @@ export async function markDocumentAsPaid(
 }
 
 export async function getTotalsForUser(userId: string): Promise<{
-  totalPayable: number;
-  totalReceivable: number;
+  totalPayableOpen: number;
+  totalPayableOverdue: number;
+  totalPayableThisYear: number;
+  totalReceivableOpen: number;
+  totalReceivableOverdue: number;
+  totalReceivableThisYear: number;
 }> {
   const client = await getPostgresClient();
   const queryStr = `
     SELECT
-      SUM(CASE WHEN direction = 'incoming' THEN amount ELSE 0 END) AS totalPayable,
-      SUM(CASE WHEN direction = 'outgoing' THEN amount ELSE 0 END) AS totalReceivable
+      SUM(CASE WHEN direction = 'incoming' AND paid IS NULL THEN amount ELSE 0 END) AS totalPayableOpen,
+      SUM(CASE WHEN direction = 'incoming' AND paid IS NULL AND duedate < NOW() THEN amount ELSE 0 END) AS totalPayableOverdue,
+      SUM(CASE WHEN direction = 'incoming' AND EXTRACT(YEAR FROM createdat) = EXTRACT(YEAR FROM NOW()) THEN amount ELSE 0 END) AS totalPayableThisYear,
+      SUM(CASE WHEN direction = 'outgoing' AND paid IS NULL THEN amount ELSE 0 END) AS totalReceivableOpen,
+      SUM(CASE WHEN direction = 'outgoing' AND paid IS NULL AND duedate < NOW() THEN amount ELSE 0 END) AS totalReceivableOverdue,
+      SUM(CASE WHEN direction = 'outgoing' AND EXTRACT(YEAR FROM createdat) = EXTRACT(YEAR FROM NOW()) THEN amount ELSE 0 END) AS totalReceivableThisYear
     FROM FrontDocs
     WHERE userId = $1
   `;
   console.log('Executing totals query:', queryStr, 'with userId:', userId);
   const result = await client.query(queryStr, [userId]);
   if (result.rows.length === 0) {
-    return { totalPayable: 0, totalReceivable: 0 };
+    return {
+      totalPayableOpen: 0,
+      totalPayableOverdue: 0,
+      totalPayableThisYear: 0,
+      totalReceivableOpen: 0,
+      totalReceivableOverdue: 0,
+      totalReceivableThisYear: 0,
+    };
   }
   return {
-    totalPayable: result.rows[0].totalpayable || 0,
-    totalReceivable: result.rows[0].totalreceivable || 0,
+    totalPayableOpen: result.rows[0].totalpayableopen || 0,
+    totalPayableOverdue: result.rows[0].totalpayableoverdue || 0,
+    totalPayableThisYear: result.rows[0].totalpayablethisYear || 0,
+    totalReceivableOpen: result.rows[0].totalreceivableopen || 0,
+    totalReceivableOverdue: result.rows[0].totalreceivableoverdue || 0,
+    totalReceivableThisYear: result.rows[0].totalreceivablethisyear || 0,
   };
 }
 
-export async function setDocumentStatus({ id, status }: { id: string; status: string }): Promise<void> {
+export async function setDocumentStatus({
+  id,
+  status,
+}: {
+  id: string;
+  status: string;
+}): Promise<void> {
   const client = await getPostgresClient();
   const updateQuery = `
     UPDATE FrontDocs
@@ -250,4 +213,44 @@ export async function setDocumentStatus({ id, status }: { id: string; status: st
   `;
   const values = [status, `scrada_${id}`];
   await client.query(updateQuery, values);
+}
+
+export async function getTotalDocumentStats(): Promise<{
+  totalProcessed;
+  totalProcessedToday;
+}> {
+  const client = await getPostgresClient();
+  const queryStr = `SELECT
+                      (SELECT COUNT(*) FROM frontdocs) AS totalProcessed,
+                      (SELECT COUNT(*) 
+                        FROM frontdocs
+                        WHERE createdAt >= date_trunc('day', CURRENT_DATE)
+                          AND createdAt < date_trunc('day', CURRENT_DATE + INTERVAL '1 day')
+                      ) AS totalProcessedToday;`;
+  const result = await client.query(queryStr);
+  return {
+    totalProcessed: result.rows[0].totalprocessed || 0,
+    totalProcessedToday: result.rows[0].totalprocessedtoday || 0,
+  };
+}
+
+export async function getMaxDocumentStats(): Promise<{
+  maxDailyTotal;
+}> {
+  const client = await getPostgresClient();
+  const queryStr = `
+    SELECT MAX(day_count) AS maxDailyTotal
+    FROM (
+         SELECT date_trunc('day', createdAt) AS day, COUNT(*) AS day_count
+         FROM frontdocs
+         WHERE createdAt >= date_trunc('day', CURRENT_DATE - INTERVAL '7 days')
+           AND createdAt < date_trunc('day', CURRENT_DATE)
+         GROUP BY 1
+    ) AS daily_counts;
+  `;
+  console.log('Executing totals count query:', queryStr);
+  const result = await client.query(queryStr);
+  return {
+    maxDailyTotal: result.rows[0].maxdailytotal || 0,
+  };
 }

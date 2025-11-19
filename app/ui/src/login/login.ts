@@ -18,8 +18,8 @@ export class Login {
             this.rememberMe = true;
             this.email = email;
         }
-        this.verifyAuthenticated();
-
+        //this.verifyAuthenticated(); // TODO
+        this.loginService.logout(); // TODO
     }
 
     async verifyLogin() {

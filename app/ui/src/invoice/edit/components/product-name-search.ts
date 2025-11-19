@@ -7,6 +7,7 @@ export class ProductNameSearch {
     private productService = resolve(ProductService);
     private productContext = resolve(ProductContext);
     @bindable inputValue = '';
+    @bindable readonly;
     filteredProducts: ProductDto[] = [];
     showSuggestions = false;
     highlightedIndex = -1;

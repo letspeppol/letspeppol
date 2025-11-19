@@ -205,13 +205,6 @@ body::before {
     content: '';
     position: fixed;
     inset: 0;
-    background: url('/logo-only.svg') center/cover no-repeat;
-    -webkit-mask: url('/file.svg') space;
-            mask: url('/file.svg') space;
-    -webkit-mask-size: 16px;
-            mask-size: 16px;
-    /*background: url('/logo-only.svg') no-repeat center center;
-    background-size: cover;*/
     opacity: 0.05;
     filter: blur(64px);
     pointer-events: none;
@@ -832,6 +825,10 @@ main.container .data-table tbody td {
     color: var(--pill-incoming-fg);
     background: var(--pill-incoming-bg);
     border-color: var(--pill-incoming-border);
+}
+
+.kpi-overdue {
+    color: var(--status-overdue)
 }
 
 /* ============================================================================

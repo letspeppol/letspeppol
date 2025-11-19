@@ -40,6 +40,7 @@ export class InvoiceCalculator {
         }
         taxTotal = roundTwoDecimals(taxTotal);
         totalWithoutTax = roundTwoDecimals(totalWithoutTax);
+        const totalWithTax = roundTwoDecimals(totalWithoutTax + taxTotal);
         taxSubtotals.forEach(item => {
             item.TaxableAmount.value = roundTwoDecimals(item.TaxableAmount.value);
             item.TaxAmount.value = roundTwoDecimals(item.TaxAmount.value);
@@ -64,11 +65,11 @@ export class InvoiceCalculator {
             },
             TaxInclusiveAmount: {
                 __currencyID: "EUR",
-                value: totalWithoutTax + taxTotal
+                value: totalWithTax
             },
             PayableAmount: {
                 __currencyID: "EUR",
-                value: totalWithoutTax + taxTotal
+                value: totalWithTax
             }
         };
     }

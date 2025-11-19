@@ -8,14 +8,20 @@ export type ListItem = {
     counterPartyId: string;
     counterPartyName: string;
     createdAt: string; // ISO 8601 Date string
-    dueDate: string; // ISO 8601 Date string
+    dueDate?: string; // ISO 8601 Date string
     amount: number;
     docId: string;
+    paymentTerms?: string;
+    paid?: string;
 };
 
 export type Totals = {
-    totalPayable: number;
-    totalReceivable: number;
+    totalPayableOpen: number;
+    totalPayableOverdue: number;
+    totalPayableThisYear: number;
+    totalReceivableOpen: number;
+    totalReceivableOverdue: number;
+    totalReceivableThisYear: number;
 }
 
 export type DocumentQuery = {

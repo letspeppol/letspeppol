@@ -70,6 +70,7 @@
                     <table class="data-table" aria-describedby="invoices-title">
                         <thead>
                         <tr>
+                            <th style="width: 10px"></th>
                             <th t="invoice.table.direction">Direction</th>
                             <th t="invoice.table.type">Type</th>
                             <th t="invoice.table.doc">Doc</th>
@@ -118,6 +119,7 @@
                         </thead>
                         <tbody>
                             <tr repeat.for="item of invoices" click.trigger="selectItem(item)">
+                                <td><span class="status-dot" class.bind="item.paid ? 'status-ok' : isOverdue(item) ? 'status-overdue' : 'status-open'" title.bind="item.paid ? 'Paid at ' + formatDate(item.paid) : 'Not paid'"></span></td>
                                 <td><span class="pill" class.bind="item.direction === 'incoming' ? 'incoming' : 'sent' ">${item.direction ?? 'outgoing'}</span></td>
                                 <td><span class="pill" class.bind="item.type === 'invoice' ? 'sent' : 'incoming' " t="documentType.${item.docType}">${item.docType}</span></td>
                                 <td>${item.docId}</td>
@@ -126,8 +128,14 @@
                                 <td>${item.counterPartyName}</td>
                                 <td>${item.amount | price}</td>
                                 <td class="actions-col">
-                                    <button if.bind="box === 'drafts'" class="icon-btn" data-action="remove-line" title="Remove" t="[title]common.remove" click.trigger="deleteDraft($event, item)">
+                                    <button if.bind="box === 'drafts'" class="icon-btn" title="Remove" t="[title]common.remove" click.trigger="deleteDraft($event, item)">
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-icon lucide-trash"><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                    </button>
+                                    <button if.bind="item.paid" class="icon-btn" title="Mark invoice as unpaid" click.trigger="markUnpaid($event, item)">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-banknote-x-icon lucide-banknote-x"><path d="M13 18H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5"/><path d="m17 17 5 5"/><path d="M18 12h.01"/><path d="m22 17-5 5"/><path d="M6 12h.01"/><circle cx="12" cy="12" r="2"/></svg>
+                                    </button>
+                                    <button if.bind="!item.paid" class="icon-btn" title="Mark invoice as paid" click.trigger="markPaid($event, item)">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-banknote-arrow-down-icon lucide-banknote-arrow-down"><path d="M12 18H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5"/><path d="m16 19 3 3 3-3"/><path d="M18 12h.01"/><path d="M19 16v6"/><path d="M6 12h.01"/><circle cx="12" cy="12" r="2"/></svg>
                                     </button>
                                 </td>
                             </tr>

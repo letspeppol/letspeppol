@@ -1,7 +1,7 @@
 {
   "name": "letspeppol-proxy",
   "version": "1.0.0",
-  "description": "The service that runs on api.letspeppol.org",
+  "description": "The proxy component of Let's Peppol",
   "type": "module",
   "engines": {
     "node": ">= 22.11 < 23"
@@ -27,15 +27,13 @@
     "vitest": "~2.1"
   },
   "scripts": {
-    "start": "NODE_OPTIONS=--enable-source-maps node build/src/main.js",
-    "cron": "NODE_OPTIONS=--enable-source-maps node build/src/cron.js",
-    "fetchUbl": "NODE_OPTIONS=--enable-source-maps node build/src/fetchUbl.js",
+    "start": "node build/src/main.js --enable-source-maps",
     "clean": "rimraf coverage build tmp",
     "build": "tsc -p tsconfig.json",
     "build:watch": "tsc -w -p tsconfig.json",
     "build:release": "pnpm run clean && tsc -p tsconfig.release.json",
     "lint": "eslint .",
-    "test": "DATABASE_URL=\"postgres://syncables:syncables@localhost:5432/syncables?sslmode=disable\" vitest run unit --config __tests__/vitest.config.ts",
+    "test": "vitest run unit --config __tests__/vitest.config.ts",
     "test:coverage": "vitest run unit --config __tests__/vitest.config.ts --coverage.enabled --coverage.all",
     "prettier": "prettier \"{src,__{tests}__}/**/*.{ts,mts}\" --config .prettierrc --write",
     "prettier:check": "prettier \"{src,__{tests}__}/**/*.{ts,mts}\" --config .prettierrc --check",
@@ -57,5 +55,5 @@
   "volta": {
     "node": "22.12.0"
   },
-  "packageManager": "pnpm@10.15.1+sha512.34e538c329b5553014ca8e8f4535997f96180a1d0f614339357449935350d924e22f8614682191264ec33d1462ac21561aff97f6bb18065351c162c7e8f6de67"
+  "packageManager": "pnpm@10.21.0"
 }

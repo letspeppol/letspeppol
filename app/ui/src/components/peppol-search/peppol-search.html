@@ -5,6 +5,7 @@
                value.bind="peppolId"
                blur.trigger="onSearchBlur()"
                autocomplete="off"
+               change.trigger="peppolIdInputChanged()"
         />
         <ul class="autocomplete-list" role="listbox" if.bind="showSuggestions">
             <li repeat.for="p of peppolMatches"

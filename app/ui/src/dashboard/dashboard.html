@@ -1,0 +1,53 @@
+<import from="../components/view/application-view"></import>
+<import from="../app/value-converters/price.ts"></import>
+
+<application-view>
+    <div class="section-header">
+        <h1>Invoice Totals</h1>
+    </div>
+    <div class="dashboard-grid">
+        <div class="card kpi-card">
+            <h3 style="text-align: center">Income</h3>
+            <div class="card kpi-card kpi-header">
+                <div class="kpi-line">
+                    <span class="label">Total ${new Date().getFullYear()}</span>
+                    <strong>${totals.totalReceivableThisYear | price}</strong>
+                </div>
+            </div>
+
+            <div class="card kpi-card kpi-body">
+                <h2>Still Open</h2>
+                <div class="kpi-line">
+                    <span class="label">Total</span>
+                    <strong>${totals.totalReceivableOpen | price}</strong>
+                </div>
+                <div class="kpi-line">
+                    <span class="label">Overdue</span>
+                    <strong class.bind="totals.totalReceivableOverdue > 0 ? 'kpi-overdue' : ''">${totals.totalReceivableOverdue | price}</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="card kpi-card">
+            <h3 style="text-align: center">Expenses</h3>
+            <div class="card kpi-card kpi-header">
+                <div class="kpi-line">
+                    <span class="label">Total ${new Date().getFullYear()}</span>
+                    <strong>${totals.totalPayableThisYear | price}</strong>
+                </div>
+            </div>
+
+            <div class="card kpi-card kpi-body">
+                <h2>Still Open</h2>
+                <div class="kpi-line">
+                    <span class="label">Total</span>
+                    <strong>${totals.totalPayableOpen | price}</strong>
+                </div>
+                <div class="kpi-line">
+                    <span class="label">Overdue</span>
+                    <strong class.bind="totals.totalPayableOverdue > 0 ? 'kpi-overdue' : ''">${totals.totalPayableOverdue | price}</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</application-view>

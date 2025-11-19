@@ -83,7 +83,8 @@
   "error" : {
     "login-failed" : "Login failed",
     "registration-company-not-found" : "Company not found",
-    "registration-company-already-registered" : "Company already registered"
+    "registration-company-already-registered" : "Company already registered",
+    "registration-company-already-registered-on-peppol" : "Company already registered on Peppol"
   },
   "paymentTerms" : {
     "15_DAYS" :  "15 days",
@@ -139,6 +140,7 @@
     "close": "Close"
   },
   "navigation": {
+    "dashboard": "Dashboard",
     "invoices": "Invoices",
     "partners": "Partners",
     "products": "Products",
@@ -301,7 +303,9 @@
       "no-matches": "No matches"
     },
     "edit": {
+      "download-ubl": "Download UBL",
       "validate": "Validate",
+      "delete-draft": "Delete draft",
       "update-draft": "Update draft",
       "save-draft": "Save draft",
       "discard": "Discard",

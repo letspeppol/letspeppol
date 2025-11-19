@@ -2,6 +2,7 @@ import {bindable, observable} from "aurelia";
 import {Party} from "../../../services/peppol/ubl";
 import {PartnerDto} from "../../../services/app/partner-service";
 import {CustomerSearch} from "./customer-search";
+import {countryListAlpha2} from "../../../app/countries"
 
 export class InvoiceCustomerModal {
     @bindable invoiceContext;
@@ -10,36 +11,19 @@ export class InvoiceCustomerModal {
     open = false;
     customer: Party | undefined;
     customerSavedFunction: () => void;
+    private countryList = countryListAlpha2;
 
     vatChanged() {
         if (!this.customer) return;
-        this.customer.PartyTaxScheme.CompanyID.value = `${this.customer.PartyLegalEntity.CompanyID.value}`;
-        this.customer.PartyIdentification[0].ID.value = this.customer.PartyLegalEntity.CompanyID.value.replace(/\D/g, '');
-    }
-
-    peppolIdChanged() {
-        if (this.peppolId.includes(":")) {
-            const parts = this.peppolId.split(":");
-            this.customer.EndpointID.__schemeID = parts[0];
-            this.customer.EndpointID.value = parts[1];
-            if (!this.customer.PartyLegalEntity.CompanyID) {
-                this.customer.PartyLegalEntity.CompanyID = { value: undefined};
-            }
-            if (!this.customer.PartyLegalEntity.CompanyID.value) {
-                if (parts[0] === '0208') {
-                    this.customer.PartyLegalEntity.CompanyID.value = `BE${parts[1]}`;
-                    this.vatChanged();
-                } else if (parts[0] === '9925') {
-                    this.customer.PartyLegalEntity.CompanyID.value = parts[1].toUpperCase();
-                    this.vatChanged();
-                }
-            }
-        }
     }
 
     showModal(customerSavedFunction: () => void) {
-        this.peppolId = undefined;
         this.customer = JSON.parse(JSON.stringify(this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party));
+        if (this.customer && this.customer.EndpointID.__schemeID && this.customer.EndpointID.value) {
+            this.peppolId = `${this.customer.EndpointID.__schemeID}:${this.customer.EndpointID.value}`;
+        } else {
+            this.peppolId = undefined;
+        }
         this.open = true;
         this.customerSearch.resetSearch();
         this.customerSearch.focusInput();
@@ -59,12 +43,33 @@ export class InvoiceCustomerModal {
         if (this.customerSavedFunction) {
             this.customerSavedFunction();
         }
+        console.log(this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party);
     }
 
     selectMatchFunction(name: string, participantID: string) {
         this.peppolId = participantID;
         if (!this.customer.PartyName.Name) {
             this.customer.PartyName.Name = name;
+        }
+        this.peppolIdChangedFunction(participantID);
+    }
+
+    peppolIdChangedFunction(peppolId: string) {
+        if (peppolId.includes(":")) {
+            const parts = peppolId.split(":");
+            this.customer.EndpointID.__schemeID = parts[0];
+            this.customer.EndpointID.value = parts[1];
+            this.customer.PartyIdentification = [{ ID: { __schemeID: parts[0], value: parts[1] } }];
+            if (!this.customer.PartyLegalEntity.CompanyID || !this.customer.PartyLegalEntity.CompanyID.value) {
+                this.customer.PartyLegalEntity.CompanyID = { value: undefined};
+            }
+            if (parts[0] === '0208') {
+                this.customer.PartyLegalEntity.CompanyID.value = parts[1];
+                this.vatChanged();
+            } else if (parts[0] === '9925') {
+                this.customer.PartyLegalEntity.CompanyID.value = parts[1].toUpperCase();
+                this.vatChanged();
+            }
         }
     }
 
@@ -81,11 +86,9 @@ export class InvoiceCustomerModal {
     }
 
     private toParty(c: PartnerDto, scheme: string, identifier: string): Party {
-        const companyNumber = (c.vatNumber || '').replace(/\D/g, '');
-
         return {
             EndpointID: { __schemeID: scheme, value: identifier },
-            PartyIdentification: [{ ID: { value: companyNumber } }],
+            PartyIdentification: [{ ID: { __schemeID: scheme, value: identifier } }],
             PartyName: { Name: c.name },
             PostalAddress: {
                 StreetName: c.registeredOffice?.street,
@@ -94,7 +97,7 @@ export class InvoiceCustomerModal {
                 PostalZone: c.registeredOffice?.postalCode,
                 Country: { IdentificationCode: 'BE' }
             },
-            PartyTaxScheme: { CompanyID: { value: c.vatNumber }, TaxScheme: { ID: 'VAT' } },
+            PartyTaxScheme: { CompanyID: c.vatNumber , TaxScheme: { ID: 'VAT' } },
             PartyLegalEntity: { RegistrationName: c.name, CompanyID: { value: c.vatNumber } },
             Contact: { Name: c.paymentAccountName }
         };

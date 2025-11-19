@@ -29,11 +29,12 @@
                                            vat-number.bind="customer.PartyLegalEntity.CompanyID.value"
                                            peppol-id.two-way="peppolId"
                                            select-match-function.bind="(name, participantID) => selectMatchFunction(name, participantID)"
+                                           peppol-id-changed-function.bind="(newPeppolId) => peppolIdChangedFunction(newPeppolId)"
                             >
                             </peppol-search>
                             <label class="field">
                                 <span t="label.vat-number">VAT Number</span>
-                                <input type="text" name="customerId" placeholder="VAT Number" t="[placeholder]label.vat-number" value.bind="customer.PartyLegalEntity.CompanyID.value"  required change.trigger="vatChanged()" style="width: 130px" />
+                                <input type="text" name="customerId" placeholder="VAT Number" t="[placeholder]label.vat-number" value.bind="customer.PartyTaxScheme.CompanyID"  required change.trigger="vatChanged()" style="width: 130px" />
                             </label>
                             <label class="field">
                                 <span t="label.name">Name</span>
@@ -69,7 +70,9 @@
 
                         <label class="field" style="margin-top: 20px">
                             <span t="label.country">Country</span>
-                            <input type="text" name="customerCity" value="Belgium" disabled />
+                            <select value.bind="customer.PostalAddress.Country.IdentificationCode">
+                                <option repeat.for="country of Object.entries(countryList)" value.bind="country[0]">${country[1]}</option>
+                            </select>
                         </label>
                     </div>
                 </div>
@@ -78,7 +81,7 @@
         <footer class="modal-footer">
             <button type="button" class="btn" click.trigger="closeModal()" t="[title]common.cancel" t="common.cancel">Cancel</button>
             <button type="button" class="btn primary" click.trigger="saveCustomer()" t="[title]common.confirm" t="common.confirm"
-                    disabled.bind="!customer.PartyName.Name || !customer.PartyLegalEntity.CompanyID.value || !peppolId || !peppolId.includes(':')">Confirm</button>
+                    disabled.bind="!customer.PartyName.Name || !customer.PartyTaxScheme.CompanyID || !peppolId || !peppolId.includes(':')">Confirm</button>
         </footer>
     </div>
 </div>

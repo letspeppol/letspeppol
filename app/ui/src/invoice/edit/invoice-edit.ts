@@ -12,7 +12,7 @@ import {
     UBLLine
 } from "../../services/peppol/ubl";
 import {AlertType} from "../../components/alert/alert";
-import {buildCreditNote, buildInvoice, parseInvoice} from "../../services/peppol/ubl-parser";
+import {buildCreditNote, buildInvoice} from "../../services/peppol/ubl-parser";
 import {InvoicePaymentModal} from "./components/invoice-payment-modal";
 import {InvoiceCustomerModal} from "./components/invoice-customer-modal";
 import {InvoiceCalculator, roundTwoDecimals} from "../invoice-calculator";
@@ -33,9 +33,8 @@ export class InvoiceEdit {
     private newInvoiceSubscription: IDisposable;
     private newCreditNoteSubscription: IDisposable;
 
-    selectedPaymentMeansCode: number | undefined = 30;
-    @observable selectedDocumentType = DocumentType.Invoice;
-    @observable customerCompanyNumber: undefined | string;
+    @bindable readOnly;
+    @bindable selectedDocumentType: DocumentType;
     @bindable invoiceModal: InvoiceModal;
     @bindable invoiceDateModal: InvoicePaymentModal;
     @bindable invoiceCustomerModal: InvoiceCustomerModal;
@@ -105,7 +104,6 @@ export class InvoiceEdit {
     async sendInvoice() {
         try {
             this.ea.publish('showOverlay', "Sending invoice");
-            console.log(JSON.stringify(this.invoiceContext.selectedInvoice));
             const xml = this.buildXml();
 
             const response = await this.invoiceService.validate(xml);
@@ -115,8 +113,8 @@ export class InvoiceEdit {
             }
 
             await this.proxyService.sendDocument(xml);
-            console.log(xml);
-            console.log(parseInvoice(xml));
+            this.ea.publish('alert', {alertType: AlertType.Success, text: "Invoice sent successfully"});
+            this.invoiceContext.clearSelectedInvoice();
         } catch(e) {
             console.error(e);
             this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to update account"});
@@ -142,16 +140,29 @@ export class InvoiceEdit {
         try {
             const draft = this.convertInvoiceToDraft();
             if (this.invoiceContext.selectedDraft) {
-                await this.invoiceService.updateInvoiceDraft(draft.id, draft);
+                const newDraft = await this.invoiceService.updateInvoiceDraft(draft.id, draft);
+                this.invoiceContext.drafts.splice(this.invoiceContext.drafts.findIndex(item => item.id === draft.id), 1, newDraft);
             } else {
                 const invoiceDraftDto = await this.invoiceService.createInvoiceDraft(draft);
                 this.invoiceContext.drafts.unshift(invoiceDraftDto);
             }
-            this.invoiceContext.selectedInvoice = undefined;
-            this.invoiceContext.selectedDraft = undefined;
+            this.invoiceContext.clearSelectedInvoice();
+            this.ea.publish('alert', {alertType: AlertType.Success, text: "Invoice draft saved"});
         } catch(e) {
             console.error(e);
             this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to save invoice as draft"});
+        }
+    }
+
+    async deleteDraft() {
+        try {
+            await this.invoiceService.deleteInvoiceDraft(this.invoiceContext.selectedDraft.id);
+            this.invoiceContext.drafts.splice(this.invoiceContext.drafts.findIndex(item => item.id === this.invoiceContext.selectedDraft.id), 1);
+            this.invoiceContext.clearSelectedInvoice();
+            this.ea.publish('alert', {alertType: AlertType.Success, text: "Invoice draft removed"});
+        } catch(e) {
+            console.error(e);
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to delete invoice draft"});
         }
     }
 
@@ -169,25 +180,41 @@ export class InvoiceEdit {
         } as InvoiceDraftDto;
     }
 
+    downloadUBL() {
+        if (!this.invoiceContext.selectedInvoiceXML) {
+            this.ea.publish('alert', {alertType: AlertType.Warning, text: "No UBL data available"});
+        }
+        const blob = new Blob([this.invoiceContext.selectedInvoiceXML], { type: "application/xml" });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${this.invoiceContext.selectedInvoice.ID}.xml`;
+        document.body.appendChild(a);
+        a.click();
+        
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
     async validate() {
         const form = document.getElementById('invoiceForm') as HTMLFormElement;
         if (!form.checkValidity()) {
             form.reportValidity();
             return;
         }
-        console.log(JSON.stringify(this.invoiceContext.selectedInvoice));
         const xml = this.buildXml();
         const response = await this.invoiceService.validate(xml);
         this.validationResultModal.showModal(response);
         console.log(response);
     }
 
-    customerCompanyNumberChanged(newValue: string) {
-        this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party.EndpointID.value = newValue;
-        this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PartyIdentification[0].ID.value = newValue;
-        this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PartyTaxScheme.CompanyID.value = newValue;
-        console.log(newValue);
-    }
+    // customerCompanyNumberChanged(newValue: string) {
+    //     this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party.EndpointID.value = newValue;
+    //     this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PartyIdentification[0].ID.value = newValue;
+    //     this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PartyTaxScheme.CompanyID = newValue;
+    //     console.log(newValue);
+    // }
 
     recalculateLinePositions() {
         for (let i = 0; i < this.invoiceContext.lines.length; i++) {

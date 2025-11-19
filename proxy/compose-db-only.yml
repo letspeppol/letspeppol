@@ -1,3 +1,5 @@
+
+name: lp
 services:
   db:
     build:
@@ -10,6 +12,6 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
-      POSTGRES_APP_DB: syncables
-      POSTGRES_APP_USER: syncables
-      POSTGRES_APP_PASSWORD: syncables
+      POSTGRES_APP_DB: letspeppol
+      POSTGRES_APP_USER: letspeppol
+      POSTGRES_APP_PASSWORD: letspeppol

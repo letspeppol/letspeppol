@@ -1,7 +1,7 @@
 import { createHmac } from 'crypto';
 import express from 'express';
 import cors from 'cors';
-import { checkBearerToken } from './auth.js';
+import { checkBearerToken, checkServiceBearerToken } from './auth.js';
 import rateLimit from 'express-rate-limit';
 import { Backend } from './Backend.js';
 import { Scrada } from './scrada.js';
@@ -11,9 +11,15 @@ import {
   markDocumentAsPaid,
   getTotalsForUser,
   setDocumentStatus,
+  getMaxDocumentStats,
+  getTotalDocumentStats,
 } from './db.js';
 
-function getAuthMiddleware(secretKey: string): { checkAuth: express.RequestHandler, checkWebhook: express.RequestHandler } {
+function getAuthMiddleware(secretKey: string): {
+  checkAuth: express.RequestHandler;
+  checkWebhook: express.RequestHandler;
+  checkServiceAuth: express.RequestHandler;
+} {
   return {
     checkAuth: async function checkAuth(req, res, next): Promise<void> {
       const authorization = req.headers['authorization'];
@@ -33,17 +39,50 @@ function getAuthMiddleware(secretKey: string): { checkAuth: express.RequestHandl
     },
     checkWebhook: async function checkWebhook(req, res, next): Promise<void> {
       const key = process.env.SCRADA_COMPANY_KEY!;
-      console.log('Checking webhook with key', JSON.stringify(key), 'and body', JSON.stringify(req.body));
-      const signatureComputed = createHmac('sha256', key).update(req.body).digest('hex');
+      console.log(
+        'Checking webhook with key',
+        JSON.stringify(key),
+        'and body',
+        JSON.stringify(req.body),
+      );
+      const signatureComputed = createHmac('sha256', key)
+        .update(req.body)
+        .digest('hex');
       const signatureGiven = req.headers['x-scrada-hmac-sha256'];
       if (signatureComputed !== signatureGiven) {
-        console.error('Invalid webhook signature:', { signatureComputed, signatureGiven });
+        console.error('Invalid webhook signature:', {
+          signatureComputed,
+          signatureGiven,
+        });
         res.status(401).json({ error: 'Unauthorized' });
       } else {
         req.body = JSON.parse(req.body);
         next();
       }
-    }
+    },
+    checkServiceAuth: async function checkServiceAuth(
+      req,
+      res,
+      next,
+    ): Promise<void> {
+      const authorization = req.headers['authorization'];
+      if (!authorization) {
+        res.status(401).json({ error: 'Unauthorized' });
+      } else {
+        const token = authorization.replace('Bearer ', '');
+        try {
+          const role = await checkServiceBearerToken(token, secretKey);
+          if (role !== 'service') {
+            res.status(401).json({ error: 'Unauthorized' });
+          } else {
+            next();
+          }
+        } catch (err: { message: string } | unknown) {
+          console.error('Error verifying token:', err);
+          res.status(401).json({ error: (err as { message: string }).message });
+        }
+      }
+    },
   };
 }
 
@@ -55,7 +94,9 @@ export type ServerOptions = {
 
 const optionsToRequire = ['PORT', 'ACCESS_TOKEN_KEY', 'DATABASE_URL'];
 export async function startServer(env: ServerOptions): Promise<number> {
-  const { checkAuth, checkWebhook } = getAuthMiddleware(env.ACCESS_TOKEN_KEY);
+  const { checkAuth, checkWebhook, checkServiceAuth } = getAuthMiddleware(
+    env.ACCESS_TOKEN_KEY,
+  );
   // console.error('checking', env);
   for (const option of optionsToRequire) {
     if (!env[option]) {
@@ -151,6 +192,14 @@ export async function startServer(env: ServerOptions): Promise<number> {
     const totals = await getTotalsForUser(requestingEntity);
     res.json(totals);
   }
+  async function getTotalDocuments(_req, res): Promise<void> {
+    const totals = await getTotalDocumentStats();
+    res.json(totals);
+  }
+  async function getMaxDocuments(_req, res): Promise<void> {
+    const totals = await getMaxDocumentStats();
+    res.json(totals);
+  }
   const port = parseInt(env.PORT);
   const app = express();
   app.use(cors({ origin: true })); // Reflect (enable) the requested origin in the CORS response
@@ -169,17 +218,24 @@ export async function startServer(env: ServerOptions): Promise<number> {
   return new Promise((resolve, reject) => {
     app.get('/v2/', hello);
     app.get('/v2/totals', checkAuth, getTotals);
+    app.get('/v2/stats/totals', checkServiceAuth, getTotalDocuments);
+    app.get('/v2/stats/max', checkServiceAuth, getMaxDocuments);
     app.get('/v2/documents', checkAuth, list);
     app.get('/v2/documents/:platformId', checkAuth, getUbl);
     app.post('/v2/documents/:platformId', checkAuth, express.json(), markPaid);
     app.post('/v2/send', checkAuth, express.text({ type: '*/*' }), send);
     app.post('/v2/reg', checkAuth, express.json(), reg);
     app.post('/v2/unreg', checkAuth, express.json(), unreg);
-    app.post('/v2/webhook/outgoing/scrada', express.text({ type: '*/*' }), checkWebhook, async (req, res) => {
-      console.log('Received outgoing webhook from Scrada', req.body);
-      setDocumentStatus(req.body)
-      res.status(200).end('OK\n');
-    });
+    app.post(
+      '/v2/webhook/outgoing/scrada',
+      express.text({ type: '*/*' }),
+      checkWebhook,
+      async (req, res) => {
+        console.log('Received outgoing webhook from Scrada', req.body);
+        setDocumentStatus(req.body);
+        res.status(200).end('OK\n');
+      },
+    );
     // app.post('/v2/webhook/incoming/scrada', express.text({ type: '*/*' }), checkWebhook, async (req, res) => {
     //   console.log('Received incoming webhook from Scrada', req.body);
     //   res.status(200).end('OK\n');
