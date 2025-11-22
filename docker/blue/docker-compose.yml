@@ -31,6 +31,9 @@ services:
       DB_PASS: ${DB_PASS}
       ACCESS_TOKEN_KEY: ${ACCESS_TOKEN_KEY}
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
+      PROXY_API_URL: ${PROXY_API_URL}
+      OPEN_COLLECTIVE_API_KEY: ${OPEN_COLLECTIVE_API_KEY}
+      DOCUMENT_PRICE: ${DOCUMENT_PRICE}
     networks:
       - web
       - default
@@ -55,6 +58,8 @@ services:
       MAIL_PASS: ${MAIL_PASS}
       MAIL_FROM: ${MAIL_FROM}
       UI_URL: ${UI_BLUE_URL}
+      PROXY_API_URL: ${PROXY_API_URL}
+      APP_API_URL: ${APP_API_URL}
       KYC_DATA_DIR: ${KYC_DATA_DIR}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -h $DB_HOST -p $DB_PORT -U $DB_USER"]
