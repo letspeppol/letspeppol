@@ -15,6 +15,9 @@ services:
       SCRADA_COMPANY_KEY: ${SCRADA_COMPANY_KEY}
       DATABASE_URL: ${DATABASE_URL}
       ACCESS_TOKEN_KEY: ${ACCESS_TOKEN_KEY}
+    networks:
+      - web
+      - default
 
   app:
     build:
