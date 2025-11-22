@@ -19,9 +19,19 @@ ENV SPRING_PROFILES_ACTIVE=postgres \
     JAVA_OPTS="" \
     SERVER_PORT=8084
 
+# Install Postgres client (includes pg_isready)
+RUN apt-get update \
+    && apt-get install -y postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
+
+# Add the wait script
+COPY wait-for-db.sh /usr/local/bin/wait-for-db.sh
+RUN chmod +x /usr/local/bin/wait-for-db.sh
+
 # Override server port via Spring variable at runtime
 ENV SERVER_PORT=8084
 
 COPY --from=build /workspace/build/libs/kyc.jar app.jar
 EXPOSE 8084
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -Dserver.port=$SERVER_PORT -jar /app/app.jar"]
+ENTRYPOINT ["sh", "-c", "wait-for-db.sh java $JAVA_OPTS -Dserver.port=$SERVER_PORT -jar /app/app.jar"]
+
