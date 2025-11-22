@@ -12,7 +12,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Address extends GenericEntity {
 
-    private Long id;
     private String city;
     private String postalCode;
     private String street;

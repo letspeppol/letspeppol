@@ -9,7 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "product_categories")
+@Table(name = "product_category")
 @Getter
 @Setter
 @NoArgsConstructor

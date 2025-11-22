@@ -28,14 +28,14 @@ public class UblDocument {
 
     @Enumerated(EnumType.STRING)
     @JdbcType(PostgreSQLEnumJdbcType.class)
-    private Direction direction; //Used for filtering when downloaded by retrieving app
+    private DocumentDirection direction; //Used for filtering when downloaded by retrieving app
 
     private String ownerPeppolId; //Sender or receiver, depending on direction
 
     private String partnerPeppolId; //Receiver or sender, depending on direction
 
     @CreationTimestamp(source = SourceType.DB)
-    private Instant createdOn; //Useful for retrieving app that wants to download already downloaded ubl documents
+    private Instant createdOn; //Useful for retrieving app that wants to download already downloaded ubl documents, is the proxyOn at App
 
     private Instant scheduledOn; //Useful for keeping track when it is scheduled to be processed, will be set when throttling is active to a moment in the future
 

@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "companies", indexes = {
+@Table(name = "company", indexes = {
         @Index(name = "uk_company_number", columnList = "companyNumber", unique = true)
 })
 @Getter
@@ -29,7 +29,7 @@ public class Company extends GenericEntity{
     private String paymentAccountName;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "registered_office_id", referencedColumnName = "id")
+    @JoinColumn(name = "registered_office_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_company_registered_office"))
     private Address registeredOffice;
 
     public Company(String companyNumber, String name, String subscriber, String subscriberEmail,

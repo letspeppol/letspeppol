@@ -6,7 +6,7 @@ import org.letspeppol.proxy.exception.BadRequestException;
 import org.letspeppol.proxy.exception.DuplicateRequestException;
 import org.letspeppol.proxy.exception.NotFoundException;
 import org.letspeppol.proxy.mapper.UblDocumentMapper;
-import org.letspeppol.proxy.model.Direction;
+import org.letspeppol.proxy.model.DocumentDirection;
 import org.letspeppol.proxy.model.AccessPoint;
 import org.letspeppol.proxy.model.UblDocument;
 import org.letspeppol.proxy.repository.UblDocumentRepository;
@@ -81,7 +81,7 @@ public class UblDocumentService {
 
     public void sendDueOutgoing() {
         List<UblDocument> ublDocuments = ublDocumentRepository.findAllByDirectionAndScheduledOnBeforeAndAccessPointIsNull(
-                Direction.OUTGOING,
+                DocumentDirection.OUTGOING,
                 Instant.now(),
                 PageRequest.of(
                         0,
@@ -121,7 +121,7 @@ public class UblDocumentService {
 
     public List<UblDocumentDto> findAllNew(String ownerPeppolId, int limit) {
         var pageable = PageRequest.of(0, limit, Sort.by("createdOn").descending());
-        return ublDocumentRepository.findAllByOwnerPeppolIdAndDownloadCountAndDirection(ownerPeppolId, 0, Direction.INCOMING, pageable).stream()
+        return ublDocumentRepository.findAllByOwnerPeppolIdAndDownloadCountAndDirection(ownerPeppolId, 0, DocumentDirection.INCOMING, pageable).stream()
                 .map(UblDocumentMapper::toDto)
                 .toList();
     }
@@ -139,7 +139,7 @@ public class UblDocumentService {
 
         UblDocument ublDocument = new UblDocument( //TODO : do we set default values here ?
                 ublDocumentDto.id(),
-                Direction.OUTGOING, //user can not overwrite this value : ublDocumentDto.direction(),
+                DocumentDirection.OUTGOING, //user can not overwrite this value : ublDocumentDto.direction(),
                 ublDocumentDto.ownerPeppolId(),
                 ublDocumentDto.partnerPeppolId(),
                 ublDocumentDto.createdOn(),
@@ -223,7 +223,7 @@ public class UblDocumentService {
 
         UblDocument ublDocument = new UblDocument( //TODO : do we set default values here ?
                 ublDocumentDto.id(),
-                Direction.INCOMING, //AP can not overwrite this value : ublDocumentDto.direction(),
+                DocumentDirection.INCOMING, //AP can not overwrite this value : ublDocumentDto.direction(),
                 ublDocumentDto.ownerPeppolId(),
                 ublDocumentDto.partnerPeppolId(),
                 ublDocumentDto.createdOn(),

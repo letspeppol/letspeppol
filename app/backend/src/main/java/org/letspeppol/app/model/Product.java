@@ -8,7 +8,7 @@ import lombok.Setter;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "products")
+@Table(name = "product")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -24,7 +24,7 @@ public class Product extends GenericEntity {
     private BigDecimal stockQuantity;
 
     @ManyToOne
-    @JoinColumn(name = "company_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_partner_company"))
+    @JoinColumn(name = "company_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_product_company"))
     private Company company;
 
     @ManyToOne(fetch = FetchType.LAZY)

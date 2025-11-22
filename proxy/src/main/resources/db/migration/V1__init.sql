@@ -1,9 +1,14 @@
-CREATE TYPE access_point AS ENUM ('NONE', 'E_INVOICE', 'SCRADA');
-CREATE TYPE direction AS ENUM ('INCOMING', 'OUTGOING');
+CREATE SCHEMA IF NOT EXISTS proxy;
+SET search_path = proxy;
 
+-- Enums
+CREATE TYPE access_point AS ENUM ('NONE', 'E_INVOICE', 'SCRADA');
+CREATE TYPE document_direction AS ENUM ('INCOMING', 'OUTGOING');
+
+-- UblDocument
 CREATE TABLE ubl_document (
     id                  uuid PRIMARY KEY,
-    direction           direction NOT NULL,
+    direction           document_direction NOT NULL,
     owner_peppol_id     text NOT NULL,
     partner_peppol_id   text NOT NULL,
     created_on          timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -18,6 +23,7 @@ CREATE TABLE ubl_document (
     access_point_id     text
 );
 
+-- Registry
 CREATE TABLE registry (
     peppol_id           text PRIMARY KEY,
     access_point        access_point,

@@ -1,6 +1,6 @@
 package org.letspeppol.proxy.model;
 
-public enum Direction {
+public enum DocumentDirection {
     INCOMING,
     OUTGOING
 }
