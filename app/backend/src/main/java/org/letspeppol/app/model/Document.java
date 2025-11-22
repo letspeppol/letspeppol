@@ -10,7 +10,9 @@ import org.hibernate.annotations.*;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Currency;
 import java.util.UUID;
+import static org.hibernate.type.SqlTypes.VARCHAR;
 
 @Entity
 @Table(name = "document")
@@ -77,11 +79,11 @@ public class Document {
     @JdbcType(PostgreSQLEnumJdbcType.class)
     private DocumentType type; //Type of document will be used to know if money needs to be paid or received, used for overview
 
-    @Enumerated(EnumType.STRING)
-    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Convert(disableConversion = true)  //Not using JPA converter
+    @JdbcTypeCode(VARCHAR)
     private Currency currency; //Currency can be foreign, used for overview
 
-    private BigDecimal amount; //Total amount without taxes, used for overview
+    private BigDecimal amount; //Total payable amount, used for overview
 
     private Instant issueDate; //Issue date on document, used for overview
 

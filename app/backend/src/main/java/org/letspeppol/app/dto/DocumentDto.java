@@ -1,10 +1,10 @@
 package org.letspeppol.app.dto;
 
-import org.letspeppol.app.model.Currency;
 import org.letspeppol.app.model.DocumentDirection;
 import org.letspeppol.app.model.DocumentType;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Currency;
 import java.util.UUID;
 
 public record DocumentDto(
@@ -28,5 +28,4 @@ public record DocumentDto(
         Instant issueDate,
         Instant dueDate,
         String paymentTerms
-) {
-}
+) {}

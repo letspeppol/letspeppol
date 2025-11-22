@@ -2,19 +2,28 @@ package org.letspeppol.app.service;
 
 import lombok.RequiredArgsConstructor;
 import org.letspeppol.app.dto.DocumentDto;
-import org.letspeppol.app.exception.NotFoundException;
+import org.letspeppol.app.dto.UblDocumentDto;
+import org.letspeppol.app.dto.UblDto;
+import org.letspeppol.app.exception.*;
+import org.letspeppol.app.exception.SecurityException;
 import org.letspeppol.app.mapper.DocumentMapper;
+import org.letspeppol.app.model.Company;
 import org.letspeppol.app.model.Document;
 import org.letspeppol.app.model.DocumentDirection;
-import org.letspeppol.app.model.DocumentType;
+import org.letspeppol.app.repository.CompanyRepository;
 import org.letspeppol.app.repository.DocumentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.letspeppol.app.util.UblParser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.xml.sax.SAXException;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.UUID;
@@ -24,7 +33,7 @@ import java.util.UUID;
 @Service
 public class DocumentService {
 
-    @Autowired
+    private final CompanyRepository companyRepository;
     private final DocumentRepository documentRepository;
 
     public void backupFile(Document document) throws Exception {
@@ -46,77 +55,103 @@ public class DocumentService {
         Files.writeString(filePath, document.getUbl(), StandardCharsets.UTF_8);
     }
 
-    public List<DocumentDto> findAll() {
-        return documentRepository.findAll().stream()
+    public List<DocumentDto> findAll(String peppolId) {
+        return documentRepository.findAllByOwnerPeppolId(peppolId).stream()
                 .map(DocumentMapper::toDto)
                 .toList();
     }
 
-    public DocumentDto findById(UUID id) {
-        return DocumentMapper.toDto(documentRepository.findById(id).orElseThrow(() -> new NotFoundException("Document does not exist")));
+    public DocumentDto findById(String peppolId, UUID id) {
+//        Company company = companyRepository.findByCompanyNumber(peppolId).orElseThrow(() -> new NotFoundException("Company does not exist"));
+        Document document =  documentRepository.findById(id).orElseThrow(() -> new NotFoundException("Document does not exist"));
+        if (!peppolId.equals(document.getOwnerPeppolId())) {
+            throw new SecurityException(AppErrorCodes.PEPPOL_ID_MISMATCH);
+        }
+        return DocumentMapper.toDto(document);
     }
 
-//    public DocumentDto createFromUbl(String ublXml) {
-//        Document document = new Document(
-//                UUID.randomUUID(), //TODO : or null ?
-//                DocumentDirection.OUTGOING,
-//                documentDto.ownerPeppolId(),
-//                documentDto.partnerPeppolId(),
-//                documentDto.proxyOn(),
-//                documentDto.scheduledOn(),
-//                documentDto.processedOn(),
-//                documentDto.processedStatus(),
-//                ublXml,
-//                documentDto.draftedOn(),
-//                documentDto.readOn(),
-//                documentDto.paidOn(),
-//                documentDto.partnerName(),
-//                documentDto.invoiceReference(),
-//                null,
-//                null,
-//                documentDto.type(),
-//                documentDto.currency(),
-//                documentDto.amount(),
-//                documentDto.issueDate(),
-//                documentDto.dueDate(),
-//                documentDto.paymentTerms()
-//        );
-////        document.setCompany();
-//        documentRepository.save(document);
+    public DocumentDto createFromUbl(String peppolId, String ublXml, boolean draft, Instant schedule) {
+        Company company = companyRepository.findByCompanyNumber(peppolId).orElseThrow(() -> new NotFoundException("Company does not exist"));
+        UblDto ublDto;
+        try {
+            ublDto = UblParser.parse(ublXml);
+        } catch (ParserConfigurationException | IOException | SAXException | XPathExpressionException e) {
+            throw new UblException(e.toString());
+        }
+        if (!peppolId.equals(ublDto.senderPeppolId())) {
+            throw new SecurityException(AppErrorCodes.PEPPOL_ID_MISMATCH);
+        }
+        Document document = new Document(
+                UUID.randomUUID(), //TODO : or null ?
+                DocumentDirection.OUTGOING,
+                peppolId,
+                ublDto.receiverPeppolId(),
+                null,
+                schedule,
+                null,
+                null,
+                ublXml,
+                draft ? Instant.now() : null,
+                null,
+                null,
+                ublDto.partnerName(),
+                ublDto.invoiceReference(),
+                ublDto.buyerReference(),
+                ublDto.orderReference(),
+                ublDto.type(),
+                ublDto.currency(),
+                ublDto.amount(),
+                ublDto.issueDate(),
+                ublDto.dueDate(),
+                ublDto.paymentTerms()
+        );
+        document.setCompany(company);
+        if (!draft) {
+            //TODO : send document
+        }
+        documentRepository.save(document);
+        //TODO : do we want to backUp drafts and not on proxy documents ?
 //        try {
 //            backupFile(document);
 //        } catch (Exception e) {
 //            throw new RuntimeException(e);
 //        }
-//        return DocumentMapper.toDto(document);
-//    }
+        return DocumentMapper.toDto(document);
+    }
 
-    public DocumentDto create(DocumentDto documentDto) {
+    public DocumentDto create(UblDocumentDto ublDocumentDto) {
+        Company company = companyRepository.findByCompanyNumber(ublDocumentDto.ownerPeppolId()).orElseThrow(() -> new NotFoundException("Company does not exist"));
+        UblDto ublDto;
+        try {
+            ublDto = UblParser.parse(ublDocumentDto.ubl());
+        } catch (ParserConfigurationException | IOException | SAXException | XPathExpressionException e) {
+            throw new UblException(e.toString());
+        }
         Document document = new Document(
-                documentDto.id(),
-                documentDto.direction(),
-                documentDto.ownerPeppolId(),
-                documentDto.partnerPeppolId(),
-                documentDto.proxyOn(),
-                documentDto.scheduledOn(),
-                documentDto.processedOn(),
-                documentDto.processedStatus(),
-                documentDto.ubl(),
-                documentDto.draftedOn(),
-                documentDto.readOn(),
-                documentDto.paidOn(),
-                documentDto.partnerName(),
-                documentDto.invoiceReference(),
+                ublDocumentDto.id(),
+                ublDocumentDto.direction(),
+                ublDocumentDto.ownerPeppolId(),
+                ublDocumentDto.partnerPeppolId(),
+                ublDocumentDto.createdOn(),
+                ublDocumentDto.scheduledOn(),
+                ublDocumentDto.processedOn(),
+                ublDocumentDto.processedStatus(),
+                ublDocumentDto.ubl(),
                 null,
                 null,
-                documentDto.type(),
-                documentDto.currency(),
-                documentDto.amount(),
-                documentDto.issueDate(),
-                documentDto.dueDate(),
-                documentDto.paymentTerms()
+                null,
+                ublDto.partnerName(),
+                ublDto.invoiceReference(),
+                ublDto.buyerReference(),
+                ublDto.orderReference(),
+                ublDto.type(),
+                ublDto.currency(),
+                ublDto.amount(),
+                ublDto.issueDate(),
+                ublDto.dueDate(),
+                ublDto.paymentTerms()
         );
-//        document.setCompany();
+        document.setCompany(company);
         documentRepository.save(document);
         try {
             backupFile(document);
@@ -126,28 +161,104 @@ public class DocumentService {
         return DocumentMapper.toDto(document);
     }
 
-    public DocumentDto update(UUID id, DocumentDto documentDto) {
+    public DocumentDto update(String peppolId, UUID id, DocumentDto documentDto, boolean draft, Instant schedule) {
+//        Company company = companyRepository.findByCompanyNumber(peppolId).orElseThrow(() -> new NotFoundException("Company does not exist"));
         Document document = documentRepository.findById(id).orElseThrow(() -> new NotFoundException("Document does not exist"));
-//        document.setUserId(documentDto.userId());
-//        document.setPlatformId(documentDto.platformId());
-//        document.setCreatedOn(documentDto.createdOn());
-//        document.setType(documentDto.type());
-//        document.setDirection(documentDto.direction());
-//        document.setCounterPartyId(documentDto.counterPartyId());
-//        document.setCounterPartyName(documentDto.counterPartyName());
-//        document.setDocId(documentDto.docId());
-//        document.setAmount(documentDto.amount());
-//        document.setDueDate(documentDto.dueDate());
-//        document.setPaymentTerms(documentDto.paymentTerms());
-//        document.setPaid(documentDto.paid());
-//        document.setUbl(documentDto.ubl());
-//        document.setStatus(documentDto.status());
-//        documentRepository.save(document);
+        if (!peppolId.equals(document.getOwnerPeppolId())) {
+            throw new SecurityException(AppErrorCodes.PEPPOL_ID_MISMATCH);
+        }
+        if (document.getProcessedOn() != null) {
+            throw new ConflictException("Document is already processed"); //TODO : port to 409 Conflict ?
+        }
+        UblDto ublDto = null;
+        try {
+            ublDto = UblParser.parse(documentDto.ubl());
+        } catch (ParserConfigurationException | IOException | SAXException | XPathExpressionException e) {
+            throw new UblException(e.toString());
+        }
+        if (!peppolId.equals(ublDto.senderPeppolId())) {
+            throw new SecurityException(AppErrorCodes.PEPPOL_ID_MISMATCH);
+        }
+        document.setPartnerPeppolId(ublDto.receiverPeppolId());
+        document.setScheduledOn(schedule);
+        document.setUbl(documentDto.ubl());
+        if (draft && document.getProxyOn() != null) { //TODO : inform user about not draftable ?
+            document.setDraftedOn(Instant.now());
+        } else {
+            document.setDraftedOn(null);
+        }
+        document.setPartnerName(ublDto.partnerName());
+        document.setInvoiceReference(ublDto.invoiceReference());
+        document.setBuyerReference(ublDto.buyerReference());
+        document.setOrderReference(ublDto.orderReference());
+        document.setType(ublDto.type());
+        document.setCurrency(ublDto.currency());
+        document.setAmount(ublDto.amount());
+        document.setIssueDate(ublDto.issueDate());
+        document.setDueDate(ublDto.dueDate());
+        document.setPaymentTerms(ublDto.paymentTerms());
+        if (document.getProxyOn() != null) {
+            //TODO : send update ?
+        } else if (!draft) {
+            //TODO : send document ?
+        }
+        documentRepository.save(document);
+        //TODO : do we want to backUp drafts and not on proxy documents ?
+//        try {
+//            backupFile(document);
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
         return DocumentMapper.toDto(document);
     }
 
-    public void delete(UUID id) {
-        documentRepository.deleteById(id);
+    public DocumentDto send(String peppolId, UUID id, Instant schedule) {
+        Document document = documentRepository.findById(id).orElseThrow(() -> new NotFoundException("Document does not exist"));
+        if (!peppolId.equals(document.getOwnerPeppolId())) {
+            throw new SecurityException(AppErrorCodes.PEPPOL_ID_MISMATCH);
+        }
+        if (document.getProcessedOn() != null) {
+            throw new ConflictException("Document is already processed"); //TODO : port to 409 Conflict ?
+        }
+        document.setScheduledOn(schedule);
+        document.setDraftedOn(null);
+        if (document.getProxyOn() != null) {
+            //TODO : send update ?
+        } else {
+            //TODO : send document ?
+        }
+        documentRepository.save(document);
+        //TODO : do we want to backUp drafts and not on proxy documents ?
+//        try {
+//            backupFile(document);
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+        return DocumentMapper.toDto(document);
+    }
+
+    public DocumentDto read(String peppolId, UUID id) {
+        Document document = documentRepository.findById(id).orElseThrow(() -> new NotFoundException("Document does not exist"));
+        if (!peppolId.equals(document.getOwnerPeppolId())) {
+            throw new SecurityException(AppErrorCodes.PEPPOL_ID_MISMATCH);
+        }
+        document.setReadOn(Instant.now());
+        documentRepository.save(document);
+        return DocumentMapper.toDto(document);
+    }
+
+    public DocumentDto paid(String peppolId, UUID id) {
+        Document document = documentRepository.findById(id).orElseThrow(() -> new NotFoundException("Document does not exist"));
+        if (!peppolId.equals(document.getOwnerPeppolId())) {
+            throw new SecurityException(AppErrorCodes.PEPPOL_ID_MISMATCH);
+        }
+        document.setPaidOn(Instant.now());
+        documentRepository.save(document);
+        return DocumentMapper.toDto(document);
+    }
+
+    public void delete(String peppolId, UUID id) { //TODO : do we need to send boundaries ?
+        documentRepository.deleteByIdAndOwnerPeppolId(id, peppolId);
     }
 
 }
