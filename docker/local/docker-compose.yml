@@ -35,7 +35,7 @@ services:
       DATABASE_URL: ${DATABASE_URL}
       ACCESS_TOKEN_KEY: ${ACCESS_TOKEN_KEY}
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${PROXY_PORT:-8086}/v2/"]
+      test: ["CMD", "curl", "-f", "http://proxy:${PROXY_PORT:-8086}/v2/"]
       interval: 5s
       timeout: 5s
       retries: 10
