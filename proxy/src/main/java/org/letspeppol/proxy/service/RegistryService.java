@@ -44,7 +44,7 @@ public class RegistryService {
             if (service == null) {
                 //TODO : LOG ERROR !!!
             } else {
-                service.unregister(registry.getPeppolId());
+                service.unregister(registry.getPeppolId(), registry.getVariables());
             }
         }
     }

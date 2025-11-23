@@ -21,7 +21,7 @@ import java.util.UUID;
 public class JwtService {
 
     public static final String PEPPOL_ID = "peppolId";
-    public static final String UID = "uid";
+    public static final String UID = "uid"; //Needed for multiple accounts to a joined Peppol ID
     public static final String ROLE_SERVICE = "service";
     private final Key key;
 
@@ -33,7 +33,7 @@ public class JwtService {
     public String generateToken(String peppolId, UUID uid) {
         long expirationTime = 1000 * 60 * 60; // 1 hour
         return Jwts.builder()
-                .setIssuer("proxy")
+                .setIssuer("app")
                 .claim(PEPPOL_ID, peppolId)
                 .claim(UID, uid)
                 .setIssuedAt(new Date())
@@ -61,10 +61,11 @@ public class JwtService {
 
     // Internal
 
-    public String generateInternalToken() {
+    public String generateInternalToken(String peppolId) {
         long expirationTime = 1000 * 60 * 60 * 24; // 1 day
         return Jwts.builder()
-                .setIssuer("proxy")
+                .setIssuer("kyc")
+                .claim(PEPPOL_ID, peppolId)
                 .claim("role", ROLE_SERVICE)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))

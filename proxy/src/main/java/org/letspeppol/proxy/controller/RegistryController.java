@@ -29,7 +29,7 @@ public class RegistryController {
         return registryService.register(
             peppolId,
             data,
-            AccessPoint.E_INVOICE
+            AccessPoint.SCRADA
         );
     }
 

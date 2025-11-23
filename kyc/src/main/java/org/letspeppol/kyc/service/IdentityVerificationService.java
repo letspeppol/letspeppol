@@ -27,7 +27,7 @@ import static org.letspeppol.kyc.service.signing.CertificateUtil.getRDNName;
 @RequiredArgsConstructor
 public class IdentityVerificationService {
 
-    private final AppService appService;
+//    private final AppService appService;
     private final AccountIdentityVerificationRepository civRepository;
     private final AccountRepository accountRepository;
     private final EncryptionService encryptionService;
@@ -67,9 +67,9 @@ public class IdentityVerificationService {
         );
         civRepository.save(civ);
 
-        String token = jwtService.generateToken(req.director().getCompany().getPeppolId(), account.getExternalId()); // TODO ?
+        String token = jwtService.generateInternalToken(req.director().getCompany().getPeppolId());//, account.getExternalId()); // TODO ?
         proxyService.registerCompany(token, req.director().getCompany().getName());
-        appService.register(req);
+        //appService.register(req);
 
         log.info("Identity verified for email={} director={} serial={}", account.getEmail(), req.director().getName(), req.x509Certificate().getSerialNumber());
         return account;

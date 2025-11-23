@@ -1,6 +1,8 @@
 package org.letspeppol.kyc.service;
 
 import com.itextpdf.forms.form.element.SignatureFieldAppearance;
+import com.itextpdf.io.font.FontProgram;
+import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.font.PdfFont;
@@ -25,6 +27,7 @@ import org.letspeppol.kyc.service.signing.EmbeddableSignatureUtil;
 import org.letspeppol.kyc.service.signing.FinalizeSignatureContainer;
 import org.letspeppol.kyc.service.signing.PreSignatureContainer;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -108,10 +111,13 @@ public class SigningService {
     }
 
     public static SignerProperties getSignerProperties(String signatureContent) throws IOException {
-        PdfFont font = PdfFontFactory.createFont(
-                "src/main/resources/fonts/DejaVuSans.ttf",
-                PdfEncodings.WINANSI
-        );
+        var res = new ClassPathResource("fonts/DejaVuSans.ttf");
+        PdfFont font;
+        try (var in = res.getInputStream()) {
+            byte[] ttf = in.readAllBytes();
+            FontProgram fp = FontProgramFactory.createFont(ttf);
+            font = PdfFontFactory.createFont(fp, PdfEncodings.WINANSI);
+        }
 
         SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID).setContent(signatureContent);
         appearance.setFont(font);

@@ -29,7 +29,7 @@ public class DataInitializer implements CommandLineRunner {
     @Transactional
     public void run(String... args) {
         String companyNumber = "1023290711";
-        if (companyRepository.findByPeppolId(companyNumber).isEmpty()) {
+        if (companyRepository.findByPeppolId("0208:"+companyNumber).isEmpty()) {
             Company c = new Company("0208:"+companyNumber, "BE"+companyNumber, "SoftwareOplossing.be", "Bruxelles", "1000", "Rue Example", "1");
             companyRepository.save(c);
             directorRepository.save(new Director("Bart In Stukken", c));
@@ -44,7 +44,7 @@ public class DataInitializer implements CommandLineRunner {
             log.info("Seeded sample company {}", companyNumber);
         }
         companyNumber = "0705969661";
-        if (companyRepository.findByPeppolId(companyNumber).isEmpty()) {
+        if (companyRepository.findByPeppolId("0208:"+companyNumber).isEmpty()) {
             Company c = new Company("0208:"+companyNumber, "BE"+companyNumber, "Digita bv.", "Hasselt", "3500", "Demerstraat", "2");
             companyRepository.save(c);
             directorRepository.save(new Director("Michiel Wouters", c));

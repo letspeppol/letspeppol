@@ -26,9 +26,6 @@ public class EInvoiceService implements AccessPointServiceInterface {
     private final WebClient eInvoiceWebClient;
     @Qualifier("eInvoiceOrganisationWebClient")
     private final WebClient eInvoiceOrganisationWebClient;
-    @Lazy
-    @Autowired
-    private RegistryService registryService;
     private final ObjectMapper objectMapper;
 
     @Override
@@ -86,26 +83,26 @@ public class EInvoiceService implements AccessPointServiceInterface {
     }
 
     @Override
-    public void unregister(String peppolId) {
-        Variables variables = registryService.getVariables(peppolId, Variables.class);
+    public void unregister(String peppolId, Map<String, Object> variables) {
+        Variables eInvoiceVariables = objectMapper.convertValue(variables, Variables.class);
         try {
             eInvoiceOrganisationWebClient
                 .post()
-                .uri("/tenants/"+variables.tenantId()+"/peppol/unregister")
+                .uri("/tenants/"+eInvoiceVariables.tenantId()+"/peppol/unregister")
                 .retrieve()
                 .toBodilessEntity()
                 .block();
 
             eInvoiceOrganisationWebClient
                 .delete()
-                .uri("/tenants/"+variables.tenantId()+"/api-keys/"+variables.keyId())
+                .uri("/tenants/"+eInvoiceVariables.tenantId()+"/api-keys/"+eInvoiceVariables.keyId())
                 .retrieve()
                 .toBodilessEntity()
                 .block();
 
             eInvoiceOrganisationWebClient
                 .delete()
-                .uri("/tenants/"+variables.tenantId())
+                .uri("/tenants/"+eInvoiceVariables.tenantId())
                 .retrieve()
                 .toBodilessEntity()
                 .block();

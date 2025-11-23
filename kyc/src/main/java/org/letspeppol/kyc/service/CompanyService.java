@@ -25,7 +25,7 @@ public class CompanyService {
     private final DirectorRepository directorRepository;
     private final KboLookupService kboLookupService;
     private final ProxyService proxyService;
-    private final AppService appService;
+//    private final AppService appService;
 
     public Optional<CompanyResponse> getByPeppolId(String peppolId) {
         Optional<Company> company = companyRepository.findByPeppolId(peppolId);
@@ -81,6 +81,6 @@ public class CompanyService {
         company.setRegisteredOnPeppol(false);
         companyRepository.save(company);
         //proxyService.unregisterCompany(token);
-        appService.unregister(peppolId);
+        //appService.unregister(peppolId);
     }
 }

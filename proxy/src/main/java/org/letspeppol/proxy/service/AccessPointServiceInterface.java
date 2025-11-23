@@ -11,7 +11,7 @@ public interface AccessPointServiceInterface {
 
     Map<String, Object> register(String peppolId, Map<String, Object> data);
 
-    void unregister(String peppolId);
+    void unregister(String peppolId, Map<String, Object> variables);
 
     String sendDocument(UblDocument ublDocument);
 

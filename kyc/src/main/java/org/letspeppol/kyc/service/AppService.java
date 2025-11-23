@@ -26,7 +26,7 @@ public class AppService {
     public AppService(@Qualifier("AppWebClient") WebClient webClient, JwtService jwtService) {
         this.webClient = webClient;
         this.jwtService = jwtService;
-        this.activeToken = jwtService.generateInternalToken();
+        this.activeToken = jwtService.generateInternalToken(null);
     }
 
     public void register(IdentityVerificationRequest identity) {
@@ -60,7 +60,7 @@ public class AppService {
 
     @Scheduled(cron = "0 0 */12 * * *")
     public void refreshToken() {
-        this.activeToken = jwtService.generateInternalToken();
+        this.activeToken = jwtService.generateInternalToken(null);
         log.info("Service token refreshed");
     }
 
