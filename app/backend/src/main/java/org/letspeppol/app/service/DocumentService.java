@@ -161,7 +161,7 @@ public class DocumentService {
         return DocumentMapper.toDto(document);
     }
 
-    public DocumentDto update(String peppolId, UUID id, DocumentDto documentDto, boolean draft, Instant schedule) {
+    public DocumentDto update(String peppolId, UUID id, String ublXml, boolean draft, Instant schedule) {
 //        Company company = companyRepository.findByCompanyNumber(peppolId).orElseThrow(() -> new NotFoundException("Company does not exist"));
         Document document = documentRepository.findById(id).orElseThrow(() -> new NotFoundException("Document does not exist"));
         if (!peppolId.equals(document.getOwnerPeppolId())) {
@@ -172,7 +172,7 @@ public class DocumentService {
         }
         UblDto ublDto = null;
         try {
-            ublDto = UblParser.parse(documentDto.ubl());
+            ublDto = UblParser.parse(ublXml);
         } catch (ParserConfigurationException | IOException | SAXException | XPathExpressionException e) {
             throw new UblException(e.toString());
         }
@@ -181,7 +181,7 @@ public class DocumentService {
         }
         document.setPartnerPeppolId(ublDto.receiverPeppolId());
         document.setScheduledOn(schedule);
-        document.setUbl(documentDto.ubl());
+        document.setUbl(ublXml);
         if (draft && document.getProxyOn() != null) { //TODO : inform user about not draftable ?
             document.setDraftedOn(Instant.now());
         } else {

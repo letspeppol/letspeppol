@@ -37,18 +37,22 @@ CREATE TABLE company (
         FOREIGN KEY (registered_office_id) REFERENCES address(id)
 );
 
--- Document
+-- Document (FK -> company)
 CREATE TABLE document (
     id                  uuid PRIMARY KEY,
     direction           document_direction NOT NULL,
     owner_peppol_id     varchar(255) NOT NULL,
     partner_peppol_id   varchar(255) NOT NULL,
-    created_on          timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    proxy_on            timestamp with time zone,
     scheduled_on        timestamp with time zone,
     processed_on        timestamp with time zone,
     processed_status    varchar(255),
     ubl                 text,
     company_id          bigint NOT NULL,
+    created_on          timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    drafted_on          timestamp with time zone,
+    read_on             timestamp with time zone,
+    paid_on             timestamp with time zone,
     partner_name        varchar(255) NOT NULL,
     invoice_reference   varchar(255) NOT NULL,
     buyer_reference     varchar(255),
@@ -59,8 +63,6 @@ CREATE TABLE document (
     issue_date          timestamp with time zone,
     due_date            timestamp with time zone,
     payment_terms       varchar(255),
-    read_on             timestamp with time zone,
-    paid_on             timestamp with time zone,
     CONSTRAINT fk_document_company
         FOREIGN KEY (company_id) REFERENCES company(id)
 );

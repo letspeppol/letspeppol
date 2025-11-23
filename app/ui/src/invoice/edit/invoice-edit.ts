@@ -112,7 +112,7 @@ export class InvoiceEdit {
                 return;
             }
 
-            await this.invoiceService.sendDocument(xml);
+            await this.invoiceService.createDocument(xml);
             this.ea.publish('alert', {alertType: AlertType.Success, text: "Invoice sent successfully"});
             this.invoiceContext.clearSelectedInvoice();
         } catch(e) {
