@@ -9,15 +9,16 @@ export class Registration {
     private peppolDirService = resolve(PeppolDirService);
     step = 0;
     email: string | undefined;
-    companyNumber : string | undefined;
+    vatNumber : string | undefined;
     company : KycCompanyResponse | undefined;
     errorCode: string | undefined;
 
-    async checkCompanyNumber() {
+    async checkVatNumber() {
         this.errorCode = undefined;
         try {
             this.ea.publish('showOverlay', "Searching company");
-            this.company = await this.registrationService.getCompany(this.companyNumber);
+            const peppolId = "0208:" + this.vatNumber.replace(/\D/g, '');
+            this.company = await this.registrationService.getCompany(peppolId);
             this.step++;
         } catch {
             this.errorCode = "registration-company-not-found";
@@ -28,7 +29,7 @@ export class Registration {
 
     restart(e) {
         this.errorCode = undefined;
-        this.companyNumber = undefined;
+        this.vatNumber = undefined;
         this.company = undefined;
         this.step = 0;
         e.preventDefault();
@@ -38,12 +39,12 @@ export class Registration {
         this.errorCode = undefined;
         try {
             this.ea.publish('showOverlay', "Confirming registration request");
-            const peppolDirectoryResponse = await this.peppolDirService.findByParticipant("0208:" + this.company.companyNumber.replace(/\D/g, ''));
+            const peppolDirectoryResponse = await this.peppolDirService.findByParticipant(this.company.peppolId);
             if (peppolDirectoryResponse.matches.length > 0) {
                 this.errorCode = "registration-company-already-registered-on-peppol";
                 return;
             }
-            await this.registrationService.confirmCompany(this.companyNumber, this.email);
+            await this.registrationService.confirmCompany(this.company.peppolId, this.email);
             this.step++;
         } catch(e) {
             console.log(e);

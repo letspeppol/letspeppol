@@ -1,4 +1,4 @@
 package org.letspeppol.app.dto;
 
-public record UnregisterRequest(String companyNumber) {
+public record UnregisterRequest(String peppolId) {
 }

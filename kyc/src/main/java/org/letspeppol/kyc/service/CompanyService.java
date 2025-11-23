@@ -3,6 +3,7 @@ package org.letspeppol.kyc.service;
 import lombok.RequiredArgsConstructor;
 import org.letspeppol.kyc.dto.CompanyResponse;
 import org.letspeppol.kyc.dto.DirectorDto;
+import org.letspeppol.kyc.dto.PeppolIdDto;
 import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.KycException;
 import org.letspeppol.kyc.model.kbo.Company;
@@ -26,24 +27,25 @@ public class CompanyService {
     private final ProxyService proxyService;
     private final AppService appService;
 
-    public Optional<CompanyResponse> getByCompanyNumber(String companyNumber) {
-        Optional<Company> company = companyRepository.findByCompanyNumber(companyNumber);
+    public Optional<CompanyResponse> getByPeppolId(String peppolId) {
+        Optional<Company> company = companyRepository.findByPeppolId(peppolId);
         if (company.isPresent()) {
             return Optional.of(toResponse(company.get()));
         }
 
-        Optional<CompanyResponse> companyLookup = kboLookupService.findCompany(companyNumber);
+        Optional<CompanyResponse> companyLookup = kboLookupService.findCompany(peppolId);
         if (companyLookup.isPresent()) {
-            Company companyToStore = storeCompanyAndDirectors(companyNumber, companyLookup.get());
+            Company companyToStore = storeCompanyAndDirectors(peppolId, companyLookup.get());
             return Optional.of(toResponse(companyToStore));
         }
 
         return Optional.empty();
     }
 
-    private Company storeCompanyAndDirectors(String companyNumber, CompanyResponse companyResponse) {
+    private Company storeCompanyAndDirectors(String peppolId, CompanyResponse companyResponse) {
         Company company = new Company(
-                companyNumber,
+                peppolId,
+                companyResponse.vatNumber(),
                 companyResponse.name(),
                 companyResponse.city(),
                 companyResponse.postalCode(),
@@ -61,7 +63,8 @@ public class CompanyService {
     public CompanyResponse toResponse(Company company) {
         return new CompanyResponse(
                 company.getId(),
-                company.getCompanyNumber(),
+                company.getPeppolId(),
+                company.getVatNumber(),
                 company.getName(),
                 company.getStreet(),
                 company.getHouseNumber(),
@@ -73,11 +76,11 @@ public class CompanyService {
         );
     }
 
-    public void unregisterCompany(String companyNumber, String token) {
-        Company company = companyRepository.findByCompanyNumber(companyNumber).orElseThrow(() -> new KycException(KycErrorCodes.COMPANY_NOT_FOUND));
+    public void unregisterCompany(String peppolId, String token) {
+        Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new KycException(KycErrorCodes.COMPANY_NOT_FOUND));
         company.setRegisteredOnPeppol(false);
         companyRepository.save(company);
         //proxyService.unregisterCompany(token);
-        appService.unregister(companyNumber);
+        appService.unregister(peppolId);
     }
 }

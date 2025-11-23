@@ -25,7 +25,7 @@ public class RegisterCompanyController {
 
     @PostMapping("/unregister")
     public ResponseEntity<Void> unregister(@RequestBody UnregisterRequest request) {
-        companyService.unregister(request.companyNumber());
+        companyService.unregister(request.peppolId());
         return ResponseEntity.ok().build();
     }
 

@@ -4,7 +4,8 @@ package org.letspeppol.kyc.dto;
  * Sent to App backend
  */
 public record RegistrationRequest(
-        String companyNumber,
+        String peppolId,
+        String vatNumber,
         String companyName,
         String street,
         String houseNumber,

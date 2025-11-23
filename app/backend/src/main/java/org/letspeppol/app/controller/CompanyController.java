@@ -25,16 +25,14 @@ public class CompanyController {
     @GetMapping
     public ResponseEntity<CompanyDto> getCompany(@AuthenticationPrincipal Jwt jwt) {
         String peppolId = JwtUtil.getPeppolId(jwt);
-        String companyNumber = peppolId.split(":")[1];
-        return ResponseEntity.ok(companyService.get(companyNumber));
+        return ResponseEntity.ok(companyService.get(peppolId));
     }
 
     @PutMapping
     public ResponseEntity updateCompany(@AuthenticationPrincipal Jwt jwt, @RequestBody CompanyDto companyDto) {
         String peppolId = JwtUtil.getPeppolId(jwt);
-        String companyNumber = peppolId.split(":")[1];
-        if (!Objects.equals(companyDto.companyNumber(), companyNumber)) {
-            log.warn("Malicious update attempt for peppolId {} company {} {}", peppolId, companyDto.companyNumber(), companyDto.name());
+        if (!Objects.equals(companyDto.peppolId(), peppolId)) {
+            log.warn("Malicious update attempt for peppolId {} company {} {}", peppolId, companyDto.peppolId(), companyDto.name());
             throw new AppException(AppErrorCodes.PEPPOL_ID_MISMATCH);
         }
         return ResponseEntity.ok(companyService.update(companyDto));

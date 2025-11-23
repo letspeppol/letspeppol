@@ -41,14 +41,14 @@ public class ActivationEmailTemplateProvider {
         this.resourceLoader = resourceLoader;
     }
 
-    public RenderedTemplate render(String companyNumber, String activationLink) {
-        return render(companyNumber, activationLink, null);
+    public RenderedTemplate render(String peppolId, String activationLink) {
+        return render(peppolId, activationLink, null);
     }
 
-    public RenderedTemplate render(String companyNumber, String activationLink, String languageTag) {
+    public RenderedTemplate render(String peppolId, String activationLink, String languageTag) {
         String template = loadTemplate(languageTag);
         String body = template
-                .replace("{{companyNumber}}", safe(companyNumber))
+                .replace("{{peppolId}}", safe(peppolId))
                 .replace("{{activationLink}}", activationLink);
         String subject = resolveSubject(languageTag);
         return new RenderedTemplate(subject, body);
@@ -89,7 +89,7 @@ public class ActivationEmailTemplateProvider {
                 }
             }
         }
-        String fb = "Dear user,\n\nPlease verify your email for company {{companyNumber}} by clicking: {{activationLink}}\n\nRegards";
+        String fb = "Dear user,\n\nPlease verify your email for company {{peppolId}} by clicking: {{activationLink}}\n\nRegards";
         cache.put("default", fb);
         return fb;
     }

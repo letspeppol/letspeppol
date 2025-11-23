@@ -8,7 +8,7 @@
         <div class="grid">
             <label class="field full">
                 <span t="label.vat-number">VAT number</span>
-                <input name="companyNumber" type="text" t="[placeholder]placeholder.vat-number" required value.bind="companyNumber"/>
+                <input name="vatNumber" type="text" t="[placeholder]placeholder.vat-number" required value.bind="vatNumber"/>
             </label>
             <label class="field full">
                 <span t="label.email">Email</span>
@@ -17,7 +17,7 @@
         </div>
         <p if.bind="errorCode" class="form-error" aria-live="assertive" t="error.${errorCode}">Login failed</p>
         <div class="auth-actions">
-            <button type="submit" class="btn primary" disabled.bind="!email || !companyNumber || companyService.http.isRequesting" click.trigger="checkCompanyNumber()">
+            <button type="submit" class="btn primary" disabled.bind="!email || !vatNumber || companyService.http.isRequesting" click.trigger="checkVatNumber()">
                 <span class="loader"></span>
                 <span t="registration.create-account">Create account</span>
             </button>
@@ -30,7 +30,7 @@
         <div class="grid grid-col-73">
             <label class="field full">
                 <span t="label.vat-number">VAT number</span>
-                <input name="companyNumber" type="text" disabled="disabled" value.to-view="company.companyNumber"/>
+                <input name="vatNumber" type="text" disabled="disabled" value.to-view="company.vatNumber"/>
             </label>
             <label class="field full">
                 <span t="label.name">Name</span>
@@ -59,7 +59,7 @@
         </div>
         <p if.bind="errorCode" class="form-error" aria-live="assertive" t="error.${errorCode}">Login failed</p>
         <div class="auth-actions">
-            <button type="button" class="btn primary" disabled.bind="!email || !companyNumber || companyService.http.isRequesting" click.trigger="confirmCompany()">
+            <button type="button" class="btn primary" disabled.bind="!email || !vatNumber || companyService.http.isRequesting" click.trigger="confirmCompany()">
                 <span t="registration.confirm-company">Confirm</span>
             </button>
         </div>

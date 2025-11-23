@@ -40,7 +40,7 @@ public class DocumentService {
         Path filePath = Paths.get(
                 //System.getProperty("java.io.tmpdir"),
                 "backup",
-                document.getCompany().getCompanyNumber(),
+                document.getCompany().getPeppolId(),
                 document.getDirection().toString(),
                 String.valueOf(document.getProxyOn().atZone(ZoneId.systemDefault()).getYear()),
                 String.valueOf(document.getProxyOn().atZone(ZoneId.systemDefault()).getMonth()),
@@ -62,7 +62,7 @@ public class DocumentService {
     }
 
     public DocumentDto findById(String peppolId, UUID id) {
-//        Company company = companyRepository.findByCompanyNumber(peppolId).orElseThrow(() -> new NotFoundException("Company does not exist"));
+//        Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new NotFoundException("Company does not exist"));
         Document document =  documentRepository.findById(id).orElseThrow(() -> new NotFoundException("Document does not exist"));
         if (!peppolId.equals(document.getOwnerPeppolId())) {
             throw new SecurityException(AppErrorCodes.PEPPOL_ID_MISMATCH);
@@ -71,7 +71,7 @@ public class DocumentService {
     }
 
     public DocumentDto createFromUbl(String peppolId, String ublXml, boolean draft, Instant schedule) {
-        Company company = companyRepository.findByCompanyNumber(peppolId).orElseThrow(() -> new NotFoundException("Company does not exist"));
+        Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new NotFoundException("Company does not exist"));
         UblDto ublDto;
         try {
             ublDto = UblParser.parse(ublXml);
@@ -82,7 +82,7 @@ public class DocumentService {
             throw new SecurityException(AppErrorCodes.PEPPOL_ID_MISMATCH);
         }
         Document document = new Document(
-                UUID.randomUUID(), //TODO : or null ?
+                null,
                 DocumentDirection.OUTGOING,
                 peppolId,
                 ublDto.receiverPeppolId(),
@@ -120,7 +120,7 @@ public class DocumentService {
     }
 
     public DocumentDto create(UblDocumentDto ublDocumentDto) {
-        Company company = companyRepository.findByCompanyNumber(ublDocumentDto.ownerPeppolId()).orElseThrow(() -> new NotFoundException("Company does not exist"));
+        Company company = companyRepository.findByPeppolId(ublDocumentDto.ownerPeppolId()).orElseThrow(() -> new NotFoundException("Company does not exist"));
         UblDto ublDto;
         try {
             ublDto = UblParser.parse(ublDocumentDto.ubl());
@@ -162,7 +162,7 @@ public class DocumentService {
     }
 
     public DocumentDto update(String peppolId, UUID id, String ublXml, boolean draft, Instant schedule) {
-//        Company company = companyRepository.findByCompanyNumber(peppolId).orElseThrow(() -> new NotFoundException("Company does not exist"));
+//        Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new NotFoundException("Company does not exist"));
         Document document = documentRepository.findById(id).orElseThrow(() -> new NotFoundException("Document does not exist"));
         if (!peppolId.equals(document.getOwnerPeppolId())) {
             throw new SecurityException(AppErrorCodes.PEPPOL_ID_MISMATCH);

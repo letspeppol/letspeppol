@@ -19,7 +19,8 @@ public class CompanyService {
 
     public void register(RegistrationRequest request) {
         Company account = new Company(
-                request.companyNumber(),
+                request.peppolId(),
+                request.vatNumber(),
                 request.companyName(),
                 request.directorName(),
                 request.directorEmail(),
@@ -32,13 +33,13 @@ public class CompanyService {
         companyRepository.save(account);
     }
 
-    public CompanyDto get(String companyNumber) {
-        Company company = companyRepository.findByCompanyNumber(companyNumber).orElseThrow(() -> new NotFoundException("Company does not exist"));
+    public CompanyDto get(String peppolId) {
+        Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new NotFoundException("Company does not exist"));
         return CompanyMapper.toDto(company);
     }
 
     public CompanyDto update(CompanyDto companyDto) {
-        Company company = companyRepository.findByCompanyNumber(companyDto.companyNumber()).orElseThrow(() -> new NotFoundException("Company does not exist"));
+        Company company = companyRepository.findByPeppolId(companyDto.peppolId()).orElseThrow(() -> new NotFoundException("Company does not exist"));
         company.setPaymentAccountName(companyDto.paymentAccountName());
         company.setPaymentTerms(companyDto.paymentTerms());
         company.setIban(companyDto.iban());
@@ -50,8 +51,8 @@ public class CompanyService {
         return CompanyMapper.toDto(company);
     }
 
-    public void unregister(String companyNumber) {
-        Company company = companyRepository.findByCompanyNumber(companyNumber).orElseThrow(() -> new NotFoundException("Company does not exist"));
+    public void unregister(String peppolId) {
+        Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new NotFoundException("Company does not exist"));
         company.setRegisteredOnPeppol(false);
         companyRepository.save(company);
     }

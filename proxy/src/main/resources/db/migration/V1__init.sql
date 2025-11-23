@@ -29,3 +29,7 @@ CREATE TABLE registry (
     access_point        access_point,
     variables           jsonb
 );
+
+-- Helpful indexes
+CREATE INDEX idx_registry_peppol_id             ON registry(peppol_id);
+CREATE INDEX idx_ubl_document_owner_peppol_id   ON ubl_document(owner_peppol_id);

@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public record InitiateRegistrationRequest(
-        @NotBlank @Size(max = 32) String companyNumber,
+        @NotBlank @Size(max = 32) String peppolId,
         @Email @NotBlank String email
 ) {}
 

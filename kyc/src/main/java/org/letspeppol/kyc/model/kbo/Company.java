@@ -10,7 +10,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "company", indexes = {
-        @Index(name = "uk_company_number", columnList = "companyNumber", unique = true)
+        @Index(name = "uk_company_number", columnList = "peppolId", unique = true)
 })
 @Getter
 @Setter
@@ -21,7 +21,9 @@ public class Company {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String companyNumber;
+    private String peppolId;
+
+    private String vatNumber;
 
     @Column(nullable = false)
     private String name;
@@ -39,8 +41,9 @@ public class Company {
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Director> directors = new ArrayList<>();
 
-    public Company(String companyNumber, String name, String city, String postalCode, String street, String houseNumber) {
-        this.companyNumber = companyNumber;
+    public Company(String peppolId, String vatNumber, String name, String city, String postalCode, String street, String houseNumber) {
+        this.peppolId = peppolId;
+        this.vatNumber = vatNumber;
         this.name = name;
         this.city = city;
         this.postalCode = postalCode;

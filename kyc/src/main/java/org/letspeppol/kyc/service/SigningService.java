@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.letspeppol.kyc.dto.*;
-import org.letspeppol.kyc.model.User;
+import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.model.kbo.Director;
 import org.letspeppol.kyc.repository.DirectorRepository;
 import org.letspeppol.kyc.service.signing.CertificateUtil;
@@ -75,7 +75,7 @@ public class SigningService {
     public PrepareSigningResponse prepareSigning(PrepareSigningRequest request) {
         TokenVerificationResponse tokenVerificationResponse = activationService.verify(request.emailToken());
         identityVerificationService.verifyNotRegistered(tokenVerificationResponse.email());
-        log.info("Preparing PDF signing for company {} and email {}", tokenVerificationResponse.company().companyNumber(), tokenVerificationResponse.email());
+        log.info("Preparing PDF signing for company {} and email {}", tokenVerificationResponse.company().peppolId(), tokenVerificationResponse.email());
         Director director = getDirectory(request.directorId(), tokenVerificationResponse);
 
         byte[] preparedPdfBytes;
@@ -141,14 +141,14 @@ public class SigningService {
                 name,
                 serialNumber,
                 sdf.format(new Date()),
-                director.getCompany().getCompanyNumber(),
+                director.getCompany().getPeppolId(),
                 director.getName()
         );
     }
 
     public byte[] finalizeSign(FinalizeSigningRequest signingRequest) {
         TokenVerificationResponse tokenVerificationResponse = activationService.verify(signingRequest.emailToken());
-        log.info("Finalizing PDF signing for company {} and email {}", tokenVerificationResponse.company().companyNumber(), tokenVerificationResponse.email());
+        log.info("Finalizing PDF signing for company {} and email {}", tokenVerificationResponse.company().peppolId(), tokenVerificationResponse.email());
 
         Director director = getDirectory(signingRequest.directorId(), tokenVerificationResponse);
 
@@ -172,28 +172,28 @@ public class SigningService {
                 signingRequest.certificate(),
                 certificates[0]
         );
-        User user = identityVerificationService.create(identityVerificationRequest);
+        Account account = identityVerificationService.create(identityVerificationRequest);
         activationService.setVerified(signingRequest.emailToken());
 
-        return writeContractToFile(tokenVerificationResponse.company().companyNumber(), user, finalPdfBytes);
+        return writeContractToFile(tokenVerificationResponse.company().peppolId(), account, finalPdfBytes);
     }
 
-    public byte[] getContract(String companyNumber, Long userId) {
+    public byte[] getContract(String peppolId, Long accountId) {
         try {
-            return Files.readAllBytes(Path.of(contractDirectory, "contract_%s_%d.pdf".formatted(companyNumber, userId)));
+            return Files.readAllBytes(Path.of(contractDirectory, "contract_%s_%d.pdf".formatted(peppolId.replace(':', '_'), accountId)));
         } catch (IOException e) {
             throw new RuntimeException("Error getting contract from file: " + e.getMessage(), e);
         }
     }
 
-    private byte[] writeContractToFile(String companyNumber, User user, byte[] finalPdfBytes) {
+    private byte[] writeContractToFile(String peppolId, Account account, byte[] finalPdfBytes) {
         try {
-            File finalizedPdf = new File(contractDirectory, "contract_%s_%d.pdf".formatted(companyNumber, user.getId()));
+            File finalizedPdf = new File(contractDirectory, "contract_%s_%d.pdf".formatted(peppolId.replace(':', '_'), account.getId()));
             Files.write(finalizedPdf.toPath(), finalPdfBytes);
-            log.info("PDF signing completed successfully for company: {}, final PDF size: {} bytes", companyNumber, finalPdfBytes.length);
+            log.info("PDF signing completed successfully for company: {}, final PDF size: {} bytes", peppolId, finalPdfBytes.length);
             return finalPdfBytes;
         } catch (Exception e) {
-            log.error("Error writing PDF with signature for company {}: {}", companyNumber, e.getMessage(), e);
+            log.error("Error writing PDF with signature for company {}: {}", peppolId, e.getMessage(), e);
             throw new RuntimeException("Failed to finalize PDF signature", e);
         }
     }
@@ -220,15 +220,15 @@ public class SigningService {
             PdfSigner.signDeferred(new PdfReader(preparedPdf), "Signature1", outputStream, finalizeSignatureContainer);
             return outputStream.toByteArray();
         } catch (Exception e) {
-            log.error("Error finalizing PDF signature for company {}: {}", tokenVerificationResponse.company().companyNumber(), e.getMessage(), e);
+            log.error("Error finalizing PDF signature for company {}: {}", tokenVerificationResponse.company().peppolId(), e.getMessage(), e);
             throw new RuntimeException("Failed to finalize PDF signature", e);
         }
     }
 
     private Director getDirectory(Long request, TokenVerificationResponse tokenVerificationResponse) {
         Director director = directorRepository.findById(request).orElseThrow(() -> new RuntimeException("Invalid director"));
-        if (!director.getCompany().getCompanyNumber().equals(tokenVerificationResponse.company().companyNumber())) {
-            log.error("Security alert, director {} company {} mismatch", director.getCompany().getCompanyNumber(), tokenVerificationResponse.company().companyNumber());
+        if (!director.getCompany().getPeppolId().equals(tokenVerificationResponse.company().peppolId())) {
+            log.error("Security alert, director {} company {} mismatch", director.getCompany().getPeppolId(), tokenVerificationResponse.company().peppolId());
             throw new RuntimeException("Invalid director");
         }
         return director;

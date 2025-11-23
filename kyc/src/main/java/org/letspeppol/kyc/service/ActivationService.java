@@ -44,20 +44,20 @@ public class ActivationService {
 
     @Transactional
     public void requestActivation(ConfirmCompanyRequest request, String acceptLanguage) {
-        if (isVerified(request.companyNumber())) {
-            log.warn("User with email {} tried to register for company {} but company was already registered", request.email(), request.companyNumber());
+        if (isVerified(request.peppolId())) {
+            log.warn("User with email {} tried to register for company {} but company was already registered", request.email(), request.peppolId());
             throw new KycException(KycErrorCodes.COMPANY_ALREADY_REGISTERED);
         }
         String token = generateToken();
         EmailVerification verification = new EmailVerification(
                 request.email().toLowerCase(),
-                request.companyNumber(),
+                request.peppolId(),
                 token,
                 Instant.now().plus(ttl)
         );
         verificationRepository.save(verification);
         String langTag = LocaleUtil.extractLanguageTag(acceptLanguage);
-        sendEmail(request.companyNumber(), request.email(), token, langTag);
+        sendEmail(request.peppolId(), request.email(), token, langTag);
     }
 
     // Backwards compatibility
@@ -70,12 +70,12 @@ public class ActivationService {
         if (verification.isVerified()) {
             throw new KycException(KycErrorCodes.TOKEN_ALREADY_VERIFIED);
         }
-        if (verification.getExpiresAt().isBefore(Instant.now())) {
+        if (verification.getExpiresOn().isBefore(Instant.now())) {
             throw new KycException(KycErrorCodes.TOKEN_EXPIRED);
         }
         return new TokenVerificationResponse(
             verification.getEmail(),
-            companyService.getByCompanyNumber(verification.getCompanyNumber())
+            companyService.getByPeppolId(verification.getPeppolId())
                 .orElseThrow(() -> new NotFoundException(KycErrorCodes.COMPANY_NOT_FOUND))
         );
     }
@@ -87,15 +87,15 @@ public class ActivationService {
         verificationRepository.save(verification);
     }
 
-    public boolean isVerified(String companyNumber) {
-        return verificationRepository.findTopByCompanyNumberOrderByCreatedAtDesc(companyNumber)
+    public boolean isVerified(String peppolId) {
+        return verificationRepository.findTopByPeppolIdOrderByCreatedOnDesc(peppolId)
                 .map(EmailVerification::isVerified)
                 .orElse(false);
     }
 
     @Transactional
     public long purgeExpired() {
-        List<EmailVerification> expired = verificationRepository.findByVerifiedFalseAndExpiresAtBefore(Instant.now());
+        List<EmailVerification> expired = verificationRepository.findByVerifiedFalseAndExpiresOnBefore(Instant.now());
         long count = expired.size();
         if (count > 0) {
             verificationRepository.deleteAll(expired);
@@ -109,11 +109,11 @@ public class ActivationService {
         return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
     }
 
-    private void sendEmail(String companyNumber, String to, String token, String languageTag) {
-        log.info("Sending activation email to {} for company {} lang={} ", to, companyNumber, languageTag);
+    private void sendEmail(String peppolId, String to, String token, String languageTag) {
+        log.info("Sending activation email to {} for company {} lang={} ", to, peppolId, languageTag);
         String activationLink = baseUrl + token;
         try {
-            ActivationEmailTemplateProvider.RenderedTemplate tpl = templateProvider.render(companyNumber, activationLink, languageTag);
+            ActivationEmailTemplateProvider.RenderedTemplate tpl = templateProvider.render(peppolId, activationLink, languageTag);
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, false);
             helper.setTo(to);
@@ -121,12 +121,12 @@ public class ActivationService {
             helper.setSubject(tpl.subject());
             helper.setText(tpl.body(), false);
             mailSender.send(message);
-            log.info("Sent activation email to {} for company {} lang={} ", to, companyNumber, languageTag);
+            log.info("Sent activation email to {} for company {} lang={} ", to, peppolId, languageTag);
         } catch (Exception e) {
             log.warn("Failed to send email (logging activation link) token={} error={}", token, e.getMessage());
             log.info("Activation link for {} -> {}", to, activationLink);
         }
     }
 
-    private void sendEmail(String companyNumber, String to, String token) { sendEmail(companyNumber, to, token, null); }
+    private void sendEmail(String peppolId, String to, String token) { sendEmail(peppolId, to, token, null); }
 }

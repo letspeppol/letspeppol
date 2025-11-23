@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "company", indexes = {
-        @Index(name = "uk_company_number", columnList = "companyNumber", unique = true)
+        @Index(name = "uk_company_number", columnList = "peppolId", unique = true)
 })
 @Getter
 @Setter
@@ -15,7 +15,9 @@ import lombok.Setter;
 public class Company extends GenericEntity{
 
     @Column(nullable = false, unique = true)
-    private String companyNumber;
+    private String peppolId;
+
+    private String vatNumber;
 
     @Column(nullable = false)
     private String name;
@@ -32,17 +34,14 @@ public class Company extends GenericEntity{
     @JoinColumn(name = "registered_office_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_company_registered_office"))
     private Address registeredOffice;
 
-    public Company(String companyNumber, String name, String subscriber, String subscriberEmail,
+    public Company(String peppolId, String vatNumber, String name, String subscriber, String subscriberEmail,
                    String city, String postalCode, String street, String houseNumber, String countryCode) {
-        this.companyNumber = companyNumber;
+        this.peppolId = peppolId;
+        this.vatNumber = vatNumber;
         this.name = name;
         this.subscriber = subscriber;
         this.subscriberEmail = subscriberEmail;
         this.registeredOffice = new Address(street, houseNumber, city, postalCode, countryCode);
         this.registeredOnPeppol = true;
-    }
-
-    public String getVatNumber() {
-        return "BE" + companyNumber;
     }
 }

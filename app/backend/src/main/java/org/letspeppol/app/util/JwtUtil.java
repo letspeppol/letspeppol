@@ -15,13 +15,4 @@ public class JwtUtil {
         return peppolId;
     }
 
-    public static String getCompanyNumber(Jwt jwt) {
-        String peppolId = getPeppolId(jwt);
-        String [] parts = peppolId.split(":");
-        if (parts.length != 2) {
-            throw new SecurityException(AppErrorCodes.PEPPOL_ID_INVALID);
-        }
-        return parts[1];
-    }
-
 }

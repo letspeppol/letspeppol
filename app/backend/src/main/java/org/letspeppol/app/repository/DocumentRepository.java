@@ -7,7 +7,10 @@ import java.util.UUID;
 
 public interface DocumentRepository extends JpaRepository<Document, UUID> {
 
+//    @Query("SELECT document FROM Document document WHERE document.company.peppolId = :peppolId ORDER BY document.createdOn DESC")
     Collection<Document> findAllByOwnerPeppolId(String peppolId);
 
+//    @Modifying
+//    @Query("DELETE FROM Document document WHERE document.id = :id AND document.company.peppolId = :peppolId")
     void deleteByIdAndOwnerPeppolId(UUID id, String peppolId);
 }

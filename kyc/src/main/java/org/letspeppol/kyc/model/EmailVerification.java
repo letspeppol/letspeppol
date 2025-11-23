@@ -12,7 +12,7 @@ import java.time.Instant;
 @Entity
 @Table(name = "email_verification", indexes = {
         @Index(name = "uk_token", columnList = "token", unique = true),
-        @Index(name = "idx_email_company", columnList = "email,companyNumber")
+        @Index(name = "idx_email_company", columnList = "email,peppolId")
 })
 @Getter
 @Setter
@@ -28,7 +28,7 @@ public class EmailVerification {
     private String email;
 
     @Column(nullable = false)
-    private String companyNumber;
+    private String peppolId;
 
     @Column(nullable = false, unique = true, length = 64)
     private String token;
@@ -37,17 +37,17 @@ public class EmailVerification {
     private boolean verified;
 
     @Column(nullable = false)
-    private Instant expiresAt;
+    private Instant expiresOn;
 
     @Column(nullable = false)
-    private Instant createdAt;
+    private Instant createdOn;
 
-    public EmailVerification(String email, String companyNumber, String token, Instant expiresAt) {
+    public EmailVerification(String email, String peppolId, String token, Instant expiresOn) {
         this.email = email;
-        this.companyNumber = companyNumber;
+        this.peppolId = peppolId;
         this.token = token;
-        this.expiresAt = expiresAt;
-        this.createdAt = Instant.now();
+        this.expiresOn = expiresOn;
+        this.createdOn = Instant.now();
         this.verified = false;
     }
 }

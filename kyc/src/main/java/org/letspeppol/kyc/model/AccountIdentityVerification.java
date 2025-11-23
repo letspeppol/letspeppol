@@ -9,20 +9,20 @@ import org.letspeppol.kyc.model.kbo.Director;
 import java.time.Instant;
 
 @Entity
-@Table(name = "user_identity_verification", indexes = {
-        @Index(name = "idx_user", columnList = "user_id")
+@Table(name = "account_identity_verification", indexes = {
+        @Index(name = "idx_account_identity_verification_account_id", columnList = "account_id")
 })
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserIdentityVerification {
+public class AccountIdentityVerification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "account_id", nullable = false)
+    private Account account;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "director_id", nullable = false)
@@ -52,12 +52,12 @@ public class UserIdentityVerification {
     private String signature;
 
     @Column(nullable = false)
-    private Instant createdAt = Instant.now();
+    private Instant createdOn = Instant.now();
 
-    public UserIdentityVerification(User user, Director director, String directorNameSnapshot,
-                                    String certificateSubject, String certificateSerial,
-                                    String signatureAlgorithm, String dataHash, String certificate, String signature) {
-        this.user = user;
+    public AccountIdentityVerification(Account account, Director director, String directorNameSnapshot,
+                                       String certificateSubject, String certificateSerial,
+                                       String signatureAlgorithm, String dataHash, String certificate, String signature) {
+        this.account = account;
         this.director = director;
         this.directorNameSnapshot = directorNameSnapshot;
         this.certificateSubject = certificateSubject;

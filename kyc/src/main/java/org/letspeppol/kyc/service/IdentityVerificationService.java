@@ -7,10 +7,10 @@ import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.letspeppol.kyc.dto.IdentityVerificationRequest;
 import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.KycException;
-import org.letspeppol.kyc.model.User;
-import org.letspeppol.kyc.model.UserIdentityVerification;
-import org.letspeppol.kyc.repository.UserIdentityVerificationRepository;
-import org.letspeppol.kyc.repository.UserRepository;
+import org.letspeppol.kyc.model.Account;
+import org.letspeppol.kyc.model.AccountIdentityVerification;
+import org.letspeppol.kyc.repository.AccountIdentityVerificationRepository;
+import org.letspeppol.kyc.repository.AccountRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,34 +28,34 @@ import static org.letspeppol.kyc.service.signing.CertificateUtil.getRDNName;
 public class IdentityVerificationService {
 
     private final AppService appService;
-    private final UserIdentityVerificationRepository civRepository;
-    private final UserRepository userRepository;
+    private final AccountIdentityVerificationRepository civRepository;
+    private final AccountRepository accountRepository;
     private final EncryptionService encryptionService;
     private final JwtService jwtService;
     private final ProxyService proxyService;
     private final PasswordEncoder passwordEncoder;
 
     public void verifyNotRegistered(String email) {
-        if (userRepository.existsByEmail(email)) {
-            throw new KycException(KycErrorCodes.USER_ALREADY_LINKED);
+        if (accountRepository.existsByEmail(email)) {
+            throw new KycException(KycErrorCodes.ACCOUNT_ALREADY_LINKED);
         }
     }
 
-    public User create(IdentityVerificationRequest req) {
+    public Account create(IdentityVerificationRequest req) {
         verifyNotRegistered(req.email());
 
-        User user = new User();
-        user.setEmail(req.email());
-        user.setIdentityVerified(true);
-        user.setIdentityVerifiedAt(Instant.now());
-        user.setCreatedAt(Instant.now());
+        Account account = new Account();
+        account.setEmail(req.email());
+        account.setIdentityVerified(true);
+        account.setIdentityVerifiedOn(Instant.now());
+        account.setCreatedOn(Instant.now());
         String passwordHash = passwordEncoder.encode(req.password());
-        user.setPasswordHash(passwordHash);
-        user.setCompany(req.director().getCompany());
-        userRepository.save(user);
+        account.setPasswordHash(passwordHash);
+        account.setCompany(req.director().getCompany());
+        accountRepository.save(account);
 
-        UserIdentityVerification civ = new UserIdentityVerification(
-                user,
+        AccountIdentityVerification civ = new AccountIdentityVerification(
+                account,
                 req.director(),
                 req.director().getName(),
                 getCN(req.x509Certificate()),
@@ -67,12 +67,12 @@ public class IdentityVerificationService {
         );
         civRepository.save(civ);
 
-        String token = jwtService.generateToken("0208:" + req.director().getCompany().getCompanyNumber().replaceAll("BE", ""), user.getExternalId()); // TODO ?
+        String token = jwtService.generateToken(req.director().getCompany().getPeppolId(), account.getExternalId()); // TODO ?
         proxyService.registerCompany(token, req.director().getCompany().getName());
         appService.register(req);
 
-        log.info("Identity verified for email={} director={} serial={}", user.getEmail(), req.director().getName(), req.x509Certificate().getSerialNumber());
-        return user;
+        log.info("Identity verified for email={} director={} serial={}", account.getEmail(), req.director().getName(), req.x509Certificate().getSerialNumber());
+        return account;
     }
 
     private String getCN(X509Certificate certificate) {

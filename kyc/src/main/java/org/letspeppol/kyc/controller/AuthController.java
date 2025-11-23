@@ -1,9 +1,9 @@
 package org.letspeppol.kyc.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.letspeppol.kyc.model.User;
+import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.service.JwtService;
-import org.letspeppol.kyc.service.UserService;
+import org.letspeppol.kyc.service.AccountService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +20,8 @@ import java.util.Base64;
 @RequiredArgsConstructor
 public class AuthController {
 
-    public final static String EAS_ONDERNEMINGSNUMMER = "0208";
-
     private final JwtService jwtService;
-    private final UserService userService;
+    private final AccountService accountService;
 
     @PostMapping("/auth")
     public ResponseEntity<String> auth(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
@@ -41,11 +39,11 @@ public class AuthController {
         }
         String email = values[0];
         String password = values[1];
-        User user = userService.findUserWithCredentials(email, password);
+        Account account = accountService.findAccountWithCredentials(email, password);
 
         String token = jwtService.generateToken(
-                EAS_ONDERNEMINGSNUMMER + ":" + user.getCompany().getCompanyNumber(),
-                user.getExternalId()
+                account.getCompany().getPeppolId(),
+                account.getExternalId()
         );
 
         return ResponseEntity.ok(token);

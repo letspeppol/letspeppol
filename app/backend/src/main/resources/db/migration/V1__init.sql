@@ -24,7 +24,8 @@ CREATE TABLE company (
     active                  boolean DEFAULT true NOT NULL,
     created_on              timestamp with time zone,
     last_updated_on         timestamp with time zone,
-    company_number          varchar(255) UNIQUE NOT NULL,
+    peppol_id               varchar(255) UNIQUE NOT NULL,
+    vat_number              varchar(255),
     iban                    varchar(255),
     name                    varchar(255) NOT NULL,
     payment_account_name    varchar(255),
@@ -129,11 +130,14 @@ CREATE TABLE product (
 );
 
 -- Helpful indexes (Postgres does NOT auto-index FKs)
+CREATE INDEX idx_company_registered_office_id   ON company(registered_office_id);
 CREATE INDEX idx_document_company_id            ON document(company_id);
-CREATE INDEX idx_category_company_id            ON product_category(company_id);
-CREATE INDEX idx_category_parent_id             ON product_category(parent_id);
 CREATE INDEX idx_partner_company_id             ON partner(company_id);
 CREATE INDEX idx_partner_registered_office_id   ON partner(registered_office_id);
-CREATE INDEX idx_company_registered_office_id   ON company(registered_office_id);
-CREATE INDEX idx_product_company_id             ON product(company_id);
+CREATE INDEX idx_category_company_id            ON product_category(company_id);
+CREATE INDEX idx_category_parent_id             ON product_category(parent_id);
 CREATE INDEX idx_product_category_id            ON product(category_id);
+CREATE INDEX idx_product_company_id             ON product(company_id);
+-- Helpful indexes
+CREATE INDEX idx_company_peppol_id              ON company(peppol_id);
+CREATE INDEX idx_document_owner_peppol_id       ON document(owner_peppol_id);

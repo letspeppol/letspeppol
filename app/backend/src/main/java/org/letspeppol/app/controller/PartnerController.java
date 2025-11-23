@@ -21,25 +21,25 @@ public class PartnerController {
 
     @GetMapping
     public List<PartnerDto> getParties(@AuthenticationPrincipal Jwt jwt) {
-        String companyNumber = JwtUtil.getCompanyNumber(jwt);
-        return partnerService.findByCompanyNumber(companyNumber);
+        String peppolId = JwtUtil.getPeppolId(jwt);
+        return partnerService.findByPeppolId(peppolId);
     }
 
     @PutMapping("{id}")
     public PartnerDto updatePartner(@AuthenticationPrincipal Jwt jwt, @PathVariable Long id, @RequestBody PartnerDto partnerDto) {
-        String companyNumber = JwtUtil.getCompanyNumber(jwt);
+        String peppolId = JwtUtil.getPeppolId(jwt);
         return partnerService.updatePartner(id, partnerDto);
     }
 
     @PostMapping
     public PartnerDto createPartner(@AuthenticationPrincipal Jwt jwt, @RequestBody PartnerDto partnerDto) {
-        String companyNumber = JwtUtil.getCompanyNumber(jwt);
-        return partnerService.createPartner(companyNumber, partnerDto);
+        String peppolId = JwtUtil.getPeppolId(jwt);
+        return partnerService.createPartner(peppolId, partnerDto);
     }
 
     @DeleteMapping("{id}")
     public void deletePartner(@AuthenticationPrincipal Jwt jwt, @PathVariable Long id) {
-        String companyNumber = JwtUtil.getCompanyNumber(jwt);
+        String peppolId = JwtUtil.getPeppolId(jwt);
         partnerService.deletePartner(id);
     }
 }

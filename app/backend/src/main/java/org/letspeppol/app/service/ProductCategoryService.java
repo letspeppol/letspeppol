@@ -24,32 +24,32 @@ public class ProductCategoryService {
     private final ProductCategoryRepository categoryRepository;
     private final CompanyRepository companyRepository;
 
-    public List<ProductCategoryDto> listRootCategories(String companyNumber, boolean deep) {
-        return categoryRepository.findRootByCompany(companyNumber).stream()
+    public List<ProductCategoryDto> listRootCategories(String peppolId, boolean deep) {
+        return categoryRepository.findRootByCompany(peppolId).stream()
                 .map(c -> ProductCategoryMapper.toDto(c, deep))
                 .toList();
     }
 
-    public List<ProductCategoryDto> listAllFlat(String companyNumber) {
-        return categoryRepository.findAllByCompany(companyNumber).stream()
+    public List<ProductCategoryDto> listAllFlat(String peppolId) {
+        return categoryRepository.findAllByCompany(peppolId).stream()
                 .map(ProductCategoryMapper::toDto)
                 .toList();
     }
 
-    public ProductCategoryDto getCategory(String companyNumber, Long id, boolean deep) {
+    public ProductCategoryDto getCategory(String peppolId, Long id, boolean deep) {
         ProductCategory category;
         if (deep) {
-            category = categoryRepository.fetchWithChildren(id, companyNumber)
+            category = categoryRepository.fetchWithChildren(id, peppolId)
                     .orElseThrow(() -> new NotFoundException("Category does not exist"));
         } else {
-            category = categoryRepository.findByIdAndCompany(id, companyNumber)
+            category = categoryRepository.findByIdAndCompany(id, peppolId)
                     .orElseThrow(() -> new NotFoundException("Category does not exist"));
         }
         return ProductCategoryMapper.toDto(category, deep);
     }
 
-    public ProductCategoryDto createCategory(String companyNumber, ProductCategoryDto dto) {
-        Company company = companyRepository.findByCompanyNumber(companyNumber)
+    public ProductCategoryDto createCategory(String peppolId, ProductCategoryDto dto) {
+        Company company = companyRepository.findByPeppolId(peppolId)
                 .orElseThrow(() -> new NotFoundException("Company does not exist"));
 
         ProductCategory category = new ProductCategory();
@@ -58,7 +58,7 @@ public class ProductCategoryService {
         category.setCompany(company);
 
         if (dto.parentId() != null) {
-            ProductCategory parent = categoryRepository.findByIdAndCompany(dto.parentId(), companyNumber)
+            ProductCategory parent = categoryRepository.findByIdAndCompany(dto.parentId(), peppolId)
                     .orElseThrow(() -> new NotFoundException("Parent category does not exist"));
             category.setParent(parent);
             parent.getSubcategories().add(category);
@@ -68,8 +68,8 @@ public class ProductCategoryService {
         return ProductCategoryMapper.toDto(category, false);
     }
 
-    public ProductCategoryDto updateCategory(String companyNumber, Long id, ProductCategoryDto dto) {
-        ProductCategory category = categoryRepository.findByIdAndCompany(id, companyNumber)
+    public ProductCategoryDto updateCategory(String peppolId, Long id, ProductCategoryDto dto) {
+        ProductCategory category = categoryRepository.findByIdAndCompany(id, peppolId)
                 .orElseThrow(() -> new NotFoundException("Category does not exist"));
 
         category.setName(dto.name());
@@ -81,7 +81,7 @@ public class ProductCategoryService {
                 category.getParent().getSubcategories().remove(category);
             }
             if (dto.parentId() != null) {
-                ProductCategory newParent = categoryRepository.findByIdAndCompany(dto.parentId(), companyNumber)
+                ProductCategory newParent = categoryRepository.findByIdAndCompany(dto.parentId(), peppolId)
                         .orElseThrow(() -> new NotFoundException("Parent category does not exist"));
                 // prevent cycles
                 if (createsCycle(category, newParent)) {
@@ -98,8 +98,8 @@ public class ProductCategoryService {
         return ProductCategoryMapper.toDto(category, false);
     }
 
-    public void deleteCategory(String companyNumber, Long id) {
-        ProductCategory category = categoryRepository.findByIdAndCompany(id, companyNumber)
+    public void deleteCategory(String peppolId, Long id) {
+        ProductCategory category = categoryRepository.findByIdAndCompany(id, peppolId)
                 .orElseThrow(() -> new NotFoundException("Category does not exist"));
         if (category.getParent() != null) {
             category.getParent().getSubcategories().remove(category);

@@ -22,28 +22,28 @@ public class CompanyController {
     private final JwtService jwtService;
     private final SigningService signingService;
 
-    @GetMapping("/{companyNumber}")
-    public CompanyResponse getCompany(@PathVariable String companyNumber) {
-         return companyService.getByCompanyNumber(companyNumber).orElseThrow(() -> new NotFoundException(KycErrorCodes.COMPANY_NOT_FOUND));
+    @GetMapping("{peppolId}")
+    public CompanyResponse getCompany(@PathVariable String peppolId) {
+         return companyService.getByPeppolId(peppolId).orElseThrow(() -> new NotFoundException(KycErrorCodes.COMPANY_NOT_FOUND));
     }
 
     @GetMapping
     public ResponseEntity<?> getCompanyForToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        String companyNumber = jwtService.validateAndGetInfo(authHeader).companyNumber();
-        return ResponseEntity.ok(companyService.getByCompanyNumber(companyNumber));
+        String peppolId = jwtService.validateAndGetInfo(authHeader).peppolId();
+        return ResponseEntity.ok(companyService.getByPeppolId(peppolId));
     }
 
-    @PostMapping("/unregister")
+    @PostMapping("unregister")
     public ResponseEntity<?> unregister(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
-        companyService.unregisterCompany(jwtInfo.companyNumber(), jwtInfo.token());
+        companyService.unregisterCompany(jwtInfo.peppolId(), jwtInfo.token());
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/signed-contract")
+    @GetMapping("signed-contract")
     public ResponseEntity<?> signedContract(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        String companyNumber = jwtService.validateAndGetInfo(authHeader).companyNumber();
-        byte[] data = signingService.getContract(companyNumber, 0L); // TODO
+        String peppolId = jwtService.validateAndGetInfo(authHeader).peppolId();
+        byte[] data = signingService.getContract(peppolId, 0L); // TODO
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=contract_signed.pdf")
                 .contentType(MediaType.APPLICATION_PDF)

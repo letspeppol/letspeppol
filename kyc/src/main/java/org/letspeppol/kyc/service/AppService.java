@@ -34,7 +34,8 @@ public class AppService {
             return;
         }
         RegistrationRequest request = new RegistrationRequest(
-                identity.director().getCompany().getCompanyNumber(),
+                identity.director().getCompany().getPeppolId(),
+                identity.director().getCompany().getVatNumber(),
                 identity.director().getCompany().getName(),
                 identity.director().getCompany().getStreet(),
                 identity.director().getCompany().getHouseNumber(),
@@ -63,12 +64,12 @@ public class AppService {
         log.info("Service token refreshed");
     }
 
-    public void unregister(String companyNumber) {
+    public void unregister(String peppolId) {
         try {
             ResponseEntity<Void> response = this.webClient.post()
                     .uri("/api/internal/company/unregister")
                     .header("Authorization", "Bearer " + activeToken)
-                    .body(Mono.just(new UnregisterRequest(companyNumber)), UnregisterRequest.class)
+                    .body(Mono.just(new UnregisterRequest(peppolId)), UnregisterRequest.class)
                     .retrieve()
                     .toBodilessEntity()
                     .block();
