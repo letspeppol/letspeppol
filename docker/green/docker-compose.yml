@@ -87,10 +87,25 @@ services:
       - "80"
     labels:
       - "traefik.enable=true"
+
+      # JWT middleware
+      - "traefik.http.middlewares.jwt-auth.plugin.jwt-token.secret=${ACCESS_TOKEN_KEY}"
+
+      # Public router
       - "traefik.http.routers.green.rule=Host(`${ACTIVE_DOMAIN_GREEN}`)"
       - "traefik.http.routers.green.entrypoints=websecure"
+      - "traefik.http.routers.green.service=nginx"
       - "traefik.http.routers.green.tls.certresolver=${CERT_RESOLVER_GREEN}"
-      - "traefik.http.services.green.loadbalancer.server.port=80"
+
+      # Protected API router
+      - "traefik.http.routers.green-api.rule=Host(`${ACTIVE_DOMAIN_GREEN}`) && (PathPrefix(`/proxy/sapi/`) || PathPrefix(`/app/`) || PathPrefix(`/kyc/sapi/`))"
+      - "traefik.http.routers.green-api.entryPoints=websecure"
+      - "traefik.http.routers.green-api.middlewares=jwt-auth"
+      - "traefik.http.routers.green-api.service=nginx"
+      - "traefik.http.routers.green-api.certresolver=${CERT_RESOLVER_GREEN}"
+
+      # Service definition
+      - "traefik.http.services.nginx.loadbalancer.server.port=80"
 
 networks:
   web:

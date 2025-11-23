@@ -28,6 +28,10 @@ services:
       # Logging (optional)
       - "--log.level=INFO"
 
+      # Enable JWT plugin (community plugin)
+      - "--experimental.plugins.jwt-token.moduleName=github.com/toanz/jwt-token"
+      - "--experimental.plugins.jwt-token.version=v0.1.4"
+
     ports:
       - "80:80"
       - "443:443"
