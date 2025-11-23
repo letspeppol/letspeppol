@@ -45,6 +45,7 @@ public class IdentityVerificationService {
         verifyNotRegistered(req.email());
 
         User user = new User();
+        user.setCreatedAt(Instant.now());
         user.setEmail(req.email());
         user.setIdentityVerified(true);
         user.setIdentityVerifiedAt(Instant.now());
