@@ -91,16 +91,29 @@ services:
       # JWT middleware
       - "traefik.http.middlewares.jwt-auth.plugin.jwt-token.secret=${ACCESS_TOKEN_KEY}"
 
+      # API rate limit middleware
+      - "traefik.http.middlewares.api-limit.ratelimit.average=20"
+      - "traefik.http.middlewares.api-limit.ratelimit.burst=75"
+      - "traefik.http.middlewares.api-limit.ratelimit.period=1s"
+      - "traefik.http.middlewares.api-limit.ratelimit.sourceCriterion.ipStrategy.depth=1"
+
       # Public router
       - "traefik.http.routers.blue.rule=Host(`${ACTIVE_DOMAIN_BLUE}`)"
       - "traefik.http.routers.blue.entrypoints=websecure"
       - "traefik.http.routers.blue.service=nginx"
       - "traefik.http.routers.blue.tls.certresolver=${CERT_RESOLVER_BLUE}"
 
-      # Protected API router
-      - "traefik.http.routers.blue-api.rule=Host(`${ACTIVE_DOMAIN_BLUE}`) && (PathPrefix(`/proxy/sapi/`) || PathPrefix(`/app/`) || PathPrefix(`/kyc/sapi/`))"
+      # API router
+      - "traefik.http.routers.blue-api.rule=Host(`${ACTIVE_DOMAIN_BLUE}`) && (PathPrefix(`/proxy/api/`) || PathPrefix(`/app/api/`) || PathPrefix(`/kyc/api/`))"
       - "traefik.http.routers.blue-api.entryPoints=websecure"
-      - "traefik.http.routers.blue-api.middlewares=jwt-auth"
+      - "traefik.http.routers.blue-api.middlewares=api-limit"
+      - "traefik.http.routers.blue-api.service=nginx"
+      - "traefik.http.routers.blue-api.certresolver=${CERT_RESOLVER_BLUE}"
+
+      # Protected API router
+      - "traefik.http.routers.blue-api.rule=Host(`${ACTIVE_DOMAIN_BLUE}`) && (PathPrefix(`/proxy/sapi/`) || PathPrefix(`/app/sapi/`) || PathPrefix(`/kyc/sapi/`))"
+      - "traefik.http.routers.blue-api.entryPoints=websecure"
+      - "traefik.http.routers.blue-api.middlewares=jwt-auth,api-limit"
       - "traefik.http.routers.blue-api.service=nginx"
       - "traefik.http.routers.blue-api.certresolver=${CERT_RESOLVER_BLUE}"
 

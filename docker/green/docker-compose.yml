@@ -91,18 +91,31 @@ services:
       # JWT middleware
       - "traefik.http.middlewares.jwt-auth.plugin.jwt-token.secret=${ACCESS_TOKEN_KEY}"
 
+      # API rate limit middleware
+      - "traefik.http.middlewares.api-limit.ratelimit.average=20"
+      - "traefik.http.middlewares.api-limit.ratelimit.burst=75"
+      - "traefik.http.middlewares.api-limit.ratelimit.period=1s"
+      - "traefik.http.middlewares.api-limit.ratelimit.sourceCriterion.ipStrategy.depth=1"
+
       # Public router
       - "traefik.http.routers.green.rule=Host(`${ACTIVE_DOMAIN_GREEN}`)"
       - "traefik.http.routers.green.entrypoints=websecure"
       - "traefik.http.routers.green.service=nginx"
       - "traefik.http.routers.green.tls.certresolver=${CERT_RESOLVER_GREEN}"
 
-      # Protected API router
-      - "traefik.http.routers.green-api.rule=Host(`${ACTIVE_DOMAIN_GREEN}`) && (PathPrefix(`/proxy/sapi/`) || PathPrefix(`/app/`) || PathPrefix(`/kyc/sapi/`))"
+      # API router
+      - "traefik.http.routers.green-api.rule=Host(`${ACTIVE_DOMAIN_GREEN}`) && (PathPrefix(`/proxy/api/`) || PathPrefix(`/app/api/`) || PathPrefix(`/kyc/api/`))"
       - "traefik.http.routers.green-api.entryPoints=websecure"
-      - "traefik.http.routers.green-api.middlewares=jwt-auth"
+      - "traefik.http.routers.green-api.middlewares=api-limit"
       - "traefik.http.routers.green-api.service=nginx"
       - "traefik.http.routers.green-api.certresolver=${CERT_RESOLVER_GREEN}"
+
+      # Protected API router
+      - "traefik.http.routers.green-sapi.rule=Host(`${ACTIVE_DOMAIN_GREEN}`) && (PathPrefix(`/proxy/sapi/`) || PathPrefix(`/app/sapi/`) || PathPrefix(`/kyc/sapi/`))"
+      - "traefik.http.routers.green-sapi.entryPoints=websecure"
+      - "traefik.http.routers.green-sapi.middlewares=jwt-auth,api-limit"
+      - "traefik.http.routers.green-sapi.service=nginx"
+      - "traefik.http.routers.green-sapi.certresolver=${CERT_RESOLVER_GREEN}"
 
       # Service definition
       - "traefik.http.services.nginx.loadbalancer.server.port=80"
