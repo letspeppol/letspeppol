@@ -21,6 +21,7 @@ import java.util.UUID;
 public class JwtService {
 
     public static final String PEPPOL_ID = "peppolId";
+    public static final String PEPPOL_ACTIVE = "peppolActive";
     public static final String UID = "uid"; //Needed for multiple accounts to a joined Peppol ID
     public static final String ROLE_SERVICE = "service";
     private final Key key;
@@ -30,11 +31,12 @@ public class JwtService {
     }
 
     // External
-    public String generateToken(String peppolId, UUID uid) {
+    public String generateToken(String peppolId, boolean peppolActive, UUID uid) {
         long expirationTime = 1000 * 60 * 60; // 1 hour
         return Jwts.builder()
                 .setIssuer("app")
                 .claim(PEPPOL_ID, peppolId)
+                .claim(PEPPOL_ACTIVE, peppolActive)
                 .claim(UID, uid)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
@@ -55,17 +57,19 @@ public class JwtService {
         return new JwtInfo(
                 token,
                 claims.get(PEPPOL_ID, String.class),
+                claims.get(PEPPOL_ACTIVE, Boolean.class),
                 claims.get(UID, String.class)
         );
     }
 
     // Internal
 
-    public String generateInternalToken(String peppolId) {
+    public String generateInternalToken(String peppolId, boolean peppolActive) {
         long expirationTime = 1000 * 60 * 60 * 24; // 1 day
         return Jwts.builder()
                 .setIssuer("kyc")
                 .claim(PEPPOL_ID, peppolId)
+                .claim(PEPPOL_ACTIVE, peppolActive)
                 .claim("role", ROLE_SERVICE)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))

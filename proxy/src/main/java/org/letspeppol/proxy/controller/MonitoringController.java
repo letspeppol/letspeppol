@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/monitor")
+@RequestMapping("/api/monitor")
 public class MonitoringController {
 
-    @GetMapping("/")
+    @GetMapping()
     public ResponseEntity<String> ok() {
         return ResponseEntity.ok( "ok" );
     }

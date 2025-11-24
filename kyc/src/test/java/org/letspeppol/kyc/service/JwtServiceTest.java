@@ -20,7 +20,7 @@ public class JwtServiceTest {
     void testGenerateAndValidateToken() {
         String peppolId = "0208:1023290711";
 
-        String token = jwtService.generateToken(peppolId, UUID.randomUUID());
+        String token = jwtService.generateToken(peppolId, true, UUID.randomUUID());
         assertNotNull(token, "Generated token should not be null");
 
         JwtInfo jwtInfo = jwtService.validateAndGetInfo(token);
@@ -39,7 +39,7 @@ public class JwtServiceTest {
     void testExpiredToken() throws InterruptedException {
         String peppolId = "expired:case";
 
-        String token = jwtService.generateToken(peppolId, UUID.randomUUID());
+        String token = jwtService.generateToken(peppolId, false, UUID.randomUUID());
 
         // Since default expiry is 1h, token should still be valid now
         JwtInfo jwtInfo = jwtService.validateAndGetInfo(token);

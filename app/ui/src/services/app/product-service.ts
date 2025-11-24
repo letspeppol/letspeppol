@@ -20,18 +20,18 @@ export class ProductService {
     private appApi = resolve(AppApi);
 
     async getProducts() : Promise<ProductDto[]> {
-        return await this.appApi.httpClient.get('/api/product').then(response => response.json());
+        return await this.appApi.httpClient.get('/sapi/product').then(response => response.json());
     }
 
     async createProduct(product: ProductDto) : Promise<ProductDto> {
-        return await this.appApi.httpClient.post('/api/product', JSON.stringify(product)).then(response => response.json());
+        return await this.appApi.httpClient.post('/sapi/product', JSON.stringify(product)).then(response => response.json());
     }
 
     async updateProduct(id: number, product: ProductDto) : Promise<ProductDto> {
-        return await this.appApi.httpClient.put(`/api/product/${id}`, JSON.stringify(product)).then(response => response.json());
+        return await this.appApi.httpClient.put(`/sapi/product/${id}`, JSON.stringify(product)).then(response => response.json());
     }
 
     async deleteProduct(id:number) {
-        return await this.appApi.httpClient.delete(`/api/product/${id}`);
+        return await this.appApi.httpClient.delete(`/sapi/product/${id}`);
     }
 }

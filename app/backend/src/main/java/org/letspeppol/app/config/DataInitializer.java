@@ -30,7 +30,7 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) {
         String peppolId = "0208:0705969661";
         if (companyRepository.findByPeppolId(peppolId).isEmpty()) {
-            RegistrationRequest registrationRequest = new RegistrationRequest(
+            AccountInfo accountInfo = new AccountInfo(
                     peppolId,
                     "BE0705969661",
                     "Digita bv.",
@@ -41,7 +41,7 @@ public class DataInitializer implements CommandLineRunner {
                     "Michiel Wouters",
                     "letspeppol@itaa.be"
             );
-            companyService.register(registrationRequest);
+            companyService.register(accountInfo);
             PartnerDto partner = new PartnerDto(
                     null,
                     "BE1023290711",
@@ -88,7 +88,7 @@ public class DataInitializer implements CommandLineRunner {
         }
         peppolId = "0208:1023290711";
         if (companyRepository.findByPeppolId(peppolId).isEmpty()) {
-            RegistrationRequest registrationRequest = new RegistrationRequest(
+            AccountInfo accountInfo = new AccountInfo(
                     peppolId,
                     "BE1023290711",
                     "SoftwareOplossing bv.",
@@ -99,7 +99,7 @@ public class DataInitializer implements CommandLineRunner {
                     "Bart In stukken",
                     "bart@softwareoplossing.be"
             );
-            companyService.register(registrationRequest);
+            companyService.register(accountInfo);
         }
     }
 }

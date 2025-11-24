@@ -21,18 +21,21 @@ public class PasswordResetController {
     private final PasswordResetService passwordResetService;
     private final JwtService jwtService;
 
+    /// Sends password recovery mail
     @PostMapping("/forgot")
     public ResponseEntity<SimpleMessage> forgot(@Valid @RequestBody ForgotPasswordRequest request, @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, required = false) String acceptLanguage) {
         passwordResetService.requestReset(request.email(), acceptLanguage);
         return ResponseEntity.noContent().build();
     }
 
+    /// Changes password based on password recovery mail
     @PostMapping("/reset")
     public ResponseEntity<Void> reset(@Valid @RequestBody ResetPasswordRequest request) {
         passwordResetService.resetPassword(request.token(), request.newPassword());
         return ResponseEntity.noContent().build();
     }
 
+    /// Changes password based on valid credentials
     @PostMapping("/change")
     public ResponseEntity<Void> change(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader, @Valid @RequestBody ChangePasswordRequest request) {
         JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);

@@ -69,56 +69,56 @@ export class InvoiceService {
     private appApi = resolve(AppApi);
 
     async validate(xml: string) : Promise<ValidationResultDto> {
-        return await this.appApi.httpClient.post(`/api/document/validate`, xml).then(response => response.json());
+        return await this.appApi.httpClient.post(`/sapi/document/validate`, xml).then(response => response.json());
     }
 
     // Drafts
 
     async getInvoiceDrafts() : Promise<InvoiceDraftDto[]> {
-        return await this.appApi.httpClient.get('/api/invoice/draft').then(response => response.json());
+        return await this.appApi.httpClient.get('/sapi/invoice/draft').then(response => response.json());
     }
 
     async createInvoiceDraft(draft: InvoiceDraftDto) : Promise<InvoiceDraftDto> {
-        return await this.appApi.httpClient.post('/api/invoice/draft', JSON.stringify(draft)).then(response => response.json());
+        return await this.appApi.httpClient.post('/sapi/invoice/draft', JSON.stringify(draft)).then(response => response.json());
     }
 
     async updateInvoiceDraft(id: number, draft: InvoiceDraftDto) : Promise<InvoiceDraftDto> {
-        return await this.appApi.httpClient.put(`/api/invoice/draft/${id}`, JSON.stringify(draft)).then(response => response.json());
+        return await this.appApi.httpClient.put(`/sapi/invoice/draft/${id}`, JSON.stringify(draft)).then(response => response.json());
     }
 
     async getDocuments() : Promise<DocumentDto[]> {
-        return await this.appApi.httpClient.get('/api/document').then(response => response.json());
+        return await this.appApi.httpClient.get('/sapi/document').then(response => response.json());
     }
 
     async getDocument(id: string) : Promise<DocumentDto> {
-        return await this.appApi.httpClient.get(`/api/document/${id}`).then(response => response.json());
+        return await this.appApi.httpClient.get(`/sapi/document/${id}`).then(response => response.json());
     }
 
     async createDocument(xml: string) : Promise<DocumentDto> {
-        return await this.appApi.httpClient.post('/api/document', xml).then(response => response.json());
+        return await this.appApi.httpClient.post('/sapi/document', xml).then(response => response.json());
     }
 
     async saveDocument(id: string, xml: string) : Promise<DocumentDto> {
-        return await this.appApi.httpClient.put(`/api/document/${id}`, xml).then(response => response.json());
+        return await this.appApi.httpClient.put(`/sapi/document/${id}`, xml).then(response => response.json());
     }
 
     async sendDocument(id: string) : Promise<DocumentDto> {
-        return await this.appApi.httpClient.put(`/api/document/${id}/send`).then(response => response.json());
+        return await this.appApi.httpClient.put(`/sapi/document/${id}/send`).then(response => response.json());
     }
 
     async markReadDocument(id: string) : Promise<DocumentDto> {
-        return await this.appApi.httpClient.put(`/api/document/${id}/read`).then(response => response.json());
+        return await this.appApi.httpClient.put(`/sapi/document/${id}/read`).then(response => response.json());
     }
 
     async markPaidDocument(id: string) : Promise<DocumentDto> {
-        return await this.appApi.httpClient.put(`/api/document/${id}/paid`).then(response => response.json());
+        return await this.appApi.httpClient.put(`/sapi/document/${id}/paid`).then(response => response.json());
     }
 
     async deleteDocument(id: string) {
-        return await this.appApi.httpClient.delete(`/api/document/${id}`);
+        return await this.appApi.httpClient.delete(`/sapi/document/${id}`);
     }
 
     async deleteInvoiceDraft(id: number) {
-        return await this.appApi.httpClient.delete(`/api/invoice/draft/${id}`);
+        return await this.appApi.httpClient.delete(`/sapi/invoice/draft/${id}`);
     }
 }

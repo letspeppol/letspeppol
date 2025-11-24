@@ -17,17 +17,19 @@ import java.util.Objects;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/company")
+@RequestMapping("/sapi/company")
 public class CompanyController {
 
     private final CompanyService companyService;
 
+    /// Gets Company info on login by UI (right after retrieving JWT Token)
     @GetMapping
     public ResponseEntity<CompanyDto> getCompany(@AuthenticationPrincipal Jwt jwt) {
         String peppolId = JwtUtil.getPeppolId(jwt);
-        return ResponseEntity.ok(companyService.get(peppolId));
+        return ResponseEntity.ok(companyService.get(peppolId, jwt));
     }
 
+    /// Updates Company info by UI (only stored in App)
     @PutMapping
     public ResponseEntity updateCompany(@AuthenticationPrincipal Jwt jwt, @RequestBody CompanyDto companyDto) {
         String peppolId = JwtUtil.getPeppolId(jwt);

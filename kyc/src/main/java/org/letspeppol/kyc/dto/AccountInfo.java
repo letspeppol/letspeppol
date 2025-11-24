@@ -1,6 +1,9 @@
-package org.letspeppol.app.dto;
+package org.letspeppol.kyc.dto;
 
-public record RegistrationRequest(
+/**
+ * Sent to App backend
+ */
+public record AccountInfo(
         String peppolId,
         String vatNumber,
         String companyName,

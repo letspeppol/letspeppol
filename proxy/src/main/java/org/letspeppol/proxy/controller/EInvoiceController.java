@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/e-invoice")
+@RequestMapping("/api/e-invoice")
 public class EInvoiceController {
 
     private final UblDocumentService ublDocumentService;
 
-    @PostMapping("/")
+    @PostMapping()
     public void createAsReceived(@RequestBody UblDocumentDto ublDocumentDto) {
         ublDocumentService.createAsReceived(ublDocumentDto, AccessPoint.E_INVOICE, "AP-uuid");
     }

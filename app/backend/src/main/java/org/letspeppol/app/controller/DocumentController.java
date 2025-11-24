@@ -3,6 +3,7 @@ package org.letspeppol.app.controller;
 import lombok.RequiredArgsConstructor;
 import org.letspeppol.app.dto.DocumentDto;
 import org.letspeppol.app.dto.ValidationResultDto;
+import org.letspeppol.app.exception.PeppolException;
 import org.letspeppol.app.service.DocumentService;
 import org.letspeppol.app.service.ValidationService;
 import org.letspeppol.app.util.JwtUtil;
@@ -16,7 +17,7 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/document")
+@RequestMapping("/sapi/document")
 public class DocumentController {
 
     private final DocumentService documentService;
@@ -45,18 +46,27 @@ public class DocumentController {
 
     @PostMapping()
     public DocumentDto create(@AuthenticationPrincipal Jwt jwt, @RequestBody String ublXml, @RequestParam(required = false) boolean draft, @RequestParam(required = false) Instant schedule) {
+        if (!JwtUtil.isPeppolActive(jwt)) {
+            draft = true;
+        }
         String peppolId = JwtUtil.getPeppolId(jwt);
         return documentService.createFromUbl(peppolId, ublXml, draft, schedule);
     }
 
     @PutMapping("{id}")
     public DocumentDto update(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestBody String ublXml, @RequestParam(required = false) boolean draft, @RequestParam(required = false) Instant schedule) {
+        if (!JwtUtil.isPeppolActive(jwt)) {
+            draft = true;
+        }
         String peppolId = JwtUtil.getPeppolId(jwt);
         return documentService.update(peppolId, id, ublXml, draft, schedule);
     }
 
     @PutMapping("{id}/send")
     public DocumentDto send(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestParam(required = false) Instant schedule) {
+        if (!JwtUtil.isPeppolActive(jwt)) {
+            throw new PeppolException("Peppol ID is not active");
+        }
         String peppolId = JwtUtil.getPeppolId(jwt);
         return documentService.send(peppolId, id, schedule);
     }

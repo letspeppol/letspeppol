@@ -21,15 +21,17 @@ public class RegistrationController {
 
     private final ActivationService activationService;
 
+    /// *Registration step 2* Sends verification email to confirm email address is correct to use after company info is confirmed to be correct
     @PostMapping("/confirm-company")
     public SimpleMessage confirmCompany(@RequestBody ConfirmCompanyRequest request, @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, required = false) String acceptLanguage) {
         activationService.requestActivation(request, acceptLanguage);
         return new SimpleMessage("Activation email sent (if delivery fails, check logs for link)");
     }
 
+    /// *Registration step 4* Generates contract for selected director to be signed
     @GetMapping("/contract")
-    public ResponseEntity<byte[]> getContract() {
-        try (var inputStream = getClass().getResourceAsStream("/docs/contract_en.pdf")) {
+    public ResponseEntity<byte[]> getContract() { //TODO : send selected director
+        try (var inputStream = getClass().getResourceAsStream("/docs/contract_en.pdf")) { //TODO : generate with company name and user name
             if (inputStream == null) {
                 return ResponseEntity.notFound().build();
             }
@@ -39,6 +41,7 @@ public class RegistrationController {
         }
     }
 
+    /// *Registration step 3* Verifies email address is correct and sends company information with list of directors to select the signing director
     @PostMapping("/verify")
     public TokenVerificationResponse verify(@RequestParam String token) {
         return activationService.verify(token);

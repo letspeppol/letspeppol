@@ -23,6 +23,7 @@ public class AuthController {
     private final JwtService jwtService;
     private final AccountService accountService;
 
+    /// Generates JWT token on login
     @PostMapping("/auth")
     public ResponseEntity<String> auth(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Basic ")) {
@@ -43,6 +44,7 @@ public class AuthController {
 
         String token = jwtService.generateToken(
                 account.getCompany().getPeppolId(),
+                account.getCompany().isRegisteredOnPeppol(),
                 account.getExternalId()
         );
 

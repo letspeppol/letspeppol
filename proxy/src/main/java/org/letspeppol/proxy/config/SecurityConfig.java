@@ -34,11 +34,11 @@ public class SecurityConfig {
                 //.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .cors(cors -> {})
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/scrada/**").permitAll()
-                        .requestMatchers("/e-invoice/**").permitAll()
-                        .requestMatchers("/register/**").hasAuthority(ROLE_SERVICE)
-                        .requestMatchers("/monitor/**").hasAuthority(ROLE_SERVICE)
-                        .requestMatchers("/**").hasAuthority(ROLE_KYC_USER)
+                        .requestMatchers("/api/scrada/**").permitAll()
+                        .requestMatchers("/api/e-invoice/**").permitAll()
+                        .requestMatchers("/sapi/register/**").hasAuthority(ROLE_SERVICE)
+                        .requestMatchers("/sapi/monitor/**").hasAuthority(ROLE_SERVICE)
+                        .requestMatchers("/sapi/**").hasAuthority(ROLE_KYC_USER)
                         .anyRequest().denyAll()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt ->

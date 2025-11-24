@@ -9,6 +9,7 @@ import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.repository.AccountRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -17,6 +18,10 @@ public class AccountService {
 
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
+
+    public Account getByExternalId(UUID externalId) {
+        return accountRepository.findByExternalId(externalId).orElseThrow(() -> new NotFoundException(KycErrorCodes.ACCOUNT_NOT_FOUND));
+    }
 
     public Account findAccountWithCredentials(String email, String password) {
         Account account = accountRepository.findByEmail(email).orElseThrow(() -> new NotFoundException(KycErrorCodes.ACCOUNT_NOT_FOUND));

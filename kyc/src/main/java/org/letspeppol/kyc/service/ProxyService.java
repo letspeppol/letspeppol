@@ -21,7 +21,7 @@ public class ProxyService {
 
     @Qualifier("ProxyWebClient")
     @Autowired
-    private  WebClient webClient;
+    private WebClient webClient;
 
     public void registerCompany(String token, String companyName) {
         if (!proxyEnabled) {

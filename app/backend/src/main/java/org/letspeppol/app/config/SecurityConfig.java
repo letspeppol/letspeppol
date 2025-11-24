@@ -23,6 +23,7 @@ import java.util.List;
 public class SecurityConfig {
 
     public static final String PEPPOL_ID = "peppolId";
+    public static final String PEPPOL_ACTIVE = "peppolActive";
     public static final String ROLE_SERVICE = "service";
     public static final String ROLE_KYC_USER = "kyc_user";
 
@@ -36,8 +37,8 @@ public class SecurityConfig {
             .cors(cors -> {})
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers("/api/peppol-directory/**").permitAll()
-                    .requestMatchers("/api/internal/**").hasAuthority(ROLE_SERVICE)
-                    .requestMatchers("/api/**").hasAuthority(ROLE_KYC_USER)
+                    .requestMatchers("/api/donation/**").permitAll()
+                    .requestMatchers("/sapi/**").hasAuthority(ROLE_KYC_USER)
                     .anyRequest().denyAll()
             )
             .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt ->
@@ -51,9 +52,6 @@ public class SecurityConfig {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
         converter.setJwtGrantedAuthoritiesConverter(jwt -> {
             Collection<GrantedAuthority> authorities = new ArrayList<>();
-            if (ROLE_SERVICE.equals(jwt.getClaims().get("role"))) {
-                authorities.add(new SimpleGrantedAuthority(ROLE_SERVICE));
-            }
             if (jwt.hasClaim(PEPPOL_ID)) {
                 authorities.add(new SimpleGrantedAuthority(ROLE_KYC_USER));
             }

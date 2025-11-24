@@ -36,6 +36,7 @@ public class DataInitializer implements CommandLineRunner {
             directorRepository.save(new Director("Wout Schattebout", c));
             Account account = Account.builder()
                     .company(c)
+                    .name("Bart In Stukken")
                     .email("test@softwareoplossing.be")
                     .passwordHash(passwordEncoder.encode("test"))
                     .externalId(UUID.randomUUID())
@@ -51,6 +52,7 @@ public class DataInitializer implements CommandLineRunner {
             directorRepository.save(new Director("Saskia Verellen", c));
             Account account = Account.builder()
                     .company(c)
+                    .name("Michiel Wouters")
                     .email("letspeppol@itaa.be")
                     .passwordHash(passwordEncoder.encode("letspeppol"))
                     .externalId(UUID.randomUUID())

@@ -11,10 +11,10 @@ import reactor.netty.http.client.HttpClient;
 import java.time.Duration;
 
 @Configuration
-public class ProxyConfig {
+public class KycConfig {
 
-    @Bean(name = "ProxyWebClient")
-    public WebClient ProxyWebClient(@Value("${proxy.api.url}") String apiUrl) {
+    @Bean
+    public WebClient kycWebClient(@Value("${kyc.api.url}") String apiUrl) {
         HttpClient httpClient = HttpClient.create()
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 1000)
                 .responseTimeout(Duration.ofSeconds(3));
@@ -24,4 +24,5 @@ public class ProxyConfig {
                 .clientConnector(new ReactorClientHttpConnector(httpClient))
                 .build();
     }
+
 }

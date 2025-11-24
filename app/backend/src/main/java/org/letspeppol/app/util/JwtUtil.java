@@ -15,4 +15,12 @@ public class JwtUtil {
         return peppolId;
     }
 
+    public static boolean isPeppolActive(Jwt jwt) {
+        Boolean peppolActive = jwt.getClaim(SecurityConfig.PEPPOL_ACTIVE);
+        if (peppolActive == null) {
+            throw new SecurityException(AppErrorCodes.PEPPOL_ACTIVE_NOT_PRESENT);
+        }
+        return peppolActive;
+    }
+
 }

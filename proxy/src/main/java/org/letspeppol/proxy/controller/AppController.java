@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("")
+@RequestMapping("/sapi/document")
 public class AppController {
 
     public static final String DEFAULT_SIZE = "10";
@@ -23,19 +23,19 @@ public class AppController {
     private final UblDocumentService ublDocumentService;
     private final RegistryService registryService;
 
-    @GetMapping("/")
+    @GetMapping()
     public List<UblDocumentDto> getAllNew(@AuthenticationPrincipal Jwt jwt, @RequestParam(defaultValue = DEFAULT_SIZE) int size) {
         String peppolId = JwtUtil.getPeppolId(jwt);
         return ublDocumentService.findAllNew(peppolId, size);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("{id}")
     public UblDocumentDto getById(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
         String peppolId = JwtUtil.getPeppolId(jwt);
         return ublDocumentService.findById(id, peppolId);
     }
 
-    @PostMapping("/")
+    @PostMapping()
     public UblDocumentDto createToSend(@AuthenticationPrincipal Jwt jwt, @RequestBody UblDocumentDto ublDocumentDto, @RequestParam(defaultValue = "false") boolean noArchive) {
         String peppolId = JwtUtil.getPeppolId(jwt);
         if (!ublDocumentDto.ownerPeppolId().equals(peppolId)) throw new SecurityException("Peppol ID not the owner");
@@ -43,7 +43,7 @@ public class AppController {
         return ublDocumentService.createToSend(ublDocumentDto, noArchive); //TODO : maybe something like return ResponseEntity.status(HttpStatus.CREATED).body(dto); ?
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("{id}")
     public void reschedule(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestBody UblDocumentDto ublDocumentDto) {
         String peppolId = JwtUtil.getPeppolId(jwt);
         if (!ublDocumentDto.ownerPeppolId().equals(peppolId)) throw new SecurityException("Peppol ID not the owner");
@@ -51,19 +51,19 @@ public class AppController {
         ublDocumentService.reschedule(id, peppolId, ublDocumentDto);
     }
 
-    @PutMapping("/downloaded/{id}")
+    @PutMapping("downloaded/{id}")
     public void downloaded(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestParam(defaultValue = "false") boolean noArchive) {
         String peppolId = JwtUtil.getPeppolId(jwt);
         ublDocumentService.downloaded(List.of(id), peppolId, noArchive);
     }
 
-    @PutMapping("/downloaded")
+    @PutMapping("downloaded")
     public void downloadedBatch(@AuthenticationPrincipal Jwt jwt, @RequestBody List<UUID> ids, @RequestParam(defaultValue = "false") boolean noArchive) {
         String peppolId = JwtUtil.getPeppolId(jwt);
         ublDocumentService.downloaded(ids, peppolId, noArchive);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("{id}")
     public void delete(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestParam(defaultValue = "false") boolean noArchive) {
         String peppolId = JwtUtil.getPeppolId(jwt);
         ublDocumentService.cancel(id, peppolId, noArchive);

@@ -45,6 +45,7 @@ public class IdentityVerificationService {
         verifyNotRegistered(req.email());
 
         Account account = new Account();
+        account.setName(req.director().getName());
         account.setEmail(req.email());
         account.setIdentityVerified(true);
         account.setIdentityVerifiedOn(Instant.now());
@@ -67,7 +68,7 @@ public class IdentityVerificationService {
         );
         civRepository.save(civ);
 
-        String token = jwtService.generateInternalToken(req.director().getCompany().getPeppolId());//, account.getExternalId()); // TODO ?
+        String token = jwtService.generateInternalToken(req.director().getCompany().getPeppolId(), req.director().getCompany().isRegisteredOnPeppol());//, account.getExternalId()); // TODO ?
         proxyService.registerCompany(token, req.director().getCompany().getName());
         //appService.register(req);
 

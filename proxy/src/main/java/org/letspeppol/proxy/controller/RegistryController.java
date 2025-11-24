@@ -12,18 +12,18 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/register")
+@RequestMapping("/sapi/register")
 public class RegistryController {
 
     private final RegistryService registryService;
 
-    @GetMapping("")
+    @GetMapping()
     public RegistryDto getById(@AuthenticationPrincipal Jwt jwt) {
         String peppolId = JwtUtil.getPeppolId(jwt);
         return registryService.get(peppolId);
     }
 
-    @PostMapping("")
+    @PostMapping()
     public RegistryDto register(@AuthenticationPrincipal Jwt jwt, @RequestBody Map<String, Object> data) {
         String peppolId = JwtUtil.getPeppolId(jwt);
         return registryService.register(
@@ -33,13 +33,13 @@ public class RegistryController {
         );
     }
 
-    @PostMapping("/suspend")
+    @PostMapping("suspend")
     public void suspend(@AuthenticationPrincipal Jwt jwt) {
         String peppolId = JwtUtil.getPeppolId(jwt);
         registryService.suspend(peppolId);
     }
 
-    @DeleteMapping("")
+    @DeleteMapping()
     public void delete(@AuthenticationPrincipal Jwt jwt) {
         String peppolId = JwtUtil.getPeppolId(jwt);
         registryService.remove(peppolId);

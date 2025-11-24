@@ -34,6 +34,9 @@ public class Account {
     private Company company;
 
     @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
     private String email;
 
     @Column(nullable = false, length = 100)
