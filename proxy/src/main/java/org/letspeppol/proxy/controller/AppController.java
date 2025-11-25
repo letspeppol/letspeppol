@@ -39,7 +39,7 @@ public class AppController {
     public UblDocumentDto createToSend(@AuthenticationPrincipal Jwt jwt, @RequestBody UblDocumentDto ublDocumentDto, @RequestParam(defaultValue = "false") boolean noArchive) {
         String peppolId = JwtUtil.getPeppolId(jwt);
         if (!ublDocumentDto.ownerPeppolId().equals(peppolId)) throw new SecurityException("Peppol ID not the owner");
-        if (registryService.getAccessPoint(peppolId) == AccessPoint.NONE) throw new SecurityException("Peppol ID not registered to send");
+        if (registryService.getAccessPoint(peppolId) == AccessPoint.NONE) throw new SecurityException("Peppol ID not activated to send");
         return ublDocumentService.createToSend(ublDocumentDto, noArchive); //TODO : maybe something like return ResponseEntity.status(HttpStatus.CREATED).body(dto); ?
     }
 
@@ -47,7 +47,7 @@ public class AppController {
     public void reschedule(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestBody UblDocumentDto ublDocumentDto) {
         String peppolId = JwtUtil.getPeppolId(jwt);
         if (!ublDocumentDto.ownerPeppolId().equals(peppolId)) throw new SecurityException("Peppol ID not the owner");
-        if (registryService.getAccessPoint(peppolId) == AccessPoint.NONE) throw new SecurityException("Peppol ID not registered to send");
+        if (registryService.getAccessPoint(peppolId) == AccessPoint.NONE) throw new SecurityException("Peppol ID not activated to send");
         ublDocumentService.reschedule(id, peppolId, ublDocumentDto);
     }
 

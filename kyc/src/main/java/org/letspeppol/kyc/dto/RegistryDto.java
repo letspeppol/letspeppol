@@ -1,4 +1,4 @@
-package org.letspeppol.proxy.dto;
+package org.letspeppol.kyc.dto;
 
 public record RegistryDto(
         String peppolId,

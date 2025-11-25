@@ -49,6 +49,6 @@ public class Company {
         this.postalCode = postalCode;
         this.street = street;
         this.houseNumber = houseNumber;
-        this.registeredOnPeppol = true;
+        this.registeredOnPeppol = false;
     }
 }

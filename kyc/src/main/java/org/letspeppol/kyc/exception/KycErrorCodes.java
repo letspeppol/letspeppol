@@ -20,6 +20,7 @@ public final class KycErrorCodes {
     // Proxy
     public static final String PROXY_REGISTRATION_FAILED = "proxy_registration_failed";
     public static final String PROXY_UNREGISTRATION_FAILED = "proxy_unregistration_failed";
+    public static final String PROXY_FAILED = "proxy_failed";
     // KBO
     public static final String KBO_PARSE_ADDRESS_FAILED = "kbo_parse_address_failed";
     public static final String KBO_PARSE_DIRECTORS_FAILED = "kbo_parse_directors_failed";

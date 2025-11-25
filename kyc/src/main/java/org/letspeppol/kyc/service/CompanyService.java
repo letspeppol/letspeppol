@@ -24,8 +24,8 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
     private final DirectorRepository directorRepository;
     private final KboLookupService kboLookupService;
+    private final JwtService jwtService;
     private final ProxyService proxyService;
-//    private final AppService appService;
 
     public Optional<CompanyResponse> getByPeppolId(String peppolId) {
         Optional<Company> company = companyRepository.findByPeppolId(peppolId);
@@ -76,11 +76,20 @@ public class CompanyService {
         );
     }
 
-    public void unregisterCompany(String peppolId, String token) {
-        Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new KycException(KycErrorCodes.COMPANY_NOT_FOUND));
-        company.setRegisteredOnPeppol(false);
+    public void registerCompany(Company company) {
+        if (company.isRegisteredOnPeppol()) {
+            //TODO : log
+            return;
+        }
+        String token = jwtService.generateInternalToken(company.getPeppolId(), company.isRegisteredOnPeppol());
+        company.setRegisteredOnPeppol(proxyService.registerCompany(token, company.getName()));
         companyRepository.save(company);
-        //proxyService.unregisterCompany(token);
-        //appService.unregister(peppolId);
+    }
+
+    public void unregisterCompany(String peppolId) {
+        Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new KycException(KycErrorCodes.COMPANY_NOT_FOUND));
+        String token = jwtService.generateInternalToken(company.getPeppolId(), company.isRegisteredOnPeppol());
+        company.setRegisteredOnPeppol(proxyService.unregisterCompany(token));
+        companyRepository.save(company);
     }
 }

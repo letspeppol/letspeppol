@@ -1,6 +1,7 @@
 package org.letspeppol.proxy.mapper;
 
 import org.letspeppol.proxy.dto.RegistryDto;
+import org.letspeppol.proxy.model.AccessPoint;
 import org.letspeppol.proxy.model.Registry;
 
 public class RegistryMapper {
@@ -10,7 +11,7 @@ public class RegistryMapper {
         }
         return new RegistryDto(
             registry.getPeppolId(),
-            registry.getAccessPoint()
+            registry.getAccessPoint() != AccessPoint.NONE
         );
     }
 }

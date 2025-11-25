@@ -1,15 +1,15 @@
 package org.letspeppol.proxy.service;
 
+import org.letspeppol.proxy.dto.RegistrationRequest;
 import org.letspeppol.proxy.model.AccessPoint;
 import org.letspeppol.proxy.model.UblDocument;
-
 import java.util.Map;
 
 public interface AccessPointServiceInterface {
 
     AccessPoint getType();
 
-    Map<String, Object> register(String peppolId, Map<String, Object> data);
+    Map<String, Object> register(String peppolId, RegistrationRequest data);
 
     void unregister(String peppolId, Map<String, Object> variables);
 

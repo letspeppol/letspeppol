@@ -1,6 +1,7 @@
 package org.letspeppol.proxy.service;
 
 import lombok.RequiredArgsConstructor;
+import org.letspeppol.proxy.dto.RegistrationRequest;
 import org.letspeppol.proxy.dto.e_invoice.*;
 import org.letspeppol.proxy.dto.scrada.*;
 import org.letspeppol.proxy.model.AccessPoint;
@@ -38,10 +39,7 @@ public class ScradaService implements AccessPointServiceInterface {
 
     /// DOCS : [Scrada : Register company](https://www.scrada.be/api-documentation/#tag/Peppol-inbound/paths/~1v1~1company~1%7BcompanyID%7D~1peppol~1register/post)
     @Override
-    public Map<String, Object> register(String peppolId, Map<String, Object> data) {
-        String name = Objects.toString(data.get("name"), "Unknown");
-        String language = Objects.toString(data.get("language"), "NL");
-        String country = Objects.toString(data.get("country"), "BE");
+    public Map<String, Object> register(String peppolId, RegistrationRequest data) {
         try {
             String uuid = scradaWebClient
                     .post()
@@ -53,9 +51,9 @@ public class ScradaService implements AccessPointServiceInterface {
                                     peppolId
                             ),
                             new BusinessEntity(
-                                    name,
-                                    language,
-                                    country
+                                    data.name(),
+                                    data.language(),
+                                    data.country()
                             ),
                             List.of(
                                     new DocumentType(

@@ -2,6 +2,7 @@ package org.letspeppol.proxy.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.letspeppol.proxy.dto.RegistrationRequest;
 import org.letspeppol.proxy.dto.RegistryDto;
 import org.letspeppol.proxy.exception.BadRequestException;
 import org.letspeppol.proxy.exception.NotFoundException;
@@ -22,14 +23,9 @@ public class RegistryService {
 
     private final RegistryRepository registryRepository;
     private final AccessPointServiceRegistry accessPointServiceRegistry;
-    private final ObjectMapper objectMapper;
 
     public RegistryDto get(String peppolId) {
         return RegistryMapper.toDto(registryRepository.findById(peppolId).orElseThrow(() -> new NotFoundException("PeppolId " + peppolId + " is not registered here")));
-    }
-
-    public <T> T getVariables(String peppolId, Class<T> elementClass) {
-        return objectMapper.convertValue(registryRepository.findById(peppolId).orElseThrow(() -> new NotFoundException("PeppolId " + peppolId + " is not registered here")).getVariables(), elementClass);
     }
 
     public AccessPoint getAccessPoint(String peppolId) {
@@ -37,37 +33,57 @@ public class RegistryService {
         return optionalRegistry.isPresent() ? optionalRegistry.get().getAccessPoint() : AccessPoint.NONE;
     }
 
-    private void unregister(Registry registry, AccessPoint accessPoint) {
-        if (registry.getAccessPoint() != AccessPoint.NONE &&
-            registry.getAccessPoint() != accessPoint) {
-            AccessPointServiceInterface service = accessPointServiceRegistry.get(registry.getAccessPoint());
-            if (service == null) {
-                //TODO : LOG ERROR !!!
-            } else {
-                service.unregister(registry.getPeppolId(), registry.getVariables());
+    private void register(RegistrationRequest data, AccessPoint accessPoint, Registry registry) {
+        try {
+            if (accessPoint != AccessPoint.NONE) {
+                AccessPointServiceInterface service = accessPointServiceRegistry.get(accessPoint);
+                if (service == null) {
+                    throw new BadRequestException("Peppol Access Point " + accessPoint + " is not active");
+                }
+                Map<String, Object> variables = service.register(registry.getPeppolId(), data);
+                registry.setVariables(variables);
             }
+            registry.setAccessPoint(accessPoint);
+        } catch (Exception e) {
+            //TODO : log !
+            registry.setAccessPoint(AccessPoint.NONE); //TODO : this line might not be needed
         }
     }
 
-    public RegistryDto register(String peppolId, Map<String, Object> data, AccessPoint accessPoint) {
+    private void unregister(Registry registry, AccessPoint accessPoint) {
+        try {
+            if (registry.getAccessPoint() != AccessPoint.NONE &&
+                registry.getAccessPoint() != accessPoint) {
+                AccessPointServiceInterface service = accessPointServiceRegistry.get(registry.getAccessPoint());
+                if (service == null) {
+                    throw new BadRequestException("Peppol Access Point " + accessPoint + " is not active");
+                } else {
+                    service.unregister(registry.getPeppolId(), registry.getVariables());
+                }
+            }
+            registry.setAccessPoint(AccessPoint.NONE);
+        } catch (Exception e) {
+            //TODO : log !
+        }
+    }
+
+    public RegistryDto register(String peppolId, RegistrationRequest data, AccessPoint accessPoint) {
         Registry registry = registryRepository.findById(peppolId).orElse(new Registry(peppolId, AccessPoint.NONE, null));
         unregister(registry, accessPoint);
-        if (accessPoint != AccessPoint.NONE) {
-            AccessPointServiceInterface service = accessPointServiceRegistry.get(accessPoint);
-            if (service == null) {
-                throw new BadRequestException("Peppol Access Point " + accessPoint + " is not active");
-            }
-            Map<String, Object> variables = service.register(registry.getPeppolId(), data);
-            registry.setVariables(variables);
-        }
-        registry.setAccessPoint(accessPoint);
+        register(data, accessPoint, registry);
         return RegistryMapper.toDto(registryRepository.save(registry));
     }
 
-    public void suspend(String peppolId) {
-        Registry registry = registryRepository.findById(peppolId).orElseThrow(() -> new NotFoundException("PeppolId " + peppolId + " is not registered here"));
+    public RegistryDto activate(String peppolId, RegistrationRequest data, AccessPoint accessPoint) {
+        Registry registry = registryRepository.findById(peppolId).orElseThrow(() -> new NotFoundException("PeppolId " + peppolId + " is not known here"));
+        register(data, accessPoint, registry);
+        return RegistryMapper.toDto(registryRepository.save(registry));
+    }
+
+    public RegistryDto suspend(String peppolId) {
+        Registry registry = registryRepository.findById(peppolId).orElseThrow(() -> new NotFoundException("PeppolId " + peppolId + " is not known here"));
         unregister(registry, AccessPoint.NONE);
-        registry.setAccessPoint(AccessPoint.NONE);
+        return RegistryMapper.toDto(registryRepository.save(registry));
     }
 
     public void remove(String peppolId) {

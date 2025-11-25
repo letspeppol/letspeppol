@@ -1,13 +1,13 @@
 package org.letspeppol.kyc.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.letspeppol.kyc.dto.ProxyRegistrationRequest;
+import org.letspeppol.kyc.dto.RegistrationRequest;
+import org.letspeppol.kyc.dto.RegistryDto;
 import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.KycException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -23,38 +23,56 @@ public class ProxyService {
     @Autowired
     private WebClient webClient;
 
-    public void registerCompany(String token, String companyName) {
+    public boolean isCompanyPeppolActive(String token) {
+        RegistryDto registryDto = this.webClient.get()
+                .uri("/sapi/registry")
+                .header("Authorization", "Bearer " + token)
+                .retrieve()
+                .bodyToMono(RegistryDto.class)
+                .blockOptional()
+                .orElseThrow( () -> new KycException(KycErrorCodes.PROXY_FAILED));
+
+        return registryDto.peppolActive();
+    }
+
+    public boolean registerCompany(String token, String companyName) {
         if (!proxyEnabled) {
-            return;
+            return false;
         }
         try {
-            ResponseEntity<String> response = this.webClient.post()
-                    .uri("/register")
-                    .body(Mono.just(new ProxyRegistrationRequest(companyName)), ProxyRegistrationRequest.class)
+            RegistryDto registryDto = this.webClient.post()
+                    .uri("/sapi/registry")
+                    .body(Mono.just(new RegistrationRequest(companyName, "NL", "BE")), RegistrationRequest.class)
                     .header("Authorization", "Bearer " + token)
                     .retrieve()
-                    .toEntity(String.class)
-                    .block();
+                    .bodyToMono(RegistryDto.class)
+                    .blockOptional()
+                    .orElseThrow( () -> new KycException(KycErrorCodes.PROXY_REGISTRATION_FAILED));
+
+            return registryDto.peppolActive();
         } catch (Exception ex) {
             log.error("Registering company to proxy failed", ex);
-            throw new KycException(KycErrorCodes.PROXY_REGISTRATION_FAILED);
+            return false;
         }
     }
 
-    public void unregisterCompany(String token) {
-        if (!proxyEnabled) {
-            return;
+    public boolean unregisterCompany(String token) {
+        if (!proxyEnabled) { //TODO : do we still need this ?
+            return false;
         }
         try {
-            ResponseEntity<String> response = this.webClient.delete()
-                    .uri("/register")
+            RegistryDto registryDto = this.webClient.put()
+                    .uri("/sapi/registry/suspend")
                     .header("Authorization", "Bearer " + token)
                     .retrieve()
-                    .toEntity(String.class)
-                    .block();
+                    .bodyToMono(RegistryDto.class)
+                    .blockOptional()
+                    .orElseThrow( () -> new KycException(KycErrorCodes.PROXY_UNREGISTRATION_FAILED));
+
+            return registryDto.peppolActive();
         } catch (Exception ex) {
             log.error("Unregistering company to proxy failed", ex);
-            throw new KycException(KycErrorCodes.PROXY_UNREGISTRATION_FAILED);
+            return isCompanyPeppolActive(token);
         }
     }
 

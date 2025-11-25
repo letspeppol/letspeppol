@@ -3,12 +3,11 @@ package org.letspeppol.proxy.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.letspeppol.proxy.dto.RegistrationRequest;
 import org.letspeppol.proxy.dto.e_invoice.*;
 import org.letspeppol.proxy.model.AccessPoint;
 import org.letspeppol.proxy.model.UblDocument;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,14 +33,13 @@ public class EInvoiceService implements AccessPointServiceInterface {
     }
 
     @Override
-    public Map<String, Object> register(String peppolId, Map<String, Object> data) {
-        String name = data.get("name").toString();
+    public Map<String, Object> register(String peppolId, RegistrationRequest data) {
         try {
             TenantCreateResponse tenantCreateResponse = eInvoiceOrganisationWebClient
                 .post()
                 .uri("/tenants")
                 .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(new TenantCreateRequest(peppolId, name)) //TODO : is description useful ?
+                .bodyValue(new TenantCreateRequest(peppolId, data.name())) //TODO : is description useful ?
                 .retrieve()
                 .bodyToMono(TenantCreateResponse.class)
                 .blockOptional()
@@ -64,7 +62,7 @@ public class EInvoiceService implements AccessPointServiceInterface {
                 .post()
                 .uri("/tenants/"+tenantId+"/peppol/register")
                 .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(new RegisterPeppolRequest(peppolId, name))
+                .bodyValue(new RegisterPeppolRequest(peppolId, data.name()))
                 .retrieve()
                 .bodyToMono(RegisterPeppolResponse.class)
                 .blockOptional()

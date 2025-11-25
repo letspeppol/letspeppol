@@ -55,8 +55,8 @@ public class CompanyController {
     /// Unregisters (not deleting) peppolId from the Peppol Directory, must call Proxy to unregister from AP
     @PostMapping("unregister")
     public ResponseEntity<?> unregister(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
-        companyService.unregisterCompany(jwtInfo.peppolId(), jwtInfo.token());
+        String peppolId = jwtService.validateAndGetInfo(authHeader).peppolId();
+        companyService.unregisterCompany(peppolId);
         return ResponseEntity.ok().build();
     }
 

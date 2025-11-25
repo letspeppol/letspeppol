@@ -27,12 +27,10 @@ import static org.letspeppol.kyc.service.signing.CertificateUtil.getRDNName;
 @RequiredArgsConstructor
 public class IdentityVerificationService {
 
-//    private final AppService appService;
-    private final AccountIdentityVerificationRepository civRepository;
+    private final AccountIdentityVerificationRepository accountIdentityVerificationRepository;
     private final AccountRepository accountRepository;
     private final EncryptionService encryptionService;
-    private final JwtService jwtService;
-    private final ProxyService proxyService;
+    private final CompanyService companyService;
     private final PasswordEncoder passwordEncoder;
 
     public void verifyNotRegistered(String email) {
@@ -55,7 +53,7 @@ public class IdentityVerificationService {
         account.setCompany(req.director().getCompany());
         accountRepository.save(account);
 
-        AccountIdentityVerification civ = new AccountIdentityVerification(
+        AccountIdentityVerification accountIdentityVerification = new AccountIdentityVerification(
                 account,
                 req.director(),
                 req.director().getName(),
@@ -66,11 +64,9 @@ public class IdentityVerificationService {
                 encryptionService.encrypt(req.certificate()),
                 encryptionService.encrypt(req.signature())
         );
-        civRepository.save(civ);
+        accountIdentityVerificationRepository.save(accountIdentityVerification);
 
-        String token = jwtService.generateInternalToken(req.director().getCompany().getPeppolId(), req.director().getCompany().isRegisteredOnPeppol());//, account.getExternalId()); // TODO ?
-        proxyService.registerCompany(token, req.director().getCompany().getName());
-        //appService.register(req);
+        companyService.registerCompany(req.director().getCompany());
 
         log.info("Identity verified for email={} director={} serial={}", account.getEmail(), req.director().getName(), req.x509Certificate().getSerialNumber());
         return account;

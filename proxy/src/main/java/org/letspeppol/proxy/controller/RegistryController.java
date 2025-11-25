@@ -1,6 +1,7 @@
 package org.letspeppol.proxy.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.letspeppol.proxy.dto.RegistrationRequest;
 import org.letspeppol.proxy.dto.RegistryDto;
 import org.letspeppol.proxy.model.AccessPoint;
 import org.letspeppol.proxy.service.RegistryService;
@@ -8,11 +9,10 @@ import org.letspeppol.proxy.util.JwtUtil;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
-import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/sapi/register")
+@RequestMapping("/sapi/registry")
 public class RegistryController {
 
     private final RegistryService registryService;
@@ -24,7 +24,7 @@ public class RegistryController {
     }
 
     @PostMapping()
-    public RegistryDto register(@AuthenticationPrincipal Jwt jwt, @RequestBody Map<String, Object> data) {
+    public RegistryDto register(@AuthenticationPrincipal Jwt jwt, @RequestBody RegistrationRequest data) {
         String peppolId = JwtUtil.getPeppolId(jwt);
         return registryService.register(
             peppolId,
@@ -33,10 +33,20 @@ public class RegistryController {
         );
     }
 
-    @PostMapping("suspend")
-    public void suspend(@AuthenticationPrincipal Jwt jwt) {
+    @PutMapping("suspend")
+    public RegistryDto suspend(@AuthenticationPrincipal Jwt jwt) {
         String peppolId = JwtUtil.getPeppolId(jwt);
-        registryService.suspend(peppolId);
+        return registryService.suspend(peppolId);
+    }
+
+    @PutMapping("activate")
+    public RegistryDto activate(@AuthenticationPrincipal Jwt jwt, @RequestBody RegistrationRequest data) { //TODO : is this useful or confusing ?
+        String peppolId = JwtUtil.getPeppolId(jwt);
+        return registryService.activate(
+                peppolId,
+                data,
+                AccessPoint.SCRADA
+        );
     }
 
     @DeleteMapping()
