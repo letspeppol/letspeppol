@@ -29,6 +29,22 @@ public class AppController {
         return ublDocumentService.findAllNew(peppolId, size);
     }
 
+    /* *
+    Need filtering and quering like
+      userId: string;
+      // paging:
+      page: number;
+      pageSize: number;
+      // filters:
+      counterPartyId?: string | undefined;
+      counterPartyNameLike?: string | undefined;
+      docType: 'invoice' | 'credit-note' | undefined;
+      direction: 'incoming' | 'outgoing' | undefined;
+      docId?: string | undefined;
+      // sorting:
+      sortBy?: 'amountAsc' | 'amountDesc' | 'createdAtAsc' | 'createdAtDesc';
+    * */
+
     @GetMapping("{id}")
     public UblDocumentDto getById(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
         String peppolId = JwtUtil.getPeppolId(jwt);

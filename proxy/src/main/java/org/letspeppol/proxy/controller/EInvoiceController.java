@@ -15,7 +15,7 @@ public class EInvoiceController {
 
     @PostMapping()
     public void createAsReceived(@RequestBody UblDocumentDto ublDocumentDto) {
-        ublDocumentService.createAsReceived(ublDocumentDto, AccessPoint.E_INVOICE, "AP-uuid");
+//        ublDocumentService.createAsReceived(ublDocumentDto, AccessPoint.E_INVOICE, "AP-uuid");
     }
 
 }

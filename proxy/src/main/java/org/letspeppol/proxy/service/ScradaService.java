@@ -2,11 +2,12 @@ package org.letspeppol.proxy.service;
 
 import lombok.RequiredArgsConstructor;
 import org.letspeppol.proxy.dto.RegistrationRequest;
-import org.letspeppol.proxy.dto.e_invoice.*;
 import org.letspeppol.proxy.dto.scrada.*;
 import org.letspeppol.proxy.model.AccessPoint;
 import org.letspeppol.proxy.model.UblDocument;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +15,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @RequiredArgsConstructor
 @Transactional
@@ -29,6 +29,9 @@ public class ScradaService implements AccessPointServiceInterface {
     public static final String PROCESS_SCHEME = "cenbii-procid-ubl";
     public static final String PROCESS_VALUE = "urn:fdc:peppol.eu:2017:poacc:billing:01:1.0";
 
+    @Lazy
+    @Autowired
+    private UblDocumentService ublDocumentService; //TODO : Is it possible to not have a circular dependency
     @Qualifier("scradaWebClient")
     private final WebClient scradaWebClient;
 
@@ -98,7 +101,7 @@ public class ScradaService implements AccessPointServiceInterface {
         try {
             scradaWebClient
                 .delete()
-                .uri("/deregister/"+PARTICIPANT_SCHEME+"/"+peppolId)
+                .uri("/deregister/{participantIdentifierScheme}/{participantIdentifierValue}", PARTICIPANT_SCHEME, peppolId)
                 .retrieve()
                 .toBodilessEntity()
                 .block();
@@ -150,5 +153,48 @@ public class ScradaService implements AccessPointServiceInterface {
     @Override
     public void receiveDocument(UblDocument ublDocument) {
 
+    }
+
+    @Override
+    public void receiveDocuments() {
+        try {
+            UnconfirmedInboundDocuments unconfirmedInboundDocuments = scradaWebClient
+                    .get()
+                    .uri("/inbound/document/unconfirmed")
+                    .retrieve()
+                    .bodyToMono(UnconfirmedInboundDocuments.class)
+                    .blockOptional()
+                    .orElseThrow(() -> new IllegalStateException("Empty response from Scrada get unconfirmed inbound documents"));
+
+            for (InboundDocument inboundDocument : unconfirmedInboundDocuments.results()) {
+                String ubl = scradaWebClient
+                        .get()
+                        .uri("/inbound/document/{documentID}", inboundDocument.id())
+                        .retrieve()
+                        .bodyToMono(String.class)
+                        .blockOptional()
+                        .orElseThrow(() -> new IllegalStateException("Empty response from Scrada get inbound document"));
+
+                ublDocumentService.createAsReceived(
+                        inboundDocument.peppolSenderID(),
+                        inboundDocument.peppolReceiverID(),
+                        ubl,
+                        AccessPoint.SCRADA,
+                        inboundDocument.id(),
+                        () -> {
+                            scradaWebClient
+                                    .put()
+                                    .uri("/inbound/document/{documentID}/confirm", inboundDocument.id())
+                                    .retrieve()
+                                    .toBodilessEntity()
+                                    .block();
+                        }
+                );
+            }
+        } catch (WebClientResponseException e) { // HTTP error (non-2xx)
+            throw new RuntimeException("Scrada API error: " + e.getStatusCode(), e);
+        } catch (Exception e) { // timeouts, connection issues, deserialization errors, etc.
+            throw new RuntimeException("Failed to call Scrada API", e);
+        }
     }
 }

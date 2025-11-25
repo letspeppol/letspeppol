@@ -19,4 +19,6 @@ public interface UblDocumentRepository extends JpaRepository<UblDocument, UUID> 
     Slice<UblDocument> findAllByOwnerPeppolIdAndDownloadCountAndDirection(String ownerPeppolId, Integer downloadCount, DocumentDirection direction, Pageable pageable);
 
     List<UblDocument> findAllByDirectionAndScheduledOnBeforeAndAccessPointIsNull(DocumentDirection direction, Instant before, Pageable pageable);
+
+    Optional<UblDocument> findByAccessPointId(String accessPointId);
 }

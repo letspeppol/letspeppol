@@ -15,6 +15,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -142,7 +145,7 @@ public class UblDocumentService {
                 DocumentDirection.OUTGOING, //user can not overwrite this value : ublDocumentDto.direction(),
                 ublDocumentDto.ownerPeppolId(),
                 ublDocumentDto.partnerPeppolId(),
-                ublDocumentDto.createdOn(),
+                null, //TODO : would we want to listen to external createdOn : ublDocumentDto.createdOn(),
                 calculateSchedule(ublDocumentDto),
                 null,
                 null,
@@ -216,32 +219,42 @@ public class UblDocumentService {
         // ublDocumentRepository.save(ublDocument); //This can be remove due to @Transactional
     }
 
-    public void createAsReceived(UblDocumentDto ublDocumentDto, AccessPoint accessPoint, String accessPointId) {
-        String hash = HashUtil.sha256(ublDocumentDto.ubl());
-        if (ublDocumentRepository.findById(ublDocumentDto.id()).isPresent() || !ublDocumentRepository.findAllByHash(hash).isEmpty()) //TODO : should we add timeframe based on ublDocumentDto.createdOn() ?
-            throw new DuplicateRequestException("UblDocument "+ublDocumentDto.id()+" is already received"); //TODO : does this make sense as AP needs to be informed we have successfully received the document ?
+    public void createAsReceived(String senderPeppolId, String receiverPeppolId, String ubl, AccessPoint accessPoint, String accessPointId, Runnable afterCommit) {
+        String hash = HashUtil.sha256(ubl);
+        if (ublDocumentRepository.findByAccessPointId(accessPointId).isPresent() || !ublDocumentRepository.findAllByHash(hash).isEmpty()) //TODO : should we add timeframe based on ublDocumentDto.createdOn() ?
+            throw new DuplicateRequestException("UblDocument "+accessPointId+" is already received"); //TODO : does this make sense as AP needs to be informed we have successfully received the document ?
 
         UblDocument ublDocument = new UblDocument( //TODO : do we set default values here ?
-                ublDocumentDto.id(),
+                UUID.randomUUID(), //No autogeneration used
                 DocumentDirection.INCOMING, //AP can not overwrite this value : ublDocumentDto.direction(),
-                ublDocumentDto.ownerPeppolId(),
-                ublDocumentDto.partnerPeppolId(),
-                ublDocumentDto.createdOn(),
-                Instant.now(),
+                receiverPeppolId,
+                senderPeppolId,
+                null, //TODO : would we want to listen to external createdOn : ublDocumentDto.createdOn(),
+                null,
                 Instant.now(),
                 null,
-                ublDocumentDto.ubl(),
+                ubl,
                 hash,
                 0,
                 null,
                 accessPoint,
                 accessPointId
         );
-        ublDocumentRepository.save(ublDocument); //This is needed as it is a new
+        ublDocument = ublDocumentRepository.save(ublDocument); //This is needed as it is a new
         try {
             backupFile(ublDocument);
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+        if (afterCommit != null && TransactionSynchronizationManager.isActualTransactionActive()) {
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override public void afterCommit() {
+                    afterCommit.run();
+                }
+            });
+        } else if (afterCommit != null) {
+            // Fallback if someone calls this without a TX (shouldn’t happen here)
+            afterCommit.run();
         }
     }
 

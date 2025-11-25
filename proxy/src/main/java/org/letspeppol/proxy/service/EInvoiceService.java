@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
-
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -124,6 +123,11 @@ public class EInvoiceService implements AccessPointServiceInterface {
 
     @Override
     public void receiveDocument(UblDocument ublDocument) {
+
+    }
+
+    @Override
+    public void receiveDocuments() {
 
     }
 }

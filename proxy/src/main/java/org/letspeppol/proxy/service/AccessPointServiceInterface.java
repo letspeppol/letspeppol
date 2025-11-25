@@ -19,6 +19,6 @@ public interface AccessPointServiceInterface {
 
     void receiveDocument(UblDocument ublDocument); //For webhooks
 
-//    List<UblDocument> receiveDocuments(); //For polling only AP
+    void receiveDocuments(); //For polling only AP
 
 }
