@@ -1,5 +1,6 @@
 package org.letspeppol.kyc.service;
 
+import io.micrometer.core.instrument.Counter;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -32,10 +33,13 @@ public class KboLookupService {
     @Autowired
     @Qualifier("KboWebClient")
     private WebClient kboWebClient;
+    @Autowired
+    private Counter kboLookupCounter;
 
     private static final Duration TIMEOUT = Duration.ofSeconds(15);
 
     public Optional<CompanyResponse> findCompany(String vatNumber) {
+        kboLookupCounter.increment();
         String normalizedVat = CompanyNumberUtil.normalizeVat(vatNumber);
         String html;
         try {

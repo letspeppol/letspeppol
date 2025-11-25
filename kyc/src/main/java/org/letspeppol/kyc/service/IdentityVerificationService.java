@@ -1,5 +1,6 @@
 package org.letspeppol.kyc.service;
 
+import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -34,6 +35,7 @@ public class IdentityVerificationService {
     private final JwtService jwtService;
     private final LetsPeppolProxyService letsPeppolProxyService;
     private final PasswordEncoder passwordEncoder;
+    private final Counter companyRegistrationCounter;
 
     public void verifyNotRegistered(String email) {
         if (userRepository.existsByEmail(email)) {
@@ -71,6 +73,7 @@ public class IdentityVerificationService {
         appService.register(req);
 
         log.info("Identity verified for email={} director={} serial={}", user.getEmail(), req.director().getName(), req.x509Certificate().getSerialNumber());
+        companyRegistrationCounter.increment();
         return user;
     }
 

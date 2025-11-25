@@ -1,0 +1,86 @@
+services:
+
+  minio:
+    image: minio/minio
+    command: "minio server /data"
+    environment:
+      - MINIO_ROOT_USER=mimir
+      - MINIO_ROOT_PASSWORD=supersecret
+      - MINIO_DEFAULT_BUCKETS=mimir
+    volumes:
+      - minio_data:/data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+
+  createbuckets:
+    image: minio/mc
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      sleep 3;
+      /usr/bin/mc alias set myminio http://minio:9000 mimir supersecret;
+      /usr/bin/mc mb mimir mimir-blocks mimir-alertmanager mimir-ruler;
+      /usr/bin/mc policy set public mimir mimir-blocks mimir-alertmanager mimir-ruler;
+      exit 0;
+      "
+
+  mimir:
+    image: grafana/mimir:latest
+    command: ["-config.file=/etc/mimir.yaml"]
+    hostname: mimir
+    depends_on:
+      - minio
+    volumes:
+      - ./mimir/config.yaml:/etc/mimir.yaml
+      - mimir_data:/data
+
+  alloy:
+    image: grafana/alloy:latest
+    container_name: alloy
+    ports:
+      - "3200:3200"      # KYC log-push endpoint
+    volumes:
+      - ./alloy/config.alloy:/etc/alloy/config.alloy
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: [ "run", "/etc/alloy/config.alloy" ]
+    # depends_on:
+      # - loki
+      # - mimir
+    networks:
+      - observability
+
+  loki:
+    image: grafana/loki:2.9.0
+    container_name: loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - loki_data:/loki
+    networks:
+      - observability
+
+  # grafana:
+  #   image: grafana/grafana:latest
+  #   container_name: grafana
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - grafana_data:/var/lib/grafana
+  #   depends_on:
+  #     - loki
+  #     - mimir
+  #   networks:
+  #     - observability
+
+networks:
+  observability:
+    driver: bridge
+
+volumes:
+  minio_data:
+  mimir_data:
+  grafana_data:
+  loki_data:
+  

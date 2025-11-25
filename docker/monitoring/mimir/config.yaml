@@ -1,0 +1,25 @@
+server:
+  log_level: info
+  http_listen_port: 9009
+
+common:
+  storage:
+    backend: s3
+    s3:
+      endpoint: minio:9000
+      access_key_id: mimir
+      secret_access_key: supersecret
+      bucket_name: mimir
+      insecure: true
+
+blocks_storage:
+  s3:
+    bucket_name: mimir-blocks
+
+alertmanager_storage:
+  s3:
+    bucket_name: mimir-alertmanager
+
+ruler_storage:
+  s3:
+    bucket_name: mimir-ruler

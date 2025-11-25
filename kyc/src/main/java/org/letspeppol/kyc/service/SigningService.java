@@ -11,6 +11,7 @@ import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.SignerProperties;
+import io.micrometer.core.instrument.Counter;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,6 +53,8 @@ public class SigningService {
     private static final SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
     private final IdentityVerificationService identityVerificationService;
     private final DirectorRepository directorRepository;
+    private final Counter prepareSigningCounter;
+    private final Counter finalizeSigningCounter;
 
     @Value("${kyc.data.dir:#{null}}")
     private String dataDirectory;
@@ -73,6 +76,7 @@ public class SigningService {
     }
 
     public PrepareSigningResponse prepareSigning(PrepareSigningRequest request) {
+        prepareSigningCounter.increment();
         TokenVerificationResponse tokenVerificationResponse = activationService.verify(request.emailToken());
         identityVerificationService.verifyNotRegistered(tokenVerificationResponse.email());
         log.info("Preparing PDF signing for company {} and email {}", tokenVerificationResponse.company().companyNumber(), tokenVerificationResponse.email());
@@ -147,6 +151,7 @@ public class SigningService {
     }
 
     public byte[] finalizeSign(FinalizeSigningRequest signingRequest) {
+        finalizeSigningCounter.increment();
         TokenVerificationResponse tokenVerificationResponse = activationService.verify(signingRequest.emailToken());
         log.info("Finalizing PDF signing for company {} and email {}", tokenVerificationResponse.company().companyNumber(), tokenVerificationResponse.email());
 

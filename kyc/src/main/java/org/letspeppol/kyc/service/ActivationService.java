@@ -1,8 +1,10 @@
 package org.letspeppol.kyc.service;
 
+import io.micrometer.core.instrument.Counter;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.letspeppol.kyc.dto.CompanyResponse;
 import org.letspeppol.kyc.dto.ConfirmCompanyRequest;
 import org.letspeppol.kyc.dto.TokenVerificationResponse;
 import org.letspeppol.kyc.exception.KycErrorCodes;
@@ -35,6 +37,8 @@ public class ActivationService {
     private final ActivationEmailTemplateProvider templateProvider;
     private final SecureRandom random = new SecureRandom();
     private final Duration ttl = Duration.ofHours(2);
+    private final Counter activationRequestedCounter;
+    private final Counter tokenVerificationCounter;
 
     @Value("${app.mail.activation.base-url}")
     private String baseUrl;
@@ -58,6 +62,7 @@ public class ActivationService {
         verificationRepository.save(verification);
         String langTag = LocaleUtil.extractLanguageTag(acceptLanguage);
         sendEmail(request.companyNumber(), request.email(), token, langTag);
+        activationRequestedCounter.increment();
     }
 
     // Backwards compatibility
@@ -73,11 +78,10 @@ public class ActivationService {
         if (verification.getExpiresAt().isBefore(Instant.now())) {
             throw new KycException(KycErrorCodes.TOKEN_EXPIRED);
         }
-        return new TokenVerificationResponse(
-            verification.getEmail(),
-            companyService.getByCompanyNumber(verification.getCompanyNumber())
-                .orElseThrow(() -> new NotFoundException(KycErrorCodes.COMPANY_NOT_FOUND))
-        );
+        CompanyResponse companyResponse = companyService.getByCompanyNumber(verification.getCompanyNumber())
+                .orElseThrow(() -> new NotFoundException(KycErrorCodes.COMPANY_NOT_FOUND));
+        tokenVerificationCounter.increment();
+        return new TokenVerificationResponse(verification.getEmail(), companyResponse);
     }
 
     public void setVerified(String token) {

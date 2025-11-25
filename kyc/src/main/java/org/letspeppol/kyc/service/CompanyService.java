@@ -1,5 +1,6 @@
 package org.letspeppol.kyc.service;
 
+import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
 import org.letspeppol.kyc.dto.CompanyResponse;
 import org.letspeppol.kyc.dto.DirectorDto;
@@ -25,6 +26,7 @@ public class CompanyService {
     private final KboLookupService kboLookupService;
     private final LetsPeppolProxyService letsPeppolProxyService;
     private final AppService appService;
+    private final Counter companyUnregistrationCounter;
 
     public Optional<CompanyResponse> getByCompanyNumber(String companyNumber) {
         Optional<Company> company = companyRepository.findByCompanyNumber(companyNumber);
@@ -79,5 +81,6 @@ public class CompanyService {
         companyRepository.save(company);
         //letsPeppolProxyService.unregisterCompany(token);
         appService.unregister(companyNumber);
+        companyUnregistrationCounter.increment();
     }
 }

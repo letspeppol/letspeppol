@@ -24,10 +24,11 @@ dependencies {
 	implementation 'org.springframework.security:spring-security-crypto'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
     implementation 'org.hibernate.orm:hibernate-community-dialects'
     implementation 'org.xerial:sqlite-jdbc:3.46.0.0'
 	implementation 'org.bouncycastle:bcprov-jdk18on:1.78.1'
-	implementation 'org.bouncycastle:bcpkix-jdk18on:1.78.1'
     implementation 'com.itextpdf:bouncy-castle-adapter:9.3.0'
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
@@ -35,6 +36,8 @@ dependencies {
     implementation 'com.itextpdf:itext-core:9.3.0'
     implementation 'org.jsoup:jsoup:1.18.1'
     implementation 'org.postgresql:postgresql:42.7.8'
+    implementation 'com.github.loki4j:loki-logback-appender:2.0.1'
+
 	compileOnly 'org.projectlombok:lombok:1.18.40'
 	annotationProcessor 'org.projectlombok:lombok:1.18.34'
 

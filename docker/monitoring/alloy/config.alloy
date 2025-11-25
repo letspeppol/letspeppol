@@ -1,0 +1,58 @@
+logging {
+  level = "info"
+}
+
+
+// =========
+// LOKI LOGS
+// =========
+
+loki.source.api "kyc_logs_api" {
+  http {
+    listen_address = "0.0.0.0"
+    listen_port    = 3200
+  }
+
+  labels = { 
+    "source" = "kyc",
+  }
+
+  forward_to = [loki.process.kyc_logs_process.receiver]
+}
+
+loki.process "kyc_logs_process" {
+  stage.static_labels {
+    values = {
+      source = "kyc",
+    }
+  }
+
+  forward_to = [loki.write.loki_writer.receiver]
+}
+
+loki.write "loki_writer" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}
+
+
+// ==================
+// PROMETHEUS METRICS
+// ==================
+
+prometheus.scrape "kyc_metrics" {
+  targets = [
+    {"__address__" = "kyc:8084"},
+  ]
+
+  scrape_interval = "15s"
+  metrics_path    = "/actuator/prometheus"
+  forward_to      = [prometheus.remote_write.prometheus_writer.receiver]
+}
+
+prometheus.remote_write "prometheus_writer" {
+  endpoint {
+    url = "http://prometheus:9090/api/v1/write"
+  }
+}
