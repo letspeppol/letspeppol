@@ -23,3 +23,7 @@ alertmanager_storage:
 ruler_storage:
   s3:
     bucket_name: mimir-ruler
+
+ingester:
+  ring:
+    replication_factor: 1

@@ -93,6 +93,9 @@ services:
       PROXY_API_URL: ${PROXY_API_URL}
       APP_API_URL: ${APP_API_URL}
       KYC_DATA_DIR: ${KYC_DATA_DIR}
+    networks:
+      - default
+      - observability
 
   ui:
     build:
@@ -117,3 +120,6 @@ volumes:
 networks:
   default:
     name: lp-network
+  observability:
+    external: true
+    name: observability

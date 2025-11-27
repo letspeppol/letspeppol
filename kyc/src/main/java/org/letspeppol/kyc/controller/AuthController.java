@@ -1,6 +1,7 @@
 package org.letspeppol.kyc.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.kyc.model.User;
 import org.letspeppol.kyc.service.JwtService;
 import org.letspeppol.kyc.service.UserService;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/jwt")
 @RequiredArgsConstructor
@@ -27,6 +29,7 @@ public class AuthController {
 
     @PostMapping("/auth")
     public ResponseEntity<String> auth(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        log.warn("Auth attempt with header: {}", authHeader);
         if (authHeader == null || !authHeader.startsWith("Basic ")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing or invalid Authorization header");
         }

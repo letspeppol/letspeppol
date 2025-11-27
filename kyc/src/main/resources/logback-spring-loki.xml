@@ -9,12 +9,12 @@
 
     <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
         <http>
-            <url>http://alloy:12345/loki/api/v1/push</url>
+            <url>http://localhost:3200/loki/api/v1/push</url>
         </http>
 
         <format>
             <label>
-                <pattern>app="springapp",service="backend",host="${HOSTNAME}"</pattern>
+                <pattern>app="kyc",service="kyc",environment="${SPRING_PROFILES_ACTIVE}",host="${HOSTNAME}"</pattern>
             </label>
 
             <message>

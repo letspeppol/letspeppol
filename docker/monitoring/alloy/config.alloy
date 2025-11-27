@@ -1,5 +1,5 @@
 logging {
-  level = "info"
+  level = "debug"
 }
 
 
@@ -43,16 +43,19 @@ loki.write "loki_writer" {
 
 prometheus.scrape "kyc_metrics" {
   targets = [
-    {"__address__" = "kyc:8084"},
+    {"__address__" = "172.17.0.1:8084"},
   ]
 
   scrape_interval = "15s"
   metrics_path    = "/actuator/prometheus"
-  forward_to      = [prometheus.remote_write.prometheus_writer.receiver]
+  forward_to      = [prometheus.remote_write.mimir_writer.receiver]
 }
 
-prometheus.remote_write "prometheus_writer" {
+prometheus.remote_write "mimir_writer" {
   endpoint {
-    url = "http://prometheus:9090/api/v1/write"
+    url = "http://mimir:9009/api/v1/push"
+    headers = {
+      "X-Scope-OrgID" = "1",
+    }
   }
 }
