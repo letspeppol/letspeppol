@@ -26,6 +26,10 @@ export class EmailConfirmation {
     private registrationSuccess = true;
     private agreedToContract = false;
     private step = 0;
+    private certificate;
+    private signatureAlgorithm;
+    private prepareSigningResponse;
+    private expanded = false;
 
     public loading(params: Params, next: RouteNode) {
         this.emailToken = next.queryParams.get('token');
@@ -42,20 +46,31 @@ export class EmailConfirmation {
     }
 
     getContractUrl() {
-        return `${this.kycApi.httpClient.baseUrl}/api/register/contract`;
+        return `${this.kycApi.httpClient.baseUrl}/api/register/contract/${this.confirmedDirector.id}?token=${this.emailToken}#page=1&view=FitH,300`;
+    }
+
+    expandContract() {
+        this.expanded = true;
+    }
+
+    minimizeContract() {
+        this.expanded = false;
     }
 
     public async confirmContract() {
         try {
-            const {
-                certificate,
-                supportedSignatureAlgorithms
-            } = await webeid.getSigningCertificate({lang: 'en'});
-
-            const {
-                signatureAlgorithm,
-                prepareSigningResponse
-            } = await this.prepareSigning(supportedSignatureAlgorithms, certificate);
+//             const {
+//                 certificate,
+//                 supportedSignatureAlgorithms
+//             } = await webeid.getSigningCertificate({lang: 'en'});
+//
+//             const {
+//                 signatureAlgorithm,
+//                 prepareSigningResponse
+//             } = await this.prepareSigning(supportedSignatureAlgorithms, certificate);
+            const certificate = this.certificate;
+            const signatureAlgorithm = this.signatureAlgorithm;
+            const prepareSigningResponse = this.prepareSigningResponse;
 
             const signResponse = await webeid.sign(
                 certificate,
@@ -117,7 +132,37 @@ export class EmailConfirmation {
     public async confirmDirector(director: Director) {
         if (this.confirmedDirector) return; // already confirmed one
         this.confirmedDirector = director;
-        this.step = 2;
+        try {
+            const {
+                certificate,
+                supportedSignatureAlgorithms
+            } = await webeid.getSigningCertificate({lang: 'en'});
+
+            const {
+                signatureAlgorithm,
+                prepareSigningResponse
+            } = await this.prepareSigning(supportedSignatureAlgorithms, certificate);
+
+            this.certificate = certificate;
+            this.signatureAlgorithm = signatureAlgorithm;
+            this.prepareSigningResponse = prepareSigningResponse;
+            this.step = 2;
+        } catch (error) {
+            let text = "Confirming Identity failed";
+            if (error instanceof Response) {
+                try {
+                    const j = await error.json();
+                    text = j?.message ?? `${error.status} ${error.statusText}`;
+                } catch {
+                    text = `${error.status} ${error.statusText}`;
+                }
+            } else if (error && typeof error === "object" && "message" in error) {
+                text = String((error as any).message);
+            }
+            this.ea.publish('alert', { alertType: AlertType.Danger, text });
+            this.confirmedDirector = undefined;
+        }
+
         return;
     }
 }

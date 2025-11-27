@@ -32,6 +32,7 @@ public class ActivationService {
     private final EmailVerificationRepository verificationRepository;
     private final JavaMailSender mailSender;
     private final CompanyService companyService;
+    private final IdentityVerificationService identityVerificationService;
     private final ActivationEmailTemplateProvider templateProvider;
     private final SecureRandom random = new SecureRandom();
     private final Duration ttl = Duration.ofHours(2);
@@ -73,6 +74,7 @@ public class ActivationService {
         if (verification.getExpiresOn().isBefore(Instant.now())) {
             throw new KycException(KycErrorCodes.TOKEN_EXPIRED);
         }
+        identityVerificationService.verifyNotRegistered(verification.getEmail());
         return new TokenVerificationResponse(
             verification.getEmail(),
             companyService.getByPeppolId(verification.getPeppolId())

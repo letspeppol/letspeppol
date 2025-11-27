@@ -4,5 +4,4 @@ public record PrepareSigningResponse(
         String hashToSign,
         String hashToFinalize,
         String hashFunction
-)
-{}
+) {}

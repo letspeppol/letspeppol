@@ -98,6 +98,7 @@
   },
   "confirmation": {
     "header": "Confirm Identity",
+    "header-sign": "Sign Contract",
     "loading": "Loading company details…",
     "company": "Company",
     "directors": "Directors",
@@ -114,7 +115,9 @@
     "anim-caption": "Insert your eID card and press confirm to sign.",
     "anim-reader-label": "READER",
     "anim-reader-sr": "Insert eID card into reader slot",
-    "confirm-button": "Confirm",
+    "expand-button": "Expand",
+    "minimize-button": "Minimize",
+    "sign-button": "Sign",
     "success-title": "Success!",
     "success-contract": "The signed contract can be found in your downloads folder",
     "success-login-prefix": "You can now"

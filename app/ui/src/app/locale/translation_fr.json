@@ -83,6 +83,7 @@
   },
   "confirmation": {
     "header": "Confirmer l'identité",
+    "header-sign": "Signer le contrat",
     "loading": "Chargement des détails de l'entreprise…",
     "company": "Entreprise",
     "directors": "Directeurs",
@@ -99,7 +100,9 @@
     "anim-caption": "Insérez votre carte eID et appuyez sur confirmer pour signer.",
     "anim-reader-label": "LECTEUR",
     "anim-reader-sr": "Insérer la carte eID dans le lecteur",
-    "confirm-button": "Confirmer",
+    "expand-button": "Agrandir",
+    "minimize-button": "Réduire",
+    "sign-button": "Signer",
     "success-title": "Succès !",
     "success-contract": "Le contrat signé se trouve dans votre dossier de téléchargements",
     "success-login-prefix": "Vous pouvez maintenant"

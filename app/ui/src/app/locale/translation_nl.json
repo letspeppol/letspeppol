@@ -81,6 +81,7 @@
   },
   "confirmation": {
     "header": "Identiteit bevestigen",
+    "header-sign": "Contract ondertekenen",
     "loading": "Bedrijfsgegevens laden…",
     "company": "Bedrijf",
     "directors": "Bestuurders",
@@ -97,7 +98,9 @@
     "anim-caption": "Steek uw eID-kaart in en druk op bevestigen om te ondertekenen.",
     "anim-reader-label": "LEZER",
     "anim-reader-sr": "Plaats eID-kaart in de lezerssleuf",
-    "confirm-button": "Bevestigen",
+    "expand-button": "Vergroten",
+    "minimize-button": "Verkleinen",
+    "sign-button": "Ondertekenen",
     "success-title": "Gelukt!",
     "success-contract": "Het ondertekende contract staat in uw downloadsmap",
     "success-login-prefix": "U kunt nu"
