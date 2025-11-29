@@ -157,6 +157,7 @@ public class ScradaService implements AccessPointServiceInterface {
 
     @Override
     public void receiveDocuments() {
+        System.out.print("?");
         try {
             UnconfirmedInboundDocuments unconfirmedInboundDocuments = scradaWebClient
                     .get()
