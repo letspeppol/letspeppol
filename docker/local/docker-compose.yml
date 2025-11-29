@@ -1,4 +1,8 @@
 services:
+  adminer:
+    image: adminer
+    restart: always
+
   db:
     image: postgres:16-alpine
     restart: unless-stopped
