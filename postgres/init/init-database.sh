@@ -4,6 +4,7 @@ set -e
 echo "[init] Starting database initialization"
 
 for db in APP KYC PROXY; do
+  db_lc=$(printf %s "$db" | tr '[:upper:]' '[:lower:]')
   user_var="${db}_USER"
   pass_var="${db}_PASS"
   db_name="$db_lc"
