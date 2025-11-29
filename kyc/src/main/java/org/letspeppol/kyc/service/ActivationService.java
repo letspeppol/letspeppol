@@ -49,6 +49,7 @@ public class ActivationService {
             log.warn("User with email {} tried to register for company {} but company was already registered", request.email(), request.peppolId());
             throw new KycException(KycErrorCodes.COMPANY_ALREADY_REGISTERED);
         }
+        identityVerificationService.verifyNotRegistered(request.email());
         String token = generateToken();
         EmailVerification verification = new EmailVerification(
                 request.email().toLowerCase(),

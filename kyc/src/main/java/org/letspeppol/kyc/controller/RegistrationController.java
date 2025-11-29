@@ -35,7 +35,7 @@ public class RegistrationController {
         return new SimpleMessage("Activation email sent (if delivery fails, check logs for link)");
     }
 
-    /// *Registration step 4* Generates contract for selected director to be signed
+    /// *Registration step 5* Generates contract for selected (i.e. step 4) director to be signed
     @GetMapping("/contract/{directorId}")
     public ResponseEntity<byte[]> getContract(@PathVariable Long directorId, @RequestParam String token) {
         TokenVerificationResponse tokenVerificationResponse = activationService.verify(token);

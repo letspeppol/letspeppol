@@ -20,7 +20,7 @@ public class IdentityVerificationController {
 
     private final SigningService signingService;
 
-    /// *Registration step 5* Generates contract hashes as preparation used for signing with Web eID (pdf gets a temporary signature placeholder). This happens right after the "Select a certificate" and before the "Signing" steps of Web eID
+    /// *Registration step 4* Generates contract hashes as preparation used for signing with Web eID (pdf gets a temporary signature placeholder). This happens right after the "Select a certificate" and before the "Signing" steps of Web eID
     @PostMapping("/sign/prepare")
     public PrepareSigningResponse prepare(@RequestBody PrepareSigningRequest request) {
         return signingService.prepareSigning(request);

@@ -238,7 +238,7 @@ public class UblDocumentService {
                 0,
                 null,
                 accessPoint,
-                accessPointId
+                accessPointId //Unique
         );
         ublDocument = ublDocumentRepository.save(ublDocument); //This is needed as it is a new
         try {

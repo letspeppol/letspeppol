@@ -29,7 +29,6 @@ export class EmailConfirmation {
     private certificate;
     private signatureAlgorithm;
     private prepareSigningResponse;
-    private expanded = false;
 
     public loading(params: Params, next: RouteNode) {
         this.emailToken = next.queryParams.get('token');
@@ -47,14 +46,6 @@ export class EmailConfirmation {
 
     getContractUrl() {
         return `${this.kycApi.httpClient.baseUrl}/api/register/contract/${this.confirmedDirector.id}?token=${this.emailToken}#page=1&view=FitH,300`;
-    }
-
-    expandContract() {
-        this.expanded = true;
-    }
-
-    minimizeContract() {
-        this.expanded = false;
     }
 
     public async confirmContract() {

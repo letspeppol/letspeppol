@@ -14,10 +14,10 @@ import java.security.cert.X509Certificate;
 public class PreSignatureContainer implements IExternalSignatureContainer {
     private PdfDictionary sigDic;
     private byte hash[];
-    private X509Certificate[] chain;
+//    private X509Certificate[] chain;
 
-    public PreSignatureContainer(X509Certificate[] chain) {
-        this.chain = chain;
+    public PreSignatureContainer() {//(X509Certificate[] chain) {
+//        this.chain = chain;
         sigDic = new PdfDictionary();
         sigDic.put(PdfName.Filter, PdfName.Adobe_PPKLite);
         sigDic.put(PdfName.SubFilter, PdfName.Adbe_pkcs7_detached);

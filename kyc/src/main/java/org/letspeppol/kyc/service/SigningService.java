@@ -33,6 +33,7 @@ import org.letspeppol.kyc.service.signing.CertificateUtil;
 import org.letspeppol.kyc.service.signing.EmbeddableSignatureUtil;
 import org.letspeppol.kyc.service.signing.FinalizeSignatureContainer;
 import org.letspeppol.kyc.service.signing.PreSignatureContainer;
+import org.letspeppol.kyc.util.NameMatchUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -58,7 +59,7 @@ public class SigningService {
     private final ActivationService activationService;
 
     public static final String LETS_PEPPOL_CONTRACT_TEMPLATE = "/docs/LetsPeppol_contract_template.pdf";
-    public static final String IDENTIFICATION_CONTENT = "%s, a private limited liability company incorporated according to Belgian law, " +
+    public static final String IDENTIFICATION_CONTENT = "%s, a legal entity according to Belgian law, " +
             "with registered office at %s, registered at the Belgian Crossroads Bank for Enterprises under number: %s, " +
             "hereby duly represented by her %s, %s;";
     public static final String SIGNATURE_CONTENT = "Digitally signed by %s [%s]\nDate: %s\nCompany: %s [%s]\nDirector: %s";
@@ -150,20 +151,22 @@ public class SigningService {
         byte[] preparedPdfBytes;
         String hashToFinalize = request.sha256();
         File preparedPdf = getGeneratedContractFileName(hashToFinalize);
+        X500Name x500Name;
         try (InputStream resource = new ByteArrayInputStream(generatedPdf);
-            PdfReader pdfReader = new PdfReader(resource);
-            OutputStream outputStream = new FileOutputStream(preparedPdf)) {
+             PdfReader pdfReader = new PdfReader(resource);
+             OutputStream outputStream = new FileOutputStream(preparedPdf)) {
 
             X509Certificate[] chain = CertificateUtil.getCertificateChain(request.certificate());
             log.debug("Certificate chain loaded with {} certificates", chain.length);
+            x500Name = CertificateUtil.getX500Name(chain);
 
             PdfSigner signer = new PdfSigner(pdfReader, outputStream, new StampingProperties().useAppendMode());
 
-            String signatureContent = getSignatureContent(chain, director);
+            String signatureContent = getSignatureContent(x500Name, director);
             SignerProperties signerProperties = getSignerProperties(signatureContent);
             signer.setSignerProperties(signerProperties);
 
-            PreSignatureContainer external = new PreSignatureContainer(chain);
+            PreSignatureContainer external = new PreSignatureContainer();//(chain);
             signer.signExternalContainer(external, 16000);
             preparedPdfBytes = external.getHash();
         } catch (Exception e) {
@@ -173,7 +176,7 @@ public class SigningService {
 
         String hash = Base64.getEncoder().encodeToString(preparedPdfBytes);
         log.info("Contract prepared for signing, hash length: {}", hash.length());
-        return new PrepareSigningResponse(hash, hashToFinalize, HASH_ALGORITHM);
+        return new PrepareSigningResponse(hash, hashToFinalize, HASH_ALGORITHM, isAllowedToSign(x500Name, director));
     }
 
     public static SignerProperties getSignerProperties(String signatureContent) throws IOException {
@@ -212,9 +215,7 @@ public class SigningService {
                 .setFieldName(SIGNING_FORMFIELD);
     }
 
-    private String getSignatureContent(X509Certificate[] chain, Director director) {
-        X500Principal principal = new X500Principal(chain[0].getSubjectX500Principal().getEncoded());
-        X500Name x500Name = new X500Name(principal.getName());
+    private static String getSignatureContent(X500Name x500Name, Director director) {
         String cn = getRDNName(x500Name, BCStyle.CN);
         String serialNumber = getRDNName(x500Name, BCStyle.SERIALNUMBER);
         String givenName = getRDNName(x500Name, BCStyle.GIVENNAME);
@@ -231,6 +232,13 @@ public class SigningService {
                 director.getCompany().getPeppolId(),
                 director.getName()
         );
+    }
+
+    public static boolean isAllowedToSign(X500Name x500Name, Director director) {
+        String givenName = getRDNName(x500Name, BCStyle.GIVENNAME);
+        String surName = getRDNName(x500Name, BCStyle.SURNAME);
+        String fullName = director.getName();
+        return NameMatchUtil.matches(givenName, surName, fullName);
     }
 
     public byte[] finalizeSign(FinalizeSigningRequest signingRequest) {
@@ -256,7 +264,8 @@ public class SigningService {
                 signingRequest.hashToSign(),
                 signingRequest.signature(),
                 signingRequest.certificate(),
-                certificates[0]
+                certificates[0],
+                CertificateUtil.getX500Name(certificates)
         );
         Account account = identityVerificationService.create(identityVerificationRequest);
         activationService.setVerified(signingRequest.emailToken());

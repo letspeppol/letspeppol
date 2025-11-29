@@ -24,7 +24,7 @@ public class AccountService {
     }
 
     public Account findAccountWithCredentials(String email, String password) {
-        Account account = accountRepository.findByEmail(email).orElseThrow(() -> new NotFoundException(KycErrorCodes.ACCOUNT_NOT_FOUND));
+        Account account = accountRepository.findByEmail(email.toLowerCase()).orElseThrow(() -> new NotFoundException(KycErrorCodes.ACCOUNT_NOT_FOUND));
         if (!passwordEncoder.matches(password, account.getPasswordHash())) {
             throw new KycException(KycErrorCodes.WRONG_PASSWORD);
         }

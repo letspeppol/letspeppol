@@ -33,7 +33,8 @@ export interface PrepareSigningRequest {
 export interface PrepareSigningResponse {
     hashToSign: string,
     hashToFinalize: string,
-    hashFunction: string
+    hashFunction: string,
+    allowedToSign: boolean
 }
 
 export interface FinalizeSigningRequest {

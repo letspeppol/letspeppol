@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.security.auth.x500.X500Principal;
 import java.security.cert.X509Certificate;
 import java.time.Instant;
-
+import static org.letspeppol.kyc.service.SigningService.isAllowedToSign;
 import static org.letspeppol.kyc.service.signing.CertificateUtil.getRDNName;
 
 @Transactional
@@ -34,7 +34,7 @@ public class IdentityVerificationService {
     private final PasswordEncoder passwordEncoder;
 
     public void verifyNotRegistered(String email) {
-        if (accountRepository.existsByEmail(email)) {
+        if (accountRepository.existsByEmail(email.toLowerCase())) {
             throw new KycException(KycErrorCodes.ACCOUNT_ALREADY_LINKED);
         }
     }
@@ -44,7 +44,7 @@ public class IdentityVerificationService {
 
         Account account = new Account();
         account.setName(req.director().getName());
-        account.setEmail(req.email());
+        account.setEmail(req.email().toLowerCase());
         account.setIdentityVerified(true);
         account.setIdentityVerifiedOn(Instant.now());
         account.setCreatedOn(Instant.now());
@@ -66,7 +66,12 @@ public class IdentityVerificationService {
         );
         accountIdentityVerificationRepository.save(accountIdentityVerification);
 
-        companyService.registerCompany(req.director().getCompany());
+        if (isAllowedToSign(req.x500Name(), req.director())) {
+            companyService.registerCompany(req.director().getCompany());
+        } else {
+            log.warn("Peppol not activated for email={} director={} signer={} {} serial={}", account.getEmail(), req.director().getName(), getRDNName(req.x500Name(), BCStyle.GIVENNAME), getRDNName(req.x500Name(), BCStyle.SURNAME), req.x509Certificate().getSerialNumber());
+            //TODO : email activation link to admin
+        }
 
         log.info("Identity verified for email={} director={} serial={}", account.getEmail(), req.director().getName(), req.x509Certificate().getSerialNumber());
         return account;

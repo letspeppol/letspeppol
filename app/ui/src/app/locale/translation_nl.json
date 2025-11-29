@@ -82,6 +82,7 @@
   "confirmation": {
     "header": "Identiteit bevestigen",
     "header-sign": "Contract ondertekenen",
+    "manual-confirmation-needed": "Uw contract vereist een handmatige controle, die tot 10 werkdagen kan duren. Houd uw e-mail in de gaten voor eventuele extra acties. Reden: de eID komt niet volledig overeen met de geselecteerde bestuurder.",
     "loading": "Bedrijfsgegevens laden…",
     "company": "Bedrijf",
     "directors": "Bestuurders",
