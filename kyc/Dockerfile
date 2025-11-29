@@ -8,6 +8,7 @@ COPY build.gradle settings.gradle ./
 RUN chmod +x gradlew
 
 # Warm dependency cache
+RUN ./gradlew --no-daemon dependencyManagement || true
 RUN ./gradlew --no-daemon build -x test || true
 
 COPY src src
@@ -25,13 +26,13 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Add the wait script
-COPY wait-for-db.sh /usr/local/bin/wait-for-db.sh
+COPY ../postgres/wait-for-db.sh /usr/local/bin/wait-for-db.sh
 RUN chmod +x /usr/local/bin/wait-for-db.sh
 
 # Override server port via Spring variable at runtime
 ENV SERVER_PORT=8084
 
-COPY --from=build /workspace/build/libs/kyc.jar app.jar
+COPY --from=build /workspace/build/libs/kyc.jar kyc.jar
 EXPOSE 8084
-ENTRYPOINT ["sh", "-c", "wait-for-db.sh java $JAVA_OPTS -Dserver.port=$SERVER_PORT -jar /app/app.jar"]
+ENTRYPOINT ["sh", "-c", "wait-for-db.sh java $JAVA_OPTS -Dserver.port=$SERVER_PORT -jar /kyc/kyc.jar"]
 
