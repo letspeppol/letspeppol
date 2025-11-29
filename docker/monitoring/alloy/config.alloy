@@ -43,7 +43,7 @@ loki.write "loki_writer" {
 
 prometheus.scrape "kyc_metrics" {
   targets = [
-    {"__address__" = "172.17.0.1:8084"},
+    {"__address__" = "172.17.0.1:8084"}, // 172.17.0.1:8084 for local KYC
   ]
 
   scrape_interval = "15s"

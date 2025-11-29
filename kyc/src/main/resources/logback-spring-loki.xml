@@ -8,19 +8,17 @@
     </appender>
 
     <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
+        <message>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level [%thread] %logger{36} - %msg%n</pattern>
+        </message>
         <http>
-            <url>http://localhost:3200/loki/api/v1/push</url>
+            <url>http://alloy:3200/loki/api/v1/push</url>
         </http>
-
-        <format>
-            <label>
-                <pattern>app="kyc",service="kyc",environment="${SPRING_PROFILES_ACTIVE}",host="${HOSTNAME}"</pattern>
-            </label>
-
-            <message>
-                <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level [%thread] %logger{36} - %msg%n</pattern>
-            </message>
-        </format>
+        <batch>
+            <maxItems>200</maxItems>
+            <timeoutMs>2000</timeoutMs>
+        </batch>
+        <verbose>true</verbose>
     </appender>
 
     <root level="INFO">

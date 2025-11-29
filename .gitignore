@@ -1,3 +1,5 @@
 .env
 acme.json
 **/var/
+.DS_store
+.idea

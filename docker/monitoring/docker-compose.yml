@@ -2,16 +2,16 @@ services:
 
   minio:
     image: minio/minio
-    command: "minio server /data"
+    command: "minio server --address ':9000' --console-address ':9001' /data"
     environment:
       - MINIO_ROOT_USER=mimir
       - MINIO_ROOT_PASSWORD=supersecret
       - MINIO_DEFAULT_BUCKETS=mimir
     volumes:
       - minio_data:/data
-    ports:
-      - "9000:9000"
-      - "9001:9001"
+#    ports:
+#      - "9000:9000"
+#      - "9001:9001"
     networks:
       - observability
 
@@ -23,8 +23,9 @@ services:
       /bin/sh -c "
       sleep 3;
       /usr/bin/mc alias set myminio http://minio:9000 mimir supersecret;
-      /usr/bin/mc mb mimir mimir-blocks mimir-alertmanager mimir-ruler;
-      /usr/bin/mc policy set public mimir mimir-blocks mimir-alertmanager mimir-ruler;
+      /usr/bin/mc mb myminio/mimir myminio/mimir-blocks myminio/mimir-alertmanager myminio/mimir-ruler 
+      /usr/bin/mc mb myminio/loki-data myminio/loki-ruler;
+      #/usr/bin/mc policy set public mimir mimir-blocks mimir-alertmanager mimir-ruler loki-data loki-ruler;
       exit 0;
       "
     networks:
@@ -37,8 +38,10 @@ services:
     depends_on:
       - minio
     volumes:
-      - ./mimir/config.yaml:/etc/mimir.yaml
+      - ./mimir/config.yml:/etc/mimir.yaml
       - mimir_data:/data
+#    ports:
+#      - "9009:9009"
     networks:
       - observability
 
@@ -51,28 +54,30 @@ services:
       - ./alloy/config.alloy:/etc/alloy/config.alloy
       - /var/run/docker.sock:/var/run/docker.sock
     command: [ "run", "/etc/alloy/config.alloy", "--server.http.listen-addr=0.0.0.0:12345" ]
-    # depends_on:
-      # - loki
-      # - mimir
+    depends_on:
+      - loki
+      - mimir
     networks:
       - observability
 
   loki:
-    image: grafana/loki:2.9.0
-    ports:
-      - "3100:3100"
+    image: grafana/loki:latest
+#    ports:
+#      - "3100:3100"
     volumes:
+      - ./loki/config.yml:/etc/loki/config.yml
       - loki_data:/loki
+    command: -config.file=/etc/loki/config.yml
     networks:
       - observability
 
   grafana:
-    image: grafana/grafana:10.2.2
+    image: grafana/grafana:latest
     ports:
       - "3000:3000"
     environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASS:-admin}
     volumes:
       - grafana_data:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning
