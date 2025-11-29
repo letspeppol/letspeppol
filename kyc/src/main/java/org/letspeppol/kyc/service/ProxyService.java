@@ -16,9 +16,6 @@ import reactor.core.publisher.Mono;
 @Service
 public class ProxyService {
 
-    @Value("${proxy.enabled}")
-    private boolean proxyEnabled;
-
     @Qualifier("ProxyWebClient")
     @Autowired
     private WebClient webClient;
@@ -36,9 +33,6 @@ public class ProxyService {
     }
 
     public boolean registerCompany(String token, String companyName) {
-        if (!proxyEnabled) {
-            return false;
-        }
         try {
             RegistryDto registryDto = this.webClient.post()
                     .uri("/sapi/registry")
@@ -57,9 +51,6 @@ public class ProxyService {
     }
 
     public boolean unregisterCompany(String token) {
-        if (!proxyEnabled) { //TODO : do we still need this ?
-            return false;
-        }
         try {
             RegistryDto registryDto = this.webClient.put()
                     .uri("/sapi/registry/suspend")

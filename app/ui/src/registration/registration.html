@@ -2,7 +2,7 @@
 <import from="../components/stepper/stepper"></import>
 
 <wizard-view>
-    <stepper au-slot="stepper" steps.bind="[1,2,3,4]" completed-steps.bind="step"></stepper>
+    <stepper au-slot="stepper" steps.bind="[1,2,3,4,5]" completed-steps.bind="step"></stepper>
     <h1 if.bind="step === 0" au-slot="header" t="registration.title-step0">Register your company</h1>
     <form if.bind="step === 0" class="auth-form">
         <div class="information" t="confirmation.belgian-only">Currently, we only activate Belgian companies. Please contact us if you’d like support for other countries.</div>
