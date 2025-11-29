@@ -15,7 +15,7 @@ COPY src src
 RUN ./gradlew --no-daemon clean bootJar -x test
 
 FROM eclipse-temurin:21-jre AS runtime
-WORKDIR /app
+WORKDIR /kyc
 ENV SPRING_PROFILES_ACTIVE=postgres \
     JAVA_OPTS="" \
     SERVER_PORT=8084
