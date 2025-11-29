@@ -6,6 +6,7 @@ echo "[init] Starting database initialization"
 for db in APP KYC PROXY; do
   user_var="${db}_USER"
   pass_var="${db}_PASS"
+  db_name="$db_lc"
 
   DB_USER="$(printenv "$user_var" || true)"
   DB_PASS="$(printenv "$pass_var" || true)"
@@ -28,13 +29,13 @@ for db in APP KYC PROXY; do
   fi
 
   # Ensure databases exist and have correct owner
-  DB_EXISTS=$(psql -U "$POSTGRES_USER" -tAc "SELECT 1 FROM pg_database WHERE datname='${db}'" || true)
+  DB_EXISTS=$(psql -U "$POSTGRES_USER" -tAc "SELECT 1 FROM pg_database WHERE datname='${db_name}'" || true)
   if [ "$DB_EXISTS" = "1" ]; then
-    echo "[init] Database $db exists -> ensuring owner ${DB_USER}"
-    psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -c "ALTER DATABASE \"${db}\" OWNER TO \"${DB_USER}\";"
+    echo "[init] Database $db_name exists -> ensuring owner ${DB_USER}"
+    psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -c "ALTER DATABASE \"${db_name}\" OWNER TO \"${DB_USER}\";"
   else
-    echo "[init] Creating database $db owned by $DB_USER"
-    psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -c "CREATE DATABASE \"${db}\" OWNER \"${DB_USER}\";"
+    echo "[init] Creating database $db_name owned by $DB_USER"
+    psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -c "CREATE DATABASE \"${db_name}\" OWNER \"${DB_USER}\";"
   fi
 done
 
