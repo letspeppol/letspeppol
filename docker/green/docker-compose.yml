@@ -77,7 +77,7 @@ services:
       MAIL_USER: ${MAIL_USER}
       MAIL_PASS: ${MAIL_PASS}
       MAIL_FROM: ${MAIL_FROM}
-      UI_URL: ${UI_BLUE_URL}
+      UI_URL: ${UI_GREEN_URL}
       PROXY_API_URL: ${PROXY_API_URL}
       KYC_DATA_DIR: ${KYC_DATA_DIR}
     healthcheck:
