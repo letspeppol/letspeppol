@@ -26,7 +26,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Add the wait script
-COPY ../postgres/run/wait-for-db.sh /usr/local/bin/wait-for-db.sh
+COPY wait-for-db.sh /usr/local/bin/wait-for-db.sh
 RUN chmod +x /usr/local/bin/wait-for-db.sh
 
 # Override server port via Spring variable at runtime
