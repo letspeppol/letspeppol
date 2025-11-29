@@ -10,5 +10,5 @@ public final class AppErrorCodes {
     public static final String PEPPOL_DIR_400_ERROR = "PEPPOL_DIR_400_ERROR";
     public static final String PEPPOL_DIR_500_ERROR = "PEPPOL_DIR_500_ERROR";
     public static final String PEPPOL_DIR_RATE_LIMIT_ERROR = "PEPPOL_DIR_RATE_LIMIT_ERROR";
-    public static final String PROXY_REST_ERROR = "PROXY_REST_ERROR";
+    public static final String KYC_REST_ERROR = "KYC_REST_ERROR";
 }

@@ -59,7 +59,7 @@ public class CompanyService {
             return CompanyMapper.toDto(register(accountInfo));
         } catch (Exception ex) {
             log.error("Call to KYC /api/company failed", ex);
-            throw new AppException(AppErrorCodes.PROXY_REST_ERROR);
+            throw new AppException(AppErrorCodes.KYC_REST_ERROR);
         }
     }
 
