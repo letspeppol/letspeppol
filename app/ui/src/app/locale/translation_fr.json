@@ -84,7 +84,7 @@
   "confirmation": {
     "header": "Confirmer l'identité",
     "header-sign": "Signer le contrat",
-    "belgian-only": "Pour l’instant, nous n’activons que des entreprises belges. <br /> Vous voulez votre pays pris en charge ? <a href=\"mailto:languages@letspeppol.org\">Aidez-nous</a>",
+    "belgian-only": "Pour l’instant, nous n’activons que des entreprises belges. <br /> Vous voulez votre pays pris en charge ? <a href=\"mailto:country@letspeppol.org\">Aidez-nous</a>",
     "manual-confirmation-needed": "Votre contrat nécessite une vérification manuelle, ce qui peut prendre jusqu’à 10 jours ouvrables. <br /> Veuillez surveiller votre e-mail pour d’éventuelles actions supplémentaires. <br /> Raison : l’eID ne correspond pas entièrement à l’administrateur sélectionné.",
     "loading": "Chargement des détails de l'entreprise…",
     "company": "Entreprise",
