@@ -1,9 +1,6 @@
-
-name: lp
 services:
   db:
     image: postgres:16-alpine
-    container_name: lp-postgres
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
@@ -11,11 +8,9 @@ services:
       POSTGRES_DB: postgres
       DB_USER: ${DB_USER}
       DB_PASS: ${DB_PASS}
-    ports:
-      - "5432:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
-      - ./postgres:/docker-entrypoint-initdb.d:ro
+      - ../../postgres:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 5s
@@ -25,7 +20,7 @@ services:
 
   proxy:
     build:
-      context: ./proxy
+      context: ../../proxy
       dockerfile: Dockerfile
     image: lp-proxy:latest
     depends_on:
@@ -40,7 +35,7 @@ services:
       DATABASE_URL: ${DATABASE_URL}
       ACCESS_TOKEN_KEY: ${ACCESS_TOKEN_KEY}
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${PROXY_PORT:-8086}/v2/"]
+      test: ["CMD", "curl", "-f", "http://proxy:${PROXY_PORT:-8086}/v2/"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -48,7 +43,7 @@ services:
 
   app:
     build:
-      context: ./app/backend
+      context: ../../app/backend
       dockerfile: Dockerfile
     image: lp-app:latest
     depends_on:
@@ -70,7 +65,7 @@ services:
 
   kyc:
     build:
-      context: ./kyc
+      context: ../../kyc
       dockerfile: Dockerfile
     image: lp-kyc:latest
     depends_on:
@@ -99,8 +94,10 @@ services:
 
   ui:
     build:
-      context: ./app/ui
+      context: ../../app/ui
       dockerfile: Dockerfile
+      args:
+        ENVIRONMENT: local
     image: lp-ui:latest
     depends_on:
       - app
@@ -110,7 +107,7 @@ services:
       - "${UI_PORT:-3000}:80"
       - "443:443"
     volumes:
-      - /var/lib/acme/:/etc/nginx/ssl/:ro
+      - ./var/lib/acme/:/etc/nginx/ssl/:ro
 
 volumes:
   db-data:
