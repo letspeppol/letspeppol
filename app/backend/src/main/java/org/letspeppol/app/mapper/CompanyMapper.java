@@ -7,7 +7,7 @@ public class CompanyMapper {
 
     public static CompanyDto toDto(Company company) {
         return new CompanyDto(
-                company.getCompanyNumber(),
+                company.getPeppolId(),
                 company.getVatNumber(),
                 company.getName(),
                 company.getSubscriber(),

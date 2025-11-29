@@ -8,10 +8,10 @@ public final class KycErrorCodes {
     public static final String TOKEN_NOT_FOUND = "token_not_found";
     public static final String TOKEN_ALREADY_VERIFIED = "token_already_verified";
     public static final String TOKEN_EXPIRED = "token_expired";
-    // User
-    public static final String USER_NOT_FOUND = "user_not_found";
+    // Account
+    public static final String ACCOUNT_NOT_FOUND = "account_not_found";
     public static final String WRONG_PASSWORD = "wrong_password";
-    public static final String USER_ALREADY_LINKED = "user_already_linked"; // restored
+    public static final String ACCOUNT_ALREADY_LINKED = "account_already_linked"; // restored
     // Password reset
     public static final String PASSWORD_RESET_TOKEN_NOT_FOUND = "password_reset_token_not_found";
     public static final String PASSWORD_RESET_TOKEN_EXPIRED = "password_reset_token_expired";
@@ -20,6 +20,7 @@ public final class KycErrorCodes {
     // Proxy
     public static final String PROXY_REGISTRATION_FAILED = "proxy_registration_failed";
     public static final String PROXY_UNREGISTRATION_FAILED = "proxy_unregistration_failed";
+    public static final String PROXY_FAILED = "proxy_failed";
     // KBO
     public static final String KBO_PARSE_ADDRESS_FAILED = "kbo_parse_address_failed";
     public static final String KBO_PARSE_DIRECTORS_FAILED = "kbo_parse_directors_failed";

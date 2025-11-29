@@ -1,32 +1,37 @@
-# Environment variables
-.env
-
-# Logs
-logs
-*.log
-npm-debug.log*
-
-# Dependencies
-node_modules/
-
-# Coverage
-coverage
-
-# Transpiled files
+HELP.md
+.gradle
 build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
 
-# VS Code
-.vscode
-!.vscode/tasks.js
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
 
-# JetBrains IDEs
-.idea/
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
 
-# Optional npm cache directory
-.npm
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
 
-# Optional eslint cache
-.eslintcache
-
-# Misc
-.DS_Store
+### VS Code ###
+.vscode/

@@ -3,9 +3,9 @@ import {singleton} from "aurelia";
 import {AppApi} from "./app-api";
 
 export interface CompanyDto {
-    name: string,
-    companyNumber: string,
+    peppolId: string,
     vatNumber: string,
+    name: string,
     subscriber: string,
     subscriberEmail: string,
     paymentTerms: string,
@@ -29,12 +29,12 @@ export class CompanyService {
     public myCompany: CompanyDto;
 
     async getAndSetMyCompanyForToken() : Promise<CompanyDto> {
-        this.myCompany = await this.appApi.httpClient.get(`/api/company`).then(response => response.json());
+        this.myCompany = await this.appApi.httpClient.get(`/sapi/company`).then(response => response.json());
         return Promise.resolve(this.myCompany);
     }
 
     async updateCompany(company: CompanyDto) {
-        const response = await this.appApi.httpClient.put(`/api/company`, JSON.stringify(company) );
+        const response = await this.appApi.httpClient.put(`/sapi/company`, JSON.stringify(company) );
         this.myCompany = await response.json();
         return Promise.resolve(this.myCompany);
     }

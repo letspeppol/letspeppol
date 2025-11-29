@@ -7,36 +7,67 @@ import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.IExternalSignatureContainer;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.SignerProperties;
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
+import org.apache.pdfbox.pdmodel.interactive.form.PDTextField;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.file.Path;
 
 import static org.letspeppol.kyc.service.SigningService.SIGNATURE_CONTENT;
 import static org.letspeppol.kyc.service.SigningService.getSignerProperties;
 
-@Disabled
+//@Disabled
 public class PdfSignatureAppearanceTest {
 
     @Test
+    public void fillPdf() throws Exception {
+        File filledPdf = Path.of("contract_en_filled.pdf").toFile(); //System.getProperty("java.io.tmpdir"),
+        try (InputStream resource = getClass().getResourceAsStream("/docs/LetsPeppol_contract_template.pdf")) {
+            if (resource == null) throw new FileNotFoundException("Classpath resource not found: /docs/LetsPeppol_contract_template.pdf");
+            byte[] bytes = resource.readAllBytes();
+
+            try (PDDocument doc = Loader.loadPDF(bytes)) {
+                PDAcroForm form = doc.getDocumentCatalog().getAcroForm();
+                if (form == null) throw new IllegalStateException("Template has no AcroForm fields");
+
+                form.getField("company").setValue("Banana Corp");
+                form.getField("identification").setValue(
+                        "Banana Corp, a private limited liability company incorporated according to Belgian law, " +
+                        "with registered office at Kerkstraat 42, 1234 Brullelijk, registered at the " +
+                        "Belgian Crossroads Bank for Enterprises under number: 1234.567.890, "+
+                        "hereby duly represented by her director, Wout Schattebout;");
+                form.getField("representative").setValue("Wout Schattebout");
+                form.getField("title").setValue("Director");
+
+                form.refreshAppearances();   // PDFBox 3: regenerate form appearances
+                form.flatten(); //final, non-form PDF
+
+                try (var baos = new FileOutputStream(filledPdf)) {
+                    doc.save(baos);
+                }
+            }
+        }
+    }
+
+    @Test
     public void generatePdf() throws Exception {
-        File preparedPdf = Path.of(System.getProperty("java.io.tmpdir"), "contract_en_prepared.pdf").toFile();
-        try (InputStream resource = getClass().getResourceAsStream("/docs/contract_en.pdf");
+        File preparedPdf = Path.of("contract_en_prepared.pdf").toFile(); //System.getProperty("java.io.tmpdir"),
+        try (InputStream resource = getClass().getResourceAsStream("/docs/LetsPeppol_contract_template.pdf");
              PdfReader pdfReader = new PdfReader(resource);
              OutputStream outputStream = new FileOutputStream(preparedPdf)) {
 
             PdfSigner signer = new PdfSigner(pdfReader, outputStream, new StampingProperties().useAppendMode());
 
             String content = SIGNATURE_CONTENT.formatted(
-                    "Wout Schattebout",
+                    "Wout Schattebout Meteenenormelangenaamdielimietentest",
                     "860807344109",
                     "09/09/2025 15:21:11",
+                    "Big Bad Bunny Boss Bringing Banana Boat Business Bv",
                     "01234556789",
-                    "Wout Peter Schattebout"
+                    "Wout Peter Schattebout Meteenenormelangenaamdielimietentest"
             );
 
             SignerProperties signerProperties = getSignerProperties(content);

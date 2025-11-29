@@ -6,11 +6,15 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: postgres
-      DB_USER: ${DB_USER}
-      DB_PASS: ${DB_PASS}
+      APP_USER: ${APP_USER}
+      APP_PASS: ${APP_PASS}
+      KYC_USER: ${KYC_USER}
+      KYC_PASS: ${KYC_PASS}
+      PROXY_USER: ${PROXY_USER}
+      PROXY_PASS: ${PROXY_PASS}
     volumes:
       - db-data:/var/lib/postgresql/data
-      - ../../postgres:/docker-entrypoint-initdb.d:ro
+      - ../../postgres/init:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 5s
@@ -27,19 +31,21 @@ services:
       db:
         condition: service_healthy
     environment:
-      PORT: ${PROXY_PORT:-8086}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${PROXY_USER}
+      DB_PASS: ${PROXY_PASS}
+      SCRADA_API_URL: ${SCRADA_API_URL}
       SCRADA_API_KEY: ${SCRADA_API_KEY}
       SCRADA_API_PWD: ${SCRADA_API_PWD}
       SCRADA_COMPANY_ID: ${SCRADA_COMPANY_ID}
       SCRADA_COMPANY_KEY: ${SCRADA_COMPANY_KEY}
-      DATABASE_URL: ${DATABASE_URL}
+      E_INVOICE_API_URL: ${E_INVOICE_API_URL}
+      E_INVOICE_ORGANISATION_API_URL: ${E_INVOICE_ORGANISATION_API_URL}
+      E_INVOICE_ORGANISATION_API_KEY: ${E_INVOICE_ORGANISATION_API_KEY}
       ACCESS_TOKEN_KEY: ${ACCESS_TOKEN_KEY}
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://proxy:${PROXY_PORT:-8086}/v2/"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-      start_period: 5s
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
 
   app:
     build:
@@ -49,17 +55,14 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      proxy:
-        condition: service_healthy
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}
-      DB_USER: ${DB_USER}
-      DB_PASS: ${DB_PASS}
+      DB_USER: ${APP_USER}
+      DB_PASS: ${APP_PASS}
       ACCESS_TOKEN_KEY: ${ACCESS_TOKEN_KEY}
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
-      PROXY_API_URL: ${PROXY_API_URL}
       OPEN_COLLECTIVE_API_KEY: ${OPEN_COLLECTIVE_API_KEY}
       DOCUMENT_PRICE: ${DOCUMENT_PRICE}
 
@@ -71,14 +74,12 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      proxy:
-        condition: service_healthy
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}
-      DB_USER: ${DB_USER}
-      DB_PASS: ${DB_PASS}
+      DB_USER: ${KYC_USER}
+      DB_PASS: ${KYC_PASS}
       SERVER_PORT: ${KYC_PORT:-8084}
       ACCESS_TOKEN_KEY: ${ACCESS_TOKEN_KEY}
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
@@ -89,7 +90,6 @@ services:
       MAIL_FROM: ${MAIL_FROM}
       UI_URL: ${UI_URL}
       PROXY_API_URL: ${PROXY_API_URL}
-      APP_API_URL: ${APP_API_URL}
       KYC_DATA_DIR: ${KYC_DATA_DIR}
 
   ui:

@@ -6,11 +6,15 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: postgres
-      DB_USER: ${DB_USER}
-      DB_PASS: ${DB_PASS}
+      APP_USER: ${APP_USER}
+      APP_PASS: ${APP_PASS}
+      KYC_USER: ${KYC_USER}
+      KYC_PASS: ${KYC_PASS}
+      PROXY_USER: ${PROXY_USER}
+      PROXY_PASS: ${PROXY_PASS}
     volumes:
       - db-data:/var/lib/postgresql/data
-      - ../../postgres:/docker-entrypoint-initdb.d:ro
+      - ../../postgres/init:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 5s

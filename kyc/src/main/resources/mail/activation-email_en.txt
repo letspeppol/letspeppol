@@ -1,6 +1,6 @@
 Hello,
 
-We received a request to verify an email address for company {{companyNumber}}.
+We received a request to verify an email address for company {{vatNumber}}.
 
 To complete verification, click the link below (valid for 2 hours):
 {{activationLink}}

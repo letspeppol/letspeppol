@@ -4,12 +4,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.KycException;
+import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.model.PasswordResetToken;
-import org.letspeppol.kyc.model.User;
 import org.letspeppol.kyc.model.kbo.Company;
 import org.letspeppol.kyc.repository.CompanyRepository;
 import org.letspeppol.kyc.repository.PasswordResetTokenRepository;
-import org.letspeppol.kyc.repository.UserRepository;
+import org.letspeppol.kyc.repository.AccountRepository;
 import org.letspeppol.kyc.service.PasswordResetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,59 +29,60 @@ class PasswordResetServiceTests {
     @Autowired
     PasswordResetTokenRepository tokenRepository;
     @Autowired
-    UserRepository userRepository;
+    AccountRepository accountRepository;
     @Autowired
     CompanyRepository companyRepository;
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    private User user;
+    private Account account;
 
     @BeforeEach
     void setup() {
         tokenRepository.deleteAll();
-        userRepository.deleteAll();
+        accountRepository.deleteAll();
         companyRepository.deleteAll();
-        Company company = new Company("BE0123456789", "TestCo", "City", "1000", "Street", "1");
+        Company company = new Company("0208:0123456789", "BE0123456789", "TestCo", "City", "1000", "Street", "1");
         companyRepository.save(company);
-        user = User.builder()
+        account = Account.builder()
+                .name("John Doe")
                 .email("user@example.com")
                 .company(company)
                 .passwordHash(passwordEncoder.encode("initialPassword123"))
                 .build();
-        userRepository.save(user);
+        accountRepository.save(account);
     }
 
     @Test
-    void requestResetCreatesTokenForExistingUser() {
-        passwordResetService.requestReset(user.getEmail());
+    void requestResetCreatesTokenForExistingAccount() {
+        passwordResetService.requestReset(account.getEmail());
         assertThat(tokenRepository.findAll()).hasSize(1);
         PasswordResetToken token = tokenRepository.findAll().get(0);
-        assertThat(token.getUser().getId()).isEqualTo(user.getId());
+        assertThat(token.getAccount().getId()).isEqualTo(account.getId());
     }
 
     @Test
-    void requestResetDoesNothingForUnknownUser() {
+    void requestResetDoesNothingForUnknownAccount() {
         passwordResetService.requestReset("missing@example.com");
         assertThat(tokenRepository.findAll()).isEmpty();
     }
 
     @Test
     void resetPasswordHappyPathMarksTokenUsedAndChangesPassword() {
-        passwordResetService.requestReset(user.getEmail());
+        passwordResetService.requestReset(account.getEmail());
         PasswordResetToken token = tokenRepository.findAll().get(0);
         passwordResetService.resetPassword(token.getToken(), "newStrongPassword!");
         PasswordResetToken updated = tokenRepository.findById(token.getId()).orElseThrow();
-        assertThat(updated.getUsedAt()).isNotNull();
-        User refreshed = userRepository.findById(user.getId()).orElseThrow();
+        assertThat(updated.getUsedOn()).isNotNull();
+        Account refreshed = accountRepository.findById(account.getId()).orElseThrow();
         assertThat(passwordEncoder.matches("newStrongPassword!", refreshed.getPasswordHash())).isTrue();
     }
 
     @Test
     void resetPasswordRejectsExpiredToken() {
-        passwordResetService.requestReset(user.getEmail());
+        passwordResetService.requestReset(account.getEmail());
         PasswordResetToken token = tokenRepository.findAll().get(0);
-        token.setExpiresAt(Instant.now().minus(2, ChronoUnit.HOURS));
+        token.setExpiresOn(Instant.now().minus(2, ChronoUnit.HOURS));
         tokenRepository.save(token);
         assertThatThrownBy(() -> passwordResetService.resetPassword(token.getToken(), "anotherPassword123"))
                 .isInstanceOf(KycException.class)
@@ -90,7 +91,7 @@ class PasswordResetServiceTests {
 
     @Test
     void resetPasswordRejectsUsedToken() {
-        passwordResetService.requestReset(user.getEmail());
+        passwordResetService.requestReset(account.getEmail());
         PasswordResetToken token = tokenRepository.findAll().get(0);
         passwordResetService.resetPassword(token.getToken(), "newStrongPassword!");
         assertThatThrownBy(() -> passwordResetService.resetPassword(token.getToken(), "secondTryPassword"))
@@ -100,7 +101,7 @@ class PasswordResetServiceTests {
 
     @Test
     void resetPasswordRejectsWeakPassword() {
-        passwordResetService.requestReset(user.getEmail());
+        passwordResetService.requestReset(account.getEmail());
         PasswordResetToken token = tokenRepository.findAll().get(0);
         assertThatThrownBy(() -> passwordResetService.resetPassword(token.getToken(), "123"))
                 .isInstanceOf(KycException.class)
@@ -109,11 +110,11 @@ class PasswordResetServiceTests {
 
     @Test
     void purgeExpiredRemovesExpiredUnusedTokens() {
-        passwordResetService.requestReset(user.getEmail());
+        passwordResetService.requestReset(account.getEmail());
         PasswordResetToken token1 = tokenRepository.findAll().get(0);
-        token1.setExpiresAt(Instant.now().minus(90, ChronoUnit.MINUTES));
+        token1.setExpiresOn(Instant.now().minus(90, ChronoUnit.MINUTES));
         tokenRepository.save(token1);
-        passwordResetService.requestReset(user.getEmail());
+        passwordResetService.requestReset(account.getEmail());
         long purged = passwordResetService.purgeExpired();
         assertThat(purged).isEqualTo(1L);
         assertThat(tokenRepository.findAll()).hasSize(1);

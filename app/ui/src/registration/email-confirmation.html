@@ -3,7 +3,8 @@
 
 <wizard-view>
     <stepper if.bind="step !== 3" au-slot="stepper" steps.bind="[1,2,3,4,5]" completed-steps.bind="step+2"></stepper>
-    <h1 au-slot="header" t="confirmation.header">Confirm Identity</h1>
+    <h1 au-slot="header" t="confirmation.header" if.bind="step === 1">Confirm Identity</h1>
+    <h1 au-slot="header" t="confirmation.header-sign" if.bind="step === 2">Sign Contract</h1>
     <template if.bind="errorMessage">
         <div class="alert error">${errorMessage}</div>
     </template>
@@ -13,11 +14,11 @@
     <form class="auth-form" if.bind="tokenVerificationResponse">
         <div class="confirmation-layout" if.bind="step === 1">
             <div>
-                <h3 t="confirmation.company">Company</h3>
+                <h3 t="confirmation.company">1. Verify the company</h3>
                 <div class="grid single">
                     <label class="field full">
                         <span t="label.vat-number">VAT number</span>
-                        <input name="tokenVerificationResponse.companyNumber" type="text" readonly value.bind="tokenVerificationResponse.company.companyNumber"/>
+                        <input name="tokenVerificationResponse.vatNumber" type="text" readonly value.bind="tokenVerificationResponse.company.vatNumber"/>
                     </label>
                     <label class="field full">
                         <span t="label.name">Name</span>
@@ -25,9 +26,11 @@
                     </label>
                 </div>
             </div>
-            <div class="vertical-separator" if.bind="!confirmedDirector"></div>
+
+            <div class="vertical-separator"></div>
+
             <div class="directors-section">
-                <h3 t="confirmation.directors">Directors</h3>
+                <h3 t="confirmation.directors">2. Select the director</h3>
                 <div class="directors-layout">
                     <div class="directors-table-col">
                         <template if.bind="tokenVerificationResponse.company.directors.length">
@@ -61,9 +64,38 @@
                     </div>
                 </div>
             </div>
+
+            <div class="vertical-separator"></div>
+
+            <div>
+                <h3 t="confirmation.sign-eid-title">3. Validate with eID of the director</h3>
+                <div class="eid-anim-col" style="width: 100%">
+                    <p class="anim-caption" t="confirmation.anim-caption">Insert your eID card and press confirm to validate your ID.</p>
+                    <div class="eid-sign-illustration" class.signed.bind="confirmedDirector">
+                        <div class="eid-card">
+                            <div class="chip"></div>
+                            <div class="photo"></div>
+                            <div class="lines line-1"></div>
+                            <div class="lines line-2"></div>
+                            <div class="signature-progress">
+                                <div class="sig-line"></div>
+                                <div class="sig-line delay"></div>
+                            </div>
+                            <div class="check-mark"></div>
+                        </div>
+                        <div class="card-reader vertical">
+                            <div class="reader-slot"></div>
+                            <span class="reader-label" t="confirmation.anim-reader-label">READER</span>
+                            <div class="status-led"></div>
+<!--                            <span class="sr-only" t="confirmation.anim-reader-sr">Insert eID card into reader slot</span>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div if.bind="step === 2" style="display: flex; flex-direction: column; gap: 1rem; align-items: center">
+            <div class="information" t="confirmation.manual-confirmation-needed" if.bind="!prepareSigningResponse.allowedToSign">Your contract requires manual review.</div>
             <div class="confirmation-layout" style="justify-content: space-around; gap: var(--space-125)">
                 <div style="width: 100%">
                     <h3 t="confirmation.read-contract-title">1. Read the Contract</h3>
@@ -78,7 +110,11 @@
 
                 <div class="vertical-separator"></div>
 
-                <div style="width: 100%">
+                <div show.bind="!agreedToContract" class="contract">
+                    <iframe src.bind="getContractUrl()" width="100%" height="100%"></iframe>
+                </div>
+
+                <div style="width: 100%" show.bind="agreedToContract">
                     <h3 t="confirmation.choose-credentials-title">2. Choose Credentials</h3>
                     <div class="grid single">
                         <label class="field full">
@@ -92,9 +128,9 @@
                     </div>
                 </div>
 
-                <div class="vertical-separator"></div>
+                <div class="vertical-separator" show.bind="agreedToContract"></div>
 
-                <div>
+                <div show.bind="agreedToContract">
                     <h3 t="confirmation.sign-eid-title">3. Sign with eID</h3>
                     <div class="eid-anim-col" style="width: 100%">
                         <p class="anim-caption" t="confirmation.anim-caption">Insert your eID card and press confirm to sign.</p>
@@ -114,20 +150,19 @@
                                 <div class="reader-slot"></div>
                                 <span class="reader-label" t="confirmation.anim-reader-label">READER</span>
                                 <div class="status-led"></div>
-                                <span class="sr-only" t="confirmation.anim-reader-sr">Insert eID card into reader slot</span>
+<!--                                <span class="sr-only" t="confirmation.anim-reader-sr">Insert eID card into reader slot</span>-->
                             </div>
                         </div>
                     </div>
                 </div>
-                <div>
+                <div show.bind="agreedToContract">
                     <div class="auth-actions" style="margin-top: 15px">
-                        <button type="button" class="btn primary" disabled.bind="!password || password !== passwordDuplicate || !agreedToContract" click.trigger="confirmContract()" t="confirmation.confirm-button">
-                            Confirm
+                        <button type="button" class="btn primary" disabled.bind="!password || password !== passwordDuplicate || !agreedToContract" click.trigger="confirmContract()" t="confirmation.sign-button">
+                            Sign
                         </button>
                     </div>
                 </div>
             </div>
-            <iframe src.bind="getContractUrl()" width="100%" height="600"></iframe>
         </div>
 
         <div if.bind="step === 3">

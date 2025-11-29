@@ -14,32 +14,32 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/product")
+@RequestMapping("/sapi/product")
 public class ProductController {
 
     private final ProductService productService;
 
     @GetMapping
     public List<ProductDto> getParties(@AuthenticationPrincipal Jwt jwt) {
-        String companyNumber = JwtUtil.getCompanyNumber(jwt);
-        return productService.findByCompanyNumber(companyNumber);
+        String peppolId = JwtUtil.getPeppolId(jwt);
+        return productService.findByPeppolId(peppolId);
     }
 
     @PutMapping("{id}")
     public ProductDto updateProduct(@AuthenticationPrincipal Jwt jwt, @PathVariable Long id, @RequestBody ProductDto productDto) {
-        String companyNumber = JwtUtil.getCompanyNumber(jwt);
-        return productService.updateProduct(companyNumber, id, productDto);
+        String peppolId = JwtUtil.getPeppolId(jwt);
+        return productService.updateProduct(peppolId, id, productDto);
     }
 
     @PostMapping
     public ProductDto createProduct(@AuthenticationPrincipal Jwt jwt, @RequestBody ProductDto productDto) {
-        String companyNumber = JwtUtil.getCompanyNumber(jwt);
-        return productService.createProduct(companyNumber, productDto);
+        String peppolId = JwtUtil.getPeppolId(jwt);
+        return productService.createProduct(peppolId, productDto);
     }
 
     @DeleteMapping("{id}")
     public void deleteProduct(@AuthenticationPrincipal Jwt jwt, @PathVariable Long id) {
-        String companyNumber = JwtUtil.getCompanyNumber(jwt);
-        productService.deleteProduct(companyNumber, id);
+        String peppolId = JwtUtil.getPeppolId(jwt);
+        productService.deleteProduct(peppolId, id);
     }
 }

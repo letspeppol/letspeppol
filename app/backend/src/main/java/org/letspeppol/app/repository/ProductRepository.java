@@ -8,10 +8,10 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    @Query("SELECT product FROM Product product WHERE product.company.companyNumber = :companyNumber ORDER BY product.name DESC")
-    List<Product> findByOwningCompany(String companyNumber);
+    @Query("SELECT product FROM Product product WHERE product.company.peppolId = :peppolId ORDER BY product.name DESC")
+    List<Product> findByOwningCompany(String peppolId);
 
     @Modifying
-    @Query("DELETE FROM Product product WHERE product.id = :id AND product.company.companyNumber = :companyNumber")
-    void deleteForOwningCompany(String companyNumber, Long id);
+    @Query("DELETE FROM Product product WHERE product.id = :id AND product.company.peppolId = :peppolId")
+    void deleteForOwningCompany(String peppolId, Long id);
 }

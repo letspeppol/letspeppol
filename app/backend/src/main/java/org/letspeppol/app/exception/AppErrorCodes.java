@@ -5,9 +5,10 @@ public final class AppErrorCodes {
 
     public static final String PEPPOL_ID_MISMATCH = "PEPPOL_ID_MISMATCH";
     public static final String PEPPOL_ID_NOT_PRESENT = "PEPPOL_ID_NOT_PRESENT";
+    public static final String PEPPOL_ACTIVE_NOT_PRESENT = "PEPPOL_ACTIVE_NOT_PRESENT";
     public static final String PEPPOL_ID_INVALID = "PEPPOL_ID_INVALID";
     public static final String PEPPOL_DIR_400_ERROR = "PEPPOL_DIR_400_ERROR";
     public static final String PEPPOL_DIR_500_ERROR = "PEPPOL_DIR_500_ERROR";
     public static final String PEPPOL_DIR_RATE_LIMIT_ERROR = "PEPPOL_DIR_RATE_LIMIT_ERROR";
-    public static final String PROXY_REST_ERROR = "PROXY_REST_ERROR";
+    public static final String KYC_REST_ERROR = "KYC_REST_ERROR";
 }

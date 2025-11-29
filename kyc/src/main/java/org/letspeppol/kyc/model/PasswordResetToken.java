@@ -8,7 +8,7 @@ import java.time.Instant;
 @Entity
 @Table(name = "password_reset_token", indexes = {
         @Index(name = "idx_password_reset_token_token", columnList = "token", unique = true),
-        @Index(name = "idx_password_reset_token_user", columnList = "user_id")
+        @Index(name = "idx_password_reset_token_account_id", columnList = "account_id")
 })
 @Getter
 @Setter
@@ -21,23 +21,23 @@ public class PasswordResetToken {
     private Long id;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "account_id")
+    private Account account;
 
     @Column(nullable = false, length = 200)
     private String token;
 
     @Column(nullable = false)
-    private Instant expiresAt;
+    private Instant expiresOn;
 
     @Column(nullable = false)
     @Builder.Default
-    private Instant createdAt = Instant.now();
+    private Instant createdOn = Instant.now();
 
-    private Instant usedAt;
+    private Instant usedOn;
 
-    public boolean isExpired() { return expiresAt.isBefore(Instant.now()); }
-    public boolean isUsed() { return usedAt != null; }
-    public void markUsed() { this.usedAt = Instant.now(); }
+    public boolean isExpired() { return expiresOn.isBefore(Instant.now()); }
+    public boolean isUsed() { return usedOn != null; }
+    public void markUsed() { this.usedOn = Instant.now(); }
 }
 

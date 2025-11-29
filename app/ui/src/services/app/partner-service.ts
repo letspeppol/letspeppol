@@ -24,18 +24,18 @@ export class PartnerService {
     private appApi = resolve(AppApi);
 
     async getPartners() : Promise<PartnerDto[]> {
-        return await this.appApi.httpClient.get('/api/partner').then(response => response.json());
+        return await this.appApi.httpClient.get('/sapi/partner').then(response => response.json());
     }
 
     async createPartner(partner: PartnerDto) : Promise<PartnerDto> {
-        return await this.appApi.httpClient.post('/api/partner', JSON.stringify(partner)).then(response => response.json());
+        return await this.appApi.httpClient.post('/sapi/partner', JSON.stringify(partner)).then(response => response.json());
     }
 
     async updatePartner(id: number, partner: PartnerDto) : Promise<PartnerDto> {
-        return await this.appApi.httpClient.put(`/api/partner/${id}`, JSON.stringify(partner)).then(response => response.json());
+        return await this.appApi.httpClient.put(`/sapi/partner/${id}`, JSON.stringify(partner)).then(response => response.json());
     }
 
     async deletePartner(id:number) {
-        return await this.appApi.httpClient.delete(`/api/partner/${id}`);
+        return await this.appApi.httpClient.delete(`/sapi/partner/${id}`);
     }
 }
