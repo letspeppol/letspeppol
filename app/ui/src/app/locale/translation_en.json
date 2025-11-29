@@ -99,7 +99,8 @@
   "confirmation": {
     "header": "Confirm Identity",
     "header-sign": "Sign Contract",
-    "manual-confirmation-needed": "Your contract requires manual review, which can take up to 10 business days. Please keep an eye on your email for any additional actions. Reason: the eID does not fully match the selected director.",
+    "belgian-only": "We currently activate Belgian companies only. <br /> Want your country supported? <a href=\"mailto:languages@letspeppol.org\">Help us</a>",
+    "manual-confirmation-needed": "Your contract requires manual review, which can take up to 10 business days. <br /> Please keep an eye on your email for any additional actions. <br /> Reason: the eID does not fully match the selected director.",
     "loading": "Loading company details…",
     "company": "Company",
     "directors": "Directors",

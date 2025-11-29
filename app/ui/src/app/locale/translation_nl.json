@@ -82,7 +82,8 @@
   "confirmation": {
     "header": "Identiteit bevestigen",
     "header-sign": "Contract ondertekenen",
-    "manual-confirmation-needed": "Uw contract vereist een handmatige controle, die tot 10 werkdagen kan duren. Houd uw e-mail in de gaten voor eventuele extra acties. Reden: de eID komt niet volledig overeen met de geselecteerde bestuurder.",
+    "belgian-only": "Momenteel activeren we alleen Belgische ondernemingen. <br /> Land laten ondersteunen? <a href=\"mailto:languages@letspeppol.org\">Help mee</a>",
+    "manual-confirmation-needed": "Uw contract vereist een handmatige controle, die tot 10 werkdagen kan duren. <br /> Houd uw e-mail in de gaten voor eventuele extra acties. <br /> Reden: de eID komt niet volledig overeen met de geselecteerde bestuurder.",
     "loading": "Bedrijfsgegevens laden…",
     "company": "Bedrijf",
     "directors": "Bestuurders",

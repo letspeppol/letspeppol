@@ -5,6 +5,7 @@
     <stepper au-slot="stepper" steps.bind="[1,2,3,4]" completed-steps.bind="step"></stepper>
     <h1 if.bind="step === 0" au-slot="header" t="registration.title-step0">Register your company</h1>
     <form if.bind="step === 0" class="auth-form">
+        <div class="information" t="confirmation.belgian-only">Currently, we only activate Belgian companies. Please contact us if you’d like support for other countries.</div>
         <div class="grid">
             <label class="field full">
                 <span t="label.vat-number">VAT number</span>

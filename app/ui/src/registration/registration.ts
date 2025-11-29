@@ -17,7 +17,9 @@ export class Registration {
         this.errorCode = undefined;
         try {
             this.ea.publish('showOverlay', "Searching company");
-            const peppolId = "0208:" + this.vatNumber.replace(/\D/g, '');
+            const digits = (this.vatNumber ?? '').replace(/\D/g, '');
+            const companyNumber = digits.slice(-10).padStart(10, '0');
+            const peppolId = `0208:${companyNumber}`;
             this.company = await this.registrationService.getCompany(peppolId);
             this.step++;
         } catch {
