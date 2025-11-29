@@ -7,6 +7,10 @@ datasources:
     access: proxy
     url: http://loki:3100
     editable: true
+    jsonData:
+      httpHeaderName1: "X-Scope-OrgID"
+    secureJsonData:
+      httpHeaderValue1: "1"
 
   - name: Mimir
     type: prometheus

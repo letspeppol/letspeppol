@@ -1,5 +1,5 @@
 logging {
-  level = "debug"
+  level = "info"
 }
 
 
@@ -13,7 +13,7 @@ loki.source.api "kyc_logs_api" {
     listen_port    = 3200
   }
 
-  labels = { 
+  labels = {
     "source" = "kyc",
   }
 
@@ -33,6 +33,9 @@ loki.process "kyc_logs_process" {
 loki.write "loki_writer" {
   endpoint {
     url = "http://loki:3100/loki/api/v1/push"
+    headers = {
+      "X-Scope-OrgID" = "1",
+    }
   }
 }
 
@@ -43,7 +46,7 @@ loki.write "loki_writer" {
 
 prometheus.scrape "kyc_metrics" {
   targets = [
-    {"__address__" = "172.17.0.1:8084"}, // 172.17.0.1:8084 for local KYC
+    {"__address__" = "kyc:8084"}, // 172.17.0.1:8084 for local KYC
   ]
 
   scrape_interval = "15s"

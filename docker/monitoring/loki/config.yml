@@ -1,4 +1,4 @@
-auth_enabled: false
+auth_enabled: true
 
 server:
   http_listen_port: 3100
@@ -20,7 +20,7 @@ common:
   compactor_address: http://loki:3100
   storage:
     s3:
-      #endpoint: minio:9000
+      #endpoint: http://minio:9000 does not work
       endpoint: http://mimir:supersecret@minio:9000
       insecure: true
       bucketnames: loki-data
@@ -38,6 +38,11 @@ ruler:
 
 compactor:
   working_directory: /tmp/compactor
+
+limits_config:
+  max_query_lookback: 90d
+  retention_period: 90d
+  volume_enabled: true
 
 ui:
   enabled: true
