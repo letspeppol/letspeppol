@@ -1,4 +1,17 @@
 services:
+  adminer:
+    image: adminer
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.adminer.rule=Host(`${ADMINER_DOMAIN}`)"
+      - "traefik.http.routers.adminer.entrypoints=websecure"
+      - "traefik.http.routers.adminer.tls.certresolver=${CERT_RESOLVER}"
+      - "traefik.http.services.adminer.loadbalancer.server.port=8080"
+
   db:
     image: postgres:16-alpine
     restart: unless-stopped
@@ -23,6 +36,7 @@ services:
       start_period: 10s
     networks:
       - web
+      - default
 
 volumes:
   db-data:

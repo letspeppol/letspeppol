@@ -22,11 +22,20 @@ services:
       - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
       - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
 
+      # DNS-01 via Hetzner
+      - "--certificatesresolvers.hetzner.acme.email=letsencrypt@letspeppol.org"
+      - "--certificatesresolvers.hetzner.acme.storage=/letsencrypt/acme.json"
+      - "--certificatesresolvers.hetzner.acme.dnschallenge.provider=hetzner"
+      - "--certificatesresolvers.hetzner.acme.dnschallenge.delaybeforecheck=0"
+
       # Tailscale (for tailnet-only domains)
       - "--certificatesresolvers.tailscale.tailscale=true"
 
       # Logging (optional)
       - "--log.level=INFO"
+
+    environment:
+      - HETZNER_API_KEY=${HETZNER_API_KEY}
 
     ports:
       - "80:80"
