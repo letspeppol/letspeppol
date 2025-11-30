@@ -49,7 +49,7 @@ services:
       PGUSER: ${POSTGRES_USER}
       PGPASSWORD: ${POSTGRES_PASSWORD}
       TZ: Europe/Brussels
-      DB_LIST: "APP KYC PROXY"   # dump these databases hourly
+      DB_LIST: "app kyc proxy"   # dump these databases hourly
       DATA_DIR: /opt/data/db
     volumes:
       - /opt/data/db:/opt/data/db
@@ -61,8 +61,7 @@ services:
           ts=$$(date "+%Y-%m-%dT%H-%M-%S%z");
           for d in $${DB_LIST}; do
             echo "[backup] dumping $$d at $$ts";
-            pg_dump -h "$$PGHOST" -U "$$PGUSER" -d "$$d" -F c -Z 6
-              -f "$$DATA_DIR/$$d-$$ts.dump" || echo "[backup] FAILED $$d";
+            pg_dump -h "$$PGHOST" -U "$$PGUSER" -d "$$d" -F c -Z 6 -f "$$DATA_DIR/$$d-$$ts.dump" || echo "[backup] FAILED $$d";
           done;
           # optional: keep 14 days
           find "$$DATA_DIR" -type f -name "*.dump" -mtime +14 -delete || true;
