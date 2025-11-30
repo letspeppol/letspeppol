@@ -49,7 +49,7 @@ services:
       PGUSER: ${POSTGRES_USER}
       PGPASSWORD: ${POSTGRES_PASSWORD}
       TZ: Europe/Brussels
-      DB_LIST: "APP KYC PROXY"   # dump these databases hourly
+      DB_LIST: "app kyc proxy"   # dump these databases hourly
       DATA_DIR: /opt/data/db
     volumes:
       - /opt/data/db:/opt/data/db
