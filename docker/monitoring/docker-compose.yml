@@ -101,6 +101,8 @@ networks:
   observability:
     name: observability
     driver: bridge
+  web:
+    external: true
 
 volumes:
   minio_data:
