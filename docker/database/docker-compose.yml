@@ -50,9 +50,9 @@ services:
       PGPASSWORD: ${POSTGRES_PASSWORD}
       TZ: Europe/Brussels
       DB_LIST: "APP KYC PROXY"   # dump these databases hourly
-      DATA_DIR: ${DB_DATA_DIR}
+      DATA_DIR: /opt/data/db
     volumes:
-      - /opt/data/db: ${DB_DATA_DIR}
+      - /opt/data/db:/opt/data/db
     command: >
       sh -c '
         mkdir -p "$$DATA_DIR";
