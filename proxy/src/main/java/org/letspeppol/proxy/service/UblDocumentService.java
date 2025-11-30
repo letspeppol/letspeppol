@@ -1,5 +1,6 @@
 package org.letspeppol.proxy.service;
 
+import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
 import org.letspeppol.proxy.dto.UblDocumentDto;
 import org.letspeppol.proxy.exception.BadRequestException;
@@ -40,6 +41,8 @@ public class UblDocumentService {
     private final UblDocumentRepository ublDocumentRepository;
     private final RegistryService registryService;
     private final AccessPointServiceRegistry accessPointServiceRegistry;
+    private final Counter documentReceivedCounter;
+    private final Counter documentRescheduleCounter;
 
     private Path backupFilePath(UblDocument ublDocument) {
         return Paths.get(
@@ -202,6 +205,7 @@ public class UblDocumentService {
         if (!calculatedSchedule.equals(ublDocument.getScheduledOn())) {
             ublDocument.setScheduledOn(calculatedSchedule);
         }
+        documentRescheduleCounter.increment();
         // ublDocumentRepository.save(ublDocument); //This can be remove due to @Transactional
     }
 
@@ -250,6 +254,7 @@ public class UblDocumentService {
             TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
                 @Override public void afterCommit() {
                     afterCommit.run();
+                    documentReceivedCounter.increment();
                 }
             });
         } else if (afterCommit != null) {

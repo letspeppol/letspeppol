@@ -12,7 +12,7 @@
             <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level [%thread] %logger{36} - %msg%n</pattern>
         </message>
         <http>
-            <url>http://alloy:3201/loki/api/v1/push</url>
+            <url>http://alloy:3202/loki/api/v1/push</url>
         </http>
         <batch>
             <maxItems>200</maxItems>
