@@ -55,6 +55,9 @@ services:
       E_INVOICE_ORGANISATION_API_KEY: ${E_INVOICE_ORGANISATION_API_KEY}
       ACCESS_TOKEN_KEY: ${ACCESS_TOKEN_KEY}
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
+      PROXY_DATA_DIR: ${PROXY_DATA_DIR}
+    volumes:
+      - ./opt/data/proxy: ${PROXY_DATA_DIR}
 
   app:
     build:
@@ -75,6 +78,9 @@ services:
       OPEN_COLLECTIVE_API_KEY: ${OPEN_COLLECTIVE_API_KEY}
       DOCUMENT_PRICE: ${DOCUMENT_PRICE}
       KYC_API_URL: ${KYC_API_URL}
+      APP_DATA_DIR: ${APP_DATA_DIR}
+    volumes:
+      - ./opt/data/app: ${APP_DATA_DIR}
 
   kyc:
     build:
@@ -101,6 +107,8 @@ services:
       UI_URL: ${UI_URL}
       PROXY_API_URL: ${PROXY_API_URL}
       KYC_DATA_DIR: ${KYC_DATA_DIR}
+    volumes:
+      - ./opt/data/kyc: ${KYC_DATA_DIR}
 
   ui:
     build:
