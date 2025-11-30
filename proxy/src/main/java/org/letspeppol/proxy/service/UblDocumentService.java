@@ -12,6 +12,7 @@ import org.letspeppol.proxy.model.AccessPoint;
 import org.letspeppol.proxy.model.UblDocument;
 import org.letspeppol.proxy.repository.UblDocumentRepository;
 import org.letspeppol.proxy.util.HashUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -44,9 +45,12 @@ public class UblDocumentService {
     private final Counter documentReceivedCounter;
     private final Counter documentRescheduleCounter;
 
+    @Value("${proxy.data.dir:#{null}}")
+    private String dataDirectory;
+
     private Path backupFilePath(UblDocument ublDocument) {
         return Paths.get(
-                //System.getProperty("java.io.tmpdir"),
+                (dataDirectory == null || dataDirectory.isBlank()) ? System.getProperty("java.io.tmpdir") : dataDirectory,
                 "backup",
                 ublDocument.getOwnerPeppolId(),
                 ublDocument.getDirection().toString(),
