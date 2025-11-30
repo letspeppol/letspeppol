@@ -22,12 +22,15 @@ services:
       E_INVOICE_ORGANISATION_API_KEY: ${E_INVOICE_ORGANISATION_API_KEY}
       ACCESS_TOKEN_KEY: ${ACCESS_TOKEN_KEY}
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
+      PROXY_DATA_DIR: ${PROXY_DATA_DIR}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -h $DB_HOST -p $DB_PORT -U $DB_USER"]
       interval: 5s
       timeout: 5s
       retries: 12
       start_period: 10s
+    volumes:
+      - /opt/data/proxy:/opt/data/proxy
     networks:
       - web
       - default
@@ -48,12 +51,15 @@ services:
       OPEN_COLLECTIVE_API_KEY: ${OPEN_COLLECTIVE_API_KEY}
       DOCUMENT_PRICE: ${DOCUMENT_PRICE}
       KYC_API_URL: ${KYC_API_URL}
+      APP_DATA_DIR: ${APP_DATA_DIR}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -h $DB_HOST -p $DB_PORT -U $DB_USER"]
       interval: 5s
       timeout: 5s
       retries: 12
       start_period: 10s
+    volumes:
+      - /opt/data/app:/opt/data/app
     networks:
       - web
       - default
@@ -86,6 +92,8 @@ services:
       timeout: 5s
       retries: 12
       start_period: 10s
+    volumes:
+      - /opt/data/kyc:/opt/data/kyc
     networks:
       - web
       - default

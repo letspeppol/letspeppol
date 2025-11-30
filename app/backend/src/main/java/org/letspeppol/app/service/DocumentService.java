@@ -13,6 +13,7 @@ import org.letspeppol.app.model.DocumentDirection;
 import org.letspeppol.app.repository.CompanyRepository;
 import org.letspeppol.app.repository.DocumentRepository;
 import org.letspeppol.app.util.UblParser;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.xml.sax.SAXException;
@@ -36,9 +37,12 @@ public class DocumentService {
     private final CompanyRepository companyRepository;
     private final DocumentRepository documentRepository;
 
+    @Value("${app.data.dir:#{null}}")
+    private String dataDirectory;
+
     public void backupFile(Document document) throws Exception {
         Path filePath = Paths.get(
-                //System.getProperty("java.io.tmpdir"),
+                (dataDirectory == null || dataDirectory.isBlank()) ? System.getProperty("java.io.tmpdir") : dataDirectory,
                 "backup",
                 document.getCompany().getPeppolId(),
                 document.getDirection().toString(),
