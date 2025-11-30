@@ -1,5 +1,6 @@
 package org.letspeppol.app.service;
 
+import io.micrometer.core.instrument.Counter;
 import org.letspeppol.app.dto.PartnerDto;
 import org.letspeppol.app.exception.NotFoundException;
 import org.letspeppol.app.mapper.PartnerMapper;
@@ -22,6 +23,7 @@ public class PartnerService {
 
     private final CompanyRepository companyRepository;
     private final PartnerRepository partnerRepository;
+    private final Counter partnerCreateCounter;
 
     public List<PartnerDto> findByPeppolId(String peppolId) {
         return partnerRepository.findByOwningPeppolId(peppolId).stream()
@@ -49,6 +51,7 @@ public class PartnerService {
         );
         partner.setCompany(company);
         partnerRepository.save(partner);
+        partnerCreateCounter.increment();
         return PartnerMapper.toDto(partner);
     }
 

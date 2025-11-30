@@ -2,6 +2,7 @@ package org.letspeppol.proxy.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
 import org.letspeppol.proxy.dto.RegistrationRequest;
 import org.letspeppol.proxy.dto.e_invoice.*;
@@ -25,6 +26,8 @@ public class EInvoiceService implements AccessPointServiceInterface {
     @Qualifier("eInvoiceOrganisationWebClient")
     private final WebClient eInvoiceOrganisationWebClient;
     private final ObjectMapper objectMapper;
+    private final Counter registerCounter;
+    private final Counter unregisterCounter;
 
     @Override
     public AccessPoint getType() {
@@ -70,6 +73,7 @@ public class EInvoiceService implements AccessPointServiceInterface {
                 //TODO : error log
             }
 
+            registerCounter.increment();
             Variables variables = new Variables(tenantId, keyId, key);
             return objectMapper.convertValue(variables, new TypeReference<>() {});
         } catch (WebClientResponseException e) { // HTTP error (non-2xx)
@@ -104,6 +108,7 @@ public class EInvoiceService implements AccessPointServiceInterface {
                 .toBodilessEntity()
                 .block();
 
+            unregisterCounter.increment();
         } catch (WebClientResponseException e) { // HTTP error (non-2xx)
             throw new RuntimeException("e-invoice API error: " + e.getStatusCode(), e);
         } catch (Exception e) { // timeouts, connection issues, deserialization errors, etc.

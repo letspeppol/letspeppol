@@ -28,6 +28,8 @@ services:
       timeout: 5s
       retries: 12
       start_period: 10s
+    ports:
+      - "${DB_PORT:-5432}:5432"
 
   proxy:
     build:
@@ -109,6 +111,9 @@ services:
       KYC_DATA_DIR: /opt/data/kyc
     volumes:
       - ./opt/data/kyc:/opt/data/kyc
+    networks:
+      - default
+      - observability
 
   ui:
     build:
@@ -133,3 +138,6 @@ volumes:
 networks:
   default:
     name: lp-network
+  observability:
+    external: true
+    name: observability

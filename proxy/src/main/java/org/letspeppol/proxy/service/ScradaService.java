@@ -1,5 +1,6 @@
 package org.letspeppol.proxy.service;
 
+import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
 import org.letspeppol.proxy.dto.RegistrationRequest;
 import org.letspeppol.proxy.dto.scrada.*;
@@ -34,6 +35,10 @@ public class ScradaService implements AccessPointServiceInterface {
     private UblDocumentService ublDocumentService; //TODO : Is it possible to not have a circular dependency
     @Qualifier("scradaWebClient")
     private final WebClient scradaWebClient;
+    private final Counter registerCounter;
+    private final Counter unregisterCounter;
+    private final Counter documentSendCounter;
+    private final Counter documentReceivedCounter;
 
     @Override
     public AccessPoint getType() {
@@ -83,6 +88,7 @@ public class ScradaService implements AccessPointServiceInterface {
                     .blockOptional()
                     .orElseThrow(() -> new IllegalStateException("Empty response from Scrada register company"));
 
+            registerCounter.increment();
             return Map.of("uuid", uuid);
         } catch (WebClientResponseException e) { // HTTP error (non-2xx)
             throw new RuntimeException("Scrada API error: " + e.getStatusCode(), e);
@@ -105,7 +111,7 @@ public class ScradaService implements AccessPointServiceInterface {
                 .retrieve()
                 .toBodilessEntity()
                 .block();
-
+            unregisterCounter.increment();
         } catch (WebClientResponseException e) { // HTTP error (non-2xx)
             throw new RuntimeException("e-invoice API error: " + e.getStatusCode(), e);
         } catch (Exception e) { // timeouts, connection issues, deserialization errors, etc.
@@ -136,7 +142,7 @@ public class ScradaService implements AccessPointServiceInterface {
                     .bodyToMono(String.class)
                     .blockOptional()
                     .orElseThrow(() -> new IllegalStateException("Empty response from Scrada send document"));
-
+            documentSendCounter.increment();
             return uuid;
         } catch (WebClientResponseException e) { // HTTP error (non-2xx)
             throw new RuntimeException("Scrada API error: " + e.getStatusCode(), e);

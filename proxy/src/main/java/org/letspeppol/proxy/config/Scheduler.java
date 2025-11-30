@@ -12,7 +12,7 @@ public class Scheduler {
     private final UblDocumentService ublDocumentService;
     private final ScradaService scradaService;
 
-    @Scheduled(fixedDelayString = "${scheduler.send.delay-ms:1000}")
+    @Scheduled(fixedDelayString = "${scheduler.send.delay-ms:1000000}")
     public void sendDueDocuments() {
         ublDocumentService.sendDueOutgoing();
     }

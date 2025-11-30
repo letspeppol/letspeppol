@@ -1,0 +1,136 @@
+logging {
+  level = "info"
+}
+
+
+// =========
+// LOKI LOGS
+// =========
+
+// KYC LOGS
+
+loki.source.api "kyc_logs_api" {
+  http {
+    listen_address = "0.0.0.0"
+    listen_port    = 3200
+  }
+
+  labels = {
+    "source" = "kyc",
+  }
+
+  forward_to = [loki.process.kyc_logs_process.receiver]
+}
+
+loki.process "kyc_logs_process" {
+  stage.static_labels {
+    values = {
+      source = "kyc",
+    }
+  }
+
+  forward_to = [loki.write.loki_writer.receiver]
+}
+
+// APP LOGS
+
+loki.source.api "app_logs_api" {
+  http {
+    listen_address = "0.0.0.0"
+    listen_port    = 3201
+  }
+
+  labels = {
+    "source" = "app",
+  }
+
+  forward_to = [loki.process.app_logs_process.receiver]
+}
+
+loki.process "app_logs_process" {
+  stage.static_labels {
+    values = {
+      source = "app",
+    }
+  }
+
+  forward_to = [loki.write.loki_writer.receiver]
+}
+
+// PROXY LOGS
+
+loki.source.api "proxy_logs_api" {
+  http {
+    listen_address = "0.0.0.0"
+    listen_port    = 3202
+  }
+
+  labels = {
+    "source" = "proxy",
+  }
+
+  forward_to = [loki.process.proxy_logs_process.receiver]
+}
+
+loki.process "proxy_logs_process" {
+  stage.static_labels {
+    values = {
+      source = "proxy",
+    }
+  }
+
+  forward_to = [loki.write.loki_writer.receiver]
+}
+
+loki.write "loki_writer" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+    headers = {
+      "X-Scope-OrgID" = "1",
+    }
+  }
+}
+
+
+// ==================
+// PROMETHEUS METRICS
+// ==================
+
+prometheus.scrape "kyc_metrics" {
+  targets = [
+    {"__address__" = "kyc:8084"}, // 172.17.0.1:8084 for local KYC
+  ]
+
+  scrape_interval = "15s"
+  metrics_path    = "/actuator/prometheus"
+  forward_to      = [prometheus.remote_write.mimir_writer.receiver]
+}
+
+prometheus.scrape "app_metrics" {
+  targets = [
+    {"__address__" = "app:8085"}, // 172.17.0.1:8085 for local App
+  ]
+
+  scrape_interval = "15s"
+  metrics_path    = "/actuator/prometheus"
+  forward_to      = [prometheus.remote_write.mimir_writer.receiver]
+}
+
+prometheus.scrape "proxy_metrics" {
+  targets = [
+    {"__address__" = "proxy:8086"}, // 172.17.0.1:8086 for local Proxy
+  ]
+
+  scrape_interval = "15s"
+  metrics_path    = "/actuator/prometheus"
+  forward_to      = [prometheus.remote_write.mimir_writer.receiver]
+}
+
+prometheus.remote_write "mimir_writer" {
+  endpoint {
+    url = "http://mimir:9009/api/v1/push"
+    headers = {
+      "X-Scope-OrgID" = "1",
+    }
+  }
+}

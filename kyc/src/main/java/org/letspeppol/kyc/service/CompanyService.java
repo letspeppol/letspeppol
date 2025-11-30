@@ -1,5 +1,6 @@
 package org.letspeppol.kyc.service;
 
+import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
 import org.letspeppol.kyc.dto.CompanyResponse;
 import org.letspeppol.kyc.dto.DirectorDto;
@@ -26,6 +27,7 @@ public class CompanyService {
     private final KboLookupService kboLookupService;
     private final JwtService jwtService;
     private final ProxyService proxyService;
+    private final Counter companyUnregistrationCounter;
 
     public Optional<CompanyResponse> getByPeppolId(String peppolId) {
         Optional<Company> company = companyRepository.findByPeppolId(peppolId);
@@ -91,5 +93,6 @@ public class CompanyService {
         String token = jwtService.generateInternalToken(company.getPeppolId(), company.isRegisteredOnPeppol());
         company.setRegisteredOnPeppol(proxyService.unregisterCompany(token));
         companyRepository.save(company);
+        companyUnregistrationCounter.increment();
     }
 }

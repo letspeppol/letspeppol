@@ -1,0 +1,148 @@
+{
+}
+  "weekStart": ""
+  "version": 1,
+  "uid": "app-logs",
+  "title": "App Logs",
+  "timezone": "",
+  "timepicker": {},
+  "time": { "from": "now-1h", "to": "now" },
+  "templating": { "list": [] },
+  "tags": ["logs", "app"],
+  "style": "dark",
+  "schemaVersion": 38,
+  "refresh": "30s",
+  ],
+    }
+      "type": "table"
+      "title": "Top App Error Messages (15m)",
+      ],
+        }
+          }
+            "uid": "loki"
+            "type": "loki",
+          "datasource": {
+          "refId": "A",
+          "expr": "topk(20, sum by (msg) (count_over_time({source=\"app\", level=\"ERROR\"}[15m])))",
+        {
+      "targets": [
+      },
+        "showHeader": true
+      "options": {
+      "id": 3,
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+      },
+        "overrides": []
+        },
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null } ] }
+          "mappings": [],
+        "defaults": {
+      "fieldConfig": {
+      },
+        "uid": "loki"
+        "type": "loki",
+      "datasource": {
+    {
+    },
+      "type": "timeseries"
+      "title": "App Error Rate",
+      ],
+        }
+          }
+            "uid": "loki"
+            "type": "loki",
+          "datasource": {
+          "refId": "A",
+          "expr": "sum(rate({source=\"app\", level=\"ERROR\"}[5m]))",
+        {
+      "targets": [
+      },
+        "tooltip": { "mode": "single" }
+        "legend": { "displayMode": "list", "placement": "bottom" },
+      "options": {
+      "id": 2,
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+      },
+        "overrides": []
+        },
+          }
+            ]
+              { "color": "red", "value": 5 }
+              { "color": "orange", "value": 1 },
+              { "color": "green", "value": null },
+            "steps": [
+            "mode": "absolute",
+          "thresholds": {
+          "mappings": [],
+          "unit": "ops",
+        "defaults": {
+      "fieldConfig": {
+      },
+        "uid": "loki"
+        "type": "loki",
+      "datasource": {
+    {
+    },
+      "type": "logs"
+      "title": "App Logs",
+      ],
+        }
+          }
+            "uid": "loki"
+            "type": "loki",
+          "datasource": {
+          "refId": "A",
+          "expr": "{source=\"app\"}",
+        {
+      "targets": [
+      },
+        "wrapLogMessage": true
+        "sortOrder": "Descending",
+        "showTime": true,
+        "showLabels": true,
+      "options": {
+      "id": 1,
+      "gridPos": { "h": 12, "w": 24, "x": 0, "y": 0 },
+      },
+        "overrides": []
+        },
+          }
+            ]
+              }
+                "value": null
+                "color": "green",
+              {
+            "steps": [
+            "mode": "absolute",
+          "thresholds": {
+          "mappings": [],
+        "defaults": {
+      "fieldConfig": {
+      },
+        "uid": "loki"
+        "type": "loki",
+      "datasource": {
+    {
+  "panels": [
+  "liveNow": false,
+  "links": [],
+  "graphTooltip": 1,
+  "fiscalYearStartMonth": 0,
+  "editable": true,
+  },
+    ]
+      }
+        "type": "dashboard"
+        "name": "Annotations & Alerts",
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "hide": true,
+        "enable": true,
+        },
+          "uid": "-- Grafana --"
+          "type": "grafana",
+        "datasource": {
+        "builtIn": 1,
+      {
+    "list": [
+  "annotations": {
+

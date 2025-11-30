@@ -1,5 +1,8 @@
 package org.letspeppol.app.service;
 
+import io.micrometer.core.instrument.Counter;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.app.dto.ProductDto;
 import org.letspeppol.app.exception.NotFoundException;
 import org.letspeppol.app.mapper.ProductMapper;
@@ -9,8 +12,6 @@ import org.letspeppol.app.model.ProductCategory;
 import org.letspeppol.app.repository.CompanyRepository;
 import org.letspeppol.app.repository.ProductCategoryRepository;
 import org.letspeppol.app.repository.ProductRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,7 @@ public class ProductService {
     private final CompanyRepository companyRepository;
     private final ProductRepository productRepository;
     private final ProductCategoryRepository productCategoryRepository;
+    private final Counter productCreateCounter;
 
     public List<ProductDto> findByPeppolId(String peppolId) {
         return productRepository.findByOwningCompany(peppolId).stream()
@@ -55,6 +57,7 @@ public class ProductService {
         }
 
         productRepository.save(product);
+        productCreateCounter.increment();
         return ProductMapper.toDto(product);
     }
 

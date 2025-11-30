@@ -1,6 +1,7 @@
 package org.letspeppol.kyc.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.service.JwtService;
 import org.letspeppol.kyc.service.AccountService;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/jwt")
 @RequiredArgsConstructor

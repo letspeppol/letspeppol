@@ -34,6 +34,7 @@ services:
     networks:
       - web
       - default
+      - observability
 
   app:
     build:
@@ -119,3 +120,6 @@ services:
 networks:
   web:
     external: true
+  observability:
+    external: true
+    name: observability
