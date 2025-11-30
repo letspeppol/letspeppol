@@ -127,11 +127,11 @@
                         </label>
                     </div>
                     <ul class="pw-hints" if.bind="password">
-                        <li class.bind="lengthOk?'ok':''">12+ characters</li>
+                        <li class.bind="lengthOk?'ok':''">At least 12 characters</li>
                         <li class.bind="lowerOk?'ok':''">At least 1 lower</li>
-                        <li class.bind="upperOk?'ok':''">At least UPPER</li>
-                        <li class.bind="numberOk?'ok':''">At least number</li>
-                        <li class.bind="symbolOk?'ok':''">At least symbol</li>
+                        <li class.bind="upperOk?'ok':''">At least 1 UPPER</li>
+                        <li class.bind="numberOk?'ok':''">At least 1 number</li>
+                        <li class.bind="symbolOk?'ok':''">At least 1 symbol</li>
                         <li class.bind="matchOk?'ok':''">Passwords match</li>
                     </ul>
                     <meter min="0" max="8" low="4" high="7" optimum="8" value.bind="pwScore" aria-label="Password strength"></meter>
