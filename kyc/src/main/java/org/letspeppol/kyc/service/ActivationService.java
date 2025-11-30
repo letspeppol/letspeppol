@@ -81,7 +81,7 @@ public class ActivationService {
             throw new KycException(KycErrorCodes.TOKEN_EXPIRED);
         }
         identityVerificationService.verifyNotRegistered(verification.getEmail());
-        CompanyResponse companyResponse = companyService.getByPeppolId(verification.getByPeppolId())
+        CompanyResponse companyResponse = companyService.getByPeppolId(verification.getPeppolId())
                 .orElseThrow(() -> new NotFoundException(KycErrorCodes.COMPANY_NOT_FOUND));
         tokenVerificationCounter.increment();
         return new TokenVerificationResponse(verification.getEmail(), companyResponse);

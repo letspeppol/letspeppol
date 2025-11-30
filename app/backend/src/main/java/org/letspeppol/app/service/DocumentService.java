@@ -1,5 +1,6 @@
 package org.letspeppol.app.service;
 
+import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
 import org.letspeppol.app.dto.DocumentDto;
 import org.letspeppol.app.dto.UblDocumentDto;
@@ -16,6 +17,7 @@ import org.letspeppol.app.util.UblParser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.xml.sax.SAXException;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
@@ -35,6 +37,10 @@ public class DocumentService {
 
     private final CompanyRepository companyRepository;
     private final DocumentRepository documentRepository;
+    private final Counter documentBackupCounter;
+    private final Counter documentCreateCounter;
+    private final Counter documentSendCounter;
+    private final Counter documentPaidCounter;
 
     public void backupFile(Document document) throws Exception {
         Path filePath = Paths.get(
@@ -53,6 +59,7 @@ public class DocumentService {
         }
         System.out.println("Writing file as backup to: " + filePath);
         Files.writeString(filePath, document.getUbl(), StandardCharsets.UTF_8);
+        documentBackupCounter.increment();
     }
 
     public List<DocumentDto> findAll(String peppolId) {
@@ -116,6 +123,7 @@ public class DocumentService {
 //        } catch (Exception e) {
 //            throw new RuntimeException(e);
 //        }
+        documentCreateCounter.increment();
         return DocumentMapper.toDto(document);
     }
 
@@ -158,6 +166,7 @@ public class DocumentService {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        documentCreateCounter.increment();
         return DocumentMapper.toDto(document);
     }
 
@@ -234,6 +243,7 @@ public class DocumentService {
 //        } catch (Exception e) {
 //            throw new RuntimeException(e);
 //        }
+        documentSendCounter.increment();
         return DocumentMapper.toDto(document);
     }
 
@@ -254,6 +264,7 @@ public class DocumentService {
         }
         document.setPaidOn(Instant.now());
         documentRepository.save(document);
+        documentPaidCounter.increment();
         return DocumentMapper.toDto(document);
     }
 
