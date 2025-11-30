@@ -1,8 +1,7 @@
 apiVersion: 1
 
 providers:
-  - name: kyc-dashboards
-    folder: KYC
+  - name: dashboards
     type: file
     disableDeletion: false
     editable: true

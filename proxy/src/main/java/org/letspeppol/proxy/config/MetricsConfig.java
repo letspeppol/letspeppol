@@ -26,8 +26,8 @@ public class MetricsConfig {
 
     @Bean
     public Counter documentSendCounter(MeterRegistry registry) {
-        return Counter.builder("document_send_total")
-                .description("Total # sent documents")
+        return Counter.builder("document_send_proxy_total")
+                .description("Total # sent documents via proxy")
                 .tag("service", "proxy")
                 .register(registry);
     }

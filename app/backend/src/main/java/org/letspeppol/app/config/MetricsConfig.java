@@ -50,8 +50,8 @@ public class MetricsConfig {
 
     @Bean
     public Counter documentSendCounter(MeterRegistry registry) {
-        return Counter.builder("document_send_total")
-                .description("Total # documents sent")
+        return Counter.builder("document_send_app_total")
+                .description("Total # documents sent via app")
                 .tag("service", "app")
                 .register(registry);
     }
