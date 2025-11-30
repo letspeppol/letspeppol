@@ -30,7 +30,7 @@ services:
       retries: 12
       start_period: 10s
     volumes:
-      - /opt/data/proxy:/opt/data/proxy
+      - /opt/data/proxy: ${PROXY_DATA_DIR}
     networks:
       - web
       - default
@@ -59,7 +59,7 @@ services:
       retries: 12
       start_period: 10s
     volumes:
-      - /opt/data/app:/opt/data/app
+      - /opt/data/app: ${APP_DATA_DIR}
     networks:
       - web
       - default
@@ -93,7 +93,7 @@ services:
       retries: 12
       start_period: 10s
     volumes:
-      - /opt/data/kyc:/opt/data/kyc
+      - /opt/data/kyc: ${KYC_DATA_DIR}
     networks:
       - web
       - default
