@@ -71,10 +71,6 @@ export class ProxyService {
         return await this.letsPeppolApi.httpClient.post(`/v2/documents/${platformId}`, JSON.stringify(body)).then(response => response.text());
     }
 
-    async sendDocument(xml: string) {
-        return await this.letsPeppolApi.httpClient.post('/v2/send', xml);
-    }
-
     // Gets UBL
     async getDocument(platformId: string) {
         return await this.letsPeppolApi.httpClient.get(`/v2/documents/${platformId}`).then(response => response.text());

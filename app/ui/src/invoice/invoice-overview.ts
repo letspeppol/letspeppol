@@ -3,8 +3,8 @@ import {DocumentType, InvoiceContext} from "./invoice-context";
 import {parseCreditNote, parseInvoice} from "../services/peppol/ubl-parser";
 import {AlertType} from "../components/alert/alert";
 import {IEventAggregator, watch} from "aurelia";
-import {DocumentQuery, ListItem, ProxyService} from "../services/proxy/proxy-service";
-import {InvoiceDraftDto, InvoiceService} from "../services/app/invoice-service";
+import {DocumentQuery, ProxyService} from "../services/proxy/proxy-service";
+import {InvoiceDraftDto, DocumentDto, InvoiceService} from "../services/app/invoice-service";
 import moment from "moment";
 
 export class InvoiceOverview {
@@ -12,7 +12,7 @@ export class InvoiceOverview {
     private proxyService = resolve(ProxyService);
     private invoiceService = resolve(InvoiceService);
     private invoiceContext = resolve(InvoiceContext);
-    invoices: ListItem[] | InvoiceDraftDto[] = [];
+    invoices: DocumentDto[] | InvoiceDraftDto[] = [];
     box = 'all'
     query: DocumentQuery = {page: 1};
 
@@ -36,7 +36,7 @@ export class InvoiceOverview {
                 ;
             });
         } else {
-            this.proxyService.getDocuments(this.query).then(items => this.invoices = items);
+            this.invoiceService.getDocuments(this.query).then(items => this.invoices = items);
         }
     }
 
@@ -71,7 +71,7 @@ export class InvoiceOverview {
         this.ea.publish('newCreditNote');
     }
 
-    selectItem(item: ListItem | InvoiceDraftDto) {
+    selectItem(item: DocumentDto | InvoiceDraftDto) {
         this.invoiceContext.selectedDraft = undefined;
         if (this.box === 'drafts') {
             const doc = item as InvoiceDraftDto;
@@ -85,17 +85,17 @@ export class InvoiceOverview {
             this.invoiceContext.selectedDraft = doc;
             this.invoiceContext.selectedInvoiceXML = doc.xml;
         } else {
-            const doc = item as ListItem;
-            this.proxyService.getDocument(doc.platformId).then((xml) => {
+            const doc = item as DocumentDto;
+            this.invoiceService.getDocument(doc.id).then((document) => {
                 this.invoiceContext.readOnly = true;
-                this.invoiceContext.selectedInvoice = parseInvoice(xml);
+                this.invoiceContext.selectedInvoice = parseInvoice(document.ubl);
                 if (!this.invoiceContext.selectedInvoice) { // TODO test
                     this.invoiceContext.selectedDocumentType = DocumentType.CreditNote;
-                    this.invoiceContext.selectedInvoice = parseCreditNote(xml);
+                    this.invoiceContext.selectedInvoice = parseCreditNote(document.ubl);
                 } else {
                     this.invoiceContext.selectedDocumentType = DocumentType.Invoice;
                 }
-                this.invoiceContext.selectedInvoiceXML = xml;
+                this.invoiceContext.selectedInvoiceXML = document.ubl;
             });
         }
     }
@@ -116,7 +116,7 @@ export class InvoiceOverview {
         this.loadInvoices();
     }
 
-    isOverdue(item: ListItem) {
+    isOverdue(item: DocumentDto) {
         if (!item.dueDate) {
             return false;
         }
@@ -140,23 +140,23 @@ export class InvoiceOverview {
         return moment(date).format('D/M/YYYY');
     }
 
-    async markPaid(event: Event, item: ListItem) {
+    async markPaid(event: Event, item: DocumentDto) {
         event.stopPropagation();
         try {
             const datePaid = moment().toISOString();
-            this.proxyService.markPaid(item.platformId, datePaid);
-            item.paid = datePaid;
+            this.proxyService.markPaid(item.id, datePaid);
+            item.paidOn = datePaid;
             this.ea.publish('alert', {alertType: AlertType.Success, text: "Invoice marked as paid"});
         } catch (e) {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to mark invoice as paid"});
         }
     }
 
-    async markUnpaid(event: Event, item: ListItem) {
+    async markUnpaid(event: Event, item: DocumentDto) {
         event.stopPropagation();
         try {
-            this.proxyService.markPaid(item.platformId, null);
-            item.paid = undefined;
+            this.proxyService.markPaid(item.id, null);
+            item.paidOn = undefined;
             this.ea.publish('alert', {alertType: AlertType.Success, text: "Invoice marked as unpaid"});
         } catch (e) {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to mark invoice as unpaid"});

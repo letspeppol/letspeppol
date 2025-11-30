@@ -1,6 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.5.6'
+	id 'org.springframework.boot' version '3.5.7'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -36,8 +36,10 @@ dependencies {
     implementation 'com.itextpdf:itext-core:9.3.0'
     implementation 'org.jsoup:jsoup:1.18.1'
     implementation 'org.postgresql:postgresql:42.7.8'
+    implementation 'org.flywaydb:flyway-database-postgresql'
+    implementation 'org.apache.pdfbox:pdfbox:3.0.2'
+    implementation 'org.apache.pdfbox:fontbox:3.0.2'
     implementation 'com.github.loki4j:loki-logback-appender:2.0.1'
-
 	compileOnly 'org.projectlombok:lombok:1.18.40'
 	annotationProcessor 'org.projectlombok:lombok:1.18.34'
 

@@ -83,6 +83,9 @@
   },
   "confirmation": {
     "header": "Confirmer l'identité",
+    "header-sign": "Signer le contrat",
+    "belgian-only": "Pour l’instant, nous n’activons que des entreprises belges. <br /> Vous voulez votre pays pris en charge ? <a href=\"mailto:country@letspeppol.org\">Aidez-nous</a>",
+    "manual-confirmation-needed": "Votre contrat nécessite une vérification manuelle, ce qui peut prendre jusqu’à 10 jours ouvrables. <br /> Veuillez surveiller votre e-mail pour d’éventuelles actions supplémentaires. <br /> Raison : l’eID ne correspond pas entièrement à l’administrateur sélectionné.",
     "loading": "Chargement des détails de l'entreprise…",
     "company": "Entreprise",
     "directors": "Directeurs",
@@ -99,7 +102,9 @@
     "anim-caption": "Insérez votre carte eID et appuyez sur confirmer pour signer.",
     "anim-reader-label": "LECTEUR",
     "anim-reader-sr": "Insérer la carte eID dans le lecteur",
-    "confirm-button": "Confirmer",
+    "expand-button": "Agrandir",
+    "minimize-button": "Réduire",
+    "sign-button": "Signer",
     "success-title": "Succès !",
     "success-contract": "Le contrat signé se trouve dans votre dossier de téléchargements",
     "success-login-prefix": "Vous pouvez maintenant"

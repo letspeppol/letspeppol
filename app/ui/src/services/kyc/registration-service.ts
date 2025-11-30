@@ -9,7 +9,7 @@ export interface TokenVerificationResponse {
 
 export interface KycCompanyResponse {
     id: number,
-    companyNumber: string,
+    peppolId: string,
     name: string;
     street: string;
     city: string;
@@ -33,7 +33,8 @@ export interface PrepareSigningRequest {
 export interface PrepareSigningResponse {
     hashToSign: string,
     hashToFinalize: string,
-    hashFunction: string
+    hashFunction: string,
+    allowedToSign: boolean
 }
 
 export interface FinalizeSigningRequest {
@@ -50,14 +51,14 @@ export interface FinalizeSigningRequest {
 export class RegistrationService {
     public kycApi = resolve(KYCApi);
 
-    async getCompany(companyNumber: string): Promise<KycCompanyResponse>  {
-        const response = await this.kycApi.httpClient.get(`/api/company/${companyNumber}`);
+    async getCompany(peppolId: string): Promise<KycCompanyResponse>  {
+        const response = await this.kycApi.httpClient.get(`/api/company/${peppolId}`);
         return response.json();
     }
 
-    async confirmCompany(companyNumber: string, email: string) {
+    async confirmCompany(peppolId: string, email: string) {
         const body = {
-            companyNumber: companyNumber,
+            peppolId: peppolId,
             email: email
         };
         const response = await this.kycApi.httpClient.post(`/api/register/confirm-company`, JSON.stringify(body) );

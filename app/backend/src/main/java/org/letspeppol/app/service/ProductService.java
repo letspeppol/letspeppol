@@ -26,14 +26,14 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ProductCategoryRepository productCategoryRepository;
 
-    public List<ProductDto> findByCompanyNumber(String companyNumber) {
-        return productRepository.findByOwningCompany(companyNumber).stream()
+    public List<ProductDto> findByPeppolId(String peppolId) {
+        return productRepository.findByOwningCompany(peppolId).stream()
                 .map(ProductMapper::toDto)
                 .toList();
     }
 
-    public ProductDto createProduct(String companyNumber, ProductDto productDto) {
-        Company company = companyRepository.findByCompanyNumber(companyNumber).orElseThrow(() -> new NotFoundException("Company does not exist"));
+    public ProductDto createProduct(String peppolId, ProductDto productDto) {
+        Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new NotFoundException("Company does not exist"));
 
         Product product = new Product();
         product.setName(productDto.name());
@@ -58,7 +58,7 @@ public class ProductService {
         return ProductMapper.toDto(product);
     }
 
-    public ProductDto updateProduct(String companyNumber, Long id, ProductDto productDto) {
+    public ProductDto updateProduct(String peppolId, Long id, ProductDto productDto) {
         Product product = productRepository.findById(id).orElseThrow(() -> new NotFoundException("Product does not exist"));
 
         product.setName(productDto.name());
@@ -72,7 +72,7 @@ public class ProductService {
         if (productDto.categoryId() != null) {
             ProductCategory category = productCategoryRepository.findById(productDto.categoryId())
                     .orElseThrow(() -> new NotFoundException("Category does not exist"));
-            if (!category.getCompany().getCompanyNumber().equals(companyNumber)) {
+            if (!category.getCompany().getPeppolId().equals(peppolId)) {
                 throw new NotFoundException("Category does not exist");
             }
             product.setCategory(category);
@@ -84,7 +84,7 @@ public class ProductService {
         return ProductMapper.toDto(product);
     }
 
-    public void deleteProduct(String companyNumber, Long id) {
-        productRepository.deleteForOwningCompany(companyNumber, id);
+    public void deleteProduct(String peppolId, Long id) {
+        productRepository.deleteForOwningCompany(peppolId, id);
     }
 }

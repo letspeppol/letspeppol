@@ -8,6 +8,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.letspeppol.kyc.dto.CompanyResponse;
 import org.letspeppol.kyc.dto.DirectorDto;
+import org.letspeppol.kyc.dto.PeppolIdDto;
 import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.KycException;
 import org.letspeppol.kyc.util.CompanyNumberUtil;
@@ -36,11 +37,16 @@ public class KboLookupService {
     @Autowired
     private Counter kboLookupCounter;
 
+    public final static String EAS_ONDERNEMINGSNUMMER = "0208";
     private static final Duration TIMEOUT = Duration.ofSeconds(15);
 
-    public Optional<CompanyResponse> findCompany(String vatNumber) {
+    public Optional<CompanyResponse> findCompany(String peppolId) {
         kboLookupCounter.increment();
-        String normalizedVat = CompanyNumberUtil.normalizeVat(vatNumber);
+        PeppolIdDto peppolIdDto = PeppolIdDto.parse(peppolId);
+        if (!EAS_ONDERNEMINGSNUMMER.equals(peppolIdDto.scheme())) { //TODO : split for other countries
+            throw new IllegalArgumentException("Only Belgian (0208) companies are implemented");
+        }
+        String normalizedVat = CompanyNumberUtil.normalizeVat(peppolIdDto.value());
         String html;
         try {
             html = fetchEnterpriseHtml(normalizedVat);
@@ -66,7 +72,8 @@ public class KboLookupService {
 
         CompanyResponse companyResponse = new CompanyResponse(
                 null,
-                normalizedVat,
+                peppolId,
+                "BE"+normalizedVat,
                 name,
                 address.get().street,
                 address.get().houseNumber,
