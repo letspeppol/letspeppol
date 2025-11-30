@@ -77,6 +77,11 @@
   min-height: 60vh;
 }
 
+.pw-hints { margin:.5rem 0 0; padding-left:1rem; }
+.pw-hints li { color:#b33; }
+.pw-hints li.ok { color:#2a7; }
+meter { width:100%; height:.5rem; }
+
 /* eID signing illustration (clean, compact) */
 .eid-anim-col {
   flex: 0 0 230px;

@@ -102,7 +102,7 @@
                     <div class="grid single">
                         <p t="confirmation.read-contract-info">You will receive a signed copy when the registration flow is complete.</p>
                         <label class="field full" style="display: flex">
-                            <input name="confirm" type="checkbox" checked.bind="agreedToContract" style="min-width: 15px; height: 15px"/>
+                            <input name="confirm" type="checkbox" checked.bind="agreedToContract" disabled.bind="confirmInProgress && agreedToContract" style="min-width: 15px; height: 15px"/>
                             <span t="confirmation.read-contract-agree">I have read the contract and agree to the terms</span>
                         </label>
                     </div>
@@ -126,6 +126,15 @@
                             <input name="password" type="password" value.bind="passwordDuplicate"/>
                         </label>
                     </div>
+                    <ul class="pw-hints" if.bind="password">
+                        <li class.bind="lengthOk?'ok':''">At least 12 characters</li>
+                        <li class.bind="lowerOk?'ok':''">At least 1 lower</li>
+                        <li class.bind="upperOk?'ok':''">At least 1 UPPER</li>
+                        <li class.bind="numberOk?'ok':''">At least 1 number</li>
+                        <li class.bind="symbolOk?'ok':''">At least 1 symbol</li>
+                        <li class.bind="matchOk?'ok':''">Passwords match</li>
+                    </ul>
+                    <meter min="0" max="8" low="4" high="7" optimum="8" value.bind="pwScore" aria-label="Password strength"></meter>
                 </div>
 
                 <div class="vertical-separator" show.bind="agreedToContract"></div>
@@ -157,7 +166,7 @@
                 </div>
                 <div show.bind="agreedToContract">
                     <div class="auth-actions" style="margin-top: 15px">
-                        <button type="button" class="btn primary" disabled.bind="!password || password !== passwordDuplicate || !agreedToContract" click.trigger="confirmContract()" t="confirmation.sign-button">
+                        <button type="button" class="btn primary" disabled.bind="!pwStrong || !password || password !== passwordDuplicate || !agreedToContract || confirmInProgress" click.trigger="confirmContract()" t="confirmation.sign-button">
                             Sign
                         </button>
                     </div>
