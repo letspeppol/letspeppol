@@ -1,6 +1,6 @@
 Hello,
 
-We received a request to verify an email address for company {{vatNumber}}.
+We received a request to verify an email address for company with Peppol ID {{peppolId}}.
 
 To complete verification, click the link below (valid for 2 hours):
 {{activationLink}}
