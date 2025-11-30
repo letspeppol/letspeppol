@@ -1,4 +1,17 @@
 services:
+  adminer:
+    image: adminer
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.adminer.rule=Host(`${ADMINER_DOMAIN}`)"
+      - "traefik.http.routers.adminer.entrypoints=websecure"
+      - "traefik.http.routers.adminer.tls.certresolver=${CERT_RESOLVER}"
+      - "traefik.http.services.adminer.loadbalancer.server.port=8080"
+
   db:
     image: postgres:16-alpine
     restart: unless-stopped
@@ -6,11 +19,15 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: postgres
-      DB_USER: ${DB_USER}
-      DB_PASS: ${DB_PASS}
+      APP_USER: ${APP_USER}
+      APP_PASS: ${APP_PASS}
+      KYC_USER: ${KYC_USER}
+      KYC_PASS: ${KYC_PASS}
+      PROXY_USER: ${PROXY_USER}
+      PROXY_PASS: ${PROXY_PASS}
     volumes:
       - db-data:/var/lib/postgresql/data
-      - ../../postgres:/docker-entrypoint-initdb.d:ro
+      - ../../postgres/init:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 5s
@@ -19,6 +36,40 @@ services:
       start_period: 10s
     networks:
       - web
+      - default
+
+  backup:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PGHOST: db
+      PGUSER: ${POSTGRES_USER}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      TZ: Europe/Brussels
+      DB_LIST: "app kyc proxy"   # dump these databases hourly
+      DATA_DIR: /opt/data/db
+    volumes:
+      - /opt/data/db:/opt/data/db
+    command: >
+      sh -c '
+        mkdir -p "$$DATA_DIR";
+        echo "[backup] starting loop for $${DB_LIST}";
+        while :; do
+          ts=$$(date "+%Y-%m-%dT%H-%M-%S%z");
+          for d in $${DB_LIST}; do
+            echo "[backup] dumping $$d at $$ts";
+            pg_dump -h "$$PGHOST" -U "$$PGUSER" -d "$$d" -F c -Z 6 -f "$$DATA_DIR/$$d-$$ts.dump" || echo "[backup] FAILED $$d";
+          done;
+          # optional: keep 14 days
+          find "$$DATA_DIR" -type f -name "*.dump" -mtime +14 -delete || true;
+          sleep 3600;
+        done
+      '
+    networks:
+      - default
 
 volumes:
   db-data:

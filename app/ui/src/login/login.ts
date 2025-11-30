@@ -37,7 +37,7 @@ export class Login {
         if (this.rememberMe) {
             localStorage.setItem('email', this.email);
         }
-        await this.router.load('invoices');
+        await this.router.load('dashboard');
     }
 
     verifyAuthenticated() {

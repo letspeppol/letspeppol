@@ -81,6 +81,9 @@
   },
   "confirmation": {
     "header": "Identiteit bevestigen",
+    "header-sign": "Contract ondertekenen",
+    "belgian-only": "Momenteel activeren we alleen Belgische ondernemingen. <br /> Land laten ondersteunen? <a href=\"mailto:country@letspeppol.org\">Help mee</a>",
+    "manual-confirmation-needed": "Uw contract vereist een handmatige controle, die tot 10 werkdagen kan duren. <br /> Houd uw e-mail in de gaten voor eventuele extra acties. <br /> Reden: de eID komt niet volledig overeen met de geselecteerde bestuurder.",
     "loading": "Bedrijfsgegevens laden…",
     "company": "Bedrijf",
     "directors": "Bestuurders",
@@ -97,7 +100,9 @@
     "anim-caption": "Steek uw eID-kaart in en druk op bevestigen om te ondertekenen.",
     "anim-reader-label": "LEZER",
     "anim-reader-sr": "Plaats eID-kaart in de lezerssleuf",
-    "confirm-button": "Bevestigen",
+    "expand-button": "Vergroten",
+    "minimize-button": "Verkleinen",
+    "sign-button": "Ondertekenen",
     "success-title": "Gelukt!",
     "success-contract": "Het ondertekende contract staat in uw downloadsmap",
     "success-login-prefix": "U kunt nu"

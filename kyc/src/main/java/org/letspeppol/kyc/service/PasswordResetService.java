@@ -8,9 +8,9 @@ import org.letspeppol.kyc.dto.ChangePasswordRequest;
 import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.KycException;
 import org.letspeppol.kyc.model.PasswordResetToken;
-import org.letspeppol.kyc.model.User;
+import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.repository.PasswordResetTokenRepository;
-import org.letspeppol.kyc.repository.UserRepository;
+import org.letspeppol.kyc.repository.AccountRepository;
 import org.letspeppol.kyc.service.mail.PasswordResetEmailTemplateProvider;
 import org.letspeppol.kyc.util.LocaleUtil;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,8 +32,8 @@ import java.util.UUID;
 public class PasswordResetService {
 
     private final PasswordResetTokenRepository tokenRepository;
-    private final UserRepository userRepository;
-    private final UserService userService;
+    private final AccountRepository accountRepository;
+    private final AccountService accountService;
     private final JavaMailSender mailSender;
     private final PasswordResetEmailTemplateProvider templateProvider;
     private final SecureRandom random = new SecureRandom();
@@ -48,15 +48,15 @@ public class PasswordResetService {
     @Transactional
     public void requestReset(String email, String acceptLanguage) {
         String langTag = LocaleUtil.extractLanguageTag(acceptLanguage);
-        userRepository.findByEmail(email.toLowerCase()).ifPresent(user -> {
+        accountRepository.findByEmail(email.toLowerCase()).ifPresent(account -> {
             String tokenValue = generateToken();
             PasswordResetToken token = PasswordResetToken.builder()
-                    .user(user)
+                    .account(account)
                     .token(tokenValue)
-                    .expiresAt(Instant.now().plus(ttl))
+                    .expiresOn(Instant.now().plus(ttl))
                     .build();
             tokenRepository.save(token);
-            sendEmail(user.getEmail(), tokenValue, langTag);
+            sendEmail(account.getEmail(), tokenValue, langTag);
         });
     }
 
@@ -73,14 +73,14 @@ public class PasswordResetService {
             throw new KycException(KycErrorCodes.PASSWORD_RESET_TOKEN_EXPIRED);
         }
         validatePassword(newPassword);
-        User user = token.getUser();
-        userService.updatePassword(user, newPassword);
+        Account account = token.getAccount();
+        accountService.updatePassword(account, newPassword);
         token.markUsed();
         tokenRepository.save(token);
     }
 
     public long purgeExpired() {
-        List<PasswordResetToken> expired = tokenRepository.findByUsedAtIsNullAndExpiresAtBefore(Instant.now());
+        List<PasswordResetToken> expired = tokenRepository.findByUsedOnIsNullAndExpiresOnBefore(Instant.now());
         long count = expired.size();
         if (count > 0) tokenRepository.deleteAll(expired);
         return count;
@@ -118,7 +118,7 @@ public class PasswordResetService {
 
     @Transactional
     public void changePassword(String uid, @Valid ChangePasswordRequest request) {
-        User user = userRepository.findByExternalId(UUID.fromString(uid)).orElseThrow(() -> new KycException(KycErrorCodes.USER_NOT_FOUND));
-        userService.updatePassword(user, request.password());
+        Account account = accountRepository.findByExternalId(UUID.fromString(uid)).orElseThrow(() -> new KycException(KycErrorCodes.ACCOUNT_NOT_FOUND));
+        accountService.updatePassword(account, request.password());
     }
 }

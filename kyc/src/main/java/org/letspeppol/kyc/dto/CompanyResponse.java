@@ -4,7 +4,8 @@ import java.util.List;
 
 public record CompanyResponse(
         Long id,
-        String companyNumber,
+        String peppolId,
+        String vatNumber,
         String name,
         String street,
         String houseNumber,

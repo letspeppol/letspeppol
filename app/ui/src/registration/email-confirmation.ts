@@ -21,11 +21,15 @@ export class EmailConfirmation {
     public emailToken: string;
     public tokenVerificationResponse: TokenVerificationResponse | undefined; // made public for template binding
     public confirmedDirector: Director | undefined; // holds the chosen director
-    private password;
+    private password = '';
     private passwordDuplicate;
     private registrationSuccess = true;
     private agreedToContract = false;
     private step = 0;
+    private certificate;
+    private signatureAlgorithm;
+    private prepareSigningResponse;
+    private confirmInProgress = false;
 
     public loading(params: Params, next: RouteNode) {
         this.emailToken = next.queryParams.get('token');
@@ -42,20 +46,54 @@ export class EmailConfirmation {
     }
 
     getContractUrl() {
-        return `${this.kycApi.httpClient.baseUrl}/api/register/contract`;
+        return `${this.kycApi.httpClient.baseUrl}/api/register/contract/${this.confirmedDirector.id}?token=${this.emailToken}#page=1&view=FitH,300`;
+    }
+
+    get lengthOk(): boolean { return this.password.length >= 12; }
+
+    get lowerOk(): boolean {
+        return (/[a-z]/.test(this.password));
+    }
+
+    get upperOk(): boolean {
+        return (/[A-Z]/.test(this.password));
+    }
+
+    get numberOk(): boolean {
+        return (/\d/.test(this.password));
+    }
+
+    get symbolOk(): boolean {
+        return (/[^A-Za-z0-9]/.test(this.password));
+    }
+
+    get matchOk(): boolean {
+        return !!this.password && this.password === this.passwordDuplicate;
+    }
+
+    get pwScore(): number {
+        return this.password ? Math.min(4, Math.floor(this.password.length / 4)) + (this.lowerOk ? 1 : 0) + (this.upperOk ? 1 : 0) + (this.numberOk ? 1 : 0) + (this.symbolOk ? 1 : 0) : 0;
+    }
+
+    get pwStrong() {
+        return this.lengthOk && this.lowerOk && this.upperOk && this.numberOk && this.symbolOk;
     }
 
     public async confirmContract() {
+        this.confirmInProgress = true;
         try {
-            const {
-                certificate,
-                supportedSignatureAlgorithms
-            } = await webeid.getSigningCertificate({lang: 'en'});
-
-            const {
-                signatureAlgorithm,
-                prepareSigningResponse
-            } = await this.prepareSigning(supportedSignatureAlgorithms, certificate);
+//             const {
+//                 certificate,
+//                 supportedSignatureAlgorithms
+//             } = await webeid.getSigningCertificate({lang: 'en'});
+//
+//             const {
+//                 signatureAlgorithm,
+//                 prepareSigningResponse
+//             } = await this.prepareSigning(supportedSignatureAlgorithms, certificate);
+            const certificate = this.certificate;
+            const signatureAlgorithm = this.signatureAlgorithm;
+            const prepareSigningResponse = this.prepareSigningResponse;
 
             const signResponse = await webeid.sign(
                 certificate,
@@ -67,10 +105,20 @@ export class EmailConfirmation {
             await this.downloadFile(finalizeSigningResponse);
             this.ea.publish('alert', {alertType: AlertType.Success, text: "Signed contract downloaded!"});
         } catch (error) {
-            const json = await error.json();
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: json ? json.message : "Signing failed"}); // TODO error util
+            let text = "Signing contract failed";
+            if (error instanceof Response) {
+                try {
+                    const j = await error.json();
+                    text = j?.message ?? `${error.status} ${error.statusText}`;
+                } catch {
+                    text = `${error.status} ${error.statusText}`;
+                }
+            } else if (error && typeof error === "object" && "message" in error) {
+                text = String((error as any).message);
+            }
+            this.ea.publish('alert', { alertType: AlertType.Danger, text });
+            this.confirmInProgress = false;
         }
-
     }
 
     private async prepareSigning(supportedSignatureAlgorithms: Array<SignatureAlgorithm>, certificate: string) {
@@ -117,7 +165,37 @@ export class EmailConfirmation {
     public async confirmDirector(director: Director) {
         if (this.confirmedDirector) return; // already confirmed one
         this.confirmedDirector = director;
-        this.step = 2;
+        try {
+            const {
+                certificate,
+                supportedSignatureAlgorithms
+            } = await webeid.getSigningCertificate({lang: 'en'});
+
+            const {
+                signatureAlgorithm,
+                prepareSigningResponse
+            } = await this.prepareSigning(supportedSignatureAlgorithms, certificate);
+
+            this.certificate = certificate;
+            this.signatureAlgorithm = signatureAlgorithm;
+            this.prepareSigningResponse = prepareSigningResponse;
+            this.step = 2;
+        } catch (error) {
+            let text = "Confirming Identity failed";
+            if (error instanceof Response) {
+                try {
+                    const j = await error.json();
+                    text = j?.message ?? `${error.status} ${error.statusText}`;
+                } catch {
+                    text = `${error.status} ${error.statusText}`;
+                }
+            } else if (error && typeof error === "object" && "message" in error) {
+                text = String((error as any).message);
+            }
+            this.ea.publish('alert', { alertType: AlertType.Danger, text });
+            this.confirmedDirector = undefined;
+        }
+
         return;
     }
 }

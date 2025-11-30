@@ -1,7 +1,7 @@
 package org.letspeppol.app.dto;
 
 public record CompanyDto(
-        String companyNumber,
+        String peppolId,
         String vatNumber,
         String name,
         String subscriber,

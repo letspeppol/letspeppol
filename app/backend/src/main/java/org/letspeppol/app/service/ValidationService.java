@@ -5,7 +5,6 @@ import com.helger.ddd.DocumentDetailsDeterminator;
 import com.helger.ddd.model.DDDSyntaxList;
 import com.helger.ddd.model.DDDValueProviderList;
 import com.helger.diver.api.coord.DVRCoordinate;
-import com.helger.diver.api.version.DVRVersion; // added import
 import com.helger.phive.api.execute.ValidationExecutionManager;
 import com.helger.phive.api.executorset.IValidationExecutorSet;
 import com.helger.phive.api.executorset.ValidationExecutorSetRegistry;
@@ -19,6 +18,8 @@ import com.helger.phive.xml.source.IValidationSourceXML;
 import com.helger.phive.xml.source.ValidationSourceXML;
 import com.helger.io.resource.inmemory.ReadableResourceString;
 import com.helger.diagnostics.error.IError;
+import org.letspeppol.app.dto.ValidationErrorDto;
+import org.letspeppol.app.dto.ValidationResultDto;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -34,8 +35,8 @@ public class ValidationService {
         PeppolValidation.initStandard(REGISTRY);
     }
 
-    public Map<String, Object> validateXml(String xml) {
-        ReadableResourceString rr = new ReadableResourceString(xml, StandardCharsets.UTF_8);
+    public ValidationResultDto validateUblXml(String ublXml) {
+        ReadableResourceString rr = new ReadableResourceString(ublXml, StandardCharsets.UTF_8);
         IValidationSourceXML source = ValidationSourceXML.create(rr);
 
         // Robustly get the document element for DDD detection
@@ -77,20 +78,18 @@ public class ValidationService {
         );
 
         var errorList = results.getAllErrors();
-        var errors = new ArrayList<Map<String,Object>>();
+        var errors = new ArrayList<ValidationErrorDto>();
         errorList.forEach(err -> errors.add(toErrorMap(err)));
 
         boolean isValid = results.containsNoError();
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("isValid", isValid);
-        response.put("errorCount", errorList.size());
-        response.put("errors", errors);
-        response.put("vesId", vesId != null ? vesId.toString() : "unknown");
-        if (detectedVESID != null) {
-            response.put("detectedVESIDRaw", detectedVESID);
-        }
-        return response;
+        return new ValidationResultDto(
+                isValid,
+                errorList.size(),
+                errors,
+                vesId != null ? vesId.toString() : "unknown",
+                detectedVESID != null ? detectedVESID : null
+        );
     }
 
     private DVRCoordinate toDVRCoordinate(String raw) {
@@ -110,26 +109,27 @@ public class ValidationService {
         return null;
     }
 
-    private Map<String,Object> errorResponse(String message) {
-        Map<String,Object> error = new HashMap<>();
-        error.put("isValid", false);
-        error.put("errorCount", 1);
-        error.put("errors", List.of(Map.of(
-                "severity", "ERROR",
-                "message", message)));
-        error.put("vesId", "unknown");
-        return error;
+    private ValidationResultDto errorResponse(String message) {
+        return new ValidationResultDto(
+                false,
+                1,
+                List.of(new ValidationErrorDto(
+                        0,
+                        0,
+                        message,
+                        "ERROR"
+                )),
+                "unknown",
+                null
+        );
     }
 
-    private Map<String,Object> toErrorMap(IError err) {
-        Map<String,Object> m = new HashMap<>();
-        m.put("severity", err.getErrorLevel().getID());
-        m.put("message", err.getErrorText(Locale.ENGLISH));
-        // Access always present location defensively; suppress warning by unconditional access if not null
-        if (err.getErrorLocation() != null) {
-            m.put("line", err.getErrorLocation().getLineNumber());
-            m.put("column", err.getErrorLocation().getColumnNumber());
-        }
-        return m;
+    private ValidationErrorDto toErrorMap(IError err) {
+        return new ValidationErrorDto(
+                err.getErrorLocation() != null ? err.getErrorLocation().getColumnNumber() : 0, // Access always present location defensively; suppress warning by unconditional access if not null
+                err.getErrorLocation() != null ? err.getErrorLocation().getLineNumber() : 0, // Access always present location defensively; suppress warning by unconditional access if not null
+                err.getErrorText(Locale.ENGLISH),
+                err.getErrorLevel().getID()
+        );
     }
 }

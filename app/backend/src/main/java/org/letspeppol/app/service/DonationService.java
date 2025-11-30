@@ -1,13 +1,11 @@
 package org.letspeppol.app.service;
 
-import lombok.Getter;
 import org.letspeppol.app.dto.DonationStatsDto;
 import org.letspeppol.app.dto.OpenCollectiveAccountDto;
-import jakarta.annotation.PostConstruct;
 
 import lombok.extern.slf4j.Slf4j;
-import org.letspeppol.app.dto.proxy.MaxProcessedDto;
-import org.letspeppol.app.dto.proxy.TotalProcessedDto;
+import org.letspeppol.app.dto.MaxProcessedDto;
+import org.letspeppol.app.dto.TotalProcessedDto;
 import org.springframework.beans.factory.annotation.Qualifier;
 //import org.springframework.graphql.client.HttpGraphQlClient;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,14 +25,14 @@ public class DonationService {
 
     @Value("${document.price}")
     private BigDecimal pricePerDocument;
-    private final LetsPeppolProxyService proxyService;
+    private final StatisticsService statisticsService;
     private final HttpGraphQlClient graphQlClient; // Open collective
     private DonationStatsDto donationStatsDto;
     private MaxProcessedDto maxProcessedDto;
 
-    public DonationService(@Qualifier("OpenCollectiveWebClient") WebClient webClient, LetsPeppolProxyService proxyService) {
+    public DonationService(@Qualifier("OpenCollectiveWebClient") WebClient webClient, StatisticsService statisticsService) {
         this.graphQlClient = HttpGraphQlClient.builder(webClient).build();
-        this.proxyService = proxyService;
+        this.statisticsService = statisticsService;
     }
 
     public DonationStatsDto getDonationStats() {
@@ -53,12 +51,13 @@ public class DonationService {
 
     @Scheduled(cron = "0 0 */12 * * *")
     public synchronized void updateMaxProcessedDto() {
-        this.maxProcessedDto = this.proxyService.maxProcessed();
+        this.maxProcessedDto = this.statisticsService.maxProcessed();
     }
 
     @Scheduled(fixedRateString = "PT15M")
     public synchronized void updateDonationStats() {
-        TotalProcessedDto totalProcessedDto = proxyService.totalsProcessed();
+        TotalProcessedDto totalProcessedDto = statisticsService.totalsProcessed();
+        if (totalProcessedDto == null) return;
         OpenCollectiveAccountDto accountInfo = this.queryAccount().block();
 
         Integer invoicesRemaining = accountInfo.getStats().getTotalAmountReceived().getValue()

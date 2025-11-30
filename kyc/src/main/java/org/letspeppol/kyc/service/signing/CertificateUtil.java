@@ -6,7 +6,7 @@ import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.style.IETFUtils;
 import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.KycException;
-
+import javax.security.auth.x500.X500Principal;
 import java.io.InputStream;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -40,6 +40,11 @@ public class CertificateUtil {
         } catch (CertificateException e) {
             throw new KycException(KycErrorCodes.INVALID_CERTIFICATE);
         }
+    }
+
+    public static X500Name getX500Name(X509Certificate[] chain) {
+        X500Principal principal = new X500Principal(chain[0].getSubjectX500Principal().getEncoded());
+        return new X500Name(principal.getName());
     }
 
     public static String getRDNName(X500Name x500Name, ASN1ObjectIdentifier identifier) {

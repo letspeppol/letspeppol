@@ -180,7 +180,14 @@ export class InvoiceComposer {
     }
 
     getCompanyNumber() {
-        return `${this.companyService.myCompany.companyNumber}`;
+        if (!this.companyService.myCompany.peppolId)
+            return undefined;
+        const s = this.companyService.myCompany.peppolId.trim();
+        const i = s.indexOf(":");
+        if (i < 0)
+            return undefined;
+        let value = s.slice(i + 1).trim();
+        return `${value}`;
     }
 
     getVatNumber() {

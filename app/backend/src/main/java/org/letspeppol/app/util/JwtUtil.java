@@ -15,13 +15,12 @@ public class JwtUtil {
         return peppolId;
     }
 
-    public static String getCompanyNumber(Jwt jwt) {
-        String peppolId = getPeppolId(jwt);
-        String [] parts = peppolId.split(":");
-        if (parts.length != 2) {
-            throw new SecurityException(AppErrorCodes.PEPPOL_ID_INVALID);
+    public static boolean isPeppolActive(Jwt jwt) {
+        Boolean peppolActive = jwt.getClaim(SecurityConfig.PEPPOL_ACTIVE);
+        if (peppolActive == null) {
+            throw new SecurityException(AppErrorCodes.PEPPOL_ACTIVE_NOT_PRESENT);
         }
-        return parts[1];
+        return peppolActive;
     }
 
 }

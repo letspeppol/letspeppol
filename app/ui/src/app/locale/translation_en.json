@@ -98,6 +98,9 @@
   },
   "confirmation": {
     "header": "Confirm Identity",
+    "header-sign": "Sign Contract",
+    "belgian-only": "We currently activate Belgian companies only. <br /> Want your country supported? <a href=\"mailto:country@letspeppol.org\">Help us</a>",
+    "manual-confirmation-needed": "Your contract requires manual review, which can take up to 10 business days. <br /> Please keep an eye on your email for any additional actions. <br /> Reason: the eID does not fully match the selected director.",
     "loading": "Loading company details…",
     "company": "Company",
     "directors": "Directors",
@@ -114,7 +117,9 @@
     "anim-caption": "Insert your eID card and press confirm to sign.",
     "anim-reader-label": "READER",
     "anim-reader-sr": "Insert eID card into reader slot",
-    "confirm-button": "Confirm",
+    "expand-button": "Expand",
+    "minimize-button": "Minimize",
+    "sign-button": "Sign",
     "success-title": "Success!",
     "success-contract": "The signed contract can be found in your downloads folder",
     "success-login-prefix": "You can now"

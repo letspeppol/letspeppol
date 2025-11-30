@@ -9,6 +9,7 @@ import org.letspeppol.app.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ import java.math.BigDecimal;
 @Slf4j
 @RequiredArgsConstructor
 @Component
+@Profile("dev")
 public class DataInitializer implements CommandLineRunner {
 
     private final CompanyRepository companyRepository;
@@ -28,10 +30,11 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) {
-        String companyNumber = "0705969661";
-        if (companyRepository.findByCompanyNumber(companyNumber).isEmpty()) {
-            RegistrationRequest registrationRequest = new RegistrationRequest(
-                    companyNumber,
+        String peppolId = "0208:0705969661";
+        if (companyRepository.findByPeppolId(peppolId).isEmpty()) {
+            AccountInfo accountInfo = new AccountInfo(
+                    peppolId,
+                    "BE0705969661",
                     "Digita bv.",
                     "Demerstraat",
                     "2",
@@ -40,7 +43,7 @@ public class DataInitializer implements CommandLineRunner {
                     "Michiel Wouters",
                     "letspeppol@itaa.be"
             );
-            companyService.register(registrationRequest);
+            companyService.register(accountInfo);
             PartnerDto partner = new PartnerDto(
                     null,
                     "BE1023290711",
@@ -54,7 +57,7 @@ public class DataInitializer implements CommandLineRunner {
                     "1000",
                     new AddressDto(null,"Bree", "3960", "Kerkstraat", "15", "BE")
             );
-            partnerService.createPartner(companyNumber, partner);
+            partnerService.createPartner(peppolId, partner);
             PartnerDto partner2 = new PartnerDto(
                     null,
                     "BE0202239951",
@@ -68,9 +71,9 @@ public class DataInitializer implements CommandLineRunner {
                     "2000",
                     new AddressDto(null,"Genk", "3600", "Stationsstraat", "22", "BE")
             );
-            partnerService.createPartner(companyNumber, partner2);
+            partnerService.createPartner(peppolId, partner2);
             ProductCategoryDto productCategory = new ProductCategoryDto(null, "Clothes", "#feeffe", null, null);
-            productCategory = productCategoryService.createCategory(companyNumber, productCategory);
+            productCategory = productCategoryService.createCategory(peppolId, productCategory);
             ProductDto product = new ProductDto(
                     null,
                     "T-shirt",
@@ -82,13 +85,14 @@ public class DataInitializer implements CommandLineRunner {
                     new BigDecimal("21"),
                     productCategory.id()
             );
-            productService.createProduct(companyNumber, product);
+            productService.createProduct(peppolId, product);
 
         }
-        companyNumber = "1023290711";
-        if (companyRepository.findByCompanyNumber(companyNumber).isEmpty()) {
-            RegistrationRequest registrationRequest = new RegistrationRequest(
-                    companyNumber,
+        peppolId = "0208:1023290711";
+        if (companyRepository.findByPeppolId(peppolId).isEmpty()) {
+            AccountInfo accountInfo = new AccountInfo(
+                    peppolId,
+                    "BE1023290711",
                     "SoftwareOplossing bv.",
                     "Demerstraat",
                     "2",
@@ -97,7 +101,7 @@ public class DataInitializer implements CommandLineRunner {
                     "Bart In stukken",
                     "bart@softwareoplossing.be"
             );
-            companyService.register(registrationRequest);
+            companyService.register(accountInfo);
         }
     }
 }

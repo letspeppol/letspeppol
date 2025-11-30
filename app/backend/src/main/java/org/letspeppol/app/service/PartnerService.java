@@ -23,14 +23,14 @@ public class PartnerService {
     private final CompanyRepository companyRepository;
     private final PartnerRepository partnerRepository;
 
-    public List<PartnerDto> findByCompanyNumber(String companyNumber) {
-        return partnerRepository.findByOwningCompany(companyNumber).stream()
+    public List<PartnerDto> findByPeppolId(String peppolId) {
+        return partnerRepository.findByOwningPeppolId(peppolId).stream()
                 .map(PartnerMapper::toDto)
                 .toList();
     }
 
-    public PartnerDto createPartner(String companyNumber, PartnerDto partnerDto) {
-        Company company = companyRepository.findByCompanyNumber(companyNumber).orElseThrow(() -> new NotFoundException("Company does not exist"));
+    public PartnerDto createPartner(String peppolId, PartnerDto partnerDto) {
+        Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new NotFoundException("Company does not exist"));
         Partner partner = new Partner(
                 partnerDto.vatNumber(),
                 partnerDto.name(),
