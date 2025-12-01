@@ -5,8 +5,13 @@ We hebben een verzoek ontvangen om een e-mailadres te verifiëren voor bedrijf m
 Om de verificatie te voltooien klikt u op de onderstaande link (2 uur geldig):
 {{activationLink}}
 
+We hebben de Web eID plugin nodig om uw identiteit te verifiëren.
+- Installeer de web-eid plugin via https://www.id.ee/en/article/install-id-software/
+- Zorg dat u ook de browserextensie installeert, de instructies staan op dezelfde pagina
+- Herstart uw browser!
+- Controleer of de plugin werkt https://www.id.ee/en/article/test-your-id-card/
+
 Als u dit niet heeft aangevraagd kunt u dit bericht negeren.
 
 Met vriendelijke groet,
-KYC Portal Team
-
+The Let’s Peppol team
