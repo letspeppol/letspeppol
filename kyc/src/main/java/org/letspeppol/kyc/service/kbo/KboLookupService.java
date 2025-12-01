@@ -1,4 +1,4 @@
-package org.letspeppol.kyc.service;
+package org.letspeppol.kyc.service.kbo;
 
 import io.micrometer.core.instrument.Counter;
 import lombok.extern.slf4j.Slf4j;
