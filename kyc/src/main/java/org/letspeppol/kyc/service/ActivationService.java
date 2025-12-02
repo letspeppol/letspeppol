@@ -37,7 +37,7 @@ public class ActivationService {
     private final IdentityVerificationService identityVerificationService;
     private final ActivationEmailTemplateProvider templateProvider;
     private final SecureRandom random = new SecureRandom();
-    private final Duration ttl = Duration.ofHours(2);
+    private final Duration ttl = Duration.ofDays(7);
     private final Counter activationRequestedCounter;
     private final Counter tokenVerificationCounter;
 
@@ -117,14 +117,16 @@ public class ActivationService {
     }
 
     private void sendEmail(String peppolId, String to, String token, String languageTag) {
-        log.info("Sending activation email to {} for company {} lang={} ", to, peppolId, languageTag);
+        log.info("Sending activation email to {} for company {} lang={}", to, peppolId, languageTag);
         String activationLink = baseUrl + token;
         try {
             ActivationEmailTemplateProvider.RenderedTemplate tpl = templateProvider.render(peppolId, activationLink, languageTag);
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, false);
             helper.setTo(to);
-            helper.setFrom(fromAddress);
+            helper.setFrom(fromAddress, "Let's Peppol");
+            helper.setBcc("kyc@letspeppol.org");
+            helper.setReplyTo("support@letspeppol.org");
             helper.setSubject(tpl.subject());
             helper.setText(tpl.body(), false);
             mailSender.send(message);
