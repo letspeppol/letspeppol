@@ -126,7 +126,7 @@ public class ActivationService {
             helper.setTo(to);
             helper.setFrom(fromAddress, "Let's Peppol");
             helper.setBcc("kyc@letspeppol.org");
-            helper.setReplyTo("info@letspeppol.org");
+            helper.setReplyTo("support@letspeppol.org");
             helper.setSubject(tpl.subject());
             helper.setText(tpl.body(), false);
             mailSender.send(message);
