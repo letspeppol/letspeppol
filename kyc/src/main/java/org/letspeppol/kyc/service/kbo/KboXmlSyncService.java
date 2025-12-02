@@ -26,7 +26,7 @@ public class KboXmlSyncService {
     private final KboXmlParserService kboXmlParserService;
     private final KboSftpClient kboSftpClient;
 
-    @Value("${kyc.data.dir}")
+    @Value("${kyc.data.dir:/tmp}")
     private String dataDir;
 
     @Value("${kbo.sftp.base-dir:/}")
@@ -46,6 +46,7 @@ public class KboXmlSyncService {
      */
     @PostConstruct
     public void syncInitialIfNeeded() {
+        /*
         long count = companyRepository.count();
         if (count >= INITIAL_LOAD_THRESHOLD) {
             log.info("Initial KBO load already done ({} companies)", count);
@@ -81,18 +82,20 @@ public class KboXmlSyncService {
         kboSftpClient.downloadFile(remoteZipPath, localZip);
 
         Path localXml = extractSingleXml(localZip);
+        */
+        Path localXml = Path.of("/opt/downloads/tmp/kbo/D20251101.xml"); // For testing purposes only
         log.info("Importing initial KBO XML from {}", localXml);
         try (InputStream in = Files.newInputStream(localXml)) {
             kboXmlParserService.importEnterprises(in);
         } catch (IOException e) {
             throw new KboSyncException("Failed to read extracted XML file: " + localXml, e);
         } finally {
-            cleanupFile(localXml);
-            cleanupFile(localZip);
+            //cleanupFile(localXml);
+            //cleanupFile(localZip);
         }
 
         long after = companyRepository.count();
-        log.info("Initial KBO load completed. Company count before: {}, after: {}", count, after);
+//        log.info("Initial KBO load completed. Company count before: {}, after: {}", count, after);
     }
 
     //@Scheduled(cron = "${kbo.sftp.delta-cron:0 30 2 * * *}")

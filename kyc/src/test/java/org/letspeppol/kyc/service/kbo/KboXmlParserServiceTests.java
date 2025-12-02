@@ -1,5 +1,6 @@
 package org.letspeppol.kyc.service.kbo;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -7,9 +8,10 @@ import org.letspeppol.kyc.model.kbo.Company;
 import org.letspeppol.kyc.model.kbo.Director;
 import org.letspeppol.kyc.repository.CompanyRepository;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -22,34 +24,46 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class KboXmlParserServiceTests {
 
     @Mock
     CompanyRepository companyRepository;
 
-    @InjectMocks
-    KboXmlParserService kboXmlParserService;
+    @Mock
+    KboBatchPersistenceService kboBatchPersistenceService;
+
+    private KboXmlParserService kboXmlParserService;
+
+    @BeforeEach
+    void setUp() {
+        kboXmlParserService = new KboXmlParserService(companyRepository, kboBatchPersistenceService);
+    }
 
     @Test
     @DisplayName("importEnterprises should create companies and directors for enterprises with address and active functions held by a person")
     void importEnterprisesCreatesCompaniesAndDirectors() throws Exception {
-        when(companyRepository.findByPeppolId(anyString())).thenReturn(Optional.empty());
+        when(companyRepository.findWithDirectorsByPeppolId(anyString())).thenReturn(Optional.empty());
 
         InputStream is = getClass().getResourceAsStream("/D20251101.xml");
         assertNotNull(is, "Test XML resource D20251101.xml should be on classpath");
 
-        // Capture what is persisted
-        ArgumentCaptor<List<Company>> captor = ArgumentCaptor.forClass(List.class);
-        when(companyRepository.saveAll(captor.capture())).thenAnswer(invocation -> invocation.getArgument(0));
+        List<Company> persistedCompanies = new ArrayList<>();
+        when(kboBatchPersistenceService.saveBatch(anyList())).thenAnswer(invocation -> {
+            List<Company> batch = invocation.getArgument(0);
+            persistedCompanies.clear();
+            persistedCompanies.addAll(batch);
+            return batch;
+        });
 
-        List<Company> result = kboXmlParserService.importEnterprises(is);
+        kboXmlParserService.importEnterprises(is);
 
-        assertNotNull(result);
+        assertFalse(persistedCompanies.isEmpty());
         // Two enterprises (200762878 and 200881951) match the criteria
-        assertEquals(2, result.size());
+        assertEquals(2, persistedCompanies.size());
 
-        Company company1 = result.stream().filter(c -> "200762878".equals(c.getVatNumber())).findFirst().orElseThrow();
-        Company company2 = result.stream().filter(c -> "200881951".equals(c.getVatNumber())).findFirst().orElseThrow();
+        Company company1 = persistedCompanies.stream().filter(c -> "BE200762878".equals(c.getVatNumber())).findFirst().orElseThrow();
+        Company company2 = persistedCompanies.stream().filter(c -> "BE200881951".equals(c.getVatNumber())).findFirst().orElseThrow();
 
         // Check company 1
         assertEquals("VLOTTER", company1.getName());
@@ -78,7 +92,7 @@ class KboXmlParserServiceTests {
         assertTrue(directorNames2.contains("Diet Phili"));
 
         // Enterprise 200450005 has no Functions, so must not be persisted
-        assertTrue(result.stream().noneMatch(c -> "200450005".equals(c.getVatNumber())));
+        assertTrue(persistedCompanies.stream().noneMatch(c -> "BE200450005".equals(c.getVatNumber())));
     }
 
     @Test
@@ -87,16 +101,23 @@ class KboXmlParserServiceTests {
         InputStream is = getClass().getResourceAsStream("/D20251101.xml");
         assertNotNull(is);
 
-        Company existing = new Company("BE200762878", "200762878", "Old name", "OldCity", "0000", "OldStreet", "1");
+        Company existing = new Company("0208:200762878", "BE200762878", "Old name", "OldCity", "0000", "OldStreet", "1");
         existing.setDirectors(new ArrayList<>());
 
-        when(companyRepository.findByPeppolId("BE200762878")).thenReturn(Optional.of(existing));
-        when(companyRepository.findByPeppolId("BE200881951")).thenReturn(Optional.empty());
-        when(companyRepository.saveAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(companyRepository.findWithDirectorsByPeppolId("0208:200762878")).thenReturn(Optional.of(existing));
+        when(companyRepository.findWithDirectorsByPeppolId("0208:200881951")).thenReturn(Optional.empty());
 
-        List<Company> result = kboXmlParserService.importEnterprises(is);
+        List<Company> persistedCompanies = new ArrayList<>();
+        when(kboBatchPersistenceService.saveBatch(anyList())).thenAnswer(invocation -> {
+            List<Company> batch = invocation.getArgument(0);
+            persistedCompanies.clear();
+            persistedCompanies.addAll(batch);
+            return batch;
+        });
 
-        Company updated = result.stream().filter(c -> "200762878".equals(c.getVatNumber())).findFirst().orElseThrow();
+        kboXmlParserService.importEnterprises(is);
+
+        Company updated = persistedCompanies.stream().filter(c -> "BE200762878".equals(c.getVatNumber())).findFirst().orElseThrow();
         assertSame(existing, updated);
         assertEquals("VLOTTER", updated.getName());
         assertEquals("Boom", updated.getCity());
@@ -113,18 +134,25 @@ class KboXmlParserServiceTests {
         assertNotNull(is);
 
         // Existing company with a registered director that does not appear in the XML
-        Company existing = new Company("BE200762878", "200762878", "Old name", "OldCity", "0000", "OldStreet", "1");
+        Company existing = new Company("0208:200762878", "BE200762878", "Old name", "OldCity", "0000", "OldStreet", "1");
         Director registeredDirector = new Director("Legacy Director", existing);
         registeredDirector.setRegistered(true);
         existing.getDirectors().add(registeredDirector);
 
-        when(companyRepository.findByPeppolId("BE200762878")).thenReturn(Optional.of(existing));
-        when(companyRepository.findByPeppolId("BE200881951")).thenReturn(Optional.empty());
-        when(companyRepository.saveAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(companyRepository.findWithDirectorsByPeppolId("0208:200762878")).thenReturn(Optional.of(existing));
+        when(companyRepository.findWithDirectorsByPeppolId("0208:200881951")).thenReturn(Optional.empty());
 
-        List<Company> result = kboXmlParserService.importEnterprises(is);
+        List<Company> persistedCompanies = new ArrayList<>();
+        when(kboBatchPersistenceService.saveBatch(anyList())).thenAnswer(invocation -> {
+            List<Company> batch = invocation.getArgument(0);
+            persistedCompanies.clear();
+            persistedCompanies.addAll(batch);
+            return batch;
+        });
 
-        Company updated = result.stream().filter(c -> "200762878".equals(c.getVatNumber())).findFirst().orElseThrow();
+        kboXmlParserService.importEnterprises(is);
+
+        Company updated = persistedCompanies.stream().filter(c -> "BE200762878".equals(c.getVatNumber())).findFirst().orElseThrow();
 
         // The registered director should still be present after import
         List<String> directorNames = updated.getDirectors().stream().map(Director::getName).toList();
@@ -133,5 +161,57 @@ class KboXmlParserServiceTests {
         // And the KBO directors should also be there
         assertTrue(directorNames.contains("Go Van Dy"));
         assertTrue(directorNames.contains("Bary De Smet"));
+    }
+
+    @Test
+    @DisplayName("importEnterprises should skip persistence when company and directors are unchanged")
+    void importEnterprisesSkipsWhenUnchanged() throws Exception {
+        InputStream is = getClass().getResourceAsStream("/D20251101.xml");
+        assertNotNull(is);
+
+        Company existing1 = new Company("0208:200762878", "BE200762878", "VLOTTER", "Boom", "2850", "Colonel Silvertopstraat", "15");
+        existing1.setId(1L);
+        existing1.setDirectors(new ArrayList<>(List.of(new Director("Go Van Dy", existing1), new Director("Bary De Smet", existing1))));
+        Company existing2 = new Company("0208:200881951", "BE200881951", "Intercommunale Maatschappij voor de Ruimtelijke Ordening en de Economisch- Sociale Expansie van het Arrondissement Halle-Vilvoorde", "Asse", "1731", "Brusselsesteenweg", "617");
+        existing2.setId(2L);
+        existing2.setDirectors(new ArrayList<>(List.of(new Director("Liev Imbrec", existing2), new Director("Diet Phili", existing2))));
+
+        when(companyRepository.findWithDirectorsByPeppolId("0208:200762878")).thenReturn(Optional.of(existing1));
+        when(companyRepository.findWithDirectorsByPeppolId("0208:200881951")).thenReturn(Optional.of(existing2));
+
+        ArgumentCaptor<List<Company>> batchCaptor = ArgumentCaptor.forClass(List.class);
+        when(kboBatchPersistenceService.saveBatch(batchCaptor.capture())).thenAnswer(invocation -> invocation.getArgument(0));
+
+        kboXmlParserService.importEnterprises(is);
+
+        assertTrue(batchCaptor.getAllValues().isEmpty(), "No persistence should happen for unchanged enterprises");
+    }
+
+    @Test
+    @DisplayName("importEnterprises should persist when directors differ from enterprise data")
+    void importEnterprisesPersistsWhenDirectorsChange() throws Exception {
+        InputStream is = getClass().getResourceAsStream("/D20251101.xml");
+        assertNotNull(is);
+
+        Company existing = new Company("0208:200762878", "BE200762878", "VLOTTER", "Boom", "2850", "Colonel Silvertopstraat", "15");
+        existing.setId(3L);
+        Director legacyDirector = new Director("Legacy Director", existing);
+        legacyDirector.setRegistered(true);
+        existing.setDirectors(new ArrayList<>(List.of(legacyDirector)));
+
+        when(companyRepository.findWithDirectorsByPeppolId("0208:200762878")).thenReturn(Optional.of(existing));
+        when(companyRepository.findWithDirectorsByPeppolId("0208:200881951")).thenReturn(Optional.empty());
+
+        ArgumentCaptor<List<Company>> batchCaptor = ArgumentCaptor.forClass(List.class);
+        when(kboBatchPersistenceService.saveBatch(batchCaptor.capture())).thenAnswer(invocation -> invocation.getArgument(0));
+
+        kboXmlParserService.importEnterprises(is);
+
+        assertFalse(batchCaptor.getAllValues().isEmpty(), "Changes to directors should trigger persistence");
+        List<String> directorNames = existing.getDirectors().stream().map(Director::getName).toList();
+        assertEquals(3, directorNames.size());
+        assertTrue(directorNames.contains("Go Van Dy"));
+        assertTrue(directorNames.contains("Bary De Smet"));
+        assertTrue(directorNames.contains("Legacy Director"));
     }
 }

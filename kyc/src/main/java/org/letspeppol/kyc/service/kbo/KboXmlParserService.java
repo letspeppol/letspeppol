@@ -1,6 +1,7 @@
 package org.letspeppol.kyc.service.kbo;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.kyc.model.kbo.Company;
 import org.letspeppol.kyc.model.kbo.Director;
 import org.letspeppol.kyc.repository.CompanyRepository;
@@ -13,7 +14,7 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.InputStream;
 import java.util.*;
 
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class KboXmlParserService {
@@ -21,8 +22,9 @@ public class KboXmlParserService {
     private static final int DEFAULT_BATCH_SIZE = 500;
 
     private final CompanyRepository companyRepository;
+    private final KboBatchPersistenceService kboBatchPersistenceService;
 
-    public List<Company> importEnterprises(InputStream xmlStream) {
+    public void importEnterprises(InputStream xmlStream) {
         Objects.requireNonNull(xmlStream, "xmlStream must not be null");
 
         List<Company> batch = new ArrayList<>();
@@ -42,51 +44,82 @@ public class KboXmlParserService {
                     }
 
                     String peppolId = buildPeppolIdFromNbr(enterprise.nbr);
+                    String vatNumber = "BE" + enterprise.nbr;
 
-                    Company company = companyRepository.findByPeppolId(peppolId)
-                            .orElseGet(() -> new Company(peppolId, enterprise.nbr, enterprise.name,
+                    Company company = companyRepository.findWithDirectorsByPeppolId(peppolId)
+                            .orElseGet(() -> new Company(peppolId, vatNumber, enterprise.name,
                                     enterprise.address.city, enterprise.address.postalCode,
                                     enterprise.address.street, enterprise.address.houseNumber));
 
-                    company.setVatNumber(enterprise.nbr);
-                    company.setName(enterprise.name);
-                    company.setCity(enterprise.address.city);
-                    company.setPostalCode(enterprise.address.postalCode);
-                    company.setStreet(enterprise.address.street);
-                    company.setHouseNumber(enterprise.address.houseNumber);
+                    boolean isNewCompany = company.getId() == null;
+                    boolean companyChanged = applyCompanyUpdates(company, enterprise, vatNumber);
+                    boolean directorsChanged = syncDirectors(company, enterprise.directors);
 
-                    // Sync directors with active ones from KBO, but keep any registered directors
-                    syncDirectors(company, enterprise.directors);
-
-                    batch.add(company);
+                    if (isNewCompany || companyChanged || directorsChanged) {
+                        batch.add(company);
+                    }
 
                     if (batch.size() >= DEFAULT_BATCH_SIZE) {
-                        companyRepository.saveAll(new ArrayList<>(batch));
+                        log.info("Saving batch of {} companies to database", batch.size());
+                        kboBatchPersistenceService.saveBatch(batch);
                         batch.clear();
                     }
                 }
             }
 
             if (!batch.isEmpty()) {
-                companyRepository.saveAll(batch);
+                kboBatchPersistenceService.saveBatch(batch);
             }
         } catch (XMLStreamException e) {
             throw new IllegalStateException("Failed to parse KBO XML", e);
         }
-
-        return batch;
     }
 
-    private void syncDirectors(Company company, List<FunctionData> functionDataList) {
-        List<Director> existingDirectors = new ArrayList<>(company.getDirectors());
+    private boolean applyCompanyUpdates(Company company, EnterpriseData enterprise, String vatNumber) {
+        boolean changed = false;
 
-        List<Director> protectedDirectors = extractProtectedDirectors(existingDirectors);
-        Set<String> activeDirectorNames = toActiveDirectorNames(functionDataList);
+        if (!Objects.equals(company.getName(), enterprise.name)
+            || !Objects.equals(company.getCity(), enterprise.address.city)
+            || !Objects.equals(company.getPostalCode(), enterprise.address.postalCode)
+            || !Objects.equals(company.getStreet(), enterprise.address.street)
+            || !Objects.equals(company.getHouseNumber(), enterprise.address.houseNumber)) {
+            company.setName(enterprise.name);
+            company.setCity(enterprise.address.city);
+            company.setPostalCode(enterprise.address.postalCode);
+            company.setStreet(enterprise.address.street);
+            company.setHouseNumber(enterprise.address.houseNumber);
+            changed = true;
+        }
+        return changed;
+    }
 
-        company.getDirectors().clear();
-        company.getDirectors().addAll(protectedDirectors);
+    private boolean syncDirectors(Company company, List<FunctionData> functionDataList) {
+        List<Director> currentDirectors = company.getDirectors();
+        List<Director> protectedDirectors = extractProtectedDirectors(currentDirectors);
+        List<Director> targetDirectors = new ArrayList<>(protectedDirectors);
 
-        mergeActiveDirectors(company, activeDirectorNames);
+        Map<String, Director> reusableDirectors = new LinkedHashMap<>();
+        for (Director director : currentDirectors) {
+            if (!director.isRegistered()) {
+                reusableDirectors.putIfAbsent(director.getName(), director);
+            }
+        }
+
+        for (String fullName : toActiveDirectorNames(functionDataList)) {
+            Director director = reusableDirectors.remove(fullName);
+            if (director == null) {
+                director = new Director(fullName, company);
+            }
+            targetDirectors.add(director);
+        }
+
+        if (directorsEqual(currentDirectors, targetDirectors)) {
+            return false;
+        }
+
+        currentDirectors.clear();
+        currentDirectors.addAll(targetDirectors);
+        return true;
     }
 
     private List<Director> extractProtectedDirectors(List<Director> existingDirectors) {
@@ -96,7 +129,7 @@ public class KboXmlParserService {
     }
 
     private Set<String> toActiveDirectorNames(List<FunctionData> functionDataList) {
-        Set<String> activeDirectorNames = new HashSet<>();
+        Set<String> activeDirectorNames = new LinkedHashSet<>();
 
         for (FunctionData d : functionDataList) {
             String fullName = (d.firstName != null && !d.firstName.isBlank())
@@ -110,18 +143,31 @@ public class KboXmlParserService {
         return activeDirectorNames;
     }
 
-    private void mergeActiveDirectors(Company company, Set<String> activeDirectorNames) {
-        Set<String> existingNames = new HashSet<>();
-        for (Director d : company.getDirectors()) {
-            existingNames.add(d.getName());
+    private boolean directorsEqual(List<Director> currentDirectors, List<Director> targetDirectors) {
+        if (currentDirectors.size() != targetDirectors.size()) {
+            return false;
         }
 
-        for (String fullName : activeDirectorNames) {
-            if (!existingNames.contains(fullName)) {
-                Director director = new Director(fullName, company);
-                company.getDirectors().add(director);
+        Comparator<Director> comparator = Comparator.comparing(Director::isRegistered).reversed()
+                .thenComparing(Director::getName, Comparator.nullsFirst(String::compareTo));
+
+        List<Director> currentSorted = new ArrayList<>(currentDirectors);
+        currentSorted.sort(comparator);
+        List<Director> targetSorted = new ArrayList<>(targetDirectors);
+        targetSorted.sort(comparator);
+
+        for (int i = 0; i < currentSorted.size(); i++) {
+            Director current = currentSorted.get(i);
+            Director target = targetSorted.get(i);
+            if (!Objects.equals(current.getName(), target.getName())) {
+                return false;
+            }
+            if (current.isRegistered() != target.isRegistered()) {
+                return false;
             }
         }
+
+        return true;
     }
 
     private EnterpriseData readEnterprise(XMLStreamReader reader) throws XMLStreamException {
@@ -158,15 +204,19 @@ public class KboXmlParserService {
         }
 
         if (nbr == null || nbr.isBlank()) {
+            log.debug("Skipping enterprise without NBR");
             return null;
         }
         if (address == null) {
+            log.debug("Skipping enterprise {} without address", nbr);
             return null;
         }
         if (directors.isEmpty()) {
+            log.debug("Skipping enterprise {} without directors", nbr);
             return null;
         }
         if (denominationName == null || denominationName.isBlank()) {
+            log.debug("Skipping enterprise {} without denominations", nbr);
             return null;
         }
 
@@ -203,7 +253,7 @@ public class KboXmlParserService {
                     AddressData candidate = readAddressCoding(reader);
                     if (candidate != null && !addressHasEnd) {
                         best = candidate;
-                    }
+                      }
                 } else if ("Validity".equals(localName)) {
                     ValidityFlags flags = readValidity(reader);
                     addressHasEnd = flags.hasEnd;
@@ -358,7 +408,7 @@ public class KboXmlParserService {
             return null;
         }
 
-        if ("001".equals(type) && "2".equals(language) && !hasEnd) {
+        if (!hasEnd) {
             return name;
         }
 
@@ -481,7 +531,7 @@ public class KboXmlParserService {
     }
 
     private String buildPeppolIdFromNbr(String nbr) {
-        return "BE" + nbr;
+        return "0208:" + nbr;
     }
 
     private record AddressData(String street, String city, String postalCode, String houseNumber) {}
