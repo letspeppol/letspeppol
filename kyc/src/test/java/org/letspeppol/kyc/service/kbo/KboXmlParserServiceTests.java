@@ -22,6 +22,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -213,5 +216,48 @@ class KboXmlParserServiceTests {
         assertTrue(directorNames.contains("Go Van Dy"));
         assertTrue(directorNames.contains("Bary De Smet"));
         assertTrue(directorNames.contains("Legacy Director"));
+    }
+
+    @Test
+    @DisplayName("importEnterprises should schedule deletion when enterprise validity has an end date")
+    void importEnterprisesDeletesEndedEnterprise() throws Exception {
+        // No registered directors for this Peppol ID
+        when(companyRepository.existsRegisteredDirectorForPeppolId("0208:404356574"))
+                .thenReturn(false);
+
+        InputStream is = getClass().getResourceAsStream("/D202511EndEnterprise.xml");
+        assertNotNull(is, "Test XML resource D202511EndEnterprise.xml should be on classpath");
+
+        kboXmlParserService.importEnterprises(is);
+
+        // No upserts should be scheduled for this ended enterprise
+        verify(kboBatchPersistenceService, never()).saveBatch(anyList());
+
+        // Deletion should be scheduled with the proper Peppol ID
+        ArgumentCaptor<List<String>> deleteCaptor = ArgumentCaptor.forClass(List.class);
+        verify(kboBatchPersistenceService, times(1)).deleteByPeppolIds(deleteCaptor.capture());
+
+        List<String> deletedIds = deleteCaptor.getValue();
+        assertEquals(1, deletedIds.size());
+        assertEquals("0208:404356574", deletedIds.get(0));
+    }
+
+    @Test
+    @DisplayName("importEnterprises should not delete company for ended enterprise when it has registered directors")
+    void importEnterprisesDoesNotDeleteEndedEnterpriseWithRegisteredDirectors() throws Exception {
+        // There is at least one registered director for this Peppol ID
+        when(companyRepository.existsRegisteredDirectorForPeppolId("0208:404356574"))
+                .thenReturn(true);
+
+        InputStream is = getClass().getResourceAsStream("/D202511EndEnterprise.xml");
+        assertNotNull(is, "Test XML resource D202511EndEnterprise.xml should be on classpath");
+
+        kboXmlParserService.importEnterprises(is);
+
+        // No upserts should be scheduled for this ended enterprise
+        verify(kboBatchPersistenceService, never()).saveBatch(anyList());
+
+        // And deletion should NOT be scheduled when there is a registered director
+        verify(kboBatchPersistenceService, never()).deleteByPeppolIds(anyList());
     }
 }

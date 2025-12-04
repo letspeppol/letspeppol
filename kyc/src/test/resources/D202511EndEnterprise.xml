@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<KBO>
+    <Enterprise>
+        <Nbr>404356574</Nbr>
+        <EnterpriseNumbers>
+            <EnterpriseNumber>
+                <EnterpriseNumber>404356574</EnterpriseNumber>
+                <Validity>
+                    <Begin>01/01/1968</Begin>
+                    <End>31/07/2025</End>
+                </Validity>
+            </EnterpriseNumber>
+        </EnterpriseNumbers>
+        <Type>2</Type>
+        <Validity>
+            <Begin>01/01/1968</Begin>
+            <End>31/07/2025</End>
+        </Validity>
+        <Addresses>
+            <Address>
+                <AddressCoding>
+                    <Descriptions>
+                        <Description>
+                            <Language>2</Language>
+                            <StreetName>Some Street</StreetName>
+                            <CommunityName>SomeCity</CommunityName>
+                        </Description>
+                    </Descriptions>
+                    <HouseNbr>10</HouseNbr>
+                    <PostCode>1234</PostCode>
+                </AddressCoding>
+            </Address>
+        </Addresses>
+        <Denominations>
+            <Denomination>
+                <Language>2</Language>
+                <Name>Ended Company</Name>
+            </Denomination>
+        </Denominations>
+        <Functions>
+            <Function>
+                <Validity>
+                    <Begin>01/01/2000</Begin>
+                </Validity>
+                <HeldByPerson>
+                    <FirstName>John</FirstName>
+                    <Name>Doe</Name>
+                </HeldByPerson>
+            </Function>
+        </Functions>
+    </Enterprise>
+</KBO>
+

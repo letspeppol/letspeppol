@@ -5,7 +5,6 @@ public record AccountInfo(
         String vatNumber,
         String companyName,
         String street,
-        String houseNumber,
         String city,
         String postalCode,
         String directorName,

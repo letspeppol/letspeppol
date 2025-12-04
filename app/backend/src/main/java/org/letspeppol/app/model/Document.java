@@ -24,11 +24,7 @@ public class Document {
     ///EXTERNAL INFORMATION
 
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-            name = "UUID",
-            strategy = "org.hibernate.id.UUIDGenerator"
-    )
+    @UuidGenerator
     private UUID id; //Unique identifier used for communication with proxy
 
     @Enumerated(EnumType.STRING)

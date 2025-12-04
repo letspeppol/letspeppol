@@ -76,7 +76,6 @@ public class KboLookupService {
                 "BE"+normalizedVat,
                 name,
                 address.get().street,
-                address.get().houseNumber,
                 address.get().city,
                 address.get().postalCode,
                 directors

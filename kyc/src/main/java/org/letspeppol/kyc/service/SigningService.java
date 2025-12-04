@@ -40,7 +40,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.security.auth.x500.X500Principal;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -106,7 +105,7 @@ public class SigningService {
 
     public byte[] generateFilledContract(Director director) {
         String company = director.getCompany().getName();
-        String address = director.getCompany().getStreet() + " " + director.getCompany().getHouseNumber() + ", " + director.getCompany().getPostalCode() + " " + director.getCompany().getCity();
+        String address = director.getCompany().getStreet() + ", " + director.getCompany().getPostalCode() + " " + director.getCompany().getCity();
         String companyNumber = beVatPretty(director.getCompany().getVatNumber());
         String title = "Director";
         String representative = director.getName();

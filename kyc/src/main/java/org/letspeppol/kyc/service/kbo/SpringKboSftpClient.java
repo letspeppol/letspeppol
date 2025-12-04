@@ -4,6 +4,7 @@ import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,17 +36,24 @@ public class SpringKboSftpClient implements KboSftpClient {
     @Value("${kbo.sftp.password}")
     private String password;
 
-    private ChannelSftp createChannel() {
-        try {
-            JSch jsch = new JSch();
-            Session session = jsch.getSession(username, host, port);
-            session.setPassword(password);
-            Properties config = new Properties();
-            config.put("StrictHostKeyChecking", "no");
-            session.setConfig(config);
-            session.connect();
+    private Session session;
+    private ChannelSftp channel;
 
-            ChannelSftp channel = (ChannelSftp) session.openChannel("sftp");
+    private synchronized ChannelSftp getChannel() {
+        try {
+            if (channel != null && channel.isConnected()) {
+                return channel;
+            }
+            if (session == null || !session.isConnected()) {
+                JSch jsch = new JSch();
+                session = jsch.getSession(username, host, port);
+                session.setPassword(password);
+                Properties config = new Properties();
+                config.put("StrictHostKeyChecking", "no");
+                session.setConfig(config);
+                session.connect();
+            }
+            channel = (ChannelSftp) session.openChannel("sftp");
             channel.connect();
             return channel;
         } catch (JSchException e) {
@@ -53,25 +61,27 @@ public class SpringKboSftpClient implements KboSftpClient {
         }
     }
 
-    private void disconnect(ChannelSftp channel) {
+    @PreDestroy
+    public void shutdown() {
         if (channel != null) {
             try {
-                Session session = channel.getSession();
                 channel.disconnect();
-                if (session != null && session.isConnected()) {
-                    session.disconnect();
-                }
-            } catch (JSchException ignored) {
-                // ignore
+            } catch (Exception ignored) {
+            }
+        }
+        if (session != null) {
+            try {
+                session.disconnect();
+            } catch (Exception ignored) {
             }
         }
     }
 
     @Override
     public List<String> listFiles(String directory) {
-        ChannelSftp channel = createChannel();
+        ChannelSftp ch = getChannel();
         try {
-            Vector<ChannelSftp.LsEntry> entries = channel.ls(directory);
+            Vector<ChannelSftp.LsEntry> entries = ch.ls(directory);
             List<String> result = new ArrayList<>();
             for (ChannelSftp.LsEntry entry : entries) {
                 if (!entry.getAttrs().isDir()) {
@@ -81,33 +91,28 @@ public class SpringKboSftpClient implements KboSftpClient {
             return result;
         } catch (Exception e) {
             throw new KboSftpException("Failed to list files in directory: " + directory, e);
-        } finally {
-            disconnect(channel);
         }
     }
 
     @Override
     public void downloadFile(String remotePath, Path localPath) {
-        ChannelSftp channel = createChannel();
+        ChannelSftp ch = getChannel();
         try {
             Files.createDirectories(localPath.getParent());
             try (var out = Files.newOutputStream(localPath)) {
-                channel.get(remotePath, out);
+                ch.get(remotePath, out);
             }
         } catch (IOException | RuntimeException | com.jcraft.jsch.SftpException e) {
             throw new KboSftpException("Failed to download remote file: " + remotePath, e);
-        } finally {
-            disconnect(channel);
         }
     }
 
     @Override
     public InputStream openFile(String remotePath) {
-        ChannelSftp channel = createChannel();
+        ChannelSftp ch = getChannel();
         try {
-            return channel.get(remotePath);
+            return ch.get(remotePath);
         } catch (com.jcraft.jsch.SftpException e) {
-            disconnect(channel);
             throw new KboSftpException("Failed to open remote file: " + remotePath, e);
         }
     }

@@ -51,8 +51,7 @@ public class CompanyService {
                 companyResponse.name(),
                 companyResponse.city(),
                 companyResponse.postalCode(),
-                companyResponse.street(),
-                companyResponse.houseNumber()
+                companyResponse.street()
         );
         companyRepository.save(company);
         for (DirectorDto director : companyResponse.directors()) {
@@ -69,7 +68,6 @@ public class CompanyService {
                 company.getVatNumber(),
                 company.getName(),
                 company.getStreet(),
-                company.getHouseNumber(),
                 company.getCity(),
                 company.getPostalCode(),
                 company.getDirectors().stream()

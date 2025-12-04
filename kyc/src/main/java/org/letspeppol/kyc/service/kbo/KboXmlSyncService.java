@@ -1,9 +1,10 @@
 package org.letspeppol.kyc.service.kbo;
 
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.letspeppol.kyc.model.kbo.KboProcessedZip;
 import org.letspeppol.kyc.repository.CompanyRepository;
+import org.letspeppol.kyc.repository.KboProcessedZipRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -25,6 +27,7 @@ public class KboXmlSyncService {
     private final CompanyRepository companyRepository;
     private final KboXmlParserService kboXmlParserService;
     private final KboSftpClient kboSftpClient;
+    private final KboProcessedZipRepository kboProcessedZipRepository;
 
     @Value("${kyc.data.dir:/tmp}")
     private String dataDir;
@@ -40,13 +43,7 @@ public class KboXmlSyncService {
 
     private static final long INITIAL_LOAD_THRESHOLD = 1000L;
 
-
-    /**
-     * Run initial sync if company count is below threshold.
-     */
-    @PostConstruct
-    public void syncInitialIfNeeded() {
-        /*
+    public void initialSync() {
         long count = companyRepository.count();
         if (count >= INITIAL_LOAD_THRESHOLD) {
             log.info("Initial KBO load already done ({} companies)", count);
@@ -82,8 +79,8 @@ public class KboXmlSyncService {
         kboSftpClient.downloadFile(remoteZipPath, localZip);
 
         Path localXml = extractSingleXml(localZip);
-        */
-        Path localXml = Path.of("/opt/downloads/tmp/kbo/D20251101.xml"); // For testing purposes only
+
+//        Path localXml = Path.of("/opt/downloads/tmp/kbo/D20251101.xml"); // For testing purposes only
         log.info("Importing initial KBO XML from {}", localXml);
         try (InputStream in = Files.newInputStream(localXml)) {
             kboXmlParserService.importEnterprises(in);
@@ -95,11 +92,11 @@ public class KboXmlSyncService {
         }
 
         long after = companyRepository.count();
-//        log.info("Initial KBO load completed. Company count before: {}, after: {}", count, after);
+        log.info("Initial KBO load completed. Company count before: {}, after: {}", count, after);
     }
 
     //@Scheduled(cron = "${kbo.sftp.delta-cron:0 30 2 * * *}")
-    public void scheduledDeltaSync() {
+    public void syncDeltaDaily() {
         try {
             syncDelta();
         } catch (Exception ex) {
@@ -134,6 +131,11 @@ public class KboXmlSyncService {
         }
 
         for (String zipName : zips) {
+            if (kboProcessedZipRepository.existsByFilename(zipName)) {
+                log.info("Skipping already processed delta ZIP {}", zipName);
+                continue;
+            }
+
             String remoteZipPath = concatPath(remoteDeltaDir, zipName);
             Path localZip = kboBase.resolve(zipName);
 
@@ -145,6 +147,7 @@ public class KboXmlSyncService {
                 log.info("Importing delta KBO XML from {}", localXml);
                 try (InputStream in = Files.newInputStream(localXml)) {
                     kboXmlParserService.importEnterprises(in);
+                    kboProcessedZipRepository.save(new KboProcessedZip(zipName, Instant.now()));
                 } finally {
                     cleanupFile(localXml);
                 }
@@ -173,8 +176,11 @@ public class KboXmlSyncService {
             ZipEntry entry;
             Path chosen = null;
             while ((entry = zis.getNextEntry()) != null) {
-                if (!entry.isDirectory() && entry.getName().toLowerCase().endsWith(".xml")) {
-                    Path out = targetDir.resolve(entry.getName());
+                String entryName = entry.getName();
+                if (!entry.isDirectory()
+                        && entryName.toLowerCase().endsWith(".xml")
+                        && !entryName.toLowerCase().endsWith(".codes.xml")) {
+                    Path out = targetDir.resolve(entryName);
                     Files.createDirectories(out.getParent());
                     Files.copy(zis, out, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
                     if (chosen == null) {
@@ -184,7 +190,7 @@ public class KboXmlSyncService {
                 zis.closeEntry();
             }
             if (chosen == null) {
-                throw new KboSyncException("No XML entry found in ZIP: " + zipFile);
+                throw new KboSyncException("No XML entry found in ZIP (excluding .codes.xml): " + zipFile);
             }
             return chosen;
         } catch (IOException e) {

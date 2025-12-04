@@ -28,6 +28,7 @@ public class KboXmlParserService {
         Objects.requireNonNull(xmlStream, "xmlStream must not be null");
 
         List<Company> batch = new ArrayList<>();
+        List<String> peppolIdsToDelete = new ArrayList<>();
 
         try {
             XMLInputFactory factory = XMLInputFactory.newInstance();
@@ -46,13 +47,34 @@ public class KboXmlParserService {
                     String peppolId = buildPeppolIdFromNbr(enterprise.nbr);
                     String vatNumber = "BE" + enterprise.nbr;
 
-                    Company company = companyRepository.findWithDirectorsByPeppolId(peppolId)
-                            .orElseGet(() -> new Company(peppolId, vatNumber, enterprise.name,
+                    if (enterprise.ended) {
+                        boolean hasRegisteredDirector = companyRepository.existsRegisteredDirectorForPeppolId(peppolId);
+                        if (hasRegisteredDirector) {
+                            log.warn("Skipping deletion of company with Peppol ID {} because it has registered directors", peppolId);
+                            continue;
+                        }
+
+                        log.info("Scheduling deletion of company with Peppol ID {} due to ended enterprise validity", peppolId);
+                        peppolIdsToDelete.add(peppolId);
+                        continue;
+                    }
+
+                    Company company = companyRepository.findWithDirectorsByPeppolId(peppolId).orElseGet(() -> {
+                        if (enterprise.address == null) {
+                            log.info("Creating new company with Peppol ID {} without address", peppolId);
+                            return new Company(peppolId, vatNumber, enterprise.name);
+                        } else {
+                            log.info("Creating new company with Peppol ID {}", peppolId);
+                            return new Company(peppolId, vatNumber, enterprise.name,
                                     enterprise.address.city, enterprise.address.postalCode,
-                                    enterprise.address.street, enterprise.address.houseNumber));
+                                    enterprise.address.street
+                            );
+                        }
+                    });
+
 
                     boolean isNewCompany = company.getId() == null;
-                    boolean companyChanged = applyCompanyUpdates(company, enterprise, vatNumber);
+                    boolean companyChanged = applyCompanyUpdates(company, enterprise);
                     boolean directorsChanged = syncDirectors(company, enterprise.directors);
 
                     if (isNewCompany || companyChanged || directorsChanged) {
@@ -70,26 +92,32 @@ public class KboXmlParserService {
             if (!batch.isEmpty()) {
                 kboBatchPersistenceService.saveBatch(batch);
             }
+
+            if (!peppolIdsToDelete.isEmpty()) {
+                log.info("Deleting {} companies that have ended enterprise validity", peppolIdsToDelete.size());
+                kboBatchPersistenceService.deleteByPeppolIds(peppolIdsToDelete);
+            }
         } catch (XMLStreamException e) {
             throw new IllegalStateException("Failed to parse KBO XML", e);
         }
     }
 
-    private boolean applyCompanyUpdates(Company company, EnterpriseData enterprise, String vatNumber) {
+    private boolean applyCompanyUpdates(Company company, EnterpriseData enterprise) {
         boolean changed = false;
 
         if (!Objects.equals(company.getName(), enterprise.name)
-            || !Objects.equals(company.getCity(), enterprise.address.city)
-            || !Objects.equals(company.getPostalCode(), enterprise.address.postalCode)
-            || !Objects.equals(company.getStreet(), enterprise.address.street)
-            || !Objects.equals(company.getHouseNumber(), enterprise.address.houseNumber)) {
+            || (enterprise.address != null && (
+                !Objects.equals(company.getCity(), enterprise.address.city)
+                || !Objects.equals(company.getPostalCode(), enterprise.address.postalCode)
+                || !Objects.equals(company.getStreet(), enterprise.address.street))
+        )) {
             company.setName(enterprise.name);
             company.setCity(enterprise.address.city);
             company.setPostalCode(enterprise.address.postalCode);
             company.setStreet(enterprise.address.street);
-            company.setHouseNumber(enterprise.address.houseNumber);
             changed = true;
         }
+        log.debug("No changes for company with Peppol ID {}", company.getPeppolId());
         return changed;
     }
 
@@ -177,29 +205,46 @@ public class KboXmlParserService {
         String denominationName = null;
 
         List<FunctionData> directors = new ArrayList<>();
+        boolean enterpriseEnded = false;
+        int depth = 0;
 
         while (reader.hasNext()) {
             int event = reader.next();
             if (event == XMLStreamConstants.START_ELEMENT) {
                 String localName = reader.getLocalName();
+                depth++;
+                // System.out.println(localName + " " + depth); // debug
 
                 if ("Nbr".equals(localName)) {
                     nbr = readSimpleTextElement(reader);
+                    depth--;
                 } else if ("Addresses".equals(localName)) {
                     AddressData lastAddress = readAddresses(reader);
                     if (lastAddress != null) {
                         address = lastAddress;
                     }
+                    depth--;
                 } else if ("Denominations".equals(localName)) {
                     String nameWithoutEnd = readDenominations(reader);
                     if (nameWithoutEnd != null && (denominationName == null || denominationName.isBlank())) {
                         denominationName = nameWithoutEnd;
                     }
+                    depth--;
                 } else if ("Functions".equals(localName)) {
                     directors.addAll(readFunctions(reader));
+                    depth--;
+                } else if ("Validity".equals(localName)) {
+                    ValidityFlags flags = readValidity(reader);
+                    if (depth == 1 && flags.hasEnd) {
+                        enterpriseEnded = true;
+                    }
+                    depth--;
                 }
-            } else if (event == XMLStreamConstants.END_ELEMENT && "Enterprise".equals(reader.getLocalName())) {
-                break;
+            } else if (event == XMLStreamConstants.END_ELEMENT) {
+                if ("Enterprise".equals(reader.getLocalName())) {
+                    break;
+                }
+                depth = Math.max(depth - 1, 0);
             }
         }
 
@@ -207,10 +252,10 @@ public class KboXmlParserService {
             log.debug("Skipping enterprise without NBR");
             return null;
         }
-        if (address == null) {
-            log.debug("Skipping enterprise {} without address", nbr);
-            return null;
-        }
+//        if (address == null) {
+//            log.debug("Skipping enterprise {} without address", nbr);
+//            return null;
+//        }
         if (directors.isEmpty()) {
             log.debug("Skipping enterprise {} without directors", nbr);
             return null;
@@ -220,7 +265,7 @@ public class KboXmlParserService {
             return null;
         }
 
-        return new EnterpriseData(nbr, denominationName, address, directors);
+        return new EnterpriseData(nbr, denominationName, address, directors, enterpriseEnded);
     }
 
     private AddressData readAddresses(XMLStreamReader reader) throws XMLStreamException {
@@ -274,6 +319,7 @@ public class KboXmlParserService {
         String street = null;
         String city = null;
         String houseNumber = null;
+        String postbox = null;
         String postalCode = null;
         boolean codingHasEnd = false;
 
@@ -289,6 +335,8 @@ public class KboXmlParserService {
                     }
                 } else if ("HouseNbr".equals(localName)) {
                     houseNumber = readSimpleTextElement(reader);
+                } else if ("PostBox".equals(localName)) {
+                    postbox = readSimpleTextElement(reader);
                 } else if ("PostCode".equals(localName)) {
                     postalCode = readSimpleTextElement(reader);
                 } else if ("Validity".equals(localName)) {
@@ -300,11 +348,22 @@ public class KboXmlParserService {
             }
         }
 
+        if (street != null && !street.isBlank()) {
+            StringBuilder sb = new StringBuilder(street);
+            if (houseNumber != null && !houseNumber.isBlank()) {
+                sb.append(" ").append(houseNumber.trim());
+            }
+            if (postbox != null && !postbox.isBlank()) {
+                sb.append(" ").append(postbox.trim());
+            }
+            street = sb.toString();
+        }
+
         if (codingHasEnd || street == null || city == null || postalCode == null) {
             return null;
         }
 
-        return new AddressData(street, city, postalCode, houseNumber);
+        return new AddressData(street, city, postalCode);
     }
 
     private AddressDescription readDescriptions(XMLStreamReader reader) throws XMLStreamException {
@@ -434,7 +493,6 @@ public class KboXmlParserService {
     }
 
     private FunctionData readFunction(XMLStreamReader reader) throws XMLStreamException {
-        boolean hasBegin = false;
         boolean hasEnd = false;
         String firstName = null;
         String lastName = null;
@@ -445,7 +503,6 @@ public class KboXmlParserService {
                 String localName = reader.getLocalName();
                 if ("Validity".equals(localName)) {
                     ValidityFlags flags = readValidity(reader);
-                    hasBegin = flags.hasBegin;
                     hasEnd = flags.hasEnd;
                 } else if ("HeldByPerson".equals(localName)) {
                     HeldByPersonData heldBy = readHeldByPerson(reader);
@@ -457,8 +514,7 @@ public class KboXmlParserService {
             }
         }
 
-        boolean active = hasBegin && !hasEnd;
-        if (!active) {
+        if (hasEnd) {
             return null;
         }
 
@@ -470,19 +526,13 @@ public class KboXmlParserService {
     }
 
     private ValidityFlags readValidity(XMLStreamReader reader) throws XMLStreamException {
-        boolean hasBegin = false;
         boolean hasEnd = false;
 
         while (reader.hasNext()) {
             int event = reader.next();
             if (event == XMLStreamConstants.START_ELEMENT) {
                 String localName = reader.getLocalName();
-                if ("Begin".equals(localName)) {
-                    String begin = readSimpleTextElement(reader);
-                    if (begin != null && !begin.isBlank()) {
-                        hasBegin = true;
-                    }
-                } else if ("End".equals(localName)) {
+                if ("End".equals(localName)) {
                     String end = readSimpleTextElement(reader);
                     if (end != null && !end.isBlank()) {
                         hasEnd = true;
@@ -493,7 +543,7 @@ public class KboXmlParserService {
             }
         }
 
-        return new ValidityFlags(hasBegin, hasEnd);
+        return new ValidityFlags(hasEnd);
     }
 
     private HeldByPersonData readHeldByPerson(XMLStreamReader reader) throws XMLStreamException {
@@ -534,7 +584,7 @@ public class KboXmlParserService {
         return "0208:" + nbr;
     }
 
-    private record AddressData(String street, String city, String postalCode, String houseNumber) {}
+    private record AddressData(String street, String city, String postalCode) {}
 
     private record AddressDescription(String language, String streetName, String communityName) {}
 
@@ -542,7 +592,7 @@ public class KboXmlParserService {
 
     private record HeldByPersonData(String firstName, String lastName) {}
 
-    private record EnterpriseData(String nbr, String name, AddressData address, List<FunctionData> directors) {}
+    private record EnterpriseData(String nbr, String name, AddressData address, List<FunctionData> directors, boolean ended) {}
 
-    private record ValidityFlags(boolean hasBegin, boolean hasEnd) {}
+    private record ValidityFlags(boolean hasEnd) {}
 }

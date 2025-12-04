@@ -34,21 +34,25 @@ public class Company {
 
     private String street;
 
-    private String houseNumber;
+    private boolean hasKboAddress = true;
 
     private boolean registeredOnPeppol = false;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Director> directors = new ArrayList<>();
 
-    public Company(String peppolId, String vatNumber, String name, String city, String postalCode, String street, String houseNumber) {
+    public Company(String peppolId, String vatNumber, String name, String city, String postalCode, String street) {
         this.peppolId = peppolId;
         this.vatNumber = vatNumber;
         this.name = name;
         this.city = city;
         this.postalCode = postalCode;
         this.street = street;
-        this.houseNumber = houseNumber;
         this.registeredOnPeppol = false;
+    }
+
+    public Company(String peppolId, String vatNumber, String name) {
+        this(peppolId, vatNumber, name, null, null, null);
+        this.hasKboAddress = false;
     }
 }
