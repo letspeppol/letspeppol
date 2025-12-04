@@ -1,4 +1,4 @@
-UPDATE app.address
+UPDATE address
 SET street =
         CASE
             WHEN street IS NULL AND house_number IS NULL THEN NULL
@@ -7,5 +7,5 @@ SET street =
             ELSE street || ' ' || house_number
             END;
 
-ALTER TABLE app.address
+ALTER TABLE address
 DROP COLUMN house_number;
