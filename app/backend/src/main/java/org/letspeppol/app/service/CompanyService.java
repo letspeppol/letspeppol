@@ -38,7 +38,6 @@ public class CompanyService {
                 request.city(),
                 request.postalCode(),
                 request.street(),
-                request.houseNumber(),
                 "BE"
         );
         return companyRepository.save(account);
@@ -74,7 +73,6 @@ public class CompanyService {
         company.getRegisteredOffice().setCity(companyDto.registeredOffice().city());
         company.getRegisteredOffice().setPostalCode(companyDto.registeredOffice().postalCode());
         company.getRegisteredOffice().setStreet(companyDto.registeredOffice().street());
-        company.getRegisteredOffice().setHouseNumber(companyDto.registeredOffice().houseNumber());
         companyRepository.save(company);
         return CompanyMapper.toDto(company);
     }

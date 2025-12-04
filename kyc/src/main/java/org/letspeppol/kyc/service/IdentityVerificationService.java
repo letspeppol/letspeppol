@@ -12,6 +12,7 @@ import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.model.AccountIdentityVerification;
 import org.letspeppol.kyc.repository.AccountIdentityVerificationRepository;
 import org.letspeppol.kyc.repository.AccountRepository;
+import org.letspeppol.kyc.repository.DirectorRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +31,7 @@ public class IdentityVerificationService {
 
     private final AccountIdentityVerificationRepository accountIdentityVerificationRepository;
     private final AccountRepository accountRepository;
+    private final DirectorRepository directorRepository;
     private final EncryptionService encryptionService;
     private final CompanyService companyService;
     private final PasswordEncoder passwordEncoder;
@@ -67,6 +69,9 @@ public class IdentityVerificationService {
                 encryptionService.encrypt(req.signature())
         );
         accountIdentityVerificationRepository.save(accountIdentityVerification);
+
+        req.director().setRegistered(true);
+        directorRepository.save(req.director());
 
         if (isAllowedToSign(req.x500Name(), req.director())) {
             companyService.registerCompany(req.director().getCompany());

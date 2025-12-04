@@ -1,4 +1,4 @@
-package org.letspeppol.kyc.service;
+package org.letspeppol.kyc.service.kbo;
 
 import io.micrometer.core.instrument.Counter;
 import lombok.extern.slf4j.Slf4j;
@@ -75,8 +75,7 @@ public class KboLookupService {
                 peppolId,
                 "BE"+normalizedVat,
                 name,
-                address.get().street,
-                address.get().houseNumber,
+                address.get().getStreetAndHouseNumber(),
                 address.get().city,
                 address.get().postalCode,
                 directors
@@ -203,6 +202,13 @@ public class KboLookupService {
         String postalCode,
         String city,
         String extraInfo
-    ){}
+    ){
+        public String getStreetAndHouseNumber()    {
+            if (houseNumber == null || houseNumber.isBlank()) {
+                return street;
+            }
+            return street + " " + houseNumber;
+        }
+    }
 
 }

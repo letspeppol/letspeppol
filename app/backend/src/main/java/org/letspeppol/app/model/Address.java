@@ -15,14 +15,12 @@ public class Address extends GenericEntity {
     private String city;
     private String postalCode;
     private String street;
-    private String houseNumber;
     private String countryCode;
 
-    public Address(String city, String postalCode, String street, String houseNumber, String countryCode) {
+    public Address(String city, String postalCode, String street, String countryCode) {
         this.city = city;
         this.postalCode = postalCode;
         this.street = street;
-        this.houseNumber = houseNumber;
         this.countryCode = countryCode;
     }
 }
