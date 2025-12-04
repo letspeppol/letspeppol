@@ -41,7 +41,7 @@ public class Company extends GenericEntity{
         this.name = name;
         this.subscriber = subscriber;
         this.subscriberEmail = subscriberEmail;
-        this.registeredOffice = new Address(street, city, postalCode, countryCode);
+        this.registeredOffice = new Address(city, postalCode, street, countryCode);
         this.registeredOnPeppol = true;
     }
 }
