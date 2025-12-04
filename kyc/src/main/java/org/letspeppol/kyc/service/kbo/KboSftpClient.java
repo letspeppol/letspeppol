@@ -4,9 +4,6 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.List;
 
-/**
- * Minimal abstraction over SFTP access for KBO sync.
- */
 public interface KboSftpClient {
 
     List<String> listFiles(String directory);
