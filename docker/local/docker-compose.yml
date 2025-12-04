@@ -109,6 +109,8 @@ services:
       UI_URL: ${UI_URL}
       PROXY_API_URL: ${PROXY_API_URL}
       KYC_DATA_DIR: /opt/data/kyc
+      KBO_SFTP_USERNAME: ${KBO_SFTP_USERNAME}
+      KBO_SFTP_PASSWORD: ${KBO_SFTP_PASSWORD}
     volumes:
       - ./opt/data/kyc:/opt/data/kyc
     networks:
