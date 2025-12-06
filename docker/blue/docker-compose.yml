@@ -136,14 +136,14 @@ services:
       - "traefik.http.routers.blue-api.entryPoints=websecure"
       - "traefik.http.routers.blue-api.middlewares=api-limit"
       - "traefik.http.routers.blue-api.service=nginx"
-      - "traefik.http.routers.blue-api.certresolver=${CERT_RESOLVER_BLUE}"
+      - "traefik.http.routers.blue-api.tls.certresolver=${CERT_RESOLVER_BLUE}"
 
       # Protected API router
       - "traefik.http.routers.blue-api.rule=Host(`${ACTIVE_DOMAIN_BLUE}`) && (PathPrefix(`/proxy/sapi/`) || PathPrefix(`/app/sapi/`) || PathPrefix(`/kyc/sapi/`))"
       - "traefik.http.routers.blue-api.entryPoints=websecure"
       - "traefik.http.routers.blue-api.middlewares=jwt-auth,api-limit"
       - "traefik.http.routers.blue-api.service=nginx"
-      - "traefik.http.routers.blue-api.certresolver=${CERT_RESOLVER_BLUE}"
+      - "traefik.http.routers.blue-api.tls.certresolver=${CERT_RESOLVER_BLUE}"
 
       # Service definition
       - "traefik.http.services.nginx.loadbalancer.server.port=80"
