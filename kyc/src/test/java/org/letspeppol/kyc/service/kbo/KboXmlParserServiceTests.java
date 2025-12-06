@@ -99,7 +99,8 @@ class KboXmlParserServiceTests {
         InputStream is = getClass().getResourceAsStream("/D20251101.xml");
         assertNotNull(is);
 
-        Company existing = new Company("0208:200762878", "BE0200762878", "Old name", "OldCity", "0000", "OldStreet 1");
+        Company existing = new Company("0208:200762878", "BE0200762878", "Old name");
+        existing.setAddress("OldCity", "0000", "OldStreet 1");
         existing.setDirectors(new ArrayList<>());
 
         when(companyRepository.findWithDirectorsByPeppolId("0208:0200762878")).thenReturn(Optional.of(existing));
@@ -130,7 +131,8 @@ class KboXmlParserServiceTests {
         assertNotNull(is);
 
         // Existing company with a registered director that does not appear in the XML
-        Company existing = new Company("0208:0200762878", "BE0200762878", "Old name", "OldCity", "0000", "OldStreet 1");
+        Company existing = new Company("0208:0200762878", "BE0200762878", "Old name");
+        existing.setAddress("OldCity", "0000", "OldStreet 1");
         Director registeredDirector = new Director("Legacy Director", existing);
         registeredDirector.setRegistered(true);
         existing.getDirectors().add(registeredDirector);
@@ -164,10 +166,12 @@ class KboXmlParserServiceTests {
         InputStream is = getClass().getResourceAsStream("/D20251101.xml");
         assertNotNull(is);
 
-        Company existing1 = new Company("0208:0200762878", "BE0200762878", "VLOTTER", "Boom", "2850", "Colonel Silvertopstraat 15");
+        Company existing1 = new Company("0208:0200762878", "BE0200762878", "VLOTTER");
+        existing1.setAddress("Boom", "2850", "Colonel Silvertopstraat 15");
         existing1.setId(1L);
         existing1.setDirectors(new ArrayList<>(List.of(new Director("Go Van Dy", existing1), new Director("Bary De Smet", existing1))));
-        Company existing2 = new Company("0208:0200881951", "BE0200881951", "Intercommunale Maatschappij voor de Ruimtelijke Ordening en de Economisch- Sociale Expansie van het Arrondissement Halle-Vilvoorde", "Asse", "1731", "Brusselsesteenweg 617");
+        Company existing2 = new Company("0208:0200881951", "BE0200881951", "Intercommunale Maatschappij voor de Ruimtelijke Ordening en de Economisch- Sociale Expansie van het Arrondissement Halle-Vilvoorde");
+        existing2.setAddress("Asse", "1731", "Brusselsesteenweg 617");
         existing2.setId(2L);
         existing2.setDirectors(new ArrayList<>(List.of(new Director("Liev Imbrec", existing2), new Director("Diet Phili", existing2))));
 
@@ -188,7 +192,8 @@ class KboXmlParserServiceTests {
         InputStream is = getClass().getResourceAsStream("/D20251101.xml");
         assertNotNull(is);
 
-        Company existing = new Company("0208:0200762878", "BE0200762878", "VLOTTER", "Boom", "2850", "Colonel Silvertopstraat 15");
+        Company existing = new Company("0208:0200762878", "BE0200762878", "VLOTTER");
+        existing.setAddress("Boom", "2850", "Colonel Silvertopstraat 15");
         existing.setId(3L);
         Director legacyDirector = new Director("Legacy Director", existing);
         legacyDirector.setRegistered(true);
@@ -251,5 +256,43 @@ class KboXmlParserServiceTests {
 
         // And deletion should NOT be scheduled when there is a registered director
         verify(kboBatchPersistenceService, never()).deleteByPeppolIds(anyList());
+    }
+
+    @Test
+    @DisplayName("importEnterprises should enrich company address from business units when enterprise has no address")
+    void importEnterprisesEnrichesAddressFromBusinessUnit() throws Exception {
+        // Enterprise number from D20251101_BusinessUnit.xml without address but with directors
+        String enterpriseNbr = "632789963";
+        String peppolId = "0208:0" + enterpriseNbr;
+        String vatNumber = "BE0" + enterpriseNbr;
+
+        // Existing company without KBO address, linked to the business unit number in the XML
+        Company existing = new Company(peppolId, vatNumber, "BITS");
+        existing.setBusinessUnit("2292261537");
+        existing.setHasKboAddress(false);
+        existing.setDirectors(new ArrayList<>());
+
+        when(companyRepository.findWithDirectorsByPeppolId(peppolId)).thenReturn(Optional.of(existing));
+        when(companyRepository.findByBusinessUnitAndHasKboAddressFalse("2292261537")).thenReturn(Optional.of(existing));
+
+        // Capture save calls from business unit processing
+        when(companyRepository.save(any(Company.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // We don't care about batch upserts here
+        when(kboBatchPersistenceService.saveBatch(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
+
+        InputStream is = getClass().getResourceAsStream("/D20251101_BusinessUnit.xml");
+        assertNotNull(is, "Test XML resource D20251101_BusinessUnit.xml should be on classpath");
+
+        kboXmlParserService.importEnterprises(is);
+
+        // After processing, the existing company should have its address set from the BusinessUnit
+        assertEquals("Hasselt", existing.getCity());
+        assertEquals("3500", existing.getPostalCode());
+        assertEquals("Demerstraat 64", existing.getStreet());
+        assertTrue(existing.isHasKboAddress());
+
+        // Verify that the repository save was invoked to persist the updated address
+        verify(companyRepository, atLeastOnce()).save(existing);
     }
 }

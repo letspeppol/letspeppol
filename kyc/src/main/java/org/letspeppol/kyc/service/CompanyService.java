@@ -45,14 +45,8 @@ public class CompanyService {
     }
 
     private Company storeCompanyAndDirectors(String peppolId, CompanyResponse companyResponse) {
-        Company company = new Company(
-                peppolId,
-                companyResponse.vatNumber(),
-                companyResponse.name(),
-                companyResponse.city(),
-                companyResponse.postalCode(),
-                companyResponse.street()
-        );
+        Company company = new Company(peppolId, companyResponse.vatNumber(), companyResponse.name());
+        company.setAddress(companyResponse.city(),companyResponse.postalCode(), companyResponse.street());
         companyRepository.save(company);
         for (DirectorDto director : companyResponse.directors()) {
             Director directorToStore = new Director(director.name(), company);

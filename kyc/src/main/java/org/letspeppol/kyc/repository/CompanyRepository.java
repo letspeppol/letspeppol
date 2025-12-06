@@ -14,6 +14,8 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
     @EntityGraph(attributePaths = "directors")
     Optional<Company> findWithDirectorsByPeppolId(String peppolId);
 
+    Optional<Company> findByBusinessUnitAndHasKboAddressFalse(String businessUnit);
+
     @Query("""
             select (count(d) > 0)
             from Company c
