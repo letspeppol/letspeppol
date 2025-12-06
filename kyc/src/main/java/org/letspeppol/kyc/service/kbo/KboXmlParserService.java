@@ -1,6 +1,7 @@
 package org.letspeppol.kyc.service.kbo;
 
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.kyc.model.kbo.Company;
 import org.letspeppol.kyc.model.kbo.Director;
@@ -13,13 +14,15 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.InputStream;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class KboXmlParserService {
 
-    private static final int DEFAULT_BATCH_SIZE = 500;
+    @Setter
+    private int defaultBatchSize = 500;
 
     private final CompanyRepository companyRepository;
     private final KboBatchPersistenceService kboBatchPersistenceService;
@@ -34,72 +37,19 @@ public class KboXmlParserService {
             XMLInputFactory factory = XMLInputFactory.newInstance();
             factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, true);
             XMLStreamReader reader = factory.createXMLStreamReader(xmlStream);
-            int totalEnterprises = 0;
-            int totalValidEnterprises = 0;
-            int totalSavedEnterprises = 0;
+            AtomicInteger totalEnterprises = new AtomicInteger(0);
+            AtomicInteger totalValidEnterprises = new AtomicInteger(0);
+            AtomicInteger totalSavedEnterprises = new AtomicInteger(0);
 
             while (reader.hasNext()) {
                 int event = reader.next();
                 if (event == XMLStreamConstants.START_ELEMENT && "Enterprise".equals(reader.getLocalName())) {
-                    totalEnterprises++;
-                    EnterpriseData enterprise = readEnterprise(reader);
-
-                    if (enterprise == null) {
-                        continue; // skipped because it didn't meet criteria
-                    }
-                    totalValidEnterprises++;
-
-                    String peppolId = buildPeppolIdFromNbr(enterprise.nbr);
-                    String vatNumber = buildVatNumberFromNbr(enterprise.nbr);
-
-                    if (enterprise.ended) {
-                        boolean hasRegisteredDirector = companyRepository.existsRegisteredDirectorForPeppolId(peppolId);
-                        if (hasRegisteredDirector) {
-                            log.warn("Skipping deletion of company with Peppol ID {} because it has registered directors", peppolId);
-                            continue;
-                        }
-
-                        log.info("Scheduling deletion of company with Peppol ID {} due to ended enterprise validity", peppolId);
-                        peppolIdsToDelete.add(peppolId);
-                        continue;
-                    }
-
-                    Company company = companyRepository.findWithDirectorsByPeppolId(peppolId).orElseGet(() -> {
-                        if (enterprise.address == null) {
-                            log.debug("Creating new company with Peppol ID {} without address", peppolId);
-                            return new Company(peppolId, vatNumber, enterprise.name, enterprise.businessUnit);
-                        } else {
-                            log.debug("Creating new company with Peppol ID {}", peppolId);
-                            return new Company(peppolId, vatNumber, enterprise.name,
-                                    enterprise.address.city, enterprise.address.postalCode,
-                                    enterprise.address.street
-                            );
-                        }
-                    });
-
-
-                    boolean isNewCompany = company.getId() == null;
-                    boolean companyChanged = false;
-                    if (!isNewCompany) {
-                        companyChanged = applyCompanyUpdates(company, enterprise);
-                    }
-                    boolean directorsChanged = syncDirectors(company, enterprise.directors);
-
-                    if (isNewCompany || companyChanged || directorsChanged) {
-                        batch.add(company);
-                        totalSavedEnterprises++;
-                    }
-
-                    if (batch.size() >= DEFAULT_BATCH_SIZE) {
-                        log.debug("Saving batch of {} companies to database", batch.size());
-                        kboBatchPersistenceService.saveBatch(batch);
-                        batch.clear();
-                    }
+                    processEnterpriseElement(reader, batch, peppolIdsToDelete, totalEnterprises, totalValidEnterprises, totalSavedEnterprises);
                 }
             }
 
             log.info("KboXmlParserService: Processed {} enterprises, of which {} were valid. Saved/updated {} companies.",
-                    totalEnterprises, totalValidEnterprises, totalSavedEnterprises);
+                    totalEnterprises.get(), totalValidEnterprises.get(), totalSavedEnterprises.get());
 
             if (!batch.isEmpty()) {
                 kboBatchPersistenceService.saveBatch(batch);
@@ -111,6 +61,68 @@ public class KboXmlParserService {
             }
         } catch (XMLStreamException e) {
             throw new IllegalStateException("Failed to parse KBO XML", e);
+        }
+    }
+
+    private void processEnterpriseElement(XMLStreamReader reader,
+                                          List<Company> batch,
+                                          List<String> peppolIdsToDelete,
+                                          AtomicInteger totalEnterprises,
+                                          AtomicInteger totalValidEnterprises,
+                                          AtomicInteger totalSavedEnterprises) throws XMLStreamException {
+        totalEnterprises.incrementAndGet();
+        EnterpriseData enterprise = readEnterprise(reader);
+
+        if (enterprise == null) {
+            return; // skipped because it didn't meet criteria
+        }
+        totalValidEnterprises.incrementAndGet();
+
+        String peppolId = buildPeppolIdFromNbr(enterprise.nbr);
+        String vatNumber = buildVatNumberFromNbr(enterprise.nbr);
+
+        if (enterprise.ended) {
+            boolean hasRegisteredDirector = companyRepository.existsRegisteredDirectorForPeppolId(peppolId);
+            if (hasRegisteredDirector) {
+                log.warn("Skipping deletion of company with Peppol ID {} because it has registered directors", peppolId);
+                return;
+            }
+
+            log.info("Scheduling deletion of company with Peppol ID {} due to ended enterprise validity", peppolId);
+            peppolIdsToDelete.add(peppolId);
+            return;
+        }
+
+        Company company = companyRepository.findWithDirectorsByPeppolId(peppolId).orElseGet(() -> {
+            if (enterprise.address == null) {
+                log.debug("Creating new company with Peppol ID {} without address", peppolId);
+                return new Company(peppolId, vatNumber, enterprise.name, enterprise.businessUnit);
+            } else {
+                log.debug("Creating new company with Peppol ID {}", peppolId);
+                return new Company(peppolId, vatNumber, enterprise.name,
+                        enterprise.address.city, enterprise.address.postalCode,
+                        enterprise.address.street
+                );
+            }
+        });
+
+
+        boolean isNewCompany = company.getId() == null;
+        boolean companyChanged = false;
+        if (!isNewCompany) {
+            companyChanged = applyCompanyUpdates(company, enterprise);
+        }
+        boolean directorsChanged = syncDirectors(company, enterprise.directors);
+
+        if (isNewCompany || companyChanged || directorsChanged) {
+            batch.add(company);
+            totalSavedEnterprises.incrementAndGet();
+        }
+
+        if (batch.size() >= defaultBatchSize) {
+            log.debug("Saving batch of {} companies to database", batch.size());
+            kboBatchPersistenceService.saveBatch(batch);
+            batch.clear();
         }
     }
 
@@ -354,7 +366,7 @@ public class KboXmlParserService {
                     AddressData candidate = readAddressCoding(reader);
                     if (candidate != null && !addressHasEnd) {
                         best = candidate;
-                    }
+                      }
                 } else if ("Validity".equals(localName)) {
                     ValidityFlags flags = readValidity(reader);
                     addressHasEnd = flags.hasEnd;

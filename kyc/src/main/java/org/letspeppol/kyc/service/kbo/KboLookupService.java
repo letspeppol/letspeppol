@@ -78,7 +78,9 @@ public class KboLookupService {
                 address.get().getStreetAndHouseNumber(),
                 address.get().city,
                 address.get().postalCode,
-                directors
+                directors,
+                true,
+                false
         );
         return Optional.of(companyResponse);
     }

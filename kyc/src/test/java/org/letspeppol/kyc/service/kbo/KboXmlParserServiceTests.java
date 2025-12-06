@@ -21,10 +21,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -41,6 +38,7 @@ class KboXmlParserServiceTests {
     @BeforeEach
     void setUp() {
         kboXmlParserService = new KboXmlParserService(companyRepository, kboBatchPersistenceService);
+        kboXmlParserService.setDefaultBatchSize(1);
     }
 
     @Test
@@ -54,7 +52,6 @@ class KboXmlParserServiceTests {
         List<Company> persistedCompanies = new ArrayList<>();
         when(kboBatchPersistenceService.saveBatch(anyList())).thenAnswer(invocation -> {
             List<Company> batch = invocation.getArgument(0);
-            persistedCompanies.clear();
             persistedCompanies.addAll(batch);
             return batch;
         });
@@ -65,15 +62,14 @@ class KboXmlParserServiceTests {
         // Two enterprises (200762878 and 200881951) match the criteria
         assertEquals(2, persistedCompanies.size());
 
-        Company company1 = persistedCompanies.stream().filter(c -> "BE200762878".equals(c.getVatNumber())).findFirst().orElseThrow();
-        Company company2 = persistedCompanies.stream().filter(c -> "BE200881951".equals(c.getVatNumber())).findFirst().orElseThrow();
+        Company company1 = persistedCompanies.stream().filter(c -> "BE0200762878".equals(c.getVatNumber())).findFirst().orElseThrow();
+        Company company2 = persistedCompanies.stream().filter(c -> "BE0200881951".equals(c.getVatNumber())).findFirst().orElseThrow();
 
         // Check company 1
         assertEquals("VLOTTER", company1.getName());
         assertEquals("Boom", company1.getCity());
         assertEquals("2850", company1.getPostalCode());
-        assertEquals("Colonel Silvertopstraat", company1.getStreet());
-        assertEquals("15", company1.getHouseNumber());
+        assertEquals("Colonel Silvertopstraat 15", company1.getStreet());
 
         List<Director> directors1 = company1.getDirectors();
         assertEquals(2, directors1.size());
@@ -85,8 +81,7 @@ class KboXmlParserServiceTests {
         assertEquals("Intercommunale Maatschappij voor de Ruimtelijke Ordening en de Economisch- Sociale Expansie van het Arrondissement Halle-Vilvoorde", company2.getName());
         assertEquals("Asse", company2.getCity());
         assertEquals("1731", company2.getPostalCode());
-        assertEquals("Brusselsesteenweg", company2.getStreet());
-        assertEquals("617", company2.getHouseNumber());
+        assertEquals("Brusselsesteenweg 617", company2.getStreet());
 
         List<Director> directors2 = company2.getDirectors();
         assertEquals(2, directors2.size());
@@ -104,29 +99,27 @@ class KboXmlParserServiceTests {
         InputStream is = getClass().getResourceAsStream("/D20251101.xml");
         assertNotNull(is);
 
-        Company existing = new Company("0208:200762878", "BE200762878", "Old name", "OldCity", "0000", "OldStreet", "1");
+        Company existing = new Company("0208:200762878", "BE0200762878", "Old name", "OldCity", "0000", "OldStreet 1");
         existing.setDirectors(new ArrayList<>());
 
-        when(companyRepository.findWithDirectorsByPeppolId("0208:200762878")).thenReturn(Optional.of(existing));
-        when(companyRepository.findWithDirectorsByPeppolId("0208:200881951")).thenReturn(Optional.empty());
+        when(companyRepository.findWithDirectorsByPeppolId("0208:0200762878")).thenReturn(Optional.of(existing));
+        when(companyRepository.findWithDirectorsByPeppolId("0208:0200881951")).thenReturn(Optional.empty());
 
         List<Company> persistedCompanies = new ArrayList<>();
         when(kboBatchPersistenceService.saveBatch(anyList())).thenAnswer(invocation -> {
             List<Company> batch = invocation.getArgument(0);
-            persistedCompanies.clear();
             persistedCompanies.addAll(batch);
             return batch;
         });
 
         kboXmlParserService.importEnterprises(is);
 
-        Company updated = persistedCompanies.stream().filter(c -> "BE200762878".equals(c.getVatNumber())).findFirst().orElseThrow();
+        Company updated = persistedCompanies.stream().filter(c -> "BE0200762878".equals(c.getVatNumber())).findFirst().orElseThrow();
         assertSame(existing, updated);
         assertEquals("VLOTTER", updated.getName());
         assertEquals("Boom", updated.getCity());
         assertEquals("2850", updated.getPostalCode());
-        assertEquals("Colonel Silvertopstraat", updated.getStreet());
-        assertEquals("15", updated.getHouseNumber());
+        assertEquals("Colonel Silvertopstraat 15", updated.getStreet());
         assertEquals(2, updated.getDirectors().size());
     }
 
@@ -137,25 +130,24 @@ class KboXmlParserServiceTests {
         assertNotNull(is);
 
         // Existing company with a registered director that does not appear in the XML
-        Company existing = new Company("0208:200762878", "BE200762878", "Old name", "OldCity", "0000", "OldStreet", "1");
+        Company existing = new Company("0208:0200762878", "BE0200762878", "Old name", "OldCity", "0000", "OldStreet 1");
         Director registeredDirector = new Director("Legacy Director", existing);
         registeredDirector.setRegistered(true);
         existing.getDirectors().add(registeredDirector);
 
-        when(companyRepository.findWithDirectorsByPeppolId("0208:200762878")).thenReturn(Optional.of(existing));
-        when(companyRepository.findWithDirectorsByPeppolId("0208:200881951")).thenReturn(Optional.empty());
+        when(companyRepository.findWithDirectorsByPeppolId("0208:0200762878")).thenReturn(Optional.of(existing));
+        when(companyRepository.findWithDirectorsByPeppolId("0208:0200881951")).thenReturn(Optional.empty());
 
         List<Company> persistedCompanies = new ArrayList<>();
         when(kboBatchPersistenceService.saveBatch(anyList())).thenAnswer(invocation -> {
             List<Company> batch = invocation.getArgument(0);
-            persistedCompanies.clear();
             persistedCompanies.addAll(batch);
             return batch;
         });
 
         kboXmlParserService.importEnterprises(is);
 
-        Company updated = persistedCompanies.stream().filter(c -> "BE200762878".equals(c.getVatNumber())).findFirst().orElseThrow();
+        Company updated = persistedCompanies.stream().filter(c -> "BE0200762878".equals(c.getVatNumber())).findFirst().orElseThrow();
 
         // The registered director should still be present after import
         List<String> directorNames = updated.getDirectors().stream().map(Director::getName).toList();
@@ -172,15 +164,15 @@ class KboXmlParserServiceTests {
         InputStream is = getClass().getResourceAsStream("/D20251101.xml");
         assertNotNull(is);
 
-        Company existing1 = new Company("0208:200762878", "BE200762878", "VLOTTER", "Boom", "2850", "Colonel Silvertopstraat", "15");
+        Company existing1 = new Company("0208:0200762878", "BE0200762878", "VLOTTER", "Boom", "2850", "Colonel Silvertopstraat 15");
         existing1.setId(1L);
         existing1.setDirectors(new ArrayList<>(List.of(new Director("Go Van Dy", existing1), new Director("Bary De Smet", existing1))));
-        Company existing2 = new Company("0208:200881951", "BE200881951", "Intercommunale Maatschappij voor de Ruimtelijke Ordening en de Economisch- Sociale Expansie van het Arrondissement Halle-Vilvoorde", "Asse", "1731", "Brusselsesteenweg", "617");
+        Company existing2 = new Company("0208:0200881951", "BE0200881951", "Intercommunale Maatschappij voor de Ruimtelijke Ordening en de Economisch- Sociale Expansie van het Arrondissement Halle-Vilvoorde", "Asse", "1731", "Brusselsesteenweg 617");
         existing2.setId(2L);
         existing2.setDirectors(new ArrayList<>(List.of(new Director("Liev Imbrec", existing2), new Director("Diet Phili", existing2))));
 
-        when(companyRepository.findWithDirectorsByPeppolId("0208:200762878")).thenReturn(Optional.of(existing1));
-        when(companyRepository.findWithDirectorsByPeppolId("0208:200881951")).thenReturn(Optional.of(existing2));
+        when(companyRepository.findWithDirectorsByPeppolId("0208:0200762878")).thenReturn(Optional.of(existing1));
+        when(companyRepository.findWithDirectorsByPeppolId("0208:0200881951")).thenReturn(Optional.of(existing2));
 
         ArgumentCaptor<List<Company>> batchCaptor = ArgumentCaptor.forClass(List.class);
         when(kboBatchPersistenceService.saveBatch(batchCaptor.capture())).thenAnswer(invocation -> invocation.getArgument(0));
@@ -196,14 +188,14 @@ class KboXmlParserServiceTests {
         InputStream is = getClass().getResourceAsStream("/D20251101.xml");
         assertNotNull(is);
 
-        Company existing = new Company("0208:200762878", "BE200762878", "VLOTTER", "Boom", "2850", "Colonel Silvertopstraat", "15");
+        Company existing = new Company("0208:0200762878", "BE0200762878", "VLOTTER", "Boom", "2850", "Colonel Silvertopstraat 15");
         existing.setId(3L);
         Director legacyDirector = new Director("Legacy Director", existing);
         legacyDirector.setRegistered(true);
         existing.setDirectors(new ArrayList<>(List.of(legacyDirector)));
 
-        when(companyRepository.findWithDirectorsByPeppolId("0208:200762878")).thenReturn(Optional.of(existing));
-        when(companyRepository.findWithDirectorsByPeppolId("0208:200881951")).thenReturn(Optional.empty());
+        when(companyRepository.findWithDirectorsByPeppolId("0208:0200762878")).thenReturn(Optional.of(existing));
+        when(companyRepository.findWithDirectorsByPeppolId("0208:0200881951")).thenReturn(Optional.empty());
 
         ArgumentCaptor<List<Company>> batchCaptor = ArgumentCaptor.forClass(List.class);
         when(kboBatchPersistenceService.saveBatch(batchCaptor.capture())).thenAnswer(invocation -> invocation.getArgument(0));
@@ -222,7 +214,7 @@ class KboXmlParserServiceTests {
     @DisplayName("importEnterprises should schedule deletion when enterprise validity has an end date")
     void importEnterprisesDeletesEndedEnterprise() throws Exception {
         // No registered directors for this Peppol ID
-        when(companyRepository.existsRegisteredDirectorForPeppolId("0208:404356574"))
+        when(companyRepository.existsRegisteredDirectorForPeppolId("0208:0404356574"))
                 .thenReturn(false);
 
         InputStream is = getClass().getResourceAsStream("/D202511EndEnterprise.xml");
@@ -239,14 +231,14 @@ class KboXmlParserServiceTests {
 
         List<String> deletedIds = deleteCaptor.getValue();
         assertEquals(1, deletedIds.size());
-        assertEquals("0208:404356574", deletedIds.get(0));
+        assertEquals("0208:0404356574", deletedIds.get(0));
     }
 
     @Test
     @DisplayName("importEnterprises should not delete company for ended enterprise when it has registered directors")
     void importEnterprisesDoesNotDeleteEndedEnterpriseWithRegisteredDirectors() throws Exception {
         // There is at least one registered director for this Peppol ID
-        when(companyRepository.existsRegisteredDirectorForPeppolId("0208:404356574"))
+        when(companyRepository.existsRegisteredDirectorForPeppolId("0208:0404356574"))
                 .thenReturn(true);
 
         InputStream is = getClass().getResourceAsStream("/D202511EndEnterprise.xml");
