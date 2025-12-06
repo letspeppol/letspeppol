@@ -34,6 +34,8 @@ public class Company {
 
     private String street;
 
+    private String businessUnit;
+
     private boolean hasKboAddress = true;
 
     private boolean registeredOnPeppol = false;
@@ -51,8 +53,9 @@ public class Company {
         this.registeredOnPeppol = false;
     }
 
-    public Company(String peppolId, String vatNumber, String name) {
+    public Company(String peppolId, String vatNumber, String name, String businessUnit) {
         this(peppolId, vatNumber, name, null, null, null);
+        this.businessUnit = businessUnit;
         this.hasKboAddress = false;
     }
 }

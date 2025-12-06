@@ -67,7 +67,7 @@ public class KboXmlParserService {
                     Company company = companyRepository.findWithDirectorsByPeppolId(peppolId).orElseGet(() -> {
                         if (enterprise.address == null) {
                             log.debug("Creating new company with Peppol ID {} without address", peppolId);
-                            return new Company(peppolId, vatNumber, enterprise.name);
+                            return new Company(peppolId, vatNumber, enterprise.name, enterprise.businessUnit);
                         } else {
                             log.debug("Creating new company with Peppol ID {}", peppolId);
                             return new Company(peppolId, vatNumber, enterprise.name,
@@ -217,6 +217,7 @@ public class KboXmlParserService {
 
         AddressData address = null;
         String denominationName = null;
+        String linkedEnterpriseNbr = null;
 
         List<FunctionData> directors = new ArrayList<>();
         boolean enterpriseEnded = false;
@@ -253,6 +254,10 @@ public class KboXmlParserService {
                         enterpriseEnded = true;
                     }
                     depth--;
+                } else if ("LinkedEnterprises".equals(localName)) {
+                    if (address == null) {
+                        linkedEnterpriseNbr = readLinkedEnterprise(reader, nbr);
+                    }
                 }
             } else if (event == XMLStreamConstants.END_ELEMENT) {
                 if ("Enterprise".equals(reader.getLocalName())) {
@@ -283,7 +288,40 @@ public class KboXmlParserService {
             return null;
         }
 
-        return new EnterpriseData(nbr, denominationName, address, directors, enterpriseEnded);
+        return new EnterpriseData(nbr, denominationName, address, directors, enterpriseEnded, linkedEnterpriseNbr);
+    }
+
+    private String readLinkedEnterprise(XMLStreamReader reader, String desiredParentNbr) throws XMLStreamException {
+        boolean hasEnd = false;
+        String linkedEnterpriseNbr = null;
+        String parentNbr = null;
+
+        while (reader.hasNext()) {
+            int event = reader.next();
+            if (event == XMLStreamConstants.START_ELEMENT) {
+                String localName = reader.getLocalName();
+                if ("Validity".equals(localName)) {
+                    ValidityFlags flags = readValidity(reader);
+                    hasEnd = flags.hasEnd;
+                } else if ("Child".equals(localName)) {
+                    linkedEnterpriseNbr = readSimpleTextElement(reader);
+                } else if ("Parent".equals(localName)) {
+                    parentNbr = readSimpleTextElement(reader);
+                }
+            } else if (event == XMLStreamConstants.END_ELEMENT && "Function".equals(reader.getLocalName())) {
+                break;
+            }
+        }
+
+        if (hasEnd) {
+            return null;
+        }
+
+        if (parentNbr == null || !parentNbr.equals(desiredParentNbr)) {
+            return null;
+        }
+
+        return linkedEnterpriseNbr;
     }
 
     private AddressData readAddresses(XMLStreamReader reader) throws XMLStreamException {
@@ -623,7 +661,7 @@ public class KboXmlParserService {
 
     private record HeldByPersonData(String firstName, String lastName) {}
 
-    private record EnterpriseData(String nbr, String name, AddressData address, List<FunctionData> directors, boolean ended) {}
+    private record EnterpriseData(String nbr, String name, AddressData address, List<FunctionData> directors, boolean ended, String businessUnit) {}
 
     private record ValidityFlags(boolean hasEnd) {}
 }

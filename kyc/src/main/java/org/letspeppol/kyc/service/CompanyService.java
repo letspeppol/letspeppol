@@ -72,7 +72,9 @@ public class CompanyService {
                 company.getPostalCode(),
                 company.getDirectors().stream()
                         .map(d -> new DirectorDto(d.getId(), d.getName()))
-                        .collect(Collectors.toList())
+                        .collect(Collectors.toList()),
+                company.isHasKboAddress(),
+                company.isRegisteredOnPeppol()
         );
     }
 
