@@ -34,18 +34,23 @@ public class KboXmlParserService {
             XMLInputFactory factory = XMLInputFactory.newInstance();
             factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, true);
             XMLStreamReader reader = factory.createXMLStreamReader(xmlStream);
+            int totalEnterprises = 0;
+            int totalValidEnterprises = 0;
+            int totalSavedEnterprises = 0;
 
             while (reader.hasNext()) {
                 int event = reader.next();
                 if (event == XMLStreamConstants.START_ELEMENT && "Enterprise".equals(reader.getLocalName())) {
+                    totalEnterprises++;
                     EnterpriseData enterprise = readEnterprise(reader);
 
                     if (enterprise == null) {
                         continue; // skipped because it didn't meet criteria
                     }
+                    totalValidEnterprises++;
 
                     String peppolId = buildPeppolIdFromNbr(enterprise.nbr);
-                    String vatNumber = "BE" + enterprise.nbr;
+                    String vatNumber = buildVatNumberFromNbr(enterprise.nbr);
 
                     if (enterprise.ended) {
                         boolean hasRegisteredDirector = companyRepository.existsRegisteredDirectorForPeppolId(peppolId);
@@ -61,10 +66,10 @@ public class KboXmlParserService {
 
                     Company company = companyRepository.findWithDirectorsByPeppolId(peppolId).orElseGet(() -> {
                         if (enterprise.address == null) {
-                            log.info("Creating new company with Peppol ID {} without address", peppolId);
+                            log.debug("Creating new company with Peppol ID {} without address", peppolId);
                             return new Company(peppolId, vatNumber, enterprise.name);
                         } else {
-                            log.info("Creating new company with Peppol ID {}", peppolId);
+                            log.debug("Creating new company with Peppol ID {}", peppolId);
                             return new Company(peppolId, vatNumber, enterprise.name,
                                     enterprise.address.city, enterprise.address.postalCode,
                                     enterprise.address.street
@@ -74,20 +79,27 @@ public class KboXmlParserService {
 
 
                     boolean isNewCompany = company.getId() == null;
-                    boolean companyChanged = applyCompanyUpdates(company, enterprise);
+                    boolean companyChanged = false;
+                    if (!isNewCompany) {
+                        companyChanged = applyCompanyUpdates(company, enterprise);
+                    }
                     boolean directorsChanged = syncDirectors(company, enterprise.directors);
 
                     if (isNewCompany || companyChanged || directorsChanged) {
                         batch.add(company);
+                        totalSavedEnterprises++;
                     }
 
                     if (batch.size() >= DEFAULT_BATCH_SIZE) {
-                        log.info("Saving batch of {} companies to database", batch.size());
+                        log.debug("Saving batch of {} companies to database", batch.size());
                         kboBatchPersistenceService.saveBatch(batch);
                         batch.clear();
                     }
                 }
             }
+
+            log.info("KboXmlParserService: Processed {} enterprises, of which {} were valid. Saved/updated {} companies.",
+                    totalEnterprises, totalValidEnterprises, totalSavedEnterprises);
 
             if (!batch.isEmpty()) {
                 kboBatchPersistenceService.saveBatch(batch);
@@ -111,13 +123,15 @@ public class KboXmlParserService {
                 || !Objects.equals(company.getPostalCode(), enterprise.address.postalCode)
                 || !Objects.equals(company.getStreet(), enterprise.address.street))
         )) {
+            log.debug("Changes detected for company with Peppol ID {}", company.getPeppolId());
             company.setName(enterprise.name);
-            company.setCity(enterprise.address.city);
-            company.setPostalCode(enterprise.address.postalCode);
-            company.setStreet(enterprise.address.street);
+            if (enterprise.address != null) {
+                company.setCity(enterprise.address.city);
+                company.setPostalCode(enterprise.address.postalCode);
+                company.setStreet(enterprise.address.street);
+            }
             changed = true;
         }
-        log.debug("No changes for company with Peppol ID {}", company.getPeppolId());
         return changed;
     }
 
@@ -252,6 +266,10 @@ public class KboXmlParserService {
             log.debug("Skipping enterprise without NBR");
             return null;
         }
+        if (address != null && address.countryCode != null && !address.countryCode.equals("150")) {
+            log.debug("Skipping enterprise {} not located in Belgium (country code 150)", nbr);
+            return null;
+        }
 //        if (address == null) {
 //            log.debug("Skipping enterprise {} without address", nbr);
 //            return null;
@@ -298,7 +316,7 @@ public class KboXmlParserService {
                     AddressData candidate = readAddressCoding(reader);
                     if (candidate != null && !addressHasEnd) {
                         best = candidate;
-                      }
+                    }
                 } else if ("Validity".equals(localName)) {
                     ValidityFlags flags = readValidity(reader);
                     addressHasEnd = flags.hasEnd;
@@ -321,6 +339,7 @@ public class KboXmlParserService {
         String houseNumber = null;
         String postbox = null;
         String postalCode = null;
+        String countryCode = null;
         boolean codingHasEnd = false;
 
         while (reader.hasNext()) {
@@ -339,6 +358,8 @@ public class KboXmlParserService {
                     postbox = readSimpleTextElement(reader);
                 } else if ("PostCode".equals(localName)) {
                     postalCode = readSimpleTextElement(reader);
+                } else if ("CountryCode".equals(localName)) {
+                    countryCode = readSimpleTextElement(reader);
                 } else if ("Validity".equals(localName)) {
                     ValidityFlags flags = readValidity(reader);
                     codingHasEnd = flags.hasEnd;
@@ -363,7 +384,7 @@ public class KboXmlParserService {
             return null;
         }
 
-        return new AddressData(street, city, postalCode);
+        return new AddressData(street, city, postalCode, countryCode);
     }
 
     private AddressDescription readDescriptions(XMLStreamReader reader) throws XMLStreamException {
@@ -580,11 +601,21 @@ public class KboXmlParserService {
         return sb.toString().trim();
     }
 
+    private String buildVatNumberFromNbr(String nbr) {
+        if (nbr.length() < 10) {
+            return "BE0" + nbr;
+        }
+        return "BE" + nbr;
+    }
+
     private String buildPeppolIdFromNbr(String nbr) {
+        if (nbr.length() < 10) {
+            return "0208:0" + nbr;
+        }
         return "0208:" + nbr;
     }
 
-    private record AddressData(String street, String city, String postalCode) {}
+    private record AddressData(String street, String city, String postalCode, String countryCode) {}
 
     private record AddressDescription(String language, String streetName, String communityName) {}
 

@@ -6,6 +6,7 @@ import org.letspeppol.kyc.model.kbo.KboProcessedZip;
 import org.letspeppol.kyc.repository.CompanyRepository;
 import org.letspeppol.kyc.repository.KboProcessedZipRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -45,26 +46,21 @@ public class KboXmlSyncService {
 
     public void initialSync() {
         long count = companyRepository.count();
-        if (count >= INITIAL_LOAD_THRESHOLD) {
-            log.info("Initial KBO load already done ({} companies)", count);
-            return;
-        }
 
         log.info("Starting initial KBO load; current company count: {}", count);
-        String remoteFullDir = concatPath(baseDir, fullDir);
-        List<String> files = kboSftpClient.listFiles(remoteFullDir);
+        List<String> files = kboSftpClient.listFiles(fullDir);
         List<String> zips = files.stream()
                 .filter(name -> name.toLowerCase().endsWith(".zip"))
                 .sorted()
                 .toList();
 
         if (zips.isEmpty()) {
-            throw new KboSyncException("No ZIP files found in remote full directory: " + remoteFullDir);
+            throw new KboSyncException("No ZIP files found in remote full directory: " + fullDir);
         }
 
         // Prefer the last ZIP lexicographically
         String remoteZipName = zips.get(zips.size() - 1);
-        String remoteZipPath = concatPath(remoteFullDir, remoteZipName);
+        String remoteZipPath = concatPath(fullDir, remoteZipName);
 
         Path kboBase = Paths.get(dataDir, "kbo");
         Path localZip = kboBase.resolve(remoteZipName);
@@ -79,23 +75,22 @@ public class KboXmlSyncService {
         kboSftpClient.downloadFile(remoteZipPath, localZip);
 
         Path localXml = extractSingleXml(localZip);
-
-//        Path localXml = Path.of("/opt/downloads/tmp/kbo/D20251101.xml"); // For testing purposes only
         log.info("Importing initial KBO XML from {}", localXml);
         try (InputStream in = Files.newInputStream(localXml)) {
             kboXmlParserService.importEnterprises(in);
+            kboProcessedZipRepository.save(new KboProcessedZip(remoteZipName, Instant.now()));
         } catch (IOException e) {
             throw new KboSyncException("Failed to read extracted XML file: " + localXml, e);
         } finally {
-            //cleanupFile(localXml);
-            //cleanupFile(localZip);
+            cleanupFile(localXml);
+            cleanupFile(localZip);
         }
 
         long after = companyRepository.count();
         log.info("Initial KBO load completed. Company count before: {}, after: {}", count, after);
     }
 
-    //@Scheduled(cron = "${kbo.sftp.delta-cron:0 30 2 * * *}")
+    @Scheduled(cron = "${kbo.sftp.delta-cron:0 30 2 * * *}")
     public void syncDeltaDaily() {
         try {
             syncDelta();
@@ -111,15 +106,14 @@ public class KboXmlSyncService {
             return;
         }
 
-        String remoteDeltaDir = concatPath(baseDir, deltaDir);
-        List<String> files = kboSftpClient.listFiles(remoteDeltaDir);
+        List<String> files = kboSftpClient.listFiles(deltaDir);
         List<String> zips = files.stream()
                 .filter(name -> name.toUpperCase().endsWith(".ZIP"))
                 .sorted(Comparator.naturalOrder())
                 .toList();
 
         if (zips.isEmpty()) {
-            log.info("No delta ZIP files found in {}", remoteDeltaDir);
+            log.info("No delta ZIP files found in {}", deltaDir);
             return;
         }
 
@@ -136,7 +130,7 @@ public class KboXmlSyncService {
                 continue;
             }
 
-            String remoteZipPath = concatPath(remoteDeltaDir, zipName);
+            String remoteZipPath = concatPath(deltaDir, zipName);
             Path localZip = kboBase.resolve(zipName);
 
             log.info("Downloading delta KBO ZIP: {} -> {}", remoteZipPath, localZip);
@@ -179,7 +173,7 @@ public class KboXmlSyncService {
                 String entryName = entry.getName();
                 if (!entry.isDirectory()
                         && entryName.toLowerCase().endsWith(".xml")
-                        && !entryName.toLowerCase().endsWith(".codes.xml")) {
+                        && entryName.toLowerCase().endsWith(".wijzig.xml")) {
                     Path out = targetDir.resolve(entryName);
                     Files.createDirectories(out.getParent());
                     Files.copy(zis, out, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
