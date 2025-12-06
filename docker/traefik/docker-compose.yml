@@ -34,6 +34,10 @@ services:
       # Logging (optional)
       - "--log.level=INFO"
 
+      # Enable JWT plugin (community plugin)
+      - "--experimental.plugins.jwt-token.moduleName=github.com/toanz/jwt-token"
+      - "--experimental.plugins.jwt-token.version=v0.1.4"
+
     environment:
       - HETZNER_API_KEY=${HETZNER_API_KEY}
 
