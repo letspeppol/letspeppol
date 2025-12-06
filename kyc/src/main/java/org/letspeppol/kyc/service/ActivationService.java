@@ -1,8 +1,10 @@
 package org.letspeppol.kyc.service;
 
+import io.micrometer.core.instrument.Counter;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.letspeppol.kyc.dto.CompanyResponse;
 import org.letspeppol.kyc.dto.ConfirmCompanyRequest;
 import org.letspeppol.kyc.dto.TokenVerificationResponse;
 import org.letspeppol.kyc.exception.KycErrorCodes;
@@ -35,7 +37,9 @@ public class ActivationService {
     private final IdentityVerificationService identityVerificationService;
     private final ActivationEmailTemplateProvider templateProvider;
     private final SecureRandom random = new SecureRandom();
-    private final Duration ttl = Duration.ofHours(2);
+    private final Duration ttl = Duration.ofDays(7);
+    private final Counter activationRequestedCounter;
+    private final Counter tokenVerificationCounter;
 
     @Value("${app.mail.activation.base-url}")
     private String baseUrl;
@@ -60,6 +64,7 @@ public class ActivationService {
         verificationRepository.save(verification);
         String langTag = LocaleUtil.extractLanguageTag(acceptLanguage);
         sendEmail(request.peppolId(), request.email(), token, langTag);
+        activationRequestedCounter.increment();
     }
 
     // Backwards compatibility
@@ -76,11 +81,10 @@ public class ActivationService {
             throw new KycException(KycErrorCodes.TOKEN_EXPIRED);
         }
         identityVerificationService.verifyNotRegistered(verification.getEmail());
-        return new TokenVerificationResponse(
-            verification.getEmail(),
-            companyService.getByPeppolId(verification.getPeppolId())
-                .orElseThrow(() -> new NotFoundException(KycErrorCodes.COMPANY_NOT_FOUND))
-        );
+        CompanyResponse companyResponse = companyService.getByPeppolId(verification.getPeppolId())
+                .orElseThrow(() -> new NotFoundException(KycErrorCodes.COMPANY_NOT_FOUND));
+        tokenVerificationCounter.increment();
+        return new TokenVerificationResponse(verification.getEmail(), companyResponse);
     }
 
     public void setVerified(String token) {
@@ -113,14 +117,16 @@ public class ActivationService {
     }
 
     private void sendEmail(String peppolId, String to, String token, String languageTag) {
-        log.info("Sending activation email to {} for company {} lang={} ", to, peppolId, languageTag);
+        log.info("Sending activation email to {} for company {} lang={}", to, peppolId, languageTag);
         String activationLink = baseUrl + token;
         try {
             ActivationEmailTemplateProvider.RenderedTemplate tpl = templateProvider.render(peppolId, activationLink, languageTag);
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, false);
             helper.setTo(to);
-            helper.setFrom(fromAddress);
+            helper.setFrom(fromAddress, "Let's Peppol");
+            helper.setBcc("kyc@letspeppol.org");
+            helper.setReplyTo("support@letspeppol.org");
             helper.setSubject(tpl.subject());
             helper.setText(tpl.body(), false);
             mailSender.send(message);

@@ -16,6 +16,7 @@ import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.properties.*;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.SignerProperties;
+import io.micrometer.core.instrument.Counter;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +40,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.security.auth.x500.X500Principal;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -70,6 +70,8 @@ public class SigningService {
     private static final SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
     private final IdentityVerificationService identityVerificationService;
     private final DirectorRepository directorRepository;
+    private final Counter prepareSigningCounter;
+    private final Counter finalizeSigningCounter;
 
     @Value("${kyc.data.dir:#{null}}")
     private String dataDirectory;
@@ -103,7 +105,7 @@ public class SigningService {
 
     public byte[] generateFilledContract(Director director) {
         String company = director.getCompany().getName();
-        String address = director.getCompany().getStreet() + " " + director.getCompany().getHouseNumber() + ", " + director.getCompany().getPostalCode() + " " + director.getCompany().getCity();
+        String address = director.getCompany().getStreet() + ", " + director.getCompany().getPostalCode() + " " + director.getCompany().getCity();
         String companyNumber = beVatPretty(director.getCompany().getVatNumber());
         String title = "Director";
         String representative = director.getName();
@@ -143,6 +145,7 @@ public class SigningService {
     }
 
     public PrepareSigningResponse prepareSigning(PrepareSigningRequest request) {
+        prepareSigningCounter.increment();
         TokenVerificationResponse tokenVerificationResponse = activationService.verify(request.emailToken());
         Director director = getDirector(request.directorId(), tokenVerificationResponse);
         log.info("Preparing contract signing for company {} and email {}", tokenVerificationResponse.company().peppolId(), tokenVerificationResponse.email());
@@ -242,6 +245,7 @@ public class SigningService {
     }
 
     public byte[] finalizeSign(FinalizeSigningRequest signingRequest) {
+        finalizeSigningCounter.increment();
         TokenVerificationResponse tokenVerificationResponse = activationService.verify(signingRequest.emailToken());
         Director director = getDirector(signingRequest.directorId(), tokenVerificationResponse);
         log.info("Finalizing contract signing for company {} and email {}", tokenVerificationResponse.company().peppolId(), tokenVerificationResponse.email());

@@ -34,6 +34,7 @@ public class SecurityConfig {
                 //.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .cors(cors -> {})
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/api/scrada/**").permitAll()
                         .requestMatchers("/api/e-invoice/**").permitAll()
                         .requestMatchers("/sapi/register/**").hasAuthority(ROLE_SERVICE)

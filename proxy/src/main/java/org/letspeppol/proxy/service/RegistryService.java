@@ -2,6 +2,7 @@ package org.letspeppol.proxy.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.proxy.dto.RegistrationRequest;
 import org.letspeppol.proxy.dto.RegistryDto;
 import org.letspeppol.proxy.exception.BadRequestException;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Transactional
 @Service
@@ -42,6 +44,7 @@ public class RegistryService {
                 }
                 Map<String, Object> variables = service.register(registry.getPeppolId(), data);
                 registry.setVariables(variables);
+                log.info("Registered PeppolId {} at access point {}", registry.getPeppolId(), accessPoint);
             }
             registry.setAccessPoint(accessPoint);
         } catch (Exception e) {

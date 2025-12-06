@@ -1,5 +1,6 @@
 package org.letspeppol.app.service;
 
+import io.micrometer.core.instrument.Counter;
 import org.letspeppol.app.dto.CompanyDto;
 import org.letspeppol.app.dto.AccountInfo;
 import org.letspeppol.app.exception.AppErrorCodes;
@@ -24,8 +25,10 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
     @Qualifier("kycWebClient")
     private final WebClient kycWebClient;
+    private final Counter companyCreateCounter;
 
     public Company register(AccountInfo request) {
+        companyCreateCounter.increment();
         Company account = new Company(
                 request.peppolId(),
                 request.vatNumber(),
@@ -35,7 +38,6 @@ public class CompanyService {
                 request.city(),
                 request.postalCode(),
                 request.street(),
-                request.houseNumber(),
                 "BE"
         );
         return companyRepository.save(account);
@@ -71,7 +73,6 @@ public class CompanyService {
         company.getRegisteredOffice().setCity(companyDto.registeredOffice().city());
         company.getRegisteredOffice().setPostalCode(companyDto.registeredOffice().postalCode());
         company.getRegisteredOffice().setStreet(companyDto.registeredOffice().street());
-        company.getRegisteredOffice().setHouseNumber(companyDto.registeredOffice().houseNumber());
         companyRepository.save(company);
         return CompanyMapper.toDto(company);
     }

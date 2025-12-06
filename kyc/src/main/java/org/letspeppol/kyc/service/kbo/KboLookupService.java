@@ -1,5 +1,6 @@
-package org.letspeppol.kyc.service;
+package org.letspeppol.kyc.service.kbo;
 
+import io.micrometer.core.instrument.Counter;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -33,11 +34,14 @@ public class KboLookupService {
     @Autowired
     @Qualifier("KboWebClient")
     private WebClient kboWebClient;
+    @Autowired
+    private Counter kboLookupCounter;
 
     public final static String EAS_ONDERNEMINGSNUMMER = "0208";
     private static final Duration TIMEOUT = Duration.ofSeconds(15);
 
     public Optional<CompanyResponse> findCompany(String peppolId) {
+        kboLookupCounter.increment();
         PeppolIdDto peppolIdDto = PeppolIdDto.parse(peppolId);
         if (!EAS_ONDERNEMINGSNUMMER.equals(peppolIdDto.scheme())) { //TODO : split for other countries
             throw new IllegalArgumentException("Only Belgian (0208) companies are implemented");
@@ -71,8 +75,7 @@ public class KboLookupService {
                 peppolId,
                 "BE"+normalizedVat,
                 name,
-                address.get().street,
-                address.get().houseNumber,
+                address.get().getStreetAndHouseNumber(),
                 address.get().city,
                 address.get().postalCode,
                 directors
@@ -199,6 +202,13 @@ public class KboLookupService {
         String postalCode,
         String city,
         String extraInfo
-    ){}
+    ){
+        public String getStreetAndHouseNumber()    {
+            if (houseNumber == null || houseNumber.isBlank()) {
+                return street;
+            }
+            return street + " " + houseNumber;
+        }
+    }
 
 }

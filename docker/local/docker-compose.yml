@@ -28,6 +28,8 @@ services:
       timeout: 5s
       retries: 12
       start_period: 10s
+    ports:
+      - "${DB_PORT:-5432}:5432"
 
   proxy:
     build:
@@ -107,8 +109,13 @@ services:
       UI_URL: ${UI_URL}
       PROXY_API_URL: ${PROXY_API_URL}
       KYC_DATA_DIR: /opt/data/kyc
+      KBO_SFTP_USERNAME: ${KBO_SFTP_USERNAME}
+      KBO_SFTP_PASSWORD: ${KBO_SFTP_PASSWORD}
     volumes:
       - ./opt/data/kyc:/opt/data/kyc
+    networks:
+      - default
+      - observability
 
   ui:
     build:
@@ -133,3 +140,6 @@ volumes:
 networks:
   default:
     name: lp-network
+  observability:
+    external: true
+    name: observability

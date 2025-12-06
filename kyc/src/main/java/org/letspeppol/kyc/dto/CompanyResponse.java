@@ -8,7 +8,6 @@ public record CompanyResponse(
         String vatNumber,
         String name,
         String street,
-        String houseNumber,
         String city,
         String postalCode,
         List<DirectorDto> directors

@@ -31,7 +31,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.graphql:spring-graphql'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
     implementation 'org.hibernate.orm:hibernate-community-dialects'
     implementation 'org.xerial:sqlite-jdbc:3.46.0.0'
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
@@ -39,6 +41,7 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
     implementation 'org.postgresql:postgresql:42.7.8'
     implementation 'org.flywaydb:flyway-database-postgresql'
+    implementation 'com.github.loki4j:loki-logback-appender:2.0.1'
 
     implementation 'com.helger.phive:phive-api:11.0.1'
     implementation 'com.helger.phive:phive-result:11.0.1'

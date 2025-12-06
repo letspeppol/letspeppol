@@ -1,5 +1,6 @@
 package org.letspeppol.kyc.service;
 
+import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -11,6 +12,7 @@ import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.model.AccountIdentityVerification;
 import org.letspeppol.kyc.repository.AccountIdentityVerificationRepository;
 import org.letspeppol.kyc.repository.AccountRepository;
+import org.letspeppol.kyc.repository.DirectorRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,9 +31,11 @@ public class IdentityVerificationService {
 
     private final AccountIdentityVerificationRepository accountIdentityVerificationRepository;
     private final AccountRepository accountRepository;
+    private final DirectorRepository directorRepository;
     private final EncryptionService encryptionService;
     private final CompanyService companyService;
     private final PasswordEncoder passwordEncoder;
+    private final Counter companyRegistrationCounter;
 
     public void verifyNotRegistered(String email) {
         if (accountRepository.existsByEmail(email.toLowerCase())) {
@@ -66,6 +70,9 @@ public class IdentityVerificationService {
         );
         accountIdentityVerificationRepository.save(accountIdentityVerification);
 
+        req.director().setRegistered(true);
+        directorRepository.save(req.director());
+
         if (isAllowedToSign(req.x500Name(), req.director())) {
             companyService.registerCompany(req.director().getCompany());
         } else {
@@ -74,6 +81,7 @@ public class IdentityVerificationService {
         }
 
         log.info("Identity verified for email={} director={} serial={}", account.getEmail(), req.director().getName(), req.x509Certificate().getSerialNumber());
+        companyRegistrationCounter.increment();
         return account;
     }
 

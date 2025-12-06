@@ -1,8 +1,8 @@
 package org.letspeppol.kyc.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.letspeppol.kyc.dto.CompanyResponse;
 import org.letspeppol.kyc.dto.AccountInfo;
+import org.letspeppol.kyc.dto.CompanyResponse;
 import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.NotFoundException;
 import org.letspeppol.kyc.model.Account;
@@ -10,11 +10,11 @@ import org.letspeppol.kyc.service.AccountService;
 import org.letspeppol.kyc.service.CompanyService;
 import org.letspeppol.kyc.service.JwtService;
 import org.letspeppol.kyc.service.SigningService;
-import org.letspeppol.kyc.service.jwt.JwtInfo;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.UUID;
 
 @RestController
@@ -43,7 +43,6 @@ public class CompanyController {
                 account.getCompany().getVatNumber(),
                 account.getCompany().getName(),
                 account.getCompany().getStreet(),
-                account.getCompany().getHouseNumber(),
                 account.getCompany().getCity(),
                 account.getCompany().getPostalCode(),
                 account.getName(),

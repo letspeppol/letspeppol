@@ -14,7 +14,6 @@ public class AddressMapper {
                 address.getCity(),
                 address.getPostalCode(),
                 address.getStreet(),
-                address.getHouseNumber(),
                 address.getCountryCode()
         );
     }
