@@ -136,14 +136,14 @@ services:
       - "traefik.http.routers.green-api.entryPoints=websecure"
       - "traefik.http.routers.green-api.middlewares=api-limit"
       - "traefik.http.routers.green-api.service=nginx"
-      - "traefik.http.routers.green-api.tls.certresolver=${CERT_RESOLVER_GREEN}"
+      - "traefik.http.routers.green-api.certresolver=${CERT_RESOLVER_GREEN}"
 
       # Protected API router
       - "traefik.http.routers.green-sapi.rule=Host(`${ACTIVE_DOMAIN_GREEN}`) && (PathPrefix(`/proxy/sapi/`) || PathPrefix(`/app/sapi/`) || PathPrefix(`/kyc/sapi/`))"
       - "traefik.http.routers.green-sapi.entryPoints=websecure"
       - "traefik.http.routers.green-sapi.middlewares=jwt-auth,api-limit"
       - "traefik.http.routers.green-sapi.service=nginx"
-      - "traefik.http.routers.green-sapi.tls.certresolver=${CERT_RESOLVER_GREEN}"
+      - "traefik.http.routers.green-sapi.certresolver=${CERT_RESOLVER_GREEN}"
 
       # Service definition
       - "traefik.http.services.nginx.loadbalancer.server.port=80"
