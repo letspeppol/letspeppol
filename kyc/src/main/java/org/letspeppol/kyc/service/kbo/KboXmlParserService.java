@@ -1,6 +1,7 @@
 package org.letspeppol.kyc.service.kbo;
 
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.kyc.model.kbo.Company;
 import org.letspeppol.kyc.model.kbo.Director;
@@ -13,13 +14,15 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.InputStream;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class KboXmlParserService {
 
-    private static final int DEFAULT_BATCH_SIZE = 500;
+    @Setter
+    private int defaultBatchSize = 500;
 
     private final CompanyRepository companyRepository;
     private final KboBatchPersistenceService kboBatchPersistenceService;
@@ -34,76 +37,25 @@ public class KboXmlParserService {
             XMLInputFactory factory = XMLInputFactory.newInstance();
             factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, true);
             XMLStreamReader reader = factory.createXMLStreamReader(xmlStream);
-            int totalEnterprises = 0;
-            int totalValidEnterprises = 0;
-            int totalSavedEnterprises = 0;
+            AtomicInteger totalEnterprises = new AtomicInteger(0);
+            AtomicInteger totalValidEnterprises = new AtomicInteger(0);
+            AtomicInteger totalSavedEnterprises = new AtomicInteger(0);
 
             while (reader.hasNext()) {
                 int event = reader.next();
                 if (event == XMLStreamConstants.START_ELEMENT && "Enterprise".equals(reader.getLocalName())) {
-                    totalEnterprises++;
-                    EnterpriseData enterprise = readEnterprise(reader);
-
-                    if (enterprise == null) {
-                        continue; // skipped because it didn't meet criteria
-                    }
-                    totalValidEnterprises++;
-
-                    String peppolId = buildPeppolIdFromNbr(enterprise.nbr);
-                    String vatNumber = buildVatNumberFromNbr(enterprise.nbr);
-
-                    if (enterprise.ended) {
-                        boolean hasRegisteredDirector = companyRepository.existsRegisteredDirectorForPeppolId(peppolId);
-                        if (hasRegisteredDirector) {
-                            log.warn("Skipping deletion of company with Peppol ID {} because it has registered directors", peppolId);
-                            continue;
-                        }
-
-                        log.info("Scheduling deletion of company with Peppol ID {} due to ended enterprise validity", peppolId);
-                        peppolIdsToDelete.add(peppolId);
-                        continue;
-                    }
-
-                    Company company = companyRepository.findWithDirectorsByPeppolId(peppolId).orElseGet(() -> {
-                        if (enterprise.address == null) {
-                            log.debug("Creating new company with Peppol ID {} without address", peppolId);
-                            return new Company(peppolId, vatNumber, enterprise.name);
-                        } else {
-                            log.debug("Creating new company with Peppol ID {}", peppolId);
-                            return new Company(peppolId, vatNumber, enterprise.name,
-                                    enterprise.address.city, enterprise.address.postalCode,
-                                    enterprise.address.street
-                            );
-                        }
-                    });
-
-
-                    boolean isNewCompany = company.getId() == null;
-                    boolean companyChanged = false;
-                    if (!isNewCompany) {
-                        companyChanged = applyCompanyUpdates(company, enterprise);
-                    }
-                    boolean directorsChanged = syncDirectors(company, enterprise.directors);
-
-                    if (isNewCompany || companyChanged || directorsChanged) {
-                        batch.add(company);
-                        totalSavedEnterprises++;
-                    }
-
-                    if (batch.size() >= DEFAULT_BATCH_SIZE) {
-                        log.debug("Saving batch of {} companies to database", batch.size());
+                    processEnterpriseElement(reader, batch, peppolIdsToDelete, totalEnterprises, totalValidEnterprises, totalSavedEnterprises);
+                } else if (event == XMLStreamConstants.END_ELEMENT && "Enterprises".equals(reader.getLocalName())) {
+                    if (!batch.isEmpty()) {
                         kboBatchPersistenceService.saveBatch(batch);
-                        batch.clear();
                     }
+                } else if (event == XMLStreamConstants.START_ELEMENT && "BusinessUnit".equals(reader.getLocalName())) {
+                    processBusinessUnitElement(reader);
                 }
             }
 
             log.info("KboXmlParserService: Processed {} enterprises, of which {} were valid. Saved/updated {} companies.",
-                    totalEnterprises, totalValidEnterprises, totalSavedEnterprises);
-
-            if (!batch.isEmpty()) {
-                kboBatchPersistenceService.saveBatch(batch);
-            }
+                    totalEnterprises.get(), totalValidEnterprises.get(), totalSavedEnterprises.get());
 
             if (!peppolIdsToDelete.isEmpty()) {
                 log.info("Deleting {} companies that have ended enterprise validity", peppolIdsToDelete.size());
@@ -114,10 +66,151 @@ public class KboXmlParserService {
         }
     }
 
-    private boolean applyCompanyUpdates(Company company, EnterpriseData enterprise) {
+    private void processBusinessUnitElement(XMLStreamReader reader) throws XMLStreamException {
+        BusinessUnitData businessUnit = readBusinessUnit(reader);
+
+        if (businessUnit == null || businessUnit.ended()) {
+            return; // skipped because it didn't meet criteria
+        }
+
+        companyRepository.findByBusinessUnitAndHasKboAddressFalse(businessUnit.nbr).ifPresent(company -> {
+            log.debug("Updating company with Peppol ID {} to add KBO address from business unit {}", company.getPeppolId(), businessUnit.nbr);
+            company.setStreet(businessUnit.address.street);
+            company.setCity(businessUnit.address.city);
+            company.setPostalCode(businessUnit.address.postalCode);
+            company.setHasKboAddress(true);
+            companyRepository.save(company);
+        });
+    }
+
+    private BusinessUnitData readBusinessUnit(XMLStreamReader reader) throws XMLStreamException {
+        String nbr = null;
+        AddressData address = null;
+        boolean businessUnitEnded = false;
+        int depth = 0;
+
+        while (reader.hasNext()) {
+            int event = reader.next();
+            if (event == XMLStreamConstants.START_ELEMENT) {
+                String localName = reader.getLocalName();
+                depth++;
+
+                if ("Number".equals(localName)) {
+                    nbr = readSimpleTextElement(reader);
+                    depth--;
+                } else if ("Addresses".equals(localName)) {
+                    AddressData lastAddress = readAddresses(reader);
+                    if (lastAddress != null) {
+                        address = lastAddress;
+                    }
+                    depth--;
+                } else if ("Validity".equals(localName)) {
+                    ValidityFlags flags = readValidity(reader);
+                    if (depth == 1 && flags.hasEnd) {
+                        businessUnitEnded = true;
+                    }
+                    depth--;
+                }
+            } else if (event == XMLStreamConstants.END_ELEMENT) {
+                if ("BusinessUnit".equals(reader.getLocalName())) {
+                    break;
+                }
+                depth = Math.max(depth - 1, 0);
+            }
+        }
+
+        if (nbr == null || nbr.isBlank()) {
+            log.debug("Skipping business unit without Number");
+            return null;
+        }
+
+        if (businessUnitEnded) {
+            log.debug("Skipping business unit {} because it has ended validity", nbr);
+            return null;
+        }
+
+        if (address == null) {
+            log.debug("Skipping business unit without address");
+            return null;
+        }
+
+        if (address.countryCode != null && !"150".equals(address.countryCode)) {
+            log.debug("Skipping business unit {} not located in Belgium (country code 150)", nbr);
+            return null;
+        }
+
+        return new BusinessUnitData(nbr, address, businessUnitEnded);
+    }
+
+    private void processEnterpriseElement(XMLStreamReader reader,
+                                          List<Company> batch,
+                                          List<String> peppolIdsToDelete,
+                                          AtomicInteger totalEnterprises,
+                                          AtomicInteger totalValidEnterprises,
+                                          AtomicInteger totalSavedEnterprises) throws XMLStreamException {
+        totalEnterprises.incrementAndGet();
+        EnterpriseData enterprise = readEnterprise(reader);
+
+        if (enterprise == null) {
+            return; // skipped because it didn't meet criteria
+        }
+        totalValidEnterprises.incrementAndGet();
+
+        String peppolId = buildPeppolIdFromNbr(enterprise.nbr);
+        String vatNumber = buildVatNumberFromNbr(enterprise.nbr);
+
+        if (enterprise.ended) {
+            boolean hasRegisteredDirector = companyRepository.existsRegisteredDirectorForPeppolId(peppolId);
+            if (hasRegisteredDirector) {
+                log.warn("Skipping deletion of company with Peppol ID {} because it has registered directors", peppolId);
+                return;
+            }
+
+            log.info("Scheduling deletion of company with Peppol ID {} due to ended enterprise validity", peppolId);
+            peppolIdsToDelete.add(peppolId);
+            return;
+        }
+
+        Company company = companyRepository.findWithDirectorsByPeppolId(peppolId).orElseGet(() -> {
+            log.debug("Creating new company with Peppol ID {}", peppolId);
+            return createCompany(peppolId, vatNumber, enterprise);
+        });
+
+        boolean isNewCompany = company.getId() == null;
+        boolean companyChanged = false;
+        if (!isNewCompany) {
+            companyChanged = updateCompany(company, enterprise);
+        }
+        boolean directorsChanged = syncDirectors(company, enterprise.directors);
+
+        if (isNewCompany || companyChanged || directorsChanged) {
+            batch.add(company);
+            totalSavedEnterprises.incrementAndGet();
+        }
+
+        if (batch.size() >= defaultBatchSize) {
+            log.debug("Saving batch of {} companies to database", batch.size());
+            kboBatchPersistenceService.saveBatch(batch);
+            batch.clear();
+        }
+    }
+
+    private Company createCompany(String peppolId, String vatNumber, EnterpriseData enterprise) {
+        Company newCompany = new Company(peppolId, vatNumber, enterprise.name);
+        if (enterprise.address != null) {
+            newCompany.setAddress(enterprise.address.city, enterprise.address.postalCode, enterprise.address.street);
+            newCompany.setHasKboAddress(true);
+        }
+        newCompany.setIban(enterprise.iban);
+        newCompany.setBusinessUnit(enterprise.businessUnit);
+        return newCompany;
+    }
+
+    private boolean updateCompany(Company company, EnterpriseData enterprise) {
         boolean changed = false;
 
         if (!Objects.equals(company.getName(), enterprise.name)
+            || !Objects.equals(company.getIban(), enterprise.iban)
             || (enterprise.address != null && (
                 !Objects.equals(company.getCity(), enterprise.address.city)
                 || !Objects.equals(company.getPostalCode(), enterprise.address.postalCode)
@@ -130,6 +223,7 @@ public class KboXmlParserService {
                 company.setPostalCode(enterprise.address.postalCode);
                 company.setStreet(enterprise.address.street);
             }
+            company.setIban(enterprise.iban);
             changed = true;
         }
         return changed;
@@ -217,6 +311,8 @@ public class KboXmlParserService {
 
         AddressData address = null;
         String denominationName = null;
+        String linkedEnterpriseNbr = null;
+        String iban = null;
 
         List<FunctionData> directors = new ArrayList<>();
         boolean enterpriseEnded = false;
@@ -253,6 +349,13 @@ public class KboXmlParserService {
                         enterpriseEnded = true;
                     }
                     depth--;
+                } else if ("LinkedEnterprise".equals(localName)) {
+                    if (address == null && linkedEnterpriseNbr == null) {
+                        linkedEnterpriseNbr = readLinkedEnterprise(reader, nbr);
+                    }
+                } else if ("BankAccounts".equals(localName)) {
+                    iban = readBankAccounts(reader);
+                    depth--;
                 }
             } else if (event == XMLStreamConstants.END_ELEMENT) {
                 if ("Enterprise".equals(reader.getLocalName())) {
@@ -283,7 +386,84 @@ public class KboXmlParserService {
             return null;
         }
 
-        return new EnterpriseData(nbr, denominationName, address, directors, enterpriseEnded);
+        return new EnterpriseData(nbr, denominationName, address, directors, enterpriseEnded, iban, linkedEnterpriseNbr);
+    }
+
+    private String readBankAccounts(XMLStreamReader reader) throws XMLStreamException {
+        String iban = null;
+
+        while (reader.hasNext()) {
+            int event = reader.next();
+            if (event == XMLStreamConstants.START_ELEMENT && "BankAccount".equals(reader.getLocalName())) {
+                String candidate = readBankAccount(reader);
+                if (candidate != null && iban == null) {
+                    iban = candidate;
+                }
+            } else if (event == XMLStreamConstants.END_ELEMENT && "BankAccounts".equals(reader.getLocalName())) {
+                break;
+            }
+        }
+
+        return iban;
+    }
+
+    private String readBankAccount(XMLStreamReader reader) throws XMLStreamException {
+        String iban = null;
+        boolean hasEnd = false;
+
+        while (reader.hasNext()) {
+            int event = reader.next();
+            if (event == XMLStreamConstants.START_ELEMENT) {
+                String localName = reader.getLocalName();
+                if ("Iban".equals(localName)) {
+                    iban = readSimpleTextElement(reader);
+                } else if ("Validity".equals(localName)) {
+                    ValidityFlags flags = readValidity(reader);
+                    hasEnd = flags.hasEnd;
+                }
+            } else if (event == XMLStreamConstants.END_ELEMENT && "BankAccount".equals(reader.getLocalName())) {
+                break;
+            }
+        }
+
+        if (hasEnd || iban == null || iban.isBlank()) {
+            return null;
+        }
+
+        return iban;
+    }
+
+    private String readLinkedEnterprise(XMLStreamReader reader, String desiredParentNbr) throws XMLStreamException {
+        boolean hasEnd = false;
+        String linkedEnterpriseNbr = null;
+        String parentNbr = null;
+
+        while (reader.hasNext()) {
+            int event = reader.next();
+            if (event == XMLStreamConstants.START_ELEMENT) {
+                String localName = reader.getLocalName();
+                if ("Validity".equals(localName)) {
+                    ValidityFlags flags = readValidity(reader);
+                    hasEnd = flags.hasEnd;
+                } else if ("Child".equals(localName)) {
+                    linkedEnterpriseNbr = readSimpleTextElement(reader);
+                } else if ("Parent".equals(localName)) {
+                    parentNbr = readSimpleTextElement(reader);
+                }
+            } else if (event == XMLStreamConstants.END_ELEMENT && "LinkedEnterprise".equals(reader.getLocalName())) {
+                break;
+            }
+        }
+
+        if (hasEnd) {
+            return null;
+        }
+
+        if (parentNbr == null || !parentNbr.equals(desiredParentNbr)) {
+            return null;
+        }
+
+        return linkedEnterpriseNbr;
     }
 
     private AddressData readAddresses(XMLStreamReader reader) throws XMLStreamException {
@@ -316,7 +496,7 @@ public class KboXmlParserService {
                     AddressData candidate = readAddressCoding(reader);
                     if (candidate != null && !addressHasEnd) {
                         best = candidate;
-                    }
+                      }
                 } else if ("Validity".equals(localName)) {
                     ValidityFlags flags = readValidity(reader);
                     addressHasEnd = flags.hasEnd;
@@ -623,7 +803,9 @@ public class KboXmlParserService {
 
     private record HeldByPersonData(String firstName, String lastName) {}
 
-    private record EnterpriseData(String nbr, String name, AddressData address, List<FunctionData> directors, boolean ended) {}
+    private record EnterpriseData(String nbr, String name, AddressData address, List<FunctionData> directors, boolean ended, String iban, String businessUnit) {}
 
     private record ValidityFlags(boolean hasEnd) {}
+
+    private record BusinessUnitData(String nbr, AddressData address, boolean ended) {}
 }

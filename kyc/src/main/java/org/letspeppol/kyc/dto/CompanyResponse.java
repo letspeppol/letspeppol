@@ -10,6 +10,8 @@ public record CompanyResponse(
         String street,
         String city,
         String postalCode,
-        List<DirectorDto> directors
+        List<DirectorDto> directors,
+        boolean hasKboAddress,
+        boolean registeredOnPeppol
 ) {}
 

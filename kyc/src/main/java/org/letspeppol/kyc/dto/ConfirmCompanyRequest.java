@@ -6,6 +6,9 @@ import jakarta.validation.constraints.Size;
 
 public record ConfirmCompanyRequest(
         @NotBlank @Size(max = 32) String peppolId,
-        @Email @NotBlank String email
+        @Email @NotBlank String email,
+        String city,
+        String postalCode,
+        String street
 ) {}
 

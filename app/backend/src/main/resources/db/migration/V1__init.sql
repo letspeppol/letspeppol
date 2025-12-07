@@ -13,7 +13,6 @@ CREATE TABLE address (
     last_updated_on   timestamp with time zone,
     city              varchar(255),
     country_code      varchar(255),
-    house_number      varchar(255),
     postal_code       varchar(255),
     street            varchar(255)
 );
@@ -30,7 +29,6 @@ CREATE TABLE company (
     name                    varchar(255) NOT NULL,
     payment_account_name    varchar(255),
     payment_terms           varchar(255),
-    registered_on_peppol    boolean NOT NULL,
     subscriber              varchar(255),
     subscriber_email        varchar(255),
     registered_office_id    bigint UNIQUE NOT NULL,

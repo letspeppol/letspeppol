@@ -7,9 +7,9 @@ import org.letspeppol.kyc.exception.KycException;
 import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.model.PasswordResetToken;
 import org.letspeppol.kyc.model.kbo.Company;
+import org.letspeppol.kyc.repository.AccountRepository;
 import org.letspeppol.kyc.repository.CompanyRepository;
 import org.letspeppol.kyc.repository.PasswordResetTokenRepository;
-import org.letspeppol.kyc.repository.AccountRepository;
 import org.letspeppol.kyc.service.PasswordResetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,7 +42,8 @@ class PasswordResetServiceTests {
         tokenRepository.deleteAll();
         accountRepository.deleteAll();
         companyRepository.deleteAll();
-        Company company = new Company("0208:0123456789", "BE0123456789", "TestCo", "City", "1000", "Street", "1");
+        Company company = new Company("0208:0123456789", "BE0123456789", "TestCo");
+        company.setAddress("City", "1000", "Street 1");
         companyRepository.save(company);
         account = Account.builder()
                 .name("John Doe")

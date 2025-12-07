@@ -34,6 +34,10 @@ public class Company {
 
     private String street;
 
+    private String businessUnit;
+
+    private String iban;
+
     private boolean hasKboAddress = true;
 
     private boolean registeredOnPeppol = false;
@@ -43,20 +47,19 @@ public class Company {
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Director> directors = new ArrayList<>();
 
-    public Company(String peppolId, String vatNumber, String name, String city, String postalCode, String street) {
+    public Company(String peppolId, String vatNumber, String name) {
         this.peppolId = peppolId;
         this.vatNumber = vatNumber;
         this.name = name;
-        this.city = city;
-        this.postalCode = postalCode;
-        this.street = street;
         this.registeredOnPeppol = false;
+        this.hasKboAddress = false;
         this.suspended = false;
     }
 
-    public Company(String peppolId, String vatNumber, String name) {
-        this(peppolId, vatNumber, name, null, null, null);
-        this.hasKboAddress = false;
+    public void setAddress(String city, String postalCode, String street) {
+        this.city = city;
+        this.postalCode = postalCode;
+        this.street = street;
     }
 
     public boolean isPeppolActive() {
