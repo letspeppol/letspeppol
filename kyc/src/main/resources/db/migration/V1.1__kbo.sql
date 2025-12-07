@@ -13,6 +13,7 @@ ALTER TABLE company DROP COLUMN house_number;
 
 -- Director: add registered and hasKboAddress
 ALTER TABLE director ADD registered boolean NOT NULL DEFAULT FALSE;
+ALTER TABLE company ADD suspended boolean NOT NULL DEFAULT FALSE;
 ALTER TABLE company ADD has_kbo_address boolean NOT NULL DEFAULT TRUE;
 UPDATE director SET registered = true WHERE 1=1;
 

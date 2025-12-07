@@ -46,7 +46,7 @@ public class AuthController {
 
         String token = jwtService.generateToken(
                 account.getCompany().getPeppolId(),
-                account.getCompany().isRegisteredOnPeppol(),
+                account.getCompany().isPeppolActive(),
                 account.getExternalId()
         );
 

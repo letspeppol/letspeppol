@@ -11,6 +11,7 @@ import org.letspeppol.app.model.Company;
 import org.letspeppol.app.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.letspeppol.app.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,7 @@ public class CompanyService {
     private final WebClient kycWebClient;
     private final Counter companyCreateCounter;
 
-    public Company register(AccountInfo request) {
+    public Company add(AccountInfo request) {
         companyCreateCounter.increment();
         Company account = new Company(
                 request.peppolId(),
@@ -44,28 +45,27 @@ public class CompanyService {
     }
 
     public CompanyDto get(String peppolId, Jwt jwt) {
-        // Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new NotFoundException("Company does not exist"));
         Optional<Company> optionalCompany = companyRepository.findByPeppolId(peppolId);
         if (optionalCompany.isPresent()) {
-            return CompanyMapper.toDto(optionalCompany.get());
+            return CompanyMapper.toDto(optionalCompany.get(), JwtUtil.isPeppolActive(jwt));
         }
         try {
             AccountInfo accountInfo = kycWebClient.get()
-                    .uri("/api/company")
+                    .uri("/sapi/company")
                     .headers(h -> h.setBearerAuth(jwt.getTokenValue())) //.header("Authorization", "Bearer " + TOKEN)
                     .retrieve()
                     .bodyToMono(AccountInfo.class)
                     .blockOptional()
                     .orElseThrow(() -> new IllegalStateException("Account was not know at KYC"));
 
-            return CompanyMapper.toDto(register(accountInfo));
+            return CompanyMapper.toDto(add(accountInfo), JwtUtil.isPeppolActive(jwt));
         } catch (Exception ex) {
-            log.error("Call to KYC /api/company failed", ex);
+            log.error("Call to KYC /sapi/company failed", ex);
             throw new AppException(AppErrorCodes.KYC_REST_ERROR);
         }
     }
 
-    public CompanyDto update(CompanyDto companyDto) {
+    public CompanyDto update(CompanyDto companyDto, Jwt jwt) {
         Company company = companyRepository.findByPeppolId(companyDto.peppolId()).orElseThrow(() -> new NotFoundException("Company does not exist"));
         company.setPaymentAccountName(companyDto.paymentAccountName());
         company.setPaymentTerms(companyDto.paymentTerms());
@@ -74,12 +74,6 @@ public class CompanyService {
         company.getRegisteredOffice().setPostalCode(companyDto.registeredOffice().postalCode());
         company.getRegisteredOffice().setStreet(companyDto.registeredOffice().street());
         companyRepository.save(company);
-        return CompanyMapper.toDto(company);
-    }
-
-    public void unregister(String peppolId) {
-        Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new NotFoundException("Company does not exist"));
-        company.setRegisteredOnPeppol(false);
-        companyRepository.save(company);
+        return CompanyMapper.toDto(company, JwtUtil.isPeppolActive(jwt));
     }
 }

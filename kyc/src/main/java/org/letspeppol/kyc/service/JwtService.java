@@ -37,6 +37,7 @@ public class JwtService {
                 .setIssuer("app")
                 .claim(PEPPOL_ID, peppolId)
                 .claim(PEPPOL_ACTIVE, peppolActive)
+                //TODO : add proxy url, to have multiple proxy possible and n-to-n relation with app, store registered proxy in kyc database
                 .claim(UID, uid)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
@@ -58,7 +59,7 @@ public class JwtService {
                 token,
                 claims.get(PEPPOL_ID, String.class),
                 claims.get(PEPPOL_ACTIVE, Boolean.class),
-                claims.get(UID, String.class)
+                UUID.fromString(claims.get(UID, String.class))
         );
     }
 

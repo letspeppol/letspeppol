@@ -1,6 +1,7 @@
 import {resolve} from "@aurelia/kernel";
 import {SignatureAlgorithm} from "@web-eid/web-eid-library/models/SignatureAlgorithm";
 import {KYCApi} from "./kyc-api";
+import {LoginService} from "../app/login-service";
 
 export interface TokenVerificationResponse {
     email: string;
@@ -50,9 +51,10 @@ export interface FinalizeSigningRequest {
 
 export class RegistrationService {
     public kycApi = resolve(KYCApi);
+    private loginService = resolve(LoginService);
 
     async getCompany(peppolId: string): Promise<KycCompanyResponse>  {
-        const response = await this.kycApi.httpClient.get(`/api/company/${peppolId}`);
+        const response = await this.kycApi.httpClient.get(`/api/register/company/${peppolId}`);
         return response.json();
     }
 
@@ -75,11 +77,40 @@ export class RegistrationService {
         return response.json();
     }
 
+    getContractUrl(directorId: number, token: string): string {
+        return `${this.kycApi.httpClient.baseUrl}/api/identity/contract/${directorId}?token=${token}`;
+    }
+
     async finalizeSign(request: FinalizeSigningRequest) : Promise<Response> {
         return await this.kycApi.httpClient.post(`/api/identity/sign/finalize`, JSON.stringify(request));
     }
 
-    async unregisterCompany() {
-        await this.kycApi.httpClient.post('/api/company/unregister');
+    async unregisterCompany(): boolean {
+        const response = await this.kycApi.httpClient.fetch('/sapi/company/peppol/unregister', { method: 'POST' }); //Using fetch to expose response header
+        if (response.status === 204) {
+            console.log("Was already unregistered");
+            return false;
+        }
+        const token = await res.json();
+        if (token) {
+            this.loginService.updateToken(token);
+            return false;
+        }
+        return true;
     }
+
+    async registerCompany(): boolean {
+        const response = await this.kycApi.httpClient.fetch('/sapi/company/peppol/register', { method: 'POST' }); //Using fetch to expose response header
+        if (response.status === 204) {
+            console.log("Was already registered");
+            return true;
+        }
+        const token = await res.json();
+        if (token) {
+            this.loginService.updateToken(token);
+            return true;
+        }
+        return false;
+    }
+
 }

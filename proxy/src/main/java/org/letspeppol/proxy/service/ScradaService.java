@@ -1,7 +1,9 @@
 package org.letspeppol.proxy.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.proxy.dto.RegistrationRequest;
 import org.letspeppol.proxy.dto.scrada.*;
 import org.letspeppol.proxy.model.AccessPoint;
@@ -17,6 +19,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RequiredArgsConstructor
 @Transactional
 @Service
@@ -39,6 +42,7 @@ public class ScradaService implements AccessPointServiceInterface {
     private final Counter unregisterCounter;
     private final Counter documentSendCounter;
     private final Counter documentReceivedCounter;
+    private final ObjectMapper objectMapper;
 
     @Override
     public AccessPoint getType() {
@@ -49,40 +53,42 @@ public class ScradaService implements AccessPointServiceInterface {
     @Override
     public Map<String, Object> register(String peppolId, RegistrationRequest data) {
         try {
+            RegisterRequest registerRequest = new RegisterRequest(
+                    new ParticipantIdentifier(
+                            PARTICIPANT_SCHEME,
+                            peppolId
+                    ),
+                    new BusinessEntity(
+                            data.name(),
+                            data.language(),
+                            data.country()
+                    ),
+                    List.of(
+                            new DocumentType(
+                                    INVOICES_SCHEME,
+                                    INVOICES_VALUE,
+                                    new ProcessIdentifier(
+                                            PROCESS_SCHEME,
+                                            PROCESS_VALUE
+                                    )
+                            ),
+                            new DocumentType(
+                                    CREDIT_NOTES_SCHEME,
+                                    CREDIT_NOTES_VALUE,
+                                    new ProcessIdentifier(
+                                            PROCESS_SCHEME,
+                                            PROCESS_VALUE
+                                    )
+                            )
+                    ),
+                    null
+            );
+            log.info("Scrada API request to {} with {}", "/register", objectMapper.writeValueAsString(registerRequest));
             String uuid = scradaWebClient
                     .post()
                     .uri("/register")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .bodyValue(new RegisterRequest(
-                            new ParticipantIdentifier(
-                                    PARTICIPANT_SCHEME,
-                                    peppolId
-                            ),
-                            new BusinessEntity(
-                                    data.name(),
-                                    data.language(),
-                                    data.country()
-                            ),
-                            List.of(
-                                    new DocumentType(
-                                            INVOICES_SCHEME,
-                                            INVOICES_VALUE,
-                                            new ProcessIdentifier(
-                                                    PROCESS_SCHEME,
-                                                    PROCESS_VALUE
-                                            )
-                                    ),
-                                    new DocumentType(
-                                            CREDIT_NOTES_SCHEME,
-                                            CREDIT_NOTES_VALUE,
-                                            new ProcessIdentifier(
-                                                    PROCESS_SCHEME,
-                                                    PROCESS_VALUE
-                                            )
-                                    )
-                            ),
-                            null
-                    ))
+                    .bodyValue(registerRequest)
                     .retrieve()
                     .bodyToMono(String.class)
                     .blockOptional()
@@ -91,6 +97,7 @@ public class ScradaService implements AccessPointServiceInterface {
             registerCounter.increment();
             return Map.of("uuid", uuid);
         } catch (WebClientResponseException e) { // HTTP error (non-2xx)
+            log.error("Scrada API error {} {}: {}", e.getRawStatusCode(), e.getStatusText(), e.getResponseBodyAsString(), e);
             throw new RuntimeException("Scrada API error: " + e.getStatusCode(), e);
         } catch (Exception e) { // timeouts, connection issues, deserialization errors, etc.
             throw new RuntimeException("Failed to call Scrada API", e);

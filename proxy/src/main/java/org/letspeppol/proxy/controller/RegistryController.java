@@ -33,20 +33,10 @@ public class RegistryController {
         );
     }
 
-    @PutMapping("suspend")
-    public RegistryDto suspend(@AuthenticationPrincipal Jwt jwt) {
+    @PutMapping("unregister")
+    public RegistryDto unregister(@AuthenticationPrincipal Jwt jwt) {
         String peppolId = JwtUtil.getPeppolId(jwt);
-        return registryService.suspend(peppolId);
-    }
-
-    @PutMapping("activate")
-    public RegistryDto activate(@AuthenticationPrincipal Jwt jwt, @RequestBody RegistrationRequest data) { //TODO : is this useful or confusing ?
-        String peppolId = JwtUtil.getPeppolId(jwt);
-        return registryService.activate(
-                peppolId,
-                data,
-                AccessPoint.SCRADA
-        );
+        return registryService.unregister(peppolId);
     }
 
     @DeleteMapping()

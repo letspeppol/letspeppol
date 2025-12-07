@@ -42,7 +42,7 @@ public class DataInitializer implements CommandLineRunner {
                     "Michiel Wouters",
                     "letspeppol@itaa.be"
             );
-            companyService.register(accountInfo);
+            companyService.add(accountInfo);
             PartnerDto partner = new PartnerDto(
                     null,
                     "BE1023290711",
@@ -99,7 +99,7 @@ public class DataInitializer implements CommandLineRunner {
                     "Bart In stukken",
                     "bart@softwareoplossing.be"
             );
-            companyService.register(accountInfo);
+            companyService.add(accountInfo);
         }
     }
 }

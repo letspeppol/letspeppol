@@ -12,11 +12,15 @@ export class ProxyApi {
         const baseUrl = import.meta.env.VITE_PROXY_BASE_URL || '/proxy';
         this.httpClient.configure(config => config
             .withBaseUrl(baseUrl)
-            .withDefaults({
-                headers: localStorage.getItem('token') ? {'Authorization': `Bearer ${localStorage.getItem('token')}`} : undefined,
-            })
             .rejectErrorResponses()
             .withInterceptor({
+                request: (request) => {
+                  const token = localStorage.getItem('token');
+                  if (token) {
+                      request.headers.set('Authorization', `Bearer ${token}`);
+                  }
+                  return request;
+                },
                 responseError: (error: Response) => {
                     if (error.status === 401) {
                         this.router.load('login');

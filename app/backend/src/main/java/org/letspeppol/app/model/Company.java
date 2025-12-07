@@ -24,7 +24,6 @@ public class Company extends GenericEntity{
 
     private String subscriber; // Director name
     private String subscriberEmail;
-    private boolean registeredOnPeppol = false;
 
     private String paymentTerms;
     private String iban;
@@ -42,6 +41,5 @@ public class Company extends GenericEntity{
         this.subscriber = subscriber;
         this.subscriberEmail = subscriberEmail;
         this.registeredOffice = new Address(city, postalCode, street, countryCode);
-        this.registeredOnPeppol = true;
     }
 }
