@@ -5,7 +5,7 @@ import org.letspeppol.app.model.Company;
 
 public class CompanyMapper {
 
-    public static CompanyDto toDto(Company company) {
+    public static CompanyDto toDto(Company company, boolean peppolActive) {
         return new CompanyDto(
                 company.getPeppolId(),
                 company.getVatNumber(),
@@ -15,7 +15,7 @@ public class CompanyMapper {
                 company.getPaymentTerms(),
                 company.getIban(),
                 company.getPaymentAccountName(),
-                company.isRegisteredOnPeppol(),
+                peppolActive,
                 AddressMapper.toDto(company.getRegisteredOffice())
         );
     }

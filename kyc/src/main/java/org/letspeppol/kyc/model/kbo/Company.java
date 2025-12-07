@@ -42,6 +42,8 @@ public class Company {
 
     private boolean registeredOnPeppol = false;
 
+    private boolean suspended = false;
+
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Director> directors = new ArrayList<>();
 
@@ -51,11 +53,16 @@ public class Company {
         this.name = name;
         this.registeredOnPeppol = false;
         this.hasKboAddress = false;
+        this.suspended = false;
     }
 
     public void setAddress(String city, String postalCode, String street) {
         this.city = city;
         this.postalCode = postalCode;
         this.street = street;
+    }
+
+    public boolean isPeppolActive() {
+        return !suspended && registeredOnPeppol;
     }
 }

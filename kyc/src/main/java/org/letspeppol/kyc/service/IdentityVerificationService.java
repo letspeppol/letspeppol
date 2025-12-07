@@ -16,7 +16,6 @@ import org.letspeppol.kyc.repository.DirectorRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.security.auth.x500.X500Principal;
 import java.security.cert.X509Certificate;
 import java.time.Instant;
@@ -76,6 +75,7 @@ public class IdentityVerificationService {
         if (isAllowedToSign(req.x500Name(), req.director())) {
             companyService.registerCompany(req.director().getCompany());
         } else {
+            companyService.suspendCompany(req.director().getCompany());
             log.warn("Peppol not activated for email={} director={} signer={} {} serial={}", account.getEmail(), req.director().getName(), getRDNName(req.x500Name(), BCStyle.GIVENNAME), getRDNName(req.x500Name(), BCStyle.SURNAME), req.x509Certificate().getSerialNumber());
             //TODO : email activation link to admin
         }

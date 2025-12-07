@@ -72,21 +72,46 @@ public class CompanyService {
         );
     }
 
-    public void registerCompany(Company company) {
-        if (company.isRegisteredOnPeppol()) {
-            //TODO : log
-            return;
-        }
-        String token = jwtService.generateInternalToken(company.getPeppolId(), company.isRegisteredOnPeppol());
-        company.setRegisteredOnPeppol(proxyService.registerCompany(token, company.getName()));
-        companyRepository.save(company);
+    public boolean registerCompany(String peppolId) {
+        Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new KycException(KycErrorCodes.COMPANY_NOT_FOUND));
+        return registerCompany(company);
     }
 
-    public void unregisterCompany(String peppolId) {
-        Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new KycException(KycErrorCodes.COMPANY_NOT_FOUND));
-        String token = jwtService.generateInternalToken(company.getPeppolId(), company.isRegisteredOnPeppol());
-        company.setRegisteredOnPeppol(proxyService.unregisterCompany(token));
+    public boolean registerCompany(Company company) {
+        if (company.isSuspended()) {
+            //TODO : log
+            return false;
+        }
+        if (company.isRegisteredOnPeppol()) {
+            //TODO : log
+            return true;
+        }
+        String token = jwtService.generateInternalToken(company.getPeppolId(), company.isPeppolActive());
+        boolean peppolActive = proxyService.registerCompany(token, company.getName());
+        company.setRegisteredOnPeppol(peppolActive);
         companyRepository.save(company);
-        companyUnregistrationCounter.increment();
+        return peppolActive;
+    }
+
+    public boolean unregisterCompany(String peppolId) {
+        Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new KycException(KycErrorCodes.COMPANY_NOT_FOUND));
+        return unregisterCompany(company);
+    }
+
+    public boolean unregisterCompany(Company company) {
+        String token = jwtService.generateInternalToken(company.getPeppolId(), company.isPeppolActive());
+        boolean peppolActive = proxyService.unregisterCompany(token);
+        company.setRegisteredOnPeppol(peppolActive);
+        companyRepository.save(company);
+        companyUnregistrationCounter.increment(); //TODO : check what is this ?
+        return peppolActive;
+    }
+
+    public void suspendCompany(Company company) {
+        company.setSuspended(true);
+        companyRepository.save(company);
+        if (company.isRegisteredOnPeppol()) {
+            unregisterCompany(company);
+        }
     }
 }

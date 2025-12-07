@@ -37,6 +37,6 @@ public class CompanyController {
             log.warn("Malicious update attempt for peppolId {} company {} {}", peppolId, companyDto.peppolId(), companyDto.name());
             throw new AppException(AppErrorCodes.PEPPOL_ID_MISMATCH);
         }
-        return ResponseEntity.ok(companyService.update(companyDto));
+        return ResponseEntity.ok(companyService.update(companyDto, jwt));
     }
 }

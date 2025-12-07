@@ -46,7 +46,8 @@ export class EmailConfirmation {
     }
 
     getContractUrl() {
-        return `${this.kycApi.httpClient.baseUrl}/api/register/contract/${this.confirmedDirector.id}?token=${this.emailToken}#page=1&view=FitH,300`;
+        const contractUrl = this.registrationService.getContractUrl(this.confirmedDirector.id, this.emailToken);
+        return `${contractUrl}#page=1&view=FitH,300`;
     }
 
     get lengthOk(): boolean { return this.password.length >= 12; }
