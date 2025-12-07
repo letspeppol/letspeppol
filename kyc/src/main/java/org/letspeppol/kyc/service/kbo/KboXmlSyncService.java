@@ -48,35 +48,35 @@ public class KboXmlSyncService {
         long count = companyRepository.count();
 
         log.info("Starting initial KBO load; current company count: {}", count);
-//        List<String> files = kboSftpClient.listFiles(fullDir);
-//        List<String> zips = files.stream()
-//                .filter(name -> name.toLowerCase().endsWith(".zip"))
-//                .sorted()
-//                .toList();
-//
-//        if (zips.isEmpty()) {
-//            throw new KboSyncException("No ZIP files found in remote full directory: " + fullDir);
-//        }
-//
-//        // Prefer the last ZIP lexicographically
-//        String remoteZipName = zips.get(zips.size() - 1);
-//        String remoteZipPath = concatPath(fullDir, remoteZipName);
-//
-//        Path kboBase = Paths.get(dataDir, "kbo");
-//        Path localZip = kboBase.resolve(remoteZipName);
-//
-//        try {
-//            Files.createDirectories(kboBase);
-//        } catch (IOException e) {
-//            throw new KboSyncException("Failed to create KBO data directory: " + kboBase, e);
-//        }
-//
-//        log.info("Downloading initial full KBO ZIP: {} -> {}", remoteZipPath, localZip);
-//        kboSftpClient.downloadFile(remoteZipPath, localZip);
-//
-//        Path localXml = extractSingleXml(localZip);
-        Path localXml = Path.of("/opt/downloads/tmp/full/D20251101.xml"); // For testing purposes only
-        String remoteZipName = "D20251101.xml";
+        List<String> files = kboSftpClient.listFiles(fullDir);
+        List<String> zips = files.stream()
+                .filter(name -> name.toLowerCase().endsWith(".zip"))
+                .sorted()
+                .toList();
+
+        if (zips.isEmpty()) {
+            throw new KboSyncException("No ZIP files found in remote full directory: " + fullDir);
+        }
+
+        // Prefer the last ZIP lexicographically
+        String remoteZipName = zips.get(zips.size() - 1);
+        String remoteZipPath = concatPath(fullDir, remoteZipName);
+
+        Path kboBase = Paths.get(dataDir, "kbo");
+        Path localZip = kboBase.resolve(remoteZipName);
+
+        try {
+            Files.createDirectories(kboBase);
+        } catch (IOException e) {
+            throw new KboSyncException("Failed to create KBO data directory: " + kboBase, e);
+        }
+
+        log.info("Downloading initial full KBO ZIP: {} -> {}", remoteZipPath, localZip);
+        kboSftpClient.downloadFile(remoteZipPath, localZip);
+
+        Path localXml = extractSingleXml(localZip);
+//        Path localXml = Path.of("/opt/downloads/tmp/full/D20251101.xml"); // For testing purposes only
+//        String remoteZipName = "D20251101.xml";
         log.info("Importing initial KBO XML from {}", localXml);
         try (InputStream in = Files.newInputStream(localXml)) {
             kboXmlParserService.importEnterprises(in);
@@ -84,8 +84,8 @@ public class KboXmlSyncService {
         } catch (IOException e) {
             throw new KboSyncException("Failed to read extracted XML file: " + localXml, e);
         } finally {
-//            cleanupFile(localXml);
-//            cleanupFile(localZip);
+            cleanupFile(localXml);
+            cleanupFile(localZip);
         }
 
         long after = companyRepository.count();
