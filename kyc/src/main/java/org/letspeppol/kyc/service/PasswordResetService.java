@@ -117,8 +117,8 @@ public class PasswordResetService {
     }
 
     @Transactional
-    public void changePassword(String uid, @Valid ChangePasswordRequest request) {
-        Account account = accountRepository.findByExternalId(UUID.fromString(uid)).orElseThrow(() -> new KycException(KycErrorCodes.ACCOUNT_NOT_FOUND));
+    public void changePassword(UUID uid, @Valid ChangePasswordRequest request) {
+        Account account = accountRepository.findByExternalId(uid).orElseThrow(() -> new KycException(KycErrorCodes.ACCOUNT_NOT_FOUND));
         accountService.updatePassword(account, request.password());
     }
 }

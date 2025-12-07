@@ -53,7 +53,7 @@ public class ProxyService {
     public boolean unregisterCompany(String token) {
         try {
             RegistryDto registryDto = this.webClient.put()
-                    .uri("/sapi/registry/suspend")
+                    .uri("/sapi/registry/unregister")
                     .header("Authorization", "Bearer " + token)
                     .retrieve()
                     .bodyToMono(RegistryDto.class)

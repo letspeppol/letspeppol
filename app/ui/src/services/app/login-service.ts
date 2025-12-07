@@ -46,9 +46,15 @@ export class LoginService {
         this.authenticated = true;
     }
 
+    updateToken(token: string) {
+        localStorage.setItem('token', token);
+        this.setAuthHeader(token);
+        this.verifyAuthenticated();
+    }
+
     async getJwtToken(username: string, password: string) {
         const authHeaders: Headers = new Headers;
-        authHeaders.append('Authorization', `Basic ${Buffer.from(username + ":" + password).toString('base64')}` );
+        authHeaders.append('Authorization', `Basic ${btoa(`${username}:${password}`)}` );
         const requestInit: RequestInit = { headers: authHeaders }
         const response = await this.kycApi.httpClient.post(`/api/jwt/auth`, undefined, requestInit);
         return await response.text();

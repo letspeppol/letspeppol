@@ -9,7 +9,7 @@ public record CompanyDto(
         String paymentTerms,
         String iban,
         String paymentAccountName,
-        boolean registeredOnPeppol,
+        boolean peppolActive,
         AddressDto registeredOffice
 )
 {}

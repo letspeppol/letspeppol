@@ -4,14 +4,18 @@ import lombok.RequiredArgsConstructor;
 import org.letspeppol.kyc.dto.FinalizeSigningRequest;
 import org.letspeppol.kyc.dto.PrepareSigningRequest;
 import org.letspeppol.kyc.dto.PrepareSigningResponse;
+import org.letspeppol.kyc.dto.TokenVerificationResponse;
+import org.letspeppol.kyc.exception.KycErrorCodes;
+import org.letspeppol.kyc.exception.KycException;
+import org.letspeppol.kyc.model.kbo.Director;
+import org.letspeppol.kyc.service.ActivationService;
 import org.letspeppol.kyc.service.SigningService;
+import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import java.nio.charset.StandardCharsets;
 
 @RestController
 @RequestMapping("/api/identity")
@@ -19,11 +23,27 @@ import org.springframework.web.bind.annotation.RestController;
 public class IdentityVerificationController {
 
     private final SigningService signingService;
+    private final ActivationService activationService;
 
     /// *Registration step 4* Generates contract hashes as preparation used for signing with Web eID (pdf gets a temporary signature placeholder). This happens right after the "Select a certificate" and before the "Signing" steps of Web eID
     @PostMapping("/sign/prepare")
     public PrepareSigningResponse prepare(@RequestBody PrepareSigningRequest request) {
         return signingService.prepareSigning(request);
+    }
+
+    /// *Registration step 5* Generates contract for selected (i.e. step 4) director to be signed
+    @GetMapping("/contract/{directorId}")
+    public ResponseEntity<byte[]> getContract(@PathVariable Long directorId, @RequestParam String token) {
+        TokenVerificationResponse tokenVerificationResponse = activationService.verify(token);
+        Director director = signingService.getDirector(directorId, tokenVerificationResponse);
+        byte[] preparedPdf = signingService.generateFilledContract(director);
+        if (preparedPdf == null || preparedPdf.length == 0) {
+            throw new KycException(KycErrorCodes.CONTRACT_NOT_FOUND);
+        }
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.inline().filename("contract_en.pdf", StandardCharsets.UTF_8).build().toString())
+                .body(preparedPdf);
     }
 
     /// *Registration step 6* Signs contract by selected director and used Web eID during "Signing" step and sends certificate information to store and generate signed contract

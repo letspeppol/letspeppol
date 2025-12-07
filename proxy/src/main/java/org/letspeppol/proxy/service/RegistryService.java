@@ -1,6 +1,5 @@
 package org.letspeppol.proxy.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.proxy.dto.RegistrationRequest;
@@ -77,20 +76,14 @@ public class RegistryService {
         return RegistryMapper.toDto(registryRepository.save(registry));
     }
 
-    public RegistryDto activate(String peppolId, RegistrationRequest data, AccessPoint accessPoint) {
-        Registry registry = registryRepository.findById(peppolId).orElseThrow(() -> new NotFoundException("PeppolId " + peppolId + " is not known here"));
-        register(data, accessPoint, registry);
-        return RegistryMapper.toDto(registryRepository.save(registry));
-    }
-
-    public RegistryDto suspend(String peppolId) {
+    public RegistryDto unregister(String peppolId) {
         Registry registry = registryRepository.findById(peppolId).orElseThrow(() -> new NotFoundException("PeppolId " + peppolId + " is not known here"));
         unregister(registry, AccessPoint.NONE);
         return RegistryMapper.toDto(registryRepository.save(registry));
     }
 
     public void remove(String peppolId) {
-        suspend(peppolId);
+        unregister(peppolId);
         registryRepository.deleteById(peppolId);
     }
 

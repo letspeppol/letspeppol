@@ -35,7 +35,7 @@ public class PasswordResetController {
         return ResponseEntity.noContent().build();
     }
 
-    /// Changes password based on valid credentials
+    /// Changes password based on valid credentials //TODO : need to move to a sapi ?
     @PostMapping("/change")
     public ResponseEntity<Void> change(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader, @Valid @RequestBody ChangePasswordRequest request) {
         JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);

@@ -9,3 +9,6 @@ SET street =
 
 ALTER TABLE address
 DROP COLUMN house_number;
+
+ALTER TABLE company
+DROP COLUMN registered_on_peppol;

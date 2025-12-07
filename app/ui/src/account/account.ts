@@ -47,10 +47,29 @@ export class Account {
         this.ea.publish('alert', {alertType: AlertType.Info, text: "Account changes reverted"});
     }
 
+    register() {
+        this.confirmationModalContext.showConfirmationModal(
+            "Activate on Peppol",
+            "Are you sure you wish to subscribe yourself to the Peppol network via Let's Peppol?\n" +
+            "Make sure you are not subscribed via another service.",
+            () => this.registerOnPeppol(),
+            undefined
+        );
+    }
+
+    async registerOnPeppol() {
+        try {
+            this.company.peppolActive = await this.registrationService.registerCompany()
+            this.ea.publish('alert', {alertType: AlertType.Success, text: "Activated company on Peppol"});
+        } catch {
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to activate company on Peppol"});
+        }
+    }
+
     unregister() {
         this.confirmationModalContext.showConfirmationModal(
             "Remove From Peppol",
-            "Are you sure you whish to unsubscribe yourself from the Peppol network?\n" +
+            "Are you sure you wish to unsubscribe yourself from the Peppol network?\n" +
             "Your invoices and credit notes will still be available.",
             () => this.unregisterFromPeppol(),
             undefined
@@ -59,8 +78,7 @@ export class Account {
 
     async unregisterFromPeppol() {
         try {
-            await this.registrationService.unregisterCompany()
-            this.company.registeredOnPeppol = false;
+            this.company.peppolActive = await this.registrationService.unregisterCompany()
             this.ea.publish('alert', {alertType: AlertType.Success, text: "Removed company from Peppol"});
         } catch {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to remove company from Peppol"});

@@ -10,7 +10,9 @@ import org.letspeppol.kyc.service.AccountService;
 import org.letspeppol.kyc.service.CompanyService;
 import org.letspeppol.kyc.service.JwtService;
 import org.letspeppol.kyc.service.SigningService;
+import org.letspeppol.kyc.service.jwt.JwtInfo;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/company")
+@RequestMapping("/sapi/company")
 @RequiredArgsConstructor
 public class CompanyController {
 
@@ -27,16 +29,10 @@ public class CompanyController {
     private final JwtService jwtService;
     private final SigningService signingService;
 
-    /// *Registration step 1* Retrieves company info based on peppolId (= VAT number converted by UI) to confirm company information is correct to use
-    @GetMapping("{peppolId}")
-    public CompanyResponse getCompany(@PathVariable String peppolId) {
-         return companyService.getByPeppolId(peppolId).orElseThrow(() -> new NotFoundException(KycErrorCodes.COMPANY_NOT_FOUND));
-    }
-
     /// Retrieves account info based on valid JWT token, used by App when peppolId is unknown on getCompany (called by UI right after obtaining JWT token)
     @GetMapping
     public ResponseEntity<?> getAccountForToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        UUID uid = UUID.fromString(jwtService.validateAndGetInfo(authHeader).uid());
+        UUID uid = jwtService.validateAndGetInfo(authHeader).uid();
         Account account = accountService.getByExternalId(uid);
         AccountInfo accountInfo = new AccountInfo(
                 account.getCompany().getPeppolId(),
@@ -51,12 +47,42 @@ public class CompanyController {
         return ResponseEntity.ok(accountInfo);
     }
 
+    /// Registers peppolId on the Peppol Directory, must call Proxy to register on AP
+    @PostMapping("/peppol/register")
+    public ResponseEntity<?> register(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
+        boolean peppolActive = companyService.registerCompany(jwtInfo.peppolId());
+        if (jwtInfo.peppolActive() == peppolActive) {
+            if (peppolActive) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("Access Point registration failed; state unchanged.");
+        }
+        String token = jwtService.generateToken(
+                jwtInfo.peppolId(),
+                peppolActive,
+                jwtInfo.uid()
+        );
+        return ResponseEntity.ok(token);
+    }
+
     /// Unregisters (not deleting) peppolId from the Peppol Directory, must call Proxy to unregister from AP
-    @PostMapping("unregister")
+    @PostMapping("/peppol/unregister")
     public ResponseEntity<?> unregister(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        String peppolId = jwtService.validateAndGetInfo(authHeader).peppolId();
-        companyService.unregisterCompany(peppolId);
-        return ResponseEntity.ok().build();
+        JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
+        boolean peppolActive = companyService.unregisterCompany(jwtInfo.peppolId());
+        if (jwtInfo.peppolActive() == peppolActive) {
+            if (!peppolActive) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("Access Point unregistration failed; state unchanged.");
+        }
+        String token = jwtService.generateToken(
+                jwtInfo.peppolId(),
+                peppolActive,
+                jwtInfo.uid()
+        );
+        return ResponseEntity.ok(token);
     }
 
     /// Download signed contract saved for peppolId
@@ -68,6 +94,5 @@ public class CompanyController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=contract_signed.pdf")
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(data);
-
     }
 }

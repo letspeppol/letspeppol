@@ -11,7 +11,7 @@ export interface CompanyDto {
     paymentTerms: string,
     iban: string,
     paymentAccountName: string,
-    registeredOnPeppol: boolean,
+    peppolActive: boolean,
     registeredOffice: Address
 }
 
