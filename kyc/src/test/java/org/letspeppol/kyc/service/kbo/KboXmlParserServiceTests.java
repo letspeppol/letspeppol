@@ -100,6 +100,7 @@ class KboXmlParserServiceTests {
         assertNotNull(is);
 
         Company existing = new Company("0208:200762878", "BE0200762878", "Old name");
+        existing.setId(1L);
         existing.setAddress("OldCity", "0000", "OldStreet 1");
         existing.setDirectors(new ArrayList<>());
 
@@ -132,6 +133,7 @@ class KboXmlParserServiceTests {
 
         // Existing company with a registered director that does not appear in the XML
         Company existing = new Company("0208:0200762878", "BE0200762878", "Old name");
+        existing.setId(1L);
         existing.setAddress("OldCity", "0000", "OldStreet 1");
         Director registeredDirector = new Director("Legacy Director", existing);
         registeredDirector.setRegistered(true);
@@ -167,12 +169,12 @@ class KboXmlParserServiceTests {
         assertNotNull(is);
 
         Company existing1 = new Company("0208:0200762878", "BE0200762878", "VLOTTER");
-        existing1.setAddress("Boom", "2850", "Colonel Silvertopstraat 15");
         existing1.setId(1L);
+        existing1.setAddress("Boom", "2850", "Colonel Silvertopstraat 15");
         existing1.setDirectors(new ArrayList<>(List.of(new Director("Go Van Dy", existing1), new Director("Bary De Smet", existing1))));
         Company existing2 = new Company("0208:0200881951", "BE0200881951", "Intercommunale Maatschappij voor de Ruimtelijke Ordening en de Economisch- Sociale Expansie van het Arrondissement Halle-Vilvoorde");
-        existing2.setAddress("Asse", "1731", "Brusselsesteenweg 617");
         existing2.setId(2L);
+        existing2.setAddress("Asse", "1731", "Brusselsesteenweg 617");
         existing2.setDirectors(new ArrayList<>(List.of(new Director("Liev Imbrec", existing2), new Director("Diet Phili", existing2))));
 
         when(companyRepository.findWithDirectorsByPeppolId("0208:0200762878")).thenReturn(Optional.of(existing1));
@@ -219,10 +221,9 @@ class KboXmlParserServiceTests {
     @DisplayName("importEnterprises should schedule deletion when enterprise validity has an end date")
     void importEnterprisesDeletesEndedEnterprise() throws Exception {
         // No registered directors for this Peppol ID
-        when(companyRepository.existsRegisteredDirectorForPeppolId("0208:0404356574"))
-                .thenReturn(false);
+        when(companyRepository.existsRegisteredDirectorForPeppolId("0208:0404356574")).thenReturn(false);
 
-        InputStream is = getClass().getResourceAsStream("/D202511EndEnterprise.xml");
+        InputStream is = getClass().getResourceAsStream("/D202511_EndEnterprise.xml");
         assertNotNull(is, "Test XML resource D202511EndEnterprise.xml should be on classpath");
 
         kboXmlParserService.importEnterprises(is);
@@ -243,10 +244,9 @@ class KboXmlParserServiceTests {
     @DisplayName("importEnterprises should not delete company for ended enterprise when it has registered directors")
     void importEnterprisesDoesNotDeleteEndedEnterpriseWithRegisteredDirectors() throws Exception {
         // There is at least one registered director for this Peppol ID
-        when(companyRepository.existsRegisteredDirectorForPeppolId("0208:0404356574"))
-                .thenReturn(true);
+        when(companyRepository.existsRegisteredDirectorForPeppolId("0208:0404356574")).thenReturn(true);
 
-        InputStream is = getClass().getResourceAsStream("/D202511EndEnterprise.xml");
+        InputStream is = getClass().getResourceAsStream("/D202511_EndEnterprise.xml");
         assertNotNull(is, "Test XML resource D202511EndEnterprise.xml should be on classpath");
 
         kboXmlParserService.importEnterprises(is);
@@ -268,6 +268,7 @@ class KboXmlParserServiceTests {
 
         // Existing company without KBO address, linked to the business unit number in the XML
         Company existing = new Company(peppolId, vatNumber, "BITS");
+        existing.setId(1L);
         existing.setBusinessUnit("2292261537");
         existing.setHasKboAddress(false);
         existing.setDirectors(new ArrayList<>());
@@ -287,6 +288,7 @@ class KboXmlParserServiceTests {
         kboXmlParserService.importEnterprises(is);
 
         // After processing, the existing company should have its address set from the BusinessUnit
+        assertEquals("BE50973371915822", existing.getIban());
         assertEquals("Hasselt", existing.getCity());
         assertEquals("3500", existing.getPostalCode());
         assertEquals("Demerstraat 64", existing.getStreet());

@@ -173,19 +173,13 @@ public class KboXmlParserService {
 
         Company company = companyRepository.findWithDirectorsByPeppolId(peppolId).orElseGet(() -> {
             log.debug("Creating new company with Peppol ID {}", peppolId);
-            Company newCompany = new Company(peppolId, vatNumber, enterprise.name);
-            if (enterprise.address != null) {
-                newCompany.setAddress(enterprise.address.city, enterprise.address.postalCode, enterprise.address.street);
-                newCompany.setHasKboAddress(true);
-            }
-            newCompany.setBusinessUnit(enterprise.businessUnit);
-            return newCompany;
+            return createCompany(peppolId, vatNumber, enterprise);
         });
 
         boolean isNewCompany = company.getId() == null;
         boolean companyChanged = false;
         if (!isNewCompany) {
-            companyChanged = applyCompanyUpdates(company, enterprise);
+            companyChanged = updateCompany(company, enterprise);
         }
         boolean directorsChanged = syncDirectors(company, enterprise.directors);
 
@@ -201,10 +195,22 @@ public class KboXmlParserService {
         }
     }
 
-    private boolean applyCompanyUpdates(Company company, EnterpriseData enterprise) {
+    private Company createCompany(String peppolId, String vatNumber, EnterpriseData enterprise) {
+        Company newCompany = new Company(peppolId, vatNumber, enterprise.name);
+        if (enterprise.address != null) {
+            newCompany.setAddress(enterprise.address.city, enterprise.address.postalCode, enterprise.address.street);
+            newCompany.setHasKboAddress(true);
+        }
+        newCompany.setIban(enterprise.iban);
+        newCompany.setBusinessUnit(enterprise.businessUnit);
+        return newCompany;
+    }
+
+    private boolean updateCompany(Company company, EnterpriseData enterprise) {
         boolean changed = false;
 
         if (!Objects.equals(company.getName(), enterprise.name)
+            || !Objects.equals(company.getIban(), enterprise.iban)
             || (enterprise.address != null && (
                 !Objects.equals(company.getCity(), enterprise.address.city)
                 || !Objects.equals(company.getPostalCode(), enterprise.address.postalCode)
@@ -217,6 +223,7 @@ public class KboXmlParserService {
                 company.setPostalCode(enterprise.address.postalCode);
                 company.setStreet(enterprise.address.street);
             }
+            company.setIban(enterprise.iban);
             changed = true;
         }
         return changed;
@@ -342,8 +349,8 @@ public class KboXmlParserService {
                         enterpriseEnded = true;
                     }
                     depth--;
-                } else if ("LinkedEnterprises".equals(localName)) {
-                    if (address == null) {
+                } else if ("LinkedEnterprise".equals(localName)) {
+                    if (address == null && linkedEnterpriseNbr == null) {
                         linkedEnterpriseNbr = readLinkedEnterprise(reader, nbr);
                     }
                 } else if ("BankAccounts".equals(localName)) {
@@ -443,7 +450,7 @@ public class KboXmlParserService {
                 } else if ("Parent".equals(localName)) {
                     parentNbr = readSimpleTextElement(reader);
                 }
-            } else if (event == XMLStreamConstants.END_ELEMENT && "Function".equals(reader.getLocalName())) {
+            } else if (event == XMLStreamConstants.END_ELEMENT && "LinkedEnterprise".equals(reader.getLocalName())) {
                 break;
             }
         }
