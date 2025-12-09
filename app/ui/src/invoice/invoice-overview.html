@@ -5,18 +5,18 @@
     <aside class="mailbox">
         <div class="mailbox-title" t="invoice.direction">Direction</div>
         <nav>
-            <button active.class="box === 'all'" class="mail-item" click.trigger="setActiveItems('all')">
+            <button active.class="box === 'ALL'" class="mail-item" click.trigger="setActiveItems('ALL')">
                 <span class="label" t="invoice.all">All</span>
             </button>
-            <button active.class="box === 'outgoing'" class="mail-item" click.trigger="setActiveItems('outgoing')">
+            <button active.class="box === 'OUTGOING'" class="mail-item" click.trigger="setActiveItems('OUTGOING')">
                 <span class="label" t="invoice.outgoing">Outgoing</span>
             </button>
-            <button active.class="box === 'incoming'" class="mail-item" click.trigger="setActiveItems('incoming')">
+            <button active.class="box === 'INCOMING'" class="mail-item" click.trigger="setActiveItems('INCOMING')">
                 <span class="label" t="invoice.incoming">Incoming</span>
             </button>
-            <button active.class="box === 'drafts'" class="mail-item" click.trigger="setActiveItems('drafts')">
+            <button active.class="box === 'DRAFTS'" class="mail-item" click.trigger="setActiveItems('DRAFTS')">
                 <span class="label" t="invoice.drafts">Drafts</span>
-                <span class="badge">${invoiceContext.drafts.length}</span>
+                <span class="badge">${invoiceContext.draftPage.totalElements}</span>
             </button>
         </nav>
     </aside>
@@ -30,7 +30,7 @@
                             <select change.trigger="changeDocType($event.target.value)">
                                 <option value="" t="invoice.all">All</option>
                                 <option value="invoice" t="documentType.invoice">Invoice</option>
-                                <option value="credit-note" t="documentType.credit-note">Credit note</option>
+                                <option value="credit-note" t="documentType.CREDIT_NOTE">Credit note</option>
                             </select>
                         </label>
                         <label class="search">
@@ -38,28 +38,28 @@
                                 <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                                 <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.5"/>
                             </svg>
-                            <input type="search" value.bind="query.docId & debounce:300" placeholder="Search customer or reference" t="[placeholder]placeholder.invoice-search.doc" />
+                            <input type="search" value.bind="query.invoiceReference & debounce:300" placeholder="Search customer or reference" t="[placeholder]placeholder.invoice-search.doc" />
                         </label>
                         <label class="search">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                 <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                                 <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.5"/>
                             </svg>
-                            <input type="search" value.bind="query.counterPartyNameLike & debounce:300" placeholder="Search customer or reference" t="[placeholder]placeholder.invoice-search.customer" />
+                            <input type="search" value.bind="query.partnerName & debounce:300" placeholder="Search customer or reference" t="[placeholder]placeholder.invoice-search.customer" />
                         </label>
                     </div>
                     <div>
-                        <button class="btn primary" click.trigger="newCreditNote()" title="New invoice" t="[title]invoice.new.credit-note">
+                        <button class="btn primary" click.trigger="newCreditNote()" title="New invoice" t="[title]invoice.new.CREDIT_NOTE">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                 <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                             </svg>
-                            <span t="invoice.new.credit-note">New invoice</span>
+                            <span t="invoice.new.CREDIT_NOTE">New Credit Note</span>
                         </button>
-                        <button class="btn primary" click.trigger="newInvoice()" title="New invoice" t="[title]invoice.new.invoice">
+                        <button class="btn primary" click.trigger="newInvoice()" title="New invoice" t="[title]invoice.new.INVOICE">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                 <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                             </svg>
-                            <span t="invoice.new.invoice">New invoice</span>
+                            <span t="invoice.new.INVOICE">New invoice</span>
                         </button>
                     </div>
                 </div>
@@ -118,20 +118,20 @@
                         </tr>
                         </thead>
                         <tbody>
-                            <tr repeat.for="item of invoices" click.trigger="selectItem(item)">
+                            <tr repeat.for="item of invoicePage.content" click.trigger="selectItem(item)">
                                 <td><span class="status-dot" class.bind="item.paidOn ? 'status-ok' : isOverdue(item) ? 'status-overdue' : 'status-open'" title.bind="item.paidOn ? 'Paid at ' + formatDate(item.paidOn) : 'Not paid'"></span></td>
-                                <td><span class="pill" class.bind="item.direction === DocumentDirection.INCOMING ? 'incoming' : 'sent'">${item.direction ?? 'outgoing'}</span></td>
-                                <td><span class="pill" class.bind="item.type === DocumentType.INVOICE ? 'sent' : 'incoming'" t="documentType.${item.docType}">${item.docType}</span></td>
+                                <td><span class="pill" class.bind="item.direction === DocumentDirection.INCOMING ? 'incoming' : 'sent'" t="documentDirection.${item.direction}">${item.direction}</span></td>
+                                <td><span class="pill" class.bind="item.type === DocumentType.INVOICE ? 'sent' : 'incoming'" t="documentType.${item.type}">${item.type}</span></td>
                                 <td>${item.invoiceReference}</td>
                                 <td>${item.issueDate | dateFormat}</td>
                                 <td>${item.dueDate | dateFormat}</td>
                                 <td>${item.partnerName}</td>
                                 <td>${item.currency} ${item.amount | price}</td>
                                 <td class="actions-col">
-                                    <button if.bind="box === 'drafts'" class="icon-btn" title="Remove" t="[title]common.remove" click.trigger="deleteDraft($event, item)">
+                                    <button if.bind="box === 'DRAFTS'" class="icon-btn" title="Remove" t="[title]common.remove" click.trigger="deleteDraft($event, item)">
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-icon lucide-trash"><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                                     </button>
-                                    <button if.bind="item.paidOn" class="icon-btn" title="Mark invoice as unpaid" click.trigger="markUnpaid($event, item)">
+                                    <button if.bind="item.paidOn" class="icon-btn" title="Mark invoice as unpaid" click.trigger="markPaid($event, item)">
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-banknote-x-icon lucide-banknote-x"><path d="M13 18H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5"/><path d="m17 17 5 5"/><path d="M18 12h.01"/><path d="m22 17-5 5"/><path d="M6 12h.01"/><circle cx="12" cy="12" r="2"/></svg>
                                     </button>
                                     <button if.bind="!item.paidOn" class="icon-btn" title="Mark invoice as paid" click.trigger="markPaid($event, item)">
@@ -142,7 +142,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div if.bind="!invoices || invoices.length === 0" class="empty-state" >
+                <div if.bind="!invoicePage.content || invoicePage.content.length === 0" class="empty-state" >
                     <div class="empty-icon" aria-hidden="true">
                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                             <path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
@@ -152,9 +152,9 @@
                     <p t="invoice.empty">No invoices match your filters.</p>
                 </div>
                 <div class="table-footer pager">
-                    <button type="button" class="btn ghost" click.trigger="previousPage()" disabled.bind="query.page <= 1" t="invoice.pager.previous">← Previous</button>
+                    <button type="button" class="btn ghost" click.trigger="previousPage()" disabled.bind="query.pageable.page <= 0" t="invoice.pager.previous">← Previous</button>
                     <span class="pager-range"></span>
-                    <button type="button" class="btn ghost" click.trigger="nextPage()" disabled.bind="invoices.length < 20" t="invoice.pager.next">Next →</button>
+                    <button type="button" class="btn ghost" click.trigger="nextPage()" disabled.bind="invoicePage.last" t="invoice.pager.next">Next →</button>
                 </div>
             </div>
         </div>

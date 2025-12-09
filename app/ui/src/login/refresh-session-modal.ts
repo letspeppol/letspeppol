@@ -22,7 +22,6 @@ export class RefreshSessionModal {
     verifyAuthenticated() {
         if (this.loginService.authenticated) {
             this.clearTimer();
-            this.setTimer();
         } else {
             this.clearTimer();
         }
@@ -40,7 +39,7 @@ export class RefreshSessionModal {
         if (token) {
             const expiryDate = this.loginService.getTokenExpiryDateInSeconds(token);
             const currentDate = this.loginService.getCurrentDateInSeconds();
-            if (expiryDate > currentDate && ((expiryDate - currentDate) < 60 * 60)) {
+            if (expiryDate > currentDate && ((expiryDate - currentDate) < 300)) {
                 timeoutInMillis = ((expiryDate - currentDate) - 300) * 1000;
             }
         }

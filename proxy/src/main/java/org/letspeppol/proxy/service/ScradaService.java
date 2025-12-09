@@ -170,7 +170,7 @@ public class ScradaService implements AccessPointServiceInterface {
 
     @Override
     public void receiveDocuments() {
-        System.out.print("?");
+//        System.out.print("?");
         try {
             UnconfirmedInboundDocuments unconfirmedInboundDocuments = scradaWebClient
                     .get()
@@ -181,6 +181,8 @@ public class ScradaService implements AccessPointServiceInterface {
                     .orElseThrow(() -> new IllegalStateException("Empty response from Scrada get unconfirmed inbound documents"));
 
             for (InboundDocument inboundDocument : unconfirmedInboundDocuments.results()) {
+                log.debug("Received document {} from {} to {}", inboundDocument.id(), inboundDocument.peppolSenderID(), inboundDocument.peppolReceiverID());
+                documentReceivedCounter.increment();
                 String ubl = scradaWebClient
                         .get()
                         .uri("/inbound/document/{documentID}", inboundDocument.id())

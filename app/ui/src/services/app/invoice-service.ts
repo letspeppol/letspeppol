@@ -2,15 +2,13 @@ import {singleton} from "aurelia";
 import {resolve} from "@aurelia/kernel";
 import {AppApi} from "./app-api";
 
-export interface InvoiceDraftDto {
-    id?: number,
-    docType: string,
-    docId: string,
-    counterPartyName?: string,
-    createdAt?: string,
-    dueDate?: string,
-    amount: number,
-    xml: string
+export interface DocumentPageDto {
+    content: DocumentDto[];
+    page: number,
+    size: number,
+    totalElements: number,
+    totalPages: number,
+    last: boolean
 }
 
 export enum DocumentDirection {
@@ -21,6 +19,30 @@ export enum DocumentDirection {
 export enum DocumentType {
   INVOICE = "INVOICE",
   CREDIT_NOTE = "CREDIT_NOTE",
+}
+
+export interface DocumentQuery {
+    type?: DocumentType;
+    direction?: DocumentDirection;
+    partnerName?: string;
+    invoiceReference?: string;
+    paid?: boolean;
+    read?: boolean;
+    draft?: boolean;
+    pageable: Pageable;
+}
+
+type SortDirection = "asc" | "desc";
+
+interface SortOrder {
+    property: string;
+    direction: SortDirection;
+}
+
+interface Pageable {
+    page: number;
+    size: number;
+    sort?: SortOrder[];
 }
 
 // ISO 4217 code like "EUR", "USD"
@@ -72,30 +94,34 @@ export class InvoiceService {
         return await this.appApi.httpClient.post(`/sapi/document/validate`, xml).then(response => response.json());
     }
 
-    // Drafts
+    async getDocuments(query: DocumentQuery) : Promise<DocumentPageDto> {
+        const search = new URLSearchParams();
 
-    async getInvoiceDrafts() : Promise<InvoiceDraftDto[]> {
-        return await this.appApi.httpClient.get('/sapi/invoice/draft').then(response => response.json());
-    }
+        if (query.type) search.append("type", query.type);
+        if (query.direction) search.append("direction", query.direction);
+        if (query.partnerName) search.append("partnerName", query.partnerName);
+        if (query.invoiceReference) search.append("invoiceReference", query.invoiceReference);
+        if (query.paid !== undefined) search.append("paid", String(query.paid));
+        if (query.read !== undefined) search.append("read", String(query.read));
+        if (query.draft !== undefined) search.append("draft", String(query.draft));
 
-    async createInvoiceDraft(draft: InvoiceDraftDto) : Promise<InvoiceDraftDto> {
-        return await this.appApi.httpClient.post('/sapi/invoice/draft', JSON.stringify(draft)).then(response => response.json());
-    }
-
-    async updateInvoiceDraft(id: number, draft: InvoiceDraftDto) : Promise<InvoiceDraftDto> {
-        return await this.appApi.httpClient.put(`/sapi/invoice/draft/${id}`, JSON.stringify(draft)).then(response => response.json());
-    }
-
-    async getDocuments() : Promise<DocumentDto[]> {
-        return await this.appApi.httpClient.get('/sapi/document').then(response => response.json());
+        // pageable
+        search.append("page", String(query.pageable.page));
+        search.append("size", String(query.pageable.size));
+        if (query.pageable.sort && query.pageable.sort.length > 0) {
+            for (const s of query.pageable.sort) {
+                search.append("sort", `${s.property},${s.direction}`);
+            }
+        }
+        return await this.appApi.httpClient.get(`/sapi/document?${search.toString()}`).then(response => response.json());
     }
 
     async getDocument(id: string) : Promise<DocumentDto> {
         return await this.appApi.httpClient.get(`/sapi/document/${id}`).then(response => response.json());
     }
 
-    async createDocument(xml: string) : Promise<DocumentDto> {
-        return await this.appApi.httpClient.post('/sapi/document', xml).then(response => response.json());
+    async createDocument(xml: string, draft: boolean = false) : Promise<DocumentDto> {
+        return await this.appApi.httpClient.post(`/sapi/document?draft=${draft}`, xml).then(response => response.json());
     }
 
     async saveDocument(id: string, xml: string) : Promise<DocumentDto> {
@@ -110,7 +136,7 @@ export class InvoiceService {
         return await this.appApi.httpClient.put(`/sapi/document/${id}/read`).then(response => response.json());
     }
 
-    async markPaidDocument(id: string) : Promise<DocumentDto> {
+    async togglePaidDocument(id: string) : Promise<DocumentDto> {
         return await this.appApi.httpClient.put(`/sapi/document/${id}/paid`).then(response => response.json());
     }
 

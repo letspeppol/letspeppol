@@ -92,9 +92,13 @@
     "60_DAYS" : "60 days",
     "END_OF_NEXT_MONTH" : "End of the month"
   },
+  "documentDirection" : {
+    "OUTGOING" : "Outgoing",
+    "INCOMING" : "Incoming"
+  },
   "documentType" : {
-    "invoice" : "Invoice",
-    "credit-note" : "Credit Note"
+    "INVOICE" : "Invoice",
+    "CREDIT_NOTE" : "Credit Note"
   },
   "confirmation": {
     "header": "Confirm Identity",
@@ -243,8 +247,8 @@
     "title": "Invoices",
     "search": "Search customer or reference",
     "new": {
-      "invoice": "New Invoice",
-      "credit-note": "New Credit Note"
+      "INVOICE": "New Invoice",
+      "CREDIT_NOTE": "New Credit Note"
     },
     "table": {
       "direction": "Direction",
@@ -315,8 +319,8 @@
       "save-draft": "Save draft",
       "discard": "Discard",
       "send": {
-        "invoice": "Send invoice",
-        "credit-note": "Send credit note"
+        "INVOICE": "Send invoice",
+        "CREDIT_NOTE": "Send credit note"
       },
       "number": "Number",
       "buyer-reference": "Buyer Reference",

@@ -5,12 +5,7 @@ import {resolve} from "@aurelia/kernel";
 import {InvoiceComposer} from "./invoice-composer";
 import {InvoiceCalculator} from "./invoice-calculator";
 import {AlertType} from "../components/alert/alert";
-import {InvoiceDraftDto} from "../services/app/invoice-service";
-
-export enum DocumentType {
-    Invoice = "invoice",
-    CreditNote = "credit-note"
-}
+import {DocumentDto, DocumentPageDto, DocumentType} from "../services/app/invoice-service";
 
 @singleton()
 export class InvoiceContext {
@@ -19,18 +14,17 @@ export class InvoiceContext {
     private readonly invoiceComposer = resolve(InvoiceComposer);
     private readonly invoiceCalculator = resolve(InvoiceCalculator);
     lines : undefined | InvoiceLine[] | CreditNoteLine[];
-    drafts: InvoiceDraftDto[] = [];
+    draftPage: DocumentPageDto = undefined;
     @observable selectedInvoice:  undefined | Invoice | CreditNote;
-    selectedDraft: InvoiceDraftDto;
+    selectedDocument: DocumentDto;
     selectedInvoiceXML: string = undefined;
-    selectedDocumentType: DocumentType = DocumentType.Invoice;
+    selectedDocumentType: DocumentType = DocumentType.INVOICE;
 
     readOnly: boolean = false;
 
     clearSelectedInvoice() {
         this.selectedInvoice = undefined;
-        this.selectedDraft = undefined;
-        this.selectedInvoiceXML = undefined;
+        this.selectedDocument = undefined;
     }
 
     selectedInvoiceChanged(newValue: UBLDoc) {
@@ -47,8 +41,8 @@ export class InvoiceContext {
         }
     }
 
-    newUBLDocument(documentType : DocumentType = DocumentType.Invoice) {
-        if (documentType === DocumentType.Invoice) {
+    newUBLDocument(documentType : DocumentType = DocumentType.INVOICE) {
+        if (documentType === DocumentType.INVOICE) {
             this.selectedInvoice = this.invoiceComposer.createInvoice();
         } else {
             this.selectedInvoice = this.invoiceComposer.createCreditNote();
@@ -70,9 +64,9 @@ export class InvoiceContext {
     // Drafts
     
     deleteDraft(draft) {
-        const index = this.drafts.findIndex(item => item === draft);
+        const index = this.draftPage.content.findIndex(item => item === draft);
         if (index > -1) {
-            this.drafts.splice(index, 1);
+            this.draftPage.content.splice(index, 1);
         }
     }
 }

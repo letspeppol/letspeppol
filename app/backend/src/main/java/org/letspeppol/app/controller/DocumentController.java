@@ -2,17 +2,23 @@ package org.letspeppol.app.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.letspeppol.app.dto.DocumentDto;
+import org.letspeppol.app.dto.DocumentFilter;
+import org.letspeppol.app.dto.PageResponse;
 import org.letspeppol.app.dto.ValidationResultDto;
 import org.letspeppol.app.exception.PeppolException;
+import org.letspeppol.app.model.DocumentDirection;
+import org.letspeppol.app.model.DocumentType;
 import org.letspeppol.app.service.DocumentService;
 import org.letspeppol.app.service.ValidationService;
 import org.letspeppol.app.util.JwtUtil;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+
 import java.time.Instant;
-import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -33,9 +39,35 @@ public class DocumentController {
     }
 
     @GetMapping()
-    public List<DocumentDto> getAll(@AuthenticationPrincipal Jwt jwt) {
+    public PageResponse<DocumentDto> getAll(@AuthenticationPrincipal Jwt jwt,
+                                    @RequestParam(required = false) DocumentType type,
+                                    @RequestParam(required = false) DocumentDirection direction,
+                                    @RequestParam(required = false) String partnerName,
+                                    @RequestParam(required = false) String invoiceReference,
+                                    @RequestParam(required = false) Boolean paid,
+                                    @RequestParam(required = false) Boolean read,
+                                    @RequestParam(required = false) Boolean draft,
+                                    Pageable pageable
+    ) {
         String peppolId = JwtUtil.getPeppolId(jwt);
-        return documentService.findAll(peppolId);
+        DocumentFilter filter = new DocumentFilter();
+        filter.setOwnerPeppolId(peppolId);
+        filter.setType(type);
+        filter.setDirection(direction);
+        filter.setPartnerName(partnerName != null && !partnerName.isBlank() ? partnerName.trim() : null);
+        filter.setInvoiceReference(invoiceReference != null && !invoiceReference.isBlank() ? invoiceReference.trim() : null);
+        filter.setPaid(paid);
+        filter.setRead(read);
+        filter.setDraft(draft);
+        Page<DocumentDto> page = documentService.findAll(filter, pageable);
+        return new PageResponse<>(
+                page.getContent(),
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.isLast()
+        );
     }
 
     @GetMapping("{id}")

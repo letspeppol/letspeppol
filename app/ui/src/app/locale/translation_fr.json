@@ -116,8 +116,8 @@
     "END_OF_NEXT_MONTH": "Fin du mois"
   },
   "documentType": {
-    "invoice": "Facture",
-    "credit-note": "Note de crédit"
+    "INVOICE": "Facture",
+    "CREDIT_NOTE": "Note de crédit"
   },
   "common": {
     "confirm": "Confirmer",

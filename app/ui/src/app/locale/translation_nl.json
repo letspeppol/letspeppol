@@ -113,9 +113,13 @@
     "60_DAYS" : "60 dagen",
     "END_OF_NEXT_MONTH" : "Einde van de maand"
   },
+  "documentDirection" : {
+    "OUTGOING" : "Uitgaand",
+    "INCOMING" : "Inkomend"
+  },
   "documentType" : {
-    "invoice" : "Factuur",
-    "credit-note" : "Creditnota"
+    "INVOICE" : "Factuur",
+    "CREDIT-NOTE" : "Creditnota"
   },
   "common": {
     "confirm": "Bevestigen",

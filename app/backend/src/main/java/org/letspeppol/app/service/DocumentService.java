@@ -3,6 +3,7 @@ package org.letspeppol.app.service;
 import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
 import org.letspeppol.app.dto.DocumentDto;
+import org.letspeppol.app.dto.DocumentFilter;
 import org.letspeppol.app.dto.UblDocumentDto;
 import org.letspeppol.app.dto.UblDto;
 import org.letspeppol.app.exception.*;
@@ -13,8 +14,13 @@ import org.letspeppol.app.model.Document;
 import org.letspeppol.app.model.DocumentDirection;
 import org.letspeppol.app.repository.CompanyRepository;
 import org.letspeppol.app.repository.DocumentRepository;
+import org.letspeppol.app.repository.DocumentSpecifications;
 import org.letspeppol.app.util.UblParser;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.xml.sax.SAXException;
@@ -70,6 +76,22 @@ public class DocumentService {
         return documentRepository.findAllByOwnerPeppolId(peppolId).stream()
                 .map(DocumentMapper::toDto)
                 .toList();
+    }
+
+    public Page<DocumentDto> findAll(DocumentFilter filter, Pageable pageable) {
+        Pageable effectivePageable = pageable;
+        if (effectivePageable == null) {
+            effectivePageable = PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "issueDate"));
+        } else if (effectivePageable.getSort().isUnsorted()) {
+            effectivePageable = PageRequest.of(
+                    effectivePageable.getPageNumber(),
+                    effectivePageable.getPageSize(),
+                    Sort.by(Sort.Direction.DESC, "issueDate")
+            );
+        }
+
+        Page<Document> page = documentRepository.findAll(DocumentSpecifications.build(filter), effectivePageable);
+        return page.map(DocumentMapper::toDto);
     }
 
     public DocumentDto findById(String peppolId, UUID id) {
@@ -266,7 +288,11 @@ public class DocumentService {
         if (!peppolId.equals(document.getOwnerPeppolId())) {
             throw new SecurityException(AppErrorCodes.PEPPOL_ID_MISMATCH);
         }
-        document.setPaidOn(Instant.now());
+        if (document.getPaidOn() != null) {
+            document.setPaidOn(null);
+        } else {
+            document.setPaidOn(Instant.now());
+        }
         documentRepository.save(document);
         documentPaidCounter.increment();
         return DocumentMapper.toDto(document);
