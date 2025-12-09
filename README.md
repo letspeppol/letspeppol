@@ -12,12 +12,6 @@ This repo will contain all the code involved in running the Let's Peppol project
 * an [app](./app/) folder that contains our web interface
 
 # Usage
-## With Docker Compose
-[FIXME: docs under construction]
-```sh
-docker compose up -d
-```
-
 ## With Nix
 [FIXME: docs under construction]
 A `devenv` environment is available in the `dev/proxy` directory to host the proxy locally and run a small test. Make sure you have [`devenv`](https://devenv.sh/getting-started/) installed, and optionally install [`direnv`](https://devenv.sh/automatic-shell-activation/) for automatic shell activation. If you don’t use `direnv`, you’ll need to run `devenv shell` manually in the `dev/proxy` directory. Next, create a `dev/.env` file with the following contents (without quotes):
