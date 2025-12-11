@@ -53,6 +53,15 @@ Open a new shell to test the proxy and run:
 cd dev
 test-proxy
 ```
+## With Docker
+To run this project locally using docker-compose, follow these steps:
+1. Clone this repository.
+2. Point a (sub)domain to localhost and generate a TLS certificate (e.g. letspeppol.example.com).
+3. Navigate to docker/local.
+4. Copy the file .env_example to a new file named .env.
+5. Update the .env file with the required environment variables.
+6. Run `docker compose up -d`
+7. Visit https://letspeppol.example.com in your browser.
 
 # Sponsored by NLNet
 ![NLNet](./docs/nlnet.svg)
