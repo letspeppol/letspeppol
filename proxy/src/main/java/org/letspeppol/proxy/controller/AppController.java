@@ -30,23 +30,6 @@ public class AppController {
     private final RegistryService registryService;
     private final ValidationService validationService;
 
-    private void validateSender(Jwt jwt, UblDocumentDto ublDocumentDto) throws SecurityException {
-        String peppolId = JwtUtil.getPeppolId(jwt);
-        if (!ublDocumentDto.ownerPeppolId().equals(peppolId)) throw new SecurityException("Peppol ID not the owner"); //TODO : improve logging
-        if (ublDocumentDto.ubl() == null || ublDocumentDto.ubl().isBlank()) {
-            throw new RuntimeException("Missing UBL content"); //TODO : use proper exceptions
-        }
-        if (!validationService.validateUblXml(ublDocumentDto.ubl()).isValid()) {
-            throw new RuntimeException("Invalid UBL content"); //TODO : use proper exceptions
-        }
-        try {
-            if (!UblParser.parsePeppolParties(ublDocumentDto.ubl()).sender().equals(peppolId)) throw new SecurityException("Peppol ID not the owner"); //TODO : improve logging
-        } catch (ParserConfigurationException | IOException | SAXException | XPathExpressionException e) {
-            throw new RuntimeException(e); //TODO : improve logging
-        }
-        if (registryService.getAccessPoint(peppolId) == AccessPoint.NONE) throw new SecurityException("Peppol ID not activated to send");
-    }
-
     @GetMapping()
     public List<UblDocumentDto> getAllNew(@AuthenticationPrincipal Jwt jwt, @RequestParam(defaultValue = DEFAULT_SIZE) int size) {
         String peppolId = JwtUtil.getPeppolId(jwt);
@@ -109,6 +92,23 @@ public class AppController {
     public void delete(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestParam(defaultValue = "false") boolean noArchive) {
         String peppolId = JwtUtil.getPeppolId(jwt);
         ublDocumentService.cancel(id, peppolId, noArchive);
+    }
+
+    private void validateSender(Jwt jwt, UblDocumentDto ublDocumentDto) throws SecurityException {
+        String peppolId = JwtUtil.getPeppolId(jwt);
+        if (!ublDocumentDto.ownerPeppolId().equals(peppolId)) throw new SecurityException("Peppol ID not the owner"); //TODO : improve logging
+        if (ublDocumentDto.ubl() == null || ublDocumentDto.ubl().isBlank()) {
+            throw new RuntimeException("Missing UBL content"); //TODO : use proper exceptions
+        }
+        if (!validationService.validateUblXml(ublDocumentDto.ubl()).isValid()) {
+            throw new RuntimeException("Invalid UBL content"); //TODO : use proper exceptions
+        }
+        try {
+            if (!UblParser.parsePeppolParties(ublDocumentDto.ubl()).sender().equals(peppolId)) throw new SecurityException("Peppol ID not the owner"); //TODO : improve logging
+        } catch (ParserConfigurationException | IOException | SAXException | XPathExpressionException e) {
+            throw new RuntimeException(e); //TODO : improve logging
+        }
+        if (registryService.getAccessPoint(peppolId) == AccessPoint.NONE) throw new SecurityException("Peppol ID not activated to send");
     }
 
 }
