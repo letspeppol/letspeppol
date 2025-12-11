@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -135,7 +137,7 @@ public class DocumentService {
         return DocumentMapper.toDto(document);
     }
 
-    public DocumentDto create(UblDocumentDto ublDocumentDto) {
+    public void create(UblDocumentDto ublDocumentDto) {
         Company company = companyRepository.findByPeppolId(ublDocumentDto.ownerPeppolId()).orElseThrow(() -> new NotFoundException("Company does not exist"));
         UblDto ublDto = readUBL(ublDocumentDto.ubl(), ublDocumentDto.ownerPeppolId());
         Document document = new Document(
@@ -167,7 +169,7 @@ public class DocumentService {
         documentCreateCounter.increment();
         backupService.backupFile(document);
         documentBackupCounter.increment();
-        return DocumentMapper.toDto(document);
+//        return DocumentMapper.toDto(document); //TODO : do we need to return something or are we only going to use this for received documents ?
     }
 
     public DocumentDto update(String peppolId, UUID id, String ublXml, boolean draft, Instant schedule, Jwt jwt) {
@@ -316,4 +318,44 @@ public class DocumentService {
         document.setProcessedStatus(ublDocumentDto.processedStatus());
         return documentRepository.save(document);
     }
+
+    private void synchronizeNewDocuments(Jwt jwt) {
+        //TODO : record Page<T>(List<T> results, Integer total, Integer page, Integer size) {}
+        //and use :
+        //.bodyToMono(new ParameterizedTypeReference<Page<UblDocumentDto>>() {})
+        //.map(Page::results)
+
+        List<UblDocumentDto> ublDocumentDtos = proxyWebClient.get()
+                .uri("/sapi/document")
+                .headers(headers -> headers.setBearerAuth(jwt.getTokenValue()))
+                .retrieve()
+                .bodyToFlux(UblDocumentDto.class)
+                .collectList()
+                .blockOptional()
+                .orElseThrow(() -> new IllegalStateException("Could not synchronize with PROXY")); //TODO : make correct error
+
+        List<UUID> ids = new ArrayList<>();
+        for (UblDocumentDto ublDocumentDto : ublDocumentDtos) {
+            create(ublDocumentDto); //TODO : Could be new NotFoundException, does that make sense ?
+            ids.add(ublDocumentDto.id());
+        }
+
+        proxyWebClient.put()
+                .uri("/sapi/document/downloaded")
+                .headers(headers -> headers.setBearerAuth(jwt.getTokenValue()))
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(ids)
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, resp ->
+                        resp.bodyToMono(String.class)
+                                .defaultIfEmpty("")
+                                .map(body -> new IllegalStateException("PROXY " + resp.statusCode() + " :: " + body))
+                )
+                .toBodilessEntity()
+                .block();
+    }
+
+    //TODO : add synchronizeDocuments(Jwt jwt) to update the status or send documents, those without processedOn (and processedStatus?)
+
+    //TODO : combine synchronizeDocuments & synchronizeNewDocuments & add something to send documents that are not draftedOn but also not proxyOn and thus not taken by proxy (due to errors?)
 }
