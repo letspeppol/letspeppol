@@ -2,10 +2,7 @@ package org.letspeppol.app.service;
 
 import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
-import org.letspeppol.app.dto.DocumentDto;
-import org.letspeppol.app.dto.DocumentFilter;
-import org.letspeppol.app.dto.UblDocumentDto;
-import org.letspeppol.app.dto.UblDto;
+import org.letspeppol.app.dto.*;
 import org.letspeppol.app.exception.*;
 import org.letspeppol.app.exception.SecurityException;
 import org.letspeppol.app.mapper.DocumentMapper;
@@ -16,24 +13,21 @@ import org.letspeppol.app.repository.CompanyRepository;
 import org.letspeppol.app.repository.DocumentRepository;
 import org.letspeppol.app.repository.DocumentSpecifications;
 import org.letspeppol.app.util.UblParser;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.xml.sax.SAXException;
-
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.Instant;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.UUID;
 
@@ -44,32 +38,31 @@ public class DocumentService {
 
     private final CompanyRepository companyRepository;
     private final DocumentRepository documentRepository;
+    private final BackupService backupService;
+    private final ValidationService validationService;
+    @Qualifier("proxyWebClient")
+    private final WebClient proxyWebClient;
     private final Counter documentBackupCounter;
     private final Counter documentCreateCounter;
     private final Counter documentSendCounter;
     private final Counter documentPaidCounter;
 
-    @Value("${app.data.dir:#{null}}")
-    private String dataDirectory;
-
-    public void backupFile(Document document) throws Exception {
-        Path filePath = Paths.get(
-                (dataDirectory == null || dataDirectory.isBlank()) ? System.getProperty("java.io.tmpdir") : dataDirectory,
-                "backup",
-                document.getCompany().getPeppolId(),
-                document.getDirection().toString(),
-                String.valueOf(document.getProxyOn().atZone(ZoneId.systemDefault()).getYear()),
-                String.valueOf(document.getProxyOn().atZone(ZoneId.systemDefault()).getMonth()),
-                document.getId() + ".ubl"
-        );
-        Path parent = filePath.getParent();
-        if (parent != null) {
-            System.out.println("Writing backup folder to: " + parent);
-            Files.createDirectories(parent);
+    private UblDto readUBL(String ublXml, String peppolId) {
+        if (ublXml == null || ublXml.isBlank()) {
+            throw new RuntimeException("Missing UBL content"); //TODO : use proper exceptions
         }
-        System.out.println("Writing file as backup to: " + filePath);
-        Files.writeString(filePath, document.getUbl(), StandardCharsets.UTF_8);
-        documentBackupCounter.increment();
+        if (!validationService.validateUblXml(ublXml).isValid()) {
+            throw new RuntimeException("Invalid UBL content"); //TODO : use proper exceptions
+        }
+        try {
+            UblDto ublDto = UblParser.parse(ublXml);
+            if (!peppolId.equals(ublDto.senderPeppolId())) {
+                throw new SecurityException(AppErrorCodes.PEPPOL_ID_MISMATCH);
+            }
+            return ublDto;
+        } catch (ParserConfigurationException | IOException | SAXException | XPathExpressionException e) {
+            throw new UblException(e.toString());
+        }
     }
 
     public List<DocumentDto> findAll(String peppolId) {
@@ -103,19 +96,11 @@ public class DocumentService {
         return DocumentMapper.toDto(document);
     }
 
-    public DocumentDto createFromUbl(String peppolId, String ublXml, boolean draft, Instant schedule) {
+    public DocumentDto createFromUbl(String peppolId, String ublXml, boolean draft, Instant schedule, Jwt jwt) {
         Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new NotFoundException("Company does not exist"));
-        UblDto ublDto;
-        try {
-            ublDto = UblParser.parse(ublXml);
-        } catch (ParserConfigurationException | IOException | SAXException | XPathExpressionException e) {
-            throw new UblException(e.toString());
-        }
-        if (!peppolId.equals(ublDto.senderPeppolId())) {
-            throw new SecurityException(AppErrorCodes.PEPPOL_ID_MISMATCH);
-        }
+        UblDto ublDto = readUBL(ublXml, peppolId);
         Document document = new Document(
-                null,
+                null, //Hibernate generates UUID
                 DocumentDirection.OUTGOING,
                 peppolId,
                 ublDto.receiverPeppolId(),
@@ -139,28 +124,20 @@ public class DocumentService {
                 ublDto.paymentTerms()
         );
         document.setCompany(company);
-        if (!draft) {
-            //TODO : send document
-        }
         documentRepository.save(document);
-        //TODO : do we want to backUp drafts and not on proxy documents ?
-//        try {
-//            backupFile(document);
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
         documentCreateCounter.increment();
+        if (!draft) {
+            backupService.backupFile(document); //TODO : do we want to backUp drafts and not on proxy documents ?
+            documentBackupCounter.increment();
+            document = deliver(document, jwt);
+            documentSendCounter.increment();
+        }
         return DocumentMapper.toDto(document);
     }
 
     public DocumentDto create(UblDocumentDto ublDocumentDto) {
         Company company = companyRepository.findByPeppolId(ublDocumentDto.ownerPeppolId()).orElseThrow(() -> new NotFoundException("Company does not exist"));
-        UblDto ublDto;
-        try {
-            ublDto = UblParser.parse(ublDocumentDto.ubl());
-        } catch (ParserConfigurationException | IOException | SAXException | XPathExpressionException e) {
-            throw new UblException(e.toString());
-        }
+        UblDto ublDto = readUBL(ublDocumentDto.ubl(), ublDocumentDto.ownerPeppolId());
         Document document = new Document(
                 ublDocumentDto.id(),
                 ublDocumentDto.direction(),
@@ -187,16 +164,13 @@ public class DocumentService {
         );
         document.setCompany(company);
         documentRepository.save(document);
-        try {
-            backupFile(document);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
         documentCreateCounter.increment();
+        backupService.backupFile(document);
+        documentBackupCounter.increment();
         return DocumentMapper.toDto(document);
     }
 
-    public DocumentDto update(String peppolId, UUID id, String ublXml, boolean draft, Instant schedule) {
+    public DocumentDto update(String peppolId, UUID id, String ublXml, boolean draft, Instant schedule, Jwt jwt) {
 //        Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new NotFoundException("Company does not exist"));
         Document document = documentRepository.findById(id).orElseThrow(() -> new NotFoundException("Document does not exist"));
         if (!peppolId.equals(document.getOwnerPeppolId())) {
@@ -205,15 +179,7 @@ public class DocumentService {
         if (document.getProcessedOn() != null) {
             throw new ConflictException("Document is already processed"); //TODO : port to 409 Conflict ?
         }
-        UblDto ublDto = null;
-        try {
-            ublDto = UblParser.parse(ublXml);
-        } catch (ParserConfigurationException | IOException | SAXException | XPathExpressionException e) {
-            throw new UblException(e.toString());
-        }
-        if (!peppolId.equals(ublDto.senderPeppolId())) {
-            throw new SecurityException(AppErrorCodes.PEPPOL_ID_MISMATCH);
-        }
+        UblDto ublDto = readUBL(ublXml, peppolId);
         document.setPartnerPeppolId(ublDto.receiverPeppolId());
         document.setScheduledOn(schedule);
         document.setUbl(ublXml);
@@ -232,22 +198,19 @@ public class DocumentService {
         document.setIssueDate(ublDto.issueDate());
         document.setDueDate(ublDto.dueDate());
         document.setPaymentTerms(ublDto.paymentTerms());
-        if (document.getProxyOn() != null) {
-            //TODO : send update ?
-        } else if (!draft) {
-            //TODO : send document ?
+        if (document.getProxyOn() == null) {
+            documentRepository.save(document); //Only save in database when it is not on proxy yet, else the safe is only allowed when it is proper delivered as proxy has the truth
         }
-        documentRepository.save(document);
-        //TODO : do we want to backUp drafts and not on proxy documents ?
-//        try {
-//            backupFile(document);
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
+        if (!draft) {
+            backupService.backupFile(document); //TODO : do we want to backUp drafts and not on proxy documents ?
+            documentBackupCounter.increment();
+            document = deliver(document, jwt);
+            documentSendCounter.increment();
+        }
         return DocumentMapper.toDto(document);
     }
 
-    public DocumentDto send(String peppolId, UUID id, Instant schedule) {
+    public DocumentDto send(String peppolId, UUID id, Instant schedule, Jwt jwt) {
         Document document = documentRepository.findById(id).orElseThrow(() -> new NotFoundException("Document does not exist"));
         if (!peppolId.equals(document.getOwnerPeppolId())) {
             throw new SecurityException(AppErrorCodes.PEPPOL_ID_MISMATCH);
@@ -257,18 +220,10 @@ public class DocumentService {
         }
         document.setScheduledOn(schedule);
         document.setDraftedOn(null);
-        if (document.getProxyOn() != null) {
-            //TODO : send update ?
-        } else {
-            //TODO : send document ?
-        }
-        documentRepository.save(document);
-        //TODO : do we want to backUp drafts and not on proxy documents ?
-//        try {
-//            backupFile(document);
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
+//        documentRepository.save(document); //Not saving, as we only save the proxy returned result
+        backupService.backupFile(document);
+        documentBackupCounter.increment(); //TODO : how to correctly use these counters ?
+        document = deliverOnSchedule(document, jwt);
         documentSendCounter.increment();
         return DocumentMapper.toDto(document);
     }
@@ -302,4 +257,63 @@ public class DocumentService {
         documentRepository.deleteByIdAndOwnerPeppolId(id, peppolId);
     }
 
+    private Document deliver(Document document, Jwt jwt) { //TODO : use boolean noArchive from Company
+        UblDocumentDto ublDocumentDto = ((document.getProxyOn() == null) ? proxyWebClient.post().uri("/sapi/document") : proxyWebClient.put().uri("/sapi/document/"+document.getId()))
+                .headers(headers -> headers.setBearerAuth(jwt.getTokenValue()))
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new UblDocumentDto(
+                        document.getId(),
+                        document.getDirection(), //DocumentDirection.OUTGOING
+                        document.getOwnerPeppolId(),
+                        document.getPartnerPeppolId(),
+                        document.getCreatedOn(), //null
+                        document.getScheduledOn(),
+                        document.getProcessedOn(), //null
+                        document.getProcessedStatus(), //null
+                        document.getUbl()
+                ))
+                .retrieve()
+                .bodyToMono(UblDocumentDto.class)
+                .blockOptional()
+                .orElseThrow(() -> new IllegalStateException("Could not deliver at PROXY")); //TODO : make correct error
+
+//        document.setId(ublDocumentDto.id()); //Should not be used here, is for other clients that do not generate their own UUID
+        document.setDirection(ublDocumentDto.direction());
+        document.setOwnerPeppolId(ublDocumentDto.ownerPeppolId());
+        document.setPartnerPeppolId(ublDocumentDto.partnerPeppolId());
+        document.setProxyOn(ublDocumentDto.createdOn());
+        document.setScheduledOn(ublDocumentDto.scheduledOn());
+        document.setProcessedOn(ublDocumentDto.processedOn());
+        document.setProcessedStatus(ublDocumentDto.processedStatus());
+        document.setUbl(ublDocumentDto.ubl());
+        return documentRepository.save(document);
+    }
+
+    private Document deliverOnSchedule(Document document, Jwt jwt) { //TODO : use boolean noArchive from Company
+        UblDocumentDto ublDocumentDto = proxyWebClient.put()
+                .uri("/sapi/document/" + document.getId() + "/send")
+                .headers(headers -> headers.setBearerAuth(jwt.getTokenValue()))
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new UblDocumentDto(
+                        document.getId(),
+                        document.getDirection(), //DocumentDirection.OUTGOING
+                        document.getOwnerPeppolId(),
+                        document.getPartnerPeppolId(),
+                        document.getCreatedOn(), //null
+                        document.getScheduledOn(),
+                        document.getProcessedOn(), //null
+                        document.getProcessedStatus(), //null
+                        document.getUbl()
+                ))
+                .retrieve()
+                .bodyToMono(UblDocumentDto.class)
+                .blockOptional()
+                .orElseThrow(() -> new IllegalStateException("Could not deliver at PROXY")); //TODO : make correct error
+
+        document.setProxyOn(ublDocumentDto.createdOn());
+        document.setScheduledOn(ublDocumentDto.scheduledOn());
+        document.setProcessedOn(ublDocumentDto.processedOn());
+        document.setProcessedStatus(ublDocumentDto.processedStatus());
+        return documentRepository.save(document);
+    }
 }

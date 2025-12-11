@@ -24,7 +24,7 @@ public class Document {
     ///EXTERNAL INFORMATION
 
     @Id
-    @UuidGenerator
+    @UuidGenerator //TODO : look into (style = UuidGenerator.Style.TIME) // time-based UUID (v1-style)
     private UUID id; //Unique identifier used for communication with proxy
 
     @Enumerated(EnumType.STRING)
@@ -60,6 +60,8 @@ public class Document {
     private Instant readOn; //Useful for keeping track of read status, flagged by user
 
     private Instant paidOn; //Useful for keeping track of paid status, flagged by user
+
+    //TODO : private Instant accountantOn; //Useful for keeping track of accountant status, action executed by user, send to company.accountantEmail or null when not send yet/successful
 
     ///UBL INFORMATION
 

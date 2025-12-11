@@ -29,6 +29,10 @@ public class Company extends GenericEntity{
     private String iban;
     private String paymentAccountName;
 
+    //TODO : private boolean noArchive; //Setting by user that data should not be stored once processed (user is absolute owner & responsible)
+    //TODO : private Instant lastDocumentSyncAt; //Rate limit the proxy polling
+    //TODO : private String accountantEmail; //Email of accounting system or accountant, flaggable by user what invoices should be send to accountant
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "registered_office_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_company_registered_office"))
     private Address registeredOffice;

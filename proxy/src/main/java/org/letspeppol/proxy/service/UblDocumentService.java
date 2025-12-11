@@ -12,22 +12,13 @@ import org.letspeppol.proxy.model.AccessPoint;
 import org.letspeppol.proxy.model.UblDocument;
 import org.letspeppol.proxy.repository.UblDocumentRepository;
 import org.letspeppol.proxy.util.HashUtil;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
-
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.time.Instant;
-import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
@@ -37,52 +28,12 @@ import java.util.UUID;
 @Service
 public class UblDocumentService {
 
-    public static final String DEFAULT_CONTENT_FOR_NO_ARCHIVE = "No Archive";
-
     private final UblDocumentRepository ublDocumentRepository;
     private final RegistryService registryService;
     private final AccessPointServiceRegistry accessPointServiceRegistry;
+    private final BackupService backupService;
     private final Counter documentReceivedCounter;
     private final Counter documentRescheduleCounter;
-
-    @Value("${proxy.data.dir:#{null}}")
-    private String dataDirectory;
-
-    private Path backupFilePath(UblDocument ublDocument) {
-        return Paths.get(
-                (dataDirectory == null || dataDirectory.isBlank()) ? System.getProperty("java.io.tmpdir") : dataDirectory,
-                "backup",
-                ublDocument.getOwnerPeppolId(),
-                ublDocument.getDirection().toString(),
-                String.valueOf(ublDocument.getCreatedOn().atZone(ZoneId.systemDefault()).getYear()),
-                String.valueOf(ublDocument.getCreatedOn().atZone(ZoneId.systemDefault()).getMonth()),
-                ublDocument.getId() + ".ubl"
-        );
-    }
-
-    private void backupFile(UblDocument ublDocument) {
-        Path filePath = backupFilePath(ublDocument);
-        Path parent = filePath.getParent();
-        try {
-            if (parent != null) {
-                System.out.println("Writing backup folder to: " + parent);
-                Files.createDirectories(parent);
-            }
-            System.out.println("Writing file as backup to: " + filePath);
-            Files.writeString(filePath, ublDocument.getUbl(), StandardCharsets.UTF_8);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void clearBackupFile(UblDocument ublDocument) {
-        Path filePath = backupFilePath(ublDocument);
-        try {
-            Files.writeString(filePath, DEFAULT_CONTENT_FOR_NO_ARCHIVE, StandardCharsets.UTF_8, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     private Instant calculateSchedule(UblDocumentDto ublDocumentDto) {
         //TODO : find number that are scheduled on that moment
@@ -143,12 +94,16 @@ public class UblDocumentService {
     }
 
     public UblDocumentDto createToSend(UblDocumentDto ublDocumentDto, boolean noArchive) {
-        String hash = HashUtil.sha256(ublDocumentDto.ubl());
-        if (ublDocumentRepository.findById(ublDocumentDto.id()).isPresent() || !ublDocumentRepository.findAllByHash(hash).isEmpty()) //TODO : should we add timeframe based on ublDocumentDto.createdOn() ?
-            throw new DuplicateRequestException("UblDocument "+ublDocumentDto.id()+" is already send");
-
+        String hash = HashUtil.sha256(ublDocumentDto.ubl()); //TODO : should we use HMAC ?
+        UUID uuid = ublDocumentDto.id() == null ? UUID.randomUUID() : ublDocumentDto.id();
+        if (ublDocumentRepository.findById(uuid).isPresent()) {
+            throw new DuplicateRequestException("UblDocument " + uuid + " is already created, please use the update call");
+        }
+        if (!ublDocumentRepository.findAllByHash(hash).isEmpty()) { //TODO : should we add timeframe based on ublDocumentDto.createdOn() ?
+            throw new DuplicateRequestException("UblDocument seems to already send with hash " + hash + " content might be not unique");
+        }
         UblDocument ublDocument = new UblDocument( //TODO : do we set default values here ?
-                ublDocumentDto.id(),
+                uuid, //App can generate the uuid, because they might have used this for drafts
                 DocumentDirection.OUTGOING, //user can not overwrite this value : ublDocumentDto.direction(),
                 ublDocumentDto.ownerPeppolId(),
                 ublDocumentDto.partnerPeppolId(),
@@ -164,7 +119,25 @@ public class UblDocumentService {
                 null
         );
         ublDocumentRepository.save(ublDocument); //This is needed as it is a new
-        backupFile(ublDocument);
+        backupService.backupFile(ublDocument);
+        return UblDocumentMapper.toDto(ublDocument);
+    }
+
+    public UblDocumentDto update(UUID id, UblDocumentDto ublDocumentDto, boolean noArchive) {
+        String hash = HashUtil.sha256(ublDocumentDto.ubl());
+        UblDocument ublDocument = ublDocumentRepository.findById(id).orElseThrow(() -> new NotFoundException("UblDocument " + id + " does not exist"));
+        ublDocument.setOwnerPeppolId(ublDocumentDto.ownerPeppolId());
+        ublDocument.setPartnerPeppolId(ublDocumentDto.partnerPeppolId());
+        ublDocument.setScheduledOn(calculateSchedule(ublDocumentDto));
+        ublDocument.setUbl(ublDocumentDto.ubl());
+        ublDocument.setHash(hash);
+        if (noArchive) {
+            ublDocument.setDownloadCount(-1);
+        } else if (ublDocument.getDownloadCount() < 0) {
+            ublDocument.setDownloadCount(0);
+        }
+        // ublDocumentRepository.save(ublDocument); //This can be remove due to @Transactional
+        backupService.backupFile(ublDocument);
         return UblDocumentMapper.toDto(ublDocument);
     }
 
@@ -179,7 +152,7 @@ public class UblDocumentService {
         if (ublDocument.getDownloadCount() < 0) { //Set to No-Archive, removed once the Peppol AP received it, if it fails the End-User can send it again as owner of the data
             ublDocument.setUbl(null);
             ublDocument.setDownloadCount(0);
-            clearBackupFile(ublDocument);
+            backupService.clearBackupFile(ublDocument);
         }
         // ublDocumentRepository.save(ublDocument); //This can be remove due to @Transactional
     }
@@ -195,13 +168,13 @@ public class UblDocumentService {
         if (ublDocument.getDownloadCount() < 0) { //Set to No-Archive
             ublDocument.setUbl(null);
             ublDocument.setDownloadCount(0);
-            clearBackupFile(ublDocument);
+            backupService.clearBackupFile(ublDocument);
         }
         // ublDocumentRepository.save(ublDocument); //This can be remove due to @Transactional
     }
 
-    public void reschedule(UUID id, String ownerPeppolId, UblDocumentDto ublDocumentDto) {
-        UblDocument ublDocument = ublDocumentRepository.findByIdAndOwnerPeppolId(id, ownerPeppolId).orElseThrow(() -> new NotFoundException("UblDocument "+id+" does not exist"));
+    public UblDocumentDto reschedule(UUID id, UblDocumentDto ublDocumentDto) {
+        UblDocument ublDocument = ublDocumentRepository.findByIdAndOwnerPeppolId(id, ublDocumentDto.ownerPeppolId()).orElseThrow(() -> new NotFoundException("UblDocument "+id+" does not exist"));
         if (ublDocument.getAccessPoint() != null) {
             throw new BadRequestException("UblDocument "+id+" is already picked up by AP");
         }
@@ -211,6 +184,7 @@ public class UblDocumentService {
         }
         documentRescheduleCounter.increment();
         // ublDocumentRepository.save(ublDocument); //This can be remove due to @Transactional
+        return UblDocumentMapper.toDto(ublDocument);
     }
 
     public void cancel(UUID id, String ownerPeppolId, boolean noArchive) {
@@ -222,7 +196,7 @@ public class UblDocumentService {
         if (noArchive || ublDocument.getDownloadCount() < 0) { //Set to No-Archive
             ublDocument.setUbl(null);
             ublDocument.setDownloadCount(0);
-            clearBackupFile(ublDocument);
+            backupService.clearBackupFile(ublDocument);
         }
         // ublDocumentRepository.save(ublDocument); //This can be remove due to @Transactional
     }
@@ -250,7 +224,7 @@ public class UblDocumentService {
         );
         ublDocument = ublDocumentRepository.save(ublDocument); //This is needed as it is a new
         try {
-            backupFile(ublDocument);
+            backupService.backupFile(ublDocument);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -276,7 +250,7 @@ public class UblDocumentService {
             ublDocument.setDownloadCount(ublDocument.getDownloadCount() + 1);
             if (noArchive) { //Set to No-Archive
                 ublDocument.setUbl(null);
-                clearBackupFile(ublDocument);
+                backupService.clearBackupFile(ublDocument);
             }
             // ublDocumentRepository.save(ublDocument); //This can be remove due to @Transactional
         }

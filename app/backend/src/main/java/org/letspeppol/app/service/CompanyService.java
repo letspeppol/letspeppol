@@ -52,7 +52,7 @@ public class CompanyService {
         try {
             AccountInfo accountInfo = kycWebClient.get()
                     .uri("/sapi/company")
-                    .headers(h -> h.setBearerAuth(jwt.getTokenValue())) //.header("Authorization", "Bearer " + TOKEN)
+                    .headers(headers -> headers.setBearerAuth(jwt.getTokenValue()))
                     .retrieve()
                     .bodyToMono(AccountInfo.class)
                     .blockOptional()
