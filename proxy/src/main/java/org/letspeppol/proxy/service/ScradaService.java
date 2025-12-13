@@ -165,6 +165,29 @@ public class ScradaService implements AccessPointServiceInterface {
         }
     }
 
+    /// DOCS : [Scrada : Get outbound document status](https://www.scrada.be/api-documentation/#tag/Peppol-outbound/paths/~1v1~1company~1{companyID}~1peppol~1outbound~1document~1{documentID}~1info/get)
+    @Override
+    public String getStatus(UblDocument ublDocument) {
+        System.out.print("?");
+        try {
+            OutboundDocument outboundDocument = scradaWebClient
+                    .get()
+                    .uri("/outbound/document/{documentID}/info", ublDocument.getAccessPointId())
+                    .retrieve()
+                    .bodyToMono(OutboundDocument.class)
+                    .blockOptional()
+                    .orElseThrow(() -> new IllegalStateException("Empty response from Scrada get unconfirmed inbound documents"));
+
+            return outboundDocument.status();
+        } catch (WebClientResponseException e) { // HTTP error (non-2xx)
+            log.error("Scrada outbound status API error {} {}: {}", e.getRawStatusCode(), e.getStatusText(), e.getResponseBodyAsString(), e);
+            throw new RuntimeException("Scrada API error: " + e.getStatusCode(), e);
+        } catch (Exception e) { // timeouts, connection issues, deserialization errors, etc.
+            log.error("Scrada outbound status API call error {}", e.toString(), e);
+            throw new RuntimeException("Failed to call Scrada API", e);
+        }
+    }
+
     @Override
     public void updateStatus(String id, String status) {
 
@@ -175,6 +198,9 @@ public class ScradaService implements AccessPointServiceInterface {
 
     }
 
+    /// DOCS : [Scrada : Get unconfirmed inbound documents](https://www.scrada.be/api-documentation/#tag/Peppol-inbound/paths/~1v1~1company~1{companyID}~1peppol~1inbound~1document~1unconfirmed/get)
+    /// DOCS : [Scrada : Get inbound document](https://www.scrada.be/api-documentation/#tag/Peppol-inbound/paths/~1v1~1company~1{companyID}~1peppol~1inbound~1document~1{documentID}/get)
+    /// DOCS : [Scrada : Confirm inbound document](https://www.scrada.be/api-documentation/#tag/Peppol-inbound/paths/~1v1~1company~1%7BcompanyID%7D~1peppol~1inbound~1document~1%7BdocumentID%7D~1confirm/put)
     @Override
     public void receiveDocuments() {
         System.out.print("?");
@@ -222,4 +248,13 @@ public class ScradaService implements AccessPointServiceInterface {
             throw new RuntimeException("Failed to call Scrada API", e);
         }
     }
+
+    /// NOT IMPLEMENTED
+    /// DOCS : [Scrada : Get PDF of inbound document](https://www.scrada.be/api-documentation/#tag/Peppol-inbound/paths/~1v1~1company~1{companyID}~1peppol~1inbound~1document~1{documentID}~1pdf/get)
+    /// DOCS : [Scrada : Send sales invoice](https://www.scrada.be/api-documentation/#tag/Peppol/paths/~1v1~1company~1{companyID}~1peppol~1lookup/post)
+    /// DOCS : [Scrada : Send self-billing invoice](https://www.scrada.be/api-documentation/#tag/Peppol-outbound/paths/~1v1~1company~1{companyID}~1peppol~1outbound~1selfBillingInvoice/post)
+    /// DOCS : [Scrada : Get outbound document](https://www.scrada.be/api-documentation/#tag/Peppol-outbound/paths/~1v1~1company~1{companyID}~1peppol~1outbound~1document~1{documentID}~1ubl/get)
+    /// DOCS : [Scrada : Participant lookup](https://www.scrada.be/api-documentation/#tag/Peppol/paths/~1v1~1company~1{companyID}~1peppol~1lookup~1{scheme}~1{id}/get)
+    /// DOCS : [Scrada : Party lookup (JSON)](https://www.scrada.be/api-documentation/#tag/Peppol/paths/~1v1~1company~1{companyID}~1peppol~1lookup/post)
+
 }

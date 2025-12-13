@@ -5,12 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.JdbcType;
-import org.hibernate.annotations.SourceType;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.*;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
-
 import java.time.Instant;
 import java.util.UUID;
 
@@ -45,6 +41,11 @@ public class UblDocument {
 
     private Instant processedOn; //Useful for keeping track when it is finished by Peppol AP
 
+//    private Instant receivedOn; //Useful for keeping track when it is received by Peppol AP of the receiver (and thus status is OK)
+    //TODO : should we store full information about the status ?
+//    @JdbcTypeCode(SqlTypes.JSON)
+//    @Column(columnDefinition = "jsonb")
+//    private Map<String, Object> processedStatus;
     private String processedStatus; //Useful for feedback from Peppol AP
 
     @Lob

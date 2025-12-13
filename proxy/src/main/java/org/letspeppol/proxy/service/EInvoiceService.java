@@ -122,6 +122,11 @@ public class EInvoiceService implements AccessPointServiceInterface {
     }
 
     @Override
+    public String getStatus(UblDocument ublDocument) {
+        return null;
+    }
+
+    @Override
     public void updateStatus(String id, String status) {
 
     }

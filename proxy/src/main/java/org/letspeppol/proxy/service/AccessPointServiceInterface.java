@@ -15,6 +15,8 @@ public interface AccessPointServiceInterface {
 
     String sendDocument(UblDocument ublDocument);
 
+    String getStatus(UblDocument ublDocument);
+
     void updateStatus(String id, String status); //For webhooks
 
     void receiveDocument(UblDocument ublDocument); //For webhooks

@@ -80,6 +80,25 @@ public class UblDocumentService {
         pickedUp(ublDocument, accessPoint, accessPointId);
     }
 
+    private void synchronizeWithAccessPoint(UblDocument ublDocument) {
+        AccessPoint accessPoint = registryService.getAccessPoint(ublDocument.getOwnerPeppolId());
+        if (accessPoint == AccessPoint.NONE) {
+            delivered(ublDocument, "PeppolId is no longer registered to synchronize");
+            return;
+        }
+        AccessPointServiceInterface service = accessPointServiceRegistry.get(accessPoint);
+        if (service == null) {
+            delivered(ublDocument, "Peppol Access Point no longer active");
+            return;
+        }
+        String accessPointId = service.getStatus(ublDocument);
+        if (accessPointId == null) {
+            ublDocument.setScheduledOn(ublDocument.getScheduledOn().plus(1, ChronoUnit.HOURS)); //Postpone 1 hour to try again
+            return;
+        }
+        pickedUp(ublDocument, accessPoint, accessPointId);
+    }
+
     public List<UblDocumentDto> findAllNew(String ownerPeppolId, int limit) {
         var pageable = PageRequest.of(0, limit, Sort.by("createdOn").descending());
         return ublDocumentRepository.findAllByOwnerPeppolIdAndDownloadCountAndDirection(ownerPeppolId, 0, DocumentDirection.INCOMING, pageable).stream()
