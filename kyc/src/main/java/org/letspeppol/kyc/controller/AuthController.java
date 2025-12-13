@@ -1,5 +1,6 @@
 package org.letspeppol.kyc.controller;
 
+import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.kyc.model.Account;
@@ -24,11 +25,14 @@ public class AuthController {
 
     private final JwtService jwtService;
     private final AccountService accountService;
+    private final Counter authenticationCounterSuccess;
+    private final Counter authenticationCounterFailure;
 
     /// Generates JWT token on login
     @PostMapping("/auth")
     public ResponseEntity<String> auth(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Basic ")) {
+            authenticationCounterFailure.increment();
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing or invalid Authorization header");
         }
 
@@ -38,6 +42,7 @@ public class AuthController {
 
         final String[] values = credentials.split(":", 2);
         if (values.length != 2) {
+            authenticationCounterFailure.increment();
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Basic authentication format");
         }
         String email = values[0];
@@ -49,6 +54,7 @@ public class AuthController {
                 account.getCompany().isPeppolActive(),
                 account.getExternalId()
         );
+        authenticationCounterSuccess.increment();
 
         return ResponseEntity.ok(token);
     }

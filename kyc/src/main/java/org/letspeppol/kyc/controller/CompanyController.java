@@ -89,7 +89,9 @@ public class CompanyController {
     @GetMapping("signed-contract")
     public ResponseEntity<?> signedContract(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         String peppolId = jwtService.validateAndGetInfo(authHeader).peppolId();
-        byte[] data = signingService.getContract(peppolId, 0L); // TODO
+        UUID externalId = jwtService.validateAndGetInfo(authHeader).uid();
+        Account account = accountService.getByExternalId(externalId);
+        byte[] data = signingService.getContract(peppolId, account.getId());
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=contract_signed.pdf")
                 .contentType(MediaType.APPLICATION_PDF)
