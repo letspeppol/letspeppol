@@ -6,6 +6,7 @@ import org.letspeppol.proxy.exception.DuplicateRequestException;
 import org.letspeppol.proxy.exception.NotFoundException;
 import org.letspeppol.proxy.model.AccessPoint;
 import org.letspeppol.proxy.model.DocumentDirection;
+import org.letspeppol.proxy.model.DocumentType;
 import org.letspeppol.proxy.model.UblDocument;
 import org.letspeppol.proxy.repository.UblDocumentRepository;
 import org.letspeppol.proxy.util.HashUtil;
@@ -26,7 +27,7 @@ public class UblDocumentReceiverService {
     private final BackupService backupService;
     private final Counter documentReceivedCounter;
 
-    public void createAsReceived(String senderPeppolId, String receiverPeppolId, String ubl, AccessPoint accessPoint, String accessPointId, Runnable afterCommit) {
+    public void createAsReceived(DocumentType documentType, String senderPeppolId, String receiverPeppolId, String ubl, AccessPoint accessPoint, String accessPointId, Runnable afterCommit) {
         String hash = HashUtil.sha256(ubl);
         if (ublDocumentRepository.findByAccessPointId(accessPointId).isPresent() || !ublDocumentRepository.findAllByHash(hash).isEmpty()) //TODO : should we add timeframe based on ublDocumentDto.createdOn() ?
             throw new DuplicateRequestException("UblDocument "+accessPointId+" is already received"); //TODO : does this make sense as AP needs to be informed we have successfully received the document ?
@@ -34,6 +35,7 @@ public class UblDocumentReceiverService {
         UblDocument ublDocument = new UblDocument( //TODO : do we set default values here ?
                 UUID.randomUUID(), //No autogeneration used
                 DocumentDirection.INCOMING, //AP can not overwrite this value : ublDocumentDto.direction(),
+                documentType,
                 receiverPeppolId,
                 senderPeppolId,
                 Instant.now(), //setting manual because we need this value to return and @Transactional will postpone it and the return dto has null

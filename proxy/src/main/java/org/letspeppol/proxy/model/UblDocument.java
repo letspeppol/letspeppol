@@ -27,6 +27,10 @@ public class UblDocument {
     @Column(nullable = false)
     private DocumentDirection direction; //Used for filtering when downloaded by retrieving app
 
+    @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    private DocumentType type;
+
     @Column(nullable = false)
     private String ownerPeppolId; //Sender or receiver, depending on direction
 

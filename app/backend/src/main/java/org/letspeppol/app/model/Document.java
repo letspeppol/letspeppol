@@ -32,6 +32,10 @@ public class Document implements Persistable<UUID> {
     @JdbcType(PostgreSQLEnumJdbcType.class)
     private DocumentDirection direction; //Used for filtering when downloaded by retrieving app
 
+    @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    private DocumentType type; //Type of document will be used to know if money needs to be paid or received, used for overview, but also for proxy as sending type
+
     private String ownerPeppolId; //Sender or receiver, depending on direction
 
     private String partnerPeppolId; //Receiver or sender, depending on direction
@@ -73,10 +77,6 @@ public class Document implements Persistable<UUID> {
     private String buyerReference; //Buyer reference, used for searching
 
     private String orderReference; //Purchase order reference, used for searching
-
-    @Enumerated(EnumType.STRING)
-    @JdbcType(PostgreSQLEnumJdbcType.class)
-    private DocumentType type; //Type of document will be used to know if money needs to be paid or received, used for overview
 
     @Convert(disableConversion = true)  //Not using JPA converter
     @JdbcTypeCode(VARCHAR)

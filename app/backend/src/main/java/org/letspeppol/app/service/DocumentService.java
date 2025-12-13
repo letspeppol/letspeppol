@@ -275,6 +275,7 @@ public class DocumentService {
                 .bodyValue(new UblDocumentDto(
                         document.getId(),
                         document.getDirection(), //DocumentDirection.OUTGOING
+                        document.getType(),
                         document.getOwnerPeppolId(),
                         document.getPartnerPeppolId(),
                         document.getCreatedOn(), //null
@@ -308,6 +309,7 @@ public class DocumentService {
                 .bodyValue(new UblDocumentDto(
                         document.getId(),
                         document.getDirection(), //DocumentDirection.OUTGOING
+                        document.getType(),
                         document.getOwnerPeppolId(),
                         document.getPartnerPeppolId(),
                         document.getCreatedOn(), //null

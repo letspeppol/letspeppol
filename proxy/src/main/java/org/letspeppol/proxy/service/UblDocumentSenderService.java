@@ -38,6 +38,7 @@ public class UblDocumentSenderService {
         UblDocument ublDocument = new UblDocument( //TODO : do we set default values here ?
                 uuid, //App can generate the uuid, because they might have used this for drafts
                 DocumentDirection.OUTGOING, //user can not overwrite this value : ublDocumentDto.direction(),
+                ublDocumentDto.type(),
                 ublDocumentDto.ownerPeppolId(),
                 ublDocumentDto.partnerPeppolId(),
                 Instant.now(), //setting manual because we need this value to return and @Transactional will postpone it and the return dto has null

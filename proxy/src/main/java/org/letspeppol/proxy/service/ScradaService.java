@@ -139,12 +139,12 @@ public class ScradaService implements AccessPointServiceInterface {
                     .header("x-scrada-peppol-sender-id", ublDocument.getOwnerPeppolId())
                     .header("x-scrada-peppol-receiver-scheme", PARTICIPANT_SCHEME)
                     .header("x-scrada-peppol-receiver-id", ublDocument.getPartnerPeppolId())
-                    .header("x-scrada-peppol-c1-country-code", "BE") //TODO : Where to get the country code of sender ?
-                    .header("x-scrada-peppol-document-type-scheme", INVOICES_SCHEME) //TODO : We need to extract TYPE !
-                    .header("x-scrada-peppol-document-type-value", INVOICES_VALUE)
+                    .header("x-scrada-peppol-c1-country-code", "BE") //This is Peppol Corner Stone 1 and always Belgium for Scrada
+                    .header("x-scrada-peppol-document-type-scheme", ublDocument.getType() == org.letspeppol.proxy.model.DocumentType.INVOICE ? INVOICES_SCHEME : CREDIT_NOTES_SCHEME)
+                    .header("x-scrada-peppol-document-type-value", ublDocument.getType() == org.letspeppol.proxy.model.DocumentType.INVOICE ? INVOICES_VALUE : CREDIT_NOTES_VALUE)
                     .header("x-scrada-peppol-process-scheme", PROCESS_SCHEME)
                     .header("x-scrada-peppol-process-value", PROCESS_VALUE)
-                    //.header("x-scrada-external-reference", "V1/202400512") //TODO : We could add InvoiceReference
+                    .header("x-scrada-external-reference", ublDocument.getId().toString()) //This is useful for Scrada debugging in https://scrada.be/en/company/{CompanyId}/settings/integrations/peppol/peppol-history
                     .bodyValue(ublDocument.getUbl())
                     .retrieve()
                     .bodyToMono(JsonNode.class)
@@ -177,9 +177,10 @@ public class ScradaService implements AccessPointServiceInterface {
             return switch (outboundDocument.status()) {
                 case "Created" -> null;
                 case "Processed" -> new StatusReport(true, null);
-                case "Retry" ->
-                    //TODO : log + outboundDocument.errorMessage() for reason
-                        null;
+                case "Retry" -> {
+                    log.info("Scrada tried {} time(s) to send {} with feedback {}", outboundDocument.attempt(), outboundDocument.externalReference(), outboundDocument.errorMessage());
+                    yield null;
+                }
                 case "Error" -> new StatusReport(false, outboundDocument.status() + " : " + outboundDocument.errorMessage());
                 default -> new StatusReport(false, outboundDocument.status());
             };
@@ -229,6 +230,7 @@ public class ScradaService implements AccessPointServiceInterface {
                         .orElseThrow(() -> new IllegalStateException("Empty response from Scrada get inbound document"));
 
                 ublDocumentReceiverService.createAsReceived(
+                        inboundDocument.peppolDocumentTypeValue().equals(INVOICES_VALUE) ? org.letspeppol.proxy.model.DocumentType.INVOICE : org.letspeppol.proxy.model.DocumentType.CREDIT_NOTE,
                         inboundDocument.peppolSenderID(),
                         inboundDocument.peppolReceiverID(),
                         ubl,
