@@ -73,7 +73,7 @@ public class CompanyService {
         company.getRegisteredOffice().setCity(companyDto.registeredOffice().city());
         company.getRegisteredOffice().setPostalCode(companyDto.registeredOffice().postalCode());
         company.getRegisteredOffice().setStreet(companyDto.registeredOffice().street());
-        companyRepository.save(company);
+        company = companyRepository.save(company);
         return CompanyMapper.toDto(company, JwtUtil.isPeppolActive(jwt));
     }
 }

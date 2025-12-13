@@ -28,13 +28,17 @@ public class UblDocument {
 
     @Enumerated(EnumType.STRING)
     @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(nullable = false)
     private DocumentDirection direction; //Used for filtering when downloaded by retrieving app
 
+    @Column(nullable = false)
     private String ownerPeppolId; //Sender or receiver, depending on direction
 
+    @Column(nullable = false)
     private String partnerPeppolId; //Receiver or sender, depending on direction
 
-    @CreationTimestamp(source = SourceType.DB)
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private Instant createdOn; //Useful for retrieving app that wants to download already downloaded ubl documents, is the proxyOn at App
 
     private Instant scheduledOn; //Useful for keeping track when it is scheduled to be processed, will be set when throttling is active to a moment in the future
@@ -48,11 +52,13 @@ public class UblDocument {
 
     ///INTERNAL INFORMATION
 
+    @Column(nullable = false)
     private String hash; //Stores the hash of the ubl to validate for duplicates as the ubl could be empty, i.e. when already stored this ublDocument within certain time-frame, this could be a duplication problem and will not process it again
 
+    @Column(nullable = false)
     private Integer downloadCount; //Starts at 0 and will increase for each validated download, used for monitoring proxy health, can be -1 to flag to empty ubl once send via AP
 
-    @UpdateTimestamp(source = SourceType.DB)
+    @UpdateTimestamp
     private Instant updatedOn; //Starts at null and will be updated for each download to retrieving app or upload to Peppol AP, used for monitoring proxy health
 
     @Enumerated(EnumType.STRING)

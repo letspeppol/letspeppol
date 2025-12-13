@@ -126,7 +126,7 @@ public class DocumentService {
                 ublDto.paymentTerms()
         );
         document.setCompany(company);
-        documentRepository.save(document);
+        document = documentRepository.save(document);
         documentCreateCounter.increment();
         if (!draft) {
             backupService.backupFile(document); //TODO : do we want to backUp drafts and not on proxy documents ?
@@ -165,7 +165,7 @@ public class DocumentService {
                 ublDto.paymentTerms()
         );
         document.setCompany(company);
-        documentRepository.save(document);
+        document = documentRepository.save(document);
         documentCreateCounter.increment();
         backupService.backupFile(document);
         documentBackupCounter.increment();
@@ -201,7 +201,7 @@ public class DocumentService {
         document.setDueDate(ublDto.dueDate());
         document.setPaymentTerms(ublDto.paymentTerms());
         if (document.getProxyOn() == null) {
-            documentRepository.save(document); //Only save in database when it is not on proxy yet, else the safe is only allowed when it is proper delivered as proxy has the truth
+            document = documentRepository.save(document); //Only save in database when it is not on proxy yet, else the safe is only allowed when it is proper delivered as proxy has the truth
         }
         if (!draft) {
             backupService.backupFile(document); //TODO : do we want to backUp drafts and not on proxy documents ?
@@ -222,7 +222,7 @@ public class DocumentService {
         }
         document.setScheduledOn(schedule);
         document.setDraftedOn(null);
-//        documentRepository.save(document); //Not saving, as we only save the proxy returned result
+//        document = documentRepository.save(document); //Not saving, as we only save the proxy returned result
         backupService.backupFile(document);
         documentBackupCounter.increment(); //TODO : how to correctly use these counters ?
         document = deliverOnSchedule(document, jwt);
@@ -236,7 +236,7 @@ public class DocumentService {
             throw new SecurityException(AppErrorCodes.PEPPOL_ID_MISMATCH);
         }
         document.setReadOn(Instant.now());
-        documentRepository.save(document);
+        document = documentRepository.save(document);
         return DocumentMapper.toDto(document);
     }
 
@@ -250,7 +250,7 @@ public class DocumentService {
         } else {
             document.setPaidOn(Instant.now());
         }
-        documentRepository.save(document);
+        document = documentRepository.save(document);
         documentPaidCounter.increment();
         return DocumentMapper.toDto(document);
     }

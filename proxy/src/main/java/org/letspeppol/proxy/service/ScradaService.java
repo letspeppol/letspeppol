@@ -1,5 +1,6 @@
 package org.letspeppol.proxy.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
@@ -97,9 +98,10 @@ public class ScradaService implements AccessPointServiceInterface {
             registerCounter.increment();
             return Map.of("uuid", uuid);
         } catch (WebClientResponseException e) { // HTTP error (non-2xx)
-            log.error("Scrada API error {} {}: {}", e.getRawStatusCode(), e.getStatusText(), e.getResponseBodyAsString(), e);
+            log.error("Scrada register API error {} {}: {}", e.getRawStatusCode(), e.getStatusText(), e.getResponseBodyAsString(), e);
             throw new RuntimeException("Scrada API error: " + e.getStatusCode(), e);
         } catch (Exception e) { // timeouts, connection issues, deserialization errors, etc.
+            log.error("Scrada register API call error {}", e.toString(), e);
             throw new RuntimeException("Failed to call Scrada API", e);
         }
     }
@@ -120,9 +122,11 @@ public class ScradaService implements AccessPointServiceInterface {
                 .block();
             unregisterCounter.increment();
         } catch (WebClientResponseException e) { // HTTP error (non-2xx)
-            throw new RuntimeException("e-invoice API error: " + e.getStatusCode(), e);
+            log.error("Scrada unregister API error {} {}: {}", e.getRawStatusCode(), e.getStatusText(), e.getResponseBodyAsString(), e);
+            throw new RuntimeException("Scrada API error: " + e.getStatusCode(), e);
         } catch (Exception e) { // timeouts, connection issues, deserialization errors, etc.
-            throw new RuntimeException("Failed to call e-invoice API", e);
+            log.error("Scrada unregister API call error {}", e.toString(), e);
+            throw new RuntimeException("Failed to call Scrada API", e);
         }
     }
 
@@ -146,14 +150,17 @@ public class ScradaService implements AccessPointServiceInterface {
                     //.header("x-scrada-external-reference", "V1/202400512") //TODO : We could add InvoiceReference
                     .bodyValue(ublDocument.getUbl())
                     .retrieve()
-                    .bodyToMono(String.class)
+                    .bodyToMono(JsonNode.class)
+                    .map(JsonNode::asText)
                     .blockOptional()
                     .orElseThrow(() -> new IllegalStateException("Empty response from Scrada send document"));
             documentSendCounter.increment();
             return uuid;
         } catch (WebClientResponseException e) { // HTTP error (non-2xx)
-            throw new RuntimeException("Scrada API error: " + e.getStatusCode(), e);
+            log.error("Scrada outbound API error {} {}: {}", e.getRawStatusCode(), e.getStatusText(), e.getResponseBodyAsString(), e);
+            throw new RuntimeException("Scrada outbound API error: " + e.getStatusCode(), e);
         } catch (Exception e) { // timeouts, connection issues, deserialization errors, etc.
+            log.error("Scrada outbound API call error {}", e.toString(), e);
             throw new RuntimeException("Failed to call Scrada API", e);
         }
     }
@@ -170,7 +177,7 @@ public class ScradaService implements AccessPointServiceInterface {
 
     @Override
     public void receiveDocuments() {
-//        System.out.print("?");
+        System.out.print("?");
         try {
             UnconfirmedInboundDocuments unconfirmedInboundDocuments = scradaWebClient
                     .get()
@@ -208,8 +215,10 @@ public class ScradaService implements AccessPointServiceInterface {
                 );
             }
         } catch (WebClientResponseException e) { // HTTP error (non-2xx)
+            log.error("Scrada inbound API error {} {}: {}", e.getRawStatusCode(), e.getStatusText(), e.getResponseBodyAsString(), e);
             throw new RuntimeException("Scrada API error: " + e.getStatusCode(), e);
         } catch (Exception e) { // timeouts, connection issues, deserialization errors, etc.
+            log.error("Scrada inbound API call error {}", e.toString(), e);
             throw new RuntimeException("Failed to call Scrada API", e);
         }
     }

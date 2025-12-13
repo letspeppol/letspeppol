@@ -52,7 +52,7 @@ public class Document {
     @JoinColumn(name = "company_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_document_company"))
     private Company company; //Owner of this database record, should match ownerPeppolId by Peppol ID
 
-    @CreationTimestamp(source = SourceType.DB)
+    @CreationTimestamp
     private Instant createdOn; //Useful for keeping track of creations, different from createdOn at Proxy
 
     private Instant draftedOn; //Updating last timestamp draft was still draft, null is no longer draft
@@ -124,7 +124,7 @@ public class Document {
         this.processedStatus = processedStatus;
         this.ubl             = ubl;
 //        this.company         = company;
-//        this.createdOn       = createdOn;
+        this.createdOn       = Instant.now(); //createdOn;
         this.draftedOn       = draftedOn;
         this.readOn          = readOn;
         this.paidOn          = paidOn;

@@ -49,7 +49,7 @@ public class PartnerService {
                 partnerDto.registeredOffice().countryCode()
         );
         partner.setCompany(company);
-        partnerRepository.save(partner);
+        partner = partnerRepository.save(partner);
         partnerCreateCounter.increment();
         return PartnerMapper.toDto(partner);
     }
@@ -69,7 +69,7 @@ public class PartnerService {
         partner.getRegisteredOffice().setPostalCode(partnerDto.registeredOffice().postalCode());
         partner.getRegisteredOffice().setStreet(partnerDto.registeredOffice().street());
         partner.getRegisteredOffice().setCountryCode(partnerDto.registeredOffice().countryCode());
-        partnerRepository.save(partner);
+        partner = partnerRepository.save(partner);
         return PartnerMapper.toDto(partner);
     }
 

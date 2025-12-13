@@ -37,7 +37,7 @@ public class UblDocumentService {
 
     private Instant calculateSchedule(UblDocumentDto ublDocumentDto) {
         //TODO : find number that are scheduled on that moment
-        return ublDocumentDto.scheduledOn();
+        return ublDocumentDto.scheduledOn() == null ? Instant.now() : ublDocumentDto.scheduledOn();
     }
 
     public void sendDueOutgoing() {
@@ -107,7 +107,7 @@ public class UblDocumentService {
                 DocumentDirection.OUTGOING, //user can not overwrite this value : ublDocumentDto.direction(),
                 ublDocumentDto.ownerPeppolId(),
                 ublDocumentDto.partnerPeppolId(),
-                null, //TODO : would we want to listen to external createdOn : ublDocumentDto.createdOn(),
+                Instant.now(), //setting manual because we need this value to return and @Transactional will postpone it and the return dto has null
                 calculateSchedule(ublDocumentDto),
                 null,
                 null,
@@ -118,7 +118,7 @@ public class UblDocumentService {
                 null,
                 null
         );
-        ublDocumentRepository.save(ublDocument); //This is needed as it is a new
+        ublDocument = ublDocumentRepository.save(ublDocument); //This is needed as it is a new
         backupService.backupFile(ublDocument);
         return UblDocumentMapper.toDto(ublDocument);
     }
@@ -136,7 +136,7 @@ public class UblDocumentService {
         } else if (ublDocument.getDownloadCount() < 0) {
             ublDocument.setDownloadCount(0);
         }
-        // ublDocumentRepository.save(ublDocument); //This can be remove due to @Transactional
+        // ublDocument = ublDocumentRepository.save(ublDocument); //This can be remove due to @Transactional
         backupService.backupFile(ublDocument);
         return UblDocumentMapper.toDto(ublDocument);
     }
@@ -154,7 +154,7 @@ public class UblDocumentService {
             ublDocument.setDownloadCount(0);
             backupService.clearBackupFile(ublDocument);
         }
-        // ublDocumentRepository.save(ublDocument); //This can be remove due to @Transactional
+        // ublDocument = ublDocumentRepository.save(ublDocument); //This can be remove due to @Transactional
     }
 
     public void delivered(UUID id, String status) {
@@ -170,7 +170,7 @@ public class UblDocumentService {
             ublDocument.setDownloadCount(0);
             backupService.clearBackupFile(ublDocument);
         }
-        // ublDocumentRepository.save(ublDocument); //This can be remove due to @Transactional
+        // ublDocument = ublDocumentRepository.save(ublDocument); //This can be remove due to @Transactional
     }
 
     public UblDocumentDto reschedule(UUID id, UblDocumentDto ublDocumentDto) {
@@ -183,7 +183,7 @@ public class UblDocumentService {
             ublDocument.setScheduledOn(calculatedSchedule);
         }
         documentRescheduleCounter.increment();
-        // ublDocumentRepository.save(ublDocument); //This can be remove due to @Transactional
+        // ublDocument = ublDocumentRepository.save(ublDocument); //This can be remove due to @Transactional
         return UblDocumentMapper.toDto(ublDocument);
     }
 
@@ -198,7 +198,7 @@ public class UblDocumentService {
             ublDocument.setDownloadCount(0);
             backupService.clearBackupFile(ublDocument);
         }
-        // ublDocumentRepository.save(ublDocument); //This can be remove due to @Transactional
+        // ublDocument = ublDocumentRepository.save(ublDocument); //This can be remove due to @Transactional
     }
 
     public void createAsReceived(String senderPeppolId, String receiverPeppolId, String ubl, AccessPoint accessPoint, String accessPointId, Runnable afterCommit) {
@@ -211,7 +211,7 @@ public class UblDocumentService {
                 DocumentDirection.INCOMING, //AP can not overwrite this value : ublDocumentDto.direction(),
                 receiverPeppolId,
                 senderPeppolId,
-                null, //TODO : would we want to listen to external createdOn : ublDocumentDto.createdOn(),
+                Instant.now(), //setting manual because we need this value to return and @Transactional will postpone it and the return dto has null
                 null,
                 Instant.now(),
                 null,
@@ -252,7 +252,7 @@ public class UblDocumentService {
                 ublDocument.setUbl(null);
                 backupService.clearBackupFile(ublDocument);
             }
-            // ublDocumentRepository.save(ublDocument); //This can be remove due to @Transactional
+            // ublDocument = ublDocumentRepository.save(ublDocument); //This can be remove due to @Transactional
         }
     }
 
