@@ -49,7 +49,7 @@ public class DocumentService {
     private final Counter documentSendCounter;
     private final Counter documentPaidCounter;
 
-    private UblDto readUBL(String ublXml, String peppolId) {
+    private UblDto readUBL(DocumentDirection documentDirection, String ublXml, String peppolId) {
         if (ublXml == null || ublXml.isBlank()) {
             throw new RuntimeException("Missing UBL content"); //TODO : use proper exceptions
         }
@@ -58,7 +58,10 @@ public class DocumentService {
         }
         try {
             UblDto ublDto = UblParser.parse(ublXml);
-            if (!peppolId.equals(ublDto.senderPeppolId())) {
+            if (documentDirection == DocumentDirection.OUTGOING && !peppolId.equals(ublDto.senderPeppolId())) {
+                throw new SecurityException(AppErrorCodes.PEPPOL_ID_MISMATCH);
+            }
+            if (documentDirection == DocumentDirection.INCOMING && !peppolId.equals(ublDto.receiverPeppolId())) {
                 throw new SecurityException(AppErrorCodes.PEPPOL_ID_MISMATCH);
             }
             return ublDto;
@@ -98,9 +101,15 @@ public class DocumentService {
         return DocumentMapper.toDto(document);
     }
 
+    public void synchronize(String peppolId, Jwt jwt) {
+        Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new NotFoundException("Company does not exist")); //TODO : does it make sense to throw error ?
+//        company.getLastDocumentSyncAt()
+        synchronizeNewDocuments(jwt);
+    }
+
     public DocumentDto createFromUbl(String peppolId, String ublXml, boolean draft, Instant schedule, Jwt jwt) {
         Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new NotFoundException("Company does not exist"));
-        UblDto ublDto = readUBL(ublXml, peppolId);
+        UblDto ublDto = readUBL(DocumentDirection.OUTGOING, ublXml, peppolId);
         Document document = new Document(
                 null, //Hibernate generates UUID
                 DocumentDirection.OUTGOING,
@@ -139,7 +148,7 @@ public class DocumentService {
 
     public void create(UblDocumentDto ublDocumentDto) {
         Company company = companyRepository.findByPeppolId(ublDocumentDto.ownerPeppolId()).orElseThrow(() -> new NotFoundException("Company does not exist"));
-        UblDto ublDto = readUBL(ublDocumentDto.ubl(), ublDocumentDto.ownerPeppolId());
+        UblDto ublDto = readUBL(ublDocumentDto.direction(), ublDocumentDto.ubl(), ublDocumentDto.ownerPeppolId());
         Document document = new Document(
                 ublDocumentDto.id(),
                 ublDocumentDto.direction(),
@@ -181,7 +190,7 @@ public class DocumentService {
         if (document.getProcessedOn() != null) {
             throw new ConflictException("Document is already processed"); //TODO : port to 409 Conflict ?
         }
-        UblDto ublDto = readUBL(ublXml, peppolId);
+        UblDto ublDto = readUBL(DocumentDirection.OUTGOING, ublXml, peppolId);
         document.setPartnerPeppolId(ublDto.receiverPeppolId());
         document.setScheduledOn(schedule);
         document.setUbl(ublXml);

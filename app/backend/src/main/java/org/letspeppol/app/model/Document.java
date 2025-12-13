@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.*;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
+import org.springframework.data.domain.Persistable;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Currency;
@@ -19,12 +20,12 @@ import static org.hibernate.type.SqlTypes.VARCHAR;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Document {
+public class Document implements Persistable<UUID> {
 
     ///EXTERNAL INFORMATION
 
     @Id
-    @UuidGenerator //TODO : look into (style = UuidGenerator.Style.TIME) // time-based UUID (v1-style)
+//    @UuidGenerator //TODO : look into (style = UuidGenerator.Style.TIME) // time-based UUID (v1-style)
     private UUID id; //Unique identifier used for communication with proxy
 
     @Enumerated(EnumType.STRING)
@@ -89,6 +90,12 @@ public class Document {
 
     private String paymentTerms; //When there is no due date, the payment terms are used for overview
 
+    @Override
+    @Transient
+    public boolean isNew() {
+        return createdOn == null; //Only insert when createdOn is null
+    }
+
     public Document(
             UUID id,
             DocumentDirection direction,
@@ -114,7 +121,7 @@ public class Document {
             Instant issueDate,
             Instant dueDate,
             String paymentTerms) {
-        this.id              = id;
+        this.id              = id == null ? UUID.randomUUID() : id;
         this.direction       = direction;
         this.ownerPeppolId   = ownerPeppolId;
         this.partnerPeppolId = partnerPeppolId;
