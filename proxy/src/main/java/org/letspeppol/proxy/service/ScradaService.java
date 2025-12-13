@@ -10,9 +10,7 @@ import org.letspeppol.proxy.dto.StatusReport;
 import org.letspeppol.proxy.dto.scrada.*;
 import org.letspeppol.proxy.model.AccessPoint;
 import org.letspeppol.proxy.model.UblDocument;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,9 +33,7 @@ public class ScradaService implements AccessPointServiceInterface {
     public static final String PROCESS_SCHEME = "cenbii-procid-ubl";
     public static final String PROCESS_VALUE = "urn:fdc:peppol.eu:2017:poacc:billing:01:1.0";
 
-    @Lazy
-    @Autowired
-    private UblDocumentService ublDocumentService; //TODO : Is it possible to not have a circular dependency
+    private final UblDocumentReceiverService ublDocumentReceiverService;
     @Qualifier("scradaWebClient")
     private final WebClient scradaWebClient;
     private final Counter registerCounter;
@@ -232,7 +228,7 @@ public class ScradaService implements AccessPointServiceInterface {
                         .blockOptional()
                         .orElseThrow(() -> new IllegalStateException("Empty response from Scrada get inbound document"));
 
-                ublDocumentService.createAsReceived(
+                ublDocumentReceiverService.createAsReceived(
                         inboundDocument.peppolSenderID(),
                         inboundDocument.peppolReceiverID(),
                         ubl,

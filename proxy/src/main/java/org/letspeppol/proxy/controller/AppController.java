@@ -6,9 +6,7 @@ import org.letspeppol.proxy.dto.PeppolParties;
 import org.letspeppol.proxy.dto.UblDocumentDto;
 import org.letspeppol.proxy.exception.SecurityException;
 import org.letspeppol.proxy.model.AccessPoint;
-import org.letspeppol.proxy.service.RegistryService;
-import org.letspeppol.proxy.service.UblDocumentService;
-import org.letspeppol.proxy.service.ValidationService;
+import org.letspeppol.proxy.service.*;
 import org.letspeppol.proxy.util.JwtUtil;
 import org.letspeppol.proxy.util.UblParser;
 import org.springframework.http.HttpStatus;
@@ -32,6 +30,8 @@ public class AppController {
     public static final String DEFAULT_SIZE = "10";
 
     private final UblDocumentService ublDocumentService;
+    private final UblDocumentSenderService ublDocumentSenderService;
+    private final UblDocumentReceiverService ublDocumentReceiverService;
     private final RegistryService registryService;
     private final ValidationService validationService;
 
@@ -66,39 +66,39 @@ public class AppController {
     @PostMapping()
     public ResponseEntity<UblDocumentDto> createToSend(@AuthenticationPrincipal Jwt jwt, @RequestBody UblDocumentDto ublDocumentDto, @RequestParam(defaultValue = "false") boolean noArchive) {
         validateSender(jwt, ublDocumentDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ublDocumentService.createToSend(ublDocumentDto, noArchive));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ublDocumentSenderService.createToSend(ublDocumentDto, noArchive));
     }
 
     @PutMapping("{id}")
     public ResponseEntity<UblDocumentDto> update(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestBody UblDocumentDto ublDocumentDto, @RequestParam(defaultValue = "false") boolean noArchive) {
         validateSender(jwt, ublDocumentDto);
-        return ResponseEntity.status(HttpStatus.OK).body(ublDocumentService.update(id, ublDocumentDto, noArchive));
+        return ResponseEntity.status(HttpStatus.OK).body(ublDocumentSenderService.update(id, ublDocumentDto, noArchive));
     }
 
     @PutMapping("{id}/send")
     public ResponseEntity<UblDocumentDto> reschedule(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestBody UblDocumentDto ublDocumentDto) {
         validateSender(jwt, ublDocumentDto);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(ublDocumentService.reschedule(id, ublDocumentDto));
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(ublDocumentSenderService.reschedule(id, ublDocumentDto));
     }
 
     @PutMapping("{id}/downloaded")
     public ResponseEntity<Object> downloaded(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestParam(defaultValue = "false") boolean noArchive) {
         String peppolId = JwtUtil.getPeppolId(jwt);
-        ublDocumentService.downloaded(List.of(id), peppolId, noArchive);
+        ublDocumentReceiverService.downloaded(List.of(id), peppolId, noArchive);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PutMapping("downloaded")
     public ResponseEntity<Object> downloadedBatch(@AuthenticationPrincipal Jwt jwt, @RequestBody List<UUID> ids, @RequestParam(defaultValue = "false") boolean noArchive) {
         String peppolId = JwtUtil.getPeppolId(jwt);
-        ublDocumentService.downloaded(ids, peppolId, noArchive);
+        ublDocumentReceiverService.downloaded(ids, peppolId, noArchive);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<Object> delete(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestParam(defaultValue = "false") boolean noArchive) {
         String peppolId = JwtUtil.getPeppolId(jwt);
-        ublDocumentService.cancel(id, peppolId, noArchive);
+        ublDocumentSenderService.cancel(id, peppolId, noArchive);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
