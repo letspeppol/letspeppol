@@ -2,6 +2,7 @@ package org.letspeppol.proxy.service;
 
 import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
+import org.letspeppol.proxy.dto.StatusReport;
 import org.letspeppol.proxy.dto.UblDocumentDto;
 import org.letspeppol.proxy.exception.BadRequestException;
 import org.letspeppol.proxy.exception.DuplicateRequestException;
@@ -63,13 +64,13 @@ public class UblDocumentService {
         AccessPoint accessPoint = registryService.getAccessPoint(ublDocument.getOwnerPeppolId());
         if (accessPoint == AccessPoint.NONE) {
             pickedUp(ublDocument, accessPoint, null);
-            delivered(ublDocument, "PeppolId is not registered to send");
+            delivered(ublDocument, new StatusReport(false, "Proxy error : PeppolId is not registered to send"));
             return;
         }
         AccessPointServiceInterface service = accessPointServiceRegistry.get(accessPoint);
         if (service == null) {
             pickedUp(ublDocument, accessPoint, null);
-            delivered(ublDocument, "Peppol Access Point not active");
+            delivered(ublDocument, new StatusReport(false, "Proxy error : Peppol Access Point not active"));
             return;
         }
         String accessPointId = service.sendDocument(ublDocument);
@@ -80,23 +81,39 @@ public class UblDocumentService {
         pickedUp(ublDocument, accessPoint, accessPointId);
     }
 
+    public void synchronizeOutgoingDocuments() {
+        List<UblDocument> ublDocuments = ublDocumentRepository.findAllByDirectionAndProcessedOnIsNullAndAccessPointIsNotNull(
+                DocumentDirection.OUTGOING,
+                PageRequest.of(
+                        0,
+                        60, //TODO : make tweakable ?
+                        Sort.by("updatedOn").ascending()
+                )
+        );
+        for (UblDocument ublDocument : ublDocuments) {
+            //TODO : logging warning when updatedOn > threshold ?
+            synchronizeWithAccessPoint(ublDocument);
+            System.out.print("-"); //TODO : monitoring ?
+        }
+        System.out.print(","); //TODO : monitoring ?
+    }
+
     private void synchronizeWithAccessPoint(UblDocument ublDocument) {
         AccessPoint accessPoint = registryService.getAccessPoint(ublDocument.getOwnerPeppolId());
         if (accessPoint == AccessPoint.NONE) {
-            delivered(ublDocument, "PeppolId is no longer registered to synchronize");
+            delivered(ublDocument, new StatusReport(false, "Proxy error : PeppolId is no longer registered to synchronize"));
             return;
         }
         AccessPointServiceInterface service = accessPointServiceRegistry.get(accessPoint);
         if (service == null) {
-            delivered(ublDocument, "Peppol Access Point no longer active");
+            delivered(ublDocument, new StatusReport(false, "Proxy error : Peppol Access Point no longer active"));
             return;
         }
-        String accessPointId = service.getStatus(ublDocument);
-        if (accessPointId == null) {
-            ublDocument.setScheduledOn(ublDocument.getScheduledOn().plus(1, ChronoUnit.HOURS)); //Postpone 1 hour to try again
+        StatusReport statusReport = service.getStatus(ublDocument);
+        if (statusReport == null) {
             return;
         }
-        pickedUp(ublDocument, accessPoint, accessPointId);
+        delivered(ublDocument, statusReport);
     }
 
     public List<UblDocumentDto> findAllNew(String ownerPeppolId, int limit) {
@@ -160,11 +177,6 @@ public class UblDocumentService {
         return UblDocumentMapper.toDto(ublDocument);
     }
 
-    public void pickedUp(UUID id, AccessPoint accessPoint, String accessPointId) {
-        UblDocument ublDocument = ublDocumentRepository.findById(id).orElseThrow(() -> new NotFoundException("UblDocument " + id + " does not exist"));
-        pickedUp(ublDocument, accessPoint, accessPointId);
-    }
-
     public void pickedUp(UblDocument ublDocument, AccessPoint accessPoint, String accessPointId) {
         ublDocument.setAccessPoint(accessPoint);
         ublDocument.setAccessPointId(accessPointId);
@@ -176,14 +188,9 @@ public class UblDocumentService {
         // ublDocument = ublDocumentRepository.save(ublDocument); //This can be remove due to @Transactional
     }
 
-    public void delivered(UUID id, String status) {
-        UblDocument ublDocument = ublDocumentRepository.findById(id).orElseThrow(() -> new NotFoundException("UblDocument " + id + " does not exist"));
-        delivered(ublDocument, status);
-    }
-
-    public void delivered(UblDocument ublDocument, String status) {
+    public void delivered(UblDocument ublDocument, StatusReport statusReport) {
         ublDocument.setProcessedOn(Instant.now());
-        ublDocument.setProcessedStatus(status);
+        ublDocument.setProcessedStatus( statusReport.success() ? null : statusReport.statusMessage() );
         if (ublDocument.getDownloadCount() < 0) { //Set to No-Archive
             ublDocument.setUbl(null);
             ublDocument.setDownloadCount(0);

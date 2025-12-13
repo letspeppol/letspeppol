@@ -1,6 +1,7 @@
 package org.letspeppol.proxy.service;
 
 import org.letspeppol.proxy.dto.RegistrationRequest;
+import org.letspeppol.proxy.dto.StatusReport;
 import org.letspeppol.proxy.model.AccessPoint;
 import org.letspeppol.proxy.model.UblDocument;
 import java.util.Map;
@@ -15,7 +16,7 @@ public interface AccessPointServiceInterface {
 
     String sendDocument(UblDocument ublDocument);
 
-    String getStatus(UblDocument ublDocument);
+    StatusReport getStatus(UblDocument ublDocument);
 
     void updateStatus(String id, String status); //For webhooks
 

@@ -6,6 +6,7 @@ import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.proxy.dto.RegistrationRequest;
+import org.letspeppol.proxy.dto.StatusReport;
 import org.letspeppol.proxy.dto.scrada.*;
 import org.letspeppol.proxy.model.AccessPoint;
 import org.letspeppol.proxy.model.UblDocument;
@@ -167,7 +168,7 @@ public class ScradaService implements AccessPointServiceInterface {
 
     /// DOCS : [Scrada : Get outbound document status](https://www.scrada.be/api-documentation/#tag/Peppol-outbound/paths/~1v1~1company~1{companyID}~1peppol~1outbound~1document~1{documentID}~1info/get)
     @Override
-    public String getStatus(UblDocument ublDocument) {
+    public StatusReport getStatus(UblDocument ublDocument) {
         System.out.print("?");
         try {
             OutboundDocument outboundDocument = scradaWebClient
@@ -177,8 +178,15 @@ public class ScradaService implements AccessPointServiceInterface {
                     .bodyToMono(OutboundDocument.class)
                     .blockOptional()
                     .orElseThrow(() -> new IllegalStateException("Empty response from Scrada get unconfirmed inbound documents"));
-
-            return outboundDocument.status();
+            return switch (outboundDocument.status()) {
+                case "Created" -> null;
+                case "Processed" -> new StatusReport(true, null);
+                case "Retry" ->
+                    //TODO : log + outboundDocument.errorMessage() for reason
+                        null;
+                case "Error" -> new StatusReport(false, outboundDocument.status() + " : " + outboundDocument.errorMessage());
+                default -> new StatusReport(false, outboundDocument.status());
+            };
         } catch (WebClientResponseException e) { // HTTP error (non-2xx)
             log.error("Scrada outbound status API error {} {}: {}", e.getRawStatusCode(), e.getStatusText(), e.getResponseBodyAsString(), e);
             throw new RuntimeException("Scrada API error: " + e.getStatusCode(), e);

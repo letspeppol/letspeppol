@@ -1,6 +1,7 @@
 package org.letspeppol.proxy.repository;
 
 import org.letspeppol.proxy.model.UblDocument;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +20,8 @@ public interface UblDocumentRepository extends JpaRepository<UblDocument, UUID> 
     Slice<UblDocument> findAllByOwnerPeppolIdAndDownloadCountAndDirection(String ownerPeppolId, Integer downloadCount, DocumentDirection direction, Pageable pageable);
 
     List<UblDocument> findAllByDirectionAndScheduledOnBeforeAndAccessPointIsNull(DocumentDirection direction, Instant before, Pageable pageable);
+
+    List<UblDocument> findAllByDirectionAndProcessedOnIsNullAndAccessPointIsNotNull(DocumentDirection documentDirection, Pageable updatedOn);
 
     Optional<UblDocument> findByAccessPointId(String accessPointId);
 }

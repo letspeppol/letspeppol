@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
 import org.letspeppol.proxy.dto.RegistrationRequest;
+import org.letspeppol.proxy.dto.StatusReport;
 import org.letspeppol.proxy.dto.e_invoice.*;
 import org.letspeppol.proxy.model.AccessPoint;
 import org.letspeppol.proxy.model.UblDocument;
@@ -122,7 +123,7 @@ public class EInvoiceService implements AccessPointServiceInterface {
     }
 
     @Override
-    public String getStatus(UblDocument ublDocument) {
+    public StatusReport getStatus(UblDocument ublDocument) {
         return null;
     }
 
