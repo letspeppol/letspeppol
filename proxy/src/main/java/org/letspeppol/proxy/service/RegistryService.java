@@ -47,8 +47,7 @@ public class RegistryService {
             }
             registry.setAccessPoint(accessPoint);
         } catch (Exception e) {
-            //TODO : log !
-            registry.setAccessPoint(AccessPoint.NONE); //TODO : this line might not be needed
+            log.error("Failed to register {} at access point {}", registry.getPeppolId(), accessPoint);
         }
     }
 
@@ -61,11 +60,12 @@ public class RegistryService {
                     throw new BadRequestException("Peppol Access Point " + accessPoint + " is not active");
                 } else {
                     service.unregister(registry.getPeppolId(), registry.getVariables());
+                    log.info("Unregistered PeppolId {} at access point {}", registry.getPeppolId(), accessPoint);
                 }
             }
             registry.setAccessPoint(AccessPoint.NONE);
         } catch (Exception e) {
-            //TODO : log !
+            log.error("Failed to unregister {} at access point {}", registry.getPeppolId(), accessPoint);
         }
     }
 

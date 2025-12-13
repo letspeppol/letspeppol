@@ -1,6 +1,8 @@
 package org.letspeppol.proxy.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.letspeppol.proxy.dto.PeppolParties;
 import org.letspeppol.proxy.dto.UblDocumentDto;
 import org.letspeppol.proxy.exception.SecurityException;
 import org.letspeppol.proxy.model.AccessPoint;
@@ -9,6 +11,8 @@ import org.letspeppol.proxy.service.UblDocumentService;
 import org.letspeppol.proxy.service.ValidationService;
 import org.letspeppol.proxy.util.JwtUtil;
 import org.letspeppol.proxy.util.UblParser;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +23,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/sapi/document")
@@ -59,56 +64,72 @@ public class AppController {
     }
 
     @PostMapping()
-    public UblDocumentDto createToSend(@AuthenticationPrincipal Jwt jwt, @RequestBody UblDocumentDto ublDocumentDto, @RequestParam(defaultValue = "false") boolean noArchive) {
+    public ResponseEntity<UblDocumentDto> createToSend(@AuthenticationPrincipal Jwt jwt, @RequestBody UblDocumentDto ublDocumentDto, @RequestParam(defaultValue = "false") boolean noArchive) {
         validateSender(jwt, ublDocumentDto);
-        return ublDocumentService.createToSend(ublDocumentDto, noArchive); //TODO : maybe something like return ResponseEntity.status(HttpStatus.CREATED).body(dto); ?
+        return ResponseEntity.status(HttpStatus.CREATED).body(ublDocumentService.createToSend(ublDocumentDto, noArchive));
     }
 
     @PutMapping("{id}")
-    public UblDocumentDto update(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestBody UblDocumentDto ublDocumentDto, @RequestParam(defaultValue = "false") boolean noArchive) {
+    public ResponseEntity<UblDocumentDto> update(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestBody UblDocumentDto ublDocumentDto, @RequestParam(defaultValue = "false") boolean noArchive) {
         validateSender(jwt, ublDocumentDto);
-        return ublDocumentService.update(id, ublDocumentDto, noArchive);
+        return ResponseEntity.status(HttpStatus.OK).body(ublDocumentService.update(id, ublDocumentDto, noArchive));
     }
 
     @PutMapping("{id}/send")
-    public UblDocumentDto reschedule(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestBody UblDocumentDto ublDocumentDto) {
+    public ResponseEntity<UblDocumentDto> reschedule(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestBody UblDocumentDto ublDocumentDto) {
         validateSender(jwt, ublDocumentDto);
-        return ublDocumentService.reschedule(id, ublDocumentDto);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(ublDocumentService.reschedule(id, ublDocumentDto));
     }
 
     @PutMapping("{id}/downloaded")
-    public void downloaded(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestParam(defaultValue = "false") boolean noArchive) {
+    public ResponseEntity<Object> downloaded(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestParam(defaultValue = "false") boolean noArchive) {
         String peppolId = JwtUtil.getPeppolId(jwt);
         ublDocumentService.downloaded(List.of(id), peppolId, noArchive);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PutMapping("downloaded")
-    public void downloadedBatch(@AuthenticationPrincipal Jwt jwt, @RequestBody List<UUID> ids, @RequestParam(defaultValue = "false") boolean noArchive) {
+    public ResponseEntity<Object> downloadedBatch(@AuthenticationPrincipal Jwt jwt, @RequestBody List<UUID> ids, @RequestParam(defaultValue = "false") boolean noArchive) {
         String peppolId = JwtUtil.getPeppolId(jwt);
         ublDocumentService.downloaded(ids, peppolId, noArchive);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @DeleteMapping("{id}")
-    public void delete(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestParam(defaultValue = "false") boolean noArchive) {
+    public ResponseEntity<Object> delete(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestParam(defaultValue = "false") boolean noArchive) {
         String peppolId = JwtUtil.getPeppolId(jwt);
         ublDocumentService.cancel(id, peppolId, noArchive);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     private void validateSender(Jwt jwt, UblDocumentDto ublDocumentDto) throws SecurityException {
         String peppolId = JwtUtil.getPeppolId(jwt);
-        if (!ublDocumentDto.ownerPeppolId().equals(peppolId)) throw new SecurityException("Peppol ID not the owner"); //TODO : improve logging
+        if (!ublDocumentDto.ownerPeppolId().equals(peppolId)) {
+            log.error("Peppol ID {} not the owner {} of document {}", peppolId, ublDocumentDto.ownerPeppolId(), ublDocumentDto.id());
+            throw new SecurityException("Peppol ID not the owner");
+        }
         if (ublDocumentDto.ubl() == null || ublDocumentDto.ubl().isBlank()) {
-            throw new RuntimeException("Missing UBL content"); //TODO : use proper exceptions
+            log.error("Peppol ID {} sending empty UBL of document {}", peppolId, ublDocumentDto.id());
+            throw new RuntimeException("Missing UBL content");
         }
         if (!validationService.validateUblXml(ublDocumentDto.ubl()).isValid()) {
-            throw new RuntimeException("Invalid UBL content"); //TODO : use proper exceptions
+            log.error("Peppol ID {} sending invalid UBL of document {}", peppolId, ublDocumentDto.id());
+            throw new RuntimeException("Invalid UBL content");
         }
         try {
-            if (!UblParser.parsePeppolParties(ublDocumentDto.ubl()).sender().equals(peppolId)) throw new SecurityException("Peppol ID not the owner"); //TODO : improve logging
+            PeppolParties peppolParties = UblParser.parsePeppolParties(ublDocumentDto.ubl());
+            if (!peppolParties.sender().equals(peppolId)) {
+                log.error("Peppol ID {} not the sender {} of document {}", peppolId, peppolParties.sender(), ublDocumentDto.id());
+                throw new SecurityException("Peppol ID not the owner");
+            }
         } catch (ParserConfigurationException | IOException | SAXException | XPathExpressionException e) {
-            throw new RuntimeException(e); //TODO : improve logging
+            log.error("Peppol ID {} send bad data of document {}", peppolId, ublDocumentDto.id(), e);
+            throw new RuntimeException(e);
         }
-        if (registryService.getAccessPoint(peppolId) == AccessPoint.NONE) throw new SecurityException("Peppol ID not activated to send");
+        if (registryService.getAccessPoint(peppolId) == AccessPoint.NONE) {
+            log.error("Peppol ID {} not activated during send of document {}", peppolId, ublDocumentDto.id());
+            throw new SecurityException("Peppol ID not activated to send");
+        }
     }
 
 }
