@@ -4,13 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.letspeppol.proxy.dto.UblDocumentDto;
 import org.letspeppol.proxy.exception.NotFoundException;
 import org.letspeppol.proxy.mapper.UblDocumentMapper;
-import org.letspeppol.proxy.model.DocumentDirection;
 import org.letspeppol.proxy.repository.UblDocumentRepository;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -19,13 +15,6 @@ import java.util.UUID;
 public class UblDocumentService {
 
     private final UblDocumentRepository ublDocumentRepository;
-
-    public List<UblDocumentDto> findAllNew(String ownerPeppolId, int limit) {
-        var pageable = PageRequest.of(0, limit, Sort.by("createdOn").descending());
-        return ublDocumentRepository.findAllByOwnerPeppolIdAndDownloadCountAndDirection(ownerPeppolId, 0, DocumentDirection.INCOMING, pageable).stream()
-                .map(UblDocumentMapper::toDto)
-                .toList();
-    }
 
     //TODO : find all archived
 

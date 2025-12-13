@@ -1,11 +1,13 @@
 package org.letspeppol.proxy.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.proxy.dto.StatusReport;
 import org.letspeppol.proxy.model.AccessPoint;
 import org.letspeppol.proxy.model.DocumentDirection;
 import org.letspeppol.proxy.model.UblDocument;
 import org.letspeppol.proxy.repository.UblDocumentRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -13,7 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import static java.lang.Math.max;
 
+@Slf4j
 @RequiredArgsConstructor
 @Transactional
 @Service
@@ -23,6 +27,12 @@ public class UblDocumentSchedulerService {
     private final RegistryService registryService;
     private final AccessPointServiceRegistry accessPointServiceRegistry;
     private final BackupService backupService;
+    private final BalanceService balanceService;
+
+    @Value("${scheduler.send.slow-down-factor:2}")
+    private int sendSlowDownFactor;
+    @Value("${scheduler.synchronize.limit-per-interval:60}")
+    private int synchronizeLimitPerInterval;
 
     public void sendDueOutgoing() {
         List<UblDocument> ublDocuments = ublDocumentRepository.findAllByDirectionAndScheduledOnBeforeAndAccessPointIsNull(
@@ -30,7 +40,7 @@ public class UblDocumentSchedulerService {
                 Instant.now(),
                 PageRequest.of(
                         0,
-                        1,
+                        max((int) ( balanceService.get() / sendSlowDownFactor ), 1), //Will process more as long as the balance is positive, slowing down by halving per second
                         Sort.by("scheduledOn").ascending().and(
                                 Sort.by("createdOn").ascending()
                         )
@@ -61,6 +71,7 @@ public class UblDocumentSchedulerService {
             ublDocument.setScheduledOn(ublDocument.getScheduledOn().plus(1, ChronoUnit.HOURS)); //Postpone 1 hour to try again
             return;
         }
+        log.info("Successful send document {} to Peppol Access Point {} | balance = {} ", ublDocument.getId(), accessPoint, balanceService.decrement());
         pickedUp(ublDocument, accessPoint, accessPointId);
     }
 
@@ -69,12 +80,14 @@ public class UblDocumentSchedulerService {
                 DocumentDirection.OUTGOING,
                 PageRequest.of(
                         0,
-                        60, //TODO : make tweakable ?
+                        synchronizeLimitPerInterval,
                         Sort.by("updatedOn").ascending()
                 )
         );
         for (UblDocument ublDocument : ublDocuments) {
-            //TODO : logging warning when updatedOn > threshold ?
+            if (ublDocument.getUpdatedOn().isAfter(Instant.now().plus(1, ChronoUnit.DAYS))) {
+                log.warn("Document {} send to Peppol Access Point {} is still not processed since {}", ublDocument.getId(), ublDocument.getAccessPoint(), ublDocument.getUpdatedOn());
+            }
             synchronizeWithAccessPoint(ublDocument);
             System.out.print("-"); //TODO : monitoring ?
         }

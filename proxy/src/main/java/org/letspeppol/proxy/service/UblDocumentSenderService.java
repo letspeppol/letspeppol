@@ -15,6 +15,10 @@ import org.letspeppol.proxy.util.HashUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -22,8 +26,13 @@ import java.util.UUID;
 @Service
 public class UblDocumentSenderService {
 
+    private static final ZoneId ZONE = ZoneId.of("Europe/Brussels");
+    private static final int MAXIMUM_RATE_PER_DAY = 4;
+    private static final int MAXIMUM_RATE_BETWEEN_PARTIES = 2;
+
     private final UblDocumentRepository ublDocumentRepository;
     private final BackupService backupService;
+    private final BalanceService balanceService;
     private final Counter documentRescheduleCounter;
 
     public UblDocumentDto createToSend(UblDocumentDto ublDocumentDto, boolean noArchive) {
@@ -32,10 +41,10 @@ public class UblDocumentSenderService {
         if (ublDocumentRepository.findById(uuid).isPresent()) {
             throw new DuplicateRequestException("UblDocument " + uuid + " is already created, please use the update call");
         }
-        if (!ublDocumentRepository.findAllByHash(hash).isEmpty()) { //TODO : should we add timeframe based on ublDocumentDto.createdOn() ?
+        if (!ublDocumentRepository.findAllByHash(hash).isEmpty()) {
             throw new DuplicateRequestException("UblDocument seems to already send with hash " + hash + " content might be not unique");
         }
-        UblDocument ublDocument = new UblDocument( //TODO : do we set default values here ?
+        UblDocument ublDocument = new UblDocument(
                 uuid, //App can generate the uuid, because they might have used this for drafts
                 DocumentDirection.OUTGOING, //user can not overwrite this value : ublDocumentDto.direction(),
                 ublDocumentDto.type(),
@@ -104,8 +113,40 @@ public class UblDocumentSenderService {
     }
 
     private Instant calculateSchedule(UblDocumentDto ublDocumentDto) {
-        //TODO : find number that are scheduled on that moment
-        return ublDocumentDto.scheduledOn() == null ? Instant.now() : ublDocumentDto.scheduledOn();
+        if (balanceService.isPositive() && (ublDocumentDto.scheduledOn() == null || ublDocumentDto.scheduledOn().isBefore(Instant.now().plus(1, ChronoUnit.HOURS)))) {
+            return Instant.now();
+        }
+        LocalDate day = Optional.ofNullable(ublDocumentDto.scheduledOn())
+                .orElseGet(Instant::now)
+                .atZone(ZONE)
+                .toLocalDate();
+        if (day.isBefore(LocalDate.now(ZONE).plusDays(1))) {
+            day = day.plusDays(1);
+        }
+        while (overMaximumRatePerDay(ublDocumentDto.ownerPeppolId(), day) ||
+                overMaximumRateBetweenParties(ublDocumentDto.ownerPeppolId(), ublDocumentDto.partnerPeppolId(), day)) {
+            day = day.plusDays(1);
+        }
+        return day.atStartOfDay(ZONE).toInstant();
+    }
+
+    private boolean overMaximumRatePerDay(String ownerPeppolId, LocalDate day) {
+        return ublDocumentRepository.countByOwnerPeppolIdAndDirectionAndProcessedOnIsNullAndAccessPointIsNullAndScheduledOnBetween(
+                ownerPeppolId,
+                DocumentDirection.OUTGOING,
+                day.atStartOfDay(ZONE).toInstant(),
+                day.plusDays(1).atStartOfDay(ZONE).toInstant()
+        ) >= MAXIMUM_RATE_PER_DAY;
+    }
+
+    private boolean overMaximumRateBetweenParties(String ownerPeppolId, String partnerPeppolId, LocalDate day) {
+        return ublDocumentRepository.countByOwnerPeppolIdAndPartnerPeppolIdAndDirectionAndProcessedOnIsNullAndAccessPointIsNullAndScheduledOnBetween(
+                ownerPeppolId,
+                partnerPeppolId,
+                DocumentDirection.OUTGOING,
+                day.atStartOfDay(ZONE).toInstant(),
+                day.plusDays(1).atStartOfDay(ZONE).toInstant()
+        ) >= MAXIMUM_RATE_BETWEEN_PARTIES;
     }
 
 }

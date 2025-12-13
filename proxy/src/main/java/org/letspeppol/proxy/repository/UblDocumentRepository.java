@@ -24,4 +24,19 @@ public interface UblDocumentRepository extends JpaRepository<UblDocument, UUID> 
     List<UblDocument> findAllByDirectionAndProcessedOnIsNullAndAccessPointIsNotNull(DocumentDirection documentDirection, Pageable updatedOn);
 
     Optional<UblDocument> findByAccessPointId(String accessPointId);
+
+    long countByOwnerPeppolIdAndDirectionAndProcessedOnIsNullAndAccessPointIsNullAndScheduledOnBetween(
+            String ownerPeppolId,
+            DocumentDirection direction,
+            Instant startInclusive,
+            Instant endExclusive
+    );
+
+    long countByOwnerPeppolIdAndPartnerPeppolIdAndDirectionAndProcessedOnIsNullAndAccessPointIsNullAndScheduledOnBetween(
+            String ownerPeppolId,
+            String partnerPeppolId,
+            DocumentDirection direction,
+            Instant startInclusive,
+            Instant endExclusive
+    );
 }

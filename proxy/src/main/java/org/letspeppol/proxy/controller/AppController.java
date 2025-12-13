@@ -38,7 +38,7 @@ public class AppController {
     @GetMapping()
     public List<UblDocumentDto> getAllNew(@AuthenticationPrincipal Jwt jwt, @RequestParam(defaultValue = DEFAULT_SIZE) int size) {
         String peppolId = JwtUtil.getPeppolId(jwt);
-        return ublDocumentService.findAllNew(peppolId, size);
+        return ublDocumentReceiverService.findAllNew(peppolId, size);
     }
 
     /* *
