@@ -78,7 +78,7 @@
     "login-failed" : "Inloggen mislukt",
     "registration-company-not-found": "Bedrijf niet gevonden",
     "registration-company-already-registered": "Bedrijf al geregistreerd",
-    "registration-company-already-registered-on-peppol" : "Bedrijf is al geregistreerd op Peppol",
+    "registration-company-already-registered-on-peppol" : "U bent al geregistreerd op Peppol. We kunnen u pas activeren nadat u zich bij de andere Peppol-provider hebt uitgeschreven.",
     "not-peppol-active" : "U bent momenteel niet geregistreerd op Peppol",
     "not-peppol-active-action" : "Los dit nu op"
   },
