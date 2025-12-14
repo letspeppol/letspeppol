@@ -4,8 +4,12 @@ export function normalizeXml(xml: string) {
   return xml
     // remove stray spaces after '=' before quotes
     .replace(/=\s+"/g, '="')
+    // normalize 123.0 -> 123
     .replace(/>(\d+)\.0</g, '>$1<')
+    // collapse all whitespace to a single space
     .replace(/\s+/g, ' ')
+    // remove any whitespace directly between closing and opening tags
+    .replace(/>\s+</g, '><')
     .trim();
 }
 
