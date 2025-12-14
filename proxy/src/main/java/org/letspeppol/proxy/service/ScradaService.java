@@ -111,12 +111,16 @@ public class ScradaService implements AccessPointServiceInterface {
 //            throw new IllegalStateException("Cannot unregister an empty uuid");
 //        }
         try {
-            scradaWebClient
+            String uuid = scradaWebClient
                 .delete()
                 .uri("/deregister/{participantIdentifierScheme}/{participantIdentifierValue}", PARTICIPANT_SCHEME, peppolId)
                 .retrieve()
-                .toBodilessEntity()
-                .block();
+                .bodyToMono(String.class)
+                .blockOptional()
+                .orElseThrow(() -> new IllegalStateException("Empty response from Scrada register company"));
+            if (!uuid.equals(variables.get("uuid"))) {
+                log.warn("Scrada unregister API for account {} gave different uuid {} than during registration {}", peppolId, uuid, variables.get("uuid"));
+            }
             unregisterCounter.increment();
         } catch (WebClientResponseException e) { // HTTP error (non-2xx)
             log.error("Scrada unregister API error {} {}: {}", e.getRawStatusCode(), e.getStatusText(), e.getResponseBodyAsString(), e);

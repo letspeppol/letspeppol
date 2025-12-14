@@ -90,6 +90,7 @@ public class CompanyService {
         }
         String token = jwtService.generateInternalToken(company.getPeppolId(), company.isPeppolActive());
         boolean peppolActive = proxyService.registerCompany(token, company.getName());
+        log.info("Registering company for {} has Peppol active = {}", company.getPeppolId(), peppolActive);
         company.setRegisteredOnPeppol(peppolActive);
         companyRepository.save(company);
         return peppolActive;
@@ -103,6 +104,7 @@ public class CompanyService {
     public boolean unregisterCompany(Company company) {
         String token = jwtService.generateInternalToken(company.getPeppolId(), company.isPeppolActive());
         boolean peppolActive = proxyService.unregisterCompany(token);
+        log.info("Unregistering company for {} has Peppol active = {}", company.getPeppolId(), peppolActive);
         company.setRegisteredOnPeppol(peppolActive);
         companyRepository.save(company);
         if (!peppolActive) {

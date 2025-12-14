@@ -73,7 +73,9 @@ export class Account {
     async registerOnPeppol() {
         try {
             this.company.peppolActive = await this.registrationService.registerCompany()
+            localStorage.setItem('peppolActive', this.company.peppolActive);
             this.ea.publish('alert', {alertType: AlertType.Success, text: "Activated company on Peppol"});
+            window.location.reload();
         } catch {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to activate company on Peppol"});
         }
@@ -92,7 +94,9 @@ export class Account {
     async unregisterFromPeppol() {
         try {
             this.company.peppolActive = await this.registrationService.unregisterCompany()
+            localStorage.setItem('peppolActive', this.company.peppolActive);
             this.ea.publish('alert', {alertType: AlertType.Success, text: "Removed company from Peppol"});
+            window.location.reload();
         } catch {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to remove company from Peppol"});
         }

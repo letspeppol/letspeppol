@@ -91,9 +91,9 @@ export class RegistrationService {
             console.log("Was already unregistered");
             return false;
         }
-        const token = await response.json();
-        if (token) {
-            this.loginService.updateToken(token);
+        const token = await response.text();
+        if (response.ok && token?.trim()) {
+            this.loginService.updateToken(token.trim());
             return false;
         }
         return true;
@@ -105,9 +105,9 @@ export class RegistrationService {
             console.log("Was already registered");
             return true;
         }
-        const token = await response.json();
-        if (token) {
-            this.loginService.updateToken(token);
+        const token = await response.text();
+        if (response.ok && token?.trim()) {
+            this.loginService.updateToken(token.trim());
             return true;
         }
         return false;
