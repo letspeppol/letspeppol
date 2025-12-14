@@ -66,7 +66,7 @@ public class Document implements Persistable<UUID> {
 
     private Instant paidOn; //Useful for keeping track of paid status, flagged by user
 
-    //TODO : private Instant accountantOn; //Useful for keeping track of accountant status, action executed by user, send to company.accountantEmail or null when not send yet/successful
+// TODO    private Instant accountantOn; //Useful for keeping track of accountant status, action executed by user, send to company.accountantEmail or null when not send yet/successful
 
     ///UBL INFORMATION
 

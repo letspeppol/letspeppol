@@ -14,6 +14,7 @@ import org.letspeppol.app.repository.DocumentRepository;
 import org.letspeppol.app.repository.DocumentSpecifications;
 import org.letspeppol.app.util.UblParser;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
@@ -29,6 +30,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -37,6 +40,8 @@ import java.util.UUID;
 @Transactional
 @Service
 public class DocumentService {
+
+    static final ZoneId ZONE = ZoneId.of("Europe/Brussels");
 
     private final CompanyRepository companyRepository;
     private final DocumentRepository documentRepository;
@@ -48,6 +53,9 @@ public class DocumentService {
     private final Counter documentCreateCounter;
     private final Counter documentSendCounter;
     private final Counter documentPaidCounter;
+
+    @Value("${proxy.synchronize.delay-ms:60000}")
+    private long synchronizeDelay;
 
     private UblDto readUBL(DocumentDirection documentDirection, String ublXml, String peppolId) {
         if (ublXml == null || ublXml.isBlank()) {
@@ -102,9 +110,16 @@ public class DocumentService {
     }
 
     public void synchronize(String peppolId, Jwt jwt) {
-        Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new NotFoundException("Company does not exist")); //TODO : does it make sense to throw error ?
-//        company.getLastDocumentSyncAt()
-        synchronizeNewDocuments(jwt);
+        companyRepository.findByPeppolId(peppolId).ifPresent(company -> {
+            if (Instant.now().minusMillis(synchronizeDelay).isAfter(company.getLastDocumentSyncAt())) {
+                company.setLastDocumentSyncAt(Instant.now().plusSeconds(60*60)); //With fast requests or slow resolves, make to not create new threads that hang
+                companyRepository.saveAndFlush(company);
+                synchronizeNewDocuments(peppolId, jwt);
+                synchronizeDocuments(peppolId, jwt);
+                company.setLastDocumentSyncAt(Instant.now()); //Now the proper delay can be applied
+                companyRepository.save(company);
+            }
+        });
     }
 
     public DocumentDto createFromUbl(String peppolId, String ublXml, boolean draft, Instant schedule, Jwt jwt) {
@@ -221,6 +236,15 @@ public class DocumentService {
         return DocumentMapper.toDto(document);
     }
 
+    public void updateStatus(UblDocumentDto ublDocumentDto) {
+        Document document = documentRepository.findById(ublDocumentDto.id()).orElseThrow(() -> new NotFoundException("Document does not exist"));
+        document.setProxyOn(ublDocumentDto.createdOn());
+        document.setScheduledOn(ublDocumentDto.scheduledOn());
+        document.setProcessedOn(ublDocumentDto.processedOn());
+        document.setProcessedStatus(ublDocumentDto.processedStatus());
+        documentRepository.save(document);
+    }
+
     public DocumentDto send(String peppolId, UUID id, Instant schedule, Jwt jwt) {
         Document document = documentRepository.findById(id).orElseThrow(() -> new NotFoundException("Document does not exist"));
         if (!peppolId.equals(document.getOwnerPeppolId())) {
@@ -330,7 +354,7 @@ public class DocumentService {
         return documentRepository.save(document);
     }
 
-    private void synchronizeNewDocuments(Jwt jwt) {
+    private void synchronizeNewDocuments(String peppolId, Jwt jwt) {
         //TODO : record Page<T>(List<T> results, Integer total, Integer page, Integer size) {}
         //and use :
         //.bodyToMono(new ParameterizedTypeReference<Page<UblDocumentDto>>() {})
@@ -366,7 +390,23 @@ public class DocumentService {
                 .block();
     }
 
-    //TODO : add synchronizeDocuments(Jwt jwt) to update the status or send documents, those without processedOn (and processedStatus?)
+    private void synchronizeDocuments(String peppolId, Jwt jwt) {
+        List<UUID> ids = documentRepository.findIdsWithPossibleStatusUpdatesOnProxy(peppolId, LocalDate.now(ZONE).plusDays(1).atStartOfDay(ZONE).toInstant());
+        List<UblDocumentDto> ublDocumentDtos = proxyWebClient.post()
+                .uri("/sapi/document/status")
+                .headers(headers -> headers.setBearerAuth(jwt.getTokenValue()))
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(ids)
+                .retrieve()
+                .bodyToFlux(UblDocumentDto.class)
+                .collectList()
+                .blockOptional()
+                .orElseThrow(() -> new IllegalStateException("Could not synchronize with PROXY")); //TODO : make correct error
+
+        for (UblDocumentDto ublDocumentDto : ublDocumentDtos) {
+            updateStatus(ublDocumentDto); //TODO : Could be new NotFoundException, does that make sense ?
+        }
+    }
 
     //TODO : combine synchronizeDocuments & synchronizeNewDocuments & add something to send documents that are not draftedOn but also not proxyOn and thus not taken by proxy (due to errors?)
 }

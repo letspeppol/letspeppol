@@ -27,7 +27,7 @@ import java.util.UUID;
 @RequestMapping("/sapi/document")
 public class AppController {
 
-    public static final String DEFAULT_SIZE = "10";
+    public static final String DEFAULT_SIZE = "100";
 
     private final UblDocumentService ublDocumentService;
     private final UblDocumentSenderService ublDocumentSenderService;
@@ -39,6 +39,12 @@ public class AppController {
     public List<UblDocumentDto> getAllNew(@AuthenticationPrincipal Jwt jwt, @RequestParam(defaultValue = DEFAULT_SIZE) int size) {
         String peppolId = JwtUtil.getPeppolId(jwt);
         return ublDocumentReceiverService.findAllNew(peppolId, size);
+    }
+
+    @PostMapping("status")
+    public List<UblDocumentDto> getStatusUpdates(@AuthenticationPrincipal Jwt jwt, @RequestBody List<UUID> ids) {
+        String peppolId = JwtUtil.getPeppolId(jwt);
+        return ublDocumentService.findByIds(ids, peppolId);
     }
 
     /* *

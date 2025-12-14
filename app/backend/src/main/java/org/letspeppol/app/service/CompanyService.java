@@ -70,6 +70,7 @@ public class CompanyService {
         company.setPaymentAccountName(companyDto.paymentAccountName());
         company.setPaymentTerms(companyDto.paymentTerms());
         company.setIban(companyDto.iban());
+        company.setNoArchive(companyDto.noArchive());
         company.getRegisteredOffice().setCity(companyDto.registeredOffice().city());
         company.getRegisteredOffice().setPostalCode(companyDto.registeredOffice().postalCode());
         company.getRegisteredOffice().setStreet(companyDto.registeredOffice().street());

@@ -9,6 +9,7 @@ public record CompanyDto(
         String paymentTerms,
         String iban,
         String paymentAccountName,
+        boolean noArchive,
         boolean peppolActive,
         AddressDto registeredOffice
 )

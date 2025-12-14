@@ -15,6 +15,7 @@ public class CompanyMapper {
                 company.getPaymentTerms(),
                 company.getIban(),
                 company.getPaymentAccountName(),
+                company.isNoArchive(),
                 peppolActive,
                 AddressMapper.toDto(company.getRegisteredOffice())
         );
