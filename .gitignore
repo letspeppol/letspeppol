@@ -3,3 +3,5 @@ acme.json
 **/var/
 .DS_store
 .idea
+.env_staging
+.env_live
