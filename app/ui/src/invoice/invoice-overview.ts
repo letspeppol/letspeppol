@@ -3,7 +3,6 @@ import {InvoiceContext} from "./invoice-context";
 import {parseCreditNote, parseInvoice} from "../services/peppol/ubl-parser";
 import {AlertType} from "../components/alert/alert";
 import {IEventAggregator, watch} from "aurelia";
-import {ProxyService} from "../services/proxy/proxy-service";
 import {
     DocumentType,
     DocumentDto,
@@ -15,7 +14,6 @@ import moment from "moment";
 
 export class InvoiceOverview {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
-    private proxyService = resolve(ProxyService);
     private invoiceService = resolve(InvoiceService);
     private invoiceContext = resolve(InvoiceContext);
     invoicePage: DocumentPageDto = undefined;

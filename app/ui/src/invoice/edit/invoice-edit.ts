@@ -1,5 +1,4 @@
 import {resolve} from "@aurelia/kernel";
-import {ProxyService} from "../../services/proxy/proxy-service";
 import {InvoiceContext} from "../invoice-context";
 import {bindable, computed, IDisposable, IEventAggregator} from "aurelia";
 import {
@@ -25,7 +24,6 @@ import {InvoiceAttachmentModal} from "./components/invoice-attachment-modal";
 
 export class InvoiceEdit {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
-    private proxyService = resolve(ProxyService);
     private invoiceService = resolve(InvoiceService);
     private invoiceContext = resolve(InvoiceContext);
     private invoiceCalculator = resolve(InvoiceCalculator);

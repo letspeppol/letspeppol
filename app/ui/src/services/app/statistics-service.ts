@@ -1,5 +1,32 @@
+import {singleton} from "aurelia";
 import {resolve} from "@aurelia/kernel";
-import {ProxyApi} from "./proxy-api";
+import {AppApi} from "./app-api";
+
+export interface DonationStatsDto {
+    totalContributions: number;
+    totalProcessed: number;
+    processedToday: number;
+    maxProcessedLastWeek: number;
+    invoicesRemaining: number;
+    transactions: Transaction[];
+}
+
+export interface Transaction {
+    type: string;
+    fromAccount: FromAccount;
+    amount: Amount;
+    createdAt: string; // ISO datetime
+}
+
+export interface FromAccount {
+    name: string;
+    slug: string;
+}
+
+export interface Amount {
+    value: number;      // BigDecimal → number (or string if you need precision)
+    currency: string;
+}
 
 // export type ListItem = {
 //     platformId: string;
@@ -24,7 +51,6 @@ export type Totals = {
     totalReceivableThisYear: number;
 }
 
-
 // export type DocumentQuery = {
 //     userId?: string;
 //     counterPartyId?: string;
@@ -37,11 +63,16 @@ export type Totals = {
 //     pageSize?: number;
 // };
 
-export class ProxyService {
-    private letsPeppolApi = resolve(ProxyApi);
+@singleton()
+export class StatisticsService {
+    private appApi = resolve(AppApi);
+
+    async getDonationStats() : Promise<DonationStatsDto> {
+        return await this.appApi.httpClient.get('/api/stats/donation').then(response => response.json());
+    }
 
     async getTotals() : Promise<Totals> {
-        return await this.letsPeppolApi.httpClient.get(`/v2/totals`).then(response => response.json());
+        return await this.appApi.httpClient.get(`/sapi/stats/account`).then(response => response.json());
     }
 
 }

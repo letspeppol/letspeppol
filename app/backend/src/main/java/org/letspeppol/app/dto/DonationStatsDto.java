@@ -8,10 +8,10 @@ import java.util.List;
 @Builder
 @Data
 public class DonationStatsDto {
-    private Integer totalContributions;
-    private Integer totalProcessed;
-    private Integer processedToday;
-    private Integer maxProcessedLastWeek;
-    private Integer invoicesRemaining;
+    private Long totalContributions;
+    private Long totalProcessed;
+    private Long processedToday;
+    private Long maxProcessedLastWeek;
+    private Long invoicesRemaining;
     private List<OpenCollectiveAccountDto.Transaction> transactions;
 }

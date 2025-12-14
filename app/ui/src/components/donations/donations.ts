@@ -1,8 +1,8 @@
-import {DonationService, DonationStatsDto} from "../../services/app/donation-service";
+import {StatisticsService, DonationStatsDto} from "../../services/app/statistics-service";
 import {resolve} from "@aurelia/kernel";
 
 export class Donations {
-    private donationService = resolve(DonationService);
+    private statisticsService = resolve(StatisticsService);
     private accountInfo: DonationStatsDto;
     strokeDashOffset: number = 0;
     attached() {
@@ -10,7 +10,7 @@ export class Donations {
     }
 
     async loadLatestDonationInfo() {
-        this.accountInfo = await this.donationService.getDonationStats();
+        this.accountInfo = await this.statisticsService.getDonationStats();
 
         const maxProcessed = this.accountInfo.maxProcessedLastWeek ?? 100;
         const percentageRemaining = this.accountInfo.invoicesRemaining / maxProcessed;

@@ -37,9 +37,8 @@ public class SecurityConfig {
             //.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
             .cors(cors -> {})
             .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/actuator/**").permitAll()
-                    .requestMatchers("/api/peppol-directory/**").permitAll()
-                    .requestMatchers("/api/donation/**").permitAll()
+                    .requestMatchers("/actuator/**").permitAll() //TODO : what is this ?
+                    .requestMatchers("/api/**").permitAll()
                     .requestMatchers("/sapi/**").hasAuthority(ROLE_KYC_USER)
                     .anyRequest().denyAll()
             )
