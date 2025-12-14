@@ -64,7 +64,7 @@ public class ProductCategoryService {
             parent.getSubcategories().add(category);
         }
 
-        categoryRepository.save(category);
+        category = categoryRepository.save(category);
         return ProductCategoryMapper.toDto(category, false);
     }
 
@@ -94,7 +94,7 @@ public class ProductCategoryService {
             }
         }
 
-        categoryRepository.save(category);
+        category = categoryRepository.save(category);
         return ProductCategoryMapper.toDto(category, false);
     }
 

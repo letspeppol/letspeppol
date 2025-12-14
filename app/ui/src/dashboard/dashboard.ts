@@ -1,8 +1,8 @@
-import {ProxyService, Totals} from "../services/proxy/proxy-service";
+import {StatisticsService, Totals} from "../services/app/statistics-service";
 import {resolve} from "@aurelia/kernel";
 
 export class Dashboard {
-    private proxyService = resolve(ProxyService);
+    private statisticsService = resolve(StatisticsService);
     totals: Totals;
 
     attached() {
@@ -10,6 +10,6 @@ export class Dashboard {
     }
 
     loadTotals() {
-        this.proxyService.getTotals().then(response => this.totals = response);
+        this.statisticsService.getTotals().then(response => this.totals = response);
     }
 }

@@ -2,7 +2,7 @@ import {bindable, observable} from "aurelia";
 import {resolve} from "@aurelia/kernel";
 import {Account} from "../../../account/account";
 import {InvoiceComposer} from "../../invoice-composer";
-import {DocumentType} from "../../invoice-context";
+import {DocumentType} from "../../../services/app/invoice-service";
 
 export interface Translation {
     key: string,
@@ -44,7 +44,7 @@ export class InvoiceDateModal {
     }
 
     private recalculateDueDate() {
-        if (this.documentType === DocumentType.CreditNote) {
+        if (this.documentType === DocumentType.CREDIT_NOTE) {
             return;
         }
         this.dueDate = this.invoiceComposer.getDueDate(this.selectedPaymentTerm, this.issueDate);

@@ -1,5 +1,6 @@
 package org.letspeppol.kyc.service;
 
+import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.kyc.exception.KycErrorCodes;
@@ -18,14 +19,19 @@ public class AccountService {
 
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
+    private final Counter authenticationCounterFailure;
 
     public Account getByExternalId(UUID externalId) {
         return accountRepository.findByExternalId(externalId).orElseThrow(() -> new NotFoundException(KycErrorCodes.ACCOUNT_NOT_FOUND));
     }
 
     public Account findAccountWithCredentials(String email, String password) {
-        Account account = accountRepository.findByEmail(email.toLowerCase()).orElseThrow(() -> new NotFoundException(KycErrorCodes.ACCOUNT_NOT_FOUND));
+        Account account = accountRepository.findByEmail(email.toLowerCase()).orElseThrow(() -> {
+            authenticationCounterFailure.increment();
+            return new NotFoundException(KycErrorCodes.ACCOUNT_NOT_FOUND);
+        });
         if (!passwordEncoder.matches(password, account.getPasswordHash())) {
+            authenticationCounterFailure.increment();
             throw new KycException(KycErrorCodes.WRONG_PASSWORD);
         }
         return account;

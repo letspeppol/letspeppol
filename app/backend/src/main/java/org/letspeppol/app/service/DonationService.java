@@ -60,12 +60,12 @@ public class DonationService {
         if (totalProcessedDto == null) return;
         OpenCollectiveAccountDto accountInfo = this.queryAccount().block();
 
-        Integer invoicesRemaining = accountInfo.getStats().getTotalAmountReceived().getValue()
+        Long invoicesRemaining = accountInfo.getStats().getTotalAmountReceived().getValue()
                 .subtract(
                         pricePerDocument.multiply(BigDecimal.valueOf(totalProcessedDto.totalProcessed()))
                 )
                 .divide(pricePerDocument, RoundingMode.HALF_EVEN)
-                .toBigInteger().intValue();
+                .toBigInteger().longValue();
 
         donationStatsDto = DonationStatsDto.builder()
                 .totalContributions(accountInfo.getStats().getContributionsCount())

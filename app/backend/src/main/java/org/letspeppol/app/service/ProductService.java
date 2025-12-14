@@ -56,7 +56,7 @@ public class ProductService {
             product.setCategory(category);
         }
 
-        productRepository.save(product);
+        product = productRepository.save(product);
         productCreateCounter.increment();
         return ProductMapper.toDto(product);
     }
@@ -83,7 +83,7 @@ public class ProductService {
             product.setCategory(null);
         }
 
-        productRepository.save(product);
+        product = productRepository.save(product);
         return ProductMapper.toDto(product);
     }
 

@@ -77,7 +77,10 @@
   "error" : {
     "login-failed" : "Inloggen mislukt",
     "registration-company-not-found": "Bedrijf niet gevonden",
-    "registration-company-already-registered": "Bedrijf al geregistreerd"
+    "registration-company-already-registered": "Bedrijf al geregistreerd",
+    "registration-company-already-registered-on-peppol" : "U bent al geregistreerd op Peppol. We kunnen u pas activeren nadat u zich bij de andere Peppol-provider hebt uitgeschreven.",
+    "not-peppol-active" : "U bent momenteel niet geregistreerd op Peppol",
+    "not-peppol-active-action" : "Los dit nu op"
   },
   "confirmation": {
     "header": "Identiteit bevestigen",
@@ -113,9 +116,13 @@
     "60_DAYS" : "60 dagen",
     "END_OF_NEXT_MONTH" : "Einde van de maand"
   },
+  "documentDirection" : {
+    "OUTGOING" : "Uitgaand",
+    "INCOMING" : "Inkomend"
+  },
   "documentType" : {
-    "invoice" : "Factuur",
-    "credit-note" : "Creditnota"
+    "INVOICE" : "Factuur",
+    "CREDIT-NOTE" : "Creditnota"
   },
   "common": {
     "confirm": "Bevestigen",

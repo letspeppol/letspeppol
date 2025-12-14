@@ -9,9 +9,17 @@ import org.springframework.context.annotation.Configuration;
 public class MetricsConfig {
 
     @Bean
-    public Counter companyRegistrationCounter(MeterRegistry registry) {
+    public Counter companyRegistrationCounterSuccess(MeterRegistry registry) {
         return Counter.builder("company_registration_total")
                 .description("Total # completed company registrations")
+                .tag("service", "kyc")
+                .register(registry);
+    }
+
+    @Bean
+    public Counter companyRegistrationCounterFailure(MeterRegistry registry) {
+        return Counter.builder("company_registration_total")
+                .description("Total # failed company registrations")
                 .tag("service", "kyc")
                 .register(registry);
     }
@@ -65,17 +73,17 @@ public class MetricsConfig {
     }
 
     @Bean
-    public Counter authenticationCounter(MeterRegistry registry) {
+    public Counter authenticationCounterSuccess(MeterRegistry registry) {
         return Counter.builder("auth_total")
-                .description("Total # authentications")
+                .description("Total # successful authentications")
                 .tag("service", "kyc")
                 .register(registry);
     }
 
     @Bean
-    public Counter authenticationIncorrectCounter(MeterRegistry registry) {
-        return Counter.builder("auth_incorrect_total")
-                .description("Total # incorrect authentications")
+    public Counter authenticationCounterFailure(MeterRegistry registry) {
+        return Counter.builder("auth_total")
+                .description("Total # failed authentications")
                 .tag("service", "kyc")
                 .register(registry);
     }

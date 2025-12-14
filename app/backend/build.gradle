@@ -35,7 +35,6 @@ dependencies {
     implementation 'org.springframework.graphql:spring-graphql'
     implementation 'io.micrometer:micrometer-registry-prometheus'
     implementation 'org.hibernate.orm:hibernate-community-dialects'
-    implementation 'org.xerial:sqlite-jdbc:3.46.0.0'
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
     implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
@@ -51,6 +50,8 @@ dependencies {
     implementation 'com.helger.phive.rules:phive-rules-en16931:4.0.3'
     implementation 'com.helger.phive.rules:phive-rules-ubl:4.0.3'
     implementation 'com.helger:ddd:0.7.1'
+
+    runtimeOnly 'com.h2database:h2'
 
     compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'

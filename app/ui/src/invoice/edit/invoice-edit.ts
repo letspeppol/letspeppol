@@ -1,7 +1,6 @@
 import {resolve} from "@aurelia/kernel";
-import {ProxyService} from "../../services/proxy/proxy-service";
-import {DocumentType, InvoiceContext} from "../invoice-context";
-import {bindable, computed, IDisposable, IEventAggregator, observable} from "aurelia";
+import {InvoiceContext} from "../invoice-context";
+import {bindable, computed, IDisposable, IEventAggregator} from "aurelia";
 import {
     Attachment,
     ClassifiedTaxCategory,
@@ -18,14 +17,13 @@ import {InvoiceCustomerModal} from "./components/invoice-customer-modal";
 import {InvoiceCalculator, roundTwoDecimals} from "../invoice-calculator";
 import {InvoiceComposer} from "../invoice-composer";
 // import {downloadInvoicePdf} from "../pdf/invoice-pdf";
-import {InvoiceDraftDto, InvoiceService} from "../../services/app/invoice-service";
+import {InvoiceService, DocumentType} from "../../services/app/invoice-service";
 import {ValidationResultModal} from "./components/validation-result-modal";
 import {InvoiceModal} from "./components/invoice-modal";
 import {InvoiceAttachmentModal} from "./components/invoice-attachment-modal";
 
 export class InvoiceEdit {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
-    private proxyService = resolve(ProxyService);
     private invoiceService = resolve(InvoiceService);
     private invoiceContext = resolve(InvoiceContext);
     private invoiceCalculator = resolve(InvoiceCalculator);
@@ -68,14 +66,14 @@ export class InvoiceEdit {
     };
 
     newInvoice() {
-        this.selectedDocumentType = DocumentType.Invoice;
+        this.selectedDocumentType = DocumentType.INVOICE;
         this.invoiceContext.newUBLDocument();
         this.showCustomerModal();
     }
 
     newCreditNote() {
-        this.selectedDocumentType = DocumentType.CreditNote;
-        this.invoiceContext.newUBLDocument(DocumentType.CreditNote);
+        this.selectedDocumentType = DocumentType.CREDIT_NOTE;
+        this.invoiceContext.newUBLDocument(DocumentType.CREDIT_NOTE);
         this.showCustomerModal();
     }
 
@@ -88,7 +86,7 @@ export class InvoiceEdit {
     addLine() {
         let line: UBLLine;
         const pos = this.invoiceContext.getNextPosition();
-        if (this.selectedDocumentType === DocumentType.Invoice) {
+        if (this.selectedDocumentType === DocumentType.INVOICE) {
             line = this.invoiceComposer.getInvoiceLine(pos);
         } else {
             line = this.invoiceComposer.getCreditNoteLine(pos);
@@ -129,7 +127,7 @@ export class InvoiceEdit {
     // }
 
     buildXml(): string {
-        if  (this.selectedDocumentType === DocumentType.Invoice)  {
+        if  (this.selectedDocumentType === DocumentType.INVOICE)  {
             return buildInvoice(this.invoiceContext.selectedInvoice as Invoice)
         } else {
             return buildCreditNote(this.invoiceContext.selectedInvoice as CreditNote);
@@ -138,13 +136,13 @@ export class InvoiceEdit {
 
     async saveAsDraft() {
         try {
-            const draft = this.convertInvoiceToDraft();
-            if (this.invoiceContext.selectedDraft) {
-                const newDraft = await this.invoiceService.updateInvoiceDraft(draft.id, draft);
-                this.invoiceContext.drafts.splice(this.invoiceContext.drafts.findIndex(item => item.id === draft.id), 1, newDraft);
+            const xml = this.buildXml();
+            if (this.invoiceContext.selectedDocument) {
+                const newDraft = await this.invoiceService.saveDocument(this.invoiceContext.selectedDocument.id, xml);
+                this.invoiceContext.draftPage.content.splice(this.invoiceContext.draftPage.content.findIndex(item => item.id === newDraft.id), 1, newDraft);
             } else {
-                const invoiceDraftDto = await this.invoiceService.createInvoiceDraft(draft);
-                this.invoiceContext.drafts.unshift(invoiceDraftDto);
+                const documentDraftDto = await this.invoiceService.createDocument(xml, true);
+                this.invoiceContext.draftPage.content.unshift(documentDraftDto);
             }
             this.invoiceContext.clearSelectedInvoice();
             this.ea.publish('alert', {alertType: AlertType.Success, text: "Invoice draft saved"});
@@ -156,28 +154,14 @@ export class InvoiceEdit {
 
     async deleteDraft() {
         try {
-            await this.invoiceService.deleteInvoiceDraft(this.invoiceContext.selectedDraft.id);
-            this.invoiceContext.drafts.splice(this.invoiceContext.drafts.findIndex(item => item.id === this.invoiceContext.selectedDraft.id), 1);
+            await this.invoiceService.deleteDocument(this.invoiceContext.selectedDocument.id);
+            this.invoiceContext.draftPage.content.splice(this.invoiceContext.draftPage.content.findIndex(item => item.id === this.invoiceContext.selectedDocument.id), 1);
             this.invoiceContext.clearSelectedInvoice();
             this.ea.publish('alert', {alertType: AlertType.Success, text: "Invoice draft removed"});
         } catch(e) {
             console.error(e);
             this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to delete invoice draft"});
         }
-    }
-
-    convertInvoiceToDraft() {
-        const xml = this.buildXml();
-        return {
-            id: this.invoiceContext.selectedDraft?.id,
-            docType: this.selectedDocumentType,
-            docId: this.invoiceContext.selectedInvoice.ID,
-            counterPartyName: this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party?.PartyName.Name,
-            createdAt: this.invoiceContext.selectedInvoice.IssueDate,
-            dueDate: this.invoiceContext.selectedInvoice.DueDate,
-            amount: this.invoiceContext.selectedInvoice.LegalMonetaryTotal.LineExtensionAmount.value,
-            xml: xml
-        } as InvoiceDraftDto;
     }
 
     downloadUBL() {

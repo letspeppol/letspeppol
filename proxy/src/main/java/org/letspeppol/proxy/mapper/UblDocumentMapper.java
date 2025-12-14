@@ -11,6 +11,7 @@ public class UblDocumentMapper {
         return new UblDocumentDto(
                 ublDocument.getId(),
                 ublDocument.getDirection(),
+                ublDocument.getType(),
                 ublDocument.getOwnerPeppolId(),
                 ublDocument.getPartnerPeppolId(),
                 ublDocument.getCreatedOn(),

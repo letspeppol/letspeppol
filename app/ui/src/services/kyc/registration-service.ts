@@ -85,29 +85,29 @@ export class RegistrationService {
         return await this.kycApi.httpClient.post(`/api/identity/sign/finalize`, JSON.stringify(request));
     }
 
-    async unregisterCompany(): boolean {
+    async unregisterCompany(): Promise<boolean> {
         const response = await this.kycApi.httpClient.fetch('/sapi/company/peppol/unregister', { method: 'POST' }); //Using fetch to expose response header
         if (response.status === 204) {
             console.log("Was already unregistered");
             return false;
         }
-        const token = await res.json();
-        if (token) {
-            this.loginService.updateToken(token);
+        const token = await response.text();
+        if (response.ok && token?.trim()) {
+            this.loginService.updateToken(token.trim());
             return false;
         }
         return true;
     }
 
-    async registerCompany(): boolean {
+    async registerCompany(): Promise<boolean> {
         const response = await this.kycApi.httpClient.fetch('/sapi/company/peppol/register', { method: 'POST' }); //Using fetch to expose response header
         if (response.status === 204) {
             console.log("Was already registered");
             return true;
         }
-        const token = await res.json();
-        if (token) {
-            this.loginService.updateToken(token);
+        const token = await response.text();
+        if (response.ok && token?.trim()) {
+            this.loginService.updateToken(token.trim());
             return true;
         }
         return false;

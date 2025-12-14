@@ -1,5 +1,5 @@
 import {bindable} from "aurelia";
-import {DocumentType} from "../../invoice-context";
+import {DocumentType} from "../../../services/app/invoice-service";
 import {CreditNote, Invoice} from "../../../services/peppol/ubl";
 import {resolve} from "@aurelia/kernel";
 import {InvoiceComposer} from "../../invoice-composer";
@@ -44,7 +44,7 @@ export class InvoiceModal {
         this.open = false;
         if (this.selectedDocumentType !== this.originalDocumentType) {
             this.originalDocumentType = this.selectedDocumentType;
-            if (this.selectedDocumentType === DocumentType.Invoice) {
+            if (this.selectedDocumentType === DocumentType.INVOICE) {
                 this.invoiceContext.selectedInvoice = this.invoiceComposer.creditNoteToInvoice(this.invoiceContext.selectedInvoice as unknown as CreditNote);
             } else {
                 this.invoiceContext.selectedInvoice = this.invoiceComposer.invoiceToCreditNote(this.invoiceContext.selectedInvoice as Invoice);

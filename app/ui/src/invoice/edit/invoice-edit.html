@@ -69,7 +69,7 @@
                 </div>
                 <span t="invoice.dateModal.issue-date">Issue Date</span>
                 <b>${invoiceContext.selectedInvoice.IssueDate}</b>
-                <template if.bind="selectedDocumentType === 'invoice'">
+                <template if.bind="selectedDocumentType === 'INVOICE'">
                     <span t="invoice.dateModal.due-date">Due Date</span>
                     <b>${invoiceContext.selectedInvoice.DueDate}</b>
                 </template>
@@ -192,7 +192,7 @@
                             </td>
                             <td><textarea class="description" placeholder="Description" t="[placeholder]label.description" value.bind="line.Item.Description" readonly.bind="readOnly"></textarea></td>
                             <td class="num">
-                                <template if.bind="selectedDocumentType === 'invoice'">
+                                <template if.bind="selectedDocumentType === 'INVOICE'">
                                     <input class="qty" type="number" min="0" step="1" value.bind="line.InvoicedQuantity.value" change.trigger="calcLineTotal(line)" readonly.bind="readOnly" />
                                 </template>
                                 <template else>

@@ -6,6 +6,8 @@ import org.letspeppol.proxy.dto.RegistryDto;
 import org.letspeppol.proxy.model.AccessPoint;
 import org.letspeppol.proxy.service.RegistryService;
 import org.letspeppol.proxy.util.JwtUtil;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -24,24 +26,25 @@ public class RegistryController {
     }
 
     @PostMapping()
-    public RegistryDto register(@AuthenticationPrincipal Jwt jwt, @RequestBody RegistrationRequest data) {
+    public ResponseEntity<RegistryDto> register(@AuthenticationPrincipal Jwt jwt, @RequestBody RegistrationRequest data) {
         String peppolId = JwtUtil.getPeppolId(jwt);
-        return registryService.register(
+        return ResponseEntity.status(HttpStatus.OK).body(registryService.register(
             peppolId,
             data,
             AccessPoint.SCRADA
-        );
+        ));
     }
 
     @PutMapping("unregister")
-    public RegistryDto unregister(@AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<RegistryDto> unregister(@AuthenticationPrincipal Jwt jwt) {
         String peppolId = JwtUtil.getPeppolId(jwt);
-        return registryService.unregister(peppolId);
+        return ResponseEntity.status(HttpStatus.OK).body(registryService.unregister(peppolId));
     }
 
     @DeleteMapping()
-    public void delete(@AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<Object> delete(@AuthenticationPrincipal Jwt jwt) {
         String peppolId = JwtUtil.getPeppolId(jwt);
         registryService.remove(peppolId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

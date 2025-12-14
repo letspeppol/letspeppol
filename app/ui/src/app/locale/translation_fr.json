@@ -79,7 +79,10 @@
   "error": {
     "login-failed": "Échec de la connexion",
     "registration-company-not-found": "Entreprise introuvable",
-    "registration-company-already-registered": "Entreprise déjà enregistrée"
+    "registration-company-already-registered": "Entreprise déjà enregistrée",
+    "registration-company-already-registered-on-peppol" : "Vous êtes déjà enregistré sur Peppol. Nous ne pourrons vous activer qu'après vous être désinscrit auprès de l'autre fournisseur Peppol.",
+    "not-peppol-active" : "Vous n'êtes actuellement pas enregistré sur Peppol",
+    "not-peppol-active-action" : "Résoudre cela maintenant"
   },
   "confirmation": {
     "header": "Confirmer l'identité",
@@ -116,8 +119,8 @@
     "END_OF_NEXT_MONTH": "Fin du mois"
   },
   "documentType": {
-    "invoice": "Facture",
-    "credit-note": "Note de crédit"
+    "INVOICE": "Facture",
+    "CREDIT_NOTE": "Note de crédit"
   },
   "common": {
     "confirm": "Confirmer",

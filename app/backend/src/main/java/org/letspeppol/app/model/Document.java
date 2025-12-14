@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.*;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
+import org.springframework.data.domain.Persistable;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Currency;
@@ -19,17 +20,21 @@ import static org.hibernate.type.SqlTypes.VARCHAR;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Document {
+public class Document implements Persistable<UUID> {
 
     ///EXTERNAL INFORMATION
 
     @Id
-    @UuidGenerator
+//    @UuidGenerator //TODO : look into (style = UuidGenerator.Style.TIME) // time-based UUID (v1-style)
     private UUID id; //Unique identifier used for communication with proxy
 
     @Enumerated(EnumType.STRING)
     @JdbcType(PostgreSQLEnumJdbcType.class)
     private DocumentDirection direction; //Used for filtering when downloaded by retrieving app
+
+    @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    private DocumentType type; //Type of document will be used to know if money needs to be paid or received, used for overview, but also for proxy as sending type
 
     private String ownerPeppolId; //Sender or receiver, depending on direction
 
@@ -52,7 +57,7 @@ public class Document {
     @JoinColumn(name = "company_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_document_company"))
     private Company company; //Owner of this database record, should match ownerPeppolId by Peppol ID
 
-    @CreationTimestamp(source = SourceType.DB)
+    @CreationTimestamp
     private Instant createdOn; //Useful for keeping track of creations, different from createdOn at Proxy
 
     private Instant draftedOn; //Updating last timestamp draft was still draft, null is no longer draft
@@ -60,6 +65,8 @@ public class Document {
     private Instant readOn; //Useful for keeping track of read status, flagged by user
 
     private Instant paidOn; //Useful for keeping track of paid status, flagged by user
+
+// TODO    private Instant accountantOn; //Useful for keeping track of accountant status, action executed by user, send to company.accountantEmail or null when not send yet/successful
 
     ///UBL INFORMATION
 
@@ -70,10 +77,6 @@ public class Document {
     private String buyerReference; //Buyer reference, used for searching
 
     private String orderReference; //Purchase order reference, used for searching
-
-    @Enumerated(EnumType.STRING)
-    @JdbcType(PostgreSQLEnumJdbcType.class)
-    private DocumentType type; //Type of document will be used to know if money needs to be paid or received, used for overview
 
     @Convert(disableConversion = true)  //Not using JPA converter
     @JdbcTypeCode(VARCHAR)
@@ -86,6 +89,12 @@ public class Document {
     private Instant dueDate; //Due date on document, used for overview
 
     private String paymentTerms; //When there is no due date, the payment terms are used for overview
+
+    @Override
+    @Transient
+    public boolean isNew() {
+        return createdOn == null; //Only insert when createdOn is null
+    }
 
     public Document(
             UUID id,
@@ -112,7 +121,7 @@ public class Document {
             Instant issueDate,
             Instant dueDate,
             String paymentTerms) {
-        this.id              = id;
+        this.id              = id == null ? UUID.randomUUID() : id;
         this.direction       = direction;
         this.ownerPeppolId   = ownerPeppolId;
         this.partnerPeppolId = partnerPeppolId;
@@ -122,7 +131,7 @@ public class Document {
         this.processedStatus = processedStatus;
         this.ubl             = ubl;
 //        this.company         = company;
-//        this.createdOn       = createdOn;
+        this.createdOn       = Instant.now(); //createdOn;
         this.draftedOn       = draftedOn;
         this.readOn          = readOn;
         this.paidOn          = paidOn;

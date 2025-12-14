@@ -43,8 +43,8 @@ public class OpenCollectiveAccountDto {
         private Amount balance;
         private Amount totalAmountSpent;
         private Amount totalAmountReceived;
-        private Integer contributionsCount;
-        private Integer contributorsCount;
+        private Long contributionsCount;
+        private Long contributorsCount;
     }
 }
 

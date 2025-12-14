@@ -84,7 +84,9 @@
     "login-failed" : "Login failed",
     "registration-company-not-found" : "Company not found",
     "registration-company-already-registered" : "Company already registered",
-    "registration-company-already-registered-on-peppol" : "Company already registered on Peppol"
+    "registration-company-already-registered-on-peppol" : "You are already registered on Peppol, we will not be able to activate you until you unregister on the other Peppol provider.",
+    "not-peppol-active" : "You are currently not registered on Peppol",
+    "not-peppol-active-action" : "Solve this now"
   },
   "paymentTerms" : {
     "15_DAYS" :  "15 days",
@@ -92,9 +94,13 @@
     "60_DAYS" : "60 days",
     "END_OF_NEXT_MONTH" : "End of the month"
   },
+  "documentDirection" : {
+    "OUTGOING" : "Outgoing",
+    "INCOMING" : "Incoming"
+  },
   "documentType" : {
-    "invoice" : "Invoice",
-    "credit-note" : "Credit Note"
+    "INVOICE" : "Invoice",
+    "CREDIT_NOTE" : "Credit Note"
   },
   "confirmation": {
     "header": "Confirm Identity",
@@ -243,8 +249,8 @@
     "title": "Invoices",
     "search": "Search customer or reference",
     "new": {
-      "invoice": "New Invoice",
-      "credit-note": "New Credit Note"
+      "INVOICE": "New Invoice",
+      "CREDIT_NOTE": "New Credit Note"
     },
     "table": {
       "direction": "Direction",
@@ -315,8 +321,8 @@
       "save-draft": "Save draft",
       "discard": "Discard",
       "send": {
-        "invoice": "Send invoice",
-        "credit-note": "Send credit note"
+        "INVOICE": "Send invoice",
+        "CREDIT_NOTE": "Send credit note"
       },
       "number": "Number",
       "buyer-reference": "Buyer Reference",

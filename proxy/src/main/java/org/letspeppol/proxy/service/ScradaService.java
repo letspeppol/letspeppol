@@ -1,16 +1,16 @@
 package org.letspeppol.proxy.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.proxy.dto.RegistrationRequest;
+import org.letspeppol.proxy.dto.StatusReport;
 import org.letspeppol.proxy.dto.scrada.*;
 import org.letspeppol.proxy.model.AccessPoint;
 import org.letspeppol.proxy.model.UblDocument;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,9 +33,7 @@ public class ScradaService implements AccessPointServiceInterface {
     public static final String PROCESS_SCHEME = "cenbii-procid-ubl";
     public static final String PROCESS_VALUE = "urn:fdc:peppol.eu:2017:poacc:billing:01:1.0";
 
-    @Lazy
-    @Autowired
-    private UblDocumentService ublDocumentService; //TODO : Is it possible to not have a circular dependency
+    private final UblDocumentReceiverService ublDocumentReceiverService;
     @Qualifier("scradaWebClient")
     private final WebClient scradaWebClient;
     private final Counter registerCounter;
@@ -97,9 +95,10 @@ public class ScradaService implements AccessPointServiceInterface {
             registerCounter.increment();
             return Map.of("uuid", uuid);
         } catch (WebClientResponseException e) { // HTTP error (non-2xx)
-            log.error("Scrada API error {} {}: {}", e.getRawStatusCode(), e.getStatusText(), e.getResponseBodyAsString(), e);
+            log.error("Scrada register API error {} {}: {}", e.getRawStatusCode(), e.getStatusText(), e.getResponseBodyAsString(), e);
             throw new RuntimeException("Scrada API error: " + e.getStatusCode(), e);
         } catch (Exception e) { // timeouts, connection issues, deserialization errors, etc.
+            log.error("Scrada register API call error {}", e.toString(), e);
             throw new RuntimeException("Failed to call Scrada API", e);
         }
     }
@@ -112,17 +111,23 @@ public class ScradaService implements AccessPointServiceInterface {
 //            throw new IllegalStateException("Cannot unregister an empty uuid");
 //        }
         try {
-            scradaWebClient
+            String uuid = scradaWebClient
                 .delete()
                 .uri("/deregister/{participantIdentifierScheme}/{participantIdentifierValue}", PARTICIPANT_SCHEME, peppolId)
                 .retrieve()
-                .toBodilessEntity()
-                .block();
+                .bodyToMono(String.class)
+                .blockOptional()
+                .orElseThrow(() -> new IllegalStateException("Empty response from Scrada register company"));
+            if (!uuid.equals(variables.get("uuid"))) {
+                log.warn("Scrada unregister API for account {} gave different uuid {} than during registration {}", peppolId, uuid, variables.get("uuid"));
+            }
             unregisterCounter.increment();
         } catch (WebClientResponseException e) { // HTTP error (non-2xx)
-            throw new RuntimeException("e-invoice API error: " + e.getStatusCode(), e);
+            log.error("Scrada unregister API error {} {}: {}", e.getRawStatusCode(), e.getStatusText(), e.getResponseBodyAsString(), e);
+            throw new RuntimeException("Scrada API error: " + e.getStatusCode(), e);
         } catch (Exception e) { // timeouts, connection issues, deserialization errors, etc.
-            throw new RuntimeException("Failed to call e-invoice API", e);
+            log.error("Scrada unregister API call error {}", e.toString(), e);
+            throw new RuntimeException("Failed to call Scrada API", e);
         }
     }
 
@@ -138,22 +143,56 @@ public class ScradaService implements AccessPointServiceInterface {
                     .header("x-scrada-peppol-sender-id", ublDocument.getOwnerPeppolId())
                     .header("x-scrada-peppol-receiver-scheme", PARTICIPANT_SCHEME)
                     .header("x-scrada-peppol-receiver-id", ublDocument.getPartnerPeppolId())
-                    .header("x-scrada-peppol-c1-country-code", "BE") //TODO : Where to get the country code of sender ?
-                    .header("x-scrada-peppol-document-type-scheme", INVOICES_SCHEME) //TODO : We need to extract TYPE !
-                    .header("x-scrada-peppol-document-type-value", INVOICES_VALUE)
+                    .header("x-scrada-peppol-c1-country-code", "BE") //This is Peppol Corner Stone 1 and always Belgium for Scrada
+                    .header("x-scrada-peppol-document-type-scheme", ublDocument.getType() == org.letspeppol.proxy.model.DocumentType.INVOICE ? INVOICES_SCHEME : CREDIT_NOTES_SCHEME)
+                    .header("x-scrada-peppol-document-type-value", ublDocument.getType() == org.letspeppol.proxy.model.DocumentType.INVOICE ? INVOICES_VALUE : CREDIT_NOTES_VALUE)
                     .header("x-scrada-peppol-process-scheme", PROCESS_SCHEME)
                     .header("x-scrada-peppol-process-value", PROCESS_VALUE)
-                    //.header("x-scrada-external-reference", "V1/202400512") //TODO : We could add InvoiceReference
+                    .header("x-scrada-external-reference", ublDocument.getId().toString()) //This is useful for Scrada debugging in https://scrada.be/en/company/{CompanyId}/settings/integrations/peppol/peppol-history
                     .bodyValue(ublDocument.getUbl())
                     .retrieve()
-                    .bodyToMono(String.class)
+                    .bodyToMono(JsonNode.class)
+                    .map(JsonNode::asText)
                     .blockOptional()
                     .orElseThrow(() -> new IllegalStateException("Empty response from Scrada send document"));
             documentSendCounter.increment();
             return uuid;
         } catch (WebClientResponseException e) { // HTTP error (non-2xx)
+            log.error("Scrada outbound API error {} {}: {}", e.getRawStatusCode(), e.getStatusText(), e.getResponseBodyAsString(), e);
+            throw new RuntimeException("Scrada outbound API error: " + e.getStatusCode(), e);
+        } catch (Exception e) { // timeouts, connection issues, deserialization errors, etc.
+            log.error("Scrada outbound API call error {}", e.toString(), e);
+            throw new RuntimeException("Failed to call Scrada API", e);
+        }
+    }
+
+    /// DOCS : [Scrada : Get outbound document status](https://www.scrada.be/api-documentation/#tag/Peppol-outbound/paths/~1v1~1company~1{companyID}~1peppol~1outbound~1document~1{documentID}~1info/get)
+    @Override
+    public StatusReport getStatus(UblDocument ublDocument) {
+        System.out.print("?");
+        try {
+            OutboundDocument outboundDocument = scradaWebClient
+                    .get()
+                    .uri("/outbound/document/{documentID}/info", ublDocument.getAccessPointId())
+                    .retrieve()
+                    .bodyToMono(OutboundDocument.class)
+                    .blockOptional()
+                    .orElseThrow(() -> new IllegalStateException("Empty response from Scrada get unconfirmed inbound documents"));
+            return switch (outboundDocument.status()) {
+                case "Created" -> null;
+                case "Processed" -> new StatusReport(true, null);
+                case "Retry" -> {
+                    log.info("Scrada tried {} time(s) to send {} with feedback {}", outboundDocument.attempt(), outboundDocument.externalReference(), outboundDocument.errorMessage());
+                    yield null;
+                }
+                case "Error" -> new StatusReport(false, outboundDocument.status() + " : " + outboundDocument.errorMessage());
+                default -> new StatusReport(false, outboundDocument.status());
+            };
+        } catch (WebClientResponseException e) { // HTTP error (non-2xx)
+            log.error("Scrada outbound status API error {} {}: {}", e.getRawStatusCode(), e.getStatusText(), e.getResponseBodyAsString(), e);
             throw new RuntimeException("Scrada API error: " + e.getStatusCode(), e);
         } catch (Exception e) { // timeouts, connection issues, deserialization errors, etc.
+            log.error("Scrada outbound status API call error {}", e.toString(), e);
             throw new RuntimeException("Failed to call Scrada API", e);
         }
     }
@@ -168,6 +207,9 @@ public class ScradaService implements AccessPointServiceInterface {
 
     }
 
+    /// DOCS : [Scrada : Get unconfirmed inbound documents](https://www.scrada.be/api-documentation/#tag/Peppol-inbound/paths/~1v1~1company~1{companyID}~1peppol~1inbound~1document~1unconfirmed/get)
+    /// DOCS : [Scrada : Get inbound document](https://www.scrada.be/api-documentation/#tag/Peppol-inbound/paths/~1v1~1company~1{companyID}~1peppol~1inbound~1document~1{documentID}/get)
+    /// DOCS : [Scrada : Confirm inbound document](https://www.scrada.be/api-documentation/#tag/Peppol-inbound/paths/~1v1~1company~1%7BcompanyID%7D~1peppol~1inbound~1document~1%7BdocumentID%7D~1confirm/put)
     @Override
     public void receiveDocuments() {
         System.out.print("?");
@@ -181,6 +223,8 @@ public class ScradaService implements AccessPointServiceInterface {
                     .orElseThrow(() -> new IllegalStateException("Empty response from Scrada get unconfirmed inbound documents"));
 
             for (InboundDocument inboundDocument : unconfirmedInboundDocuments.results()) {
+                log.debug("Received document {} from {} to {}", inboundDocument.id(), inboundDocument.peppolSenderID(), inboundDocument.peppolReceiverID());
+                documentReceivedCounter.increment();
                 String ubl = scradaWebClient
                         .get()
                         .uri("/inbound/document/{documentID}", inboundDocument.id())
@@ -189,7 +233,8 @@ public class ScradaService implements AccessPointServiceInterface {
                         .blockOptional()
                         .orElseThrow(() -> new IllegalStateException("Empty response from Scrada get inbound document"));
 
-                ublDocumentService.createAsReceived(
+                ublDocumentReceiverService.createAsReceived(
+                        inboundDocument.peppolDocumentTypeValue().equals(INVOICES_VALUE) ? org.letspeppol.proxy.model.DocumentType.INVOICE : org.letspeppol.proxy.model.DocumentType.CREDIT_NOTE,
                         inboundDocument.peppolSenderID(),
                         inboundDocument.peppolReceiverID(),
                         ubl,
@@ -206,9 +251,20 @@ public class ScradaService implements AccessPointServiceInterface {
                 );
             }
         } catch (WebClientResponseException e) { // HTTP error (non-2xx)
+            log.error("Scrada inbound API error {} {}: {}", e.getRawStatusCode(), e.getStatusText(), e.getResponseBodyAsString(), e);
             throw new RuntimeException("Scrada API error: " + e.getStatusCode(), e);
         } catch (Exception e) { // timeouts, connection issues, deserialization errors, etc.
+            log.error("Scrada inbound API call error {}", e.toString(), e);
             throw new RuntimeException("Failed to call Scrada API", e);
         }
     }
+
+    /// NOT IMPLEMENTED
+    /// DOCS : [Scrada : Get PDF of inbound document](https://www.scrada.be/api-documentation/#tag/Peppol-inbound/paths/~1v1~1company~1{companyID}~1peppol~1inbound~1document~1{documentID}~1pdf/get)
+    /// DOCS : [Scrada : Send sales invoice](https://www.scrada.be/api-documentation/#tag/Peppol/paths/~1v1~1company~1{companyID}~1peppol~1lookup/post)
+    /// DOCS : [Scrada : Send self-billing invoice](https://www.scrada.be/api-documentation/#tag/Peppol-outbound/paths/~1v1~1company~1{companyID}~1peppol~1outbound~1selfBillingInvoice/post)
+    /// DOCS : [Scrada : Get outbound document](https://www.scrada.be/api-documentation/#tag/Peppol-outbound/paths/~1v1~1company~1{companyID}~1peppol~1outbound~1document~1{documentID}~1ubl/get)
+    /// DOCS : [Scrada : Participant lookup](https://www.scrada.be/api-documentation/#tag/Peppol/paths/~1v1~1company~1{companyID}~1peppol~1lookup~1{scheme}~1{id}/get)
+    /// DOCS : [Scrada : Party lookup (JSON)](https://www.scrada.be/api-documentation/#tag/Peppol/paths/~1v1~1company~1{companyID}~1peppol~1lookup/post)
+
 }

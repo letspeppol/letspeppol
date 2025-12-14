@@ -2,13 +2,11 @@ import {resolve} from "@aurelia/kernel";
 import {singleton} from "aurelia";
 import {jwtDecode} from "jwt-decode";
 import {KYCApi} from "../kyc/kyc-api";
-import {ProxyApi} from "../proxy/proxy-api";
 import {AppApi} from "./app-api";
 
 @singleton()
 export class LoginService {
     public kycApi = resolve(KYCApi);
-    public proxyApi = resolve(ProxyApi);
     public appApi = resolve(AppApi);
     public authenticated = false;
 
@@ -62,15 +60,14 @@ export class LoginService {
 
     setAuthHeader(token: string) {
         this.kycApi.httpClient.configure(config => config.withDefaults({ headers: {'Authorization': `Bearer ${token}`} }));
-        this.proxyApi.httpClient.configure(config => config.withDefaults({ headers: {'Authorization': `Bearer ${token}`} }));
         this.appApi.httpClient.configure(config => config.withDefaults({ headers: {'Authorization': `Bearer ${token}`} }));
     }
 
     logout() {
         this.kycApi.httpClient.configure(config => config.withDefaults({ headers: {'Authorization': ''} }));
-        this.proxyApi.httpClient.configure(config => config.withDefaults({ headers: {'Authorization': ''} }));
         this.appApi.httpClient.configure(config => config.withDefaults({ headers: {'Authorization': ''} }));
         localStorage.removeItem('token');
+        localStorage.removeItem('peppolActive');
         this.authenticated = false;
     }
 }

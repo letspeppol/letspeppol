@@ -13,8 +13,8 @@ import moment from "moment/moment";
 import {singleton} from "aurelia";
 import {resolve} from "@aurelia/kernel";
 import {CompanyService} from "../services/app/company-service";
+import {DocumentType} from "../services/app/invoice-service";
 import {I18N} from "@aurelia/i18n";
-import {DocumentType} from "./invoice-context";
 
 @singleton()
 export class InvoiceComposer {
@@ -61,7 +61,7 @@ export class InvoiceComposer {
         } as Invoice;
 
         invoice.PaymentMeans = this.getPaymentMeansForMyCompany(30);
-        invoice.PaymentTerms = this.getPaymentTermsForMyCompany(DocumentType.Invoice);
+        invoice.PaymentTerms = this.getPaymentTermsForMyCompany(DocumentType.INVOICE);
 
         return invoice;
     }
@@ -103,7 +103,7 @@ export class InvoiceComposer {
             return {
                 Note: this.translatePaymentTerm(myCompany.paymentTerms)
             }
-        } else if (documentType === DocumentType.CreditNote) {
+        } else if (documentType === DocumentType.CREDIT_NOTE) {
             return {
                 Note: this.translatePaymentTerm('15_DAYS')
             }
@@ -136,7 +136,7 @@ export class InvoiceComposer {
             CreditNoteLine: []
         } as CreditNote;
 
-        creditNote.PaymentTerms = this.getPaymentTermsForMyCompany(DocumentType.CreditNote);
+        creditNote.PaymentTerms = this.getPaymentTermsForMyCompany(DocumentType.CREDIT_NOTE);
 
         return creditNote;
     }
@@ -165,9 +165,7 @@ export class InvoiceComposer {
                     }
                 },
                 PartyTaxScheme: {
-                    CompanyID: {
-                        value: undefined
-                    },
+                    CompanyID: undefined,
                     TaxScheme: {
                         ID: "VAT"
                     }
@@ -218,9 +216,7 @@ export class InvoiceComposer {
                     }
                 },
                 PartyTaxScheme: {
-                    CompanyID: {
-                        value: this.getVatNumber()
-                    },
+                    CompanyID: this.getVatNumber(),
                     TaxScheme: {
                         ID: "VAT"
                     }

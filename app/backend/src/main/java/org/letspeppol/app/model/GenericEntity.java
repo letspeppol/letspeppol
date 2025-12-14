@@ -16,10 +16,10 @@ public class GenericEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
 
-    @CreationTimestamp(source = SourceType.DB)
+    @CreationTimestamp
     protected Instant createdOn;
 
-    @UpdateTimestamp(source = SourceType.DB)
+    @UpdateTimestamp
     protected Instant lastUpdatedOn;
 
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")

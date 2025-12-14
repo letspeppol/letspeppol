@@ -26,7 +26,7 @@ public class CompanyController {
     @GetMapping
     public ResponseEntity<CompanyDto> getCompany(@AuthenticationPrincipal Jwt jwt) {
         String peppolId = JwtUtil.getPeppolId(jwt);
-        return ResponseEntity.ok(companyService.get(peppolId, jwt));
+        return ResponseEntity.ok(companyService.get(peppolId, jwt.getTokenValue(), JwtUtil.isPeppolActive(jwt)));
     }
 
     /// Updates Company info by UI (only stored in App)
@@ -37,6 +37,6 @@ public class CompanyController {
             log.warn("Malicious update attempt for peppolId {} company {} {}", peppolId, companyDto.peppolId(), companyDto.name());
             throw new AppException(AppErrorCodes.PEPPOL_ID_MISMATCH);
         }
-        return ResponseEntity.ok(companyService.update(companyDto, jwt));
+        return ResponseEntity.ok(companyService.update(companyDto, JwtUtil.isPeppolActive(jwt)));
     }
 }

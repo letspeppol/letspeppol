@@ -2,6 +2,7 @@ package org.letspeppol.kyc.service;
 
 import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.kyc.dto.CompanyResponse;
 import org.letspeppol.kyc.dto.DirectorDto;
 import org.letspeppol.kyc.exception.KycErrorCodes;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -79,15 +81,16 @@ public class CompanyService {
 
     public boolean registerCompany(Company company) {
         if (company.isSuspended()) {
-            //TODO : log
+            log.info("Will not register suspended company {}", company.getName());
             return false;
         }
         if (company.isRegisteredOnPeppol()) {
-            //TODO : log
+            log.info("Will skip registration for already registered company {}", company.getName());
             return true;
         }
         String token = jwtService.generateInternalToken(company.getPeppolId(), company.isPeppolActive());
         boolean peppolActive = proxyService.registerCompany(token, company.getName());
+        log.info("Registering company for {} has Peppol active = {}", company.getPeppolId(), peppolActive);
         company.setRegisteredOnPeppol(peppolActive);
         companyRepository.save(company);
         return peppolActive;
@@ -101,9 +104,12 @@ public class CompanyService {
     public boolean unregisterCompany(Company company) {
         String token = jwtService.generateInternalToken(company.getPeppolId(), company.isPeppolActive());
         boolean peppolActive = proxyService.unregisterCompany(token);
+        log.info("Unregistering company for {} has Peppol active = {}", company.getPeppolId(), peppolActive);
         company.setRegisteredOnPeppol(peppolActive);
         companyRepository.save(company);
-        companyUnregistrationCounter.increment(); //TODO : check what is this ?
+        if (!peppolActive) {
+            companyUnregistrationCounter.increment();
+        }
         return peppolActive;
     }
 

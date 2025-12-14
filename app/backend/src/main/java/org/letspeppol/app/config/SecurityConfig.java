@@ -1,5 +1,6 @@
 package org.letspeppol.app.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,11 +9,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -31,20 +32,20 @@ public class SecurityConfig {
     private String allowedOrigins;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, PostAuthProxyRequest postAuthProxyRequest) throws Exception {
         http
             //.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
             .cors(cors -> {})
             .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/actuator/**").permitAll()
-                    .requestMatchers("/api/peppol-directory/**").permitAll()
-                    .requestMatchers("/api/donation/**").permitAll()
+                    .requestMatchers("/actuator/**").permitAll() //TODO : what is this ?
+                    .requestMatchers("/api/**").permitAll()
                     .requestMatchers("/sapi/**").hasAuthority(ROLE_KYC_USER)
                     .anyRequest().denyAll()
             )
             .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt ->
                     jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())
-            ));
+            ))
+            .addFilterAfter(postAuthProxyRequest, BearerTokenAuthenticationFilter.class);
         return http.build();
     }
 
