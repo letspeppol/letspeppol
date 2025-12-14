@@ -33,10 +33,11 @@ public class PostAuthProxyRequest extends OncePerRequestFilter {
         if (authentication instanceof JwtAuthenticationToken jwtAuth && authentication.isAuthenticated()) {
             Jwt jwt = jwtAuth.getToken();
             String peppolId = JwtUtil.getPeppolId(jwt);
+            String tokenValue = jwt.getTokenValue();
             // start a virtual thread (fire-and-forget) to check if the user has new documents
             Thread.startVirtualThread(() -> {
                 try {
-                    documentService.synchronize(peppolId, jwt);
+                    documentService.synchronize(peppolId, tokenValue);
                 } catch (Exception e) {
                     logger.warn("Post-auth async task failed", e);
                 }

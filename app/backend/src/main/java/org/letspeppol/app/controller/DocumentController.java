@@ -82,7 +82,7 @@ public class DocumentController {
             draft = true;
         }
         String peppolId = JwtUtil.getPeppolId(jwt);
-        return documentService.createFromUbl(peppolId, ublXml, draft, schedule, jwt);
+        return documentService.createFromUbl(peppolId, ublXml, draft, schedule, jwt.getTokenValue());
     }
 
     @PutMapping("{id}")
@@ -91,7 +91,7 @@ public class DocumentController {
             draft = true;
         }
         String peppolId = JwtUtil.getPeppolId(jwt);
-        return documentService.update(peppolId, id, ublXml, draft, schedule, jwt);
+        return documentService.update(peppolId, id, ublXml, draft, schedule, jwt.getTokenValue());
     }
 
     @PutMapping("{id}/send")
@@ -100,7 +100,7 @@ public class DocumentController {
             throw new PeppolException("Peppol ID is not active");
         }
         String peppolId = JwtUtil.getPeppolId(jwt);
-        return documentService.send(peppolId, id, schedule, jwt);
+        return documentService.send(peppolId, id, schedule, jwt.getTokenValue());
     }
 
     @PutMapping("{id}/read")

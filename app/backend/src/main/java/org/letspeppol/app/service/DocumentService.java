@@ -109,20 +109,20 @@ public class DocumentService {
         return DocumentMapper.toDto(document);
     }
 
-    public void synchronize(String peppolId, Jwt jwt) {
+    public void synchronize(String peppolId, String tokenValue) {
         companyRepository.findByPeppolId(peppolId).ifPresent(company -> {
             if (Instant.now().minusMillis(synchronizeDelay).isAfter(company.getLastDocumentSyncAt())) {
                 company.setLastDocumentSyncAt(Instant.now().plusSeconds(60*60)); //With fast requests or slow resolves, make to not create new threads that hang
                 companyRepository.saveAndFlush(company);
-                synchronizeNewDocuments(peppolId, jwt);
-                synchronizeDocuments(peppolId, jwt);
+                synchronizeNewDocuments(peppolId, tokenValue);
+                synchronizeDocuments(peppolId, tokenValue);
                 company.setLastDocumentSyncAt(Instant.now()); //Now the proper delay can be applied
                 companyRepository.save(company);
             }
         });
     }
 
-    public DocumentDto createFromUbl(String peppolId, String ublXml, boolean draft, Instant schedule, Jwt jwt) {
+    public DocumentDto createFromUbl(String peppolId, String ublXml, boolean draft, Instant schedule, String tokenValue) {
         Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new NotFoundException("Company does not exist"));
         UblDto ublDto = readUBL(DocumentDirection.OUTGOING, ublXml, peppolId);
         Document document = new Document(
@@ -155,7 +155,7 @@ public class DocumentService {
         if (!draft) {
             backupService.backupFile(document); //TODO : do we want to backUp drafts and not on proxy documents ?
             documentBackupCounter.increment();
-            document = deliver(document, jwt);
+            document = deliver(document, tokenValue);
             documentSendCounter.increment();
         }
         return DocumentMapper.toDto(document);
@@ -196,7 +196,7 @@ public class DocumentService {
 //        return DocumentMapper.toDto(document); //TODO : do we need to return something or are we only going to use this for received documents ?
     }
 
-    public DocumentDto update(String peppolId, UUID id, String ublXml, boolean draft, Instant schedule, Jwt jwt) {
+    public DocumentDto update(String peppolId, UUID id, String ublXml, boolean draft, Instant schedule, String tokenValue) {
 //        Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new NotFoundException("Company does not exist"));
         Document document = documentRepository.findById(id).orElseThrow(() -> new NotFoundException("Document does not exist"));
         if (!peppolId.equals(document.getOwnerPeppolId())) {
@@ -230,7 +230,7 @@ public class DocumentService {
         if (!draft) {
             backupService.backupFile(document); //TODO : do we want to backUp drafts and not on proxy documents ?
             documentBackupCounter.increment();
-            document = deliver(document, jwt);
+            document = deliver(document, tokenValue);
             documentSendCounter.increment();
         }
         return DocumentMapper.toDto(document);
@@ -245,7 +245,7 @@ public class DocumentService {
         documentRepository.save(document);
     }
 
-    public DocumentDto send(String peppolId, UUID id, Instant schedule, Jwt jwt) {
+    public DocumentDto send(String peppolId, UUID id, Instant schedule, String tokenValue) {
         Document document = documentRepository.findById(id).orElseThrow(() -> new NotFoundException("Document does not exist"));
         if (!peppolId.equals(document.getOwnerPeppolId())) {
             throw new SecurityException(AppErrorCodes.PEPPOL_ID_MISMATCH);
@@ -258,7 +258,7 @@ public class DocumentService {
 //        document = documentRepository.save(document); //Not saving, as we only save the proxy returned result
         backupService.backupFile(document);
         documentBackupCounter.increment(); //TODO : how to correctly use these counters ?
-        document = deliverOnSchedule(document, jwt);
+        document = deliverOnSchedule(document, tokenValue);
         documentSendCounter.increment();
         return DocumentMapper.toDto(document);
     }
@@ -292,9 +292,9 @@ public class DocumentService {
         documentRepository.deleteByIdAndOwnerPeppolId(id, peppolId);
     }
 
-    private Document deliver(Document document, Jwt jwt) { //TODO : use boolean noArchive from Company
+    private Document deliver(Document document, String tokenValue) { //TODO : use boolean noArchive from Company
         UblDocumentDto ublDocumentDto = ((document.getProxyOn() == null) ? proxyWebClient.post().uri("/sapi/document") : proxyWebClient.put().uri("/sapi/document/"+document.getId()))
-                .headers(headers -> headers.setBearerAuth(jwt.getTokenValue()))
+                .headers(headers -> headers.setBearerAuth(tokenValue))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UblDocumentDto(
                         document.getId(),
@@ -325,10 +325,10 @@ public class DocumentService {
         return documentRepository.save(document);
     }
 
-    private Document deliverOnSchedule(Document document, Jwt jwt) { //TODO : use boolean noArchive from Company
+    private Document deliverOnSchedule(Document document, String tokenValue) { //TODO : use boolean noArchive from Company
         UblDocumentDto ublDocumentDto = proxyWebClient.put()
                 .uri("/sapi/document/" + document.getId() + "/send")
-                .headers(headers -> headers.setBearerAuth(jwt.getTokenValue()))
+                .headers(headers -> headers.setBearerAuth(tokenValue))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UblDocumentDto(
                         document.getId(),
@@ -354,7 +354,7 @@ public class DocumentService {
         return documentRepository.save(document);
     }
 
-    private void synchronizeNewDocuments(String peppolId, Jwt jwt) {
+    private void synchronizeNewDocuments(String peppolId, String tokenValue) {
         //TODO : record Page<T>(List<T> results, Integer total, Integer page, Integer size) {}
         //and use :
         //.bodyToMono(new ParameterizedTypeReference<Page<UblDocumentDto>>() {})
@@ -362,7 +362,7 @@ public class DocumentService {
 
         List<UblDocumentDto> ublDocumentDtos = proxyWebClient.get()
                 .uri("/sapi/document")
-                .headers(headers -> headers.setBearerAuth(jwt.getTokenValue()))
+                .headers(headers -> headers.setBearerAuth(tokenValue))
                 .retrieve()
                 .bodyToFlux(UblDocumentDto.class)
                 .collectList()
@@ -377,7 +377,7 @@ public class DocumentService {
 
         proxyWebClient.put()
                 .uri("/sapi/document/downloaded")
-                .headers(headers -> headers.setBearerAuth(jwt.getTokenValue()))
+                .headers(headers -> headers.setBearerAuth(tokenValue))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(ids)
                 .retrieve()
@@ -390,11 +390,11 @@ public class DocumentService {
                 .block();
     }
 
-    private void synchronizeDocuments(String peppolId, Jwt jwt) {
+    private void synchronizeDocuments(String peppolId, String tokenValue) {
         List<UUID> ids = documentRepository.findIdsWithPossibleStatusUpdatesOnProxy(peppolId, LocalDate.now(ZONE).plusDays(1).atStartOfDay(ZONE).toInstant());
         List<UblDocumentDto> ublDocumentDtos = proxyWebClient.post()
                 .uri("/sapi/document/status")
-                .headers(headers -> headers.setBearerAuth(jwt.getTokenValue()))
+                .headers(headers -> headers.setBearerAuth(tokenValue))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(ids)
                 .retrieve()
