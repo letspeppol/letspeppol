@@ -13,7 +13,7 @@ export class Login {
     rememberMe: boolean = false;
 
     attached() {
-        const email = localStorage.getItem("email")
+        const email = localStorage.getItem("email");
         if (email) {
             this.rememberMe = true;
             this.email = email;
@@ -32,7 +32,7 @@ export class Login {
     }
 
     async loginSuccess() {
-        await this.companyService.getAndSetMyCompanyForToken();
+        await this.companyService.getAndSetMyCompanyForToken().then(result => localStorage.setItem('peppolActive', result.peppolActive));
         this.error = false;
         if (this.rememberMe) {
             localStorage.setItem('email', this.email);

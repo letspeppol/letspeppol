@@ -1,13 +1,14 @@
 import {CompanyDto, CompanyService} from "../services/app/company-service";
 import {resolve} from "@aurelia/kernel";
 import {AlertType} from "../components/alert/alert";
-import {IEventAggregator} from "aurelia";
+import {IEventAggregator, IDisposable} from "aurelia";
 import {RegistrationService} from "../services/kyc/registration-service";
 import {ChangePasswordModal} from "./change-password-modal";
 import {ConfirmationModalContext} from "../components/confirmation/confirmation-modal-context";
 
 export class Account {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
+    private sub?: IDisposable;
     private readonly companyService = resolve(CompanyService);
     private readonly registrationService = resolve(RegistrationService);
     private readonly confirmationModalContext = resolve(ConfirmationModalContext);
@@ -19,12 +20,24 @@ export class Account {
         this.getCompany().catch(() => {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to get account"});
         });
+        this.sub = this.ea.subscribe('account:register', () => {
+            this.register();
+        });
+        const st = (history.state ?? {}) as any;
+        if (st.runRegister) {
+            history.replaceState({ ...st, runRegister: false }, '');// consume it so refresh doesn't re-run
+            this.register();
+        }
+    }
+
+    unbinding() {
+        this.sub?.dispose();
     }
 
     async getCompany() {
         let company = this.companyService.myCompany;
         if (!company) {
-            company = await this.companyService.getAndSetMyCompanyForToken().then(result => this.company = result);
+            company = await this.companyService.getAndSetMyCompanyForToken().then(result => this.company = result); //TODO : why company = ?
         }
         this.company = JSON.parse(JSON.stringify(company));
     }

@@ -67,6 +67,7 @@ export class LoginService {
         this.kycApi.httpClient.configure(config => config.withDefaults({ headers: {'Authorization': ''} }));
         this.appApi.httpClient.configure(config => config.withDefaults({ headers: {'Authorization': ''} }));
         localStorage.removeItem('token');
+        localStorage.removeItem('peppolActive');
         this.authenticated = false;
     }
 }

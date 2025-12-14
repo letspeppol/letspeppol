@@ -2,6 +2,12 @@
 <import from="../../components/donations/donations"></import>
 
 <heading></heading>
+<div if.bind="!peppolActive" class="global-error">
+    <div class="form-error">
+        <p aria-live="assertive" t="error.not-peppol-active">You are currently not registered on Peppol</p>
+        <button type="button" class="btn" click.trigger="notPeppolActiveAction()" title="Solve this now" t="[title]error.not-peppol-active-action;error.not-peppol-active-action">Solve this now</button>
+    </div>
+</div>
 <main class="container">
     <section>
         <au-slot></au-slot>

@@ -1,0 +1,10 @@
+.global-error {
+    margin: auto;
+    margin-top: 1%;
+    max-width: 700px;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    border: 1px solid var(--status-overdue);
+    border-radius: var(--radius-input);
+}
