@@ -171,10 +171,14 @@ export class InvoiceComposer {
                     }
                 },
                 PartyLegalEntity: {
-                    RegistrationName: undefined
+                    RegistrationName: 'jop',
+                    CompanyID: {
+                        __schemeID: null,
+                        value: 'jop'
+                    }
                 }
             }
-        };
+        } as AccountingParty;
     }
 
     getCompanyNumber() {
@@ -225,7 +229,7 @@ export class InvoiceComposer {
                     RegistrationName: this.companyService.myCompany.name,
                 }
             }
-        };
+        } as AccountingParty;
     }
 
     getCreditNoteLine(position: string): CreditNoteLine {

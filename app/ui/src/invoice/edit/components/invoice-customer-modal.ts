@@ -17,8 +17,12 @@ export class InvoiceCustomerModal {
         if (!this.customer) return;
     }
 
+    nameChanged() {
+        this.customer.PartyLegalEntity.RegistrationName = this.customer.PartyName.Name;
+    }
+
     showModal(customerSavedFunction: () => void) {
-        this.customer = JSON.parse(JSON.stringify(this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party));
+        this.customer = structuredClone(this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party);
         if (this.customer && this.customer.EndpointID.__schemeID && this.customer.EndpointID.value) {
             this.peppolId = `${this.customer.EndpointID.__schemeID}:${this.customer.EndpointID.value}`;
         } else {
@@ -51,6 +55,7 @@ export class InvoiceCustomerModal {
         if (!this.customer.PartyName.Name) {
             this.customer.PartyName.Name = name;
         }
+        this.customer.PartyLegalEntity.RegistrationName = this.customer.PartyName.Name;
         this.peppolIdChangedFunction(participantID);
     }
 

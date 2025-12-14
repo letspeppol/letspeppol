@@ -38,7 +38,7 @@
                             </label>
                             <label class="field">
                                 <span t="label.name">Name</span>
-                                <input type="text" name="customerName" placeholder="Name" t="[placeholder]placeholder.name" value.bind="customer.PartyName.Name" required />
+                                <input type="text" name="customerName" placeholder="Name" t="[placeholder]placeholder.name" value.bind="customer.PartyName.Name" required change.trigger="nameChanged()" />
                             </label>
                         </div>
                     </div>

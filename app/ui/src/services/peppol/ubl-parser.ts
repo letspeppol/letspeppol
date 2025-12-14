@@ -1,12 +1,13 @@
-import {XMLBuilder, XMLParser} from "fast-xml-parser";
+import {XMLParser} from "fast-xml-parser";
 import {CreditNote, Invoice} from "./ubl";
+import { buildInvoiceXml, buildCreditNoteXml } from './ubl-builder';
 
 const parser = new XMLParser({
     ignoreAttributes: false,
     attributeNamePrefix: "__",
     textNodeName: "value",
     parseTagValue: false,
-    isArray: (name, jpath, isLeafNode, isAttribute) => {
+    isArray: (name) => {
         return (
             name === "cac:InvoiceLine" ||
             name === "cac:AdditionalDocumentReference" ||
@@ -27,55 +28,6 @@ const parser = new XMLParser({
     }
 });
 
-export const builder = new XMLBuilder({
-    ignoreAttributes: false,
-    attributeNamePrefix: "__",
-    format: true,
-    suppressEmptyNode: true,
-    textNodeName: "value",
-    // tagValueProcessor: (a) => a, // prevent automatic type coercion
-    // attributeValueProcessor: (a) => a,
-});
-
-// PEPPOL namespaces
-const UBL_NS = {
-    "__xmlns:cac": "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2",
-    "__xmlns:cbc": "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2",
-    "__xmlns": "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2",
-};
-
-// Separate namespace for CreditNote root element
-const CREDIT_NOTE_NS = {
-    "__xmlns:cac": "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2",
-    "__xmlns:cbc": "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2",
-    "__xmlns": "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2",
-};
-
-// Helper to add prefixes recursively
-
-function addPrefixes(obj: any): any {
-    if (typeof obj !== "object" || obj === null) return obj;
-
-    // Arrays handled recursively without renaming the element
-    if (Array.isArray(obj)) {
-        return obj.map(addPrefixes);
-    }
-
-    const result: any = {};
-    for (const key of Object.keys(obj)) {
-        let newKey = key;
-
-        if (!key.startsWith("__") && key !== "Invoice" && key !== "CreditNote" && key !== "UBLVersionID" && key !== "value") {
-            const prefix = PREFIX_MAP[key] || "cac";
-            newKey = `${prefix}:${key}`;
-        }
-
-        result[newKey] = addPrefixes(obj[key]);
-    }
-
-    return result;
-}
-
 // Invoice functions
 export function parseInvoice(xml: string): Invoice {
     const obj = parser.parse(xml);
@@ -85,10 +37,8 @@ export function parseInvoice(xml: string): Invoice {
 }
 
 export function buildInvoice(invoice: Invoice): string {
-    invoice = removeEmpty(invoice);
-    const invoiceWithNS = { ...UBL_NS, ...addPrefixes(invoice), };
-    const cleaned = removeEmptyNodes(invoiceWithNS);
-    return `<?xml version="1.0" encoding="UTF-8"?>` + builder.build({Invoice: cleaned});
+    // Delegate to the string-based UBL builder to ensure deterministic ordering
+    return buildInvoiceXml(invoice);
 }
 
 // CreditNote functions
@@ -100,34 +50,11 @@ export function parseCreditNote(xml: string): CreditNote {
 }
 
 export function buildCreditNote(creditNote: CreditNote): string {
-    creditNote = removeEmpty(creditNote);
-    const creditWithNS = { ...CREDIT_NOTE_NS, ...addPrefixes(creditNote) };
-    const cleaned = removeEmptyNodes(creditWithNS);
-    return `<?xml version="1.0" encoding="UTF-8"?>` + builder.build({ CreditNote: cleaned });
+    // Delegate to the string-based UBL builder to ensure deterministic ordering
+    return buildCreditNoteXml(creditNote);
 }
 
-function removeEmptyNodes(obj: any): any {
-    if (obj === null || obj === undefined) return undefined;
-    if (Array.isArray(obj)) {
-        const filtered = obj
-            .map(removeEmptyNodes)
-            .filter((item) => item !== undefined);
-        return filtered.length ? filtered : undefined;
-    }
-    if (typeof obj === "object") {
-        const result: any = {};
-        for (const key of Object.keys(obj)) {
-            const value = removeEmptyNodes(obj[key]);
-            if (value !== undefined) {
-                result[key] = value;
-            }
-        }
-        return Object.keys(result).length ? result : undefined;
-    }
-    return obj; // primitive value
-}
-
-function stripPrefixes(obj: any): any {
+function stripPrefixes(obj: unknown): unknown {
     if (obj === null || obj === undefined) return obj;
 
     if (Array.isArray(obj)) {
@@ -135,19 +62,20 @@ function stripPrefixes(obj: any): any {
     }
 
     if (typeof obj === "object") {
-        const result: any = {};
-        for (const key of Object.keys(obj)) {
+        const input = obj as Record<string, unknown>;
+        const result: Record<string, unknown> = {};
+        for (const key of Object.keys(input)) {
             // Remove "cbc:" or "cac:" prefixes
             const newKey = key.replace(/^(cbc|cac):/, "");
-            result[newKey] = stripPrefixes(obj[key]);
+            result[newKey] = stripPrefixes(input[key]);
         }
 
         // Auto-normalize PartyIdentification inside Party objects
         if (result.PartyIdentification) {
-            const pi = result.PartyIdentification;
+            const pi = result.PartyIdentification as any;
             if (pi.ID) {
                 const ids = Array.isArray(pi.ID) ? pi.ID : [pi.ID];
-                result.PartyIdentification = ids.map(id => ({ ID: id }));
+                result.PartyIdentification = ids.map((id: any) => ({ ID: id }));
             }
         }
 
@@ -157,48 +85,22 @@ function stripPrefixes(obj: any): any {
     return obj; // primitive
 }
 
-function normalizeArrays(obj: any, keys: string[]) {
+function normalizeArrays(obj: unknown, keys: string[]): void {
     if (!obj || typeof obj !== "object") return;
+    const record = obj as Record<string, unknown>;
+
     for (const key of keys) {
-        if (obj[key] && !Array.isArray(obj[key])) {
-            obj[key] = [obj[key]];
+        if (record[key] && !Array.isArray(record[key])) {
+            record[key] = [record[key]];
         }
     }
-    for (const k of Object.keys(obj)) {
-        normalizeArrays(obj[k], keys);
+
+    for (const k of Object.keys(record)) {
+        normalizeArrays(record[k], keys);
     }
 }
 
-function removeEmpty<T>(value: T): T | undefined {
-    if (value == null) return undefined; // null or undefined
-
-    if (typeof value === 'string') {
-        const trimmed = value.trim();
-        return trimmed === '' ? undefined : (trimmed as T);
-    }
-
-    if (Array.isArray(value)) {
-        const cleaned = value
-            .map(removeEmpty)
-            .filter((v): v is Exclude<typeof v, undefined> => v !== undefined);
-
-        return cleaned.length > 0 ? (cleaned as T) : undefined;
-    }
-
-    if (typeof value === 'object') {
-        const entries = Object.entries(value)
-            .map(([k, v]) => [k, removeEmpty(v)] as const)
-            .filter(([_, v]) => v !== undefined);
-
-        if (entries.length === 0) return undefined;
-        return Object.fromEntries(entries) as T;
-    }
-
-    // numbers, booleans, etc.
-    return value;
-}
-
-// Explicit prefix map for UBL 2.1 Invoice
+// Explicit prefix map for UBL 2.1 Invoice (kept for reference; not used at build time anymore)
 const PREFIX_MAP: Record<string, "cbc" | "cac"> = {
     // CBC basic components
     "CustomizationID": "cbc",
