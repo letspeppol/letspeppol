@@ -64,7 +64,7 @@ export class Account {
         }
     }
 
-    discardChanges() {
+    cancelChanges() {
         this.company = JSON.parse(JSON.stringify(this.companyService.myCompany));
         this.ea.publish('alert', {alertType: AlertType.Info, text: "Account changes reverted"});
     }
