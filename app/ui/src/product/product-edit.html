@@ -4,7 +4,7 @@
             <h1 style="margin:0" t="product.edit.new">New product</h1>
         </div>
         <div class="editor-header-actions">
-            <button type="button" class="btn" click.trigger="productContext.clearSelectedProduct()" t="product.edit.discard">Discard</button>
+            <button type="button" class="btn" click.trigger="productContext.clearSelectedProduct()" t="product.edit.cancel">Cancel</button>
             <button type="button" class="btn primary" click.trigger="saveProduct()" disabled.bind="!productContext.selectedProduct.name" t="product.edit.save">Save product</button>
         </div>
     </div>

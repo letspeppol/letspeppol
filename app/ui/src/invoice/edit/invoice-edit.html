@@ -33,7 +33,7 @@
             <button if.bind="invoiceContext.selectedDraft && !readOnly" type="button" class="btn" click.trigger="deleteDraft()">
                 <span t="invoice.edit.delete-draft">Delete draft</span>
             </button>
-            <button type="button" class="btn" click.trigger="invoiceContext.clearSelectedInvoice()" t="invoice.edit.discard">Discard</button>
+            <button type="button" class="btn" click.trigger="invoiceContext.clearSelectedInvoice()" t="invoice.edit.cancel">Cancel</button>
             <button if.bind="!readOnly" type="button" class="btn primary" click.trigger="sendInvoice()" disabled.bind="!isValid" t="invoice.edit.send.${selectedDocumentType}">Send invoice</button>
         </div>
     </div>
