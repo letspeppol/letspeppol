@@ -30,7 +30,7 @@ public class KboXmlSyncService {
     private final KboSftpClient kboSftpClient;
     private final KboProcessedZipRepository kboProcessedZipRepository;
 
-    @Value("${kyc.data.dir:/tmp}")
+    @Value("${contract.data.dir:/tmp}")
     private String dataDir;
 
     @Value("${kbo.sftp.base-dir:/}")
