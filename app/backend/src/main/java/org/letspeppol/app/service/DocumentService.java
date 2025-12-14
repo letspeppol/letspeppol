@@ -21,7 +21,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -109,16 +108,10 @@ public class DocumentService {
         return DocumentMapper.toDto(document);
     }
 
-    public void synchronize(String peppolId, String tokenValue) {
+    public void synchronize(String peppolId, String tokenValue) throws InterruptedException {
         companyRepository.findByPeppolId(peppolId).ifPresent(company -> {
-            if (Instant.now().minusMillis(synchronizeDelay).isAfter(company.getLastDocumentSyncAt())) {
-                company.setLastDocumentSyncAt(Instant.now().plusSeconds(60*60)); //With fast requests or slow resolves, make to not create new threads that hang
-                companyRepository.saveAndFlush(company);
-                synchronizeNewDocuments(peppolId, tokenValue);
-                synchronizeDocuments(peppolId, tokenValue);
-                company.setLastDocumentSyncAt(Instant.now()); //Now the proper delay can be applied
-                companyRepository.save(company);
-            }
+            synchronizeNewDocuments(peppolId, tokenValue);
+            synchronizeDocuments(peppolId, tokenValue);
         });
     }
 

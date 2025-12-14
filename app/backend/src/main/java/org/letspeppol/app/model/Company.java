@@ -30,9 +30,15 @@ public class Company extends GenericEntity{
     private String iban;
     private String paymentAccountName;
 
-    private boolean noArchive; //Setting by user that data should not be stored once processed (user is absolute owner & responsible)
-    private Instant lastDocumentSyncAt; //Rate limit the proxy polling
+// TODO    private boolean noArchive; //Setting by user that data should not be stored once processed (user is absolute owner & responsible)
 // TODO    private String accountant; //Either email or UUID of accounting system or accountant, flaggable by user what invoices should be sent to accountant
+//CREATE SCHEMA IF NOT EXISTS app;
+//    SET search_path = app;
+//
+//-- Company
+//    ALTER TABLE company
+//    ADD COLUMN no_archive boolean DEFAULT false NOT NULL,
+//    ADD COLUMN accountant varchar(255);
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "registered_office_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_company_registered_office"))
@@ -45,8 +51,7 @@ public class Company extends GenericEntity{
         this.name = name;
         this.subscriber = subscriber;
         this.subscriberEmail = subscriberEmail;
-        this.noArchive = false;
-        this.lastDocumentSyncAt = Instant.now();
+// TODO        this.noArchive = false;
         this.registeredOffice = new Address(city, postalCode, street, countryCode);
     }
 }
