@@ -21,12 +21,12 @@ public interface DocumentRepository extends JpaRepository<Document, UUID>, JpaSp
 
     @Query(value = """
     SELECT
-      COALESCE(SUM(CASE WHEN direction = 'INCOMING' AND paid_on IS NULL THEN amount ELSE 0 END), 0) AS totalPayableOpen,
-      COALESCE(SUM(CASE WHEN direction = 'INCOMING' AND paid_on IS NULL AND due_date < NOW() THEN amount ELSE 0 END), 0) AS totalPayableOverdue,
-      COALESCE(SUM(CASE WHEN direction = 'INCOMING' AND EXTRACT(YEAR FROM issue_date) = EXTRACT(YEAR FROM NOW()) THEN amount ELSE 0 END), 0) AS totalPayableThisYear,
-      COALESCE(SUM(CASE WHEN direction = 'OUTGOING' AND paid_on IS NULL THEN amount ELSE 0 END), 0) AS totalReceivableOpen,
-      COALESCE(SUM(CASE WHEN direction = 'OUTGOING' AND paid_on IS NULL AND due_date < NOW() THEN amount ELSE 0 END), 0) AS totalReceivableOverdue,
-      COALESCE(SUM(CASE WHEN direction = 'OUTGOING' AND EXTRACT(YEAR FROM issue_date) = EXTRACT(YEAR FROM NOW()) THEN amount ELSE 0 END), 0) AS totalReceivableThisYear
+      COALESCE(SUM(CASE WHEN drafted_on IS NULL AND direction = 'INCOMING' AND paid_on IS NULL THEN amount ELSE 0 END), 0) AS totalPayableOpen,
+      COALESCE(SUM(CASE WHEN drafted_on IS NULL AND direction = 'INCOMING' AND paid_on IS NULL AND due_date < NOW() THEN amount ELSE 0 END), 0) AS totalPayableOverdue,
+      COALESCE(SUM(CASE WHEN drafted_on IS NULL AND direction = 'INCOMING' AND EXTRACT(YEAR FROM issue_date) = EXTRACT(YEAR FROM NOW()) THEN amount ELSE 0 END), 0) AS totalPayableThisYear,
+      COALESCE(SUM(CASE WHEN drafted_on IS NULL AND direction = 'OUTGOING' AND paid_on IS NULL THEN amount ELSE 0 END), 0) AS totalReceivableOpen,
+      COALESCE(SUM(CASE WHEN drafted_on IS NULL AND direction = 'OUTGOING' AND paid_on IS NULL AND due_date < NOW() THEN amount ELSE 0 END), 0) AS totalReceivableOverdue,
+      COALESCE(SUM(CASE WHEN drafted_on IS NULL AND direction = 'OUTGOING' AND EXTRACT(YEAR FROM issue_date) = EXTRACT(YEAR FROM NOW()) THEN amount ELSE 0 END), 0) AS totalReceivableThisYear
     FROM app.document
     WHERE owner_peppol_id = :ownerPeppolId
     """, nativeQuery = true)
@@ -42,7 +42,7 @@ public interface DocumentRepository extends JpaRepository<Document, UUID>, JpaSp
     FROM (
       SELECT date_trunc('day', issue_date) AS day, COUNT(*) AS day_count
       FROM app.document
-      WHERE issue_date >= :startInclusive AND issue_date <  :endExclusive
+      WHERE processed_on IS NOT NULL AND issue_date >= :startInclusive AND issue_date <  :endExclusive
       GROUP BY 1
     ) daily_counts
     """, nativeQuery = true)
