@@ -30,6 +30,7 @@ public class ProxyConfig {
 
         return WebClient.builder()
                 .baseUrl(apiUrl)
+                .codecs(c -> c.defaultCodecs().maxInMemorySize(32 * 1024 * 1024))
                 .clientConnector(new ReactorClientHttpConnector(httpClient))
                 .build();
     }
