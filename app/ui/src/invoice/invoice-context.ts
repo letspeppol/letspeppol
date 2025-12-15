@@ -28,6 +28,9 @@ export class InvoiceContext {
     }
 
     selectedInvoiceChanged(newValue: UBLDoc) {
+        if (!newValue) {
+            return;
+        }
         this.lines = getLines(newValue);
     }
 

@@ -6,8 +6,14 @@ export function getLines(doc: UBLDoc): UBLLine[] {
         return undefined;
     }
     if ("InvoiceTypeCode" in doc) {
+        if (!doc.InvoiceLine) {
+            doc.InvoiceLine = [] as InvoiceLine[];
+        }
         return doc.InvoiceLine
     } else {
+        if (!doc.CreditNoteLine) {
+            doc.CreditNoteLine = [] as CreditNoteLine[];
+        }
         return doc.CreditNoteLine;
     }
 }

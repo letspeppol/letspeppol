@@ -4,5 +4,5 @@
 
 <application-view>
     <partner-overview show.bind="!partnerContext.selectedPartner"></partner-overview>
-    <partner-edit show.bind="partnerContext.selectedPartner"></partner-edit>
+    <partner-edit if.bind="partnerContext.selectedPartner"></partner-edit>
 </application-view>

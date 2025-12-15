@@ -77,6 +77,8 @@ export class InvoiceOverview {
     }
 
     selectItem(item: DocumentDto) {
+        this.invoiceContext.readOnly = (item.direction === DocumentDirection.INCOMING || item.proxyOn != null);
+        this.invoiceContext.selectedDocument = item;
         if (item.type === DocumentType.CREDIT_NOTE) {
             this.invoiceContext.selectedInvoice = parseCreditNote(item.ubl);
         } else {
