@@ -102,7 +102,7 @@ export class InvoiceCustomerModal {
                 PostalZone: c.registeredOffice?.postalCode,
                 Country: { IdentificationCode: 'BE' }
             },
-            PartyTaxScheme: { CompanyID: c.vatNumber , TaxScheme: { ID: 'VAT' } },
+            PartyTaxScheme: { CompanyID: {value: c.vatNumber } , TaxScheme: { ID: 'VAT' } },
             PartyLegalEntity: { RegistrationName: c.name, CompanyID: { value: c.vatNumber } },
             Contact: { Name: c.paymentAccountName }
         };

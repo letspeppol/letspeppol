@@ -119,7 +119,7 @@ export interface EmbeddedDocumentBinaryObject {
 }
 
 export interface PartyTaxScheme {
-    CompanyID: string
+    CompanyID: Identifier
     TaxScheme?: { ID: string };
 }
 

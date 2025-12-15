@@ -1,26 +1,31 @@
 import {XMLParser} from "fast-xml-parser";
 import {CreditNote, Invoice} from "./ubl";
-import { buildInvoiceXml, buildCreditNoteXml } from './ubl-builder';
 
 const parser = new XMLParser({
     ignoreAttributes: false,
     attributeNamePrefix: "__",
     textNodeName: "value",
     parseTagValue: false,
+    removeNSPrefix: true,
     isArray: (name) => {
         return (
-            name === "cac:InvoiceLine" ||
-            name === "cac:AdditionalDocumentReference" ||
+            name === "CreditNoteLine" ||
+            name === "InvoiceLine" ||
+            name === "AdditionalDocumentReference" ||
+            name === "AllowanceCharge" ||
+            name === "TaxSubtotal" ||
+            name === "TaxTotal" ||
+            name === "PartyIdentification" ||
             false
         );
     },
     tagValueProcessor: (tagName, value) => {
         const bare = tagName.replace(/^[^:]*:/, '');
-        if (numberFields.includes(bare)) {
+        if (NUMERIC_TAGS.has(bare)) {
             const n = Number(value);
             return isNaN(n) ? value : n;
         }
-        if (booleanFields.includes(bare)) {
+        if (BOOLEAN_TAGS.has(bare)) {
             if (value === 'true') return true;
             if (value === 'false') return false;
         }
@@ -28,30 +33,19 @@ const parser = new XMLParser({
     }
 });
 
-// Invoice functions
 export function parseInvoice(xml: string): Invoice {
-    const obj = parser.parse(xml);
-    const invoiceObj = stripPrefixes(obj["Invoice"]);
-    normalizeArrays(invoiceObj, ["TaxTotal", "TaxSubtotal", "AllowanceCharge", "cac:InvoiceLine", "cac:AdditionalDocumentReference"]);
-    return invoiceObj;
+    return parseUblDocument<Invoice>(xml, "Invoice");
 }
 
-export function buildInvoice(invoice: Invoice): string {
-    // Delegate to the string-based UBL builder to ensure deterministic ordering
-    return buildInvoiceXml(invoice);
-}
-
-// CreditNote functions
 export function parseCreditNote(xml: string): CreditNote {
-    const obj = parser.parse(xml);
-    const creditObj = stripPrefixes(obj["CreditNote"]);
-    normalizeArrays(creditObj, ["TaxTotal", "TaxSubtotal", "AllowanceCharge", "CreditNoteLine", "AdditionalDocumentReference"]);
-    return creditObj;
+    return parseUblDocument<CreditNote>(xml, "CreditNote");
 }
 
-export function buildCreditNote(creditNote: CreditNote): string {
-    // Delegate to the string-based UBL builder to ensure deterministic ordering
-    return buildCreditNoteXml(creditNote);
+function parseUblDocument<T>(xml: string, rootTag: "Invoice" | "CreditNote"): T {
+    const obj = parser.parse(xml);
+    const root = obj[rootTag];
+    const stripped = stripPrefixes(root);
+    return stripped as T;
 }
 
 function stripPrefixes(obj: unknown): unknown {
@@ -65,17 +59,22 @@ function stripPrefixes(obj: unknown): unknown {
         const input = obj as Record<string, unknown>;
         const result: Record<string, unknown> = {};
         for (const key of Object.keys(input)) {
-            // Remove "cbc:" or "cac:" prefixes
-            const newKey = key.replace(/^(cbc|cac):/, "");
-            result[newKey] = stripPrefixes(input[key]);
+            result[key] = stripPrefixes(input[key]);
         }
 
-        // Auto-normalize PartyIdentification inside Party objects
-        if (result.PartyIdentification) {
-            const pi = result.PartyIdentification as any;
-            if (pi.ID) {
-                const ids = Array.isArray(pi.ID) ? pi.ID : [pi.ID];
-                result.PartyIdentification = ids.map((id: any) => ({ ID: id }));
+        if (result.PartyLegalEntity) {
+            const ple = result.PartyLegalEntity as Record<string, unknown>;
+            const rawCompany = ple.CompanyID as unknown;
+            if (typeof rawCompany === 'string') {
+                ple.CompanyID = { value: rawCompany };
+            }
+        }
+
+        if (result.PartyTaxScheme) {
+            const pts = result.PartyTaxScheme as Record<string, unknown>;
+            const rawCompany = pts.CompanyID as unknown;
+            if (typeof rawCompany === 'string') {
+                pts.CompanyID = { value: rawCompany };
             }
         }
 
@@ -84,74 +83,6 @@ function stripPrefixes(obj: unknown): unknown {
 
     return obj; // primitive
 }
-
-function normalizeArrays(obj: unknown, keys: string[]): void {
-    if (!obj || typeof obj !== "object") return;
-    const record = obj as Record<string, unknown>;
-
-    for (const key of keys) {
-        if (record[key] && !Array.isArray(record[key])) {
-            record[key] = [record[key]];
-        }
-    }
-
-    for (const k of Object.keys(record)) {
-        normalizeArrays(record[k], keys);
-    }
-}
-
-// Explicit prefix map for UBL 2.1 Invoice (kept for reference; not used at build time anymore)
-const PREFIX_MAP: Record<string, "cbc" | "cac"> = {
-    // CBC basic components
-    "CustomizationID": "cbc",
-    "ProfileID": "cbc",
-    "ID": "cbc",
-    "IssueDate": "cbc",
-    "DueDate": "cbc",
-    "InvoiceTypeCode": "cbc",
-    "CreditNoteTypeCode": "cbc",
-    "DocumentCurrencyCode": "cbc",
-    "AccountingCost": "cbc",
-    "BuyerReference": "cbc",
-    "LineExtensionAmount": "cbc",
-    "TaxExclusiveAmount": "cbc",
-    "TaxInclusiveAmount": "cbc",
-    "ChargeTotalAmount": "cbc",
-    "PayableAmount": "cbc",
-    "PriceAmount": "cbc",
-    "InvoicedQuantity": "cbc",
-    "CreditedQuantity": "cbc",
-    "Percent": "cbc",
-    "Note": "cbc",
-    "EndpointID": "cbc",
-    "PaymentMeansCode": "cbc",
-    "PaymentID": "cbc",
-    "Amount": "cbc",
-    "TaxAmount": "cbc",
-    "CompanyID": "cbc",
-    "RegistrationName": "cbc",
-    "Description": "cbc",
-    "Name": "cbc",
-    "StreetName": "cbc",
-    "AdditionalStreetName": "cbc",
-    "CityName": "cbc",
-    "PostalZone": "cbc",
-    "IdentificationCode": "cbc",
-    "LineID": "cbc",
-    "ItemClassificationCode": "cbc",
-    "ActualDeliveryDate": "cbc",
-    "Telephone": "cbc",
-    "ElectronicMail": "cbc",
-    "Fax": "cbc",
-    "Email": "cbc",
-    "TaxableAmount": "cbc",
-    "ChargeIndicator": "cbc",
-    "AllowanceChargeReason": "cbc",
-    "EmbeddedDocumentBinaryObject": "cbc",
-    "DocumentDescription": "cbc",
-    "URI": "cbc"
-    // Everything else is aggregate (cac)
-};
 
 const numberFields = [
     "ChargeTotalAmount",
@@ -175,3 +106,6 @@ const numberFields = [
 const booleanFields = [
     "ChargeIndicator"
 ];
+
+const NUMERIC_TAGS = new Set(numberFields);
+const BOOLEAN_TAGS = new Set(booleanFields);

@@ -1,6 +1,7 @@
 import {describe, expect, test} from "vitest";
-import {buildCreditNote, buildInvoice, parseCreditNote, parseInvoice} from "../../src/services/peppol/ubl-parser";
+import {parseCreditNote, parseInvoice} from "../../src/services/peppol/ubl-parser";
 import { normalizeXml, sampleInvoiceXml, sampleCreditNoteXml } from './ubl-test-utils';
+import {buildCreditNoteXml, buildInvoiceXml} from "../../src/services/peppol/ubl-builder";
 
 describe("Invoice XML round-trip", () => {
     test("parse -> build should match original XML", () => {
@@ -29,10 +30,9 @@ describe("Invoice XML round-trip", () => {
         expect(supplier.PostalAddress?.StreetName).toBe("Main street 1");
         expect(supplier.PostalAddress?.CityName).toBe("London");
         expect(supplier.PostalAddress?.PostalZone).toBe("GB 123 EW");
-        expect(supplier.PartyTaxScheme?.CompanyID).toBe("GB1232434");
-        expect(supplier.PartyLegalEntity?.RegistrationName).toBe(
-            "SupplierOfficialName Ltd"
-        );
+        expect(supplier.PartyTaxScheme?.CompanyID.value).toBe("GB1232434");
+        expect(supplier.PartyLegalEntity?.RegistrationName).toBe("SupplierOfficialName Ltd");
+        expect(supplier.PartyLegalEntity?.CompanyID.value).toBe("GB983294");
 
         // --- Customer ---
         const customer = invoiceObj.AccountingCustomerParty.Party;
@@ -43,7 +43,8 @@ describe("Invoice XML round-trip", () => {
         expect(customer.PostalAddress?.StreetName).toBe("Hovedgatan 32");
         expect(customer.PostalAddress?.CityName).toBe("Stockholm");
         expect(customer.PostalAddress?.PostalZone).toBe("456 34");
-        expect(customer.PartyTaxScheme?.CompanyID).toBe("SE4598375937");
+        expect(customer.PartyTaxScheme?.CompanyID.value).toBe("SE4598375937");
+        expect(customer.PartyLegalEntity?.RegistrationName).toBe("Buyer Official Name");
         expect(customer.PartyLegalEntity?.CompanyID.value).toBe("39937423947");
         expect(customer.Contact?.Name).toBe("Lisa Johnson");
         expect(customer.Contact?.Telephone).toBe("23434234");
@@ -122,7 +123,7 @@ describe("Invoice XML round-trip", () => {
         expect(additionalDocumentReference2.Attachment.EmbeddedDocumentBinaryObject.value).toBe("RGl0IGlzIGVlbiB0ZXN0");
 
         // Build XML from Invoice object
-        const rebuiltXml = buildInvoice(invoiceObj);
+        const rebuiltXml = buildInvoiceXml(invoiceObj);
 
         // Normalize whitespace for comparison
         const originalNormalized = `<?xml version="1.0" encoding="UTF-8"?>` + normalizeXml(sampleInvoiceXml);
@@ -158,9 +159,7 @@ describe("CreditNote XML round-trip", () => {
         expect(supplier.PostalAddress?.CityName).toBe("London");
         expect(supplier.PostalAddress?.PostalZone).toBe("GB 123 EW");
         expect(supplier.PartyTaxScheme?.CompanyID.value).toBe("GB1232434");
-        expect(supplier.PartyLegalEntity?.RegistrationName).toBe(
-            "SupplierOfficialName Ltd"
-        );
+        expect(supplier.PartyLegalEntity?.RegistrationName).toBe("SupplierOfficialName Ltd");
 
         // Customer
         const customer = creditNoteObj.AccountingCustomerParty.Party;
@@ -216,7 +215,7 @@ describe("CreditNote XML round-trip", () => {
         expect(line.Item.ClassifiedTaxCategory?.Percent).toBe(25.0);
         expect(line.Price.PriceAmount.value).toBe(400);
 
-        const rebuiltXml = buildCreditNote(creditNoteObj);
+        const rebuiltXml = buildCreditNoteXml(creditNoteObj);
         const originalNormalized = `<?xml version="1.0" encoding="UTF-8"?>` + normalizeXml(sampleCreditNoteXml);
         const rebuiltNormalized = normalizeXml(rebuiltXml);
         expect(rebuiltNormalized).toBe(originalNormalized);

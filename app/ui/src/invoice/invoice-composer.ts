@@ -220,7 +220,7 @@ export class InvoiceComposer {
                     }
                 },
                 PartyTaxScheme: {
-                    CompanyID: this.getVatNumber(),
+                    CompanyID: {value: this.getVatNumber() },
                     TaxScheme: {
                         ID: "VAT"
                     }
