@@ -1,21 +1,20 @@
 package org.letspeppol.app.service;
 
 import io.micrometer.core.instrument.Counter;
-import org.letspeppol.app.dto.CompanyDto;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.app.dto.AccountInfo;
+import org.letspeppol.app.dto.CompanyDto;
 import org.letspeppol.app.exception.AppErrorCodes;
 import org.letspeppol.app.exception.AppException;
 import org.letspeppol.app.exception.NotFoundException;
 import org.letspeppol.app.mapper.CompanyMapper;
 import org.letspeppol.app.model.Company;
 import org.letspeppol.app.repository.CompanyRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.letspeppol.app.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+
 import java.util.Optional;
 
 @Service
@@ -70,7 +69,7 @@ public class CompanyService {
         company.setPaymentAccountName(companyDto.paymentAccountName());
         company.setPaymentTerms(companyDto.paymentTerms());
         company.setIban(companyDto.iban());
-// TODO        company.setNoArchive(companyDto.noArchive());
+        // TODO        company.setNoArchive(companyDto.noArchive());
         company.getRegisteredOffice().setCity(companyDto.registeredOffice().city());
         company.getRegisteredOffice().setPostalCode(companyDto.registeredOffice().postalCode());
         company.getRegisteredOffice().setStreet(companyDto.registeredOffice().street());

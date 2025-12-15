@@ -4,4 +4,7 @@ import {PartnerContext} from "./partner-context";
 export class Partners {
     private partnerContext = resolve(PartnerContext);
 
+    detaching() {
+        this.partnerContext.clearSelectedPartner();
+    }
 }

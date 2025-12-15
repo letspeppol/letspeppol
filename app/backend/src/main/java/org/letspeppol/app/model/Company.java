@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.time.Instant;
 
 @Entity
 @Table(name = "company", indexes = {
@@ -29,6 +28,7 @@ public class Company extends GenericEntity{
     private String paymentTerms;
     private String iban;
     private String paymentAccountName;
+    private String lastInvoiceReference;
 
 // TODO    private boolean noArchive; //Setting by user that data should not be stored once processed (user is absolute owner & responsible)
 // TODO    private String accountant; //Either email or UUID of accounting system or accountant, flaggable by user what invoices should be sent to accountant

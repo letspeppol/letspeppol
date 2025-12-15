@@ -65,7 +65,7 @@ services:
           done;
           # optional: keep 14 days
           find "$$DATA_DIR" -type f -name "*.dump" -mtime +14 -delete || true;
-          sleep 3600;
+          sleep 43200;
         done
       '
     networks:

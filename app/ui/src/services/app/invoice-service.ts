@@ -124,8 +124,8 @@ export class InvoiceService {
         return await this.appApi.httpClient.post(`/sapi/document?draft=${draft}`, xml).then(response => response.json());
     }
 
-    async saveDocument(id: string, xml: string) : Promise<DocumentDto> {
-        return await this.appApi.httpClient.put(`/sapi/document/${id}`, xml).then(response => response.json());
+    async updateDocument(id: string, xml: string, draft: boolean = false) : Promise<DocumentDto> {
+        return await this.appApi.httpClient.put(`/sapi/document/${id}?draft=${draft}`, xml).then(response => response.json());
     }
 
     async sendDocument(id: string) : Promise<DocumentDto> {

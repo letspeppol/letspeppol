@@ -11,7 +11,6 @@ import {
     UBLLine
 } from "../../services/peppol/ubl";
 import {AlertType} from "../../components/alert/alert";
-import {buildCreditNote, buildInvoice} from "../../services/peppol/ubl-parser";
 import {InvoicePaymentModal} from "./components/invoice-payment-modal";
 import {InvoiceCustomerModal} from "./components/invoice-customer-modal";
 import {InvoiceCalculator, roundTwoDecimals} from "../invoice-calculator";
@@ -21,6 +20,7 @@ import {InvoiceService, DocumentType} from "../../services/app/invoice-service";
 import {ValidationResultModal} from "./components/validation-result-modal";
 import {InvoiceModal} from "./components/invoice-modal";
 import {InvoiceAttachmentModal} from "./components/invoice-attachment-modal";
+import {buildCreditNoteXml, buildInvoiceXml} from "../../services/peppol/ubl-builder";
 
 export class InvoiceEdit {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -68,6 +68,7 @@ export class InvoiceEdit {
     newInvoice() {
         this.selectedDocumentType = DocumentType.INVOICE;
         this.invoiceContext.newUBLDocument();
+        this.invoiceContext.getLastInvoiceReference();
         this.showCustomerModal();
     }
 
@@ -92,6 +93,7 @@ export class InvoiceEdit {
             line = this.invoiceComposer.getCreditNoteLine(pos);
         }
         this.invoiceContext.lines.push(line);
+        this.saveAsDraft(false).catch(e => console.error(e));
     }
 
     deleteLine(line: UBLLine) {
@@ -128,23 +130,27 @@ export class InvoiceEdit {
 
     buildXml(): string {
         if  (this.selectedDocumentType === DocumentType.INVOICE)  {
-            return buildInvoice(this.invoiceContext.selectedInvoice as Invoice)
+            return buildInvoiceXml(this.invoiceContext.selectedInvoice as Invoice)
         } else {
-            return buildCreditNote(this.invoiceContext.selectedInvoice as CreditNote);
+            return buildCreditNoteXml(this.invoiceContext.selectedInvoice as CreditNote);
         }
     }
 
-    async saveAsDraft() {
+    async saveAsDraft(returnToOverview: boolean = true) {
         try {
             const xml = this.buildXml();
             if (this.invoiceContext.selectedDocument) {
-                const newDraft = await this.invoiceService.saveDocument(this.invoiceContext.selectedDocument.id, xml);
+                const newDraft = await this.invoiceService.updateDocument(this.invoiceContext.selectedDocument.id, xml, true);
                 this.invoiceContext.draftPage.content.splice(this.invoiceContext.draftPage.content.findIndex(item => item.id === newDraft.id), 1, newDraft);
             } else {
                 const documentDraftDto = await this.invoiceService.createDocument(xml, true);
+                this.invoiceContext.selectedDocument = documentDraftDto;
                 this.invoiceContext.draftPage.content.unshift(documentDraftDto);
+                this.invoiceContext.draftPage.totalElements++;
             }
-            this.invoiceContext.clearSelectedInvoice();
+            if (returnToOverview) {
+                this.invoiceContext.clearSelectedInvoice();
+            }
             this.ea.publish('alert', {alertType: AlertType.Success, text: "Invoice draft saved"});
         } catch(e) {
             console.error(e);
@@ -218,9 +224,7 @@ export class InvoiceEdit {
 
     showCustomerModal() {
         this.invoiceCustomerModal.showModal(() => {
-            if (!this.invoiceContext.selectedInvoice.ID) {
-                this.showInvoiceModal();
-            }
+            console.log('customer modal closed');
         });
     }
 

@@ -56,11 +56,11 @@ public class DocumentService {
     @Value("${proxy.synchronize.delay-ms:60000}")
     private long synchronizeDelay;
 
-    private UblDto readUBL(DocumentDirection documentDirection, String ublXml, String peppolId) {
+    private UblDto readUBL(DocumentDirection documentDirection, String ublXml, String peppolId, boolean draft) {
         if (ublXml == null || ublXml.isBlank()) {
             throw new RuntimeException("Missing UBL content"); //TODO : use proper exceptions
         }
-        if (!validationService.validateUblXml(ublXml).isValid()) {
+        if (!validationService.validateUblXml(ublXml).isValid() && !draft) {
             throw new RuntimeException("Invalid UBL content"); //TODO : use proper exceptions
         }
         try {
@@ -117,7 +117,7 @@ public class DocumentService {
 
     public DocumentDto createFromUbl(String peppolId, String ublXml, boolean draft, Instant schedule, String tokenValue) {
         Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new NotFoundException("Company does not exist"));
-        UblDto ublDto = readUBL(DocumentDirection.OUTGOING, ublXml, peppolId);
+        UblDto ublDto = readUBL(DocumentDirection.OUTGOING, ublXml, peppolId, draft);
         Document document = new Document(
                 null, //Hibernate generates UUID
                 DocumentDirection.OUTGOING,
@@ -156,7 +156,7 @@ public class DocumentService {
 
     public void create(UblDocumentDto ublDocumentDto) {
         Company company = companyRepository.findByPeppolId(ublDocumentDto.ownerPeppolId()).orElseThrow(() -> new NotFoundException("Company does not exist"));
-        UblDto ublDto = readUBL(ublDocumentDto.direction(), ublDocumentDto.ubl(), ublDocumentDto.ownerPeppolId());
+        UblDto ublDto = readUBL(ublDocumentDto.direction(), ublDocumentDto.ubl(), ublDocumentDto.ownerPeppolId(), false);
         Document document = new Document(
                 ublDocumentDto.id(),
                 ublDocumentDto.direction(),
@@ -198,11 +198,11 @@ public class DocumentService {
         if (document.getProcessedOn() != null) {
             throw new ConflictException("Document is already processed"); //TODO : port to 409 Conflict ?
         }
-        UblDto ublDto = readUBL(DocumentDirection.OUTGOING, ublXml, peppolId);
+        UblDto ublDto = readUBL(DocumentDirection.OUTGOING, ublXml, peppolId, draft);
         document.setPartnerPeppolId(ublDto.receiverPeppolId());
         document.setScheduledOn(schedule);
         document.setUbl(ublXml);
-        if (draft && document.getProxyOn() != null) { //TODO : inform user about not draftable ?
+        if (draft && document.getProxyOn() == null) { //TODO : inform user about not draftable ?
             document.setDraftedOn(Instant.now());
         } else {
             document.setDraftedOn(null);
@@ -315,6 +315,7 @@ public class DocumentService {
         document.setProcessedOn(ublDocumentDto.processedOn());
         document.setProcessedStatus(ublDocumentDto.processedStatus());
         document.setUbl(ublDocumentDto.ubl());
+        document.getCompany().setLastInvoiceReference(document.getInvoiceReference());
         return documentRepository.save(document);
     }
 
@@ -344,6 +345,7 @@ public class DocumentService {
         document.setScheduledOn(ublDocumentDto.scheduledOn());
         document.setProcessedOn(ublDocumentDto.processedOn());
         document.setProcessedStatus(ublDocumentDto.processedStatus());
+        document.getCompany().setLastInvoiceReference(document.getInvoiceReference());
         return documentRepository.save(document);
     }
 
