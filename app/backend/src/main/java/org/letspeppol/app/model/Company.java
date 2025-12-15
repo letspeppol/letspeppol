@@ -51,7 +51,7 @@ public class Company extends GenericEntity{
         this.name = name;
         this.subscriber = subscriber;
         this.subscriberEmail = subscriberEmail;
-        // TODO        this.noArchive = false;
+// TODO        this.noArchive = false;
         this.registeredOffice = new Address(city, postalCode, street, countryCode);
     }
 }
