@@ -68,6 +68,7 @@ export class InvoiceEdit {
     newInvoice() {
         this.selectedDocumentType = DocumentType.INVOICE;
         this.invoiceContext.newUBLDocument();
+        this.invoiceContext.getLastInvoiceReference();
         this.showCustomerModal();
     }
 
@@ -223,9 +224,7 @@ export class InvoiceEdit {
 
     showCustomerModal() {
         this.invoiceCustomerModal.showModal(() => {
-            if (!this.invoiceContext.selectedInvoice.ID) {
-                this.showInvoiceModal();
-            }
+            console.log('customer modal closed');
         });
     }
 

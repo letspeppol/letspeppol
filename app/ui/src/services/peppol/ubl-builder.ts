@@ -124,6 +124,13 @@ function buildPartyTaxScheme(p?: PartyTaxScheme): string {
         typeof companyIdRaw === 'object' && companyIdRaw && 'value' in companyIdRaw
             ? companyIdRaw.value
             : (companyIdRaw as string | number | boolean | undefined | null);
+    if (
+        companyIdText === undefined ||
+        companyIdText === null ||
+        String(companyIdText).trim() === ''
+    ) {
+        return '';
+    }
     return joinNonEmpty([
         '<cac:PartyTaxScheme>',
         textElement('cbc:CompanyID', companyIdText),

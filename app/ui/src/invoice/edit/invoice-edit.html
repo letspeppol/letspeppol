@@ -52,6 +52,7 @@
                     </button>
                 </div>
                 <div><span t="documentType.${selectedDocumentType}"></span> <span t="invoice.edit.number">Number</span></div>
+                <i if.bind="!invoiceContext.selectedInvoice.ID && invoiceContext.lastInvoiceReference" style="color: var(--muted); font-size: var(--space-09)">Last number: ${invoiceContext.lastInvoiceReference}</i>
                 <b>${invoiceContext.selectedInvoice.ID}</b>
                 <span t="invoice.edit.buyer-reference">Buyer Reference</span>
                 <b>${invoiceContext.selectedInvoice.BuyerReference}</b>

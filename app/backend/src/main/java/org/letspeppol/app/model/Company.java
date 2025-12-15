@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.time.Instant;
 
 @Entity
 @Table(name = "company", indexes = {
@@ -29,16 +28,17 @@ public class Company extends GenericEntity{
     private String paymentTerms;
     private String iban;
     private String paymentAccountName;
+    private String lastInvoiceReference;
 
-// TODO    private boolean noArchive; //Setting by user that data should not be stored once processed (user is absolute owner & responsible)
-// TODO    private String accountant; //Either email or UUID of accounting system or accountant, flaggable by user what invoices should be sent to accountant
-//CREATE SCHEMA IF NOT EXISTS app;
-//    SET search_path = app;
-//
-//-- Company
-//    ALTER TABLE company
-//    ADD COLUMN no_archive boolean DEFAULT false NOT NULL,
-//    ADD COLUMN accountant varchar(255);
+    // TODO    private boolean noArchive; //Setting by user that data should not be stored once processed (user is absolute owner & responsible)
+    // TODO    private String accountant; //Either email or UUID of accounting system or accountant, flaggable by user what invoices should be sent to accountant
+    //CREATE SCHEMA IF NOT EXISTS app;
+    //    SET search_path = app;
+    //
+    //-- Company
+    //    ALTER TABLE company
+    //    ADD COLUMN no_archive boolean DEFAULT false NOT NULL,
+    //    ADD COLUMN accountant varchar(255);
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "registered_office_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_company_registered_office"))
@@ -51,7 +51,7 @@ public class Company extends GenericEntity{
         this.name = name;
         this.subscriber = subscriber;
         this.subscriberEmail = subscriberEmail;
-// TODO        this.noArchive = false;
+        // TODO        this.noArchive = false;
         this.registeredOffice = new Address(city, postalCode, street, countryCode);
     }
 }

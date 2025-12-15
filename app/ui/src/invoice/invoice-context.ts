@@ -19,6 +19,7 @@ export class InvoiceContext {
     selectedDocument: DocumentDto;
     selectedInvoiceXML: string = undefined;
     selectedDocumentType: DocumentType = DocumentType.INVOICE;
+    lastInvoiceReference: string = undefined;
 
     readOnly: boolean = false;
 
@@ -62,6 +63,12 @@ export class InvoiceContext {
             }
         }
         return "1";
+    }
+
+    getLastInvoiceReference() {
+        this.companyService.getAndSetMyCompanyForToken().then(company => {
+            this.lastInvoiceReference = company.lastInvoiceReference;
+        }).catch(() => this.lastInvoiceReference = undefined);
     }
 
     // Drafts

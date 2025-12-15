@@ -315,6 +315,7 @@ public class DocumentService {
         document.setProcessedOn(ublDocumentDto.processedOn());
         document.setProcessedStatus(ublDocumentDto.processedStatus());
         document.setUbl(ublDocumentDto.ubl());
+        document.getCompany().setLastInvoiceReference(document.getInvoiceReference());
         return documentRepository.save(document);
     }
 
@@ -344,6 +345,7 @@ public class DocumentService {
         document.setScheduledOn(ublDocumentDto.scheduledOn());
         document.setProcessedOn(ublDocumentDto.processedOn());
         document.setProcessedStatus(ublDocumentDto.processedStatus());
+        document.getCompany().setLastInvoiceReference(document.getInvoiceReference());
         return documentRepository.save(document);
     }
 
