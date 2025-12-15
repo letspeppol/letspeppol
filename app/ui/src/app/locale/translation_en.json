@@ -84,7 +84,7 @@
     "login-failed" : "Login failed",
     "registration-company-not-found" : "Company not found",
     "registration-company-already-registered" : "Company already registered",
-    "registration-company-already-registered-on-peppol" : "Company already registered on Peppol",
+    "registration-company-already-registered-on-peppol" : "You are already registered on Peppol, we will not be able to activate you until you unregister on the other Peppol provider.",
     "not-peppol-active" : "You are currently not registered on Peppol",
     "not-peppol-active-action" : "Solve this now"
   },
@@ -135,7 +135,6 @@
     "cancel": "Cancel",
     "delete": "Delete",
     "save": "Save",
-    "discard": "Discard",
     "clear": "Clear",
     "apply": "Apply",
     "previous": "Previous",
@@ -198,7 +197,7 @@
       "product-category": "Product Category",
       "none": "None",
       "save": "Save product",
-      "discard": "Discard"
+      "cancel": "Cancel"
     },
     "categoryModal": {
       "title": "Product Category",
@@ -237,7 +236,7 @@
       "payment-terms": "Payment Terms",
       "iban": "IBAN",
       "save": "Save partner",
-      "discard": "Discard"
+      "cancel": "Cancel"
     }
   },
   "invoice": {
@@ -319,7 +318,7 @@
       "delete-draft": "Delete draft",
       "update-draft": "Update draft",
       "save-draft": "Save draft",
-      "discard": "Discard",
+      "cancel": "Cancel",
       "send": {
         "INVOICE": "Send invoice",
         "CREDIT_NOTE": "Send credit note"
@@ -344,7 +343,7 @@
   },
   "account": {
     "title": "Account",
-    "discard": "Discard",
+    "cancel": "Cancel",
     "save": "Save",
     "subscriber-info": "Subscriber Info",
     "download-contract": "Download Contract",

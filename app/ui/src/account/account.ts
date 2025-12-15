@@ -3,6 +3,7 @@ import {resolve} from "@aurelia/kernel";
 import {AlertType} from "../components/alert/alert";
 import {IEventAggregator, IDisposable} from "aurelia";
 import {RegistrationService} from "../services/kyc/registration-service";
+import {PeppolDirectoryResponse, PeppolDirService} from "../services/peppol/peppol-dir-service";
 import {ChangePasswordModal} from "./change-password-modal";
 import {ConfirmationModalContext} from "../components/confirmation/confirmation-modal-context";
 
@@ -12,8 +13,10 @@ export class Account {
     private readonly companyService = resolve(CompanyService);
     private readonly registrationService = resolve(RegistrationService);
     private readonly confirmationModalContext = resolve(ConfirmationModalContext);
+    private readonly peppolDirService = resolve(PeppolDirService);
     private company: CompanyDto;
     public static PAYMENT_TERMS = ['15_DAYS', '30_DAYS', '60_DAYS', 'END_OF_NEXT_MONTH'];
+    private alreadyPeppolActivated = false;
     changePasswordModal: ChangePasswordModal;
 
     attached() {
@@ -40,6 +43,12 @@ export class Account {
             company = await this.companyService.getAndSetMyCompanyForToken().then(result => this.company = result); //TODO : why company = ?
         }
         this.company = JSON.parse(JSON.stringify(company));
+        if (!this.company.peppolActive) {
+            const peppolDirectoryResponse = await this.peppolDirService.findByParticipant(peppolId);
+            if (peppolDirectoryResponse.matches.length > 0) { //TODO : why not peppolDirectoryResponse.total-result-count ?
+                this.alreadyPeppolActivated = true;
+            }
+        }
     }
 
     async saveAccount() {
@@ -55,19 +64,31 @@ export class Account {
         }
     }
 
-    discardChanges() {
+    cancelChanges() {
         this.company = JSON.parse(JSON.stringify(this.companyService.myCompany));
         this.ea.publish('alert', {alertType: AlertType.Info, text: "Account changes reverted"});
     }
 
-    register() {
-        this.confirmationModalContext.showConfirmationModal(
-            "Activate on Peppol",
-            "Are you sure you wish to subscribe yourself to the Peppol network via Let's Peppol?\n" +
-            "Make sure you are not subscribed via another service.",
-            () => this.registerOnPeppol(),
-            undefined
-        );
+    async register() {
+        const peppolDirectoryResponse = await this.peppolDirService.findByParticipant(this.company.peppolId);
+        if (peppolDirectoryResponse.matches.length > 0) { //TODO : why not peppolDirectoryResponse.total-result-count ?
+            this.confirmationModalContext.showConfirmationModal(
+                "Activate on Peppol",
+                "It looks like you are currently registered to the Peppol network via another Access Point.\n" +
+                "Are you sure you wish to subscribe yourself to the Peppol network via Let's Peppol?\n" +
+                "It might fail if you are still registered at the other Access Point provider.",
+                () => this.registerOnPeppol(),
+                undefined
+            );
+        } else {
+            this.confirmationModalContext.showConfirmationModal(
+                "Activate on Peppol",
+                "Are you sure you wish to subscribe yourself to the Peppol network via Let's Peppol?\n" +
+                "Make sure you are not subscribed via another service.",
+                () => this.registerOnPeppol(),
+                undefined
+            );
+        }
     }
 
     async registerOnPeppol() {

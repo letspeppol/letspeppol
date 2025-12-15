@@ -8,6 +8,9 @@
     <template if.bind="errorMessage">
         <div class="alert error">${errorMessage}</div>
     </template>
+    <template if.bind="alreadyPeppolActivated">
+        <div class="alert alert--warning warning-box" t="error.registration-company-already-registered-on-peppol">You are already registered on Peppol, we will not be able to activate you until you unregister on the other Peppol provider.</div>
+    </template>
     <template if.bind="!errorMessage && !tokenVerificationResponse">
         <div class="loading-msg" t="confirmation.loading">Loading company details…</div>
     </template>

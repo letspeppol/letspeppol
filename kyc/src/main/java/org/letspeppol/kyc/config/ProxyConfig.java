@@ -12,6 +12,7 @@ public class ProxyConfig {
     public WebClient webClient(@Value("${proxy.api.url}") String apiUrl) {
         return WebClient.builder()
                 .baseUrl(apiUrl)
+                .codecs(c -> c.defaultCodecs().maxInMemorySize(32 * 1024 * 1024))
                 .build();
     }
 }

@@ -6,7 +6,7 @@
             <h1 style="margin:0" t="partner.edit.new">New partner</h1>
         </div>
         <div class="editor-header-actions">
-            <button type="button" class="btn" click.trigger="partnerContext.clearSelectedPartner()" t="partner.edit.discard">Discard</button>
+            <button type="button" class="btn" click.trigger="partnerContext.clearSelectedPartner()" t="partner.edit.cancel">Cancel</button>
             <button type="button" class="btn primary" click.trigger="savePartner()" disabled.bind="!partnerContext.selectedPartner.name || !partnerContext.selectedPartner.peppolId || !partnerContext.selectedPartner.peppolId.includes(':')" t="partner.edit.save">Save partner</button>
         </div>
     </div>

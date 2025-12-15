@@ -73,7 +73,7 @@ public class SigningService {
     private final Counter prepareSigningCounter;
     private final Counter finalizeSigningCounter;
 
-    @Value("${kyc.data.dir:#{null}}")
+    @Value("${contract.data.dir:#{null}}")
     private String dataDirectory;
 
     private String workingDirectory;

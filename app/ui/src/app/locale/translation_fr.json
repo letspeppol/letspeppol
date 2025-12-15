@@ -80,7 +80,7 @@
     "login-failed": "Échec de la connexion",
     "registration-company-not-found": "Entreprise introuvable",
     "registration-company-already-registered": "Entreprise déjà enregistrée",
-    "registration-company-already-registered-on-peppol" : "Entreprise déjà enregistrée sur Peppol",
+    "registration-company-already-registered-on-peppol" : "Vous êtes déjà enregistré sur Peppol. Nous ne pourrons vous activer qu'après vous être désinscrit auprès de l'autre fournisseur Peppol.",
     "not-peppol-active" : "Vous n'êtes actuellement pas enregistré sur Peppol",
     "not-peppol-active-action" : "Résoudre cela maintenant"
   },
@@ -127,7 +127,6 @@
     "cancel": "Annuler",
     "delete": "Supprimer",
     "save": "Enregistrer",
-    "discard": "Annuler",
     "clear": "Effacer",
     "apply": "Appliquer",
     "previous": "Précédent",
@@ -189,7 +188,7 @@
       "product-category": "Catégorie de produit",
       "none": "Aucun",
       "save": "Enregistrer le produit",
-      "discard": "Annuler"
+      "cancel": "Annuler"
     },
     "categoryModal": {
       "title": "Catégorie de produit",
@@ -226,7 +225,7 @@
       "payment-terms": "Conditions de paiement",
       "iban": "IBAN",
       "save": "Enregistrer partenaire",
-      "discard": "Annuler"
+      "cancel": "Annuler"
     },
     "all": "Tous"
   },
@@ -303,7 +302,7 @@
       "validate": "Valider",
       "update-draft": "Mettre à jour le brouillon",
       "save-draft": "Enregistrer brouillon",
-      "discard": "Annuler",
+      "cancel": "Annuler",
       "send": "Envoyer la facture",
       "number": "Numéro",
       "buyer-reference": "Référence acheteur",
@@ -324,7 +323,7 @@
   },
   "account": {
     "title": "Compte",
-    "discard": "Annuler",
+    "cancel": "Annuler",
     "save": "Enregistrer",
     "subscriber-info": "Info abonné",
     "download-contract": "Télécharger le contrat",

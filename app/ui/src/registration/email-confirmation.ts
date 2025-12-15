@@ -10,6 +10,7 @@ import {
     RegistrationService,
     TokenVerificationResponse
 } from "../services/kyc/registration-service";
+import {PeppolDirectoryResponse, PeppolDirService} from "../services/peppol/peppol-dir-service";
 import {SignatureAlgorithm} from "@web-eid/web-eid-library/models/SignatureAlgorithm";
 import {LibrarySignResponse} from "@web-eid/web-eid-library/models/message/LibraryResponse";
 
@@ -17,6 +18,7 @@ export class EmailConfirmation {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
     readonly kycApi = resolve(KYCApi);
     readonly registrationService = resolve(RegistrationService);
+    readonly peppolDirService = resolve(PeppolDirService);
     public errorMessage: string | undefined; // made public for template binding
     public emailToken: string;
     public tokenVerificationResponse: TokenVerificationResponse | undefined; // made public for template binding
@@ -30,6 +32,7 @@ export class EmailConfirmation {
     private signatureAlgorithm;
     private prepareSigningResponse;
     private confirmInProgress = false;
+    private alreadyPeppolActivated = false;
 
     public loading(params: Params, next: RouteNode) {
         this.emailToken = next.queryParams.get('token');
@@ -40,6 +43,7 @@ export class EmailConfirmation {
         this.registrationService.verifyToken(this.emailToken).then(result => {
             this.tokenVerificationResponse = result;
             this.step = 1;
+            this.checkPeppolDirectory(result.company.peppolId);
         }).catch(error => {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: "Token invalid"});
         });
@@ -78,6 +82,13 @@ export class EmailConfirmation {
 
     get pwStrong() {
         return this.lengthOk && this.lowerOk && this.upperOk && this.numberOk && this.symbolOk;
+    }
+
+    public async checkPeppolDirectory(peppolId: string) {
+        const peppolDirectoryResponse = await this.peppolDirService.findByParticipant(peppolId);
+        if (peppolDirectoryResponse.matches.length > 0) { //TODO : why not peppolDirectoryResponse.total-result-count ?
+            this.alreadyPeppolActivated = true;
+        }
     }
 
     public async confirmContract() {

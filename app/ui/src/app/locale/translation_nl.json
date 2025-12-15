@@ -78,7 +78,7 @@
     "login-failed" : "Inloggen mislukt",
     "registration-company-not-found": "Bedrijf niet gevonden",
     "registration-company-already-registered": "Bedrijf al geregistreerd",
-    "registration-company-already-registered-on-peppol" : "Bedrijf is al geregistreerd op Peppol",
+    "registration-company-already-registered-on-peppol" : "U bent al geregistreerd op Peppol. We kunnen u pas activeren nadat u zich bij de andere Peppol-provider hebt uitgeschreven.",
     "not-peppol-active" : "U bent momenteel niet geregistreerd op Peppol",
     "not-peppol-active-action" : "Los dit nu op"
   },
@@ -129,7 +129,6 @@
     "cancel": "Annuleren",
     "delete": "Verwijderen",
     "save": "Opslaan",
-    "discard": "Annuleren",
     "clear": "Wissen",
     "apply": "Toepassen",
     "previous": "Vorige",
@@ -191,7 +190,7 @@
       "product-category": "Productcategorie",
       "none": "Geen",
       "save": "Product opslaan",
-      "discard": "Annuleren"
+      "cancel": "Annuleren"
     },
     "categoryModal": {
       "title": "Productcategorie",
@@ -228,7 +227,7 @@
       "payment-terms": "Betalingsvoorwaarden",
       "iban": "IBAN",
       "save": "Partner opslaan",
-      "discard": "Annuleren"
+      "cancel": "Annuleren"
     },
     "all": "Alle"
   },
@@ -305,7 +304,7 @@
       "validate": "Valideren",
       "update-draft": "Concept bijwerken",
       "save-draft": "Concept opslaan",
-      "discard": "Annuleren",
+      "cancel": "Annuleren",
       "send": "Factuur verzenden",
       "number": "Nummer",
       "buyer-reference": "Referentie koper",
@@ -326,7 +325,7 @@
   },
   "account": {
     "title": "Account",
-    "discard": "Annuleren",
+    "cancel": "Annuleren",
     "save": "Opslaan",
     "subscriber-info": "Abonnee-info",
     "download-contract": "Contract downloaden",

@@ -11,6 +11,11 @@
   --eid-card-overlap: -12px;
 }
 
+.warning-box {
+  margin: auto;
+  margin-bottom: 2rem;
+}
+
 .confirmation-layout {
   display: flex;
   gap: var(--space-1);
