@@ -22,6 +22,7 @@ public class ScradaConfig {
 
         return WebClient.builder()
                 .baseUrl(apiUrl + "/v1/company/" + companyId + "/peppol")
+                .codecs(c -> c.defaultCodecs().maxInMemorySize(32 * 1024 * 1024))
                 .defaultHeader("X-API-KEY", apiKey)
                 .defaultHeader("X-PASSWORD", password)
                 .clientConnector(new ReactorClientHttpConnector(httpClient))
