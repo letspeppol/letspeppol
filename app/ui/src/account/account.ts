@@ -44,7 +44,7 @@ export class Account {
         }
         this.company = JSON.parse(JSON.stringify(company));
         if (!this.company.peppolActive) {
-            const peppolDirectoryResponse = await this.peppolDirService.findByParticipant(peppolId);
+            const peppolDirectoryResponse = await this.peppolDirService.findByParticipant(peppolId); // TODO : peppolId undefined ?
             if (peppolDirectoryResponse.matches.length > 0) { //TODO : why not peppolDirectoryResponse.total-result-count ?
                 this.alreadyPeppolActivated = true;
             }

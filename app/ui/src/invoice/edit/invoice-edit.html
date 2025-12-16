@@ -4,6 +4,7 @@
 <import from="./components/invoice-payment-modal"></import>
 <import from="./components/invoice-customer-modal"></import>
 <import from="./components/invoice-attachment-modal"></import>
+<import from="./components/invoice-number-modal"></import>
 <import from="./components/validation-result-modal"></import>
 <import from="./components/product-name-search"></import>
 
@@ -12,6 +13,7 @@
 <invoice-customer-modal component.ref="invoiceCustomerModal" invoice-context.bind="invoiceContext"></invoice-customer-modal>
 <invoice-payment-modal component.ref="invoicePaymentModal" invoice-context.bind="invoiceContext"></invoice-payment-modal>
 <invoice-attachment-modal component.ref="invoiceAttachmentModal" invoice-context.bind="invoiceContext"></invoice-attachment-modal>
+<invoice-number-modal component.ref="invoiceNumberModal" invoice-context.bind="invoiceContext"></invoice-number-modal>
 <validation-result-modal component.ref="validationResultModal"></validation-result-modal>
 
 <div class="invoices-main">
@@ -34,7 +36,7 @@
                 <span t="invoice.edit.delete-draft">Delete draft</span>
             </button>
             <button type="button" class="btn" click.trigger="invoiceContext.clearSelectedInvoice()" t="invoice.edit.cancel">Cancel</button>
-            <button if.bind="!readOnly" type="button" class="btn primary" click.trigger="sendInvoice()" disabled.bind="!isValid" t="invoice.edit.send.${selectedDocumentType}">Send invoice</button>
+            <button if.bind="!readOnly" type="button" class="btn primary" click.trigger="verifyNumberAndSend()" disabled.bind="!isValid" t="invoice.edit.send.${selectedDocumentType}">Send invoice</button>
         </div>
     </div>
 
@@ -52,8 +54,15 @@
                     </button>
                 </div>
                 <div><span t="documentType.${selectedDocumentType}"></span> <span t="invoice.edit.number">Number</span></div>
-                <i if.bind="!invoiceContext.selectedInvoice.ID && invoiceContext.lastInvoiceReference" style="color: var(--muted); font-size: var(--space-09)">Last number: ${invoiceContext.lastInvoiceReference}</i>
-                <b>${invoiceContext.selectedInvoice.ID}</b>
+
+                <template if.bind="!invoiceContext.selectedInvoice.ID">
+                    <i if.bind="!invoiceContext.nextInvoiceReference" style="color: var(--muted); font-size: var(--space-09)">Last number: ${invoiceContext.lastInvoiceReference}</i>
+                    <i else style="color: var(--muted); font-size: var(--space-09)">${invoiceContext.nextInvoiceReference}</i>
+                </template>
+                <template else>
+                    <b>${invoiceContext.selectedInvoice.ID}</b>
+                </template>
+
                 <span t="invoice.edit.buyer-reference">Buyer Reference</span>
                 <b>${invoiceContext.selectedInvoice.BuyerReference}</b>
             </div>

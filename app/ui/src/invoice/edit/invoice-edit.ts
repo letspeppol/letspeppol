@@ -21,6 +21,7 @@ import {ValidationResultModal} from "./components/validation-result-modal";
 import {InvoiceModal} from "./components/invoice-modal";
 import {InvoiceAttachmentModal} from "./components/invoice-attachment-modal";
 import {buildCreditNoteXml, buildInvoiceXml} from "../../services/peppol/ubl-builder";
+import {InvoiceNumberModal} from "./components/invoice-number-modal";
 
 export class InvoiceEdit {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -38,6 +39,7 @@ export class InvoiceEdit {
     @bindable invoiceCustomerModal: InvoiceCustomerModal;
     @bindable invoicePaymentModal: InvoicePaymentModal;
     @bindable invoiceAttachmentModal: InvoiceAttachmentModal;
+    @bindable invoiceNumberModal: InvoiceNumberModal;
     @bindable validationResultModal: ValidationResultModal;
 
     bound() {
@@ -101,6 +103,14 @@ export class InvoiceEdit {
         this.invoiceCalculator.calculateTaxAndTotals(this.invoiceContext.selectedInvoice);
     }
 
+    async verifyNumberAndSend() {
+        if (!this.invoiceContext.selectedInvoice.ID) {
+            this.invoiceNumberModal.showModal(() => this.sendInvoice());
+        } else {
+            await this.sendInvoice();
+        }
+    }
+
     async sendInvoice() {
         try {
             this.ea.publish('showOverlay', "Sending invoice");
@@ -114,7 +124,11 @@ export class InvoiceEdit {
 
             await this.invoiceService.createDocument(xml);
             this.ea.publish('alert', {alertType: AlertType.Success, text: "Invoice sent successfully"});
-            this.invoiceContext.clearSelectedInvoice();
+            if (this.invoiceContext.selectedDocument.draftedOn) {
+                await this.deleteDraft();
+            } else {
+                this.invoiceContext.clearSelectedInvoice();
+            }
         } catch(e) {
             console.error(e);
             this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to update account"});
@@ -161,7 +175,7 @@ export class InvoiceEdit {
     async deleteDraft() {
         try {
             await this.invoiceService.deleteDocument(this.invoiceContext.selectedDocument.id);
-            this.invoiceContext.draftPage.content.splice(this.invoiceContext.draftPage.content.findIndex(item => item.id === this.invoiceContext.selectedDocument.id), 1);
+            this.invoiceContext.deleteDraft(this.invoiceContext.selectedDocument);
             this.invoiceContext.clearSelectedInvoice();
             this.ea.publish('alert', {alertType: AlertType.Success, text: "Invoice draft removed"});
         } catch(e) {
@@ -238,7 +252,6 @@ export class InvoiceEdit {
 
     @computed({
         deps: [
-            'invoiceContext.selectedInvoice.ID',
             'invoiceContext.selectedInvoice.BuyerReference',
             'invoiceContext.selectedInvoice.IssueDate',
             'invoiceContext.selectedInvoice.DueDate',
@@ -252,7 +265,7 @@ export class InvoiceEdit {
         ] })
     get isValid() {
         const inv = this.invoiceContext.selectedInvoice;
-        return inv && inv.ID && inv.BuyerReference && inv.IssueDate && (inv.DueDate || inv.PaymentTerms)
+        return inv && inv.BuyerReference && inv.IssueDate && (inv.DueDate || inv.PaymentTerms)
             && inv.AccountingCustomerParty
             && inv.AccountingCustomerParty.Party.PartyIdentification[0].ID.value
             && inv.AccountingCustomerParty.Party.PartyName.Name

@@ -38,7 +38,7 @@ export class InvoiceModal {
     }
 
     saveInvoiceInfo() {
-        if (!this.id || !this.buyerReference) {
+        if (!this.buyerReference) {
             return;
         }
         this.open = false;
