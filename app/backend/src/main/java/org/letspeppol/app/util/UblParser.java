@@ -58,11 +58,21 @@ public final class UblParser {
         PeppolParties peppolParties = getPeppolParties(document);
 
         // partnerName (customer name -> legal name -> supplier name -> supplier legal name)
-        String partnerName = xp.evaluate("(/*/*[local-name()='AccountingCustomerParty']/*[local-name()='Party']/*[local-name()='PartyName']/*[local-name()='Name']"
-                        + " | /*/*[local-name()='AccountingCustomerParty']/*[local-name()='Party']/*[local-name()='PartyLegalEntity']/*[local-name()='RegistrationName']"
-                        + " | /*/*[local-name()='AccountingSupplierParty']/*[local-name()='Party']/*[local-name()='PartyName']/*[local-name()='Name']"
-                        + " | /*/*[local-name()='AccountingSupplierParty']/*[local-name()='Party']/*[local-name()='PartyLegalEntity']/*[local-name()='RegistrationName'])[1]", document).trim();
-        if (partnerName.isEmpty()) partnerName = null;
+        String[] xpaths = {
+                "/*/*[local-name()='AccountingCustomerParty']/*[local-name()='Party']/*[local-name()='PartyName']/*[local-name()='Name']",
+                "/*/*[local-name()='AccountingCustomerParty']/*[local-name()='Party']/*[local-name()='PartyLegalEntity']/*[local-name()='RegistrationName']",
+                "/*/*[local-name()='AccountingSupplierParty']/*[local-name()='Party']/*[local-name()='PartyName']/*[local-name()='Name']",
+                "/*/*[local-name()='AccountingSupplierParty']/*[local-name()='Party']/*[local-name()='PartyLegalEntity']/*[local-name()='RegistrationName']"
+        };
+
+        String partnerName = null;
+        for (String path : xpaths) {
+            String value = xp.evaluate(path, document).trim();
+            if (!value.isEmpty()) {
+                partnerName = value;
+                break;
+            }
+        }
 
         // invoiceReference
         String invoiceReference = xp.evaluate("/*/*[local-name()='ID']", document).trim();
