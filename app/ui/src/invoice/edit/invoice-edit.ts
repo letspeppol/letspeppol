@@ -22,6 +22,7 @@ import {InvoiceModal} from "./components/invoice-modal";
 import {InvoiceAttachmentModal} from "./components/invoice-attachment-modal";
 import {buildCreditNoteXml, buildInvoiceXml} from "../../services/peppol/ubl-builder";
 import {InvoiceNumberModal} from "./components/invoice-number-modal";
+import { toErrorResponse } from "../../app/util/error-response-handler";
 
 export class InvoiceEdit {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -129,9 +130,15 @@ export class InvoiceEdit {
             } else {
                 this.invoiceContext.clearSelectedInvoice();
             }
-        } catch(e) {
-            console.error(e);
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to update account"});
+        } catch (e: unknown) {
+            const errorResponse = await toErrorResponse(e);
+            if (errorResponse?.errorCode === 'INVOICE_NUMBER_ALREADY_USED') {
+                this.ea.publish('alert', { alertType: AlertType.Danger, text: 'Invoice number already used' });
+            } else if (errorResponse?.message) {
+                this.ea.publish('alert', { alertType: AlertType.Danger, text: errorResponse.message });
+            } else {
+                this.ea.publish('alert', { alertType: AlertType.Danger, text: 'Failed to send invoice' });
+            }
         } finally {
             this.ea.publish('hideOverlay');
         }
@@ -265,14 +272,23 @@ export class InvoiceEdit {
         ] })
     get isValid() {
         const inv = this.invoiceContext.selectedInvoice;
+        const hasParty = inv && inv.AccountingCustomerParty && inv.AccountingCustomerParty.Party;
+        const partyIdentification = hasParty && inv.AccountingCustomerParty.Party.PartyIdentification;
+        const hasPartyIdentificationId =
+            !partyIdentification ||
+            (Array.isArray(partyIdentification) &&
+                partyIdentification.length > 0 &&
+                partyIdentification[0].ID &&
+                partyIdentification[0].ID.value);
+
         return inv && inv.BuyerReference && inv.IssueDate && (inv.DueDate || inv.PaymentTerms)
-            && inv.AccountingCustomerParty
-            && inv.AccountingCustomerParty.Party.PartyIdentification[0].ID.value
+            && hasParty
+            && hasPartyIdentificationId
             && inv.AccountingCustomerParty.Party.PartyName.Name
             && inv.AccountingCustomerParty.Party.PartyTaxScheme.TaxScheme.ID
             && inv.LegalMonetaryTotal.LineExtensionAmount.value > 0
-            && (!inv.PaymentMeans || (inv.PaymentMeans.PaymentMeansCode.value != 30|| (inv.PaymentMeans.PaymentMeansCode.value === 30 && inv.PaymentMeans.PayeeFinancialAccount.ID)))
-        ;
+            && (!inv.PaymentMeans || (inv.PaymentMeans.PaymentMeansCode.value != 30
+                || (inv.PaymentMeans.PaymentMeansCode.value === 30 && inv.PaymentMeans.PayeeFinancialAccount.ID)));
     }
 
     downloadAttachment(attachment: Attachment) {

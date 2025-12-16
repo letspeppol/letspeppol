@@ -34,15 +34,15 @@ public final class UblParser {
 
     private static PeppolParties getPeppolParties(Document document) throws XPathExpressionException {
         XPath xp = XPathFactory.newInstance().newXPath();
-        String senderId = xp.evaluate("normalize-space((/*/*[local-name()='AccountingSupplierParty']/*[local-name()='Party']/*[local-name()='PartyIdentification']/*[local-name()='ID'])[1])", document).trim();
-        String senderScheme = xp.evaluate("normalize-space((/*/*[local-name()='AccountingSupplierParty']/*[local-name()='Party']/*[local-name()='PartyIdentification']/*[local-name()='ID'])[1]/@schemeID)", document).trim();
+        String senderId = xp.evaluate("normalize-space((/*/*[local-name()='AccountingSupplierParty']/*[local-name()='Party']/*[local-name()='EndpointID'])[1])", document).trim();
+        String senderScheme = xp.evaluate("normalize-space((/*/*[local-name()='AccountingSupplierParty']/*[local-name()='Party']/*[local-name()='EndpointID'])[1]/@schemeID)", document).trim();
         if (senderId.isEmpty()) {
             throw new RuntimeException("AccountingSupplierParty not found");
         }
         String senderPeppolId = senderScheme.isEmpty() ? senderId : senderScheme + ":" + senderId;
 
-        String receiverId = xp.evaluate("normalize-space((/*/*[local-name()='AccountingCustomerParty']/*[local-name()='Party']/*[local-name()='PartyIdentification']/*[local-name()='ID'])[1])", document).trim();
-        String receiverScheme = xp.evaluate("normalize-space((/*/*[local-name()='AccountingCustomerParty']/*[local-name()='Party']/*[local-name()='PartyIdentification']/*[local-name()='ID'])[1]/@schemeID)", document).trim();
+        String receiverId = xp.evaluate("normalize-space((/*/*[local-name()='AccountingCustomerParty']/*[local-name()='Party']/*[local-name()='EndpointID'])[1])", document).trim();
+        String receiverScheme = xp.evaluate("normalize-space((/*/*[local-name()='AccountingCustomerParty']/*[local-name()='Party']/*[local-name()='EndpointID'])[1]/@schemeID)", document).trim();
         if (receiverId.isEmpty()) {
             throw new RuntimeException("AccountingCustomerParty not found");
         }
