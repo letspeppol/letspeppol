@@ -8,9 +8,9 @@
         <div class="modal-body">
             <p if.bind="invoiceContext.lastInvoiceReference" style="color: var(--muted)">Last number: <strong>${invoiceContext.lastInvoiceReference}</strong></p>
             <div style="display: inline-grid; gap: var(--space-1)">
-                <label class="field">
+                <label class="field required">
                     <span t="label.invoice-number">Name</span>
-                    <input type="text" name="payeeFinancialAccountName" placeholder.bind="invoiceNumber" t="[placeholder]label.account-name" value.bind="invoiceNumber" />
+                    <input type="text" name="invoice-number" placeholder.bind="invoiceNumber" t="[placeholder]label.account-name" value.bind="invoiceNumber" required />
                 </label>
             </div>
         </div>

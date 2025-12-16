@@ -127,7 +127,7 @@
                                 <td>${item.issueDate | dateFormat}</td>
                                 <td>${item.dueDate | dateFormat}</td>
                                 <td>${item.partnerName}</td>
-                                <td>${item.currency} ${item.amount | price}</td>
+                                <td>${item.amount | price:item.currency}</td>
                                 <td>
                                     <span class="pill" if.bind="item.draftedOn" t="invoice.status.draft">Drafted</span>
                                     <span class="pill scheduled" if.bind="item.scheduledOn && !item.processedOn" t="invoice.status.scheduled">Scheduled</span>

@@ -36,7 +36,7 @@
                                 <span t="label.vat-number">VAT Number</span>
                                 <input type="text" name="customerId" placeholder="VAT Number" t="[placeholder]label.vat-number" value.bind="customer.PartyTaxScheme.CompanyID.value"  required change.trigger="vatChanged()" style="width: 130px" />
                             </label>
-                            <label class="field">
+                            <label class="field required">
                                 <span t="label.name">Name</span>
                                 <input type="text" name="customerName" placeholder="Name" t="[placeholder]placeholder.name" value.bind="customer.PartyName.Name" required change.trigger="nameChanged()" />
                             </label>
