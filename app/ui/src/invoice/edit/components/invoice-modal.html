@@ -20,7 +20,7 @@
                         <span t="invoice.modal.invoice-number">Invoice number</span>
                         <input id="docNumber" type="text" name="docNumber" placeholder.bind="selectedDocumentType === 'INVOICE' ? 'INV-2025-0001' : 'CRE-2025-0001'" value.bind="id" keydown.trigger="onKeyDown($event)" required />
                     </label>
-                    <label class="field">
+                    <label class="field required">
                         <span t="invoice.modal.buyer-reference">Buyer Reference</span>
                         <input type="text" name="reference" placeholder="PO-12345" value.bind="buyerReference" keydown.trigger="onKeyDown($event)" required />
                     </label>

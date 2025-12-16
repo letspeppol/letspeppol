@@ -1278,3 +1278,17 @@ table, tr, td {
     color: var(--status-overdue);
 }
 
+.required-table-input {
+    position: relative;
+}
+
+.required-table-input::after {
+    content: ' *';
+    color: var(--status-overdue);
+    position: absolute;
+    right: .4rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    font-size: .85rem;
+}

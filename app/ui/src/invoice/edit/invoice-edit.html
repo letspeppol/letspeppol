@@ -116,7 +116,7 @@
                     ${invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PostalAddress.PostalZone}
                 </b>
             </div>
-            <div class="composer-info">
+            <div class="composer-info" class.bind="!isPaymentInfoComplete ? 'missing-required' : ''">
                 <div style="display: flex; flex-direction: row; margin-bottom: var(--space-025)" click.trigger="showPaymentModal()">
                     <div class="card-header">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-banknote-arrow-down-icon lucide-banknote-arrow-down"><path d="M12 18H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5"/><path d="m16 19 3 3 3-3"/><path d="M18 12h.01"/><path d="M19 16v6"/><path d="M6 12h.01"/><circle cx="12" cy="12" r="2"/></svg>
@@ -191,7 +191,7 @@
                                 </button>
                             </div>
                         </th>
-                        <th style="width:18%" t="product.table.name">Name</th>
+                        <th style="width:18%" t="product.table.name" class="required">Name</th>
                         <th t="product.table.description">Description</th>
                         <th class="num" style="width:120px" t="invoice.edit.amount">Amount</th>
                         <th class="num" style="width:140px" t="invoice.edit.unit-price">Unit price</th>
@@ -202,20 +202,34 @@
                     </thead>
                     <tbody if.bind="invoiceContext.selectedInvoice">
                         <tr repeat.for="line of invoiceContext.lines">
-                            <td><input class="pos" type="number" min="1" value.bind="line.ID" required/></td>
                             <td>
-                                <product-name-search input-value.two-way="line.Item.Name" readonly.bind="readOnly"></product-name-search>
+                                <div required-table-input.class="!line.ID">
+                                    <input class="pos" type="number" min="1" value.bind="line.ID"/>
+                                </div>
                             </td>
-                            <td><textarea class="description" placeholder="Description" t="[placeholder]label.description" value.bind="line.Item.Description" readonly.bind="readOnly"></textarea></td>
+                            <td>
+                                <div required-table-input.class="!line.Item.Name">
+                                    <product-name-search input-value.two-way="line.Item.Name" readonly.bind="readOnly"></product-name-search>
+                                </div>
+                            </td>
+                            <td><textarea class="description required-input" placeholder="Description" t="[placeholder]label.description" value.bind="line.Item.Description" readonly.bind="readOnly"></textarea></td>
                             <td class="num">
                                 <template if.bind="selectedDocumentType === 'INVOICE'">
-                                    <input class="qty" type="number" min="0" step="1" value.bind="line.InvoicedQuantity.value" change.trigger="calcLineTotal(line)" readonly.bind="readOnly" />
+                                    <div required-table-input.class="!line.InvoicedQuantity.value">
+                                        <input class="qty" type="number" min="0" step="1" value.bind="line.InvoicedQuantity.value" change.trigger="calcLineTotal(line)" readonly.bind="readOnly" />
+                                    </div>
                                 </template>
                                 <template else>
-                                    <input class="qty" type="number" min="0" step="1" value.bind="line.CreditedQuantity.value" change.trigger="calcLineTotal(line)" readonly.bind="readOnly" />
+                                    <div required-table-input.class="!line.CreditedQuantity.value">
+                                        <input class="qty" type="number" min="0" step="1" value.bind="line.CreditedQuantity.value" change.trigger="calcLineTotal(line)" readonly.bind="readOnly" />
+                                    </div>
                                 </template>
                             </td>
-                            <td class="num"><input class="unitPrice" type="number" min="0" step="0.01" value.bind="line.Price.PriceAmount.value" change.trigger="calcLineTotal(line)" readonly.bind="readOnly" /></td>
+                            <td class="num">
+                                <div required-table-input.class="!line.Price.PriceAmount.value">
+                                    <input class="unitPrice" type="number" min="0" step="0.01" value.bind="line.Price.PriceAmount.value" change.trigger="calcLineTotal(line)" readonly.bind="readOnly" />
+                                </div>
+                            </td>
                             <td class="num">
                                 <select value.bind="line.Item.ClassifiedTaxCategory" change.trigger="calcLineTotal(line)" matcher.bind="taxCategoryMatcher" disabled.bind="readOnly">
                                     <option repeat.for="taxCategory of taxCategories" model.bind="taxCategory">${taxCategory.Percent}%</option>

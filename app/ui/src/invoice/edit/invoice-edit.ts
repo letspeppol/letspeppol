@@ -303,13 +303,24 @@ export class InvoiceEdit {
             && inv.AccountingCustomerParty.Party.PartyName.Name
             && inv.AccountingCustomerParty.Party.PartyTaxScheme.TaxScheme.ID
             && inv.LegalMonetaryTotal.LineExtensionAmount.value > 0
-            && (!inv.PaymentMeans || (inv.PaymentMeans.PaymentMeansCode.value != 30
-                || (inv.PaymentMeans.PaymentMeansCode.value === 30 && inv.PaymentMeans.PayeeFinancialAccount.ID)));
+            && this.isPaymentInfoComplete;
     }
 
     @computed('invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PartyName.Name')
-    get isCustomerInfoComplete() {
-        return this.invoiceContext.selectedInvoice?.AccountingCustomerParty?.Party?.PartyName?.Name;
+    get isCustomerInfoComplete(): boolean {
+        return !!this.invoiceContext.selectedInvoice?.AccountingCustomerParty?.Party?.PartyName?.Name;
+    }
+
+    @computed({
+        deps: [
+            'invoiceContext.selectedInvoice.PaymentMeans.PaymentMeansCode.value',
+            'invoiceContext.selectedInvoice.PaymentMeans.PayeeFinancialAccount.ID'
+        ] })
+    get isPaymentInfoComplete(): boolean {
+        const inv = this.invoiceContext.selectedInvoice;
+        return !inv?.PaymentMeans
+            || (inv?.PaymentMeans.PaymentMeansCode.value != 30
+            || (inv?.PaymentMeans.PaymentMeansCode.value === 30 && !!inv?.PaymentMeans.PayeeFinancialAccount.ID));
     }
 
 }
