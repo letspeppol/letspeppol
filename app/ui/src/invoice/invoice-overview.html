@@ -114,6 +114,7 @@
                             </th>
                             <th t="invoice.table.customer">Customer</th>
                             <th t="invoice.table.total">Total</th>
+                            <th t="invoice.table.status">Status</th>
                             <th class="actions-col" t="invoice.table.actions">Actions</th>
                         </tr>
                         </thead>
@@ -127,6 +128,12 @@
                                 <td>${item.dueDate | dateFormat}</td>
                                 <td>${item.partnerName}</td>
                                 <td>${item.currency} ${item.amount | price}</td>
+                                <td>
+                                    <span class="pill" if.bind="item.draftedOn" t="invoice.status.draft">Drafted</span>
+                                    <span class="pill scheduled" if.bind="item.scheduledOn && !item.processedOn" t="invoice.status.scheduled">Scheduled</span>
+                                    <span class="pill processed" if.bind="item.processedOn && !item.processedStatus" t="invoice.status.processed">Processed</span>
+                                    <span class="pill error" if.bind="item.processedStatus" t="invoice.status.error" title.bind="item.processedStatus">Error</span>
+                                </td>
                                 <td class="actions-col">
                                     <button if.bind="box === 'DRAFTS'" class="icon-btn" title="Remove" t="[title]common.remove" click.trigger="deleteDraft($event, item)">
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-icon lucide-trash"><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>

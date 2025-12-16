@@ -251,6 +251,12 @@
       "INVOICE": "New Invoice",
       "CREDIT_NOTE": "New Credit Note"
     },
+    "status": {
+      "draft": "Draft",
+      "scheduled": "Scheduled",
+      "processed": "Processed",
+      "error": "Error"
+    },
     "table": {
       "direction": "Direction",
       "type": "Type",
@@ -259,6 +265,7 @@
       "due-date": "Due Date",
       "customer": "Customer",
       "total": "Total",
+      "status": "Status",
       "actions": "Actions"
     },
     "filter": {
