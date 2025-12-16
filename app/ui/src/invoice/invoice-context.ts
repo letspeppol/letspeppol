@@ -17,7 +17,6 @@ export class InvoiceContext {
     draftPage: DocumentPageDto = undefined;
     @observable selectedInvoice:  undefined | Invoice | CreditNote;
     selectedDocument: DocumentDto;
-    selectedInvoiceXML: string = undefined;
     selectedDocumentType: DocumentType = DocumentType.INVOICE;
     lastInvoiceReference: string = undefined;
     nextInvoiceReference: string = undefined;

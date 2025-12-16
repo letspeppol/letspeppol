@@ -192,10 +192,10 @@ export class InvoiceEdit {
     }
 
     downloadUBL() {
-        if (!this.invoiceContext.selectedInvoiceXML) {
+        if (!this.invoiceContext.selectedDocument) {
             this.ea.publish('alert', {alertType: AlertType.Warning, text: "No UBL data available"});
         }
-        const blob = new Blob([this.invoiceContext.selectedInvoiceXML], { type: "application/xml" });
+        const blob = new Blob([this.invoiceContext.selectedDocument.ubl], { type: "application/xml" });
         const url = URL.createObjectURL(blob);
 
         const a = document.createElement("a");
