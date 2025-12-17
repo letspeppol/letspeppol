@@ -67,6 +67,9 @@
     --pill-incoming-fg: #0ea5a4;
     --pill-incoming-bg: #ecfeff;
     --pill-incoming-border: #a7f3d0;
+    --pill-error-fg: #dc2626;
+    --pill-error-bg: #fef2f2;
+    --pill-error-border: #fecaca;
 
     /* App background decoration */
     --app-bg-base: #f5f7fb;
@@ -110,7 +113,7 @@
     --space-4rem: 4rem;
 
     /* Component sizing */
-    --container-max: 1360px;
+    --container-max: 1460px;
     --sidebar-width: 260px;
     --sticky-offset: 72px;
     --search-min-w: 220px;
@@ -815,16 +818,22 @@ main.container .data-table tbody td {
     border: 1px solid currentcolor;
 }
 
-.pill.sent {
+.pill.sent, .pill.scheduled {
     color: var(--pill-invoice-fg);
     background: var(--pill-invoice-bg);
     border-color: var(--pill-invoice-border);
 }
 
-.pill.incoming {
+.pill.incoming, .pill.processed {
     color: var(--pill-incoming-fg);
     background: var(--pill-incoming-bg);
     border-color: var(--pill-incoming-border);
+}
+
+.pill.error {
+    color: var(--pill-error-fg);
+    background: var(--pill-error-bg);
+    border-color: var(--pill-error-border);
 }
 
 .kpi-overdue {

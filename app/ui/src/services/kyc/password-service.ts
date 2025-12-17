@@ -26,6 +26,6 @@ export class PasswordService {
     }
 
     async changePassword(request: ChangePasswordRequest) {
-        return await this.kycApi.httpClient.post(`/api/password/change`, JSON.stringify(request));
+        return await this.kycApi.httpClient.post(`/sapi/password/change`, JSON.stringify(request));
     }
 }

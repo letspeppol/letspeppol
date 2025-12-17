@@ -20,9 +20,15 @@
     <div class="section-header">
         <div style="display:flex;align-items:center;gap:.5rem">
             <h1 if.bind="!readOnly" style="margin:0" t="invoice.new.${selectedDocumentType}">New Invoice/Credit-Note</h1>
-            <h1 else style="margin:0">
+            <h1 else style="margin:0; display: flex; align-items: center">
                 <span t="documentType.${selectedDocumentType}"></span>
-                ${invoiceContext.selectedInvoice.ID}
+                <span style="margin-left: var(--space-05); margin-right: var(--space-05)" >${invoiceContext.selectedInvoice.ID}</span>
+                <template if.bind="invoiceContext.selectedDocument">
+                    <span class="pill" if.bind="invoiceContext.selectedDocument.draftedOn" t="invoice.status.draft">Drafted</span>
+                    <span class="pill scheduled" if.bind="invoiceContext.selectedDocument.scheduledOn && !invoiceContext.selectedDocument.processedOn" t="invoice.status.scheduled">Scheduled</span>
+                    <span class="pill processed" if.bind="invoiceContext.selectedDocument.processedOn && !invoiceContext.selectedDocument.processedStatus" t="invoice.status.processed">Processed</span>
+                    <span class="pill error" if.bind="invoiceContext.selectedDocument.processedStatus" t="invoice.status.error" title.bind="invoiceContext.selectedDocument.processedStatus">Error</span>
+                </template>
             </h1>
         </div>
         <div class="editor-header-actions">
