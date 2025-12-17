@@ -15,11 +15,11 @@
                     </select>
                 </label>
                 <template if.bind="paymentMeansCode === 30">
-                    <label class="field">
+                    <label class="field required">
                         <span t="invoice.paymentModal.name">Name</span>
                         <input type="text" name="payeeFinancialAccountName" placeholder="Acccount name" t="[placeholder]label.account-name" value.bind="paymentMeans.PayeeFinancialAccount.Name" />
                     </label>
-                    <label class="field">
+                    <label class="field required">
                         <span t="invoice.paymentModal.iban">IBAN</span>
                         <input type="text" name="payeeFinancialAccountID" placeholder="IBAN" t="[placeholder]label.iban" value.bind="paymentMeans.PayeeFinancialAccount.ID" />
                     </label>

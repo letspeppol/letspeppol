@@ -982,6 +982,11 @@ main.container .data-table tbody td {
     min-width: var(--composer-min);
 }
 
+.composer-info.missing-required {
+    border: 1px solid var(--pill-error-fg);
+    box-shadow: 0 0 2px 0 var(--pill-error-fg);
+}
+
 .composer-info b {
     font-size: var(--space-09);
 }
@@ -1261,4 +1266,29 @@ main.container .data-table tbody td {
 
 table, tr, td {
     overflow: visible !important;
+}
+
+.field > span.required::after {
+    content: ' *';
+    color: var(--status-overdue);
+}
+
+.field.required > span::after {
+    content: ' *';
+    color: var(--status-overdue);
+}
+
+.required-table-input {
+    position: relative;
+}
+
+.required-table-input::after {
+    content: ' *';
+    color: var(--status-overdue);
+    position: absolute;
+    right: .4rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    font-size: .85rem;
 }
