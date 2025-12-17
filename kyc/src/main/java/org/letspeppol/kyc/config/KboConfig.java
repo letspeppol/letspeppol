@@ -22,10 +22,7 @@ public class KboConfig {
                 .doOnConnected(connection -> connection
                         .addHandlerLast(new ReadTimeoutHandler(30))
                         .addHandlerLast(new WriteTimeoutHandler(30))
-                )
-                .wiretap("reactor.netty.http.client",
-                        io.netty.handler.logging.LogLevel.DEBUG,
-                        reactor.netty.transport.logging.AdvancedByteBufFormat.TEXTUAL);
+                );
 
         return WebClient.builder()
                 .baseUrl(baseUrl)
