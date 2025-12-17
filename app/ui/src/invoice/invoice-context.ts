@@ -20,6 +20,7 @@ export class InvoiceContext {
     selectedInvoiceXML: string = undefined;
     selectedDocumentType: DocumentType = DocumentType.INVOICE;
     lastInvoiceReference: string = undefined;
+    nextInvoiceReference: string = undefined;
 
     readOnly: boolean = false;
 
@@ -68,15 +69,42 @@ export class InvoiceContext {
     getLastInvoiceReference() {
         this.companyService.getAndSetMyCompanyForToken().then(company => {
             this.lastInvoiceReference = company.lastInvoiceReference;
-        }).catch(() => this.lastInvoiceReference = undefined);
+            this.nextInvoiceReference = this.computeNextInvoiceReference(this.lastInvoiceReference);
+        }).catch(() => {
+            this.lastInvoiceReference = undefined;
+            this.nextInvoiceReference = undefined;
+        });
+    }
+
+    private computeNextInvoiceReference(lastRef?: string): string {
+        if (!lastRef) {
+            const year = new Date().getFullYear().toString();
+            return `${year}0001`;
+        }
+
+        const match = lastRef.match(/(.*?)(\d+)([^0-9]*)$/);
+        if (!match) {
+            // No digits found
+            return undefined;
+        }
+
+        const prefix = match[1];
+        const numStr = match[2];
+        const suffix = match[3];
+
+        const width = numStr.length;
+        const nextNum = (parseInt(numStr, 10) + 1).toString().padStart(width, "0");
+
+        return `${prefix}${nextNum}${suffix}`;
     }
 
     // Drafts
     
-    deleteDraft(draft) {
-        const index = this.draftPage.content.findIndex(item => item === draft);
+    deleteDraft(draft: DocumentDto) {
+        const index = this.draftPage.content.findIndex(item => item.id === draft.id);
         if (index > -1) {
             this.draftPage.content.splice(index, 1);
+            this.draftPage.totalElements--;
         }
     }
 }

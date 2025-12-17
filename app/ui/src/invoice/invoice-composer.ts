@@ -44,7 +44,7 @@ export class InvoiceComposer {
             InvoiceTypeCode: 380,
             Note: undefined,
             DocumentCurrencyCode: "EUR",
-            BuyerReference: undefined,
+            BuyerReference: "NA",
             AdditionalDocumentReference: undefined,
             AccountingSupplierParty: this.getAccountingSupplierParty(),
             AccountingCustomerParty: this.getAccountingCustomerParty(),

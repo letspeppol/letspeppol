@@ -1,0 +1,29 @@
+<div class="modal" role="dialog" aria-modal="true" show.bind="open">
+    <div class="modal-backdrop"></div>
+    <div class="modal-card">
+        <header class="modal-header">
+            <h2 t="invoice.modal.invoice-number">Invoice Number</h2>
+            <button class="icon-btn" click.trigger="closeModal()" aria-label="Close dialog" t="[aria-label]common.close" title="Close" t="[title]common.close">×</button>
+        </header>
+        <div class="modal-body">
+            <p if.bind="invoiceContext.lastInvoiceReference" style="color: var(--muted)">Last number: <strong>${invoiceContext.lastInvoiceReference}</strong></p>
+            <div style="display: inline-grid; gap: var(--space-1)">
+                <label class="field">
+                    <span t="label.invoice-number">Name</span>
+                    <input type="text" name="payeeFinancialAccountName" placeholder.bind="invoiceNumber" t="[placeholder]label.account-name" value.bind="invoiceNumber" />
+                </label>
+            </div>
+        </div>
+        <footer class="modal-footer">
+            <button type="button" class="btn"
+                    click.trigger="closeModal()"
+                    title="Cancel" t="[title]common.cancel"
+                    t="common.cancel">Cancel</button>
+            <button type="button" class="btn primary"
+                    click.trigger="sendInvoice()"
+                    title="Confirm" t="[title]common.confirm"
+                    t="common.confirm"
+                    disabled.bind="!invoiceNumber">Send</button>
+        </footer>
+    </div>
+</div>
