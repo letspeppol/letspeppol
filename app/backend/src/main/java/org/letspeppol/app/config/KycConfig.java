@@ -1,6 +1,8 @@
 package org.letspeppol.app.config;
 
 import io.netty.channel.ChannelOption;
+import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.handler.timeout.WriteTimeoutHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,8 +18,15 @@ public class KycConfig {
     @Bean
     public WebClient kycWebClient(@Value("${kyc.api.url}") String apiUrl) {
         HttpClient httpClient = HttpClient.create()
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 1000)
-                .responseTimeout(Duration.ofSeconds(3));
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
+                .responseTimeout(Duration.ofSeconds(30))
+                .doOnConnected(connection -> connection
+                        .addHandlerLast(new ReadTimeoutHandler(30))
+                        .addHandlerLast(new WriteTimeoutHandler(30))
+                )
+                .wiretap("reactor.netty.http.client",
+                        io.netty.handler.logging.LogLevel.DEBUG,
+                        reactor.netty.transport.logging.AdvancedByteBufFormat.TEXTUAL);
 
         return WebClient.builder()
                 .baseUrl(apiUrl)
