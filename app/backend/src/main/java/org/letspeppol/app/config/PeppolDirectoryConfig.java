@@ -1,6 +1,8 @@
 package org.letspeppol.app.config;
 
 import io.netty.channel.ChannelOption;
+import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.handler.timeout.WriteTimeoutHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,8 +18,12 @@ public class PeppolDirectoryConfig {
     @Bean(name = "PeppolDirectoryWebClient")
     public WebClient webClient(@Value("${peppol.directory.url}") String apiUrl) {
         HttpClient httpClient = HttpClient.create()
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 2000)
-                .responseTimeout(Duration.ofSeconds(3));
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
+                .responseTimeout(Duration.ofSeconds(30))
+                .doOnConnected(connection -> connection
+                        .addHandlerLast(new ReadTimeoutHandler(30))
+                        .addHandlerLast(new WriteTimeoutHandler(30))
+                );
 
         return WebClient.builder()
                 .baseUrl(apiUrl)
