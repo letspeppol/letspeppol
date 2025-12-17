@@ -34,4 +34,12 @@ export class PartnerEdit {
         return Account.PAYMENT_TERMS;
     }
 
+    vatNumberChanged() {
+        const vatNumber = this.partnerContext.selectedPartner.vatNumber;
+        if (vatNumber && vatNumber.length >= 2) {
+            this.partnerContext.selectedPartner.vatNumber = vatNumber.toUpperCase();
+        }
+    }
+
+
 }

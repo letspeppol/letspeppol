@@ -3,6 +3,7 @@ import {Party} from "../../../services/peppol/ubl";
 import {PartnerDto} from "../../../services/app/partner-service";
 import {CustomerSearch} from "./customer-search";
 import {countryListAlpha2} from "../../../app/countries"
+import {isIso6523Scheme} from "../../../app/util/iso6523list";
 
 export class InvoiceCustomerModal {
     @bindable invoiceContext;
@@ -15,6 +16,9 @@ export class InvoiceCustomerModal {
 
     vatChanged() {
         if (!this.customer) return;
+        if (this.customer.PartyTaxScheme.CompanyID.value) {
+            this.customer.PartyTaxScheme.CompanyID.value = this.customer.PartyTaxScheme.CompanyID.value.toUpperCase();
+        }
     }
 
     nameChanged() {
@@ -91,9 +95,8 @@ export class InvoiceCustomerModal {
     }
 
     private toParty(c: PartnerDto, scheme: string, identifier: string): Party {
-        return {
+        const party = {
             EndpointID: { __schemeID: scheme, value: identifier },
-            PartyIdentification: [{ ID: { __schemeID: scheme, value: identifier } }],
             PartyName: { Name: c.name },
             PostalAddress: {
                 StreetName: c.registeredOffice?.street,
@@ -105,6 +108,10 @@ export class InvoiceCustomerModal {
             PartyTaxScheme: { CompanyID: {value: c.vatNumber } , TaxScheme: { ID: 'VAT' } },
             PartyLegalEntity: { RegistrationName: c.name, CompanyID: { value: c.vatNumber } },
             Contact: { Name: c.paymentAccountName }
-        };
+        } as Party;
+        if (isIso6523Scheme(scheme)) {
+            party.PartyIdentification = [{ ID: { __schemeID: scheme, value: identifier } }];
+        }
+        return party;
     }
 }

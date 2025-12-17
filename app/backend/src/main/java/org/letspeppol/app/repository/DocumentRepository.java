@@ -19,6 +19,13 @@ public interface DocumentRepository extends JpaRepository<Document, UUID>, JpaSp
     @Query("SELECT document.id FROM Document document WHERE document.company.peppolId = :peppolId AND document.proxyOn is not null AND document.processedOn is null AND document.draftedOn is null AND ( document.scheduledOn is null OR document.scheduledOn < :maximalScheduledOn )")
     List<UUID> findIdsWithPossibleStatusUpdatesOnProxy(@Param("peppolId") String peppolId, @Param("maximalScheduledOn") Instant maximalScheduledOn);
 
+    @Query("""
+        SELECT COUNT(document) > 0 FROM Document document
+        WHERE document.invoiceReference = :invoiceReference AND document.company.peppolId = :ownerPeppolId
+        AND document.draftedOn IS NULL AND document.proxyOn IS NOT NULL
+        """)
+    boolean existsByInvoiceReferenceAndOwnerPeppolId(String invoiceReference, String ownerPeppolId);
+
     @Query(value = """
     SELECT
       COALESCE(SUM(CASE WHEN drafted_on IS NULL AND direction = 'INCOMING' AND paid_on IS NULL THEN amount ELSE 0 END), 0) AS totalPayableOpen,
@@ -51,4 +58,5 @@ public interface DocumentRepository extends JpaRepository<Document, UUID>, JpaSp
 //    @Modifying
 //    @Query("DELETE FROM Document document WHERE document.id = :id AND document.company.peppolId = :peppolId")
     void deleteByIdAndOwnerPeppolId(UUID id, String peppolId);
+
 }

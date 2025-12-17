@@ -118,6 +118,11 @@ public class DocumentService {
     public DocumentDto createFromUbl(String peppolId, String ublXml, boolean draft, Instant schedule, String tokenValue) {
         Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new NotFoundException("Company does not exist"));
         UblDto ublDto = readUBL(DocumentDirection.OUTGOING, ublXml, peppolId, draft);
+        if (!draft) {
+             if (documentRepository.existsByInvoiceReferenceAndOwnerPeppolId(ublDto.invoiceReference(), peppolId)) {
+                 throw new AppException(AppErrorCodes.INVOICE_NUMBER_ALREADY_USED);
+             }
+        }
         Document document = new Document(
                 null, //Hibernate generates UUID
                 DocumentDirection.OUTGOING,
