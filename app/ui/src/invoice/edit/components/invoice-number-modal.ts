@@ -8,7 +8,7 @@ export class InvoiceNumberModal {
 
     showModal(sendFunction: () => void) {
         this.sendFunction = sendFunction;
-        this.invoiceNumber =  this.invoiceContext.nextInvoiceReference;
+        this.invoiceNumber = this.invoiceContext.nextInvoiceReference;
         this.open = true;
     }
 
