@@ -195,7 +195,7 @@ function buildParty(p: Party): string {
         p.PostalAddress ? buildAddress(p.PostalAddress) : '',
         buildPartyTaxScheme(p.PartyTaxScheme),
         buildPartyLegalEntity(p.PartyLegalEntity),
-        buildContact(p.Contact),
+        //buildContact(p.Contact), Not used
         '</cac:Party>',
     ]);
 }

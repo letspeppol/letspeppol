@@ -31,15 +31,15 @@ public final class UblParser {
 
     private static PeppolParties getPeppolParties(Document document) throws XPathExpressionException {
         XPath xp = XPathFactory.newInstance().newXPath();
-        String senderId = xp.evaluate("normalize-space((/*/*[local-name()='AccountingSupplierParty']/*[local-name()='Party']/*[local-name()='PartyIdentification']/*[local-name()='ID'])[1])", document).trim();
-        String senderScheme = xp.evaluate("normalize-space((/*/*[local-name()='AccountingSupplierParty']/*[local-name()='Party']/*[local-name()='PartyIdentification']/*[local-name()='ID'])[1]/@schemeID)", document).trim();
+        String senderId = xp.evaluate("normalize-space((/*/*[local-name()='AccountingSupplierParty']/*[local-name()='Party']/*[local-name()='EndpointID'])[1])", document).trim();
+        String senderScheme = xp.evaluate("normalize-space((/*/*[local-name()='AccountingSupplierParty']/*[local-name()='Party']/*[local-name()='EndpointID'])[1]/@schemeID)", document).trim();
         if (senderId.isEmpty()) {
             throw new RuntimeException("AccountingSupplierParty not found");
         }
         String senderPeppolId = senderScheme.isEmpty() ? senderId : senderScheme + ":" + senderId;
 
-        String receiverId = xp.evaluate("normalize-space((/*/*[local-name()='AccountingCustomerParty']/*[local-name()='Party']/*[local-name()='PartyIdentification']/*[local-name()='ID'])[1])", document).trim();
-        String receiverScheme = xp.evaluate("normalize-space((/*/*[local-name()='AccountingCustomerParty']/*[local-name()='Party']/*[local-name()='PartyIdentification']/*[local-name()='ID'])[1]/@schemeID)", document).trim();
+        String receiverId = xp.evaluate("normalize-space((/*/*[local-name()='AccountingCustomerParty']/*[local-name()='Party']/*[local-name()='EndpointID'])[1])", document).trim();
+        String receiverScheme = xp.evaluate("normalize-space((/*/*[local-name()='AccountingCustomerParty']/*[local-name()='Party']/*[local-name()='EndpointID'])[1]/@schemeID)", document).trim();
         if (receiverId.isEmpty()) {
             throw new RuntimeException("AccountingCustomerParty not found");
         }
@@ -58,11 +58,21 @@ public final class UblParser {
         PeppolParties peppolParties = getPeppolParties(document);
 
         // partnerName (customer name -> legal name -> supplier name -> supplier legal name)
-        String partnerName = xp.evaluate("(/*/*[local-name()='AccountingCustomerParty']/*[local-name()='Party']/*[local-name()='PartyName']/*[local-name()='Name']"
-                        + " | /*/*[local-name()='AccountingCustomerParty']/*[local-name()='Party']/*[local-name()='PartyLegalEntity']/*[local-name()='RegistrationName']"
-                        + " | /*/*[local-name()='AccountingSupplierParty']/*[local-name()='Party']/*[local-name()='PartyName']/*[local-name()='Name']"
-                        + " | /*/*[local-name()='AccountingSupplierParty']/*[local-name()='Party']/*[local-name()='PartyLegalEntity']/*[local-name()='RegistrationName'])[1]", document).trim();
-        if (partnerName.isEmpty()) partnerName = null;
+        String[] xpaths = {
+                "/*/*[local-name()='AccountingCustomerParty']/*[local-name()='Party']/*[local-name()='PartyName']/*[local-name()='Name']",
+                "/*/*[local-name()='AccountingCustomerParty']/*[local-name()='Party']/*[local-name()='PartyLegalEntity']/*[local-name()='RegistrationName']",
+                "/*/*[local-name()='AccountingSupplierParty']/*[local-name()='Party']/*[local-name()='PartyName']/*[local-name()='Name']",
+                "/*/*[local-name()='AccountingSupplierParty']/*[local-name()='Party']/*[local-name()='PartyLegalEntity']/*[local-name()='RegistrationName']"
+        };
+
+        String partnerName = null;
+        for (String path : xpaths) {
+            String value = xp.evaluate(path, document).trim();
+            if (!value.isEmpty()) {
+                partnerName = value;
+                break;
+            }
+        }
 
         // invoiceReference
         String invoiceReference = xp.evaluate("/*/*[local-name()='ID']", document).trim();
