@@ -3,7 +3,7 @@ import {resolve} from "@aurelia/kernel";
 import {AlertType} from "../components/alert/alert";
 import {IEventAggregator, IDisposable} from "aurelia";
 import {RegistrationService} from "../services/kyc/registration-service";
-import {PeppolDirectoryResponse, PeppolDirService} from "../services/peppol/peppol-dir-service";
+import {PeppolDirService} from "../services/peppol/peppol-dir-service";
 import {ChangePasswordModal} from "./change-password-modal";
 import {ConfirmationModalContext} from "../components/confirmation/confirmation-modal-context";
 
@@ -19,7 +19,7 @@ export class Account {
     private alreadyPeppolActivated = false;
     changePasswordModal: ChangePasswordModal;
 
-    attached() {
+    attaching() {
         this.getCompany().catch(() => {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to get account"});
         });
@@ -40,11 +40,12 @@ export class Account {
     async getCompany() {
         let company = this.companyService.myCompany;
         if (!company) {
-            company = await this.companyService.getAndSetMyCompanyForToken().then(result => this.company = result); //TODO : why company = ?
+            company = await this.companyService.getAndSetMyCompanyForToken();
         }
         this.company = JSON.parse(JSON.stringify(company));
-        if (!this.company.peppolActive) {
-            const peppolDirectoryResponse = await this.peppolDirService.findByParticipant(peppolId); // TODO : peppolId undefined ?
+
+        if (!this.company.peppolActive && this.company.peppolId) {
+            const peppolDirectoryResponse = await this.peppolDirService.findByParticipant(this.company.peppolId); // TODO : peppolId undefined ?
             if (peppolDirectoryResponse.matches.length > 0) { //TODO : why not peppolDirectoryResponse.total-result-count ?
                 this.alreadyPeppolActivated = true;
             }

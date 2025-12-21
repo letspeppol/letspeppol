@@ -6,7 +6,7 @@ export class ApplicationView {
     private readonly router: IRouter = resolve(IRouter);
     private readonly currentRoute = resolve(ICurrentRoute);
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
-    peppolActive: boolean = false;
+    peppolActive: boolean = true;
 
     attached() {
         this.peppolActive = localStorage.getItem('peppolActive') === 'true';

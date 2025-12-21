@@ -40,7 +40,7 @@ export class InvoiceComposer {
             ProfileID: "urn:fdc:peppol.eu:2017:poacc:billing:01:1.0",
             ID: "",
             IssueDate: moment().format('YYYY-MM-DD'),
-            DueDate: moment().add(30, 'day').format('YYYY-MM-DD'),
+            DueDate: this.getDueDateForCompany(),
             InvoiceTypeCode: 380,
             Note: undefined,
             DocumentCurrencyCode: "EUR",
@@ -64,6 +64,13 @@ export class InvoiceComposer {
         invoice.PaymentTerms = this.getPaymentTermsForMyCompany(DocumentType.INVOICE);
 
         return invoice;
+    }
+
+    getDueDateForCompany() {
+        if (this.companyService.myCompany.paymentTerms) {
+            return this.getDueDate(this.companyService.myCompany.paymentTerms, moment().format('YYYY-MM-DD'));
+        }
+        return moment().add(30, 'day').format('YYYY-MM-DD');
     }
 
     getDueDate(paymentTerm: string, issueDate: string) {
