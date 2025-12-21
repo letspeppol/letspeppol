@@ -3,29 +3,30 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Let's Peppol — Facturation électronique Peppol gratuite pour PME | BARGE vzw</title>
-  <meta name="description" content="Soyez conforme à Peppol pour la Belgique 2026. Let's Peppol est un point d’accès de facturation électronique gratuit et open source pour PME, indépendants et comptables. Porté par l’ASBL BARGE vzw." />
+  <title>Let's Peppol — Facturation électronique Peppol gratuite pour les PME | BARGE vzw</title>
+  <meta name="description" content="La Belgique est en ligne. Let's Peppol est un point d’accès Peppol de facturation électronique gratuit et open source pour les PME, les freelances et les comptables. Soutenu par l’ASBL BARGE." />
   <meta name="robots" content="index,follow" />
   <link rel="canonical" href="https://letspeppol.org/" />
-  <meta property="og:title" content="Let's Peppol — Facturation électronique Peppol gratuite pour PME" />
-  <meta property="og:description" content="Point d’accès Peppol gratuit et open source. Prêt pour la Belgique en 2026. Interface type boîte de réception. Vos données restent les vôtres." />
+  <meta property="og:title" content="Let's Peppol — Facturation électronique Peppol gratuite pour les PME" />
+  <meta property="og:description" content="La Belgique est en ligne. Point d’accès Peppol gratuit et open source. Interface type boîte de réception. Vos données restent les vôtres." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://letspeppol.org/" />
   <meta name="twitter:card" content="summary_large_image" />
+
   <style>
     :root {
-      --primary: #2C3C69; /* Let's Encrypt navy */
-      --accent: #FAA21D;  /* Let's Encrypt orange */
-      --ink: #0f172a;     /* slate-900 */
-      --muted: #475569;   /* slate-600 */
-      --border: #e2e8f0;  /* slate-200 */
-      --bg: #f8fafc;      /* slate-50 */
+      --primary: #2C3C69;
+      --accent: #FAA21D;
+      --ink: #0f172a;
+      --muted: #475569;
+      --border: #e2e8f0;
+      --bg: #f8fafc;
       --white: #ffffff;
     }
     html, body { margin:0; padding:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji"; color: var(--ink); background: var(--bg); }
     .container { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
     header.sticky { position: sticky; top: 0; z-index: 40; background: color-mix(in srgb, var(--white) 94%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(255,255,255,.12); }
-    .nav { display:flex; align-items:center; justify-content:space-between; }
+    .nav { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
     .brand { display:flex; gap:12px; align-items:center; color:var(--primary); }
     .nav a { color: var(--primary); text-decoration:none; font-size:14px; margin-left:20px; }
     .btn { display:inline-flex; align-items:center; gap:8px; text-decoration:none; font-weight:700; border-radius: 12px; padding: 12px 16px; }
@@ -34,7 +35,7 @@
     .actions > .btn-ghost { background: var(--primary); color: var(--white); }
     .actions > .btn-ghost:hover { background: color-mix(in srgb, var(--primary) 80%, transparent); }
     .bar { background: color-mix(in srgb, var(--primary), var(--accent) 20%); color:#fff; border-bottom:1px solid rgba(255,255,255,.12); }
-    .bar .inner { display:flex; align-items:center; gap:12px; padding: 8px 0; }
+    .bar .inner { display:flex; align-items:center; justify-content:space-between; gap:12px; padding: 8px 0; flex-wrap:wrap; }
     .pill { display:inline-flex; align-items:center; border-radius:999px; padding:4px 10px; background: rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.18); font-size:12px; }
     .hero { position:relative; color:#fff; background:
       radial-gradient(1200px 600px at 10% -10%, color-mix(in srgb, var(--primary) 12%, transparent), transparent 70%),
@@ -44,9 +45,8 @@
     }
     h1 { font-size: clamp(28px, 4vw, 48px); line-height:1.1; margin: 0 0 12px; }
     .lead { font-size: clamp(16px, 2.2vw, 20px); color: #eef2ff; opacity:.9; }
-    .cta-row { display:flex; flex-wrap:wrap; gap:12px; margin-top:16px; }
-    .input { border:1px solid rgba(255,255,255,.3); background: rgba(255,255,255,.12); color:#fff; outline:none; border-radius:12px; padding: 12px 14px; width: min(420px, 100%); }
-    .small { font-size:12px; opacity:.85; }
+    .cta-row { display:flex; flex-wrap:wrap; gap:12px; margin-top:16px; align-items:center; }
+    .small { font-size:12px; opacity:.9; }
     .badges { display:flex; flex-wrap:wrap; gap:8px; margin-top:18px; }
     .badge { background:#eef2ff; color:#334155; padding:4px 10px; border-radius:999px; font-size:12px; }
 
@@ -65,10 +65,11 @@
     @media (max-width:1000px){.resp{grid-template-columns:1fr}}
     .preview { background:#fff; border:1px solid rgba(255,255,255,.2); border-radius: 22px; padding: 12px; box-shadow: 0 20px 60px rgba(2,6,23,.2); display:none; }
     @media(min-width:1000px){.preview{display:block}}
-    .table { display:grid; grid-template-columns: 1fr 2fr; border:1px solid var(--border); border-radius:12px; overflow:hidden; }
-    .left { border-right:1px solid var(--border); max-height:260px; overflow:auto; }
-    .row { padding:10px 12px; border-bottom:1px solid var(--border); }
-    .row:last-child{ border-bottom:0; }
+
+    .partners { display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:12px; margin-top:12px; }
+    @media (max-width: 900px){ .partners { grid-template-columns: 1fr; } }
+    .partner a { color: var(--primary); text-decoration:none; font-weight:700; }
+    .partner p { margin:6px 0 0; }
 
     footer { background:#fff; border-top:1px solid var(--border); }
     .footer { display:flex; align-items:center; justify-content:space-between; gap:12px; padding: 18px 0; color: var(--muted); font-size:14px; flex-wrap:wrap; }
@@ -77,6 +78,7 @@
     .ghost:hover { background: rgba(255,255,255,.2); }
     .accent:hover { filter: brightness(.96); }
   </style>
+
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -86,28 +88,30 @@
     "operatingSystem": "Web",
     "offers": {"@type": "Offer", "price": "0"},
     "creator": {"@type": "Organization", "name": "BARGE vzw"},
-    "description": "Point d’accès Peppol gratuit et open source pour les PME et les indépendants.",
+    "description": "Point d’accès Peppol de facturation électronique gratuit et open source pour les PME et les freelances.",
     "url": "https://letspeppol.org/"
   }
   </script>
 </head>
+
 <body>
 
   <!-- Header -->
   <header class="sticky">
     <div class="container nav">
       <div class="brand">
-        <img src="https://letspeppol.org/logo.png" height="64" aria-label="Logo Let's Peppol" />
+        <img src="https://letspeppol.org/logo.png" height="64" alt="Logo Let's Peppol" />
         <div style="opacity:.8; font-size:12px;">Par BARGE vzw</div>
       </div>
-      <nav class="actions" aria-label="Principale">
+      <nav class="actions" aria-label="Primary">
         <a href="#how">Comment ça marche</a>
         <a href="#features">Fonctionnalités</a>
         <a href="#compliance">Conformité</a>
+        <a href="#partners">Partenaires</a>
         <a href="#open">Open source</a>
         <a href="#faq">FAQ</a>
-        <a class="btn btn-ghost ghost" href="https://letspeppol.org/invoice_example.png" target="_blank">Voir l’aperçu</a>
-        <a class="btn btn-accent accent" href="https://letspeppol.org/join">Rejoindre</a>
+        <a class="btn btn-ghost ghost" href="https://letspeppol.org/invoice_example.png" target="_blank" rel="noreferrer">Voir l’aperçu</a>
+        <a class="btn btn-accent accent" href="https://be.letspeppol.org">Belgique : commencer</a>
       </nav>
     </div>
   </header>
@@ -115,8 +119,14 @@
   <!-- Announcement bar -->
   <div class="bar">
     <div class="container inner">
-      <span class="pill">Fenêtre de lancement : nov.–déc. 2025</span>
-      <span>Facturation électronique Peppol prête pour la Belgique, pour les PME et micro-entreprises.</span>
+      <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+        <span class="pill">Belgique : en ligne</span>
+        <span>Les entreprises belges peuvent s’inscrire et se connecter via le portail Belgique.</span>
+      </div>
+      <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+        <a class="btn btn-accent accent" href="https://be.letspeppol.org" style="padding:8px 12px; border-radius:10px;">Aller au portail Belgique →</a>
+        <a class="btn btn-ghost ghost" href="https://letspeppol.org/join" style="padding:8px 12px; border-radius:10px;">Liste d’attente (autres pays)</a>
+      </div>
     </div>
   </div>
 
@@ -124,29 +134,29 @@
   <section class="hero">
     <div class="container resp">
       <div>
-        <h1>Conforme à Peppol — gratuit, ouvert et conçu pour chaque PME</h1>
-        <p class="lead">Let's Peppol est un point d’accès open source et gratuit, soutenu par l’ASBL belge <strong>BARGE vzw</strong>. Envoyez et recevez des e-factures sur le réseau Peppol via une boîte de réception qui se manie comme l’e-mail.</p>
+        <h1>La Belgique est en ligne. La facturation électronique Peppol, gratuite et ouverte, pour chaque PME</h1>
+        <p class="lead">
+          Let's Peppol est un point d’accès gratuit et open source, soutenu par l’association belge <strong>BARGE vzw</strong>.
+          Envoyez et recevez des e-factures via le réseau Peppol avec une boîte de réception qui ressemble à l’e-mail.
+        </p>
+
         <div class="cta-row">
-          <a class="btn btn-accent accent" href="https://letspeppol.org/join">Rejoindre la liste d’attente →</a>
-          <a class="btn btn-ghost ghost" href="https://letspeppol.org/invoice_example.png" target="_blank">Voir l’aperçu ▸</a>
+          <a class="btn btn-accent accent" href="https://be.letspeppol.org/registration">Belgique : s’inscrire maintenant →</a>
+          <a class="btn btn-ghost ghost" href="https://letspeppol.org/join">Liste d’attente (autres pays) ▸</a>
         </div>
-        <!--div class="cta-row">
-          <div>
-            <input id="invite" class="input" placeholder="Code d’invitation (comptable/partenaire) — facultatif" />
-            <div class="small">Les codes des sponsors (p. ex. comptables) augmentent votre priorité dans la file.</div>
-          </div>
-          <a id="applyCode" class="btn btn-ghost ghost" href="https://letspeppol.org/join">Appliquer le code à l’inscription</a>
-        </div-->
+
         <div class="badges">
-          <span class="badge">Respecte le RGPD</span>
+          <span class="badge">Respect du RGPD</span>
           <span class="badge">Vos données restent les vôtres</span>
           <span class="badge">Hébergement UE</span>
           <span class="badge">Open source</span>
         </div>
       </div>
       <div>
-        <div class="preview" aria-label="Aperçu de l’interface (susceptible d’être modifié)">
-          <a href="https://letspeppol.org/invoice_example.png" target="_blank"><img src="https://letspeppol.org/invoice_example.png" width="563px" /></a>
+        <div class="preview" aria-label="Aperçu de l’interface (susceptible d’évoluer)">
+          <a href="https://letspeppol.org/invoice_example.png" target="_blank" rel="noreferrer">
+            <img src="https://letspeppol.org/invoice_example.png" width="563" alt="Capture d’écran de l’aperçu Let's Peppol" />
+          </a>
           <div class="small" style="text-align:center; color:var(--muted); margin-top:6px;">Aperçu</div>
         </div>
       </div>
@@ -156,16 +166,19 @@
   <!-- Why / Value -->
   <section id="features">
     <div class="container" style="text-align:center; max-width:800px;">
-      <h2>Une alternative gratuite pour devenir conforme à Peppol</h2>
-      <p class="muted" style="font-size:18px">Conçu pour les PME, les indépendants et leurs comptables. Aucun verrouillage. Vos données restent les vôtres. Porté par une ASBL belge et une communauté open source mondiale.</p>
+      <h2>Une alternative gratuite pour devenir conforme Peppol</h2>
+      <p class="muted" style="font-size:18px">
+        Conçu pour les PME, les freelances et leurs comptables. Pas de verrouillage fournisseur. Vos données restent les vôtres.
+        Soutenu par une association belge et une communauté open source mondiale.
+      </p>
     </div>
     <div class="container grid grid-3" style="margin-top:20px;">
-      <div class="card"><h3>Interface type boîte de réception</h3><p class="muted">Envoyez et recevez e-factures et notes de crédit via une interface web familière — comme l’e-mail.</p></div>
-      <div class="card"><h3>Peppol BIS / UBL</h3><p class="muted">Construit autour des standards Peppol BIS 3.0 et UBL 2.1 pour interopérer dès le premier jour.</p></div>
-      <div class="card"><h3>Propriété des données</h3><p class="muted">Vous êtes toujours propriétaire de vos données. Nous ne monétisons ni ne vendons vos informations.</p></div>
-      <div class="card"><h3>Confiance dès la conception</h3><p class="muted">Respect du RGPD, hébergement UE, code transparent et audits via nos processus communautaires.</p></div>
-      <div class="card"><h3>Open source</h3><p class="muted">Libre comme la liberté. Pas de frais de licence. Contribuez aux intégrations avec la communauté.</p></div>
-      <div class="card"><h3>Sans coûts ni frais</h3><p class="muted">Lancé et maintenu par une organisation à but non lucratif, porté par la communauté et soutenu par des donateurs et partenaires.</p></div>
+      <div class="card"><h3>Interface type boîte de réception</h3><p class="muted">Envoyez et recevez des e-factures et des notes de crédit via une interface web familière, comme l’e-mail.</p></div>
+      <div class="card"><h3>Peppol BIS / UBL</h3><p class="muted">Basé sur les standards Peppol BIS 3.0 et UBL 2.1 pour interopérer avec le réseau dès le premier jour.</p></div>
+      <div class="card"><h3>Propriété des données</h3><p class="muted">Vous restez propriétaire de vos données. Nous ne les exploitons ni ne les vendons.</p></div>
+      <div class="card"><h3>Confiance dès la conception</h3><p class="muted">Traitement conforme au RGPD, hébergement UE, code transparent et audits via nos processus communautaires.</p></div>
+      <div class="card"><h3>Open source</h3><p class="muted">Libre comme dans liberté. Pas de frais de licence. Contribuez à des intégrations avec la communauté au fil du temps.</p></div>
+      <div class="card"><h3>Zéro coûts et zéro frais</h3><p class="muted">Lancé et maintenu par une organisation sans but lucratif, porté par la communauté et soutenu par des donateurs et partenaires.</p></div>
     </div>
   </section>
 
@@ -173,12 +186,57 @@
   <section id="how">
     <div class="container" style="text-align:center;">
       <h2>Comment ça marche</h2>
-      <p class="muted">Commencez simplement. Évoluez avec la communauté.</p>
+      <p class="muted">Onboarding simple. Pas de tracas eID au quotidien.</p>
     </div>
     <div class="container grid grid-3" style="margin-top:16px;">
-      <div class="card"><div class="pill" style="background:var(--accent); color:#111; border:none;">1</div><h3>Inscrivez-vous sur la liste d’attente</h3><p class="muted">Inscription sur letspeppol.org/join. Ajoutez un code d’invitation de votre comptable pour augmenter la priorité.</p></div>
-      <div class="card"><div class="pill" style="background:var(--accent); color:#111; border:none;">2</div><h3>Ajoutez welcome@letspeppol.org à votre liste blanche</h3><p class="muted">Assurez-vous de ne pas manquer l’e-mail d’activation à cause du filtre anti-spam.</p></div>
-      <div class="card"><div class="pill" style="background:var(--accent); color:#111; border:none;">3</div><h3>Passez en production</h3><p class="muted">Quand vient votre tour, complétez le KYC et acceptez les conditions de l’ASBL. Vous êtes prêts pour Peppol.</p></div>
+      <div class="card">
+        <div class="pill" style="background:var(--accent); color:#111; border:none;">1</div>
+        <h3>Allez sur votre portail</h3>
+        <p class="muted">
+          Entreprises belges : utilisez <a href="https://be.letspeppol.org" style="color:var(--primary); text-decoration:none; font-weight:700;">be.letspeppol.org</a>.
+          Autres pays : inscrivez-vous sur la liste d’attente via <a href="https://letspeppol.org/join" style="color:var(--primary); text-decoration:none; font-weight:700;">letspeppol.org/join</a>.
+        </p>
+      </div>
+      <div class="card">
+        <div class="pill" style="background:var(--accent); color:#111; border:none;">2</div>
+        <h3>Installer les logiciels eID (uniquement à l’inscription)</h3>
+        <p class="muted">
+          Pour l’inscription en Belgique, vous aurez besoin de :
+          <strong>Web-eID</strong> (logiciel eID européen) et du <strong>logiciel eID belge</strong>.
+          Vous n’avez besoin de votre <strong>carte eID + lecteur</strong> que pendant l’inscription.
+        </p>
+      </div>
+      <div class="card">
+        <div class="pill" style="background:var(--accent); color:#111; border:none;">3</div>
+        <h3>Ensuite : connexion simple</h3>
+        <p class="muted">
+          Une fois inscrit, vous vous connectez normalement. Pas besoin de lecteur au quotidien.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="eid">
+    <div class="container">
+      <div class="card">
+        <h3>Logiciels eID requis (uniquement à l’inscription)</h3>
+        <p class="muted">
+          Vous devez installer le logiciel européen Web eID et le logiciel eID belge, puis redémarrer votre navigateur.
+          Vous pouvez vérifier votre installation via la page de test de la carte. Si cela ne fonctionne pas, nous sommes disponibles pour vous aider.
+        </p>
+        <ul class="list">
+          <li><span class="check">✔</span> Installer Web eID (européen) : <a href="https://www.id.ee/en/article/install-id-software/" target="_blank" rel="noreferrer">guide d’installation id.ee</a></li>
+          <li><span class="check">✔</span> Installer le logiciel eID belge : <a href="https://eid.belgium.be/en" target="_blank" rel="noreferrer">eid.belgium.be</a></li>
+          <li><span class="check">✔</span> Redémarrer votre navigateur</li>
+          <li><span class="check">✔</span> Tester votre carte : <a href="https://www.id.ee/en/article/test-your-id-card/" target="_blank" rel="noreferrer">test de carte id.ee</a></li>
+        </ul>
+        <p class="muted" style="margin-top:10px;">
+          Vous voulez nous aider à onboarder davantage d’entreprises partout en Belgique ? Dites-nous que vous souhaitez aider.
+        </p>
+        <p class="muted" style="margin-top:10px;">
+          <a href="https://youtu.be/d9E5kNO5qhY" target="_blank" rel="noreferrer">Vidéo tutorielle d’onboarding</a>
+        </p>
+      </div>
     </div>
   </section>
 
@@ -189,36 +247,87 @@
         <h3>Conformité &amp; confiance</h3>
         <ul class="list">
           <li><span class="check">✔</span> Conçu pour l’échange de documents Peppol BIS 3.0 / UBL 2.1.</li>
-          <li><span class="check">✔</span> Objectif : être prêt pour la facturation électronique en Belgique en 2026.</li>
-          <li><span class="check">✔</span> Traitements conformes au RGPD avec hébergement des données dans l’UE.</li>
-          <li><span class="check">✔</span> Code ouvert, feuilles de route transparentes et relectures communautaires.</li>
+          <li><span class="check">✔</span> Focus sur la préparation à la facturation électronique en Belgique.</li>
+          <li><span class="check">✔</span> Traitement conforme au RGPD avec hébergement des données dans l’UE.</li>
+          <li><span class="check">✔</span> Code ouvert, feuilles de route transparentes et revue communautaire.</li>
         </ul>
-        <p class="small" style="margin-top:10px; color:var(--muted)">Remarque : le lancement débute en bêta fermée. Le périmètre fonctionnel s’élargira avec les contributions de la communauté.</p>
+        <p class="small" style="margin-top:10px; color:var(--muted)">Remarque : le périmètre fonctionnel s’élargit au fil des contributions de la communauté.</p>
       </div>
       <div class="card">
         <h3>Pour les PME &amp; les comptables</h3>
         <ul class="list">
           <li><span class="check">✔</span> Indépendants, freelances et micro-PME bienvenus.</li>
-          <li><span class="check">✔</span> Les membres de l’ITAA peuvent parrainer et distribuer des codes d’invitation.</li>
-          <li><span class="check">✔</span> Maîtrise totale de vos données ; aucun verrouillage fournisseur.</li>
+          <li><span class="check">✔</span> Vos données restent les vôtres : aucun verrouillage fournisseur.</li>
+          <li><span class="check">✔</span> Pensé pour rester simple : interface boîte de réception, export propre, standards ouverts.</li>
         </ul>
         <div class="badges" style="margin-top:10px;">
-          <span class="badge">ASBL : BARGE vzw</span>
+          <span class="badge">Sans but lucratif : BARGE vzw</span>
           <span class="badge">Porté par la communauté</span>
-          <span class="badge">Gratuit comme Let’s Encrypt</span>
+          <span class="badge">Gratuit comme Let's Encrypt</span>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- Partners / Sponsors -->
+  <section id="partners">
+    <div class="container card">
+      <h3>Sponsors &amp; partenaires</h3>
+      <p class="muted">
+        Let's Peppol est soutenu par des organisations qui veulent un écosystème de facturation électronique ouvert et sain pour les PME.
+        Si vous aimez l’infrastructure ennuyeuse mais bien faite, ces organisations ont aidé à rendre tout ça possible.
+      </p>
+
+      <div class="partners">
+        <div class="card partner">
+          <a href="https://softwareoplossing.be" target="_blank" rel="noreferrer">SoftwareOplossing.be</a>
+          <p class="muted">Partenaire</p>
+        </div>
+        <div class="card partner">
+          <a href="https://pondersource.com" target="_blank" rel="noreferrer">Pondersource</a>
+          <p class="muted">Partenaire</p>
+        </div>
+        <div class="card partner">
+          <a href="https://nlnet.nl" target="_blank" rel="noreferrer">NLnet Foundation</a>
+          <p class="muted">Sponsor</p>
+        </div>
+        <div class="card partner">
+          <a href="https://brightest.be" target="_blank" rel="noreferrer">brightest</a>
+          <p class="muted">Partenaire</p>
+        </div>
+        <div class="card partner">
+          <a href="https://consenso.be" target="_blank" rel="noreferrer">consenso advocaten</a>
+          <p class="muted">Partenaire</p>
+        </div>
+        <div class="card partner">
+          <a href="https://wimnet.eu" target="_blank" rel="noreferrer">WimNet</a>
+          <p class="muted">Partenaire</p>
+        </div>
+      </div>
+
+      <p class="small" style="margin-top:12px; color:var(--muted)">
+        Vous souhaitez soutenir ou devenir partenaire ? Écrivez-nous à <a href="mailto:contact@letspeppol.org" style="color:var(--primary); text-decoration:none;">contact@letspeppol.org</a>.
+      </p>
     </div>
   </section>
 
   <!-- Open-source & supporters -->
   <section id="open">
     <div class="container card">
-      <h3>Open source &amp; soutiens</h3>
-      <p class="muted">Let's Peppol est développé et maintenu par <strong>BARGE vzw (Business Applications Research Group Europe)</strong>, avec le soutien de donateurs et partenaires. Nous accueillons les contributions et le parrainage via OpenCollective.</p>
+      <h3>Open source &amp; développer le réseau</h3>
+      <p class="muted">
+        Let's Peppol est développé et maintenu par <strong>BARGE vzw (Business Applications Research Group Europe)</strong>,
+        soutenu par des donateurs et des partenaires. Nous accueillons les contributions et le sponsoring via OpenCollective.
+      </p>
+      <p class="muted">
+        <strong>Autres pays :</strong> si vous souhaitez aider à étendre Let's Peppol au-delà de la Belgique, contactez
+        <a href="mailto:country@letspeppol.org" style="color:var(--primary); text-decoration:none; font-weight:700;">country@letspeppol.org</a>
+        et/ou manifestez votre intérêt en rejoignant la liste d’attente.
+      </p>
       <div class="cta-row">
-        <a class="btn" style="background:var(--primary); color:#fff" href="https://github.com/letspeppol/letspeppol">Voir le code</a>
-        <a class="btn" style="border:1px solid var(--border); background:#fff; color:var(--ink)" href="https://opencollective.com/letspeppol">Soutenir sur OpenCollective</a>
+        <a class="btn" style="background:var(--primary); color:#fff" href="https://github.com/letspeppol/letspeppol" target="_blank" rel="noreferrer">Voir le code</a>
+        <a class="btn" style="border:1px solid var(--border); background:#fff; color:var(--ink)" href="https://opencollective.com/letspeppol" target="_blank" rel="noreferrer">Sponsoriser via OpenCollective</a>
+        <a class="btn btn-accent accent" href="https://letspeppol.org/join">Rejoindre la liste d’attente</a>
       </div>
     </div>
   </section>
@@ -226,22 +335,41 @@
   <!-- FAQ -->
   <section id="faq">
     <div class="container" style="max-width:800px;">
-      <h3>Foire aux questions</h3>
+      <h3>Questions fréquentes</h3>
+
       <details class="card" open>
         <summary><strong>Est-ce vraiment gratuit ?</strong></summary>
-        <p class="muted">Oui. Comme Let’s Encrypt, Let’s Peppol est gratuit à l’usage. Le projet est financé par des dons et des sponsors. Si vous y trouvez de la valeur, pensez à nous soutenir.</p>
+        <p class="muted">Oui. Comme Let's Encrypt, Let's Peppol est gratuit à l’usage. Le projet est financé par des dons et des sponsors. Si vous le trouvez utile, pensez à nous soutenir.</p>
       </details>
+
       <details class="card">
-        <summary><strong>Qu’en est-il de la disponibilité et du support ?</strong></summary>
-        <p class="muted">Nous visons une haute disponibilité et un support communautaire réactif, mais les engagements d’uptime ne sont pas juridiquement contraignants. Les détails de support/SLA figurent dans le contrat KYC lors de l’onboarding.</p>
+        <summary><strong>Ai-je besoin de mon eID belge et du lecteur à chaque connexion ?</strong></summary>
+        <p class="muted">
+          Non. Vous n’avez besoin de la carte eID + lecteur que pendant l’inscription. Ensuite, c’est une connexion normale et simple au quotidien.
+        </p>
       </details>
+
       <details class="card">
-        <summary><strong>Suis-je propriétaire de mes données ?</strong></summary>
-        <p class="muted">Toujours. Nous ne vendons pas, ne minons pas et ne réutilisons pas vos données professionnelles.</p>
+        <summary><strong>Que dois-je installer pour m’inscrire en Belgique ?</strong></summary>
+        <p class="muted">
+          Vous aurez besoin de <strong>Web-eID</strong> (logiciel eID européen) et du <strong>logiciel eID belge</strong>.
+          Une fois l’inscription terminée, vous n’avez plus besoin du lecteur pour l’usage normal.
+        </p>
       </details>
+
+      <details class="card">
+        <summary><strong>Et la disponibilité / le support ?</strong></summary>
+        <p class="muted">Nous visons une haute disponibilité et un support communautaire rapide, mais les engagements d’uptime ne sont pas juridiquement contraignants. Les détails d’un support/SLA formel figurent dans le contrat lors de l’onboarding.</p>
+      </details>
+
+      <details class="card">
+        <summary><strong>Est-ce que je reste propriétaire de mes données ?</strong></summary>
+        <p class="muted">Toujours. Nous ne vendons pas, n’exploitons pas et ne réutilisons pas vos données métier.</p>
+      </details>
+
       <details class="card">
         <summary><strong>Quelles langues sont prises en charge ?</strong></summary>
-        <p class="muted">Anglais, néerlandais et français au lancement (allemand prévu). Aidez-nous à ajouter d’autres langues.</p>
+        <p class="muted">Anglais, néerlandais et français au lancement (allemand prévu). Aidez-nous en ajoutant d’autres langues.</p>
       </details>
     </div>
   </section>
@@ -251,8 +379,9 @@
     <div class="container" style="display:grid; grid-template-columns:1fr 1fr; gap:20px; padding:32px 0;">
       <div>
         <h3>Contact</h3>
-        <p class="muted">Des questions ou envie de collaborer ? Contactez-nous par e-mail ou via le formulaire.</p>
+        <p class="muted">Des questions ou envie de devenir partenaire ? Contactez-nous par e-mail.</p>
         <p><a href="mailto:contact@letspeppol.org" style="color:var(--primary); text-decoration:none;">contact@letspeppol.org</a></p>
+        <p><a href="mailto:country@letspeppol.org" style="color:var(--primary); text-decoration:none;">country@letspeppol.org</a> (autres pays)</p>
         <p><a href="https://letspeppol.org/join" style="color:var(--primary); text-decoration:none;">Rejoindre la liste d’attente</a></p>
       </div>
       <div>
@@ -260,10 +389,9 @@
         <ul class="list">
           <li><strong>Entité :</strong> BARGE vzw — Business Applications Research Group Europe</li>
           <li><strong>TVA :</strong> <em>BE-1029.545.627</em></li>
-          <li><strong>Hébergement :</strong> dans l’UE</li>
+          <li><strong>Hébergement :</strong> basé dans l’UE</li>
         </ul>
-        <!--p class="small"><a href="#" style="color:var(--primary); text-decoration:none;">Politique de confidentialité</a> • <a href="#" style="color:var(--primary); text-decoration:none;">Conditions d’utilisation</a> • <a href="#" style="color:var(--primary); text-decoration:none;">Mentions légales</a></p-->
-        <p class="small" style="color:var(--muted);">© <span id="year"></span> Let's Peppol / BARGE vzw. Peppol est une marque d’OpenPeppol AISBL. Ce projet est indépendant et porté par la communauté.</p>
+        <p class="small" style="color:var(--muted);">© <span id="year"></span> Let's Peppol / BARGE vzw. Peppol est une marque déposée d’OpenPeppol AISBL. Ce projet est indépendant et porté par la communauté.</p>
       </div>
     </div>
   </section>
@@ -281,5 +409,9 @@
     </div>
   </footer>
 
+  <script>
+    // un minimum de dignité pour l’année dans le footer
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
