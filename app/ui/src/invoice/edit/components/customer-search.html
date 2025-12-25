@@ -1,6 +1,6 @@
-<label class="field" style="position: relative;">
+<label class="search" style="position: relative; width: 300px">
     <input id="customerSearch"
-           type="text"
+           type="search"
            name="customerSearch"
            placeholder="Search by name or VAT number"
            t="[placeholder]invoice.customerModal.search-placeholder"
@@ -12,6 +12,8 @@
            autocomplete="off"
            style="width: 400px;"
     />
+    <svg if.bind="!showSuggestions" click.trigger="showFirstPartners()" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down-icon lucide-chevron-down"><path d="m6 9 6 6 6-6"/></svg>
+    <svg if.bind="showSuggestions" click.trigger="hidePartners()" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" cclass="lucide lucide-chevron-up-icon lucide-chevron-up"><path d="m18 15-6-6-6 6"/></svg>
     <ul class="autocomplete-list" role="listbox" if.bind="showSuggestions">
         <li repeat.for="c of filteredCustomers"
             role="option"
@@ -21,8 +23,11 @@
             mousedown.trigger="$event.preventDefault()">
                 <div class="title">${c.name}</div>
                 <div class="meta">VAT: ${c.vatNumber}</div>
-                <div class="addr" if.bind="c.registeredOffice">${c.registeredOffice.street} ${c.registeredOffice.houseNumber}, ${c.registeredOffice.postalCode} ${c.registeredOffice.city}</div>
+                <div class="addr" if.bind="c.registeredOffice && (c.registeredOffice.street || c.registeredOffice.houseNumber || c.registeredOffice.postalCode || c.registeredOffice.city)">
+                    ${c.registeredOffice.street} ${c.registeredOffice.houseNumber}
+                    <template if.bind="c.registeredOffice.postalCode || c.registeredOffice.city">, ${c.registeredOffice.postalCode} ${c.registeredOffice.city}</template>
+                </div>
         </li>
-        <li class="autocomplete-empty" if.bind="filteredCustomers.length === 0" t="invoice.customerModal.no-matches">No matches</li>
+        <li class="autocomplete-empty" if.bind="filteredCustomers.length === 0 && searchQuery" t="invoice.customerModal.no-matches">No matches</li>
     </ul>
 </label>

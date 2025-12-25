@@ -25,7 +25,7 @@
                     <input type="text" value.bind="partnerContext.selectedPartner.vatNumber" change.trigger="vatNumberChanged()"/>
                 </label>
                 <company-search select-company-function.bind="(company) => completePartnerInfo(company)"
-                                search-query.bind="partnerContext.selectedPartner.name">
+                                search-query.two-way="partnerContext.selectedPartner.name">
                 </company-search>
                 <label class="field">
                     <span t="label.email">Email</span>

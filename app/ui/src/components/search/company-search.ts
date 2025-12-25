@@ -7,14 +7,11 @@ export class CompanySearch {
     private companySearchService = resolve(CompanySearchService);
     companies: KycCompanyResponse[] = [];
     showSuggestions = false;
+    ignoreNextBlur = false;
     highlightedIndex = -1;
     @bindable searchQuery = '';
     @bindable selectCompanyFunction: (c: KycCompanyResponse) => void;
     @bindable confirmCompanyFunction: () => void;
-
-    attached() {
-        
-    }
 
     async getCompanies() {
         try {
@@ -34,7 +31,8 @@ export class CompanySearch {
         }
     }
 
-    async searchCompanies() {
+    async searchCompanies(ignoreNextBlur = false) {
+        this.ignoreNextBlur = ignoreNextBlur;
         if (this.searchQuery.length >= 5) {
             await this.getCompanies();
             this.showSuggestions = this.companies.length > 0;
@@ -65,8 +63,15 @@ export class CompanySearch {
         }
     }
 
-    onSearchBlur() {
+    onSearchBlur(event: UIEvent) {
         setTimeout(() => {
+            if (this.ignoreNextBlur) {
+                this.ignoreNextBlur = false;
+                const target = event.target as HTMLInputElement | null;
+                if (target?.name === 'companyNameSearch') {
+                    return;
+                }
+            }
             this.showSuggestions = false;
         }, 120);
     }
