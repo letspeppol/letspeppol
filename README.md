@@ -18,7 +18,7 @@ The main challenge of giving free-of-charge access to the Peppol e-invoicing net
 * let the user connect a card reader to their computer, and put their Belgian identity card into it
 * let the user install some desktop software as well as a browser plugin (both open source from [https://web-eid.eu](https://web-eid.eu))
 * with this the user can issue a QES legally binding signature (this only works for Belgian, Estonian, and 4 other countries, this is not yet possible for the Netherlands)
-* We created a legal entity under Belgian law and had a lawyer write a contract that the person signs, stating they are one of the directors of a Belgian comany
+* We created a legal entity under Belgian law and had a lawyer write a contract that the person signs, stating they are one of the directors of a Belgian company
 * this legal entity is in the process of getting full access to the Belgian companies registry, so we can check the first and last name that the person claims to be.
 
 [Here is a screencast](https://drive.google.com/file/d/1HHSM9V1_2ez59vlnkL0YO3190X1uOh1j/view) that shows our fully automated business authentication in production.
