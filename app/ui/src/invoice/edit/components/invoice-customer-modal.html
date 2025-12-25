@@ -1,5 +1,5 @@
 <import from="./customer-search"></import>
-<import from="../../../components/peppol-search/peppol-search"></import>
+<import from="../../../components/search/company-search"></import>
 
 <div class="modal" role="dialog" aria-modal="true" show.bind="open">
     <div class="modal-backdrop"></div>
@@ -17,35 +17,31 @@
                                  confirm-customer-function.bind="() => customer && saveCustomer()">
                 </customer-search>
 
-                <h3 class="field full" style="margin-bottom: 0px" t="invoice.customerModal.customer-title">Customer</h3>
+                <h3 class="field full" style="margin-bottom: 0px" t="invoice.customerModal.create-new">Create New</h3>
                 <div style="display: grid; gap: 1rem; grid-template-columns: auto auto;">
                     <div class="card">
                         <div class="card-header">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-building-icon lucide-building"><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M12 6h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/><path d="M8 6h.01"/><path d="M9 22v-3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><rect x="4" y="2" width="16" height="20" rx="2"/></svg>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-building-icon lucide-building"><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M12 6h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/><path d="M8 6h.01"/><path d="M9 22v-3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><rect x="4" y="2" width="16" height="20" rx="2"/></svg>
                             <h2 t="partner.edit.company-info">Company Info</h2>
                         </div>
                         <div style="display: grid; gap: var(--space-1)">
-                            <peppol-search name.bind="customer.PartyName.Name"
-                                           vat-number.bind="customer.PartyLegalEntity.CompanyID.value"
-                                           peppol-id.two-way="peppolId"
-                                           select-match-function.bind="(name, participantID) => selectMatchFunction(name, participantID)"
-                                           peppol-id-changed-function.bind="(newPeppolId) => peppolIdChangedFunction(newPeppolId)"
-                            >
-                            </peppol-search>
                             <label class="field">
                                 <span t="label.vat-number">VAT Number</span>
-                                <input type="text" name="customerId" placeholder="VAT Number" t="[placeholder]label.vat-number" value.bind="customer.PartyTaxScheme.CompanyID.value"  required change.trigger="vatChanged()" style="width: 130px" />
+                                <input type="text" name="customerId" placeholder="VAT Number" t="[placeholder]label.vat-number" value.bind="customer.PartyTaxScheme.CompanyID.value"  required change.trigger="vatNumberChanged()" style="width: 130px" />
                             </label>
+                            <company-search select-company-function.bind="(company) => completeCustomerInfo(company)"
+                                            search-query.bind="customer.PartyName.Name">
+                            </company-search>
                             <label class="field required">
-                                <span t="label.name">Name</span>
-                                <input type="text" name="customerName" placeholder="Name" t="[placeholder]placeholder.name" value.bind="customer.PartyName.Name" required change.trigger="nameChanged()" />
+                                <span t="label.peppolId">Peppol ID</span>
+                                <input type="text" value.bind="peppolId" change.trigger="peppolIdChanged()"/>
                             </label>
                         </div>
                     </div>
 
                     <div class="card">
                         <div class="card-header">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin-house-icon lucide-map-pin-house"><path d="M15 22a1 1 0 0 1-1-1v-4a1 1 0 0 1 .445-.832l3-2a1 1 0 0 1 1.11 0l3 2A1 1 0 0 1 22 17v4a1 1 0 0 1-1 1z"/><path d="M18 10a8 8 0 0 0-16 0c0 4.993 5.539 10.193 7.399 11.799a1 1 0 0 0 .601.2"/><path d="M18 22v-3"/><circle cx="10" cy="10" r="3"/></svg>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin-house-icon lucide-map-pin-house"><path d="M15 22a1 1 0 0 1-1-1v-4a1 1 0 0 1 .445-.832l3-2a1 1 0 0 1 1.11 0l3 2A1 1 0 0 1 22 17v4a1 1 0 0 1-1 1z"/><path d="M18 10a8 8 0 0 0-16 0c0 4.993 5.539 10.193 7.399 11.799a1 1 0 0 0 .601.2"/><path d="M18 22v-3"/><circle cx="10" cy="10" r="3"/></svg>
                             <h2 t="partner.edit.address">Address</h2>
                         </div>
 

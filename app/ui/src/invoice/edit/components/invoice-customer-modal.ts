@@ -4,15 +4,20 @@ import {PartnerDto} from "../../../services/app/partner-service";
 import {CustomerSearch} from "./customer-search";
 import {countryListAlpha2} from "../../../app/countries"
 import {isIso6523Scheme} from "../../../app/util/iso6523list";
+import {normalizeVatNumber} from "../../../partner/vat-normalizer";
+import {KycCompanyResponse} from "../../../services/kyc/registration-service";
+import {resolve} from "@aurelia/kernel";
+import {CompanySearchService} from "../../../services/kyc/company-search-service";
 
 export class InvoiceCustomerModal {
+    private readonly companySearchService = resolve(CompanySearchService);
+    private countryList = countryListAlpha2;
     @bindable invoiceContext;
     @bindable customerSearch: CustomerSearch;
-    @observable peppolId: string;
+    peppolId: string;
     open = false;
     customer: Party | undefined;
     customerSavedFunction: () => void;
-    private countryList = countryListAlpha2;
 
     vatChanged() {
         if (!this.customer) return;
@@ -113,5 +118,54 @@ export class InvoiceCustomerModal {
             party.PartyIdentification = [{ ID: { __schemeID: scheme, value: identifier } }];
         }
         return party;
+    }
+
+    peppolIdChanged() {
+        if (this.peppolId && this.peppolId.length === 15 && this.peppolId.startsWith('0208:')) {
+            this.companySearchService.searchCompany({peppolId: this.peppolId}).then(companies => {
+                if (companies.length) {
+                    this.completeCustomerInfo(companies[0]);
+                }
+            });
+        }
+    }
+
+    vatNumberChanged() {
+        const {normalized, isValidShape} = normalizeVatNumber(this.customer?.PartyTaxScheme?.CompanyID?.value);
+        this.customer.PartyTaxScheme.CompanyID.value = normalized;
+
+        // BE VAT
+        if (isValidShape && normalized.length === 12) {
+            this.companySearchService.searchCompany({vatNumber: normalized}).then(companies => {
+                if (companies.length) {
+                    this.completeCustomerInfo(companies[0]);
+                }
+            });
+        }
+    }
+
+    private completeCustomerInfo(kycCompanyResponse: KycCompanyResponse) {
+        if (!this.customer.PartyTaxScheme.CompanyID) {
+            this.customer.PartyTaxScheme.CompanyID = {value: undefined};
+        }
+        if (!this.customer.PartyTaxScheme.CompanyID.value) {
+            this.customer.PartyTaxScheme.CompanyID.value = kycCompanyResponse.vatNumber;
+        }
+        if (!this.peppolId) {
+            this.peppolId = kycCompanyResponse.peppolId;
+            this.peppolIdChangedFunction(this.peppolId);
+        }
+        if (!this.customer.PartyName.Name) {
+            this.customer.PartyName.Name = kycCompanyResponse.name;
+        }
+        if (!this.customer.PostalAddress.CityName) {
+            this.customer.PostalAddress.CityName = kycCompanyResponse.city;
+        }
+        if (!this.customer.PostalAddress.PostalZone) {
+            this.customer.PostalAddress.PostalZone = kycCompanyResponse.postalCode;
+        }
+        if (!this.customer.PostalAddress.StreetName) {
+            this.customer.PostalAddress.StreetName = kycCompanyResponse.street;
+        }
     }
 }

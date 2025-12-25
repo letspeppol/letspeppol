@@ -4,17 +4,21 @@ import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.kyc.dto.CompanyResponse;
+import org.letspeppol.kyc.dto.CompanySearchResponse;
 import org.letspeppol.kyc.dto.DirectorDto;
 import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.KycException;
+import org.letspeppol.kyc.mapper.CompanyMapper;
 import org.letspeppol.kyc.model.kbo.Company;
 import org.letspeppol.kyc.model.kbo.Director;
 import org.letspeppol.kyc.repository.CompanyRepository;
 import org.letspeppol.kyc.repository.DirectorRepository;
 import org.letspeppol.kyc.service.kbo.KboLookupService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -31,16 +35,22 @@ public class CompanyService {
     private final ProxyService proxyService;
     private final Counter companyUnregistrationCounter;
 
+    public List<CompanySearchResponse> search(String vatNumber, String peppolId, String name) {
+        return companyRepository.search(vatNumber, peppolId, name, Pageable.ofSize(5)).stream()// name != null ? name + "%" : null
+                .map(CompanyMapper::toSearchResponse)
+                .collect(Collectors.toList());
+    }
+
     public Optional<CompanyResponse> getByPeppolId(String peppolId) {
         Optional<Company> company = companyRepository.findByPeppolId(peppolId);
         if (company.isPresent()) {
-            return Optional.of(toResponse(company.get()));
+            return Optional.of(CompanyMapper.toResponse(company.get()));
         }
 
         Optional<CompanyResponse> companyLookup = kboLookupService.findCompany(peppolId);
         if (companyLookup.isPresent()) {
             Company companyToStore = storeCompanyAndDirectors(peppolId, companyLookup.get());
-            return Optional.of(toResponse(companyToStore));
+            return Optional.of(CompanyMapper.toResponse(companyToStore));
         }
 
         return Optional.empty();
@@ -55,23 +65,6 @@ public class CompanyService {
             directorRepository.save(directorToStore);
         }
         return company;
-    }
-
-    public CompanyResponse toResponse(Company company) {
-        return new CompanyResponse(
-                company.getId(),
-                company.getPeppolId(),
-                company.getVatNumber(),
-                company.getName(),
-                company.getStreet(),
-                company.getCity(),
-                company.getPostalCode(),
-                company.getDirectors().stream()
-                        .map(d -> new DirectorDto(d.getId(), d.getName()))
-                        .collect(Collectors.toList()),
-                company.isHasKboAddress(),
-                company.isRegisteredOnPeppol()
-        );
     }
 
     public boolean registerCompany(String peppolId) {

@@ -1,0 +1,33 @@
+<label class="field" style="position: relative;">
+    <span t="label.company-name">Company Name (search)</span>
+
+    <div style="display: flex; align-items: center">
+        <input id="companyNameSearch"
+               type="text"
+               name="companyNameSearch"
+               title="Search by name" t="[title]invoice.customerModal.search-placeholder"
+               value.bind="searchQuery"
+               input.trigger="onSearchInput()"
+               keydown.trigger="onSearchKeydown($event)"
+               blur.trigger="onSearchBlur()"
+               autocomplete="off"
+               style="width: 100%"
+        />
+        <button disabled.bind="searchQuery < 5" click.trigger="searchCompanies()" type="button" class="btn" style="padding: var(--space-05) var(--space-065); margin-left: var(--space-02)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search-icon lucide-search"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+        </button>
+    </div>
+    <ul class="autocomplete-list" role="listbox" if.bind="showSuggestions">
+        <li repeat.for="c of companies"
+            role="option"
+            class="autocomplete-item"
+            class.bind="$index === highlightedIndex ? 'active' : ''"
+            click.trigger="selectCompany(c)"
+            mousedown.trigger="$event.preventDefault()">
+            <div class="title">${c.name}</div>
+            <div class="meta">VAT: ${c.vatNumber}</div>
+            <div class="addr">${c.street} ${c.houseNumber}, ${c.postalCode} ${c.city}</div>
+        </li>
+        <li class="autocomplete-empty" if.bind="companies.length === 0" t="invoice.customerModal.no-matches">No matches</li>
+    </ul>
+</label>

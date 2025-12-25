@@ -306,8 +306,8 @@
     },
     "customerModal": {
       "title": "Customer",
-      "search-title": "Search Customer",
-      "customer-title": "Customer",
+      "search-title": "Select Partner",
+      "create-new": "Create New",
       "country": "Country",
       "house-number": "House Number",
       "country-value": "Belgium",
