@@ -55,7 +55,7 @@ function attr(name: string, value: string | number | boolean | undefined | null)
 }
 
 function textElement(name: string, value: string | number | boolean | undefined | null, attrs = ''): string {
-    if (value === undefined || value === null) return '';
+    if (value === undefined || value === null || value === '') return '';
     const text = escapeXml(String(value));
     return `<${name}${attrs}>${text}</${name}>`;
 }
