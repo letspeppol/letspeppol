@@ -31,7 +31,7 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
             SELECT c FROM Company c WHERE
             (:vatNumber IS NULL OR c.vatNumber = :vatNumber) AND
             (:peppolId IS NULL OR c.peppolId = :peppolId) AND
-            (:name IS NULL OR LOWER(c.name) LIKE CONCAT(LOWER(:name), '%'))
+            (:name IS NULL OR LOWER(c.name) LIKE :name)
             """)
     List<Company> search(@Param("vatNumber") String vatNumber,
                          @Param("peppolId") String peppolId,

@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -36,7 +37,7 @@ public class CompanyService {
     private final Counter companyUnregistrationCounter;
 
     public List<CompanySearchResponse> search(String vatNumber, String peppolId, String name) {
-        return companyRepository.search(vatNumber, peppolId, name, Pageable.ofSize(5)).stream()// name != null ? name + "%" : null
+        return companyRepository.search(vatNumber, peppolId, name != null ? name.toLowerCase(Locale.ROOT) + "%" : null, Pageable.ofSize(5)).stream()
                 .map(CompanyMapper::toSearchResponse)
                 .collect(Collectors.toList());
     }
