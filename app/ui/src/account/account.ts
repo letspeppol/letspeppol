@@ -131,4 +131,19 @@ export class Account {
     getPaymentTerms() {
         return Account.PAYMENT_TERMS;
     }
+
+    async downloadContract() {
+        try {
+            const blob = await this.registrationService.downloadSignedContract().then( res => res.blob() )
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "signed_contract.pdf";
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        } catch {
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to download signed contract"});
+        }
+    }
 }
