@@ -15,6 +15,7 @@ Aurelia
     .register(
         I18nConfiguration.customize((options) => {
             options.initOptions = {
+                lng: localStorage.getItem("locale") ?? undefined,
                 resources: {
                     nl: { translation: nl },
                     fr: { translation: fr },
