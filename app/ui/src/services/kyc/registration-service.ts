@@ -114,4 +114,8 @@ export class RegistrationService {
         return false;
     }
 
+    async downloadSignedContract(): Promise<Response> {
+        return this.kycApi.httpClient.get('/sapi/company/signed-contract');
+    }
+
 }
