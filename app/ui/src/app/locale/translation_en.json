@@ -9,6 +9,7 @@
     "postal-code": "Postal Code",
     "street": "Street",
     "house-number": "House Number",
+    "house-number-short": "House Nr",
     "company-name": "Company name",
     "description": "Description",
     "reference": "Reference",
@@ -39,7 +40,6 @@
     "due-date": "Due Date",
     "type": "Type",
     "number": "Number",
-    "house-number-short": "House Nr",
     "peppolId": "Peppol ID"
   },
   "placeholder" : {
@@ -312,7 +312,7 @@
       "house-number": "House Number",
       "country-value": "Belgium",
       "search-name-vat": "Name or VAT Number",
-      "search-placeholder": "Search by name or VAT number",
+      "search-partner-placeholder": "Search partner by name or VAT number",
       "no-matches": "No matches"
     },
     "productSearch": {
