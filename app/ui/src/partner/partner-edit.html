@@ -1,4 +1,5 @@
-<import from="../components/peppol-search/peppol-search"></import>
+<import from="../components/search/peppol-search"></import>
+<import from="../components/search/company-search"></import>
 
 <div class="invoices-main">
     <div class="section-header">
@@ -23,10 +24,9 @@
                     <span t="label.vat-number">VAT Number</span>
                     <input type="text" value.bind="partnerContext.selectedPartner.vatNumber" change.trigger="vatNumberChanged()"/>
                 </label>
-                <label class="field required">
-                    <span t="label.company-name">Company name</span>
-                    <input type="text" value.bind="partnerContext.selectedPartner.name" />
-                </label>
+                <company-search select-company-function.bind="(company) => completePartnerInfo(company)"
+                                search-query.two-way="partnerContext.selectedPartner.name">
+                </company-search>
                 <label class="field">
                     <span t="label.email">Email</span>
                     <input type="text" value.bind="partnerContext.selectedPartner.email" />
@@ -47,10 +47,10 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-globe-icon lucide-globe"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
                 <h2 t="partner.edit.peppol">Peppol</h2>
             </div>
-            <peppol-search name.bind="partnerContext.selectedPartner.name"
-                           vat-number.bind="partnerContext.selectedPartner.vatNumber"
-                           peppol-id.two-way="partnerContext.selectedPartner.peppolId">
-            </peppol-search>
+            <label class="field required">
+                <span t="label.peppolId">Peppol ID</span>
+                <input type="text" value.bind="partnerContext.selectedPartner.peppolId" change.trigger="peppolIdChanged()"/>
+            </label>
         </div>
 
         <div class="card" style="min-width: 300px; width: 320px">

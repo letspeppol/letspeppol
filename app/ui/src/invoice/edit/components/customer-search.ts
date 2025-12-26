@@ -8,6 +8,7 @@ export class CustomerSearch {
     customers: PartnerDto[] = [];
     filteredCustomers: PartnerDto[] = [];
     showSuggestions = false;
+    ignoreNextBlur = false;
     highlightedIndex = -1;
     @bindable selectCustomerFunction: (c: PartnerDto) => void;
     @bindable confirmCustomerFunction: () => void;
@@ -68,7 +69,12 @@ export class CustomerSearch {
     }
 
     onSearchBlur() {
+        console.log('onSearchBlur');
         setTimeout(() => {
+            if (this.ignoreNextBlur) {
+                this.ignoreNextBlur = false;
+                return;
+            }
             this.showSuggestions = false;
         }, 120);
     }
@@ -77,7 +83,10 @@ export class CustomerSearch {
         if (this.selectCustomerFunction) {
             this.selectCustomerFunction(c);
         }
-        this.searchQuery = `${c.name} (${c.vatNumber})`;
+        this.searchQuery = c.name;
+        if (c.vatNumber) {
+            this.searchQuery += ` (${c.vatNumber})`;
+        }
         this.showSuggestions = false;
     }
 
@@ -90,5 +99,17 @@ export class CustomerSearch {
 
     public focusInput() {
         setTimeout(() => window.document.getElementById('customerSearch')?.focus(), 50);
+    }
+
+    showFirstPartners() {
+        this.filteredCustomers = this.customers.slice(0,8);
+        this.showSuggestions = true;
+        this.ignoreNextBlur = true;
+    }
+
+    hidePartners() {
+        this.filteredCustomers = [];
+        this.showSuggestions = false;
+        this.ignoreNextBlur = false;
     }
 }

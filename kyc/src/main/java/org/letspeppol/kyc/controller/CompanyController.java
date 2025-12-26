@@ -2,9 +2,7 @@ package org.letspeppol.kyc.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.letspeppol.kyc.dto.AccountInfo;
-import org.letspeppol.kyc.dto.CompanyResponse;
-import org.letspeppol.kyc.exception.KycErrorCodes;
-import org.letspeppol.kyc.exception.NotFoundException;
+import org.letspeppol.kyc.dto.CompanySearchResponse;
 import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.service.AccountService;
 import org.letspeppol.kyc.service.CompanyService;
@@ -17,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -45,6 +44,14 @@ public class CompanyController {
                 account.getEmail()
         );
         return ResponseEntity.ok(accountInfo);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<CompanySearchResponse>> search(
+            @RequestParam(value = "vatNumber", required = false) String vatNumber,
+            @RequestParam(value = "peppolId", required = false) String peppolId,
+            @RequestParam(value = "companyName", required = false) String companyName) {
+        return ResponseEntity.ok(companyService.search(vatNumber, peppolId, companyName));
     }
 
     /// Registers peppolId on the Peppol Directory, must call Proxy to register on AP

@@ -494,7 +494,7 @@ main.container {
     border: 1px solid var(--border-soft);
     border-radius: .6rem;
     padding: var(--space-05) var(--space-065);
-    max-width: 200px;
+    /*max-width: 200px;*/
 }
 
 .search input {
@@ -502,7 +502,7 @@ main.container {
     outline: none;
     background: transparent;
     color: var(--text);
-    max-width: 150px;
+    /*max-width: 150px;*/
     /*min-width: var(--search-min-w);*/
 }
 

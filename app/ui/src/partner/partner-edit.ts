@@ -5,9 +5,13 @@ import {PartnerService} from "../services/app/partner-service";
 import {PartnerContext} from "./partner-context";
 import {Account} from "../account/account";
 import {countryListAlpha2} from "../app/countries"
+import {normalizeVatNumber} from "./vat-normalizer";
+import {CompanySearchService} from "../services/kyc/company-search-service";
+import {KycCompanyResponse} from "../services/kyc/registration-service";
 
 export class PartnerEdit {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
+    private readonly companySearchService = resolve(CompanySearchService);
     private readonly partnerService = resolve(PartnerService);
     private readonly partnerContext = resolve(PartnerContext);
     private countryList = countryListAlpha2;
@@ -34,12 +38,55 @@ export class PartnerEdit {
         return Account.PAYMENT_TERMS;
     }
 
-    vatNumberChanged() {
-        const vatNumber = this.partnerContext.selectedPartner.vatNumber;
-        if (vatNumber && vatNumber.length >= 2) {
-            this.partnerContext.selectedPartner.vatNumber = vatNumber.toUpperCase();
+    peppolIdChanged() {
+        const partner = this.partnerContext.selectedPartner;
+        if (!partner) return;
+
+        if (partner.peppolId.length === 15 && partner.peppolId.startsWith('0208:')) {
+            this.companySearchService.searchCompany({peppolId: partner.peppolId}).then(companies => {
+                if (companies.length) {
+                    this.completePartnerInfo(companies[0]);
+                }
+            });
         }
     }
 
+    vatNumberChanged() {
+        const partner = this.partnerContext.selectedPartner;
+        if (!partner) return;
 
+        const {normalized, isValidShape} = normalizeVatNumber(partner.vatNumber);
+        partner.vatNumber = normalized;
+
+        // BE VAT
+        if (isValidShape && normalized.length === 12) {
+            this.companySearchService.searchCompany({vatNumber: normalized}).then(companies => {
+                if (companies.length) {
+                    this.completePartnerInfo(companies[0]);
+                }
+            });
+        }
+    }
+
+    private completePartnerInfo(kycCompanyResponse: KycCompanyResponse) {
+        const partner = this.partnerContext.selectedPartner;
+        if (!partner.vatNumber) {
+            partner.vatNumber = kycCompanyResponse.vatNumber;
+        }
+        if (!partner.peppolId) {
+            partner.peppolId = kycCompanyResponse.peppolId;
+        }
+        if (!partner.name) {
+            partner.name = kycCompanyResponse.name;
+        }
+        if (!partner.registeredOffice.city) {
+            partner.registeredOffice.city = kycCompanyResponse.city;
+        }
+        if (!partner.registeredOffice.postalCode) {
+            partner.registeredOffice.postalCode = kycCompanyResponse.postalCode;
+        }
+        if (!partner.registeredOffice.street) {
+            partner.registeredOffice.street = kycCompanyResponse.street;
+        }
+    }
 }

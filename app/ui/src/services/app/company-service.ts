@@ -39,5 +39,4 @@ export class CompanyService {
         this.myCompany = await response.json();
         return Promise.resolve(this.myCompany);
     }
-
 }
