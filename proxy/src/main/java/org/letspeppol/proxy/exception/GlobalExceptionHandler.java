@@ -22,6 +22,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new SimpleMessage(ex.getMessage()));
     }
 
+    @ExceptionHandler(AlreadyRegisteredException.class)
+    public ResponseEntity<Map<String, Object>> handleAlreadyRegisteredException(AlreadyRegisteredException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
+                "code", "PEPPOL_ALREADY_REGISTERED",
+                "provider", e.getProvider(),
+                "message", "Company already registered on Peppol at another provider."
+        ));
+    }
+
     @ExceptionHandler(DuplicateRequestException.class)
     public ResponseEntity<SimpleMessage> handleDuplicateRequestException(DuplicateRequestException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new SimpleMessage(ex.getMessage()));

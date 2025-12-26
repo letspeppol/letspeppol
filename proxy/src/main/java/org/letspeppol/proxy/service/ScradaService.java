@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.proxy.dto.RegistrationRequest;
 import org.letspeppol.proxy.dto.StatusReport;
 import org.letspeppol.proxy.dto.scrada.*;
+import org.letspeppol.proxy.exception.AlreadyRegisteredException;
 import org.letspeppol.proxy.model.AccessPoint;
 import org.letspeppol.proxy.model.UblDocument;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -95,8 +96,19 @@ public class ScradaService implements AccessPointServiceInterface {
             registerCounter.increment();
             return Map.of("uuid", uuid);
         } catch (WebClientResponseException e) { // HTTP error (non-2xx)
-            log.error("Scrada register API error {} {}: {}", e.getRawStatusCode(), e.getStatusText(), e.getResponseBodyAsString(), e);
-            throw new RuntimeException("Scrada API error: " + e.getStatusCode(), e);
+            String body = e.getResponseBodyAsString();
+            try {
+                ErrorResponse errorResponse = objectMapper.readValue(body, ErrorResponse.class);
+                log.warn("Scrada register API could not succeed (code={} type={}) {}: {}", errorResponse.errorCode(), errorResponse.errorType(), errorResponse.defaultFormat(), body);
+                throw switch (errorResponse.errorCode()) {
+                    case 110554 -> new AlreadyRegisteredException(errorResponse.parameters().get(1));
+                    case 100008, 110552 -> new AlreadyRegisteredException("scrada.be");
+                    default -> throw new IllegalStateException("Unexpected value: " + errorResponse.errorCode());
+                };
+            } catch (Exception parseFail) {
+                log.error("Scrada register API error {} {}: {} & parsing failed {}", e.getRawStatusCode(), e.getStatusText(), body, parseFail.getMessage(), e);
+                throw new RuntimeException("Scrada API error: " + e.getStatusCode(), e);
+            }
         } catch (Exception e) { // timeouts, connection issues, deserialization errors, etc.
             log.error("Scrada register API call error {}", e.toString(), e);
             throw new RuntimeException("Failed to call Scrada API", e);
