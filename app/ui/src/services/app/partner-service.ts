@@ -30,7 +30,7 @@ export class PartnerService {
 
         if (params.peppolId?.trim()) qs.set(`peppolId`, params.peppolId.trim());
 
-        const url = qs.toString() ? `/sapi/partner/search?${qs.toString()}` : `/sapi/company/search`;
+        const url = qs.toString() ? `/sapi/partner/search?${qs.toString()}` : `/sapi/partner/search`;
         const response = await this.appApi.httpClient.get(url);
 
         return response.json();
