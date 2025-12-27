@@ -1,6 +1,8 @@
 package org.letspeppol.app.service;
 
 import io.micrometer.core.instrument.Counter;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.app.dto.PartnerDto;
 import org.letspeppol.app.exception.NotFoundException;
 import org.letspeppol.app.mapper.PartnerMapper;
@@ -8,12 +10,11 @@ import org.letspeppol.app.model.Company;
 import org.letspeppol.app.model.Partner;
 import org.letspeppol.app.repository.CompanyRepository;
 import org.letspeppol.app.repository.PartnerRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -24,6 +25,12 @@ public class PartnerService {
     private final CompanyRepository companyRepository;
     private final PartnerRepository partnerRepository;
     private final Counter partnerCreateCounter;
+
+    public List<PartnerDto> search(String ownerPeppolId, String peppolId) {
+        return partnerRepository.search(ownerPeppolId, peppolId).stream()
+                .map(PartnerMapper::toDto)
+                .collect(Collectors.toList());
+    }
 
     public List<PartnerDto> findByPeppolId(String peppolId) {
         return partnerRepository.findByOwningPeppolId(peppolId).stream()
@@ -76,4 +83,5 @@ public class PartnerService {
     public void deletePartner(Long id) {
         partnerRepository.deleteById(id);
     }
+
 }

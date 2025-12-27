@@ -1,11 +1,12 @@
 import {IEventAggregator, observable, singleton} from "aurelia";
-import {CreditNote, CreditNoteLine, getLines, Invoice, InvoiceLine, UBLDoc} from "../services/peppol/ubl";
+import {CreditNote, CreditNoteLine, getLines, Invoice, InvoiceLine, Party, UBLDoc} from "../services/peppol/ubl";
 import {CompanyService} from "../services/app/company-service";
 import {resolve} from "@aurelia/kernel";
 import {InvoiceComposer} from "./invoice-composer";
 import {InvoiceCalculator} from "./invoice-calculator";
 import {AlertType} from "../components/alert/alert";
 import {DocumentDto, DocumentPageDto, DocumentType} from "../services/app/invoice-service";
+import {PartnerDto} from "../services/app/partner-service";
 
 @singleton()
 export class InvoiceContext {
@@ -22,6 +23,7 @@ export class InvoiceContext {
     nextInvoiceReference: string = undefined;
 
     readOnly: boolean = false;
+    partnerMissing: boolean = false;
 
     clearSelectedInvoice() {
         this.selectedInvoice = undefined;
@@ -95,6 +97,21 @@ export class InvoiceContext {
         const nextNum = (parseInt(numStr, 10) + 1).toString().padStart(width, "0");
 
         return `${prefix}${nextNum}${suffix}`;
+    }
+
+    public mapPartner(party: Party): PartnerDto {
+        return {
+            vatNumber: party.PartyTaxScheme?.CompanyID?.value,
+            name: party.PartyName?.Name,
+            peppolId: `${party.EndpointID.__schemeID}:${party.EndpointID.value}`,
+            customer: true,
+            registeredOffice: {
+                city: party?.PostalAddress?.CityName,
+                postalCode: party?.PostalAddress?.PostalZone,
+                street: party?.PostalAddress?.StreetName,
+                countryCode: party?.PostalAddress?.Country.IdentificationCode
+            }
+        } as PartnerDto;
     }
 
     // Drafts

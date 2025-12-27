@@ -313,7 +313,8 @@
       "country-value": "Belgium",
       "search-name-vat": "Name or VAT Number",
       "search-partner-placeholder": "Search partner by name or VAT number",
-      "no-matches": "No matches"
+      "no-matches": "No matches",
+      "save-as-partner": "Save as partner"
     },
     "productSearch": {
       "placeholder": "name",

@@ -9,4 +9,11 @@ import java.util.List;
 public interface PartnerRepository extends JpaRepository<Partner, Long> {
     @Query("SELECT partner FROM Partner partner WHERE partner.company.peppolId = :peppolId ORDER BY partner.name DESC")
     List<Partner> findByOwningPeppolId(String peppolId);
+
+    @Query("""
+            SELECT partner FROM Partner partner
+            WHERE partner.company.peppolId = :ownerPeppolId
+            AND partner.peppolId = :peppolId ORDER BY partner.name DESC
+            """)
+    List<Partner> search(String ownerPeppolId, String peppolId);
 }

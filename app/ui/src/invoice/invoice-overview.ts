@@ -11,10 +11,12 @@ import {
     InvoiceService, DocumentDirection,
 } from "../services/app/invoice-service";
 import moment from "moment";
+import {PartnerService} from "../services/app/partner-service";
 
 export class InvoiceOverview {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
     private invoiceService = resolve(InvoiceService);
+    private partnerService = resolve(PartnerService);
     private invoiceContext = resolve(InvoiceContext);
     invoicePage: DocumentPageDto = undefined;
     box = 'ALL'
@@ -86,6 +88,11 @@ export class InvoiceOverview {
             this.invoiceContext.selectedInvoice = parseCreditNote(item.ubl);
         } else {
             this.invoiceContext.selectedInvoice = parseInvoice(item.ubl);
+        }
+        if (this.invoiceContext.readOnly) {
+            this.invoiceContext.partnerMissing = true;
+            this.partnerService.searchPartners({peppolId: item.partnerPeppolId})
+                .then((list) => this.invoiceContext.partnerMissing = list.length === 0);
         }
     }
 

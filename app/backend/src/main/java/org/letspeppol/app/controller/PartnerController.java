@@ -5,6 +5,7 @@ import org.letspeppol.app.service.PartnerService;
 import org.letspeppol.app.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,12 @@ import java.util.List;
 public class PartnerController {
 
     private final PartnerService partnerService;
+
+    @GetMapping("/search")
+    public ResponseEntity<List<PartnerDto>> search(@AuthenticationPrincipal Jwt jwt, @RequestParam(value = "peppolId", required = true) String peppolId) {
+        String ownerPeppolId = JwtUtil.getPeppolId(jwt);
+        return ResponseEntity.ok(partnerService.search(ownerPeppolId, peppolId));
+    }
 
     @GetMapping
     public List<PartnerDto> getParties(@AuthenticationPrincipal Jwt jwt) {
