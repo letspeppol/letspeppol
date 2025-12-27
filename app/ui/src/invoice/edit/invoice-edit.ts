@@ -4,9 +4,9 @@ import {bindable, computed, IDisposable, IEventAggregator} from "aurelia";
 import {
     Attachment,
     ClassifiedTaxCategory,
-    CreditNote,
+    CreditNote, CreditNoteLine,
     getAmount,
-    Invoice,
+    Invoice, InvoiceLine,
     PaymentMeansCode,
     UBLLine
 } from "../../services/peppol/ubl";
@@ -23,6 +23,7 @@ import {InvoiceAttachmentModal} from "./components/invoice-attachment-modal";
 import {buildCreditNoteXml, buildInvoiceXml} from "../../services/peppol/ubl-builder";
 import {InvoiceNumberModal} from "./components/invoice-number-modal";
 import { toErrorResponse } from "../../app/util/error-response-handler";
+import moment, {Moment} from "moment";
 
 export class InvoiceEdit {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -32,6 +33,7 @@ export class InvoiceEdit {
     private invoiceComposer = resolve(InvoiceComposer);
     private newInvoiceSubscription: IDisposable;
     private newCreditNoteSubscription: IDisposable;
+    private previousSaveDate: undefined | Moment;
 
     @bindable readOnly;
     @bindable selectedDocumentType: DocumentType;
@@ -85,6 +87,31 @@ export class InvoiceEdit {
         const quantity = getAmount(line);
         line.LineExtensionAmount.value = roundTwoDecimals(line.Price.PriceAmount.value * quantity.value);
         this.invoiceCalculator.calculateTaxAndTotals(this.invoiceContext.selectedInvoice);
+        this.checkLineAutoSave(line);
+    }
+
+    nameOnChange(e: UIEvent, line: UBLLine) {
+        this.checkLineAutoSave(line);
+    }
+
+    checkLineAutoSave(line: InvoiceLine | CreditNoteLine) {
+        let autosave = false;
+        if (line?.Item?.Name && line?.Price?.PriceAmount?.value) {
+            if (this.selectedDocumentType === DocumentType.INVOICE && (line as InvoiceLine).InvoicedQuantity?.value
+                || this.selectedDocumentType === DocumentType.INVOICE && (line as CreditNoteLine).CreditedQuantity?.value) {
+                autosave = true;
+            }
+        }
+        if (autosave) {
+            this.autoSave();
+        }
+    }
+
+    autoSave() {
+        if (!this.previousSaveDate || moment().diff(this.previousSaveDate, 'seconds') >= 10) {
+            this.previousSaveDate = moment();
+            this.saveAsDraft(false);
+        }
     }
 
     addLine() {
@@ -96,12 +123,15 @@ export class InvoiceEdit {
             line = this.invoiceComposer.getCreditNoteLine(pos);
         }
         this.invoiceContext.lines.push(line);
-        this.saveAsDraft(false).catch(e => console.error(e));
+        if (this.invoiceContext.lines.length === 1) {
+            this.saveAsDraft(false).catch(e => console.error(e));
+        }
     }
 
     deleteLine(line: UBLLine) {
         this.invoiceContext.lines.splice(this.invoiceContext.lines.findIndex(item => item === line), 1);
         this.invoiceCalculator.calculateTaxAndTotals(this.invoiceContext.selectedInvoice);
+        this.autoSave();
     }
 
     async verifyNumberAndSend() {
