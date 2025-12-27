@@ -1,11 +1,13 @@
 import {IEventAggregator, observable, singleton} from "aurelia";
+import {Router} from "@aurelia/router";
+import {resolve} from "@aurelia/kernel";
 import {CreditNote, CreditNoteLine, getLines, Invoice, InvoiceLine, UBLDoc} from "../services/peppol/ubl";
 import {CompanyService} from "../services/app/company-service";
-import {resolve} from "@aurelia/kernel";
 import {InvoiceComposer} from "./invoice-composer";
 import {InvoiceCalculator} from "./invoice-calculator";
 import {AlertType} from "../components/alert/alert";
-import {DocumentDto, DocumentPageDto, DocumentType} from "../services/app/invoice-service";
+import {DocumentDirection, DocumentDto, DocumentPageDto, DocumentType} from "../services/app/invoice-service";
+import {parseCreditNote, parseInvoice} from "../services/peppol/ubl-parser";
 
 @singleton()
 export class InvoiceContext {
@@ -13,6 +15,7 @@ export class InvoiceContext {
     private readonly companyService = resolve(CompanyService);
     private readonly invoiceComposer = resolve(InvoiceComposer);
     private readonly invoiceCalculator = resolve(InvoiceCalculator);
+    private readonly router = resolve(Router);
     lines : undefined | InvoiceLine[] | CreditNoteLine[];
     draftPage: DocumentPageDto = undefined;
     @observable selectedInvoice:  undefined | Invoice | CreditNote;
@@ -24,6 +27,7 @@ export class InvoiceContext {
     readOnly: boolean = false;
 
     clearSelectedInvoice() {
+        history.pushState({}, '', `/invoices`);
         this.selectedInvoice = undefined;
         this.selectedDocument = undefined;
     }
@@ -33,6 +37,19 @@ export class InvoiceContext {
             return;
         }
         this.lines = getLines(newValue);
+    }
+
+    selectInvoice(item: DocumentDto) {
+        this.readOnly = (item.direction === DocumentDirection.INCOMING || item.proxyOn != null);
+        this.selectedDocument = item;
+        if (item.draftedOn) {
+            this.getLastInvoiceReference();
+        }
+        if (item.type === DocumentType.CREDIT_NOTE) {
+            this.selectedInvoice = parseCreditNote(item.ubl);
+        } else {
+            this.selectedInvoice = parseInvoice(item.ubl);
+        }
     }
 
     async initCompany() {
