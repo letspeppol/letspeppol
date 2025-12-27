@@ -209,7 +209,7 @@
                             </td>
                             <td>
                                 <div required-table-input.class="!line.Item.Name">
-                                    <product-name-search input-value.two-way="line.Item.Name" readonly.bind="readOnly"></product-name-search>
+                                    <product-name-search input-value.two-way="line.Item.Name" readonly.bind="readOnly" on-search-change-function.bind="(e) => nameOnChange(e, line)"></product-name-search>
                                 </div>
                             </td>
                             <td><textarea class="description required-input" placeholder="Description" t="[placeholder]label.description" value.bind="line.Item.Description" readonly.bind="readOnly"></textarea></td>
