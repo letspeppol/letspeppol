@@ -21,6 +21,11 @@ public final class KycErrorCodes {
     public static final String PROXY_REGISTRATION_FAILED = "proxy_registration_failed";
     public static final String PROXY_UNREGISTRATION_FAILED = "proxy_unregistration_failed";
     public static final String PROXY_FAILED = "proxy_failed";
+    public static final String PROXY_REGISTRATION_CONFLICT = "proxy_registration_conflict";
+    public static final String PROXY_REGISTRATION_UNAVAILABLE = "proxy_registration_unavailable";
+    public static final String PROXY_REGISTRATION_INTERNAL_ERROR = "proxy_registration_internal_error";
+    public static final String PROXY_REGISTRATION_SUSPENDED = "proxy_registration_suspended";
+    public static final String PROXY_REGISTRATION_NOT_NEEDED = "proxy_registration_not_needed";
     // KBO
     public static final String KBO_PARSE_ADDRESS_FAILED = "kbo_parse_address_failed";
     public static final String KBO_PARSE_DIRECTORS_FAILED = "kbo_parse_directors_failed";
@@ -35,5 +40,6 @@ public final class KycErrorCodes {
     public static final String UNEXPECTED_ERROR = "unexpected_error";
     // Auth
     public static final String AUTHENTCATION_FAILED = "auth_failed";
+
     private KycErrorCodes() {}
 }

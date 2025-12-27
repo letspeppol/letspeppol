@@ -48,6 +48,7 @@ public class RegistryService {
             registry.setAccessPoint(accessPoint);
         } catch (Exception e) {
             log.error("Failed to register {} at access point {}", registry.getPeppolId(), accessPoint);
+            throw e;
         }
     }
 

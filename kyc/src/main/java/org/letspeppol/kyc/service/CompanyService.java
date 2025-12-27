@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.kyc.dto.CompanyResponse;
 import org.letspeppol.kyc.dto.CompanySearchResponse;
 import org.letspeppol.kyc.dto.DirectorDto;
+import org.letspeppol.kyc.dto.RegistrationResponse;
 import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.KycException;
 import org.letspeppol.kyc.mapper.CompanyMapper;
@@ -68,26 +69,26 @@ public class CompanyService {
         return company;
     }
 
-    public boolean registerCompany(String peppolId) {
+    public RegistrationResponse registerCompany(String peppolId) {
         Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new KycException(KycErrorCodes.COMPANY_NOT_FOUND));
         return registerCompany(company);
     }
 
-    public boolean registerCompany(Company company) {
+    public RegistrationResponse registerCompany(Company company) {
         if (company.isSuspended()) {
             log.info("Will not register suspended company {}", company.getName());
-            return false;
+            return new RegistrationResponse(false, KycErrorCodes.PROXY_REGISTRATION_SUSPENDED, "Account is currently suspended");
         }
         if (company.isRegisteredOnPeppol()) {
             log.info("Will skip registration for already registered company {}", company.getName());
-            return true;
+            return new RegistrationResponse(true, KycErrorCodes.PROXY_REGISTRATION_NOT_NEEDED, "Account is already registered");
         }
         String token = jwtService.generateInternalToken(company.getPeppolId(), company.isPeppolActive());
-        boolean peppolActive = proxyService.registerCompany(token, company.getName());
-        log.info("Registering company for {} has Peppol active = {}", company.getPeppolId(), peppolActive);
-        company.setRegisteredOnPeppol(peppolActive);
+        RegistrationResponse registrationResponse = proxyService.registerCompany(token, company.getName());
+        log.info("Registering company for {} has Peppol active = {}", company.getPeppolId(), registrationResponse.peppolActive());
+        company.setRegisteredOnPeppol(registrationResponse.peppolActive());
         companyRepository.save(company);
-        return peppolActive;
+        return registrationResponse;
     }
 
     public boolean unregisterCompany(String peppolId) {

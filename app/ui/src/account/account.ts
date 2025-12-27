@@ -18,6 +18,8 @@ export class Account {
     public static PAYMENT_TERMS = ['15_DAYS', '30_DAYS', '60_DAYS', 'END_OF_NEXT_MONTH'];
     private alreadyPeppolActivated = false;
     changePasswordModal: ChangePasswordModal;
+    private warningKey;
+    private alreadyRegisteredProvider = '';
 
     attaching() {
         this.getCompany().catch(() => {
@@ -98,8 +100,35 @@ export class Account {
             localStorage.setItem('peppolActive', this.company.peppolActive);
             this.ea.publish('alert', {alertType: AlertType.Success, text: "Activated company on Peppol"});
             window.location.reload();
-        } catch {
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to activate company on Peppol"});
+        } catch (response: Response) {
+            if (!response) {
+                this.ea.publish('alert', { alertType: AlertType.Danger, text: "Failed to send activation request" });
+                return;
+            }
+            const status = response.status;
+            const body = await response.text().catch(() => "");
+            switch (status) {
+                case 403:
+                    console.log("Forbidden: " + body);
+                    this.warningKey = 'account.registration-failed.contact-us';
+                    break;
+                case 409:
+                    console.log("Already registered at " + body);
+                    this.warningKey = 'account.registration-failed.contact-provider';
+                    this.alreadyRegisteredProvider = body;
+                    break;
+                case 503:
+                    console.log("Service could not process request at this moment, try again later.");
+                    this.warningKey = 'account.registration-failed.try-again-one-hour';
+                    break;
+                case 424:
+                case 500:
+                default:
+                    console.log("Service could not process request");
+                    this.warningKey = 'account.registration-failed.try-again-one-day';
+                    break;
+            }
+            this.ea.publish('alert', { alertType: AlertType.Danger, text: "Failed to activate company on Peppol" });
         }
     }
 
