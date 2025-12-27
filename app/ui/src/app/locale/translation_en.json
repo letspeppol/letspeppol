@@ -247,6 +247,9 @@
     "drafts": "Drafts",
     "title": "Invoices",
     "search": "Search customer or reference",
+    "customer": "Customer",
+    "supplier": "Supplier",
+    "partner": "Partner",
     "new": {
       "INVOICE": "New Invoice",
       "CREDIT_NOTE": "New Credit Note"
@@ -263,7 +266,6 @@
       "doc": "Doc",
       "issue-date": "Issue Date",
       "due-date": "Due Date",
-      "customer": "Customer",
       "total": "Total",
       "status": "Status",
       "actions": "Actions"

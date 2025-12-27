@@ -247,6 +247,9 @@
     "drafts" : "Concepten",
     "title" : "Facturen",
     "search" : "Klant of referentie zoeken",
+    "customer" : "Klant",
+    "supplier": "Leverancier",
+    "partner": "Partner",
     "new" : {
       "INVOICE" : "Nieuwe factuur",
       "CREDIT_NOTE" : "Nieuwe creditnota"
@@ -263,7 +266,6 @@
       "doc" : "Doc",
       "issue-date" : "Uitgiftedatum",
       "due-date" : "Vervaldatum",
-      "customer" : "Klant",
       "total" : "Totaal",
       "status" : "Status",
       "actions" : "Acties"
