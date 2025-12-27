@@ -16,13 +16,14 @@ import {InvoiceCustomerModal} from "./components/invoice-customer-modal";
 import {InvoiceCalculator, roundTwoDecimals} from "../invoice-calculator";
 import {InvoiceComposer} from "../invoice-composer";
 // import {downloadInvoicePdf} from "../pdf/invoice-pdf";
-import {InvoiceService, DocumentType} from "../../services/app/invoice-service";
+import {DocumentDirection, DocumentType, InvoiceService} from "../../services/app/invoice-service";
 import {ValidationResultModal} from "./components/validation-result-modal";
 import {InvoiceModal} from "./components/invoice-modal";
 import {InvoiceAttachmentModal} from "./components/invoice-attachment-modal";
 import {buildCreditNoteXml, buildInvoiceXml} from "../../services/peppol/ubl-builder";
 import {InvoiceNumberModal} from "./components/invoice-number-modal";
-import { toErrorResponse } from "../../app/util/error-response-handler";
+import {toErrorResponse} from "../../app/util/error-response-handler";
+import {PartnerService} from "../../services/app/partner-service";
 
 export class InvoiceEdit {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -30,6 +31,7 @@ export class InvoiceEdit {
     private invoiceContext = resolve(InvoiceContext);
     private invoiceCalculator = resolve(InvoiceCalculator);
     private invoiceComposer = resolve(InvoiceComposer);
+    private partnerService = resolve(PartnerService);
     private newInvoiceSubscription: IDisposable;
     private newCreditNoteSubscription: IDisposable;
 
@@ -231,6 +233,21 @@ export class InvoiceEdit {
         for (let i = 0; i < this.invoiceContext.lines.length; i++) {
             this.invoiceContext.lines[i].ID = (i + 1).toString();
         }
+    }
+
+    savePartner() {
+        let partner;
+        if (this.invoiceContext.selectedDocument.direction === DocumentDirection.INCOMING) {
+            partner = this.invoiceContext.mapPartner(this.invoiceContext.selectedInvoice.AccountingSupplierParty.Party);
+        } else {
+            partner = this.invoiceContext.mapPartner(this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party);
+        }
+        this.partnerService.createPartner(partner)
+            .then(() => {
+                this.ea.publish('alert', {alertType: AlertType.Success, text: "Partner created"});
+                this.invoiceContext.partnerMissing = false;
+            })
+            .catch(() => this.ea.publish('alert', {alertType: AlertType.Danger, text: "Partner creation failed"}));
     }
 
     // Modals
