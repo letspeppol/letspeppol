@@ -84,7 +84,7 @@
     "login-failed" : "Login failed",
     "registration-company-not-found" : "Company not found",
     "registration-company-already-registered" : "Company already registered",
-    "registration-company-already-registered-on-peppol" : "You are already registered on Peppol, we will not be able to activate you until you unregister on the other Peppol provider.",
+    "registration-company-already-registered-on-peppol" : "It looks like this Peppol ID is already registered with another provider. Activation here requires unregistering there first. You can still complete the signing process and handle this afterward.",
     "not-peppol-active" : "You are currently not registered on Peppol",
     "not-peppol-active-action" : "Solve this now"
   },
@@ -365,7 +365,13 @@
     "payment-info": "Payment Info",
     "iban": "IBAN",
     "account-name": "Account Name",
-    "payment-terms": "Payment Terms"
+    "payment-terms": "Payment Terms",
+    "registration-failed": {
+      "contact-us": "Registration was not finalized. Please contact support at support@letspeppol.org for the next steps.",
+      "contact-provider": "Your Peppol ID is currently registered with {{provider}}. Please contact them to unregister it, then log in and try activating again.",
+      "try-again-one-day": "Registration was not finalized. Please try again tomorrow. If the problem persists, contact support at support@letspeppol.org and include your account details.",
+      "try-again-one-hour": "Registration was not finalized. Please try again in about an hour. The Peppol network may be temporarily overloaded."
+    }
   },
   "forgot": {
     "title": "Forgot Password",

@@ -6,5 +6,6 @@ public record ErrorResponse(
         int errorCode,
         int errorType,
         String defaultFormat,
-        List<String> parameters
+        List<String> parameters,
+        List<ErrorResponse> innerErrors
 ) {}

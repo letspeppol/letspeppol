@@ -1,4 +1,9 @@
 package org.letspeppol.kyc.dto;
 
-public record IdentityVerificationResponse(boolean success, String message) {}
+import org.letspeppol.kyc.model.Account;
+
+public record IdentityVerificationResponse(
+        Account account,
+        RegistrationResponse registrationResponse
+) {}
 

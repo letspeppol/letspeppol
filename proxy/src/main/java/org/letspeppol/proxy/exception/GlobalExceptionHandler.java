@@ -2,6 +2,7 @@ package org.letspeppol.proxy.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.proxy.dto.SimpleMessage;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -23,12 +24,13 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AlreadyRegisteredException.class)
-    public ResponseEntity<Map<String, Object>> handleAlreadyRegisteredException(AlreadyRegisteredException e) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
-                "code", "PEPPOL_ALREADY_REGISTERED",
-                "provider", e.getProvider(),
-                "message", "Company already registered on Peppol at another provider."
-        ));
+    public ResponseEntity<String> handleAlreadyRegisteredException(AlreadyRegisteredException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getProvider());
+    }
+
+    @ExceptionHandler(ServiceUnavailableException.class)
+    public ResponseEntity<SimpleMessage> handleServiceUnavailableException(ServiceUnavailableException ex) {
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).header(HttpHeaders.RETRY_AFTER, "3600").body(new SimpleMessage(ex.getMessage()));
     }
 
     @ExceptionHandler(DuplicateRequestException.class)
