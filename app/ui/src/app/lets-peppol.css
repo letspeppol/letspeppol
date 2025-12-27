@@ -81,6 +81,7 @@
     --shadow-header: 0 2px 8px rgb(0 0 0 / 12%);
     --shadow-card: 0 8px 24px rgb(15 23 42 / 8%);
     --shadow-soft: 0 4px 12px rgb(15 23 42 / 6%);
+    --shadow-active-btn: 0px 1px 4px 1px rgb(44 60 105 / 30%);
     --radius-lg: 10px;
     --radius-md: 8px;
     --radius-sm: 6px;
@@ -607,6 +608,10 @@ main.container {
 
 .icon-btn:hover {
     color: var(--text);
+}
+
+.btn.active-route {
+    box-shadow: var(--shadow-active-btn);
 }
 
 /* ============================================================================

@@ -11,6 +11,7 @@ import * as nl from "./app/locale/translation_nl.json";
 Aurelia
     .register(RouterConfiguration.customize({
         useUrlFragmentHash: false,
+        activeClass: 'active-route'
     }))
     .register(
         I18nConfiguration.customize((options) => {

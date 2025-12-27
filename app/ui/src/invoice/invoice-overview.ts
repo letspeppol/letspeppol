@@ -1,6 +1,5 @@
 import {resolve} from "@aurelia/kernel";
 import {InvoiceContext} from "./invoice-context";
-import {parseCreditNote, parseInvoice} from "../services/peppol/ubl-parser";
 import {AlertType} from "../components/alert/alert";
 import {IEventAggregator, watch} from "aurelia";
 import {
@@ -77,16 +76,8 @@ export class InvoiceOverview {
     }
 
     selectItem(item: DocumentDto) {
-        this.invoiceContext.readOnly = (item.direction === DocumentDirection.INCOMING || item.proxyOn != null);
-        this.invoiceContext.selectedDocument = item;
-        if (item.draftedOn) {
-            this.invoiceContext.getLastInvoiceReference();
-        }
-        if (item.type === DocumentType.CREDIT_NOTE) {
-            this.invoiceContext.selectedInvoice = parseCreditNote(item.ubl);
-        } else {
-            this.invoiceContext.selectedInvoice = parseInvoice(item.ubl);
-        }
+        history.pushState({}, '', `/invoices/${item.id}`);
+        this.invoiceContext.selectInvoice(item);
     }
 
     nextPage() {
