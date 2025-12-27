@@ -247,6 +247,9 @@
     "drafts" : "Brouillons",
     "title" : "Factures",
     "search" : "Rechercher client ou référence",
+    "customer" : "Client",
+    "supplier" : "Fournisseur",
+    "partner" : "Partenaire",
     "new" : {
       "INVOICE" : "Nouvelle facture",
       "CREDIT_NOTE" : "Nouvelle note de crédit"
@@ -263,7 +266,6 @@
       "doc" : "Doc",
       "issue-date" : "Date d'émission",
       "due-date" : "Date d'échéance",
-      "customer" : "Client",
       "total" : "Total",
       "status" : "Statut",
       "actions" : "Actions"

@@ -112,7 +112,11 @@
                                     </div>
                                 </div>
                             </th>
-                            <th t="invoice.table.customer">Customer</th>
+                            <th>
+                                <span if.bind="box === 'OUTGOING'" t="invoice.customer">Customer</span>
+                                <span if.bind="box === 'INCOMING'" t="invoice.supplier">Supplier</span>
+                                <span if.bind="box === 'ALL' || box === 'DRAFTS'" t="invoice.partner">Partner</span>
+                            </th>
                             <th t="invoice.table.total">Total</th>
                             <th t="invoice.table.status">Status</th>
                             <th class="actions-col" t="invoice.table.actions">Actions</th>
