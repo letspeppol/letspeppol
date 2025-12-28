@@ -2,7 +2,7 @@ Hello,
 
 We received a request to verify an email address for company with Peppol ID {{peppolId}}.
 
-To complete verification, click the link below (valid for 2 hours):
+To complete verification, click the link below (valid for 1 week):
 {{activationLink}}
 
 We need the Web eID plugin to verify your identity.

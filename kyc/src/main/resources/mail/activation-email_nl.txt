@@ -2,7 +2,7 @@ Hallo,
 
 We hebben een verzoek ontvangen om een e-mailadres te verifiëren voor bedrijf met Peppol ID {{peppolId}}.
 
-Om de verificatie te voltooien klikt u op de onderstaande link (2 uur geldig):
+Om de verificatie te voltooien klikt u op de onderstaande link (1 week geldig):
 {{activationLink}}
 
 We hebben de Web eID plugin nodig om uw identiteit te verifiëren.
