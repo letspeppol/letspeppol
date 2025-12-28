@@ -84,7 +84,7 @@
     "login-failed" : "Inloggen mislukt",
     "registration-company-not-found" : "Bedrijf niet gevonden",
     "registration-company-already-registered" : "Bedrijf al geregistreerd",
-    "registration-company-already-registered-on-peppol" : "U bent al geregistreerd op Peppol. We kunnen u pas activeren nadat u zich bij de andere Peppol-provider hebt uitgeschreven.",
+    "registration-company-already-registered-on-peppol" : "Het lijkt erop dat deze Peppol-ID al bij een andere provider is geregistreerd. Activering hier vereist dat u zich daar eerst uitschrijft. U kunt het ondertekenproces wel afronden en dit daarna regelen.",
     "not-peppol-active" : "U bent momenteel niet geregistreerd op Peppol",
     "not-peppol-active-action" : "Los dit nu op"
   },
@@ -365,7 +365,13 @@
     "payment-info" : "Betaalinformatie",
     "iban" : "IBAN",
     "account-name" : "Accountnaam",
-    "payment-terms" : "Betalingsvoorwaarden"
+    "payment-terms" : "Betalingsvoorwaarden",
+    "registration-failed": {
+      "contact-us": "De registratie is niet afgerond. Neem contact op met support via support@letspeppol.org voor de volgende stappen.",
+      "contact-provider": "Uw Peppol-ID is momenteel geregistreerd bij {{provider}}. Neem contact met hen op om het uit te schrijven, log daarna in en probeer opnieuw te activeren.",
+      "try-again-one-day": "De registratie is niet afgerond. Probeer het morgen opnieuw. Als het probleem aanhoudt, neem contact op met support via support@letspeppol.org en vermeld uw accountgegevens.",
+      "try-again-one-hour": "De registratie is niet afgerond. Probeer het over ongeveer een uur opnieuw. Het Peppol-netwerk is mogelijk tijdelijk overbelast."
+    }
   },
   "forgot" : {
     "title" : "Wachtwoord vergeten",

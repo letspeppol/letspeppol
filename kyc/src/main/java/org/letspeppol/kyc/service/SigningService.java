@@ -244,7 +244,7 @@ public class SigningService {
         return NameMatchUtil.matches(givenName, surName, fullName);
     }
 
-    public byte[] finalizeSign(FinalizeSigningRequest signingRequest) {
+    public FinalizeSigningResponse finalizeSign(FinalizeSigningRequest signingRequest) {
         finalizeSigningCounter.increment();
         TokenVerificationResponse tokenVerificationResponse = activationService.verify(signingRequest.emailToken());
         Director director = getDirector(signingRequest.directorId(), tokenVerificationResponse);
@@ -271,10 +271,10 @@ public class SigningService {
                 certificates[0],
                 CertificateUtil.getX500Name(certificates)
         );
-        Account account = identityVerificationService.create(identityVerificationRequest);
+        IdentityVerificationResponse identityVerificationResponse = identityVerificationService.create(identityVerificationRequest);
         activationService.setVerified(signingRequest.emailToken());
 
-        return writeContractToFile(tokenVerificationResponse.company().peppolId(), account, finalPdfBytes);
+        return new FinalizeSigningResponse(writeContractToFile(tokenVerificationResponse.company().peppolId(), identityVerificationResponse.account(), finalPdfBytes), identityVerificationResponse.registrationResponse());
     }
 
     public byte[] getContract(String peppolId, Long accountId) {

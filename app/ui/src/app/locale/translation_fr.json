@@ -84,7 +84,7 @@
     "login-failed" : "Échec de la connexion",
     "registration-company-not-found" : "Entreprise introuvable",
     "registration-company-already-registered" : "Entreprise déjà enregistrée",
-    "registration-company-already-registered-on-peppol" : "Vous êtes déjà enregistré sur Peppol. Nous ne pourrons vous activer qu'après vous être désinscrit auprès de l'autre fournisseur Peppol.",
+    "registration-company-already-registered-on-peppol" : "Il semble que cet identifiant Peppol soit déjà enregistré auprès d’un autre fournisseur. L’activation ici nécessite que vous vous désinscriviez d’abord là-bas. Vous pouvez tout de même finaliser le processus de signature et vous en occuper ensuite.",
     "not-peppol-active" : "Vous n'êtes actuellement pas enregistré sur Peppol",
     "not-peppol-active-action" : "Résoudre cela maintenant"
   },
@@ -365,7 +365,13 @@
     "payment-info" : "Infos paiement",
     "iban" : "IBAN",
     "account-name" : "Nom du compte",
-    "payment-terms" : "Conditions de paiement"
+    "payment-terms" : "Conditions de paiement",
+    "registration-failed": {
+      "contact-us": "L'inscription n'a pas été finalisée. Veuillez contacter le support à l’adresse support@letspeppol.org pour la suite.",
+      "contact-provider": "Votre identifiant Peppol est actuellement enregistré auprès de {{provider}}. Veuillez les contacter pour le désinscrire, puis connectez-vous et réessayez l’activation.",
+      "try-again-one-day": "L'inscription n'a pas été finalisée. Veuillez réessayer demain. Si le problème persiste, contactez le support à l’adresse support@letspeppol.org en indiquant les informations de votre compte.",
+      "try-again-one-hour": "L'inscription n'a pas été finalisée. Veuillez réessayer dans environ une heure. Le réseau Peppol est peut-être temporairement surchargé."
+    }
   },
   "forgot" : {
     "title" : "Mot de passe oublié",

@@ -2,6 +2,7 @@ package org.letspeppol.proxy.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.proxy.dto.SimpleMessage;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -20,6 +21,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<SimpleMessage> handleNotFound(NotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new SimpleMessage(ex.getMessage()));
+    }
+
+    @ExceptionHandler(AlreadyRegisteredException.class)
+    public ResponseEntity<String> handleAlreadyRegisteredException(AlreadyRegisteredException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getProvider());
+    }
+
+    @ExceptionHandler(ServiceUnavailableException.class)
+    public ResponseEntity<SimpleMessage> handleServiceUnavailableException(ServiceUnavailableException ex) {
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).header(HttpHeaders.RETRY_AFTER, "3600").body(new SimpleMessage(ex.getMessage()));
     }
 
     @ExceptionHandler(DuplicateRequestException.class)

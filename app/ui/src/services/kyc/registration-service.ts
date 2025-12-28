@@ -106,12 +106,15 @@ export class RegistrationService {
             console.log("Was already registered");
             return true;
         }
-        const token = await response.text();
-        if (response.ok && token?.trim()) {
-            this.loginService.updateToken(token.trim());
-            return true;
+        if (response.ok) {
+            const token = await response.text();
+            if (token?.trim()) {
+                this.loginService.updateToken(token.trim());
+                return true;
+            }
+            return false;
         }
-        return false;
+        throw Error(response);
     }
 
     async downloadSignedContract(): Promise<Response> {

@@ -73,6 +73,9 @@
                             <span t="account.activate-on-peppol">Activate On Peppol</span>
                         </button>
                     </label>
+                    <template if.bind="warningKey">
+                        <div class="alert alert--warning warning-box" t.bind="warningKey" t-params.bind="{ provider: alreadyRegisteredProvider }"></div>
+                    </template>
                 </div>
             </div>
             <div class="card" style="min-width: 320px">
