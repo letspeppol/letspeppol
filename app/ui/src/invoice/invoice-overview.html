@@ -121,8 +121,8 @@
                         <tbody>
                             <tr repeat.for="item of invoiceContext.invoicePage.content" click.trigger="selectItem(item)">
                                 <td><span class="status-dot" class.bind="item.paidOn ? 'status-ok' : isOverdue(item) ? 'status-overdue' : 'status-open'" title.bind="item.paidOn ? 'Paid at ' + formatDate(item.paidOn) : 'Not paid'"></span></td>
-                                <td><span class="pill" class.bind="item.direction === DocumentDirection.INCOMING ? 'incoming' : 'sent'" t="documentDirection.${item.direction}">${item.direction}</span></td>
-                                <td><span class="pill" class.bind="item.type === DocumentType.INVOICE ? 'sent' : 'incoming'" t="documentType.${item.type}">${item.type}</span></td>
+                                <td><span class="pill" class.bind="item.direction === 'INCOMING' ? 'incoming' : 'sent'" t="documentDirection.${item.direction}">${item.direction}</span></td>
+                                <td><span class="pill" class.bind="item.type === 'INVOICE' ? 'sent' : 'incoming'" t="documentType.${item.type}">${item.type}</span></td>
                                 <td>${item.invoiceReference}</td>
                                 <td>${item.issueDate | dateFormat}</td>
                                 <td>${item.dueDate | dateFormat}</td>
