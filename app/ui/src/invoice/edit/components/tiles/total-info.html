@@ -1,0 +1,12 @@
+<div class="head-right">
+    <div class="total-display">
+        <span t="invoice.edit.subtotal">Subtotal</span>
+        <b>€ ${invoiceContext.selectedInvoice.LegalMonetaryTotal.TaxExclusiveAmount.value.toFixed(2)}</b>
+        <span t="invoice.edit.tax">Tax</span>
+        <b>€ ${invoiceContext.selectedInvoice.TaxTotal[0].TaxAmount.value.toFixed(2)}</b>
+    </div>
+    <div class="total-display">
+        <span t="invoice.edit.total">Total</span>
+        <strong>€ ${invoiceContext.selectedInvoice.LegalMonetaryTotal.PayableAmount.value.toFixed(2)}</strong>
+    </div>
+</div>

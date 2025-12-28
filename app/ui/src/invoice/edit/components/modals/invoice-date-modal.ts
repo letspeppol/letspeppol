@@ -1,8 +1,8 @@
 import {bindable, observable} from "aurelia";
 import {resolve} from "@aurelia/kernel";
-import {Account} from "../../../account/account";
-import {InvoiceComposer} from "../../invoice-composer";
-import {DocumentType} from "../../../services/app/invoice-service";
+import {Account} from "../../../../account/account";
+import {InvoiceComposer} from "../../../invoice-composer";
+import {DocumentType} from "../../../../services/app/invoice-service";
 
 export interface Translation {
     key: string,

@@ -1,5 +1,5 @@
-<import from="./customer-search"></import>
-<import from="../../../components/search/company-search"></import>
+<import from="../customer-search"></import>
+<import from="../../../../components/search/company-search"></import>
 
 <div class="modal" role="dialog" aria-modal="true" show.bind="open">
     <div class="modal-backdrop"></div>
@@ -30,7 +30,7 @@
                                 <input type="text" name="customerId" placeholder="VAT Number" t="[placeholder]label.vat-number" value.bind="customer.PartyTaxScheme.CompanyID.value"  required change.trigger="vatNumberChanged()" style="width: 130px" />
                             </label>
                             <company-search select-company-function.bind="(company) => completeCustomerInfo(company)"
-                                            search-query.bind="customer.PartyName.Name">
+                                            search-query.two-way="customer.PartyName.Name">
                             </company-search>
                             <label class="field required">
                                 <span t="label.peppolId">Peppol ID</span>
@@ -71,6 +71,10 @@
             </div>
         </div>
         <footer class="modal-footer">
+            <label class="field checkbox">
+                <input type="checkbox" checked.bind="saveAsPartner" disabled.bind="!customer.PartyName.Name || !peppolId" />
+                <span t="invoice.customerModal.save-as-partner"></span>
+            </label>
             <button type="button" class="btn" click.trigger="closeModal()" t="[title]common.cancel" t="common.cancel">Cancel</button>
             <button type="button" class="btn primary" click.trigger="saveCustomer()" t="[title]common.confirm" t="common.confirm"
                     disabled.bind="!customer.PartyName.Name || !customer.PartyTaxScheme.CompanyID || !peppolId || !peppolId.includes(':')">Confirm</button>
