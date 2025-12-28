@@ -1,15 +1,15 @@
 import {bindable, IEventAggregator} from "aurelia";
-import {Party} from "../../../services/peppol/ubl";
-import {PartnerDto, PartnerService} from "../../../services/app/partner-service";
-import {CustomerSearch} from "./customer-search";
-import {countryListAlpha2} from "../../../app/countries"
-import {isIso6523Scheme} from "../../../app/util/iso6523list";
-import {normalizeVatNumber} from "../../../partner/vat-normalizer";
-import {KycCompanyResponse} from "../../../services/kyc/registration-service";
+import {Party} from "../../../../services/peppol/ubl";
+import {PartnerDto, PartnerService} from "../../../../services/app/partner-service";
+import {CustomerSearch} from "../customer-search";
+import {countryListAlpha2} from "../../../../app/countries"
+import {isIso6523Scheme} from "../../../../app/util/iso6523list";
+import {normalizeVatNumber} from "../../../../partner/vat-normalizer";
+import {KycCompanyResponse} from "../../../../services/kyc/registration-service";
 import {resolve} from "@aurelia/kernel";
-import {CompanySearchService} from "../../../services/kyc/company-search-service";
-import {AlertType} from "../../../components/alert/alert";
-import {InvoiceContext} from "../../invoice-context";
+import {CompanySearchService} from "../../../../services/kyc/company-search-service";
+import {AlertType} from "../../../../components/alert/alert";
+import {InvoiceContext} from "../../../invoice-context";
 
 export class InvoiceCustomerModal {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
