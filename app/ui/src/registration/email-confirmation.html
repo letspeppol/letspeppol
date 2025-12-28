@@ -1,5 +1,6 @@
 <import from="../components/view/wizard-view"></import>
 <import from="../components/stepper/stepper"></import>
+<import from="../components/eid/card-reader"></import>
 
 <wizard-view>
     <stepper if.bind="step !== 3" au-slot="stepper" steps.bind="[1,2,3,4,5]" completed-steps.bind="step+2"></stepper>
@@ -72,28 +73,7 @@
 
             <div>
                 <h3 t="confirmation.sign-eid-title">3. Validate with eID of the director</h3>
-                <div class="eid-anim-col" style="width: 100%">
-                    <p class="anim-caption" t="confirmation.anim-caption">Insert your eID card and press confirm to validate your ID.</p>
-                    <div class="eid-sign-illustration" class.signed.bind="confirmedDirector">
-                        <div class="eid-card">
-                            <div class="chip"></div>
-                            <div class="photo"></div>
-                            <div class="lines line-1"></div>
-                            <div class="lines line-2"></div>
-                            <div class="signature-progress">
-                                <div class="sig-line"></div>
-                                <div class="sig-line delay"></div>
-                            </div>
-                            <div class="check-mark"></div>
-                        </div>
-                        <div class="card-reader vertical">
-                            <div class="reader-slot"></div>
-                            <span class="reader-label" t="confirmation.anim-reader-label">READER</span>
-                            <div class="status-led"></div>
-<!--                            <span class="sr-only" t="confirmation.anim-reader-sr">Insert eID card into reader slot</span>-->
-                        </div>
-                    </div>
-                </div>
+                <card-reader caption-key="confirmation.anim-caption-validate" reader-label-key="confirmation.anim-reader-label" signed.bind="confirmedDirector"></card-reader>
             </div>
         </div>
 
@@ -144,28 +124,7 @@
 
                 <div show.bind="agreedToContract">
                     <h3 t="confirmation.sign-eid-title">3. Sign with eID</h3>
-                    <div class="eid-anim-col" style="width: 100%">
-                        <p class="anim-caption" t="confirmation.anim-caption">Insert your eID card and press confirm to sign.</p>
-                        <div class="eid-sign-illustration" class.signed.bind="confirmedDirector">
-                            <div class="eid-card">
-                                <div class="chip"></div>
-                                <div class="photo"></div>
-                                <div class="lines line-1"></div>
-                                <div class="lines line-2"></div>
-                                <div class="signature-progress">
-                                    <div class="sig-line"></div>
-                                    <div class="sig-line delay"></div>
-                                </div>
-                                <div class="check-mark"></div>
-                            </div>
-                            <div class="card-reader vertical">
-                                <div class="reader-slot"></div>
-                                <span class="reader-label" t="confirmation.anim-reader-label">READER</span>
-                                <div class="status-led"></div>
-<!--                                <span class="sr-only" t="confirmation.anim-reader-sr">Insert eID card into reader slot</span>-->
-                            </div>
-                        </div>
-                    </div>
+                    <card-reader caption-key="confirmation.anim-caption-sign" reader-label-key="confirmation.anim-reader-label" signed.bind="confirmedDirector"></card-reader>
                 </div>
                 <div show.bind="agreedToContract">
                     <div class="auth-actions" style="margin-top: 15px">

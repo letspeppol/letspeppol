@@ -3,6 +3,7 @@ import {Login} from "../login/login";
 import {Registration} from "../registration/registration";
 import {Invoices} from "../invoice/invoices";
 import {Partners} from "../partner/partners";
+import {Onboarding} from "../registration/onboarding";
 import {EmailConfirmation} from "../registration/email-confirmation";
 import {resolve} from "@aurelia/kernel";
 import {Alert} from "../components/alert/alert";
