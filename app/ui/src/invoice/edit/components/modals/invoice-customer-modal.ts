@@ -84,7 +84,6 @@ export class InvoiceCustomerModal {
             const parts = peppolId.split(":");
             this.customer.EndpointID.__schemeID = parts[0];
             this.customer.EndpointID.value = parts[1];
-            this.customer.PartyIdentification = [{ ID: { __schemeID: parts[0], value: parts[1] } }];
             if (!this.customer.PartyLegalEntity.CompanyID || !this.customer.PartyLegalEntity.CompanyID.value) {
                 this.customer.PartyLegalEntity.CompanyID = { value: undefined};
             }
@@ -94,6 +93,11 @@ export class InvoiceCustomerModal {
             } else if (parts[0] === '9925') {
                 this.customer.PartyLegalEntity.CompanyID.value = parts[1].toUpperCase();
                 this.vatChanged();
+            }
+            if (isIso6523Scheme(parts[0])) {
+                this.customer.PartyIdentification = [{ ID: { __schemeID: parts[0], value: parts[2] } }];
+            } else {
+                this.customer.PartyIdentification = undefined;
             }
         }
     }
@@ -136,9 +140,11 @@ export class InvoiceCustomerModal {
             this.companySearchService.searchCompany({peppolId: this.peppolId}).then(companies => {
                 if (companies.length) {
                     this.completeCustomerInfo(companies[0]);
+                    return;
                 }
             });
         }
+        this.peppolIdChangedFunction(this.peppolId);
     }
 
     vatNumberChanged() {
