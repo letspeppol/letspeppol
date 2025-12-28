@@ -85,13 +85,14 @@ public class DocumentService {
 
     public Page<DocumentDto> findAll(DocumentFilter filter, Pageable pageable) {
         Pageable effectivePageable = pageable;
+        Sort sort = Sort.by(Sort.Direction.DESC, "issueDate").and(Sort.by(Sort.Direction.DESC, "createdOn"));
         if (effectivePageable == null) {
-            effectivePageable = PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "issueDate"));
+            effectivePageable = PageRequest.of(0, 20, sort);
         } else if (effectivePageable.getSort().isUnsorted()) {
             effectivePageable = PageRequest.of(
                     effectivePageable.getPageNumber(),
                     effectivePageable.getPageSize(),
-                    Sort.by(Sort.Direction.DESC, "issueDate")
+                    sort
             );
         }
 
