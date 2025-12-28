@@ -98,8 +98,9 @@ export class InvoiceEdit {
                 return;
             }
 
-            await this.invoiceService.createDocument(xml);
+            const doc = await this.invoiceService.createDocument(xml);
             this.ea.publish('alert', {alertType: AlertType.Success, text: "Invoice sent successfully"});
+            this.invoiceContext.invoicePage.content.unshift(doc);
             if (this.invoiceContext.selectedDocument.draftedOn) {
                 await this.deleteDraft();
             } else {

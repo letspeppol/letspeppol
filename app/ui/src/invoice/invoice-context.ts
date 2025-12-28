@@ -1,5 +1,3 @@
-import {resolve} from "@aurelia/kernel";
-import {Router} from "@aurelia/router";
 import {IEventAggregator, observable, singleton} from "aurelia";
 import {CreditNote, CreditNoteLine, getLines, Invoice, InvoiceLine, Party, UBLDoc} from "../services/peppol/ubl";
 import {CompanyService} from "../services/app/company-service";
@@ -9,6 +7,7 @@ import {AlertType} from "../components/alert/alert";
 import {DocumentDirection, DocumentDto, DocumentPageDto, DocumentType} from "../services/app/invoice-service";
 import {parseCreditNote, parseInvoice} from "../services/peppol/ubl-parser";
 import {PartnerDto, PartnerService} from "../services/app/partner-service";
+import {resolve} from "@aurelia/kernel";
 
 @singleton()
 export class InvoiceContext {
@@ -17,15 +16,16 @@ export class InvoiceContext {
     private readonly partnerService = resolve(PartnerService);
     private readonly invoiceComposer = resolve(InvoiceComposer);
     private readonly invoiceCalculator = resolve(InvoiceCalculator);
-    private readonly router = resolve(Router);
-    lines : undefined | InvoiceLine[] | CreditNoteLine[];
+    // Overview
     draftPage: DocumentPageDto = undefined;
+    invoicePage: DocumentPageDto = undefined;
+    // Current invoice
+    lines : undefined | InvoiceLine[] | CreditNoteLine[];
     @observable selectedInvoice:  undefined | Invoice | CreditNote;
     selectedDocument: DocumentDto;
     selectedDocumentType: DocumentType = DocumentType.INVOICE;
     lastInvoiceReference: string = undefined;
     nextInvoiceReference: string = undefined;
-
     readOnly: boolean = false;
     partnerMissing: boolean = false;
 
