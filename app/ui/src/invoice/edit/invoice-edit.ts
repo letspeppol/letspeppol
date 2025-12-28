@@ -19,6 +19,7 @@ import {InvoiceNumberModal} from "./components/modals/invoice-number-modal";
 import {toErrorResponse} from "../../app/util/error-response-handler";
 import {PartnerService} from "../../services/app/partner-service";
 import {PaymentInfo} from "./components/tiles/payment-info";
+import moment, {Moment} from "moment";
 
 export class InvoiceEdit {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -28,6 +29,7 @@ export class InvoiceEdit {
     private partnerService = resolve(PartnerService);
     private newInvoiceSubscription: IDisposable;
     private newCreditNoteSubscription: IDisposable;
+    private previousSaveDate: undefined | Moment;
 
     @bindable readOnly;
     @bindable selectedDocumentType: DocumentType;
@@ -72,7 +74,9 @@ export class InvoiceEdit {
             line = this.invoiceComposer.getCreditNoteLine(pos);
         }
         this.invoiceContext.lines.push(line);
-        this.saveAsDraft(false).catch(e => console.error(e));
+        if (this.invoiceContext.lines.length === 1) {
+            this.saveAsDraft(false).catch(e => console.error(e));
+        }
     }
 
     async verifyNumberAndSend() {
@@ -148,6 +152,13 @@ export class InvoiceEdit {
         } catch(e) {
             console.error(e);
             this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to save invoice as draft"});
+        }
+    }
+
+    autoSave() {
+        if (!this.previousSaveDate || moment().diff(this.previousSaveDate, 'seconds') >= 10) {
+            this.previousSaveDate = moment();
+            this.saveAsDraft(false);
         }
     }
 
