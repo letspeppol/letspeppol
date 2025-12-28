@@ -1,4 +1,4 @@
-import {ValidationResultDto} from "../../../services/app/invoice-service";
+import {ValidationResultDto} from "../../../../services/app/invoice-service";
 
 export class ValidationResultModal {
     open = false;

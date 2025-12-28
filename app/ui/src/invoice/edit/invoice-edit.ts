@@ -2,35 +2,31 @@ import {resolve} from "@aurelia/kernel";
 import {InvoiceContext} from "../invoice-context";
 import {bindable, computed, IDisposable, IEventAggregator} from "aurelia";
 import {
-    Attachment,
-    ClassifiedTaxCategory,
-    CreditNote, CreditNoteLine,
-    getAmount,
-    Invoice, InvoiceLine,
-    PaymentMeansCode,
+    CreditNote,
+    Invoice,
     UBLLine
 } from "../../services/peppol/ubl";
 import {AlertType} from "../../components/alert/alert";
-import {InvoicePaymentModal} from "./components/invoice-payment-modal";
-import {InvoiceCustomerModal} from "./components/invoice-customer-modal";
-import {InvoiceCalculator, roundTwoDecimals} from "../invoice-calculator";
+import {InvoicePaymentModal} from "./components/modals/invoice-payment-modal";
+import {InvoiceCustomerModal} from "./components/modals/invoice-customer-modal";
 import {InvoiceComposer} from "../invoice-composer";
-// import {downloadInvoicePdf} from "../pdf/invoice-pdf";
-import {InvoiceService, DocumentType} from "../../services/app/invoice-service";
-import {ValidationResultModal} from "./components/validation-result-modal";
-import {InvoiceModal} from "./components/invoice-modal";
-import {InvoiceAttachmentModal} from "./components/invoice-attachment-modal";
+import {DocumentDirection, DocumentType, InvoiceService} from "../../services/app/invoice-service";
+import {ValidationResultModal} from "./components/modals/validation-result-modal";
+import {InvoiceModal} from "./components/modals/invoice-modal";
+import {InvoiceAttachmentModal} from "./components/modals/invoice-attachment-modal";
 import {buildCreditNoteXml, buildInvoiceXml} from "../../services/peppol/ubl-builder";
-import {InvoiceNumberModal} from "./components/invoice-number-modal";
-import { toErrorResponse } from "../../app/util/error-response-handler";
+import {InvoiceNumberModal} from "./components/modals/invoice-number-modal";
+import {toErrorResponse} from "../../app/util/error-response-handler";
+import {PartnerService} from "../../services/app/partner-service";
+import {PaymentInfo} from "./components/tiles/payment-info";
 import moment, {Moment} from "moment";
 
 export class InvoiceEdit {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
     private invoiceService = resolve(InvoiceService);
     private invoiceContext = resolve(InvoiceContext);
-    private invoiceCalculator = resolve(InvoiceCalculator);
     private invoiceComposer = resolve(InvoiceComposer);
+    private partnerService = resolve(PartnerService);
     private newInvoiceSubscription: IDisposable;
     private newCreditNoteSubscription: IDisposable;
     private previousSaveDate: undefined | Moment;
@@ -44,6 +40,7 @@ export class InvoiceEdit {
     @bindable invoiceAttachmentModal: InvoiceAttachmentModal;
     @bindable invoiceNumberModal: InvoiceNumberModal;
     @bindable validationResultModal: ValidationResultModal;
+    @bindable paymentInfo: PaymentInfo;
 
     bound() {
         this.newInvoiceSubscription = this.ea.subscribe('newInvoice', () => this.newInvoice());
@@ -54,21 +51,6 @@ export class InvoiceEdit {
         this.newInvoiceSubscription.dispose();
         this.newCreditNoteSubscription.dispose();
     }
-
-    taxCategories: ClassifiedTaxCategory[] = [
-        { ID: "S", Percent: 21, TaxScheme: { ID: 'VAT' } },
-        { ID: "S", Percent: 12, TaxScheme: { ID: 'VAT' } },
-        { ID: "S", Percent: 6, TaxScheme: { ID: 'VAT' } },
-        { ID: "Z", Percent: 0, TaxScheme: { ID: 'VAT' } },
-    ];
-
-    paymentMeanCodeMatcher = (a: PaymentMeansCode, b: PaymentMeansCode) => {
-        return a?.value === b?.value;
-    };
-
-    taxCategoryMatcher = (a: ClassifiedTaxCategory, b: ClassifiedTaxCategory) => {
-        return a?.Percent === b?.Percent;
-    };
 
     newInvoice() {
         this.selectedDocumentType = DocumentType.INVOICE;
@@ -83,37 +65,6 @@ export class InvoiceEdit {
         this.showCustomerModal();
     }
 
-    calcLineTotal(line: UBLLine) {
-        const quantity = getAmount(line);
-        line.LineExtensionAmount.value = roundTwoDecimals(line.Price.PriceAmount.value * quantity.value);
-        this.invoiceCalculator.calculateTaxAndTotals(this.invoiceContext.selectedInvoice);
-        this.checkLineAutoSave(line);
-    }
-
-    nameOnChange(e: UIEvent, line: UBLLine) {
-        this.checkLineAutoSave(line);
-    }
-
-    checkLineAutoSave(line: InvoiceLine | CreditNoteLine) {
-        let autosave = false;
-        if (line?.Item?.Name && line?.Price?.PriceAmount?.value) {
-            if (this.selectedDocumentType === DocumentType.INVOICE && (line as InvoiceLine).InvoicedQuantity?.value
-                || this.selectedDocumentType === DocumentType.INVOICE && (line as CreditNoteLine).CreditedQuantity?.value) {
-                autosave = true;
-            }
-        }
-        if (autosave) {
-            this.autoSave();
-        }
-    }
-
-    autoSave() {
-        if (!this.previousSaveDate || moment().diff(this.previousSaveDate, 'seconds') >= 10) {
-            this.previousSaveDate = moment();
-            this.saveAsDraft(false);
-        }
-    }
-
     addLine() {
         let line: UBLLine;
         const pos = this.invoiceContext.getNextPosition();
@@ -126,12 +77,6 @@ export class InvoiceEdit {
         if (this.invoiceContext.lines.length === 1) {
             this.saveAsDraft(false).catch(e => console.error(e));
         }
-    }
-
-    deleteLine(line: UBLLine) {
-        this.invoiceContext.lines.splice(this.invoiceContext.lines.findIndex(item => item === line), 1);
-        this.invoiceCalculator.calculateTaxAndTotals(this.invoiceContext.selectedInvoice);
-        this.autoSave();
     }
 
     async verifyNumberAndSend() {
@@ -209,6 +154,13 @@ export class InvoiceEdit {
         }
     }
 
+    autoSave() {
+        if (!this.previousSaveDate || moment().diff(this.previousSaveDate, 'seconds') >= 10) {
+            this.previousSaveDate = moment();
+            this.saveAsDraft(false);
+        }
+    }
+
     async deleteDraft() {
         try {
             await this.invoiceService.deleteDocument(this.invoiceContext.selectedDocument.id);
@@ -250,57 +202,58 @@ export class InvoiceEdit {
         console.log(response);
     }
 
-    // customerCompanyNumberChanged(newValue: string) {
-    //     this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party.EndpointID.value = newValue;
-    //     this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PartyIdentification[0].ID.value = newValue;
-    //     this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PartyTaxScheme.CompanyID = newValue;
-    //     console.log(newValue);
-    // }
-
-    recalculateLinePositions() {
-        for (let i = 0; i < this.invoiceContext.lines.length; i++) {
-            this.invoiceContext.lines[i].ID = (i + 1).toString();
+    savePartner() {
+        let partner;
+        if (this.invoiceContext.selectedDocument.direction === DocumentDirection.INCOMING) {
+            partner = this.invoiceContext.mapPartner(this.invoiceContext.selectedInvoice.AccountingSupplierParty.Party);
+        } else {
+            partner = this.invoiceContext.mapPartner(this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party);
         }
+        this.partnerService.createPartner(partner)
+            .then(() => {
+                this.ea.publish('alert', {alertType: AlertType.Success, text: "Partner created"});
+                this.invoiceContext.partnerMissing = false;
+            })
+            .catch(() => this.ea.publish('alert', {alertType: AlertType.Danger, text: "Partner creation failed"}));
     }
 
     // Modals
 
     showInvoiceModal() {
+        if (this.readOnly) {
+            return;
+        }
         this.invoiceModal.showModal();
     }
 
     showDateModal() {
+        if (this.readOnly) {
+            return;
+        }
         this.invoiceDateModal.showModal();
     }
 
     showCustomerModal() {
+        if (this.readOnly) {
+            return;
+        }
         this.invoiceCustomerModal.showModal(() => {
             console.log('customer modal closed');
         });
     }
 
     showPaymentModal() {
+        if (this.readOnly) {
+            return;
+        }
         this.invoicePaymentModal.showModal();
     }
 
     showAttachmentModal() {
+        if (this.readOnly) {
+            return;
+        }
         this.invoiceAttachmentModal.showModal();
-    }
-
-    downloadAttachment(attachment: Attachment) {
-        if (attachment.EmbeddedDocumentBinaryObject) {
-            const source = `data:${attachment.EmbeddedDocumentBinaryObject.__mimeCode};base64,${attachment.EmbeddedDocumentBinaryObject.value}`;
-            const link = document.createElement('a');
-            document.body.appendChild(link);
-            link.href = source;
-            link.target = '_self';
-            link.download = attachment.EmbeddedDocumentBinaryObject.__filename;
-            link.click();
-            this.ea.publish('alert', {alertType: AlertType.Info, text: `File '${attachment.EmbeddedDocumentBinaryObject.__filename}' downloaded`});
-        }
-        if (attachment.ExternalReference && attachment.ExternalReference.URI) {
-            window.open(attachment.ExternalReference.URI, '_blank');
-        }
     }
 
     @computed({
@@ -333,24 +286,7 @@ export class InvoiceEdit {
             && inv.AccountingCustomerParty.Party.PartyName.Name
             && inv.AccountingCustomerParty.Party.PartyTaxScheme.TaxScheme.ID
             && inv.LegalMonetaryTotal.LineExtensionAmount.value > 0
-            && this.isPaymentInfoComplete;
-    }
-
-    @computed('invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PartyName.Name')
-    get isCustomerInfoComplete(): boolean {
-        return !!this.invoiceContext.selectedInvoice?.AccountingCustomerParty?.Party?.PartyName?.Name;
-    }
-
-    @computed({
-        deps: [
-            'invoiceContext.selectedInvoice.PaymentMeans.PaymentMeansCode.value',
-            'invoiceContext.selectedInvoice.PaymentMeans.PayeeFinancialAccount.ID'
-        ] })
-    get isPaymentInfoComplete(): boolean {
-        const inv = this.invoiceContext.selectedInvoice;
-        return !inv?.PaymentMeans
-            || (inv?.PaymentMeans.PaymentMeansCode.value != 30
-            || (inv?.PaymentMeans.PaymentMeansCode.value === 30 && !!inv?.PaymentMeans.PayeeFinancialAccount.ID));
+            && this.paymentInfo.isPaymentInfoComplete;
     }
 
 }
