@@ -14,14 +14,16 @@ export class InvoiceContext {
     private readonly companyService = resolve(CompanyService);
     private readonly invoiceComposer = resolve(InvoiceComposer);
     private readonly invoiceCalculator = resolve(InvoiceCalculator);
-    lines : undefined | InvoiceLine[] | CreditNoteLine[];
+    // Overview
     draftPage: DocumentPageDto = undefined;
+    invoicePage: DocumentPageDto = undefined;
+    // Current invoice
+    lines : undefined | InvoiceLine[] | CreditNoteLine[];
     @observable selectedInvoice:  undefined | Invoice | CreditNote;
     selectedDocument: DocumentDto;
     selectedDocumentType: DocumentType = DocumentType.INVOICE;
     lastInvoiceReference: string = undefined;
     nextInvoiceReference: string = undefined;
-
     readOnly: boolean = false;
     partnerMissing: boolean = false;
 
