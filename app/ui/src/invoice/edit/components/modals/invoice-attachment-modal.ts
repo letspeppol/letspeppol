@@ -1,7 +1,7 @@
 import {bindable, IEventAggregator, watch} from "aurelia";
-import {AdditionalDocumentReference} from "../../../services/peppol/ubl";
+import {AdditionalDocumentReference} from "../../../../services/peppol/ubl";
 import {resolve} from "@aurelia/kernel";
-import {AlertType} from "../../../components/alert/alert";
+import {AlertType} from "../../../../components/alert/alert";
 
 export class InvoiceAttachmentModal {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);

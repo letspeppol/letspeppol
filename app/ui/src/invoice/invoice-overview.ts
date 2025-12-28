@@ -10,10 +10,12 @@ import {
     InvoiceService, DocumentDirection,
 } from "../services/app/invoice-service";
 import moment from "moment";
+import {PartnerService} from "../services/app/partner-service";
 
 export class InvoiceOverview {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
     private invoiceService = resolve(InvoiceService);
+    private partnerService = resolve(PartnerService);
     private invoiceContext = resolve(InvoiceContext);
     invoicePage: DocumentPageDto = undefined;
     box = 'ALL'
@@ -76,7 +78,7 @@ export class InvoiceOverview {
     }
 
     selectItem(item: DocumentDto) {
-        history.pushState({}, '', `/invoices/${item.id}`);
+        history.replaceState({}, '', `/invoices/${item.id}`);
         this.invoiceContext.selectInvoice(item);
     }
 

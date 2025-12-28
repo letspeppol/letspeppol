@@ -2,6 +2,8 @@ import {singleton} from "aurelia";
 import {resolve} from "@aurelia/kernel";
 import {Address} from "./company-service";
 import {AppApi} from "./app-api";
+import {KycCompanyResponse} from "../kyc/registration-service";
+import {CompanySearchParams} from "../kyc/company-search-service";
 
 export interface PartnerDto {
     id?: number,
@@ -22,6 +24,17 @@ export interface PartnerDto {
 @singleton()
 export class PartnerService {
     private appApi = resolve(AppApi);
+
+    async searchPartners(params: {peppolId: string}): Promise<PartnerDto[]> {
+        const qs = new URLSearchParams();
+
+        if (params.peppolId?.trim()) qs.set(`peppolId`, params.peppolId.trim());
+
+        const url = qs.toString() ? `/sapi/partner/search?${qs.toString()}` : `/sapi/partner/search`;
+        const response = await this.appApi.httpClient.get(url);
+
+        return response.json();
+    }
 
     async getPartners() : Promise<PartnerDto[]> {
         return await this.appApi.httpClient.get('/sapi/partner').then(response => response.json());

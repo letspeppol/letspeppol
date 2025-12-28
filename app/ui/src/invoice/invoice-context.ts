@@ -1,18 +1,20 @@
-import {IEventAggregator, observable, singleton} from "aurelia";
-import {Router} from "@aurelia/router";
 import {resolve} from "@aurelia/kernel";
-import {CreditNote, CreditNoteLine, getLines, Invoice, InvoiceLine, UBLDoc} from "../services/peppol/ubl";
+import {Router} from "@aurelia/router";
+import {IEventAggregator, observable, singleton} from "aurelia";
+import {CreditNote, CreditNoteLine, getLines, Invoice, InvoiceLine, Party, UBLDoc} from "../services/peppol/ubl";
 import {CompanyService} from "../services/app/company-service";
 import {InvoiceComposer} from "./invoice-composer";
 import {InvoiceCalculator} from "./invoice-calculator";
 import {AlertType} from "../components/alert/alert";
 import {DocumentDirection, DocumentDto, DocumentPageDto, DocumentType} from "../services/app/invoice-service";
 import {parseCreditNote, parseInvoice} from "../services/peppol/ubl-parser";
+import {PartnerDto, PartnerService} from "../services/app/partner-service";
 
 @singleton()
 export class InvoiceContext {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
     private readonly companyService = resolve(CompanyService);
+    private readonly partnerService = resolve(PartnerService);
     private readonly invoiceComposer = resolve(InvoiceComposer);
     private readonly invoiceCalculator = resolve(InvoiceCalculator);
     private readonly router = resolve(Router);
@@ -25,9 +27,10 @@ export class InvoiceContext {
     nextInvoiceReference: string = undefined;
 
     readOnly: boolean = false;
+    partnerMissing: boolean = false;
 
     clearSelectedInvoice() {
-        history.pushState({}, '', `/invoices`);
+        history.replaceState({}, '', `/invoices`);
         this.selectedInvoice = undefined;
         this.selectedDocument = undefined;
     }
@@ -49,6 +52,11 @@ export class InvoiceContext {
             this.selectedInvoice = parseCreditNote(item.ubl);
         } else {
             this.selectedInvoice = parseInvoice(item.ubl);
+        }
+        if (this.readOnly) {
+            this.partnerMissing = true;
+            this.partnerService.searchPartners({peppolId: item.partnerPeppolId})
+                .then((list) => this.partnerMissing = list.length === 0);
         }
     }
 
@@ -112,6 +120,21 @@ export class InvoiceContext {
         const nextNum = (parseInt(numStr, 10) + 1).toString().padStart(width, "0");
 
         return `${prefix}${nextNum}${suffix}`;
+    }
+
+    public mapPartner(party: Party): PartnerDto {
+        return {
+            vatNumber: party.PartyTaxScheme?.CompanyID?.value,
+            name: party.PartyName?.Name,
+            peppolId: `${party.EndpointID.__schemeID}:${party.EndpointID.value}`,
+            customer: true,
+            registeredOffice: {
+                city: party?.PostalAddress?.CityName,
+                postalCode: party?.PostalAddress?.PostalZone,
+                street: party?.PostalAddress?.StreetName,
+                countryCode: party?.PostalAddress?.Country.IdentificationCode
+            }
+        } as PartnerDto;
     }
 
     // Drafts

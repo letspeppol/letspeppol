@@ -1,8 +1,8 @@
 import {bindable} from "aurelia";
-import {DocumentType} from "../../../services/app/invoice-service";
-import {CreditNote, Invoice} from "../../../services/peppol/ubl";
+import {DocumentType} from "../../../../services/app/invoice-service";
+import {CreditNote, Invoice} from "../../../../services/peppol/ubl";
 import {resolve} from "@aurelia/kernel";
-import {InvoiceComposer} from "../../invoice-composer";
+import {InvoiceComposer} from "../../../invoice-composer";
 
 export class InvoiceModal {
     private readonly invoiceComposer = resolve(InvoiceComposer);

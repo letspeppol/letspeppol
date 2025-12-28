@@ -1,21 +1,26 @@
-import {bindable, observable} from "aurelia";
-import {Party} from "../../../services/peppol/ubl";
-import {PartnerDto} from "../../../services/app/partner-service";
-import {CustomerSearch} from "./customer-search";
-import {countryListAlpha2} from "../../../app/countries"
-import {isIso6523Scheme} from "../../../app/util/iso6523list";
-import {normalizeVatNumber} from "../../../partner/vat-normalizer";
-import {KycCompanyResponse} from "../../../services/kyc/registration-service";
+import {bindable, IEventAggregator} from "aurelia";
+import {Party} from "../../../../services/peppol/ubl";
+import {PartnerDto, PartnerService} from "../../../../services/app/partner-service";
+import {CustomerSearch} from "../customer-search";
+import {countryListAlpha2} from "../../../../app/countries"
+import {isIso6523Scheme} from "../../../../app/util/iso6523list";
+import {normalizeVatNumber} from "../../../../partner/vat-normalizer";
+import {KycCompanyResponse} from "../../../../services/kyc/registration-service";
 import {resolve} from "@aurelia/kernel";
-import {CompanySearchService} from "../../../services/kyc/company-search-service";
+import {CompanySearchService} from "../../../../services/kyc/company-search-service";
+import {AlertType} from "../../../../components/alert/alert";
+import {InvoiceContext} from "../../../invoice-context";
 
 export class InvoiceCustomerModal {
+    private readonly ea: IEventAggregator = resolve(IEventAggregator);
     private readonly companySearchService = resolve(CompanySearchService);
+    private readonly partnerService = resolve(PartnerService);
     private countryList = countryListAlpha2;
-    @bindable invoiceContext;
+    @bindable invoiceContext: InvoiceContext;
     @bindable customerSearch: CustomerSearch;
     peppolId: string;
     open = false;
+    saveAsPartner = false;
     customer: Party | undefined;
     customerSavedFunction: () => void;
 
@@ -37,6 +42,7 @@ export class InvoiceCustomerModal {
         } else {
             this.peppolId = undefined;
         }
+        this.saveAsPartner = false;
         this.open = true;
         this.customerSearch.resetSearch();
         this.customerSearch.focusInput();
@@ -56,7 +62,12 @@ export class InvoiceCustomerModal {
         if (this.customerSavedFunction) {
             this.customerSavedFunction();
         }
-        console.log(this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party);
+        if (this.saveAsPartner) {
+            const partner = this.invoiceContext.mapPartner(this.customer);
+            this.partnerService.createPartner(partner)
+                .then(() => this.ea.publish('alert', {alertType: AlertType.Success, text: "Partner created"}))
+                .catch(() => this.ea.publish('alert', {alertType: AlertType.Danger, text: "Partner creation failed"}));
+        }
     }
 
     selectMatchFunction(name: string, participantID: string) {
