@@ -17,6 +17,7 @@ import {Dashboard} from "../dashboard/dashboard";
         { path: ['/login'],            component: Login,                title: 'Login',                 data: { allowEveryone: true }},
         { path: '/forgot-password',    component: ForgotPassword,       title: 'Forgot Password',       data: { allowEveryone: true }},
         { path: '/reset-password',     component: ResetPassword,        title: 'Reset Password',        data: { allowEveryone: true }},
+        { path: '/onboarding',         component: Onboarding,           title: 'Onboarding',            data: { allowEveryone: true }},
         { path: '/registration',       component: Registration,         title: 'Registration',          data: { allowEveryone: true }},
         { path: '/email-confirmation', component: EmailConfirmation,    title: 'Email Confirmation',    data: { allowEveryone: true }},
         { path: '/invoices',           component: Invoices,             title: 'Invoice',               },
