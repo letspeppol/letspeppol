@@ -26,7 +26,7 @@ export class InvoiceCustomerModal {
 
     vatChanged() {
         if (!this.customer) return;
-        if (this.customer.PartyTaxScheme.CompanyID.value) {
+        if (this.customer.PartyTaxScheme.CompanyID?.value) {
             this.customer.PartyTaxScheme.CompanyID.value = this.customer.PartyTaxScheme.CompanyID.value.toUpperCase();
         }
     }
