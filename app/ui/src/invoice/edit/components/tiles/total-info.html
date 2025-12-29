@@ -1,12 +1,14 @@
+<import from="../../../../app/value-converters/price.ts"></import>
+
 <div class="head-right">
     <div class="total-display">
         <span t="invoice.edit.subtotal">Subtotal</span>
-        <b>€ ${invoiceContext.selectedInvoice.LegalMonetaryTotal.TaxExclusiveAmount.value.toFixed(2)}</b>
+        <b>${invoiceContext.selectedInvoice.LegalMonetaryTotal.TaxExclusiveAmount.value.toFixed(2) | price:item.currency}</b>
         <span t="invoice.edit.tax">Tax</span>
-        <b>€ ${invoiceContext.selectedInvoice.TaxTotal[0].TaxAmount.value.toFixed(2)}</b>
+        <b>${invoiceContext.selectedInvoice.TaxTotal[0].TaxAmount.value.toFixed(2) | price:item.currency}</b>
     </div>
     <div class="total-display">
         <span t="invoice.edit.total">Total</span>
-        <strong>€ ${invoiceContext.selectedInvoice.LegalMonetaryTotal.PayableAmount.value.toFixed(2)}</strong>
+        <strong>${invoiceContext.selectedInvoice.LegalMonetaryTotal.PayableAmount.value.toFixed(2) | price:item.currency}</strong>
     </div>
 </div>
