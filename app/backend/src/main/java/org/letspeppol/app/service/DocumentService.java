@@ -64,7 +64,7 @@ public class DocumentService {
             throw new RuntimeException("Invalid UBL content"); //TODO : use proper exceptions
         }
         try {
-            UblDto ublDto = UblParser.parse(ublXml);
+            UblDto ublDto = UblParser.parse(documentDirection, ublXml);
             if (documentDirection == DocumentDirection.OUTGOING && !peppolId.equals(ublDto.senderPeppolId())) {
                 throw new SecurityException(AppErrorCodes.PEPPOL_ID_MISMATCH);
             }
