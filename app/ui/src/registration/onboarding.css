@@ -1,0 +1,138 @@
+/* Onboarding layout */
+.onboarding-steps {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+    counter-reset: step;
+}
+
+.onboarding-steps-item {
+  line-height: 1.45;
+    counter-increment: step;
+    position: relative;
+    padding-left: 34px; /* space for the circle */
+    margin: 0 0 12px 0;
+}
+
+.onboarding-steps-item::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 2px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ccc;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  background-color: var(--primary-strong);
+}
+
+.onboarding-substeps {
+  margin-top: 0.5rem;
+  padding-left: 1.25rem;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.link-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: baseline;
+  margin-left: 0.25rem;
+}
+
+.hint {
+  margin: 0.35rem 0 0;
+  color: #6b7280; /* gray-500-ish */
+  font-size: 0.95rem;
+}
+
+.hint-link {
+  display: inline-block;
+  margin-top: 0.25rem;
+  font-size: 0.95rem;
+}
+
+/* Web eID check section */
+.onboarding-check {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.onboarding-check h3 {
+  margin: 0 0 0.75rem;
+}
+
+/* Troubleshooting callout under the test */
+.onboarding-troubleshoot-block {
+  margin-top: 0.9rem;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  background: #fff7ed;           /* amber-50-ish */
+  border: 1px solid #fed7aa;     /* amber-200-ish */
+}
+
+.onboarding-troubleshoot-block .hint {
+  margin: 0 0 0.5rem;
+  color: #92400e; /* amber-800-ish */
+  font-weight: 600;
+}
+
+.onboarding-troubleshoot {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.onboarding-troubleshoot a {
+  text-decoration: underline;
+}
+
+/* Optional: make buttons not stick to content */
+.onboarding-check .btn.primary {
+  margin-top: 0.75rem;
+}
+
+.onboarding-success-block {
+  margin-top: 0.9rem;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  background: #ecfdf5;          /* green-50-ish */
+  border: 1px solid #a7f3d0;    /* green-200-ish */
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.onboarding-success-icon {
+  flex: 0 0 auto;
+  color: #059669; /* green-600-ish */
+  margin-top: 2px;
+}
+
+.onboarding-success-text {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.onboarding-success-title {
+  margin: 0;
+  font-weight: 700;
+  color: #065f46; /* green-800-ish */
+}
+
+.onboarding-success-subtitle {
+  margin: 0;
+  color: #047857; /* green-700-ish */
+  font-size: 0.95rem;
+}

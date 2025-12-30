@@ -64,6 +64,46 @@
     "forgot" : "Mot de passe oublié",
     "remember" : "Se souvenir de moi"
   },
+  "onboarding": {
+    "title": "Étapes d’onboarding",
+    "or": "ou",
+    "os": { "windows": "Windows", "macos": "macOS", "linux": "Linux" },
+    "browser": { "chrome": "Chrome", "firefox": "Firefox", "safari": "Safari", "edge": "Microsoft Edge" },
+    "step": {
+      "register-company": "Enregistrez votre entreprise",
+      "prepare-eid": {
+        "title": "Préparez votre logiciel eID, votre lecteur et votre carte",
+        "install-web-eid": "Installez l’application Web eID",
+        "alt-stack": "Vous pouvez aussi installer la pile logicielle complète via id.ee.",
+        "alt-stack-link": "Ouvrir le guide d’installation id.ee",
+        "install-beidconnect": "Assurez-vous que BeIDConnect est installé (middleware eID belge).",
+        "install-beidconnect-link": "Télécharger BeIDConnect",
+        "restart-browser": "Redémarrez votre navigateur et vérifiez que l’extension Web eID est activée.",
+        "browser-help": "Aide pour l’extension :",
+        "test-setup": "Connectez votre lecteur eID, insérez votre carte eID et lancez le test à droite.",
+        "troubleshoot": {
+          "title": "Si la confirmation échoue :",
+          "reinsert": "Retirez la carte eID et insérez-la à nouveau.",
+          "usb": "Utilisez une connexion USB directe (évitez les hubs/dongles).",
+          "restart": "Redémarrez votre navigateur et réessayez.",
+          "other-device": "Essayez sur un autre ordinateur.",
+          "contact": "Contacter le support :"
+        },
+        "success": {
+          "title": "Web eID fonctionne",
+          "subtitle": "Votre lecteur de carte et la configuration du navigateur semblent corrects."
+        }
+      },
+      "verify-email": "Vérifiez votre adresse e-mail (vérifiez les spams pour les e-mails de @letspeppol.org).",
+      "verify-director": "Vérifiez votre identité en tant que dirigeant de l’entreprise.",
+      "sign-contract": "Signez le contrat pour finaliser le KYC (Know Your Customer).",
+      "login": "Connectez-vous à votre compte."
+    },
+    "check-title": "Vérifiez votre installation Web eID",
+    "check": "Vérifier Web eID",
+    "anim-caption-sign": "Insérez votre carte eID et appuyez sur Confirmer pour vérifier l’installation.",
+    "anim-reader-label": "LECTEUR"
+  },
   "registration" : {
     "title-step0" : "Enregistrez votre entreprise",
     "create-account" : "Créer un compte",
@@ -73,12 +113,10 @@
     "wrong-company" : "Mauvaise entreprise ?",
     "back" : "Retour",
     "title-step2" : "Vérification du compte",
-    "instructions-intro" : "Un e-mail de confirmation a été envoyé. Mais d'abord :",
-    "instructions-install-plugin" : "Installez le <b>plugin web-eid</b> via <a href=\"https://www.id.ee/en/article/install-id-software/\">https://www.id.ee/en/article/install-id-software/</a>",
-    "instructions-install-extension" : "Assurez-vous d'installer l'extension de navigateur, les instructions sont sur la même page",
-    "instructions-restart-browser" : "<b>Redémarrez votre navigateur !</b>",
-    "instructions-test-plugin" : "Vérifiez si le plugin fonctionne <a href=\"https://www.id.ee/en/article/test-your-id-card/\">ici</a>",
-    "instructions-finally" : "<b>Enfin</b>, consultez vos e-mails et cliquez sur le lien de vérification dans l'e-mail de confirmation"
+    "instructions-intro": "Nous vous avons envoyé un e-mail de confirmation depuis kyc@letspeppol.org. Veuillez également vérifier votre dossier spam.",
+    "instructions-onboarding": "Avant de continuer, complétez la checklist d’onboarding pour configurer Web eID.",
+    "instructions-go-checklist": "Aller à la checklist",
+    "instructions-finally": "<b>Enfin</b>, ouvrez l’e-mail de confirmation et cliquez sur le lien de vérification."
   },
   "error" : {
     "login-failed" : "Échec de la connexion",
@@ -120,7 +158,8 @@
     "read-contract-agree" : "J'ai lu le contrat et j'accepte les conditions",
     "choose-credentials-title" : "2. Choisir les identifiants",
     "sign-eid-title" : "3. Signer avec eID",
-    "anim-caption" : "Insérez votre carte eID et appuyez sur confirmer pour signer.",
+    "anim-caption-validate": "Insérez votre carte eID et appuyez sur Confirmer pour valider votre identité.",
+    "anim-caption-sign": "Insérez votre carte eID et appuyez sur Confirmer pour signer le contrat.",
     "anim-reader-label" : "LECTEUR",
     "anim-reader-sr" : "Insérer la carte eID dans le lecteur",
     "expand-button" : "Agrandir",

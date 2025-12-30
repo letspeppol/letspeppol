@@ -65,13 +65,9 @@
 
     <h1 if.bind="step === 2" au-slot="header" t="registration.title-step2">Account verification</h1>
     <template if.bind="step === 2">
-        <p t="registration.instructions-intro">A confirmation email has been sent. But first:</p>
-        <ul>
-            <li t="registration.instructions-install-plugin">Install the <b>web-eid plugin</b> via <a href="https://www.id.ee/en/article/install-id-software/">https://www.id.ee/en/article/install-id-software/</a></li>
-            <li t="registration.instructions-install-extension">Make sure you install the browser extension, you can find the instructions on the same page</li>
-            <li t="registration.instructions-restart-browser"><b>Restart your browser!</b></li>
-            <li t="registration.instructions-test-plugin">Verify whether the plugin works <a href="https://www.id.ee/en/article/test-your-id-card/">here</a></li>
-        </ul>
-        <p t="registration.instructions-finally"><b>Finally</b>, check your mails and click on the verification link in the confirmation email</p>
+        <p t="registration.instructions-intro">We’ve sent you a confirmation email. Please also check your spam folder for a mail from @letspeppol.org.</p>
+        <p t="registration.instructions-onboarding">Before you continue, complete the onboarding checklist to set up Web eID.</p>
+        <button type="button" class="btn primary" click.trigger="goToOnboarding()" t="registration.instructions-go-checklist">Go to checklist</button>
+        <p t="registration.instructions-finally"><b>Finally</b>, check your mails (maybe spam) and click on the verification link in the confirmation email</p>
     </template>
 </wizard-view>

@@ -50,7 +50,7 @@ public class ActivationEmailTemplateProvider {
         String body = template
                 .replace("{{peppolId}}", safe(peppolId))
                 .replace("{{activationLink}}", activationLink);
-        String subject = resolveSubject(languageTag);
+        String subject = resolveSubject(languageTag).replace("{{peppolId}}", safe(peppolId));
         return new RenderedTemplate(subject, body);
     }
 

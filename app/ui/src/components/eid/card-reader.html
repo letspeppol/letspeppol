@@ -1,0 +1,24 @@
+<template>
+    <div class="eid-anim-col" style="width: 100%">
+        <p class="anim-caption" t.bind="captionKey">Insert your eID card and press confirm.</p>
+        <div class="eid-sign-illustration" class.signed.bind="signed">
+            <div class="eid-card">
+                <div class="chip"></div>
+                <div class="photo"></div>
+                <div class="lines line-1"></div>
+                <div class="lines line-2"></div>
+                <div class="signature-progress">
+                    <div class="sig-line"></div>
+                    <div class="sig-line delay"></div>
+                </div>
+                <div class="check-mark"></div>
+            </div>
+            <div class="card-reader vertical">
+                <div class="reader-slot"></div>
+                <span class="reader-label" t.bind="readerLabelKey">READER</span>
+                <div class="status-led"></div>
+<!--                <span class="sr-only" t="confirmation.anim-reader-sr">Insert eID card into reader slot</span>-->
+            </div>
+        </div>
+    </div>
+</template>

@@ -64,6 +64,46 @@
     "forgot" : "Forgot my password",
     "remember": "Remember me"
   },
+  "onboarding": {
+    "title": "Onboarding steps",
+    "or": "or",
+    "os": { "windows": "Windows", "macos": "macOS", "linux": "Linux" },
+    "browser": { "chrome": "Chrome", "firefox": "Firefox", "safari": "Safari", "edge": "Microsoft Edge" },
+    "step": {
+      "register-company": "Register your company",
+      "prepare-eid": {
+        "title": "Prepare your eID software, reader and card",
+        "install-web-eid": "Install the Web eID application",
+        "alt-stack": "Alternatively, you can install the full software stack from id.ee.",
+        "alt-stack-link": "Open id.ee installation guide",
+        "install-beidconnect": "Ensure BeIDConnect is installed (Belgian eID middleware).",
+        "install-beidconnect-link": "Download BeIDConnect",
+        "restart-browser": "Restart your browser and verify that the Web eID extension is enabled.",
+        "browser-help": "Extension help:",
+        "test-setup": "Connect your eID reader, insert your eID card, and run the test on the right.",
+        "troubleshoot": {
+          "title": "If confirmation fails:",
+          "reinsert": "Remove the eID card and insert it again.",
+          "usb": "Use a direct USB connection (avoid hubs/dongles).",
+          "restart": "Restart your browser and try again.",
+          "other-device": "Try another computer.",
+          "contact": "Contact support:"
+        },
+        "success": {
+          "title": "Web eID is working",
+          "subtitle": "Your card reader and browser setup look good."
+        }
+      },
+      "verify-email": "Verify your email address (check spam for emails from @letspeppol.org).",
+      "verify-director": "Verify your identity as a company director.",
+      "sign-contract": "Sign the contract to complete KYC (Know Your Customer).",
+      "login": "Log in to your account."
+    },
+    "check-title": "Check your Web eID installation",
+    "check": "Check Web eID",
+    "anim-caption-sign": "Insert your eID card and press confirm to verify installation.",
+    "anim-reader-label": "READER"
+  },
   "registration" : {
     "title-step0" : "Register your company",
     "create-account" : "Create account",
@@ -73,12 +113,10 @@
     "wrong-company": "Wrong company?",
     "back": "Back",
     "title-step2": "Account verification",
-    "instructions-intro": "A confirmation email has been sent. But first:",
-    "instructions-install-plugin": "Install the <b>web-eid plugin</b> via <a href=\"https://www.id.ee/en/article/install-id-software/\">https://www.id.ee/en/article/install-id-software/</a>",
-    "instructions-install-extension": "Make sure you install the browser extension, you can find the instructions on the same page",
-    "instructions-restart-browser": "<b>Restart your browser!</b>",
-    "instructions-test-plugin": "Verify whether the plugin works <a href=\"https://www.id.ee/en/article/test-your-id-card/\">here</a>",
-    "instructions-finally": "<b>Finally</b>, check your mails and click on the verification link in the confirmation email"
+    "instructions-intro": "We’ve sent you a confirmation email from kyc@letspeppol.org. Please also check your spam folder.",
+    "instructions-onboarding": "Before you continue, complete the onboarding checklist to set up Web eID.",
+    "instructions-go-checklist": "Go to checklist",
+    "instructions-finally": "<b>Finally</b>, open the confirmation email and click the verification link."
   },
   "error" : {
     "login-failed" : "Login failed",
@@ -120,7 +158,8 @@
     "read-contract-agree": "I have read the contract and agree to the terms",
     "choose-credentials-title": "2. Choose Credentials",
     "sign-eid-title": "3. Sign with eID",
-    "anim-caption": "Insert your eID card and press confirm to sign.",
+    "anim-caption-validate": "Insert your eID card and press confirm to validate your identity.",
+    "anim-caption-sign": "Insert your eID card and press confirm to sign the contract.",
     "anim-reader-label": "READER",
     "anim-reader-sr": "Insert eID card into reader slot",
     "expand-button": "Expand",

@@ -1,17 +1,15 @@
 Hello,
 
-We received a request to verify an email address for company with Peppol ID {{peppolId}}.
+We received a request to verify the email address for the company with Peppol ID {{peppolId}}.
 
-To complete verification, click the link below (valid for 2 hours):
+To complete the verification, please click the link below (valid for 7 days):
 {{activationLink}}
 
-We need the Web eID plugin to verify your identity.
-- Install the web-eid plugin via https://www.id.ee/en/article/install-id-software/
-- Make sure you install the browser extension, you can find the instructions on the same page
-- Restart your browser!
-- Verify whether the plugin works on https://www.id.ee/en/article/test-your-id-card/
+Next steps (Web eID setup & identity verification)
+For detailed instructions to install and test Web eID, please follow our onboarding checklist:
+https://be.letspeppol.org/onboarding
 
-If you did not request this, you can ignore this message.
+If you did not request this verification, you can safely ignore this message.
 
 Kind regards,
-The Let’s Peppol team
+Let’s Peppol Team
