@@ -13,6 +13,7 @@ export class ProductNameSearch {
     highlightedIndex = -1;
     productSearchInput: HTMLInputElement; // ref from template
     @bindable selectProductFunction: (c: ProductDto) => void;
+    @bindable onSearchChangeFunction: (e: UIEvent) => void;
     top = '';
     left = '';
     width= '';
@@ -28,6 +29,12 @@ export class ProductNameSearch {
             } catch (e) {
                 console.warn('Product API failed, using mock data');
             }
+        }
+    }
+
+    onSearchChange(e: UIEvent) {
+        if (this.onSearchChangeFunction) {
+            this.onSearchChangeFunction(e);
         }
     }
 

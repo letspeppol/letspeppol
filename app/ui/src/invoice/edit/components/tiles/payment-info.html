@@ -1,0 +1,23 @@
+<div class="composer-info" class.bind="!isPaymentInfoComplete ? 'missing-required' : ''">
+    <div style="display: flex; flex-direction: row; margin-bottom: var(--space-025)" click.trigger="showPaymentModal()">
+        <div class="card-header">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-banknote-arrow-down-icon lucide-banknote-arrow-down"><path d="M12 18H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5"/><path d="m16 19 3 3 3-3"/><path d="M18 12h.01"/><path d="M19 16v6"/><path d="M6 12h.01"/><circle cx="12" cy="12" r="2"/></svg>
+            <h5 style="margin: 0" t="invoice.paymentModal.title">Payment</h5>
+        </div>
+        <button if.bind="!readOnly" class="icon-btn" title="Edit" t="[title]common.edit">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pen-icon lucide-pen"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>
+        </button>
+    </div>
+    <span t="invoice.edit.method">Method</span>
+    <b>${invoiceComposer.paymentMeansCodes.find(item => item.value === invoiceContext.selectedInvoice.PaymentMeans.PaymentMeansCode.value).__name ?? 'None'}</b>
+    <template if.bind="invoiceContext.selectedInvoice.PaymentMeans.PayeeFinancialAccount">
+        <span t="label.account-name">Account Name</span>
+        <b>${invoiceContext.selectedInvoice.PaymentMeans.PayeeFinancialAccount.Name ?? '/'}</b>
+        <span t="label.iban">IBAN</span>
+        <b>${invoiceContext.selectedInvoice.PaymentMeans.PayeeFinancialAccount.ID ?? '/'}</b>
+    </template>
+    <template if.bind="invoiceContext.selectedInvoice.PaymentMeans.PaymentID">
+        <span t="label.reference">Reference</span>
+        <b>${invoiceContext.selectedInvoice.PaymentMeans.PaymentID}</b>
+    </template>
+</div>

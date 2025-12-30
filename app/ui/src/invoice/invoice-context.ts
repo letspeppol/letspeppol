@@ -1,29 +1,36 @@
 import {IEventAggregator, observable, singleton} from "aurelia";
-import {CreditNote, CreditNoteLine, getLines, Invoice, InvoiceLine, UBLDoc} from "../services/peppol/ubl";
+import {CreditNote, CreditNoteLine, getLines, Invoice, InvoiceLine, Party, UBLDoc} from "../services/peppol/ubl";
 import {CompanyService} from "../services/app/company-service";
-import {resolve} from "@aurelia/kernel";
 import {InvoiceComposer} from "./invoice-composer";
 import {InvoiceCalculator} from "./invoice-calculator";
 import {AlertType} from "../components/alert/alert";
-import {DocumentDto, DocumentPageDto, DocumentType} from "../services/app/invoice-service";
+import {DocumentDirection, DocumentDto, DocumentPageDto, DocumentType} from "../services/app/invoice-service";
+import {parseCreditNote, parseInvoice} from "../services/peppol/ubl-parser";
+import {PartnerDto, PartnerService} from "../services/app/partner-service";
+import {resolve} from "@aurelia/kernel";
 
 @singleton()
 export class InvoiceContext {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
     private readonly companyService = resolve(CompanyService);
+    private readonly partnerService = resolve(PartnerService);
     private readonly invoiceComposer = resolve(InvoiceComposer);
     private readonly invoiceCalculator = resolve(InvoiceCalculator);
-    lines : undefined | InvoiceLine[] | CreditNoteLine[];
+    // Overview
     draftPage: DocumentPageDto = undefined;
+    invoicePage: DocumentPageDto = undefined;
+    // Current invoice
+    lines : undefined | InvoiceLine[] | CreditNoteLine[];
     @observable selectedInvoice:  undefined | Invoice | CreditNote;
     selectedDocument: DocumentDto;
     selectedDocumentType: DocumentType = DocumentType.INVOICE;
     lastInvoiceReference: string = undefined;
     nextInvoiceReference: string = undefined;
-
     readOnly: boolean = false;
+    partnerMissing: boolean = false;
 
     clearSelectedInvoice() {
+        history.replaceState({}, '', `/invoices`);
         this.selectedInvoice = undefined;
         this.selectedDocument = undefined;
     }
@@ -33,6 +40,24 @@ export class InvoiceContext {
             return;
         }
         this.lines = getLines(newValue);
+    }
+
+    selectInvoice(item: DocumentDto) {
+        this.readOnly = (item.direction === DocumentDirection.INCOMING || item.proxyOn != null);
+        this.selectedDocument = item;
+        if (item.draftedOn) {
+            this.getLastInvoiceReference();
+        }
+        if (item.type === DocumentType.CREDIT_NOTE) {
+            this.selectedInvoice = parseCreditNote(item.ubl);
+        } else {
+            this.selectedInvoice = parseInvoice(item.ubl);
+        }
+        if (this.readOnly) {
+            this.partnerMissing = true;
+            this.partnerService.searchPartners({peppolId: item.partnerPeppolId})
+                .then((list) => this.partnerMissing = list.length === 0);
+        }
     }
 
     async initCompany() {
@@ -95,6 +120,21 @@ export class InvoiceContext {
         const nextNum = (parseInt(numStr, 10) + 1).toString().padStart(width, "0");
 
         return `${prefix}${nextNum}${suffix}`;
+    }
+
+    public mapPartner(party: Party): PartnerDto {
+        return {
+            vatNumber: party.PartyTaxScheme?.CompanyID?.value,
+            name: party.PartyName?.Name,
+            peppolId: `${party.EndpointID.__schemeID}:${party.EndpointID.value}`,
+            customer: true,
+            registeredOffice: {
+                city: party?.PostalAddress?.CityName,
+                postalCode: party?.PostalAddress?.PostalZone,
+                street: party?.PostalAddress?.StreetName,
+                countryCode: party?.PostalAddress?.Country.IdentificationCode
+            }
+        } as PartnerDto;
     }
 
     // Drafts

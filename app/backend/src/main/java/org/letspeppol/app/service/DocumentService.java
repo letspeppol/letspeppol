@@ -64,7 +64,7 @@ public class DocumentService {
             throw new RuntimeException("Invalid UBL content"); //TODO : use proper exceptions
         }
         try {
-            UblDto ublDto = UblParser.parse(ublXml);
+            UblDto ublDto = UblParser.parse(documentDirection, ublXml);
             if (documentDirection == DocumentDirection.OUTGOING && !peppolId.equals(ublDto.senderPeppolId())) {
                 throw new SecurityException(AppErrorCodes.PEPPOL_ID_MISMATCH);
             }
@@ -85,13 +85,14 @@ public class DocumentService {
 
     public Page<DocumentDto> findAll(DocumentFilter filter, Pageable pageable) {
         Pageable effectivePageable = pageable;
+        Sort sort = Sort.by(Sort.Direction.DESC, "issueDate").and(Sort.by(Sort.Direction.DESC, "createdOn"));
         if (effectivePageable == null) {
-            effectivePageable = PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "issueDate"));
+            effectivePageable = PageRequest.of(0, 20, sort);
         } else if (effectivePageable.getSort().isUnsorted()) {
             effectivePageable = PageRequest.of(
                     effectivePageable.getPageNumber(),
                     effectivePageable.getPageSize(),
-                    Sort.by(Sort.Direction.DESC, "issueDate")
+                    sort
             );
         }
 

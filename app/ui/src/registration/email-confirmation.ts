@@ -32,7 +32,8 @@ export class EmailConfirmation {
     private signatureAlgorithm;
     private prepareSigningResponse;
     private confirmInProgress = false;
-    private alreadyPeppolActivated = false;
+    private warningKey;
+    private alreadyRegisteredProvider = '';
 
     public loading(params: Params, next: RouteNode) {
         this.emailToken = next.queryParams.get('token');
@@ -87,7 +88,7 @@ export class EmailConfirmation {
     public async checkPeppolDirectory(peppolId: string) {
         const peppolDirectoryResponse = await this.peppolDirService.findByParticipant(peppolId);
         if (peppolDirectoryResponse.matches.length > 0) { //TODO : why not peppolDirectoryResponse.total-result-count ?
-            this.alreadyPeppolActivated = true;
+            this.warningKey = 'error.registration-company-already-registered-on-peppol';
         }
     }
 
@@ -114,6 +115,25 @@ export class EmailConfirmation {
             );
             const finalizeSigningResponse = await this.finalizeSigning(certificate, signResponse, prepareSigningResponse);
             this.step = 3;
+            const registrationStatus = finalizeSigningResponse.headers.get('Registration-Status'); // OK | FAILED | SUSPENDED | CONFLICT | UNKNOWN
+            switch (registrationStatus) {
+              case 'UNKNOWN':
+              case 'FAILED':
+                this.warningKey = 'account.registration-failed.try-again-one-day';
+                break;
+              case 'SUSPENDED':
+                this.warningKey = 'account.registration-failed.contact-us';
+                break;
+              case 'CONFLICT':
+                const raw = finalizeSigningResponse.headers.get('Registration-Provider') ?? '';
+                const provider = raw ? decodeURIComponent(raw) : '';
+                this.warningKey = 'account.registration-failed.contact-provider';
+                this.alreadyRegisteredProvider = provider;
+                break;
+              case 'OK':
+              default:
+                break;
+            }
             await this.downloadFile(finalizeSigningResponse);
             this.ea.publish('alert', {alertType: AlertType.Success, text: "Signed contract downloaded!"});
         } catch (error) {
@@ -147,7 +167,7 @@ export class EmailConfirmation {
         return {signatureAlgorithm, prepareSigningResponse};
     }
 
-    private async finalizeSigning(certificate: string, signResponse: LibrarySignResponse, prepareSigningResponse: PrepareSigningResponse) {
+    private async finalizeSigning(certificate: string, signResponse: LibrarySignResponse, prepareSigningResponse: PrepareSigningResponse): Promise<Response> {
         const finalizeSigningRequest = {
             emailToken: this.emailToken,
             directorId: this.confirmedDirector.id,

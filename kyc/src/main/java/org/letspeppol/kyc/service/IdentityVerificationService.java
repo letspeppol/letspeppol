@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.letspeppol.kyc.dto.IdentityVerificationRequest;
+import org.letspeppol.kyc.dto.IdentityVerificationResponse;
+import org.letspeppol.kyc.dto.RegistrationResponse;
 import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.KycException;
 import org.letspeppol.kyc.model.Account;
@@ -48,7 +50,7 @@ public class IdentityVerificationService {
         }
     }
 
-    public Account create(IdentityVerificationRequest req) {
+    public IdentityVerificationResponse create(IdentityVerificationRequest req) {
         verifyNotRegistered(req.email());
 
         Account account = new Account();
@@ -78,10 +80,12 @@ public class IdentityVerificationService {
         req.director().setRegistered(true);
         directorRepository.save(req.director());
 
+        RegistrationResponse registrationResponse = null;
         if (isAllowedToSign(req.x500Name(), req.director())) {
-            if (companyService.registerCompany(req.director().getCompany())) {
+            registrationResponse = companyService.registerCompany(req.director().getCompany());
+            if (registrationResponse.peppolActive() && registrationResponse.errorCode() == null) {
                 companyRegistrationCounterSuccess.increment();
-            } else {
+            } else if(!registrationResponse.peppolActive()) {
                 companyRegistrationCounterFailure.increment();
             }
         } else {
@@ -91,7 +95,7 @@ public class IdentityVerificationService {
         }
 
         log.info("Identity verified for email={} director={} serial={}", account.getEmail(), req.director().getName(), req.x509Certificate().getSerialNumber());
-        return account;
+        return new IdentityVerificationResponse(account, registrationResponse); //TODO : return registrationResponse somehow
     }
 
     private String getCN(X509Certificate certificate) {

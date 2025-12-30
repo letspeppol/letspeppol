@@ -1,22 +1,21 @@
 import {resolve} from "@aurelia/kernel";
 import {InvoiceContext} from "./invoice-context";
-import {parseCreditNote, parseInvoice} from "../services/peppol/ubl-parser";
 import {AlertType} from "../components/alert/alert";
 import {IEventAggregator, watch} from "aurelia";
 import {
     DocumentType,
     DocumentDto,
-    DocumentPageDto,
     DocumentQuery,
     InvoiceService, DocumentDirection,
 } from "../services/app/invoice-service";
 import moment from "moment";
+import {PartnerService} from "../services/app/partner-service";
 
 export class InvoiceOverview {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
     private invoiceService = resolve(InvoiceService);
+    private partnerService = resolve(PartnerService);
     private invoiceContext = resolve(InvoiceContext);
-    invoicePage: DocumentPageDto = undefined;
     box = 'ALL'
     query: DocumentQuery = {pageable: {page: 0, size: 20}};
 
@@ -33,7 +32,7 @@ export class InvoiceOverview {
     @watch((vm) => [vm.query.invoiceReference, vm.query.partnerName])
     loadInvoices() {
         if (this.box === 'drafts') {
-            this.invoiceService.getDocuments({...this.query, draft: true }).then(page => this.invoicePage = page);
+            this.invoiceService.getDocuments({...this.query, draft: true }).then(page => this.invoiceContext.invoicePage = page);
             // this.invoices = this.invoiceContext.drafts.filter(i => {
             //    return (!this.query.type || i.docType === this.query.type) &&
             //     (!this.query.counterPartyNameLike || !i.counterPartyName || i.counterPartyName.toLowerCase().includes(this.query.counterPartyNameLike.toLowerCase())) &&
@@ -41,7 +40,7 @@ export class InvoiceOverview {
             //     ;
             // });
         } else {
-            this.invoiceService.getDocuments({...this.query, draft: false}).then(page => this.invoicePage = page);
+            this.invoiceService.getDocuments({...this.query, draft: false}).then(page => this.invoiceContext.invoicePage = page);
         }
     }
 
@@ -63,7 +62,7 @@ export class InvoiceOverview {
                 this.loadInvoices();
                 break;
             case 'DRAFTS':
-                this.invoicePage = this.invoiceContext.draftPage;
+                this.invoiceContext.invoicePage = this.invoiceContext.draftPage;
                 break;
         }
     }
@@ -77,16 +76,8 @@ export class InvoiceOverview {
     }
 
     selectItem(item: DocumentDto) {
-        this.invoiceContext.readOnly = (item.direction === DocumentDirection.INCOMING || item.proxyOn != null);
-        this.invoiceContext.selectedDocument = item;
-        if (item.draftedOn) {
-            this.invoiceContext.getLastInvoiceReference();
-        }
-        if (item.type === DocumentType.CREDIT_NOTE) {
-            this.invoiceContext.selectedInvoice = parseCreditNote(item.ubl);
-        } else {
-            this.invoiceContext.selectedInvoice = parseInvoice(item.ubl);
-        }
+        history.replaceState({}, '', `/invoices/${item.id}`);
+        this.invoiceContext.selectInvoice(item);
     }
 
     nextPage() {

@@ -112,17 +112,21 @@
                                     </div>
                                 </div>
                             </th>
-                            <th t="invoice.table.customer">Customer</th>
+                            <th>
+                                <span if.bind="box === 'OUTGOING' || box === 'DRAFTS'" t="invoice.customer">Customer</span>
+                                <span if.bind="box === 'INCOMING'" t="invoice.supplier">Supplier</span>
+                                <span if.bind="box === 'ALL'" t="invoice.partner">Partner</span>
+                            </th>
                             <th t="invoice.table.total">Total</th>
                             <th t="invoice.table.status">Status</th>
                             <th class="actions-col" t="invoice.table.actions">Actions</th>
                         </tr>
                         </thead>
                         <tbody>
-                            <tr repeat.for="item of invoicePage.content" click.trigger="selectItem(item)">
+                            <tr repeat.for="item of invoiceContext.invoicePage.content" click.trigger="selectItem(item)">
                                 <td><span class="status-dot" class.bind="item.paidOn ? 'status-ok' : isOverdue(item) ? 'status-overdue' : 'status-open'" title.bind="item.paidOn ? 'Paid at ' + formatDate(item.paidOn) : 'Not paid'"></span></td>
-                                <td><span class="pill" class.bind="item.direction === DocumentDirection.INCOMING ? 'incoming' : 'sent'" t="documentDirection.${item.direction}">${item.direction}</span></td>
-                                <td><span class="pill" class.bind="item.type === DocumentType.INVOICE ? 'sent' : 'incoming'" t="documentType.${item.type}">${item.type}</span></td>
+                                <td><span class="pill" class.bind="item.direction === 'INCOMING' ? 'incoming' : 'sent'" t="documentDirection.${item.direction}">${item.direction}</span></td>
+                                <td><span class="pill" class.bind="item.type === 'INVOICE' ? 'sent' : 'incoming'" t="documentType.${item.type}">${item.type}</span></td>
                                 <td>${item.invoiceReference}</td>
                                 <td>${item.issueDate | dateFormat}</td>
                                 <td>${item.dueDate | dateFormat}</td>
@@ -149,7 +153,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div if.bind="!invoicePage.content || invoicePage.content.length === 0" class="empty-state" >
+                <div if.bind="!invoiceContext.invoicePage.content || invoiceContext.invoicePage.content.length === 0" class="empty-state" >
                     <div class="empty-icon" aria-hidden="true">
                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                             <path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
@@ -161,7 +165,7 @@
                 <div class="table-footer pager">
                     <button type="button" class="btn ghost" click.trigger="previousPage()" disabled.bind="query.pageable.page <= 0" t="invoice.pager.previous">← Previous</button>
                     <span class="pager-range"></span>
-                    <button type="button" class="btn ghost" click.trigger="nextPage()" disabled.bind="invoicePage.last" t="invoice.pager.next">Next →</button>
+                    <button type="button" class="btn ghost" click.trigger="nextPage()" disabled.bind="invoiceContext.invoicePage.last" t="invoice.pager.next">Next →</button>
                 </div>
             </div>
         </div>

@@ -2,6 +2,7 @@ package org.letspeppol.app.util;
 
 import org.letspeppol.app.dto.PeppolParties;
 import org.letspeppol.app.dto.UblDto;
+import org.letspeppol.app.model.DocumentDirection;
 import org.letspeppol.app.model.DocumentType;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -52,17 +53,21 @@ public final class UblParser {
         return getPeppolParties(prepareDomDocument(xml));
     }
 
-    public static UblDto parse(String xml) throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
+    public static UblDto parse(DocumentDirection documentDirection, String xml) throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
         Document document = prepareDomDocument(xml);
         XPath xp = XPathFactory.newInstance().newXPath();
         PeppolParties peppolParties = getPeppolParties(document);
 
         // partnerName (customer name -> legal name -> supplier name -> supplier legal name)
-        String[] xpaths = {
+        String[] xpaths = switch (documentDirection) {
+            case OUTGOING -> new String[] {
                 "/*/*[local-name()='AccountingCustomerParty']/*[local-name()='Party']/*[local-name()='PartyName']/*[local-name()='Name']",
-                "/*/*[local-name()='AccountingCustomerParty']/*[local-name()='Party']/*[local-name()='PartyLegalEntity']/*[local-name()='RegistrationName']",
+                "/*/*[local-name()='AccountingCustomerParty']/*[local-name()='Party']/*[local-name()='PartyLegalEntity']/*[local-name()='RegistrationName']"
+            };
+            case INCOMING -> new String[] {
                 "/*/*[local-name()='AccountingSupplierParty']/*[local-name()='Party']/*[local-name()='PartyName']/*[local-name()='Name']",
                 "/*/*[local-name()='AccountingSupplierParty']/*[local-name()='Party']/*[local-name()='PartyLegalEntity']/*[local-name()='RegistrationName']"
+            };
         };
 
         String partnerName = null;

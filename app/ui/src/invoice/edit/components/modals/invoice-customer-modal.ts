@@ -1,27 +1,32 @@
-import {bindable, observable} from "aurelia";
-import {Party} from "../../../services/peppol/ubl";
-import {PartnerDto} from "../../../services/app/partner-service";
-import {CustomerSearch} from "./customer-search";
-import {countryListAlpha2} from "../../../app/countries"
-import {isIso6523Scheme} from "../../../app/util/iso6523list";
-import {normalizeVatNumber} from "../../../partner/vat-normalizer";
-import {KycCompanyResponse} from "../../../services/kyc/registration-service";
+import {bindable, IEventAggregator} from "aurelia";
+import {Party} from "../../../../services/peppol/ubl";
+import {PartnerDto, PartnerService} from "../../../../services/app/partner-service";
+import {CustomerSearch} from "../customer-search";
+import {countryListAlpha2} from "../../../../app/countries"
+import {isIso6523Scheme} from "../../../../app/util/iso6523list";
+import {normalizeVatNumber} from "../../../../partner/vat-normalizer";
+import {KycCompanyResponse} from "../../../../services/kyc/registration-service";
 import {resolve} from "@aurelia/kernel";
-import {CompanySearchService} from "../../../services/kyc/company-search-service";
+import {CompanySearchService} from "../../../../services/kyc/company-search-service";
+import {AlertType} from "../../../../components/alert/alert";
+import {InvoiceContext} from "../../../invoice-context";
 
 export class InvoiceCustomerModal {
+    private readonly ea: IEventAggregator = resolve(IEventAggregator);
     private readonly companySearchService = resolve(CompanySearchService);
+    private readonly partnerService = resolve(PartnerService);
     private countryList = countryListAlpha2;
-    @bindable invoiceContext;
+    @bindable invoiceContext: InvoiceContext;
     @bindable customerSearch: CustomerSearch;
     peppolId: string;
     open = false;
+    saveAsPartner = false;
     customer: Party | undefined;
     customerSavedFunction: () => void;
 
     vatChanged() {
         if (!this.customer) return;
-        if (this.customer.PartyTaxScheme.CompanyID.value) {
+        if (this.customer.PartyTaxScheme.CompanyID?.value) {
             this.customer.PartyTaxScheme.CompanyID.value = this.customer.PartyTaxScheme.CompanyID.value.toUpperCase();
         }
     }
@@ -37,6 +42,7 @@ export class InvoiceCustomerModal {
         } else {
             this.peppolId = undefined;
         }
+        this.saveAsPartner = false;
         this.open = true;
         this.customerSearch.resetSearch();
         this.customerSearch.focusInput();
@@ -56,7 +62,12 @@ export class InvoiceCustomerModal {
         if (this.customerSavedFunction) {
             this.customerSavedFunction();
         }
-        console.log(this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party);
+        if (this.saveAsPartner) {
+            const partner = this.invoiceContext.mapPartner(this.customer);
+            this.partnerService.createPartner(partner)
+                .then(() => this.ea.publish('alert', {alertType: AlertType.Success, text: "Partner created"}))
+                .catch(() => this.ea.publish('alert', {alertType: AlertType.Danger, text: "Partner creation failed"}));
+        }
     }
 
     selectMatchFunction(name: string, participantID: string) {
@@ -73,7 +84,6 @@ export class InvoiceCustomerModal {
             const parts = peppolId.split(":");
             this.customer.EndpointID.__schemeID = parts[0];
             this.customer.EndpointID.value = parts[1];
-            this.customer.PartyIdentification = [{ ID: { __schemeID: parts[0], value: parts[1] } }];
             if (!this.customer.PartyLegalEntity.CompanyID || !this.customer.PartyLegalEntity.CompanyID.value) {
                 this.customer.PartyLegalEntity.CompanyID = { value: undefined};
             }
@@ -83,6 +93,11 @@ export class InvoiceCustomerModal {
             } else if (parts[0] === '9925') {
                 this.customer.PartyLegalEntity.CompanyID.value = parts[1].toUpperCase();
                 this.vatChanged();
+            }
+            if (isIso6523Scheme(parts[0])) {
+                this.customer.PartyIdentification = [{ ID: { __schemeID: parts[0], value: parts[2] } }];
+            } else {
+                this.customer.PartyIdentification = undefined;
             }
         }
     }
@@ -125,9 +140,11 @@ export class InvoiceCustomerModal {
             this.companySearchService.searchCompany({peppolId: this.peppolId}).then(companies => {
                 if (companies.length) {
                     this.completeCustomerInfo(companies[0]);
+                    return;
                 }
             });
         }
+        this.peppolIdChangedFunction(this.peppolId);
     }
 
     vatNumberChanged() {
