@@ -88,6 +88,10 @@
           "restart": "Herstart uw browser en probeer opnieuw.",
           "other-device": "Probeer een andere computer.",
           "contact": "Contacteer support:"
+        },
+        "success": {
+          "title": "Web eID werkt",
+          "subtitle": "Uw kaartlezer en browserconfiguratie lijken in orde."
         }
       },
       "verify-email": "Verifieer uw e-mailadres (controleer de spam voor e-mails van @letspeppol.org).",

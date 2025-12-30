@@ -88,6 +88,10 @@
           "restart": "Redémarrez votre navigateur et réessayez.",
           "other-device": "Essayez sur un autre ordinateur.",
           "contact": "Contacter le support :"
+        },
+        "success": {
+          "title": "Web eID fonctionne",
+          "subtitle": "Votre lecteur de carte et la configuration du navigateur semblent corrects."
         }
       },
       "verify-email": "Vérifiez votre adresse e-mail (vérifiez les spams pour les e-mails de @letspeppol.org).",

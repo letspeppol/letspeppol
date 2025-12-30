@@ -88,6 +88,10 @@
           "restart": "Restart your browser and try again.",
           "other-device": "Try another computer.",
           "contact": "Contact support:"
+        },
+        "success": {
+          "title": "Web eID is working",
+          "subtitle": "Your card reader and browser setup look good."
         }
       },
       "verify-email": "Verify your email address (check spam for emails from @letspeppol.org).",
