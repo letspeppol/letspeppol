@@ -1,0 +1,80 @@
+/* Onboarding layout */
+.onboarding-steps {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.onboarding-steps > li {
+  line-height: 1.45;
+}
+
+.onboarding-substeps {
+  margin-top: 0.5rem;
+  padding-left: 1.25rem;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.link-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: baseline;
+  margin-left: 0.25rem;
+}
+
+.hint {
+  margin: 0.35rem 0 0;
+  color: #6b7280; /* gray-500-ish */
+  font-size: 0.95rem;
+}
+
+.hint-link {
+  display: inline-block;
+  margin-top: 0.25rem;
+  font-size: 0.95rem;
+}
+
+/* Web eID check section */
+.onboarding-check {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.onboarding-check h3 {
+  margin: 0 0 0.75rem;
+}
+
+/* Troubleshooting callout under the test */
+.onboarding-troubleshoot-block {
+  margin-top: 0.9rem;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  background: #fff7ed;           /* amber-50-ish */
+  border: 1px solid #fed7aa;     /* amber-200-ish */
+}
+
+.onboarding-troubleshoot-block .hint {
+  margin: 0 0 0.5rem;
+  color: #92400e; /* amber-800-ish */
+  font-weight: 600;
+}
+
+.onboarding-troubleshoot {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.onboarding-troubleshoot a {
+  text-decoration: underline;
+}
+
+/* Optional: make buttons not stick to content */
+.onboarding-check .btn.primary {
+  margin-top: 0.75rem;
+}

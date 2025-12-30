@@ -64,6 +64,42 @@
     "forgot" : "Wachtwoord vergeten",
     "remember" : "Onthoud mij"
   },
+  "onboarding": {
+    "title": "Onboardingstappen",
+    "or": "of",
+    "os": { "windows": "Windows", "macos": "macOS", "linux": "Linux" },
+    "browser": { "chrome": "Chrome", "firefox": "Firefox", "safari": "Safari", "edge": "Microsoft Edge" },
+    "step": {
+      "register-company": "Registreer uw bedrijf",
+      "prepare-eid": {
+        "title": "Bereid uw eID-software, kaartlezer en kaart voor",
+        "install-web-eid": "Installeer de Web eID-applicatie",
+        "alt-stack": "Als alternatief kunt u de volledige softwarestack installeren via id.ee.",
+        "alt-stack-link": "Open de id.ee-installatiegids",
+        "install-beidconnect": "Zorg ervoor dat BeIDConnect is geïnstalleerd (Belgische eID-middleware).",
+        "install-beidconnect-link": "Download BeIDConnect",
+        "restart-browser": "Start uw browser opnieuw en controleer of de Web eID-extensie is ingeschakeld.",
+        "browser-help": "Hulp voor de extensie:",
+        "test-setup": "Sluit uw eID-kaartlezer aan, steek uw eID-kaart in en voer de test rechts uit.",
+        "troubleshoot": {
+          "title": "Als bevestigen mislukt:",
+          "reinsert": "Verwijder de eID-kaart en steek ze opnieuw in.",
+          "usb": "Gebruik een directe USB-verbinding (vermijd hubs/dongles).",
+          "restart": "Herstart uw browser en probeer opnieuw.",
+          "other-device": "Probeer een andere computer.",
+          "contact": "Contacteer support:"
+        }
+      },
+      "verify-email": "Verifieer uw e-mailadres (controleer de spam voor e-mails van @letspeppol.org).",
+      "verify-director": "Verifieer uw identiteit als bestuurder van het bedrijf.",
+      "sign-contract": "Onderteken het contract om KYC (Know Your Customer) te voltooien.",
+      "login": "Log in op uw account."
+    },
+    "check-title": "Controleer uw Web eID-installatie",
+    "check": "Web eID controleren",
+    "anim-caption-sign": "Steek uw eID-kaart in en druk op bevestigen om de installatie te verifiëren.",
+    "anim-reader-label": "LEZER"
+  },
   "registration" : {
     "title-step0" : "Registreer uw bedrijf",
     "create-account" : "Account aanmaken",

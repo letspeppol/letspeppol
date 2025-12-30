@@ -64,6 +64,42 @@
     "forgot" : "Forgot my password",
     "remember": "Remember me"
   },
+  "onboarding": {
+    "title": "Onboarding steps",
+    "or": "or",
+    "os": { "windows": "Windows", "macos": "macOS", "linux": "Linux" },
+    "browser": { "chrome": "Chrome", "firefox": "Firefox", "safari": "Safari", "edge": "Microsoft Edge" },
+    "step": {
+      "register-company": "Register your company",
+      "prepare-eid": {
+        "title": "Prepare your eID software, reader and card",
+        "install-web-eid": "Install the Web eID application",
+        "alt-stack": "Alternatively, you can install the full software stack from id.ee.",
+        "alt-stack-link": "Open id.ee installation guide",
+        "install-beidconnect": "Ensure BeIDConnect is installed (Belgian eID middleware).",
+        "install-beidconnect-link": "Download BeIDConnect",
+        "restart-browser": "Restart your browser and verify that the Web eID extension is enabled.",
+        "browser-help": "Extension help:",
+        "test-setup": "Connect your eID reader, insert your eID card, and run the test on the right.",
+        "troubleshoot": {
+          "title": "If confirmation fails:",
+          "reinsert": "Remove the eID card and insert it again.",
+          "usb": "Use a direct USB connection (avoid hubs/dongles).",
+          "restart": "Restart your browser and try again.",
+          "other-device": "Try another computer.",
+          "contact": "Contact support:"
+        }
+      },
+      "verify-email": "Verify your email address (check spam for emails from @letspeppol.org).",
+      "verify-director": "Verify your identity as a company director.",
+      "sign-contract": "Sign the contract to complete KYC (Know Your Customer).",
+      "login": "Log in to your account."
+    },
+    "check-title": "Check your Web eID installation",
+    "check": "Check Web eID",
+    "anim-caption-sign": "Insert your eID card and press confirm to verify installation.",
+    "anim-reader-label": "READER"
+  },
   "registration" : {
     "title-step0" : "Register your company",
     "create-account" : "Create account",
