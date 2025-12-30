@@ -113,12 +113,10 @@
     "wrong-company" : "Verkeerd bedrijf?",
     "back" : "Terug",
     "title-step2" : "Account verificatie",
-    "instructions-intro" : "Een bevestigingsmail is verzonden. Maar eerst:",
-    "instructions-install-plugin" : "Installeer de <b>web-eid plugin</b> via <a href=\"https://www.id.ee/en/article/install-id-software/\">https://www.id.ee/en/article/install-id-software/</a>",
-    "instructions-install-extension" : "Zorg dat u ook de browserextensie installeert, de instructies staan op dezelfde pagina",
-    "instructions-restart-browser" : "<b>Herstart uw browser!</b>",
-    "instructions-test-plugin" : "Controleer of de plugin werkt <a href=\"https://www.id.ee/en/article/test-your-id-card/\">hier</a>",
-    "instructions-finally" : "<b>Tot slot</b>, controleer uw e-mail en klik op de verificatielink in de bevestigingsmail"
+    "instructions-intro": "We hebben u een bevestigingsmail gestuurd van kyc@letspeppol.org. Controleer ook uw spamfolder.",
+    "instructions-onboarding": "Voordat u verdergaat, doorloop de onboarding-checklist om Web eID in te stellen.",
+    "instructions-go-checklist": "Ga naar de checklist",
+    "instructions-finally": "<b>Tot slot</b>, open de bevestigingsmail en klik op de verificatielink."
   },
   "error" : {
     "login-failed" : "Inloggen mislukt",

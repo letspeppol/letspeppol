@@ -1,10 +1,12 @@
 import {resolve} from "@aurelia/kernel";
 import {IEventAggregator} from "aurelia";
 import {KycCompanyResponse, RegistrationService} from "../services/kyc/registration-service";
+import {IRouter} from '@aurelia/router';
 
 export class Registration {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
     private registrationService = resolve(RegistrationService);
+    private readonly router = resolve(IRouter);
     step = 0;
     email: string | undefined;
     vatNumber : string | undefined;
@@ -49,4 +51,7 @@ export class Registration {
         }
     }
 
+    goToOnboarding() {
+        void this.router.load('/onboarding');
+    }
 }

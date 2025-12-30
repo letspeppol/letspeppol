@@ -1,17 +1,15 @@
 Hallo,
 
-We hebben een verzoek ontvangen om een e-mailadres te verifiëren voor bedrijf met Peppol ID {{peppolId}}.
+We hebben een verzoek ontvangen om het e-mailadres te verifiëren voor het bedrijf met Peppol ID {{peppolId}}.
 
-Om de verificatie te voltooien klikt u op de onderstaande link (1 week geldig):
+Om de verificatie te voltooien, klik op de onderstaande link (7 dagen geldig):
 {{activationLink}}
 
-We hebben de Web eID plugin nodig om uw identiteit te verifiëren.
-- Installeer de web-eid plugin via https://www.id.ee/en/article/install-id-software/
-- Zorg dat u ook de browserextensie installeert, de instructies staan op dezelfde pagina
-- Herstart uw browser!
-- Controleer of de plugin werkt https://www.id.ee/en/article/test-your-id-card/
+Volgende stappen (Web eID-installatie & identiteitsverificatie)
+Voor gedetailleerde instructies om Web eID te installeren en te testen, volg onze onboarding-checklist:
+https://be.letspeppol.org/onboarding
 
-Als u dit niet heeft aangevraagd kunt u dit bericht negeren.
+Als u deze verificatie niet heeft aangevraagd, kunt u dit bericht veilig negeren.
 
 Met vriendelijke groet,
 The Let’s Peppol team

@@ -113,12 +113,10 @@
     "wrong-company": "Wrong company?",
     "back": "Back",
     "title-step2": "Account verification",
-    "instructions-intro": "A confirmation email has been sent. But first:",
-    "instructions-install-plugin": "Install the <b>web-eid plugin</b> via <a href=\"https://www.id.ee/en/article/install-id-software/\">https://www.id.ee/en/article/install-id-software/</a>",
-    "instructions-install-extension": "Make sure you install the browser extension, you can find the instructions on the same page",
-    "instructions-restart-browser": "<b>Restart your browser!</b>",
-    "instructions-test-plugin": "Verify whether the plugin works <a href=\"https://www.id.ee/en/article/test-your-id-card/\">here</a>",
-    "instructions-finally": "<b>Finally</b>, check your mails and click on the verification link in the confirmation email"
+    "instructions-intro": "We’ve sent you a confirmation email from kyc@letspeppol.org. Please also check your spam folder.",
+    "instructions-onboarding": "Before you continue, complete the onboarding checklist to set up Web eID.",
+    "instructions-go-checklist": "Go to checklist",
+    "instructions-finally": "<b>Finally</b>, open the confirmation email and click the verification link."
   },
   "error" : {
     "login-failed" : "Login failed",

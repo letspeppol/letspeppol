@@ -113,12 +113,10 @@
     "wrong-company" : "Mauvaise entreprise ?",
     "back" : "Retour",
     "title-step2" : "Vérification du compte",
-    "instructions-intro" : "Un e-mail de confirmation a été envoyé. Mais d'abord :",
-    "instructions-install-plugin" : "Installez le <b>plugin web-eid</b> via <a href=\"https://www.id.ee/en/article/install-id-software/\">https://www.id.ee/en/article/install-id-software/</a>",
-    "instructions-install-extension" : "Assurez-vous d'installer l'extension de navigateur, les instructions sont sur la même page",
-    "instructions-restart-browser" : "<b>Redémarrez votre navigateur !</b>",
-    "instructions-test-plugin" : "Vérifiez si le plugin fonctionne <a href=\"https://www.id.ee/en/article/test-your-id-card/\">ici</a>",
-    "instructions-finally" : "<b>Enfin</b>, consultez vos e-mails et cliquez sur le lien de vérification dans l'e-mail de confirmation"
+    "instructions-intro": "Nous vous avons envoyé un e-mail de confirmation depuis kyc@letspeppol.org. Veuillez également vérifier votre dossier spam.",
+    "instructions-onboarding": "Avant de continuer, complétez la checklist d’onboarding pour configurer Web eID.",
+    "instructions-go-checklist": "Aller à la checklist",
+    "instructions-finally": "<b>Enfin</b>, ouvrez l’e-mail de confirmation et cliquez sur le lien de vérification."
   },
   "error" : {
     "login-failed" : "Échec de la connexion",
