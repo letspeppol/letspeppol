@@ -98,14 +98,15 @@ public class ScradaService implements AccessPointServiceInterface {
             return Map.of("uuid", uuid);
         } catch (WebClientResponseException e) { // HTTP error (non-2xx)
             String body = e.getResponseBodyAsString();
+            ErrorResponse errorResponse = null;
             try {
-                ErrorResponse errorResponse = objectMapper.readValue(body, ErrorResponse.class);
-                log.warn("Scrada register API could not succeed (code={} type={}) {}: {}", errorResponse.errorCode(), errorResponse.errorType(), errorResponse.defaultFormat(), body);
-                throw processErrorResponse(errorResponse);
+                errorResponse = objectMapper.readValue(body, ErrorResponse.class);
             } catch (Exception parseFail) {
                 log.error("Scrada register API error {} {}: {} & parsing failed {}", e.getRawStatusCode(), e.getStatusText(), body, parseFail.getMessage(), e);
                 throw new RuntimeException("Scrada API error: " + e.getStatusCode(), e);
             }
+            log.warn("Scrada register API could not succeed (code={} type={}) {}: {}", errorResponse.errorCode(), errorResponse.errorType(), errorResponse.defaultFormat(), body);
+            throw processErrorResponse(errorResponse);
         } catch (Exception e) { // timeouts, connection issues, deserialization errors, etc.
             log.error("Scrada register API call error {}", e.toString(), e);
             throw new RuntimeException("Failed to call Scrada API", e);
