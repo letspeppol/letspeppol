@@ -1,5 +1,55 @@
 <import from="../components/view/wizard-view"></import>
+<import from="../components/eid/card-reader"></import>
 
 <wizard-view>
-    <h1 au-slot="header" t="onboarding.title">Onboarding information</h1>
+    <h1 au-slot="header" t="onboarding.title">Onboarding steps</h1>
+    <form class="auth-form">
+        <ol>
+            <li><a href="https://be.letspeppol.org/registration" target="_blank">Register your company</a></li>
+            <li>
+                Prepare eID software, reader and card
+                <ol>
+                    <li>
+                        Install European eID software for
+                        <a href="https://github.com/web-eid/web-eid-app/releases/download/v2.8.0/web-eid_2.8.0.913.x64.exe" target="_blank">Windows</a>
+                        or <a href="https://github.com/web-eid/web-eid-app/releases/download/v2.8.0/web-eid_2.8.0.710.dmg" target="_blank">MacOS</a>
+                        or <a href="https://github.com/web-eid/web-eid-app/releases/tag/v2.8.0" target="_blank">Linux</a>
+                        <i>(alternatively you can install the full software stack of <a href="https://www.id.ee/en/article/install-id-software/" target="_blank">id.ee</a>)</i>
+                    </li>
+                    <li>Make sure the Belgian eID software <a href="https://eid.belgium.be/en/download/beidconnect" target="_blank">BeIDConnect</a> is also installed</li>
+                    <li>
+                        Restart the browser and make sure Web eID extension is enabled
+                        <i>
+                            (more information for
+                            <a href="https://www.id.ee/en/article/install-id-software/#chrome" target="_blank">Chrome</a>
+                            or <a href="https://www.id.ee/en/article/install-id-software/#mozilla-firefox" target="_blank">Firefox</a>
+                            or <a href="https://www.id.ee/en/article/install-id-software/#safari" target="_blank">Safari</a>
+                            or <a href="https://www.id.ee/en/article/install-id-software/#microsoft-edge" target="_blank">Microsoft Edge</a>
+                            )
+                        </i>
+                    </li>
+                    <li>Connect eID reader with eID card and use the test below</li>
+                    <li>
+                        Confirm your identity in Web eID, if it does not work :
+                        <ul>
+                            <li>Try again by removing the eID card and sliding it in again</li>
+                            <li>Try direct USB connection (minimize USB dongles)</li>
+                            <li>Try full restart</li>
+                            <li>Try different computer</li>
+                            <li>Contact us on <a href="mailto:support@letspeppol.org">support@letspeppol.org</a></li>
+                        </ul>
+                    </li>
+                </ol>
+            </li>
+            <li>Click the email verification link in your email, check your spam folder for emails from @letspeppol.org</li>
+            <li>Verify your identity as director of the company</li>
+            <li>Sign the contract as part of the KYC (Know-Your-Customer) obligations</li>
+            <li>Login to your account</li>
+        </ol>
+        <div>
+            <h3 t="onboarding.check-title">Check your Web eID installation with your eID</h3>
+            <card-reader caption-key="onboarding.anim-caption-sign" reader-label-key="onboarding.anim-reader-label"></card-reader>
+            <button type="button" class="btn primary" click.trigger="checkWebEID()" t="onboarding.check">Check Web eID</button>
+        </div>
+    </form>
 </wizard-view>
