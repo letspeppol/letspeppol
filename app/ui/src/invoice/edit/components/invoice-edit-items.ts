@@ -4,6 +4,7 @@ import {ClassifiedTaxCategory, CreditNoteLine, getAmount, InvoiceLine, UBLLine} 
 import {InvoiceCalculator, roundTwoDecimals} from "../../invoice-calculator";
 import {DocumentType} from "../../../services/app/invoice-service";
 import {bindable} from "aurelia";
+import {ProductDto} from "../../../services/app/product-service";
 
 export class InvoiceEditItems {
     private invoiceContext = resolve(InvoiceContext);
@@ -44,6 +45,15 @@ export class InvoiceEditItems {
 
     nameOnChange(e: UIEvent, line: UBLLine) {
         this.checkLineAutoSave(line);
+    }
+
+    selectProduct(p: ProductDto, line: UBLLine) {
+        if (p.costPrice) {
+            line.Price.PriceAmount.value = p.costPrice;
+        }
+        if (p.description) {
+            line.Item.Description = p.description;
+        }
     }
 
     checkLineAutoSave(line: InvoiceLine | CreditNoteLine) {
