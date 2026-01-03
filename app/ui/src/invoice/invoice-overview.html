@@ -1,4 +1,5 @@
 <import from="../app/value-converters/date-format.ts"></import>
+<import from="../app/value-converters/date-time-format.ts"></import>
 <import from="../app/value-converters/price.ts"></import>
 
 <div class="invoices-layout">
@@ -133,9 +134,9 @@
                                 <td>${item.partnerName}</td>
                                 <td>${item.amount | price:item.currency}</td>
                                 <td>
-                                    <span class="pill" if.bind="item.draftedOn" t="invoice.status.draft">Drafted</span>
-                                    <span class="pill scheduled" if.bind="item.scheduledOn && !item.processedOn" t="invoice.status.scheduled">Scheduled</span>
-                                    <span class="pill processed" if.bind="item.processedOn && !item.processedStatus" t="invoice.status.processed">Processed</span>
+                                    <span class="pill" if.bind="item.draftedOn" t="invoice.status.draft" title="${item.draftedOn | dateTimeFormat}">Drafted</span>
+                                    <span class="pill scheduled" if.bind="item.scheduledOn && !item.processedOn" t="invoice.status.scheduled" title="${item.scheduledOn | dateTimeFormat}">Scheduled</span>
+                                    <span class="pill processed" if.bind="item.processedOn && !item.processedStatus" t="invoice.status.processed" title="${item.processedOn | dateTimeFormat}">Processed</span>
                                     <span class="pill error" if.bind="item.processedStatus" t="invoice.status.error" title.bind="item.processedStatus">Error</span>
                                 </td>
                                 <td class="actions-col">
