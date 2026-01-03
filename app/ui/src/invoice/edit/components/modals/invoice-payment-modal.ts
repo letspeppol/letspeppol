@@ -13,7 +13,7 @@ export class InvoicePaymentModal {
     paymentMeans: PaymentMeans | undefined;
 
     showModal() {
-        this.paymentMeansCode = structuredClone(this.invoiceContext.selectedInvoice.PaymentMeans.PaymentMeansCode.value);
+        this.paymentMeansCode = structuredClone(this.invoiceContext.selectedInvoice.PaymentMeans?.PaymentMeansCode.value);
         this.paymentMeans = structuredClone(this.invoiceContext.selectedInvoice.PaymentMeans);
         console.log(this.paymentMeans);
         this.open = true;
