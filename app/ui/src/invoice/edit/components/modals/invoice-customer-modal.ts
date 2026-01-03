@@ -95,7 +95,7 @@ export class InvoiceCustomerModal {
                 this.vatChanged();
             }
             if (isIso6523Scheme(parts[0])) {
-                this.customer.PartyIdentification = [{ ID: { __schemeID: parts[0], value: parts[2] } }];
+                this.customer.PartyIdentification = [{ ID: { __schemeID: parts[0], value: parts[1] } }];
             } else {
                 this.customer.PartyIdentification = undefined;
             }
