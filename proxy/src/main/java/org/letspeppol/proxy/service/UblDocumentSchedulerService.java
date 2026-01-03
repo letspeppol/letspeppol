@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.UUID;
 import static java.lang.Math.max;
 
 @Slf4j
@@ -66,6 +67,12 @@ public class UblDocumentSchedulerService {
             delivered(ublDocument, new StatusReport(false, "Proxy error : Peppol Access Point not active"));
             return;
         }
+        if (ublDocument.getPartnerPeppolId().equals(ublDocument.getOwnerPeppolId())) {
+            String loopbackId = loopbackDocument(ublDocument);
+            log.info("Successful processed loopback document {} bypassed Peppol Access Point {} | balance = {} ", ublDocument.getId(), accessPoint, balanceService.decrement());
+            pickedUp(ublDocument, AccessPoint.LOOPBACK, loopbackId.toString());
+            return;
+        }
         String accessPointId = service.sendDocument(ublDocument);
         if (accessPointId == null) {
             ublDocument.setScheduledOn(ublDocument.getScheduledOn().plus(1, ChronoUnit.HOURS)); //Postpone 1 hour to try again
@@ -95,9 +102,15 @@ public class UblDocumentSchedulerService {
     }
 
     private void synchronizeWithAccessPoint(UblDocument ublDocument) {
-        AccessPoint accessPoint = registryService.getAccessPoint(ublDocument.getOwnerPeppolId());
-        if (accessPoint == AccessPoint.NONE) {
-            delivered(ublDocument, new StatusReport(false, "Proxy error : PeppolId is no longer registered to synchronize"));
+//        AccessPoint accessPoint = registryService.getAccessPoint(ublDocument.getOwnerPeppolId());
+//        if (accessPoint == AccessPoint.NONE) {
+//            delivered(ublDocument, new StatusReport(false, "Proxy error : PeppolId is no longer registered to synchronize"));
+//            return;
+//        }
+        AccessPoint accessPoint = ublDocument.getAccessPoint(); //Take the Access Point of the document
+        if (accessPoint == AccessPoint.LOOPBACK) {
+            log.warn("Loopback document {} was not delivered since {}", ublDocument.getId(), ublDocument.getUpdatedOn());
+            delivered(ublDocument, new StatusReport(true, null));
             return;
         }
         AccessPointServiceInterface service = accessPointServiceRegistry.get(accessPoint);
@@ -134,4 +147,30 @@ public class UblDocumentSchedulerService {
         // ublDocument = ublDocumentRepository.save(ublDocument); //This can be remove due to @Transactional
     }
 
+    private String loopbackDocument(UblDocument ublDocument) {
+        UblDocument loopbackUblDocument = new UblDocument(
+                UUID.randomUUID(), //No autogeneration used
+                DocumentDirection.INCOMING,
+                ublDocument.getType(),
+                ublDocument.getPartnerPeppolId(),
+                ublDocument.getOwnerPeppolId(),
+                Instant.now(),
+                null,
+                Instant.now(),
+                null,
+                ublDocument.getUbl(),
+                ublDocument.getHash(),
+                0,
+                null,
+                AccessPoint.LOOPBACK,
+                ublDocument.getId().toString()
+        );
+        loopbackUblDocument = ublDocumentRepository.save(loopbackUblDocument);
+        try {
+            backupService.backupFile(loopbackUblDocument);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return loopbackUblDocument.getId().toString();
+    }
 }
