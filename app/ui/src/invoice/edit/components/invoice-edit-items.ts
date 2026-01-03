@@ -54,6 +54,12 @@ export class InvoiceEditItems {
         if (p.description) {
             line.Item.Description = p.description;
         }
+        if (p.taxPercentage != null) {
+            const taxCategory = this.taxCategories.find(item => item.Percent === p.taxPercentage);
+            if (taxCategory) {
+                line.Item.ClassifiedTaxCategory = taxCategory;
+            }
+        }
     }
 
     checkLineAutoSave(line: InvoiceLine | CreditNoteLine) {
