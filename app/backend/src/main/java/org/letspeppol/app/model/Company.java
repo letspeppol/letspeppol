@@ -21,6 +21,7 @@ public class Company extends GenericEntity{
 
     @Column(nullable = false)
     private String name;
+    private String displayName;
 
     private String subscriber; // Director name
     private String subscriberEmail;

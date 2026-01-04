@@ -4,6 +4,7 @@ public record CompanyDto(
         String peppolId,
         String vatNumber,
         String name,
+        String displayName,
         String subscriber,
         String subscriberEmail,
         String paymentTerms,
