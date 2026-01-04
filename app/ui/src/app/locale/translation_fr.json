@@ -339,7 +339,8 @@
       "type" : "Type",
       "name" : "Nom",
       "iban" : "IBAN",
-      "reference" : "Référence"
+      "reference" : "Référence",
+      "store-iban": "Enregistrer l’IBAN dans le compte"
     },
     "validationModal" : {
       "title" : "Validation",

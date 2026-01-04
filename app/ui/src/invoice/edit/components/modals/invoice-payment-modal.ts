@@ -1,10 +1,12 @@
-import {bindable} from "aurelia";
+import {bindable, IEventAggregator} from "aurelia";
 import {PaymentMeans} from "../../../../services/peppol/ubl";
 import {InvoiceComposer} from "../../../invoice-composer";
 import {resolve} from "@aurelia/kernel";
 import {CompanyService} from "../../../../services/app/company-service";
+import {AlertType} from "../../../../components/alert/alert";
 
 export class InvoicePaymentModal {
+    private readonly ea: IEventAggregator = resolve(IEventAggregator);
     invoiceComposer = resolve(InvoiceComposer);
     companyService = resolve(CompanyService);
     @bindable invoiceContext;
@@ -39,6 +41,16 @@ export class InvoicePaymentModal {
             this.paymentMeans = {
                 PaymentMeansCode: this.invoiceComposer.getPaymentMeansCode(this.paymentMeansCode)
             };
+        }
+    }
+
+    async saveIbanToAccount() {
+        try {
+            this.companyService.myCompany.iban = this.paymentMeans.PayeeFinancialAccount.ID.toUpperCase();
+            await this.companyService.updateCompany(this.companyService.myCompany);
+            this.ea.publish('alert', {alertType: AlertType.Success, text: "IBAN saved"});
+        } catch {
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Company save failed"});
         }
     }
 }

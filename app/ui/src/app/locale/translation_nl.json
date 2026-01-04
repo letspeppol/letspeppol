@@ -339,7 +339,8 @@
       "type" : "Type",
       "name" : "Naam",
       "iban" : "IBAN",
-      "reference" : "Referentie"
+      "reference" : "Referentie",
+      "store-iban": "IBAN opslaan in account"
     },
     "validationModal" : {
       "title" : "Validatie",
