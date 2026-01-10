@@ -13,6 +13,7 @@ import org.letspeppol.app.model.Company;
 import org.letspeppol.app.repository.CompanyRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Optional;
@@ -66,6 +67,11 @@ public class CompanyService {
 
     public CompanyDto update(CompanyDto companyDto, boolean isPeppolActive) {
         Company company = companyRepository.findByPeppolId(companyDto.peppolId()).orElseThrow(() -> new NotFoundException("Company does not exist"));
+        if (!company.getName().equals(companyDto.displayName()) && StringUtils.hasText(companyDto.displayName())) {
+            company.setDisplayName(companyDto.displayName());
+        } else {
+            company.setDisplayName(null);
+        }
         company.setPaymentAccountName(companyDto.paymentAccountName());
         company.setPaymentTerms(companyDto.paymentTerms());
         company.setIban(companyDto.iban());

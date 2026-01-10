@@ -3,6 +3,8 @@ package org.letspeppol.app.mapper;
 import org.letspeppol.app.dto.CompanyDto;
 import org.letspeppol.app.model.Company;
 
+import java.util.Objects;
+
 public class CompanyMapper {
 
     public static CompanyDto toDto(Company company, boolean peppolActive) {
@@ -10,6 +12,7 @@ public class CompanyMapper {
                 company.getPeppolId(),
                 company.getVatNumber(),
                 company.getName(),
+                Objects.requireNonNullElse(company.getDisplayName(), company.getName()),
                 company.getSubscriber(),
                 company.getSubscriberEmail(),
                 company.getPaymentTerms(),
