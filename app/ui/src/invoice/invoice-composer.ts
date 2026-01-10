@@ -178,10 +178,10 @@ export class InvoiceComposer {
                     }
                 },
                 PartyLegalEntity: {
-                    RegistrationName: 'jop',
+                    RegistrationName: undefined,
                     CompanyID: {
                         __schemeID: null,
-                        value: 'jop'
+                        value: undefined
                     }
                 }
             }
