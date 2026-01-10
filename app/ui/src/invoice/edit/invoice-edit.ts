@@ -62,6 +62,7 @@ export class InvoiceEdit {
     newCreditNote() {
         this.selectedDocumentType = DocumentType.CREDIT_NOTE;
         this.invoiceContext.newUBLDocument(DocumentType.CREDIT_NOTE);
+        this.invoiceContext.getLastInvoiceReference();
         this.showCustomerModal();
     }
 
