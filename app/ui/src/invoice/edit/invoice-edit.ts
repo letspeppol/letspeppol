@@ -62,6 +62,7 @@ export class InvoiceEdit {
     newCreditNote() {
         this.selectedDocumentType = DocumentType.CREDIT_NOTE;
         this.invoiceContext.newUBLDocument(DocumentType.CREDIT_NOTE);
+        this.invoiceContext.getLastInvoiceReference();
         this.showCustomerModal();
     }
 
@@ -316,7 +317,7 @@ export class InvoiceEdit {
                 partyIdentification[0].ID &&
                 partyIdentification[0].ID.value);
 
-        return inv && inv.BuyerReference && inv.IssueDate && (inv.DueDate || inv.PaymentTerms)
+        return inv && inv.BuyerReference && inv.IssueDate && (inv.DueDate || inv.PaymentTerms || (inv as CreditNote)?.CreditNoteTypeCode)
             && hasParty
             && hasPartyIdentificationId
             && inv.AccountingCustomerParty.Party.PartyName.Name

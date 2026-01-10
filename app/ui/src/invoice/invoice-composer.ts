@@ -66,6 +66,36 @@ export class InvoiceComposer {
         return invoice;
     }
 
+    createCreditNote(): CreditNote {
+        const creditNote = {
+            CustomizationID: "urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0",
+            ProfileID: "urn:fdc:peppol.eu:2017:poacc:billing:01:1.0",
+            ID: "",
+            IssueDate: moment().format('YYYY-MM-DD'),
+            CreditNoteTypeCode: 381,
+            Note: undefined,
+            DocumentCurrencyCode: "EUR",
+            BuyerReference: "NA",
+            AdditionalDocumentReference: undefined,
+            AccountingSupplierParty: this.getAccountingSupplierParty(),
+            AccountingCustomerParty: this.getAccountingCustomerParty(),
+            PaymentMeans : undefined,
+            PaymentTerms: undefined,
+            TaxTotal: undefined,
+            LegalMonetaryTotal: {
+                PayableAmount: {
+                    __currencyID: 'EUR',
+                    value: 0
+                }
+            },
+            CreditNoteLine: []
+        } as CreditNote;
+
+        creditNote.PaymentTerms = this.getPaymentTermsForMyCompany(DocumentType.CREDIT_NOTE);
+
+        return creditNote;
+    }
+
     getDueDateForCompany() {
         if (this.companyService.myCompany.paymentTerms) {
             return this.getDueDate(this.companyService.myCompany.paymentTerms, moment().format('YYYY-MM-DD'));
@@ -118,36 +148,6 @@ export class InvoiceComposer {
         return undefined;
     }
 
-    createCreditNote(): CreditNote {
-        const creditNote = {
-            CustomizationID: "urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0",
-            ProfileID: "urn:fdc:peppol.eu:2017:poacc:billing:01:1.0",
-            ID: "",
-            IssueDate: moment().format('YYYY-MM-DD'),
-            CreditNoteTypeCode: 381,
-            Note: undefined,
-            DocumentCurrencyCode: "EUR",
-            BuyerReference: undefined,
-            AdditionalDocumentReference: undefined,
-            AccountingSupplierParty: this.getAccountingSupplierParty(),
-            AccountingCustomerParty: this.getAccountingCustomerParty(),
-            PaymentMeans : undefined,
-            PaymentTerms: undefined,
-            TaxTotal: undefined,
-            LegalMonetaryTotal: {
-                PayableAmount: {
-                    __currencyID: 'EUR',
-                    value: 0
-                }
-            },
-            CreditNoteLine: []
-        } as CreditNote;
-
-        creditNote.PaymentTerms = this.getPaymentTermsForMyCompany(DocumentType.CREDIT_NOTE);
-
-        return creditNote;
-    }
-
     getAccountingCustomerParty(): AccountingParty {
         return {
             Party :  {
@@ -178,10 +178,10 @@ export class InvoiceComposer {
                     }
                 },
                 PartyLegalEntity: {
-                    RegistrationName: 'jop',
+                    RegistrationName: undefined,
                     CompanyID: {
                         __schemeID: null,
-                        value: 'jop'
+                        value: undefined
                     }
                 }
             }

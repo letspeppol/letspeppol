@@ -49,8 +49,10 @@ export class InvoiceContext {
             this.getLastInvoiceReference();
         }
         if (item.type === DocumentType.CREDIT_NOTE) {
+            this.selectedDocumentType = DocumentType.CREDIT_NOTE;
             this.selectedInvoice = parseCreditNote(item.ubl);
         } else {
+            this.selectedDocumentType = DocumentType.INVOICE;
             this.selectedInvoice = parseInvoice(item.ubl);
         }
         if (this.readOnly) {
