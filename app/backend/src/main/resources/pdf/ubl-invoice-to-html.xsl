@@ -303,6 +303,22 @@
     </xsl:choose>
   </xsl:template>
 
+  <!-- Map ISO country codes (IdentificationCode) to display names.
+       Fallback: return the uppercased code unchanged if not mapped. -->
+  <xsl:template name="country-code-to-name">
+    <xsl:param name="code"/>
+
+    <xsl:variable name="c" select="translate(normalize-space($code), 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')"/>
+
+    <xsl:choose>
+      <xsl:when test="$c = 'BE'">Belgium</xsl:when>
+      <xsl:when test="$c = 'NL'">Netherlands</xsl:when>
+      <xsl:when test="$c = 'FR'">France</xsl:when>
+      <xsl:when test="$c = 'DE'">Germany</xsl:when>
+      <xsl:otherwise><xsl:value-of select="$c"/></xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
   <xsl:template name="render-address">
     <xsl:param name="address"/>
 
@@ -342,7 +358,11 @@
 
           <!-- Line 3: Country IdentificationCode -->
           <xsl:if test="string-length($country) &gt; 0">
-            <div><xsl:value-of select="$country"/></div>
+            <div>
+              <xsl:call-template name="country-code-to-name">
+                <xsl:with-param name="code" select="$country"/>
+              </xsl:call-template>
+            </div>
           </xsl:if>
 
       </xsl:if>
