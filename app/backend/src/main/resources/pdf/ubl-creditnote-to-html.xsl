@@ -307,10 +307,46 @@
     <xsl:variable name="c" select="translate(normalize-space($code), 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')"/>
 
     <xsl:choose>
+      <xsl:when test="$c = 'AT'">Austria</xsl:when>
       <xsl:when test="$c = 'BE'">Belgium</xsl:when>
-      <xsl:when test="$c = 'NL'">Netherlands</xsl:when>
-      <xsl:when test="$c = 'FR'">France</xsl:when>
+      <xsl:when test="$c = 'BG'">Bulgaria</xsl:when>
+      <xsl:when test="$c = 'CH'">Switzerland</xsl:when>
+      <xsl:when test="$c = 'CY'">Cyprus</xsl:when>
+      <xsl:when test="$c = 'CZ'">Czechia</xsl:when>
       <xsl:when test="$c = 'DE'">Germany</xsl:when>
+      <xsl:when test="$c = 'DK'">Denmark</xsl:when>
+      <xsl:when test="$c = 'EE'">Estonia</xsl:when>
+      <xsl:when test="$c = 'ES'">Spain</xsl:when>
+      <xsl:when test="$c = 'FI'">Finland</xsl:when>
+      <xsl:when test="$c = 'FR'">France</xsl:when>
+      <xsl:when test="$c = 'GB'">United Kingdom</xsl:when>
+      <xsl:when test="$c = 'GR'">Greece</xsl:when>
+      <xsl:when test="$c = 'HR'">Croatia</xsl:when>
+      <xsl:when test="$c = 'HU'">Hungary</xsl:when>
+      <xsl:when test="$c = 'IE'">Ireland</xsl:when>
+      <xsl:when test="$c = 'IS'">Iceland</xsl:when>
+      <xsl:when test="$c = 'IT'">Italy</xsl:when>
+      <xsl:when test="$c = 'LI'">Liechtenstein</xsl:when>
+      <xsl:when test="$c = 'LT'">Lithuania</xsl:when>
+      <xsl:when test="$c = 'LU'">Luxembourg</xsl:when>
+      <xsl:when test="$c = 'LV'">Latvia</xsl:when>
+      <xsl:when test="$c = 'MT'">Malta</xsl:when>
+      <xsl:when test="$c = 'NL'">Netherlands</xsl:when>
+      <xsl:when test="$c = 'NO'">Norway</xsl:when>
+      <xsl:when test="$c = 'PL'">Poland</xsl:when>
+      <xsl:when test="$c = 'PT'">Portugal</xsl:when>
+      <xsl:when test="$c = 'RO'">Romania</xsl:when>
+      <xsl:when test="$c = 'SE'">Sweden</xsl:when>
+      <xsl:when test="$c = 'SI'">Slovenia</xsl:when>
+      <xsl:when test="$c = 'SK'">Slovakia</xsl:when>
+
+      <xsl:when test="$c = 'AD'">Andorra</xsl:when>
+      <xsl:when test="$c = 'MC'">Monaco</xsl:when>
+      <xsl:when test="$c = 'SM'">San Marino</xsl:when>
+      <xsl:when test="$c = 'VA'">Vatican City</xsl:when>
+      <xsl:when test="$c = 'XK'">Kosovo</xsl:when>
+      <xsl:when test="$c = 'US'">United States</xsl:when>
+
       <xsl:otherwise><xsl:value-of select="$c"/></xsl:otherwise>
     </xsl:choose>
   </xsl:template>
