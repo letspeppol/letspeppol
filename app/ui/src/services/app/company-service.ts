@@ -6,6 +6,7 @@ export interface CompanyDto {
     peppolId: string,
     vatNumber: string,
     name: string,
+    displayName: string,
     subscriber: string,
     subscriberEmail: string,
     paymentTerms: string,

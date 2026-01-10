@@ -339,7 +339,8 @@
       "type" : "Type",
       "name" : "Nom",
       "iban" : "IBAN",
-      "reference" : "Référence"
+      "reference" : "Référence",
+      "store-iban": "Enregistrer l’IBAN dans le compte"
     },
     "validationModal" : {
       "title" : "Validation",
@@ -399,6 +400,8 @@
     "change-password" : "Changer le mot de passe",
     "company-info" : "Informations société",
     "company-name" : "Nom de l'entreprise",
+    "company-legal-name": "Dénomination sociale",
+    "company-display-name": "Nom commercial",
     "peppol-registration" : "Enregistrement Peppol",
     "remove-from-peppol" : "Retirer de Peppol",
     "activate-on-peppol" : "Activer sur Peppol",

@@ -339,7 +339,8 @@
       "type": "Type",
       "name": "Name",
       "iban": "IBAN",
-      "reference": "Reference"
+      "reference": "Reference",
+      "store-iban": "Save IBAN in account"
     },
     "validationModal": {
       "title": "Validation",
@@ -399,7 +400,8 @@
     "download-contract": "Download Contract",
     "change-password": "Change Password",
     "company-info": "Company Info",
-    "company-name": "Company name",
+    "company-legal-name": "Company legal name",
+    "company-display-name": "Company display name",
     "peppol-registration": "Peppol Registration",
     "remove-from-peppol": "Remove From Peppol",
     "activate-on-peppol": "Activate On Peppol",

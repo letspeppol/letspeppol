@@ -1,3 +1,5 @@
+<import from="../../../../app/value-converters/date-format.ts"></import>
+
 <div class="composer-info">
     <div style="display: flex; flex-direction: row;" click.trigger="showDateModal()">
         <div class="card-header">
@@ -10,10 +12,10 @@
         </button>
     </div>
     <span t="invoice.dateModal.issue-date">Issue Date</span>
-    <b>${invoiceContext.selectedInvoice.IssueDate}</b>
+    <b>${invoiceContext.selectedInvoice.IssueDate | dateFormat}</b>
     <template if.bind="selectedDocumentType === 'INVOICE'">
         <span t="invoice.dateModal.due-date">Due Date</span>
-        <b>${invoiceContext.selectedInvoice.DueDate}</b>
+        <b>${invoiceContext.selectedInvoice.DueDate | dateFormat}</b>
     </template>
     <template else>
         <span t="invoice.dateModal.payment-terms">Payment Terms</span>

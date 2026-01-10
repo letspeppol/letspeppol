@@ -215,7 +215,7 @@ export class InvoiceComposer {
                         value: this.getCompanyNumber()
                     }}],
                 PartyName: {
-                    Name: this.companyService.myCompany.name
+                    Name: this.companyService.myCompany.displayName
                 },
                 PostalAddress: {
                     StreetName: this.companyService.myCompany.registeredOffice.street,

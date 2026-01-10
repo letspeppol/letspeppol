@@ -23,7 +23,7 @@ The main challenge of giving free-of-charge access to the Peppol e-invoicing net
 
 [Here is a screencast](https://drive.google.com/file/d/1HHSM9V1_2ez59vlnkL0YO3190X1uOh1j/view) that shows our fully automated business authentication in production.
 
-# Dasboard application
+# Dashboard application
 A public instance of this code will soon be available, please keep an eye on [LetsPeppol.org](https://letspeppol.org).
 
 [Here is a screencast](https://drive.google.com/file/d/1HHSM9V1_2ez59vlnkL0YO3190X1uOh1j/view?usp=drive_link) of how the application can be used to send and receive invoices via Let's Peppol.

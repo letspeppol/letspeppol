@@ -22,6 +22,7 @@
                     <label class="field required">
                         <span t="invoice.paymentModal.iban">IBAN</span>
                         <input type="text" name="payeeFinancialAccountID" placeholder="IBAN" t="[placeholder]label.iban" value.bind="paymentMeans.PayeeFinancialAccount.ID" />
+                        <button if.bind="!companyService.myCompany.iban && paymentMeans.PayeeFinancialAccount.ID.length >= 15" type="button" class="btn" click.trigger="saveIbanToAccount()" t="invoice.paymentModal.store-iban">Store IBAN in account</button>
                     </label>
                     <label class="field">
                         <span t="invoice.paymentModal.reference">Reference</span>
