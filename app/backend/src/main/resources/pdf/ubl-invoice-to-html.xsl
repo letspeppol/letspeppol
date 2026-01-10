@@ -84,8 +84,16 @@
             <xsl:if test="$renderNumber = 'true'">
               <div><span class="muted">Number: </span> <strong><xsl:value-of select="normalize-space(/*/*[local-name()='ID'][1])"/></strong></div>
             </xsl:if>
-            <div><span class="muted">Issue date: </span> <xsl:value-of select="normalize-space(/*/*[local-name()='IssueDate'][1])"/></div>
-            <div><span class="muted">Due date: </span> <xsl:value-of select="normalize-space((/*/*[local-name()='DueDate'] | /*/*[local-name()='PaymentMeans']/*[local-name()='PaymentDueDate'])[1])"/></div>
+            <div><span class="muted">Issue date: </span>
+              <xsl:call-template name="format-ubl-date">
+                <xsl:with-param name="value" select="normalize-space(/*/*[local-name()='IssueDate'][1])"/>
+              </xsl:call-template>
+            </div>
+            <div><span class="muted">Due date: </span>
+              <xsl:call-template name="format-ubl-date">
+                <xsl:with-param name="value" select="normalize-space((/*/*[local-name()='DueDate'] | /*/*[local-name()='PaymentMeans']/*[local-name()='PaymentDueDate'])[1])"/>
+              </xsl:call-template>
+            </div>
 
             <xsl:variable name="buyerReference" select="normalize-space((/*/*[local-name()='BuyerReference'])[1])"/>
             <xsl:if test="string-length($buyerReference) &gt; 0">
@@ -270,6 +278,29 @@
 
     </body>
     </html>
+  </xsl:template>
+
+  <!-- Formats UBL dates like YYYY-MM-DD (or dateTime variants) as DD-MM-YYYY.
+       If the input doesn't look like YYYY-MM-DD, it falls back to the original value. -->
+  <xsl:template name="format-ubl-date">
+    <xsl:param name="value"/>
+
+    <xsl:variable name="raw" select="normalize-space($value)"/>
+    <xsl:variable name="d" select="substring($raw, 1, 10)"/>
+
+    <xsl:choose>
+      <xsl:when test="string-length($raw) = 0"/>
+      <xsl:when test="string-length($d) = 10 and substring($d, 5, 1) = '-' and substring($d, 8, 1) = '-'">
+        <xsl:value-of select="substring($d, 9, 2)"/>
+        <xsl:text>-</xsl:text>
+        <xsl:value-of select="substring($d, 6, 2)"/>
+        <xsl:text>-</xsl:text>
+        <xsl:value-of select="substring($d, 1, 4)"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="$raw"/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <xsl:template name="render-address">
