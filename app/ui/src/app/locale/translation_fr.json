@@ -361,7 +361,8 @@
       "no-matches" : "Aucun résultat"
     },
     "edit" : {
-      "download-ubl" : "Télécharger UBL",
+      "download-ubl" : "UBL",
+      "download-pdf" : "PDF",
       "validate" : "Valider",
       "delete-draft" : "Supprimer brouillon",
       "update-draft" : "Mettre à jour le brouillon",

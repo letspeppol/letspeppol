@@ -51,6 +51,11 @@ dependencies {
     implementation 'com.helger.phive.rules:phive-rules-ubl:4.0.3'
     implementation 'com.helger:ddd:0.7.1'
 
+    // XSLT-based PDF generation
+    implementation 'com.openhtmltopdf:openhtmltopdf-core:1.0.10'
+    implementation 'com.openhtmltopdf:openhtmltopdf-pdfbox:1.0.10'
+    implementation 'com.openhtmltopdf:openhtmltopdf-slf4j:1.0.10'
+
     runtimeOnly 'com.h2database:h2'
 
     compileOnly 'org.projectlombok:lombok'
@@ -60,6 +65,9 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // Generate UBL invoices in tests
+    testImplementation 'com.helger.ubl:ph-ubl21:10.0.0'
 }
 
 tasks.named('test') {

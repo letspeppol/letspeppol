@@ -362,7 +362,8 @@
       "no-matches": "No matches"
     },
     "edit": {
-      "download-ubl": "Download UBL",
+      "download-ubl": "UBL",
+      "download-pdf": "PDF",
       "validate": "Validate",
       "delete-draft": "Delete draft",
       "update-draft": "Update draft",
