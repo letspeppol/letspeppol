@@ -23,7 +23,6 @@ class UblInvoicePdfServiceTest {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         UBL21Marshaller.invoice().write(invoiceType, byteArrayOutputStream);
 
-
         UblInvoicePdfService sut = new UblInvoicePdfService();
         byte[] pdf = sut.toPdf(byteArrayOutputStream.toString(StandardCharsets.UTF_8));
 

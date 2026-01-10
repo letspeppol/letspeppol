@@ -102,6 +102,7 @@
             <xsl:variable name="paymentAccountName" select="normalize-space((./*/*[local-name()='PaymentMeans']/*[local-name()='PayeeFinancialAccount']/*[local-name()='Name'])[1])"/>
             <xsl:variable name="paymentServiceProviderId" select="normalize-space((./*/*[local-name()='PaymentMeans']/*[local-name()='PayeeFinancialAccount']/*[local-name()='FinancialInstitutionBranch']/*[local-name()='ID'])[1])"/>
             <xsl:variable name="paymentId" select="normalize-space((./*/*[local-name()='PaymentMeans']/*[local-name()='PaymentID'])[1])"/>
+            <xsl:variable name="paymentTermsNotes" select="./*/*[local-name()='PaymentTerms']/*[local-name()='Note']"/>
 
             <strong>Payment Info</strong>
             <xsl:if test="string-length($paymentAccountId) &gt; 0">
@@ -115,6 +116,9 @@
             </xsl:if>
             <xsl:if test="string-length($paymentId) &gt; 0">
               <div><span class="muted">Ref: </span> <xsl:value-of select="$paymentId"/></div>
+            </xsl:if>
+            <xsl:if test="string-length($paymentTermsNotes) &gt; 0">
+              <div><span class="muted">Terms: </span> <xsl:value-of select="$paymentTermsNotes"/></div>
             </xsl:if>
           </td>
         </tr>
