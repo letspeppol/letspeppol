@@ -134,3 +134,27 @@ prometheus.remote_write "mimir_writer" {
     }
   }
 }
+
+prometheus.scrape "node_exporter" {
+  targets = [
+    {"__address__" = "node_exporter:9100"},
+  ]
+  scrape_interval = "15s"
+  forward_to      = [prometheus.relabel.add_server_name.receiver]
+}
+
+prometheus.scrape "cadvisor" {
+  targets = [
+    {"__address__" = "cadvisor:8080"},
+  ]
+  scrape_interval = "15s"
+  forward_to      = [prometheus.relabel.add_server_name.receiver]
+}
+
+prometheus.relabel "add_server_name" {
+  rule {
+    target_label = "server"
+    replacement  = "${HOSTNAME}"
+  }
+  forward_to = [prometheus.remote_write.mimir_writer.receiver]
+}

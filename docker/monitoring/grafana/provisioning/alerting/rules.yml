@@ -1,0 +1,13 @@
+apiVersion: 1
+
+contactPoints:
+  - orgId: 1
+    name: ops-slack
+    receivers:
+      - uid: ops-slack-receiver
+        type: slack
+        settings:
+          url: ${SLACK_WEBHOOK_URL}
+          recipient: "#ops-alerts"
+          title: '{{ template "default.title" . }}'
+          text: '{{ template "default.message" . }}'
