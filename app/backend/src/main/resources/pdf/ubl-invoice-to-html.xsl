@@ -272,7 +272,7 @@
 
       <xsl:variable name="note" select="./*/*[local-name()='Note'][1]"/>
       <xsl:if test="string-length($note) &gt; 0">
-          <strong>Note</strong>
+          <strong class="note">Note</strong>
           <span class="note"><xsl:value-of select="$note"/></span>
       </xsl:if>
 
