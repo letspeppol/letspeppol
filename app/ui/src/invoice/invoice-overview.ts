@@ -122,10 +122,15 @@ export class InvoiceOverview {
         try {
             const datePaid = moment().toISOString();
             await this.invoiceService.togglePaidDocument(item.id);
-            item.paidOn = datePaid;
-            this.ea.publish('alert', {alertType: AlertType.Success, text: "Invoice marked as paid"});
+            if (item.paidOn) {
+                item.paidOn = undefined;
+                this.ea.publish('alert', {alertType: AlertType.Success, text: "Invoice marked as unpaid"});
+            } else {
+                item.paidOn = datePaid;
+                this.ea.publish('alert', {alertType: AlertType.Success, text: "Invoice marked as paid"});
+            }
         } catch (e) {
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to mark invoice as paid"});
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to change invoice paid status"});
         }
     }
 }
