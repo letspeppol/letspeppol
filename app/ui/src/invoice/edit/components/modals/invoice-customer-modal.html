@@ -77,7 +77,7 @@
             </label>
             <button type="button" class="btn" click.trigger="closeModal()" t="[title]common.cancel" t="common.cancel">Cancel</button>
             <button type="button" class="btn primary" click.trigger="saveCustomer()" t="[title]common.confirm" t="common.confirm"
-                    disabled.bind="!customer.PartyName.Name || !customer.PartyTaxScheme.CompanyID || !peppolId || !peppolId.includes(':')">Confirm</button>
+                    disabled.bind="!customer.PartyName.Name || !customer.PartyLegalEntity.RegistrationName || !customer.PartyTaxScheme.CompanyID || !peppolId || !peppolId.includes(':')">Confirm</button>
         </footer>
     </div>
 </div>
