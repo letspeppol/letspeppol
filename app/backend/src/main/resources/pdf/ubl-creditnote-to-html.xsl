@@ -50,6 +50,11 @@
           float: left;
         }
 
+        .note-pre {
+          width: 100%;
+          white-space: pre-wrap;
+        }
+
         /* Watermark for draft/proforma */
         .watermark {
           position: fixed;
@@ -269,7 +274,7 @@
       <xsl:variable name="note" select="./*/*[local-name()='Note'][1]"/>
       <xsl:if test="string-length($note) &gt; 0">
         <strong class="note">Note</strong>
-        <span class="note"><xsl:value-of select="$note"/></span>
+        <span class="note note-pre"><xsl:value-of select="$note"/></span>
       </xsl:if>
 
     </body>
