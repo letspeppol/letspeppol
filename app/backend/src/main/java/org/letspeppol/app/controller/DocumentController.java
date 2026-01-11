@@ -10,9 +10,12 @@ import org.letspeppol.app.model.DocumentDirection;
 import org.letspeppol.app.model.DocumentType;
 import org.letspeppol.app.service.DocumentService;
 import org.letspeppol.app.service.ValidationService;
+import org.letspeppol.app.service.UblInvoicePdfService;
 import org.letspeppol.app.util.JwtUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -28,6 +31,7 @@ public class DocumentController {
 
     private final DocumentService documentService;
     private final ValidationService validationService;
+    private final UblInvoicePdfService ublInvoicePdfService;
 
     @PostMapping("validate")
     public ResponseEntity<?> validate(@RequestBody String ublXml) {
@@ -119,5 +123,20 @@ public class DocumentController {
     public void delete(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
         String peppolId = JwtUtil.getPeppolId(jwt);
         documentService.delete(peppolId, id);
+    }
+
+    @GetMapping("{id}/pdf")
+    public ResponseEntity<byte[]> getPdf(@AuthenticationPrincipal Jwt jwt,
+                                         @PathVariable UUID id,
+                                         @RequestParam(required = false, defaultValue = "FINAL") UblInvoicePdfService.RenderMode mode) { // Will be used later for proforma
+        String peppolId = JwtUtil.getPeppolId(jwt);
+        DocumentDto doc = documentService.findById(peppolId, id);
+        UblInvoicePdfService.RenderMode renderMode = doc.scheduledOn() == null ? UblInvoicePdfService.RenderMode.DRAFT : UblInvoicePdfService.RenderMode.FINAL;
+        byte[] pdf = ublInvoicePdfService.toPdf(doc.ubl(), renderMode);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"invoice-" + id + ".pdf\"")
+                .body(pdf);
     }
 }

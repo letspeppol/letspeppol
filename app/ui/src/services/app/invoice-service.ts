@@ -147,4 +147,9 @@ export class InvoiceService {
     async deleteInvoiceDraft(id: number) {
         return await this.appApi.httpClient.delete(`/sapi/invoice/draft/${id}`);
     }
+
+    async downloadPdf(id: string) {
+        return await this.appApi.httpClient.get(`/sapi/document/${id}/pdf`);
+
+    }
 }

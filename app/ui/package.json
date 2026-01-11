@@ -8,21 +8,20 @@
   },
   "license": "UNLICENSED",
   "dependencies": {
-    "@aurelia/i18n": "^2.0.0-beta.26",
-    "@aurelia/router": "^2.0.0-beta.26",
+    "@aurelia/i18n": "^2.0.0-beta.27",
+    "@aurelia/router": "^2.0.0-beta.27",
     "@types/jsonwebtoken": "^9.0.10",
     "@web-eid/web-eid-library": "^2.0.2",
-    "aurelia": "^2.0.0-beta.26",
+    "aurelia": "^2.0.0-beta.27",
     "fast-xml-parser": "^5.2.5",
     "jwt-decode": "^4.0.0",
     "lodash": "^4.17.21",
     "lucide": "^0.544.0",
-    "moment": "^2.30.1",
-    "jspdf": "3.0.2"
+    "moment": "^2.30.1"
   },
   "devDependencies": {
-    "@aurelia/testing": "^2.0.0-beta.26",
-    "@aurelia/vite-plugin": "^2.0.0-beta.26",
+    "@aurelia/testing": "^2.0.0-beta.27",
+    "@aurelia/vite-plugin": "^2.0.0-beta.27",
     "@types/node": "^22.10.2",
     "eslint": "^9.17.0",
     "globals": "^15.14.0",

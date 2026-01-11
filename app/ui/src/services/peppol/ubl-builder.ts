@@ -195,7 +195,7 @@ function buildParty(p: Party): string {
         p.PostalAddress ? buildAddress(p.PostalAddress) : '',
         buildPartyTaxScheme(p.PartyTaxScheme),
         buildPartyLegalEntity(p.PartyLegalEntity),
-        //buildContact(p.Contact), Not used
+        // buildContact(p.Contact),
         '</cac:Party>',
     ]);
 }
@@ -535,6 +535,7 @@ export function buildInvoiceXml(invoice: Invoice): string {
         textElement('cbc:IssueDate', invoice.IssueDate),
         textElement('cbc:DueDate', invoice.DueDate),
         textElement('cbc:InvoiceTypeCode', invoice.InvoiceTypeCode),
+        textElement('cbc:Note', invoice.Note),
         textElement('cbc:DocumentCurrencyCode', invoice.DocumentCurrencyCode),
         textElement('cbc:AccountingCost', invoice.AccountingCost),
         textElement('cbc:BuyerReference', invoice.BuyerReference),
@@ -559,6 +560,7 @@ export function buildCreditNoteXml(creditNote: CreditNote): string {
         textElement('cbc:ID', creditNote.ID),
         textElement('cbc:IssueDate', creditNote.IssueDate),
         textElement('cbc:CreditNoteTypeCode', creditNote.CreditNoteTypeCode),
+        textElement('cbc:Note', creditNote.Note),
         textElement('cbc:DocumentCurrencyCode', creditNote.DocumentCurrencyCode),
         textElement('cbc:AccountingCost', creditNote.AccountingCost),
         textElement('cbc:BuyerReference', creditNote.BuyerReference),

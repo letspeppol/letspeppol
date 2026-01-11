@@ -12,6 +12,7 @@ export class CompanySearch {
     @bindable searchQuery = '';
     @bindable selectCompanyFunction: (c: KycCompanyResponse) => void;
     @bindable confirmCompanyFunction: () => void;
+    @bindable onChangeFunction: () => void;
 
     async getCompanies() {
         try {
@@ -82,5 +83,11 @@ export class CompanySearch {
         }
         this.searchQuery = `${c.name}`;
         this.showSuggestions = false;
+    }
+
+    onChange(event: UIEvent) {
+        if (this.onChangeFunction) {
+            this.onChangeFunction();
+        }
     }
 }

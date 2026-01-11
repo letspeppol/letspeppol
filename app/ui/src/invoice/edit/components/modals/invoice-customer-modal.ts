@@ -10,14 +10,16 @@ import {resolve} from "@aurelia/kernel";
 import {CompanySearchService} from "../../../../services/kyc/company-search-service";
 import {AlertType} from "../../../../components/alert/alert";
 import {InvoiceContext} from "../../../invoice-context";
+import {InvoiceComposer} from "../../../invoice-composer";
 
 export class InvoiceCustomerModal {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
     private readonly companySearchService = resolve(CompanySearchService);
     private readonly partnerService = resolve(PartnerService);
+    private invoiceComposer = resolve(InvoiceComposer);
     private countryList = countryListAlpha2;
     @bindable invoiceContext: InvoiceContext;
-    @bindable customerSearch: CustomerSearch;
+    customerSearch: CustomerSearch;
     peppolId: string;
     open = false;
     saveAsPartner = false;
@@ -112,6 +114,11 @@ export class InvoiceCustomerModal {
             identifier = parts[1];
         }
         this.customer = this.toParty(c, scheme, identifier);
+        if (c.paymentTerms) {
+            this.invoiceContext.selectedInvoice.PaymentTerms = {
+                Note: this.invoiceComposer.translatePaymentTerm(c.paymentTerms)
+            };
+        }
     }
 
     private toParty(c: PartnerDto, scheme: string, identifier: string): Party {
@@ -174,6 +181,7 @@ export class InvoiceCustomerModal {
         }
         if (!this.customer.PartyName.Name) {
             this.customer.PartyName.Name = kycCompanyResponse.name;
+            this.customer.PartyLegalEntity.RegistrationName = kycCompanyResponse.name;
         }
         if (!this.customer.PostalAddress.CityName) {
             this.customer.PostalAddress.CityName = kycCompanyResponse.city;
