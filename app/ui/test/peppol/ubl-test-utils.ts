@@ -22,6 +22,7 @@ export const sampleCreditNoteXml = `
   <cbc:ID>Snippet1</cbc:ID>
   <cbc:IssueDate>2025-11-13</cbc:IssueDate>
   <cbc:CreditNoteTypeCode>381</cbc:CreditNoteTypeCode>
+  <cbc:Note>Thank you for your business</cbc:Note>
   <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
   <cbc:AccountingCost>4025:123:4343</cbc:AccountingCost>
   <cbc:BuyerReference>0150abc</cbc:BuyerReference>
@@ -83,11 +84,6 @@ export const sampleCreditNoteXml = `
         <cbc:RegistrationName>Buyer Official Name</cbc:RegistrationName>
         <cbc:CompanyID schemeID="0183">39937423947</cbc:CompanyID>
       </cac:PartyLegalEntity>
-      <cac:Contact>
-        <cbc:Name>Lisa Johnson</cbc:Name>
-        <cbc:Telephone>23434234</cbc:Telephone>
-        <cbc:ElectronicMail>lj@buyer.se</cbc:ElectronicMail>
-      </cac:Contact>
     </cac:Party>
   </cac:AccountingCustomerParty>
   <cac:AllowanceCharge>
@@ -169,6 +165,7 @@ export const sampleInvoiceXml = `
   <cbc:IssueDate>2025-11-13</cbc:IssueDate>
   <cbc:DueDate>2025-12-01</cbc:DueDate>
   <cbc:InvoiceTypeCode>380</cbc:InvoiceTypeCode>
+  <cbc:Note>Thank you for your business</cbc:Note>
   <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
   <cbc:AccountingCost>4025:123:4343</cbc:AccountingCost>
   <cbc:BuyerReference>0150abc</cbc:BuyerReference>
@@ -248,11 +245,6 @@ export const sampleInvoiceXml = `
         <cbc:RegistrationName>Buyer Official Name</cbc:RegistrationName>
         <cbc:CompanyID schemeID="0183">39937423947</cbc:CompanyID>
       </cac:PartyLegalEntity>
-      <cac:Contact>
-        <cbc:Name>Lisa Johnson</cbc:Name>
-        <cbc:Telephone>23434234</cbc:Telephone>
-        <cbc:ElectronicMail>lj@buyer.se</cbc:ElectronicMail>
-      </cac:Contact>
     </cac:Party>
   </cac:AccountingCustomerParty>
   <cac:Delivery>

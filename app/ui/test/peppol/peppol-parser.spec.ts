@@ -18,6 +18,7 @@ describe("Invoice XML round-trip", () => {
         expect(invoiceObj.IssueDate).toBe("2025-11-13");
         expect(invoiceObj.DueDate).toBe("2025-12-01");
         expect(invoiceObj.InvoiceTypeCode).toBe(380);
+        expect(invoiceObj.Note).toBe("Thank you for your business");
         expect(invoiceObj.DocumentCurrencyCode).toBe("EUR");
         expect(invoiceObj.AccountingCost).toBe("4025:123:4343");
         expect(invoiceObj.BuyerReference).toBe("0150abc");
@@ -46,9 +47,6 @@ describe("Invoice XML round-trip", () => {
         expect(customer.PartyTaxScheme?.CompanyID.value).toBe("SE4598375937");
         expect(customer.PartyLegalEntity?.RegistrationName).toBe("Buyer Official Name");
         expect(customer.PartyLegalEntity?.CompanyID.value).toBe("39937423947");
-        expect(customer.Contact?.Name).toBe("Lisa Johnson");
-        expect(customer.Contact?.Telephone).toBe("23434234");
-        expect(customer.Contact?.ElectronicMail).toBe("lj@buyer.se");
 
         // --- Delivery ---
         expect(invoiceObj.Delivery?.ActualDeliveryDate).toBe("2025-11-01");
@@ -146,6 +144,7 @@ describe("CreditNote XML round-trip", () => {
         expect(creditNoteObj.ID).toBe("Snippet1");
         expect(creditNoteObj.IssueDate).toBe("2025-11-13");
         expect(creditNoteObj.CreditNoteTypeCode).toBe(381);
+        expect(creditNoteObj.Note).toBe("Thank you for your business");
         expect(creditNoteObj.DocumentCurrencyCode).toBe("EUR");
         expect(creditNoteObj.AccountingCost).toBe("4025:123:4343");
         expect(creditNoteObj.BuyerReference).toBe("0150abc");
@@ -173,9 +172,6 @@ describe("CreditNote XML round-trip", () => {
         expect(customer.PostalAddress?.PostalZone).toBe("456 34");
         expect(customer.PartyTaxScheme?.CompanyID.value).toBe("SE4598375937");
         expect(customer.PartyLegalEntity?.CompanyID.value).toBe("39937423947");
-        expect(customer.Contact?.Name).toBe("Lisa Johnson");
-        expect(customer.Contact?.Telephone).toBe("23434234");
-        expect(customer.Contact?.ElectronicMail).toBe("lj@buyer.se");
 
         // AllowanceCharge
         const allowance = creditNoteObj.AllowanceCharge?.[0];

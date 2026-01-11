@@ -362,7 +362,8 @@
       "no-matches" : "Geen resultaten"
     },
     "edit" : {
-      "download-ubl" : "UBL downloaden",
+      "download-ubl" : "UBL",
+      "download-pdf" : "PDF",
       "validate" : "Valideren",
       "delete-draft" : "Concept verwijderen",
       "update-draft" : "Concept bijwerken",

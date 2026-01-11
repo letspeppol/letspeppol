@@ -187,7 +187,42 @@ export class InvoiceEdit {
         a.download = `${this.invoiceContext.selectedInvoice.ID}.xml`;
         document.body.appendChild(a);
         a.click();
-        
+
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    async downloadPDF() {
+        if (!this.invoiceContext.selectedDocument) {
+            this.ea.publish('alert', {alertType: AlertType.Warning, text: "No UBL data available"});
+        }
+        if (!this.readOnly) {
+            await this.saveAsDraft(false);
+        }
+        const blob = await this.invoiceService.downloadPdf(this.invoiceContext.selectedDocument.id).then(res => res.blob());
+        const url = URL.createObjectURL(blob);
+
+        let filename;
+        if (this.invoiceContext.selectedDocumentType === DocumentType.INVOICE) {
+            filename = 'invoice-';
+        } else {
+            filename = 'creditnote-';
+        }
+        if (this.invoiceContext.selectedInvoice.ID) {
+            filename += this.invoiceContext.selectedInvoice.ID;
+        } else {
+            filename += moment().format('DD-MM-YYYY');
+        }
+        if (!this.readOnly) {
+            filename += '-draft';
+        }
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${filename}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
     }

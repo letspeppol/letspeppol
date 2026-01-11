@@ -17,7 +17,7 @@ export class InvoiceCustomerModal {
     private readonly partnerService = resolve(PartnerService);
     private countryList = countryListAlpha2;
     @bindable invoiceContext: InvoiceContext;
-    @bindable customerSearch: CustomerSearch;
+    customerSearch: CustomerSearch;
     peppolId: string;
     open = false;
     saveAsPartner = false;
@@ -174,6 +174,7 @@ export class InvoiceCustomerModal {
         }
         if (!this.customer.PartyName.Name) {
             this.customer.PartyName.Name = kycCompanyResponse.name;
+            this.customer.PartyLegalEntity.RegistrationName = kycCompanyResponse.name;
         }
         if (!this.customer.PostalAddress.CityName) {
             this.customer.PostalAddress.CityName = kycCompanyResponse.city;
