@@ -154,7 +154,7 @@ prometheus.scrape "cadvisor" {
 prometheus.relabel "add_server_name" {
   rule {
     target_label = "server"
-    replacement  = "${HOSTNAME}"
+    replacement  = env("SERVER_NAME")
   }
   forward_to = [prometheus.remote_write.mimir_writer.receiver]
 }

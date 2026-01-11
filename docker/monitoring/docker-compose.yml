@@ -43,7 +43,7 @@ services:
   alloy:
     image: grafana/alloy:latest
     environment:
-      HOSTNAME: ${HOSTNAME}
+      SERVER_NAME: ${SERVER_NAME}
     volumes:
       - ./alloy/config.alloy:/etc/alloy/config.alloy
       - /var/run/docker.sock:/var/run/docker.sock
@@ -69,6 +69,7 @@ services:
     environment:
       GF_SECURITY_ADMIN_USER: ${GRAFANA_USER:-admin}
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASS:-admin}
+      GF_SERVER_ROOT_URL: https://${GRAFANA_DOMAIN}/
       DISCORD_WEBHOOK_URL: ${DISCORD_WEBHOOK_URL}
     volumes:
       - grafana_data:/var/lib/grafana
@@ -102,15 +103,17 @@ services:
       - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
 
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor:latest
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
     restart: unless-stopped
     networks:
       - observability
     volumes:
       - /:/rootfs:ro
-      - /var/run:/var/run:rw
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    command:
+      - "--docker_only=true"
 
 networks:
   observability:
