@@ -67,13 +67,17 @@ export class InvoiceDateModal {
     }
 
     private loadPossiblePaymentTerms() {
+        let selectedPaymentTerm: string = undefined;
         this.possiblePaymentTerms = [];
         for (const paymentTerm of Account.PAYMENT_TERMS) {
             const translation = this.invoiceComposer.translatePaymentTerm(paymentTerm);
             if (translation === this.invoiceContext.selectedInvoice.PaymentTerms.Note) {
-                this.selectedPaymentTerm = paymentTerm;
+                selectedPaymentTerm = paymentTerm;
             }
             this.possiblePaymentTerms.push({key: paymentTerm, translation: translation});
+        }
+        if (selectedPaymentTerm) {
+            setTimeout(() => this.selectedPaymentTerm = selectedPaymentTerm, 100);
         }
     }
 }
