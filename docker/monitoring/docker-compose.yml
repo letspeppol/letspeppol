@@ -4,9 +4,9 @@ services:
     image: minio/minio
     command: "minio server --address ':9000' --console-address ':9001' /data"
     environment:
-      - MINIO_ROOT_USER: mimir
-      - MINIO_ROOT_PASSWORD: supersecret
-      - MINIO_DEFAULT_BUCKETS: mimir
+      MINIO_ROOT_USER: mimir
+      MINIO_ROOT_PASSWORD: supersecret
+      MINIO_DEFAULT_BUCKETS: mimir
     volumes:
       - minio_data:/data
     networks:
@@ -43,7 +43,7 @@ services:
   alloy:
     image: grafana/alloy:latest
     environment:
-      - HOSTNAME=${HOSTNAME}
+      HOSTNAME: ${HOSTNAME}
     volumes:
       - ./alloy/config.alloy:/etc/alloy/config.alloy
       - /var/run/docker.sock:/var/run/docker.sock
@@ -67,9 +67,9 @@ services:
   grafana:
     image: grafana/grafana:latest
     environment:
-      - GF_SECURITY_ADMIN_USER: ${GRAFANA_USER:-admin}
-      - GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASS:-admin}
-      - DISCORD_WEBHOOK_URL: ${DISCORD_WEBHOOK_URL}
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASS:-admin}
+      DISCORD_WEBHOOK_URL: ${DISCORD_WEBHOOK_URL}
     volumes:
       - grafana_data:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning
