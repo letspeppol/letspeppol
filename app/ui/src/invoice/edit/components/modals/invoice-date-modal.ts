@@ -22,15 +22,16 @@ export class InvoiceDateModal {
     showModal() {
         this.loadPossiblePaymentTerms();
         this.issueDate = JSON.parse(JSON.stringify(this.invoiceContext.selectedInvoice.IssueDate));
-        // if (this.invoiceContext.selectedInvoice.PaymentTerms) {
-        //     this.selectedPaymentTerm = JSON.parse(JSON.stringify(this.invoiceContext.selectedInvoice.PaymentTerms));
-        // } else {
-        //     this.selectedPaymentTerm = undefined;
-        // }
+//         if (this.invoiceContext.selectedInvoice.PaymentTerms) {
+//             this.selectedPaymentTerm = JSON.parse(JSON.stringify(this.invoiceContext.selectedInvoice.PaymentTerms.Note));
+//         } else {
+//             this.selectedPaymentTerm = undefined;
+//         }
         if (this.invoiceContext.selectedInvoice.dueDate) {
             this.dueDate = JSON.parse(JSON.stringify(this.invoiceContext.selectedInvoice.dueDate));
         } else {
             this.dueDate = undefined;
+            this.recalculateDueDate();
         }
         this.open = true;
     }
@@ -69,7 +70,7 @@ export class InvoiceDateModal {
         this.possiblePaymentTerms = [];
         for (const paymentTerm of Account.PAYMENT_TERMS) {
             const translation = this.invoiceComposer.translatePaymentTerm(paymentTerm);
-            if (translation === this.invoiceContext.selectedInvoice.PaymentTerms) {
+            if (translation === this.invoiceContext.selectedInvoice.PaymentTerms.Note) {
                 this.selectedPaymentTerm = paymentTerm;
             }
             this.possiblePaymentTerms.push({key: paymentTerm, translation: translation});
