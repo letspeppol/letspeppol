@@ -2,6 +2,7 @@ package org.letspeppol.app.service;
 
 import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.app.dto.*;
 import org.letspeppol.app.exception.*;
 import org.letspeppol.app.exception.SecurityException;
@@ -35,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @RequiredArgsConstructor
 @Transactional
 @Service
@@ -69,6 +71,10 @@ public class DocumentService {
                 throw new SecurityException(AppErrorCodes.PEPPOL_ID_MISMATCH);
             }
             if (documentDirection == DocumentDirection.INCOMING && !peppolId.equals(ublDto.receiverPeppolId())) {
+                if (peppolId.equals(ublDto.receiverPeppolId().replace("9925:BE", "0208:"))) { //TODO : fix this madness, why is Peppol allowing documents to PeppolID that was not registered ?
+                    log.warn("The user {} received a Peppol document for {} but will be allowed", peppolId, ublDto.receiverPeppolId());
+                    return ublDto;
+                }
                 throw new SecurityException(AppErrorCodes.PEPPOL_ID_MISMATCH);
             }
             return ublDto;
@@ -372,8 +378,12 @@ public class DocumentService {
 
         List<UUID> ids = new ArrayList<>();
         for (UblDocumentDto ublDocumentDto : ublDocumentDtos) {
-            create(ublDocumentDto); //TODO : Could be new NotFoundException, does that make sense ?
-            ids.add(ublDocumentDto.id());
+            try {
+                create(ublDocumentDto); //TODO : Could be new NotFoundException, does that make sense ?
+                ids.add(ublDocumentDto.id());
+            } catch (SecurityException e) {
+                log.error("Could not save received document to database", e);
+            }
         }
 
         proxyWebClient.put()
