@@ -166,6 +166,16 @@
     --radial-teal: rgb(20 184 166 / 8%);
     --table-row-alt: color-mix(in hsl, var(--panel) 92%, transparent);
     --table-row-hover: color-mix(in hsl, var(--panel) 88%, transparent);
+    /* Pills */
+    --pill-invoice-fg: #93c5fd;
+    --pill-invoice-bg: #1e293b;
+    --pill-invoice-border: #334155;
+    --pill-incoming-fg: #5eead4;
+    --pill-incoming-bg: #022c2a;
+    --pill-incoming-border: #134e4a;
+    --pill-error-fg: #fca5a5;
+    --pill-error-bg: #2a0f0f;
+    --pill-error-border: #7f1d1d;
 }
 
 :root[data-theme="light"] {
