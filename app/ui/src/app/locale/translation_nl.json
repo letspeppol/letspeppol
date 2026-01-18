@@ -33,7 +33,6 @@
     "customer" : "Klant",
     "supplier" : "Leverancier",
     "invoice-number" : "Factuurnummer",
-    "buyer-reference" : "Referentie koper",
     "note-optional" : "Notitie (optioneel)",
     "issue-date" : "Uitgiftedatum",
     "due-date" : "Vervaldatum",
@@ -100,9 +99,9 @@
       "login": "Log in op uw account."
     },
     "check-title": "Controleer uw Web eID-installatie",
-    "check": "Web eID controleren",
-    "anim-caption-sign": "Steek uw eID-kaart in en druk op bevestigen om de installatie te verifiëren.",
-    "anim-reader-label": "LEZER"
+    "check" : "Web eID controleren",
+    "anim-caption-sign" : "Steek uw eID-kaart in en druk op bevestigen om de installatie te verifiëren.",
+    "anim-reader-label" : "LEZER"
   },
   "registration" : {
     "title-step0" : "Registreer uw bedrijf",
@@ -115,7 +114,7 @@
     "title-step2" : "Account verificatie",
     "instructions-intro": "We hebben u een bevestigingsmail gestuurd van kyc@letspeppol.org. Controleer ook uw spamfolder.",
     "instructions-onboarding": "Voordat u verdergaat, doorloop de onboarding-checklist om Web eID in te stellen.",
-    "instructions-go-checklist": "Ga naar de checklist",
+    "instructions-go-checklist" : "Ga naar de checklist",
     "instructions-finally": "<b>Tot slot</b>, open de bevestigingsmail en klik op de verificatielink."
   },
   "error" : {
@@ -289,6 +288,8 @@
     "customer" : "Klant",
     "supplier": "Leverancier",
     "partner": "Partner",
+    "buyer-reference" : "Referentie koper",
+    "order-reference" : "Orderreferentie",
     "new" : {
       "INVOICE" : "Nieuwe factuur",
       "CREDIT_NOTE" : "Nieuwe creditnota"
@@ -325,8 +326,10 @@
       "document" : "Document",
       "invoice-number" : "Factuurnummer",
       "buyer-reference" : "Referentie koper",
+      "order-reference" : "Orderreferentie",
       "note-optional" : "Notitie (optioneel)",
-      "note-placeholder" : "Extra notities voor deze factuur"
+      "note-placeholder" : "Extra notities voor deze factuur",
+      "reference-required" : "Referentie koper OF orderreferentie is verplicht"
     },
     "dateModal" : {
       "title" : "Datum",
