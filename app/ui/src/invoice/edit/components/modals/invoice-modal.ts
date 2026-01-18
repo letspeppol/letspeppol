@@ -13,6 +13,7 @@ export class InvoiceModal {
     id: string;
     selectedDocumentType: DocumentType;
     buyerReference: string;
+    orderReference: string;
     note: string;
 
     showModal() {
@@ -38,7 +39,7 @@ export class InvoiceModal {
     }
 
     saveInvoiceInfo() {
-        if (!this.buyerReference) {
+        if (!this.buyerReference && !this.orderReference) {
             return;
         }
         this.open = false;
@@ -52,6 +53,11 @@ export class InvoiceModal {
         }
         this.invoiceContext.selectedInvoice.ID = this.id;
         this.invoiceContext.selectedInvoice.BuyerReference = this.buyerReference;
+        if (this.orderReference) {
+            this.invoiceContext.selectedInvoice.OrderReference = {ID: this.orderReference};
+        } else {
+            this.invoiceContext.selectedInvoice.OrderReference = undefined;
+        }
         this.invoiceContext.selectedInvoice.Note = this.note;
         console.log(this.originalDocumentType);
     }

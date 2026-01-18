@@ -21,6 +21,7 @@ import type {
     Item,
     MonetaryTotal,
     OrderLineReference,
+    OrderReference,
     Party,
     PartyIdentification,
     PartyLegalEntity,
@@ -82,6 +83,19 @@ function buildAmount(tag: string, a?: Amount): string {
     if (!a) return '';
     const attrs = attr('currencyID', a.__currencyID);
     return textElement(tag, a.value, attrs);
+}
+
+function buildOrderReference(or?: OrderReference): string {
+    if (!or) return '';
+    const hasId = typeof or.ID === 'string' && or.ID.trim() !== '';
+    const hasSalesOrderId = typeof or.SalesOrderID === 'string' && or.SalesOrderID.trim() !== '';
+    if (!hasId && !hasSalesOrderId) return '';
+    return joinNonEmpty([
+        '<cac:OrderReference>',
+        textElement('cbc:ID', hasId ? or.ID : undefined),
+        textElement('cbc:SalesOrderID', hasSalesOrderId ? or.SalesOrderID : undefined),
+        '</cac:OrderReference>',
+    ]);
 }
 
 // --- Root namespace constants ---------------------------------------------
@@ -152,17 +166,6 @@ function buildPartyLegalEntity(p?: PartyLegalEntity): string {
         textElement('cbc:RegistrationName', p.RegistrationName),
         p.CompanyID ? buildIdentifier('cbc:CompanyID', p.CompanyID) : '',
         '</cac:PartyLegalEntity>',
-    ]);
-}
-
-function buildContact(c?: { Name?: string; Telephone?: string; ElectronicMail?: string }): string {
-    if (!c) return '';
-    return joinNonEmpty([
-        '<cac:Contact>',
-        textElement('cbc:Name', c.Name),
-        textElement('cbc:Telephone', c.Telephone),
-        textElement('cbc:ElectronicMail', c.ElectronicMail),
-        '</cac:Contact>',
     ]);
 }
 
@@ -539,6 +542,7 @@ export function buildInvoiceXml(invoice: Invoice): string {
         textElement('cbc:DocumentCurrencyCode', invoice.DocumentCurrencyCode),
         textElement('cbc:AccountingCost', invoice.AccountingCost),
         textElement('cbc:BuyerReference', invoice.BuyerReference),
+        buildOrderReference(invoice.OrderReference),
         buildAdditionalDocumentReference(invoice.AdditionalDocumentReference),
         buildAccountingParty('cac:AccountingSupplierParty', invoice.AccountingSupplierParty),
         buildAccountingParty('cac:AccountingCustomerParty', invoice.AccountingCustomerParty),
@@ -564,6 +568,7 @@ export function buildCreditNoteXml(creditNote: CreditNote): string {
         textElement('cbc:DocumentCurrencyCode', creditNote.DocumentCurrencyCode),
         textElement('cbc:AccountingCost', creditNote.AccountingCost),
         textElement('cbc:BuyerReference', creditNote.BuyerReference),
+        buildOrderReference(creditNote.OrderReference),
         buildAccountingParty('cac:AccountingSupplierParty', creditNote.AccountingSupplierParty),
         buildAccountingParty('cac:AccountingCustomerParty', creditNote.AccountingCustomerParty),
         buildAllowanceCharge(creditNote.AllowanceCharge),

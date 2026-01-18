@@ -61,6 +61,7 @@ export interface UBLBase {
     DocumentCurrencyCode?: string;
     AccountingCost?: string;
     BuyerReference?: string;
+    OrderReference?: OrderReference;
     BillingReference: BillingReference[];
     AccountingSupplierParty: AccountingParty;
     AccountingCustomerParty: AccountingParty;
@@ -78,6 +79,11 @@ export interface UBLBaseLine {
     OrderLineReference?: OrderLineReference;
     Item: Item;
     Price: Price;
+}
+
+export interface OrderReference {
+    ID: string,
+    SalesOrderID?: string,
 }
 
 export interface Identifier {

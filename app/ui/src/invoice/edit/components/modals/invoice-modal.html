@@ -7,7 +7,7 @@
         </header>
         <div class="modal-body">
             <div style="display: inline-grid; gap: var(--space-1)">
-                <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-09);">
+                <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-09);">
                     <label class="field" >
                         <span t="invoice.modal.document">Document</span>
                         <select name="documentType" value.bind="selectedDocumentType" required>
@@ -20,9 +20,13 @@
                         <span t="invoice.modal.invoice-number">Invoice number</span>
                         <input id="docNumber" type="text" name="docNumber" placeholder.bind="selectedDocumentType === 'INVOICE' ? 'INV-2025-0001' : 'CRE-2025-0001'" value.bind="id" keydown.trigger="onKeyDown($event)" required />
                     </label>
-                    <label class="field required">
-                        <span t="invoice.modal.buyer-reference">Buyer Reference</span>
-                        <input type="text" name="reference" placeholder="PO-12345" value.bind="buyerReference" keydown.trigger="onKeyDown($event)" required />
+                    <label class="field">
+                        <span t="invoice.buyer-reference">Buyer Reference</span>
+                        <input type="text" name="reference" value.bind="buyerReference" keydown.trigger="onKeyDown($event)" required />
+                    </label>
+                    <label class="field">
+                        <span t="invoice.order-reference">Order Reference</span>
+                        <input type="text" name="reference" value.bind="orderReference" keydown.trigger="onKeyDown($event)" required />
                     </label>
                     <label class="field full">
                         <details>
@@ -34,8 +38,9 @@
             </div>
         </div>
         <footer class="modal-footer">
+            <small class="modal-footer-info" t="invoice.modal.reference-required">Either buyer reference OR order reference is required</small>
             <button type="button" class="btn" click.trigger="closeModal()" title="Cancel" t="[title]common.cancel" t="common.cancel">Cancel</button>
-            <button type="button" class="btn primary" click.trigger="saveInvoiceInfo()" disabled.bind="!buyerReference" title="Confirm" t="[title]common.confirm" t="common.confirm">Confirm</button>
+            <button type="button" class="btn primary" click.trigger="saveInvoiceInfo()" disabled.bind="!buyerReference && !orderReference" title="Confirm" t="[title]common.confirm" t="common.confirm">Confirm</button>
         </footer>
     </div>
 </div>
