@@ -964,6 +964,7 @@ main.container .data-table tbody td {
 .modal-footer {
     display: flex;
     justify-content: flex-end;
+    align-items: center;
     gap: var(--space-05);
     padding: var(--space-075) var(--space-1) var(--space-1);
     border-top: 1px dashed var(--border-soft);
@@ -1018,6 +1019,7 @@ main.container .data-table tbody td {
     min-width: var(--total-min);
 }
 
+.modal-footer-info,
 .total-display span,
 .composer-info span {
     color: var(--muted);
