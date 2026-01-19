@@ -296,6 +296,7 @@ export class InvoiceEdit {
     @computed({
         deps: [
             'invoiceContext.selectedInvoice.BuyerReference',
+            'invoiceContext.selectedInvoice.OrderReference.ID',
             'invoiceContext.selectedInvoice.IssueDate',
             'invoiceContext.selectedInvoice.DueDate',
             'invoiceContext.selectedInvoice.PaymentTerms',
@@ -317,7 +318,7 @@ export class InvoiceEdit {
                 partyIdentification[0].ID &&
                 partyIdentification[0].ID.value);
 
-        return inv && inv.BuyerReference && inv.IssueDate && (inv.DueDate || inv.PaymentTerms || (inv as CreditNote)?.CreditNoteTypeCode)
+        return inv && (inv.BuyerReference || inv?.OrderReference?.ID) && inv.IssueDate && (inv.DueDate || inv.PaymentTerms || (inv as CreditNote)?.CreditNoteTypeCode)
             && hasParty
             && hasPartyIdentificationId
             && inv.AccountingCustomerParty.Party.PartyName.Name

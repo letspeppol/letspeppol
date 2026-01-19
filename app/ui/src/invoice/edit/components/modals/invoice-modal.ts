@@ -19,7 +19,9 @@ export class InvoiceModal {
     showModal() {
         this.selectedDocumentType = JSON.parse(JSON.stringify(this.originalDocumentType));
         this.id = undefined;
-        this.buyerReference = "NA";
+        if (this.invoiceContext.selectedInvoice.BuyerReference) {
+            this.buyerReference = JSON.parse(JSON.stringify(this.invoiceContext.selectedInvoice.BuyerReference));
+        }
         this.note = undefined;
         if (this.invoiceContext.selectedInvoice.ID) {
             this.id = JSON.parse(JSON.stringify(this.invoiceContext.selectedInvoice.ID));
