@@ -1,0 +1,3 @@
+ALTER TABLE account ADD COLUMN type varchar(15) DEFAULT 'USER' NOT NULL;
+ALTER TABLE company ALTER COLUMN peppol_id varchar(255) UNIQUE DEFAULT NULL;
+

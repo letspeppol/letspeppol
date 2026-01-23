@@ -64,5 +64,23 @@ public class DataInitializer implements CommandLineRunner {
             accountRepository.save(account);
             log.info("Seeded sample company {}", companyNumber);
         }
+        UUID appUUID = UUID.fromString("b095630d-1bf3-4250-bf9e-2d49e6ce505b");
+        if (accountRepository.findByExternalId(appUUID).isEmpty()) {
+            Company c = companyRepository.search("BE1029545627", null, null, null).stream()
+                    .findFirst()
+                    .orElseGet(() -> {
+                        Company company = new Company(null, "BE1029545627", "Barge VZW");
+                        companyRepository.save(company);
+                        return company;
+                    });
+            Account account = Account.builder()
+                    .company(c)
+                    .name("be.letspeppol.org App")
+                    .passwordHash(passwordEncoder.encode("letspeppol"))
+                    .externalId(appUUID)
+                    .build();
+            accountRepository.save(account);
+            log.info("Seeded App account");
+        }
     }
 }

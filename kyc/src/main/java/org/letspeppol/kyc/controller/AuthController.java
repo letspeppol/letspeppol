@@ -4,8 +4,8 @@ import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.kyc.model.Account;
-import org.letspeppol.kyc.service.JwtService;
 import org.letspeppol.kyc.service.AccountService;
+import org.letspeppol.kyc.service.JwtService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +50,7 @@ public class AuthController {
         Account account = accountService.findAccountWithCredentials(email, password);
 
         String token = jwtService.generateToken(
+                account.getType(),
                 account.getCompany().getPeppolId(),
                 account.getCompany().isPeppolActive(),
                 account.getExternalId()
@@ -58,4 +59,35 @@ public class AuthController {
 
         return ResponseEntity.ok(token);
     }
+
+    @PostMapping("/auth/app")
+    public ResponseEntity<String> authApp(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Basic ")) {
+            authenticationCounterFailure.increment();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing or invalid Authorization header");
+        }
+
+        String base64Credentials = authHeader.substring("Basic ".length()).trim();
+        byte[] credDecoded = Base64.getDecoder().decode(base64Credentials.getBytes(StandardCharsets.UTF_8));
+        String credentials = new String(credDecoded, StandardCharsets.UTF_8);
+
+        final String[] values = credentials.split(":", 2);
+        if (values.length != 2) {
+            authenticationCounterFailure.increment();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Basic authentication format");
+        }
+        String externalId = values[0];
+        String password = values[1];
+        Account account = accountService.findAppAccountWithCredentials(externalId, password);
+        String token = jwtService.generateToken(
+                account.getType(),
+                account.getCompany().getPeppolId(),
+                account.getCompany().isPeppolActive(),
+                account.getExternalId()
+        );
+        authenticationCounterSuccess.increment();
+
+        return ResponseEntity.ok(token);
+    }
+
 }

@@ -48,6 +48,7 @@ public class DocumentService {
     private final DocumentRepository documentRepository;
     private final BackupService backupService;
     private final ValidationService validationService;
+    private final NotificationService notificationService;
     @Qualifier("proxyWebClient")
     private final WebClient proxyWebClient;
     private final Counter documentBackupCounter;
@@ -117,7 +118,7 @@ public class DocumentService {
 
     public void synchronize(String peppolId, String tokenValue) throws InterruptedException {
         companyRepository.findByPeppolId(peppolId).ifPresent(company -> {
-            synchronizeNewDocuments(peppolId, tokenValue);
+            synchronizeNewDocuments(tokenValue);
             synchronizeDocuments(peppolId, tokenValue);
         });
     }
@@ -198,6 +199,11 @@ public class DocumentService {
         documentCreateCounter.increment();
         backupService.backupFile(document);
         documentBackupCounter.increment();
+
+        if (DocumentDirection.INCOMING.equals(document.getDirection()) && company.isEnableEmailNotification()) {
+            notificationService.notifyIncomingDocument(company, document);
+        }
+
 //        return DocumentMapper.toDto(document); //TODO : do we need to return something or are we only going to use this for received documents ?
     }
 
@@ -361,7 +367,7 @@ public class DocumentService {
         return documentRepository.save(document);
     }
 
-    private void synchronizeNewDocuments(String peppolId, String tokenValue) {
+    private void synchronizeNewDocuments(String tokenValue) {
         //TODO : record Page<T>(List<T> results, Integer total, Integer page, Integer size) {}
         //and use :
         //.bodyToMono(new ParameterizedTypeReference<Page<UblDocumentDto>>() {})

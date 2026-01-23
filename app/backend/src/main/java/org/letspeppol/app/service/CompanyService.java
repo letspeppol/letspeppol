@@ -75,6 +75,9 @@ public class CompanyService {
         company.setPaymentAccountName(companyDto.paymentAccountName());
         company.setPaymentTerms(companyDto.paymentTerms());
         company.setIban(companyDto.iban());
+        company.setEnableEmailNotification(companyDto.enableEmailNotification());
+        company.setAddAttachmentToNotification(companyDto.addAttachmentToNotification());
+        company.setEmailNotificationCcList(companyDto.emailNotificationCCList());
         // TODO        company.setNoArchive(companyDto.noArchive());
         company.getRegisteredOffice().setCity(companyDto.registeredOffice().city());
         company.getRegisteredOffice().setPostalCode(companyDto.registeredOffice().postalCode());
