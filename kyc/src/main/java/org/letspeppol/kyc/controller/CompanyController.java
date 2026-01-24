@@ -69,6 +69,7 @@ public class CompanyController {
                 return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("Access Point registration failed; state unchanged.");
             }
             String token = jwtService.generateToken(
+                    Account.Type.USER,
                     jwtInfo.peppolId(),
                     registrationResponse.peppolActive(),
                     jwtInfo.uid()
@@ -100,6 +101,7 @@ public class CompanyController {
             return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("Access Point unregistration failed; state unchanged.");
         }
         String token = jwtService.generateToken(
+                Account.Type.USER,
                 jwtInfo.peppolId(),
                 peppolActive,
                 jwtInfo.uid()
