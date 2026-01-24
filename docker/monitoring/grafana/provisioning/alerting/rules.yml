@@ -103,7 +103,7 @@ groups:
               model:
                 editorMode: code
                 expr: |-
-                    (time() - container_last_seen{container_label_com_docker_compose_service="adminer"} > 180)
+                    (time() - container_last_seen{container_label_com_docker_compose_service="adminer"} > bool 180)
                     or absent(container_last_seen{container_label_com_docker_compose_service="adminer"})
                 instant: true
                 intervalMs: 1000
@@ -167,8 +167,7 @@ groups:
           execErrState: Error
           for: 5m
           keepFiringFor: 10m
-          annotations:
-            summary: Adminer is down on {{ $labels.server }}
+          annotations: {}
           labels:
             severity: critical
           isPaused: false
@@ -186,7 +185,7 @@ groups:
               model:
                 editorMode: code
                 expr: |-
-                    (time() - container_last_seen{container_label_com_docker_compose_service="mimir"} > 180)
+                    (time() - container_last_seen{container_label_com_docker_compose_service="mimir"} > bool 180)
                     or absent(container_last_seen{container_label_com_docker_compose_service="mimir"})
                 instant: true
                 intervalMs: 1000
@@ -250,8 +249,7 @@ groups:
           execErrState: Error
           for: 5m
           keepFiringFor: 10m
-          annotations:
-            summary: Mimir is down on {{ $labels.server }}
+          annotations: {}
           labels:
             severity: critical
           isPaused: false
@@ -269,7 +267,7 @@ groups:
               model:
                 editorMode: code
                 expr: |-
-                    (time() - container_last_seen{container_label_com_docker_compose_service="app"} > 180)
+                    (time() - container_last_seen{container_label_com_docker_compose_service="app"} > bool 180)
                     or absent(container_last_seen{container_label_com_docker_compose_service="app"})
                 instant: true
                 intervalMs: 1000
@@ -334,8 +332,7 @@ groups:
           execErrState: Error
           for: 5m
           keepFiringFor: 10m
-          annotations:
-            summary: App is down on {{ $labels.server }}
+          annotations: {}
           labels:
             severity: critical
           isPaused: false
@@ -353,7 +350,7 @@ groups:
               model:
                 editorMode: code
                 expr: |-
-                    (time() - container_last_seen{container_label_com_docker_compose_service="kyc"} > 180)
+                    (time() - container_last_seen{container_label_com_docker_compose_service="kyc"} > bool 180)
                     or absent(container_last_seen{container_label_com_docker_compose_service="kyc"})
                 instant: true
                 intervalMs: 1000
@@ -418,8 +415,7 @@ groups:
           execErrState: Error
           for: 5m
           keepFiringFor: 10m
-          annotations:
-            summary: KYC is down on {{ $labels.server }}
+          annotations: {}
           labels:
             severity: critical
           isPaused: false
@@ -437,7 +433,7 @@ groups:
               model:
                 editorMode: code
                 expr: |-
-                    (time() - container_last_seen{container_label_com_docker_compose_service="alloy"} > 180)
+                    (time() - container_last_seen{container_label_com_docker_compose_service="alloy"} > bool 180)
                     or absent(container_last_seen{container_label_com_docker_compose_service="alloy"})
                 instant: true
                 intervalMs: 1000
@@ -502,8 +498,7 @@ groups:
           execErrState: Error
           for: 5m
           keepFiringFor: 10m
-          annotations:
-            summary: Alloy is down on {{ $labels.server }}
+          annotations: {}
           labels:
             severity: critical
           isPaused: false
@@ -521,7 +516,7 @@ groups:
               model:
                 editorMode: code
                 expr: |-
-                    (time() - container_last_seen{container_label_com_docker_compose_service="loki"} > 180)
+                    (time() - container_last_seen{container_label_com_docker_compose_service="loki"} > bool 180)
                     or absent(container_last_seen{container_label_com_docker_compose_service="loki"})
                 instant: true
                 intervalMs: 1000
@@ -586,8 +581,7 @@ groups:
           execErrState: Error
           for: 5m
           keepFiringFor: 10m
-          annotations:
-            summary: Loki is down on {{ $labels.server }}
+          annotations: {}
           labels:
             severity: critical
           isPaused: false
@@ -605,7 +599,7 @@ groups:
               model:
                 editorMode: code
                 expr: |-
-                    (time() - container_last_seen{container_label_com_docker_compose_service="db"} > 180)
+                    (time() - container_last_seen{container_label_com_docker_compose_service="db"} > bool 180)
                     or absent(container_last_seen{container_label_com_docker_compose_service="db"})
                 instant: true
                 intervalMs: 1000
@@ -670,8 +664,7 @@ groups:
           execErrState: Error
           for: 5m
           keepFiringFor: 10m
-          annotations:
-            summary: Db is down on {{ $labels.server }}
+          annotations: {}
           labels:
             severity: critical
           isPaused: false
@@ -689,7 +682,7 @@ groups:
               model:
                 editorMode: code
                 expr: |-
-                    (time() - container_last_seen{container_label_com_docker_compose_service="proxy"} > 180)
+                    (time() - container_last_seen{container_label_com_docker_compose_service="proxy"} > bool 180)
                     or absent(container_last_seen{container_label_com_docker_compose_service="proxy"})
                 instant: true
                 intervalMs: 1000
@@ -754,8 +747,7 @@ groups:
           execErrState: Error
           for: 5m
           keepFiringFor: 10m
-          annotations:
-            summary: Proxy is down on {{ $labels.server }}
+          annotations: {}
           labels:
             severity: critical
           isPaused: false
@@ -773,7 +765,7 @@ groups:
               model:
                 editorMode: code
                 expr: |-
-                    (time() - container_last_seen{container_label_com_docker_compose_service="grafana"} > 180)
+                    (time() - container_last_seen{container_label_com_docker_compose_service="grafana"} > bool 180)
                     or absent(container_last_seen{container_label_com_docker_compose_service="grafana"})
                 instant: true
                 intervalMs: 1000
@@ -838,8 +830,7 @@ groups:
           execErrState: Error
           for: 5m
           keepFiringFor: 10m
-          annotations:
-            summary: Grafana is down on {{ $labels.server }}
+          annotations: {}
           labels:
             severity: critical
           isPaused: false
@@ -857,7 +848,7 @@ groups:
               model:
                 editorMode: code
                 expr: |-
-                    (time() - container_last_seen{container_label_com_docker_compose_service="backup"} > 180)
+                    (time() - container_last_seen{container_label_com_docker_compose_service="backup"} > bool 180)
                     or absent(container_last_seen{container_label_com_docker_compose_service="backup"})
                 instant: true
                 intervalMs: 1000
@@ -922,8 +913,7 @@ groups:
           execErrState: Error
           for: 5m
           keepFiringFor: 10m
-          annotations:
-            summary: Backup is down on {{ $labels.server }}
+          annotations: {}
           labels:
             severity: critical
           isPaused: false
@@ -941,8 +931,8 @@ groups:
               model:
                 editorMode: code
                 expr: |-
-                    (time() - container_last_seen{container_label_com_docker_compose_service="adminer"} > 180)
-                    or absent(container_last_seen{container_label_com_docker_compose_service="adminer"})
+                    (time() - container_last_seen{container_label_com_docker_compose_service="cadvisor"} > bool 180)
+                    or absent(container_last_seen{container_label_com_docker_compose_service="cadvisor"})
                 instant: true
                 intervalMs: 1000
                 legendFormat: __auto
@@ -1006,8 +996,7 @@ groups:
           execErrState: Error
           for: 5m
           keepFiringFor: 10m
-          annotations:
-            summary: Cadvisor is down on {{ $labels.server }}
+          annotations: {}
           labels:
             severity: critical
           isPaused: false
@@ -1025,7 +1014,7 @@ groups:
               model:
                 editorMode: code
                 expr: |-
-                    (time() - container_last_seen{container_label_com_docker_compose_service="node_exporter"} > 180)
+                    (time() - container_last_seen{container_label_com_docker_compose_service="node_exporter"} > bool 180)
                     or absent(container_last_seen{container_label_com_docker_compose_service="node_exporter"})
                 instant: true
                 intervalMs: 1000
@@ -1090,8 +1079,7 @@ groups:
           execErrState: Error
           for: 5m
           keepFiringFor: 10m
-          annotations:
-            summary: Node exporter is down on {{ $labels.server }}
+          annotations: {}
           labels:
             severity: critical
           isPaused: false
