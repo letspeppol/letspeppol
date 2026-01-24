@@ -37,13 +37,13 @@ public class AppController {
 
     @GetMapping()
     public List<UblDocumentDto> getAllNew(@AuthenticationPrincipal Jwt jwt, @RequestParam(defaultValue = DEFAULT_SIZE) int size) {
-        String peppolId = JwtUtil.getPeppolId(jwt);
+        String peppolId = JwtUtil.getUserPeppolId(jwt);
         return ublDocumentReceiverService.findAllNew(peppolId, size);
     }
 
     @PostMapping("status")
     public List<UblDocumentDto> getStatusUpdates(@AuthenticationPrincipal Jwt jwt, @RequestBody List<UUID> ids) {
-        String peppolId = JwtUtil.getPeppolId(jwt);
+        String peppolId = JwtUtil.getUserPeppolId(jwt);
         return ublDocumentService.findByIds(ids, peppolId);
     }
 
@@ -65,7 +65,7 @@ public class AppController {
 
     @GetMapping("{id}")
     public UblDocumentDto getById(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
-        String peppolId = JwtUtil.getPeppolId(jwt);
+        String peppolId = JwtUtil.getUserPeppolId(jwt);
         return ublDocumentService.findById(id, peppolId);
     }
 
@@ -89,27 +89,27 @@ public class AppController {
 
     @PutMapping("{id}/downloaded")
     public ResponseEntity<Object> downloaded(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestParam(defaultValue = "false") boolean noArchive) {
-        String peppolId = JwtUtil.getPeppolId(jwt);
+        String peppolId = JwtUtil.getUserPeppolId(jwt);
         ublDocumentReceiverService.downloaded(List.of(id), peppolId, noArchive);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PutMapping("downloaded")
     public ResponseEntity<Object> downloadedBatch(@AuthenticationPrincipal Jwt jwt, @RequestBody List<UUID> ids, @RequestParam(defaultValue = "false") boolean noArchive) {
-        String peppolId = JwtUtil.getPeppolId(jwt);
+        String peppolId = JwtUtil.getUserPeppolId(jwt);
         ublDocumentReceiverService.downloaded(ids, peppolId, noArchive);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<Object> delete(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestParam(defaultValue = "false") boolean noArchive) {
-        String peppolId = JwtUtil.getPeppolId(jwt);
+        String peppolId = JwtUtil.getUserPeppolId(jwt);
         ublDocumentSenderService.cancel(id, peppolId, noArchive);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     private void validateSender(Jwt jwt, UblDocumentDto ublDocumentDto) throws SecurityException {
-        String peppolId = JwtUtil.getPeppolId(jwt);
+        String peppolId = JwtUtil.getUserPeppolId(jwt);
         if (!ublDocumentDto.ownerPeppolId().equals(peppolId)) {
             log.error("Peppol ID {} not the owner {} of document {}", peppolId, ublDocumentDto.ownerPeppolId(), ublDocumentDto.id());
             throw new SecurityException("Peppol ID not the owner");

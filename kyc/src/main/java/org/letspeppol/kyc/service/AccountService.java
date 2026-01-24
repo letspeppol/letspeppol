@@ -38,7 +38,7 @@ public class AccountService {
         return account;
     }
 
-    public Account findAppAccountWithCredentials(String externalId, String password) {
+    public Account findAppAccountWithCredentials(String externalId, String password) { //TODO : why ?
         Account account = accountRepository.findByExternalId(UUID.fromString(externalId)).orElseThrow(() -> {
             authenticationCounterFailure.increment();
             return new NotFoundException(KycErrorCodes.ACCOUNT_NOT_FOUND);

@@ -21,12 +21,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Account {
 
-    public enum Type {
-        USER,
-        APP,
-        ACCOUNTANT
-    }
-
     public Account() {
         this.externalId = UUID.randomUUID();
     }
@@ -37,7 +31,7 @@ public class Account {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private Type type;
+    private AccountType type;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "company_id", nullable = false)

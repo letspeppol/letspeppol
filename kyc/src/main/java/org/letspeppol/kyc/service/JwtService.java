@@ -7,7 +7,7 @@ import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.KycException;
-import org.letspeppol.kyc.model.Account;
+import org.letspeppol.kyc.model.AccountType;
 import org.letspeppol.kyc.service.jwt.JwtInfo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -33,11 +33,11 @@ public class JwtService {
     }
 
     // External
-    public String generateToken(Account.Type accountType, String peppolId, boolean peppolActive, UUID uid) {
+    public String generateToken(AccountType accountType, String peppolId, boolean peppolActive, UUID uid) {
         long expirationTime = 1000 * 60 * 60; // 1 hour
         return Jwts.builder()
                 .setIssuer("app")
-                .claim(ACCOUNT_TYPE, accountType.name())
+                .claim(ACCOUNT_TYPE, accountType)
                 .claim(PEPPOL_ID, peppolId)
                 .claim(PEPPOL_ACTIVE, peppolActive)
                 //TODO : add proxy url, to have multiple proxy possible and n-to-n relation with app, store registered proxy in kyc database
@@ -60,6 +60,7 @@ public class JwtService {
                 .getBody();
         return new JwtInfo(
                 token,
+                claims.get(ACCOUNT_TYPE, AccountType.class),
                 claims.get(PEPPOL_ID, String.class),
                 claims.get(PEPPOL_ACTIVE, Boolean.class),
                 UUID.fromString(claims.get(UID, String.class))
