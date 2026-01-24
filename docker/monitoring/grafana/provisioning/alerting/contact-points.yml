@@ -8,6 +8,6 @@ contactPoints:
         type: discord
         settings:
           url: ${DISCORD_WEBHOOK_URL}
-          recipient: "#ops-alerts"
+          recipient: ${DISCORD_CHANNEL}
           title: '{{ template "default.title" . }}'
           text: '{{ template "default.message" . }}'
