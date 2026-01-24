@@ -289,6 +289,8 @@
     "customer": "Customer",
     "supplier": "Supplier",
     "partner": "Partner",
+    "buyer-reference": "Buyer Reference",
+    "order-reference": "Order Reference",
     "new": {
       "INVOICE": "New Invoice",
       "CREDIT_NOTE": "New Credit Note"
@@ -324,9 +326,9 @@
       "title": "Invoice",
       "document": "Document",
       "invoice-number": "Invoice number",
-      "buyer-reference": "Buyer Reference",
       "note-optional": "Note (optional)",
-      "note-placeholder": "Additional notes for this invoice"
+      "note-placeholder": "Additional notes for this invoice",
+      "reference-required" : "Either buyer reference OR order reference is required"
     },
     "dateModal": {
       "title": "Date",

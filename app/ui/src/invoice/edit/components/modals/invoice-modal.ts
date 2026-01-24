@@ -13,12 +13,15 @@ export class InvoiceModal {
     id: string;
     selectedDocumentType: DocumentType;
     buyerReference: string;
+    orderReference: string;
     note: string;
 
     showModal() {
         this.selectedDocumentType = JSON.parse(JSON.stringify(this.originalDocumentType));
         this.id = undefined;
-        this.buyerReference = "NA";
+        if (this.invoiceContext.selectedInvoice.BuyerReference) {
+            this.buyerReference = JSON.parse(JSON.stringify(this.invoiceContext.selectedInvoice.BuyerReference));
+        }
         this.note = undefined;
         if (this.invoiceContext.selectedInvoice.ID) {
             this.id = JSON.parse(JSON.stringify(this.invoiceContext.selectedInvoice.ID));
@@ -38,7 +41,7 @@ export class InvoiceModal {
     }
 
     saveInvoiceInfo() {
-        if (!this.buyerReference) {
+        if (!this.buyerReference && !this.orderReference) {
             return;
         }
         this.open = false;
@@ -52,6 +55,11 @@ export class InvoiceModal {
         }
         this.invoiceContext.selectedInvoice.ID = this.id;
         this.invoiceContext.selectedInvoice.BuyerReference = this.buyerReference;
+        if (this.orderReference) {
+            this.invoiceContext.selectedInvoice.OrderReference = {ID: this.orderReference};
+        } else {
+            this.invoiceContext.selectedInvoice.OrderReference = undefined;
+        }
         this.invoiceContext.selectedInvoice.Note = this.note;
         console.log(this.originalDocumentType);
     }

@@ -26,6 +26,9 @@ export const sampleCreditNoteXml = `
   <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
   <cbc:AccountingCost>4025:123:4343</cbc:AccountingCost>
   <cbc:BuyerReference>0150abc</cbc:BuyerReference>
+  <cac:OrderReference>
+    <cbc:ID>123123123</cbc:ID>
+  </cac:OrderReference>
   <cac:AccountingSupplierParty>
     <cac:Party>
       <cbc:EndpointID schemeID="0208">1023290711</cbc:EndpointID>
@@ -169,6 +172,9 @@ export const sampleInvoiceXml = `
   <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
   <cbc:AccountingCost>4025:123:4343</cbc:AccountingCost>
   <cbc:BuyerReference>0150abc</cbc:BuyerReference>
+  <cac:OrderReference>
+    <cbc:ID>123123123</cbc:ID>
+  </cac:OrderReference>
   <cac:AdditionalDocumentReference>
     <cbc:ID>LINK1</cbc:ID>
     <cbc:DocumentDescription>link description1</cbc:DocumentDescription>

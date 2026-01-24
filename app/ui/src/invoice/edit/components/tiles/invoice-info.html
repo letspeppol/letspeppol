@@ -19,6 +19,13 @@
         <b>${invoiceContext.selectedInvoice.ID}</b>
     </template>
 
-    <span t="invoice.edit.buyer-reference">Buyer Reference</span>
-    <b>${invoiceContext.selectedInvoice.BuyerReference}</b>
+    <template if.bind="invoiceContext.selectedInvoice.BuyerReference">
+        <span t="invoice.buyer-reference">Buyer Reference</span>
+        <b>${invoiceContext.selectedInvoice.BuyerReference}</b>
+    </template>
+
+    <template if.bind="invoiceContext.selectedInvoice.OrderReference.ID">
+        <span t="invoice.order-reference">Order Reference</span>
+        <b>${invoiceContext.selectedInvoice.OrderReference.ID}</b>
+    </template>
 </div>

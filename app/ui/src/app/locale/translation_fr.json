@@ -33,7 +33,6 @@
     "customer" : "Client",
     "supplier" : "Fournisseur",
     "invoice-number" : "Numéro de facture",
-    "buyer-reference" : "Référence acheteur",
     "note-optional" : "Note (optionnel)",
     "issue-date" : "Date d'émission",
     "due-date" : "Date d'échéance",
@@ -100,7 +99,7 @@
       "login": "Connectez-vous à votre compte."
     },
     "check-title": "Vérifiez votre installation Web eID",
-    "check": "Vérifier Web eID",
+    "check" : "Vérifier Web eID",
     "anim-caption-sign": "Insérez votre carte eID et appuyez sur Confirmer pour vérifier l’installation.",
     "anim-reader-label": "LECTEUR"
   },
@@ -289,6 +288,8 @@
     "customer" : "Client",
     "supplier" : "Fournisseur",
     "partner" : "Partenaire",
+    "buyer-reference" : "Référence acheteur",
+    "order-reference" : "Référence de commande",
     "new" : {
       "INVOICE" : "Nouvelle facture",
       "CREDIT_NOTE" : "Nouvelle note de crédit"
@@ -325,8 +326,10 @@
       "document" : "Document",
       "invoice-number" : "Numéro de facture",
       "buyer-reference" : "Référence acheteur",
+      "order-reference" : "Référence de commande",
       "note-optional" : "Note (optionnel)",
-      "note-placeholder" : "Notes supplémentaires pour cette facture"
+      "note-placeholder" : "Notes supplémentaires pour cette facture",
+      "reference-required" : "La référence acheteur OU la référence de commande est obligatoire"
     },
     "dateModal" : {
       "title" : "Date",
