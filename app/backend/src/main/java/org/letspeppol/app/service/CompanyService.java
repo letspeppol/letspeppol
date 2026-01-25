@@ -83,6 +83,7 @@ public class CompanyService {
         company.getRegisteredOffice().setPostalCode(companyDto.registeredOffice().postalCode());
         company.getRegisteredOffice().setStreet(companyDto.registeredOffice().street());
         company = companyRepository.save(company);
+        //TODO : check if companyDto.enableEmailNotification() is different, --> inform (POST) kyc on /sapi/linked/register the uid and type of APP-account
         return CompanyMapper.toDto(company, isPeppolActive);
     }
 }

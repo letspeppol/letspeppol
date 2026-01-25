@@ -60,7 +60,7 @@ public class Account {
     private Instant identityVerifiedOn;
 
     @Column(unique = true, nullable = false)
-    private UUID externalId;
+    private UUID externalId; //Is an ID that is allowed to be exposed externally
 
     @Builder.Default
     @ManyToMany

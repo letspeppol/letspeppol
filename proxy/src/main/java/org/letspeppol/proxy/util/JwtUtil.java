@@ -19,7 +19,7 @@ public class JwtUtil {
 
     public static String getUserPeppolId(Jwt jwt) {
         AccountType accountType = jwt.getClaim(SecurityConfig.ACCOUNT_TYPE);
-        if (accountType != AccountType.USER) {
+        if (!accountType.isUser()) {
             throw new SecurityException("Not a user");
         }
         String peppolId = jwt.getClaim(SecurityConfig.PEPPOL_ID);
@@ -31,7 +31,7 @@ public class JwtUtil {
 
     public static UUID getAppUid(Jwt jwt) {
         AccountType accountType = jwt.getClaim(SecurityConfig.ACCOUNT_TYPE);
-        if (accountType != AccountType.APP) {
+        if (!accountType.isApp()) {
             throw new SecurityException("Not an app");
         }
         String uid = jwt.getClaim(SecurityConfig.UID);

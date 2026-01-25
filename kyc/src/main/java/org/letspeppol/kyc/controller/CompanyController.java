@@ -4,8 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.letspeppol.kyc.dto.AccountInfo;
 import org.letspeppol.kyc.dto.CompanySearchResponse;
 import org.letspeppol.kyc.dto.RegistrationResponse;
+import org.letspeppol.kyc.exception.ForbiddenException;
 import org.letspeppol.kyc.exception.KycErrorCodes;
+import org.letspeppol.kyc.mapper.AccountMapper;
 import org.letspeppol.kyc.model.Account;
+import org.letspeppol.kyc.model.AccountType;
 import org.letspeppol.kyc.service.AccountService;
 import org.letspeppol.kyc.service.CompanyService;
 import org.letspeppol.kyc.service.JwtService;
@@ -33,19 +36,9 @@ public class CompanyController {
     /// Retrieves account info based on valid JWT token, used by App when peppolId is unknown on getCompany (called by UI right after obtaining JWT token)
     @GetMapping
     public ResponseEntity<?> getAccountForToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        UUID uid = jwtService.validateAndGetInfo(authHeader).uid();
-        Account account = accountService.getByExternalId(uid);
-        AccountInfo accountInfo = new AccountInfo(
-                account.getCompany().getPeppolId(),
-                account.getCompany().getVatNumber(),
-                account.getCompany().getName(),
-                account.getCompany().getStreet(),
-                account.getCompany().getCity(),
-                account.getCompany().getPostalCode(),
-                account.getName(),
-                account.getEmail()
-        );
-        return ResponseEntity.ok(accountInfo);
+        JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
+        Account account = (jwtInfo.accountType() == AccountType.ADMIN) ? accountService.getAdminByExternalId(jwtInfo.uid()) : accountService.getAdminByPeppolId(jwtInfo.peppolId());
+        return ResponseEntity.ok(AccountMapper.toAccountInfo(account));  //This will be the ADMIN account and thus the one who signed the contract
     }
 
     @GetMapping("/search")
@@ -53,13 +46,16 @@ public class CompanyController {
             @RequestParam(value = "vatNumber", required = false) String vatNumber,
             @RequestParam(value = "peppolId", required = false) String peppolId,
             @RequestParam(value = "companyName", required = false) String companyName) {
-        return ResponseEntity.ok(companyService.search(vatNumber, peppolId, companyName));
+        return ResponseEntity.ok(companyService.search(vatNumber, peppolId, companyName)); //TODO : not really using the JWT, do we need to validate ? Also no comment :-o
     }
 
     /// Registers peppolId on the Peppol Directory, must call Proxy to register on AP
     @PostMapping("/peppol/register")
     public ResponseEntity<?> register(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
+        if (jwtInfo.accountType() != AccountType.ADMIN) {
+            throw new ForbiddenException(KycErrorCodes.NOT_ADMIN);
+        }
         RegistrationResponse registrationResponse = companyService.registerCompany(jwtInfo.peppolId());
         if (registrationResponse.errorCode() == null) {
             if (jwtInfo.peppolActive() == registrationResponse.peppolActive()) {
@@ -93,6 +89,9 @@ public class CompanyController {
     @PostMapping("/peppol/unregister")
     public ResponseEntity<?> unregister(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
+        if (jwtInfo.accountType() != AccountType.ADMIN) {
+            throw new ForbiddenException(KycErrorCodes.NOT_ADMIN);
+        }
         boolean peppolActive = companyService.unregisterCompany(jwtInfo.peppolId());
         if (jwtInfo.peppolActive() == peppolActive) {
             if (!peppolActive) {
@@ -112,9 +111,13 @@ public class CompanyController {
     /// Download signed contract saved for peppolId
     @GetMapping("signed-contract")
     public ResponseEntity<?> signedContract(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        String peppolId = jwtService.validateAndGetInfo(authHeader).peppolId();
-        UUID externalId = jwtService.validateAndGetInfo(authHeader).uid();
-        Account account = accountService.getByExternalId(externalId);
+        JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
+        if (jwtInfo.accountType() != AccountType.ADMIN) {
+            throw new ForbiddenException(KycErrorCodes.NOT_ADMIN);
+        }
+        String peppolId = jwtInfo.peppolId();
+        UUID externalId = jwtInfo.uid();
+        Account account = accountService.getAdminByExternalId(externalId);
         byte[] data = signingService.getContract(peppolId, account.getId());
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=contract_signed.pdf")

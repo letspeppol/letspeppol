@@ -385,9 +385,9 @@ public class DocumentService {
         List<UUID> ids = new ArrayList<>();
         for (UblDocumentDto ublDocumentDto : ublDocumentDtos) {
             try {
-                create(ublDocumentDto); //TODO : Could be new NotFoundException, does that make sense ?
+                create(ublDocumentDto);
                 ids.add(ublDocumentDto.id());
-            } catch (SecurityException e) {
+            } catch (Exception e) {
                 log.error("Could not save received document to database", e);
             }
         }
@@ -420,7 +420,7 @@ public class DocumentService {
                 .blockOptional()
                 .orElseThrow(() -> new IllegalStateException("Could not synchronize with PROXY")); //TODO : make correct error
 
-        for (UblDocumentDto ublDocumentDto : ublDocumentDtos) {
+        for (UblDocumentDto ublDocumentDto : ublDocumentDtos) { //TODO : update to StatusDto !
             updateStatus(ublDocumentDto); //TODO : Could be new NotFoundException, does that make sense ?
         }
     }

@@ -60,34 +60,4 @@ public class AuthController {
         return ResponseEntity.ok(token);
     }
 
-    @PostMapping("/auth/app")
-    public ResponseEntity<String> authApp(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        if (authHeader == null || !authHeader.startsWith("Basic ")) {
-            authenticationCounterFailure.increment();
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing or invalid Authorization header");
-        }
-
-        String base64Credentials = authHeader.substring("Basic ".length()).trim();
-        byte[] credDecoded = Base64.getDecoder().decode(base64Credentials.getBytes(StandardCharsets.UTF_8));
-        String credentials = new String(credDecoded, StandardCharsets.UTF_8);
-
-        final String[] values = credentials.split(":", 2);
-        if (values.length != 2) {
-            authenticationCounterFailure.increment();
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Basic authentication format");
-        }
-        String externalId = values[0];
-        String password = values[1];
-        Account account = accountService.findAppAccountWithCredentials(externalId, password);
-        String token = jwtService.generateToken(
-                account.getType(),
-                account.getCompany().getPeppolId(),
-                account.getCompany().isPeppolActive(),
-                account.getExternalId()
-        );
-        authenticationCounterSuccess.increment();
-
-        return ResponseEntity.ok(token);
-    }
-
 }
