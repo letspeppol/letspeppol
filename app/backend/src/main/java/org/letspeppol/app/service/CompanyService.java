@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.app.dto.AccountInfo;
 import org.letspeppol.app.dto.CompanyDto;
+import org.letspeppol.app.dto.LinkedInfo;
 import org.letspeppol.app.exception.AppErrorCodes;
 import org.letspeppol.app.exception.AppException;
 import org.letspeppol.app.exception.NotFoundException;
@@ -65,8 +66,27 @@ public class CompanyService {
         }
     }
 
-    public CompanyDto update(CompanyDto companyDto, boolean isPeppolActive) {
+    public CompanyDto update(CompanyDto companyDto, boolean isPeppolActive, String tokenValue) {
         Company company = companyRepository.findByPeppolId(companyDto.peppolId()).orElseThrow(() -> new NotFoundException("Company does not exist"));
+        if (company.isEnableEmailNotification() != companyDto.enableEmailNotification()) {
+            if (companyDto.enableEmailNotification()) {
+                kycWebClient.post()
+                        .uri("/sapi/linked/register")
+                        .headers(headers -> headers.setBearerAuth(tokenValue))
+                        .retrieve()
+                        .bodyToMono(LinkedInfo.class)
+                        .blockOptional()
+                        .orElseThrow(() -> new IllegalStateException("Error linking App for company " + companyDto.peppolId()));
+            } else {
+                kycWebClient.post()
+                        .uri("/sapi/linked/unregister")
+                        .headers(headers -> headers.setBearerAuth(tokenValue))
+                        .retrieve()
+                        .bodyToMono(LinkedInfo.class)
+                        .blockOptional()
+                        .orElseThrow(() -> new IllegalStateException("Error linking App for company " + companyDto.peppolId()));
+            }
+        }
         if (!company.getName().equals(companyDto.displayName()) && StringUtils.hasText(companyDto.displayName())) {
             company.setDisplayName(companyDto.displayName());
         } else {
@@ -83,7 +103,6 @@ public class CompanyService {
         company.getRegisteredOffice().setPostalCode(companyDto.registeredOffice().postalCode());
         company.getRegisteredOffice().setStreet(companyDto.registeredOffice().street());
         company = companyRepository.save(company);
-        //TODO : check if companyDto.enableEmailNotification() is different, --> inform (POST) kyc on /sapi/linked/register the uid and type of APP-account
         return CompanyMapper.toDto(company, isPeppolActive);
     }
 }

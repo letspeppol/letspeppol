@@ -60,7 +60,7 @@ public class JwtService {
                 .getBody();
         return new JwtInfo(
                 token,
-                claims.get(ACCOUNT_TYPE, AccountType.class),
+                AccountType.valueOf(claims.get(ACCOUNT_TYPE, String.class)),
                 claims.get(PEPPOL_ID, String.class),
                 claims.get(PEPPOL_ACTIVE, Boolean.class),
                 UUID.fromString(claims.get(UID, String.class))
