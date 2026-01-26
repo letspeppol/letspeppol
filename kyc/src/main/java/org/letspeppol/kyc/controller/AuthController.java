@@ -4,8 +4,8 @@ import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.kyc.model.Account;
-import org.letspeppol.kyc.service.JwtService;
 import org.letspeppol.kyc.service.AccountService;
+import org.letspeppol.kyc.service.JwtService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +50,7 @@ public class AuthController {
         Account account = accountService.findAccountWithCredentials(email, password);
 
         String token = jwtService.generateToken(
+                account.getType(),
                 account.getCompany().getPeppolId(),
                 account.getCompany().isPeppolActive(),
                 account.getExternalId()
@@ -58,4 +59,5 @@ public class AuthController {
 
         return ResponseEntity.ok(token);
     }
+
 }

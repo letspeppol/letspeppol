@@ -14,6 +14,9 @@ export interface CompanyDto {
     paymentAccountName: string,
     lastInvoiceReference: string,
     peppolActive: boolean,
+    enableEmailNotification: boolean,
+    addAttachmentToNotification: boolean,
+    emailNotificationCCList: string,
     registeredOffice: Address
 }
 

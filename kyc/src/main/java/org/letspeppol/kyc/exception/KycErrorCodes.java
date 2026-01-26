@@ -10,6 +10,8 @@ public final class KycErrorCodes {
     public static final String TOKEN_EXPIRED = "token_expired";
     // Account
     public static final String ACCOUNT_NOT_FOUND = "account_not_found";
+    public static final String ACCOUNT_NOT_ADMIN = "account_not_admin";
+    public static final String ACCOUNT_NOT_APP = "account_not_app";
     public static final String WRONG_PASSWORD = "wrong_password";
     public static final String ACCOUNT_ALREADY_LINKED = "account_already_linked"; // restored
     // Password reset
@@ -26,6 +28,8 @@ public final class KycErrorCodes {
     public static final String PROXY_REGISTRATION_INTERNAL_ERROR = "proxy_registration_internal_error";
     public static final String PROXY_REGISTRATION_SUSPENDED = "proxy_registration_suspended";
     public static final String PROXY_REGISTRATION_NOT_NEEDED = "proxy_registration_not_needed";
+    public static final String PROXY_ALLOW_SERVICE_FAILED = "proxy_allow_service_failed";
+    public static final String PROXY_REJECT_SERVICE_FAILED = "proxy_reject_service_failed";
     // KBO
     public static final String KBO_PARSE_ADDRESS_FAILED = "kbo_parse_address_failed";
     public static final String KBO_PARSE_DIRECTORS_FAILED = "kbo_parse_directors_failed";
@@ -40,6 +44,7 @@ public final class KycErrorCodes {
     public static final String UNEXPECTED_ERROR = "unexpected_error";
     // Auth
     public static final String AUTHENTCATION_FAILED = "auth_failed";
+    public static final String NOT_ADMIN = "not_admin";
 
     private KycErrorCodes() {}
 }

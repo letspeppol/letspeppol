@@ -31,6 +31,10 @@ public class Company extends GenericEntity{
     private String paymentAccountName;
     private String lastInvoiceReference;
 
+    private boolean enableEmailNotification;
+    private boolean addAttachmentToNotification;
+    private String emailNotificationCcList; // comma-separated list
+
 // TODO    private boolean noArchive; //Setting by user that data should not be stored once processed (user is absolute owner & responsible)
 // TODO    private String accountant; //Either email or UUID of accounting system or accountant, flaggable by user what invoices should be sent to accountant
 //CREATE SCHEMA IF NOT EXISTS app;
