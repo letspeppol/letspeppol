@@ -83,7 +83,7 @@ public class CompanyService {
             log.info("Will skip registration for already registered company {}", company.getName());
             return new RegistrationResponse(true, KycErrorCodes.PROXY_REGISTRATION_NOT_NEEDED, "Account is already registered");
         }
-        String token = jwtService.generateInternalToken(company.getPeppolId(), company.isPeppolActive());
+        String token = jwtService.generateInternalToken(company.getPeppolId(), company.isPeppolActive(), null);
         RegistrationResponse registrationResponse = proxyService.registerCompany(token, company.getName());
         log.info("Registering company for {} has Peppol active = {}", company.getPeppolId(), registrationResponse.peppolActive());
         company.setRegisteredOnPeppol(registrationResponse.peppolActive());
@@ -97,7 +97,7 @@ public class CompanyService {
     }
 
     public boolean unregisterCompany(Company company) {
-        String token = jwtService.generateInternalToken(company.getPeppolId(), company.isPeppolActive());
+        String token = jwtService.generateInternalToken(company.getPeppolId(), company.isPeppolActive(), null);
         boolean peppolActive = proxyService.unregisterCompany(token);
         log.info("Unregistering company for {} has Peppol active = {}", company.getPeppolId(), peppolActive);
         company.setRegisteredOnPeppol(peppolActive);

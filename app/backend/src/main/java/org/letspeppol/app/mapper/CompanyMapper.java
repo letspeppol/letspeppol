@@ -19,8 +19,11 @@ public class CompanyMapper {
                 company.getIban(),
                 company.getPaymentAccountName(),
                 company.getLastInvoiceReference(),
-// TODO                company.isNoArchive(),
+                // TODO company.isNoArchive(),
                 peppolActive,
+                company.isEnableEmailNotification(),
+                company.isAddAttachmentToNotification(),
+                company.getEmailNotificationCcList(),
                 AddressMapper.toDto(company.getRegisteredOffice())
         );
     }

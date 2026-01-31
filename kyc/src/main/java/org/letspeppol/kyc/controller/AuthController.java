@@ -4,8 +4,8 @@ import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.kyc.model.Account;
-import org.letspeppol.kyc.service.JwtService;
 import org.letspeppol.kyc.service.AccountService;
+import org.letspeppol.kyc.service.JwtService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,11 +45,12 @@ public class AuthController {
             authenticationCounterFailure.increment();
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Basic authentication format");
         }
-        String email = values[0];
+        String emailOrUuid = values[0];
         String password = values[1];
-        Account account = accountService.findAccountWithCredentials(email, password);
+        Account account = accountService.findAccountWithCredentials(emailOrUuid, password);
 
         String token = jwtService.generateToken(
+                account.getType(),
                 account.getCompany().getPeppolId(),
                 account.getCompany().isPeppolActive(),
                 account.getExternalId()
@@ -58,4 +59,5 @@ public class AuthController {
 
         return ResponseEntity.ok(token);
     }
+
 }

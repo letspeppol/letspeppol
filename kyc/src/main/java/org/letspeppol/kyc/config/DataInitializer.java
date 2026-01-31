@@ -3,6 +3,7 @@ package org.letspeppol.kyc.config;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.kyc.model.Account;
+import org.letspeppol.kyc.model.AccountType;
 import org.letspeppol.kyc.model.kbo.Company;
 import org.letspeppol.kyc.model.kbo.Director;
 import org.letspeppol.kyc.repository.AccountRepository;
@@ -39,6 +40,7 @@ public class DataInitializer implements CommandLineRunner {
             directorRepository.save(new Director("Wout Schattebout", c));
             Account account = Account.builder()
                     .company(c)
+                    .type(AccountType.ADMIN)
                     .name("Bart In Stukken")
                     .email("test@softwareoplossing.be")
                     .passwordHash(passwordEncoder.encode("test"))
@@ -56,6 +58,7 @@ public class DataInitializer implements CommandLineRunner {
             directorRepository.save(new Director("Saskia Verellen", c));
             Account account = Account.builder()
                     .company(c)
+                    .type(AccountType.ADMIN)
                     .name("Michiel Wouters")
                     .email("letspeppol@itaa.be")
                     .passwordHash(passwordEncoder.encode("letspeppol"))
@@ -63,6 +66,26 @@ public class DataInitializer implements CommandLineRunner {
                     .build();
             accountRepository.save(account);
             log.info("Seeded sample company {}", companyNumber);
+        }
+        UUID appUUID = UUID.fromString("b095630d-1bf3-4250-bf9e-2d49e6ce505b");
+        if (accountRepository.findByExternalId(appUUID).isEmpty()) {
+            Company c = companyRepository.search("BE1029545627", null, null, null).stream()
+                    .findFirst()
+                    .orElseGet(() -> {
+                        Company company = new Company(null, "BE1029545627", "Barge VZW");
+                        companyRepository.save(company);
+                        return company;
+                    });
+            Account account = Account.builder()
+                    .company(c)
+                    .type(AccountType.APP)
+                    .name("Let's Peppol Email Notification App")
+                    .email("support@letspeppol.org")
+                    .passwordHash(passwordEncoder.encode("letspeppol"))
+                    .externalId(appUUID)
+                    .build();
+            accountRepository.save(account);
+            log.info("Seeded App account");
         }
     }
 }

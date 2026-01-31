@@ -5,9 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 import org.letspeppol.kyc.model.kbo.Company;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -28,6 +32,10 @@ public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    private AccountType type;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "company_id", nullable = false)
@@ -52,6 +60,16 @@ public class Account {
     private Instant identityVerifiedOn;
 
     @Column(unique = true, nullable = false)
-    private UUID externalId;
+    private UUID externalId; //Is an ID that is allowed to be exposed externally
+
+    @Builder.Default
+    @ManyToMany
+    @JoinTable(
+            name = "account_link",
+            joinColumns = @JoinColumn(name = "account_id"),
+            inverseJoinColumns = @JoinColumn(name = "linked_account_id"),
+            uniqueConstraints = @UniqueConstraint(name = "uk_account_link_pair", columnNames = {"account_id", "linked_account_id"})
+    )
+    private List<Account> linkedAccounts = new ArrayList<>();
 
 }

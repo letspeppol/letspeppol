@@ -34,7 +34,7 @@ public class ActivationService {
     private final EmailVerificationRepository verificationRepository;
     private final JavaMailSender mailSender;
     private final CompanyService companyService;
-    private final IdentityVerificationService identityVerificationService;
+    private final AccountService accountService;
     private final ActivationEmailTemplateProvider templateProvider;
     private final SecureRandom random = new SecureRandom();
     private final Duration ttl = Duration.ofDays(7);
@@ -53,7 +53,7 @@ public class ActivationService {
             log.warn("User with email {} tried to register for company {} but company was already registered", request.email(), request.peppolId());
             throw new KycException(KycErrorCodes.COMPANY_ALREADY_REGISTERED);
         }
-        identityVerificationService.verifyNotRegistered(request.email());
+        accountService.verifyNotRegistered(request.email());
         String token = generateToken();
         EmailVerification verification = new EmailVerification(
                 request.email().toLowerCase(),
@@ -80,7 +80,7 @@ public class ActivationService {
         if (verification.getExpiresOn().isBefore(Instant.now())) {
             throw new KycException(KycErrorCodes.TOKEN_EXPIRED);
         }
-        identityVerificationService.verifyNotRegistered(verification.getEmail());
+        accountService.verifyNotRegistered(verification.getEmail());
         CompanyResponse companyResponse = companyService.getByPeppolId(verification.getPeppolId())
                 .orElseThrow(() -> new NotFoundException(KycErrorCodes.COMPANY_NOT_FOUND));
         tokenVerificationCounter.increment();

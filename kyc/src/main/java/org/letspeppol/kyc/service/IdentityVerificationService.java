@@ -8,23 +8,24 @@ import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.letspeppol.kyc.dto.IdentityVerificationRequest;
 import org.letspeppol.kyc.dto.IdentityVerificationResponse;
+import org.letspeppol.kyc.dto.NewUserRequest;
 import org.letspeppol.kyc.dto.RegistrationResponse;
-import org.letspeppol.kyc.exception.KycErrorCodes;
-import org.letspeppol.kyc.exception.KycException;
 import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.model.AccountIdentityVerification;
+import org.letspeppol.kyc.model.AccountType;
 import org.letspeppol.kyc.repository.AccountIdentityVerificationRepository;
-import org.letspeppol.kyc.repository.AccountRepository;
 import org.letspeppol.kyc.repository.DirectorRepository;
-import org.letspeppol.kyc.service.mail.ActivationEmailTemplateProvider;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import javax.security.auth.x500.X500Principal;
 import java.security.cert.X509Certificate;
 import java.time.Instant;
+import java.util.UUID;
+
 import static org.letspeppol.kyc.service.SigningService.isAllowedToSign;
 import static org.letspeppol.kyc.service.signing.CertificateUtil.getRDNName;
 
@@ -35,7 +36,7 @@ import static org.letspeppol.kyc.service.signing.CertificateUtil.getRDNName;
 public class IdentityVerificationService {
 
     private final AccountIdentityVerificationRepository accountIdentityVerificationRepository;
-    private final AccountRepository accountRepository;
+    private final AccountService accountService;
     private final DirectorRepository directorRepository;
     private final JavaMailSender mailSender;
     private final EncryptionService encryptionService;
@@ -44,16 +45,11 @@ public class IdentityVerificationService {
     private final Counter companyRegistrationCounterSuccess;
     private final Counter companyRegistrationCounterFailure;
 
-    public void verifyNotRegistered(String email) {
-        if (accountRepository.existsByEmail(email.toLowerCase())) {
-            throw new KycException(KycErrorCodes.ACCOUNT_ALREADY_LINKED);
-        }
-    }
-
-    public IdentityVerificationResponse create(IdentityVerificationRequest req) {
-        verifyNotRegistered(req.email());
+    public IdentityVerificationResponse createAdmin(IdentityVerificationRequest req) {
+        accountService.verifyNotRegistered(req.email());
 
         Account account = new Account();
+        account.setType(AccountType.ADMIN);
         account.setName(req.director().getName());
         account.setEmail(req.email().toLowerCase());
         account.setIdentityVerified(true);
@@ -62,7 +58,7 @@ public class IdentityVerificationService {
         String passwordHash = passwordEncoder.encode(req.password());
         account.setPasswordHash(passwordHash);
         account.setCompany(req.director().getCompany());
-        accountRepository.save(account);
+        accountService.create(account);
 
         AccountIdentityVerification accountIdentityVerification = new AccountIdentityVerification(
                 account,
@@ -91,11 +87,34 @@ public class IdentityVerificationService {
         } else {
             companyService.suspendCompany(req.director().getCompany());
             log.warn("Peppol not activated for email={} director={} signer={} {} serial={}", account.getEmail(), req.director().getName(), getRDNName(req.x500Name(), BCStyle.GIVENNAME), getRDNName(req.x500Name(), BCStyle.SURNAME), req.x509Certificate().getSerialNumber());
-            sendManualVerificationEmail(account.getEmail(), req.director().getCompany().getPeppolId(), req.director().getCompany().getName(), req.director().getName(), getRDNName(req.x500Name(), BCStyle.GIVENNAME), getRDNName(req.x500Name(), BCStyle.SURNAME));
+            sendManualVerificationEmail(account.getEmail(), req.director().getCompany().getPeppolId(), req.director().getCompany().getName(), req.director().getName(), getRDNName(req.x500Name(), BCStyle.GIVENNAME), getRDNName(req.x500Name(), BCStyle.SURNAME)); //TODO : check, mail does not work !
         }
 
         log.info("Identity verified for email={} director={} serial={}", account.getEmail(), req.director().getName(), req.x509Certificate().getSerialNumber());
-        return new IdentityVerificationResponse(account, registrationResponse); //TODO : return registrationResponse somehow
+        return new IdentityVerificationResponse(account, registrationResponse);
+    }
+
+    public Account createUser(UUID adminExternalId, NewUserRequest req) {
+        Account admin = accountService.getAdminByExternalId(adminExternalId);
+        accountService.verifyNotRegistered(req.email());
+        Account account = new Account();
+        account.setType(AccountType.USER);
+        account.setName(req.name());
+        account.setEmail(req.email().toLowerCase());
+        account.setIdentityVerified(false);
+        account.setIdentityVerifiedOn(null);
+        account.setCreatedOn(Instant.now());
+        account.setPasswordHash("TODO");
+        account.setCompany(admin.getCompany());
+        accountService.create(account);
+
+        //TODO : send User Activation Mail
+
+        accountService.link(admin, account);
+
+        log.info("New user created name={} email={} company={}", account.getName(), account.getEmail(), account.getCompany().getPeppolId());
+        return account;
+        //return new IdentityVerificationResponse(account, new RegistrationResponse(account.getCompany().isPeppolActive(), null, null));
     }
 
     private String getCN(X509Certificate certificate) {
