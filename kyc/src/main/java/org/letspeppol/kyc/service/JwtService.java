@@ -69,13 +69,14 @@ public class JwtService {
 
     // Internal
 
-    public String generateInternalToken(String peppolId, boolean peppolActive) {
+    public String generateInternalToken(String peppolId, boolean peppolActive, UUID uid) {
         long expirationTime = 1000 * 60 * 60 * 24; // 1 day //TODO : why 24 hours ?
         return Jwts.builder()
                 .setIssuer("kyc")
                 .claim(ACCOUNT_TYPE, AccountType.ADMIN) //TODO : can we copy this from the used JWT ?
                 .claim(PEPPOL_ID, peppolId)
                 .claim(PEPPOL_ACTIVE, peppolActive)
+                .claim(UID, uid)
                 .claim("role", ROLE_SERVICE)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))

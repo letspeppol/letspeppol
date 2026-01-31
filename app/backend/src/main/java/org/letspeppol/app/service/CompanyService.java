@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.app.dto.AccountInfo;
 import org.letspeppol.app.dto.CompanyDto;
 import org.letspeppol.app.dto.LinkedInfo;
+import org.letspeppol.app.dto.ServiceRequest;
 import org.letspeppol.app.exception.AppErrorCodes;
 import org.letspeppol.app.exception.AppException;
 import org.letspeppol.app.exception.NotFoundException;
@@ -13,11 +14,13 @@ import org.letspeppol.app.mapper.CompanyMapper;
 import org.letspeppol.app.model.Company;
 import org.letspeppol.app.repository.CompanyRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -28,6 +31,7 @@ public class CompanyService {
     @Qualifier("kycWebClient")
     private final WebClient kycWebClient;
     private final Counter companyCreateCounter;
+    private @Value("${kyc.auth.app.external-id}") String appExternalId;
 
     public Company add(AccountInfo request) {
         companyCreateCounter.increment();
@@ -69,10 +73,12 @@ public class CompanyService {
     public CompanyDto update(CompanyDto companyDto, boolean isPeppolActive, String tokenValue) {
         Company company = companyRepository.findByPeppolId(companyDto.peppolId()).orElseThrow(() -> new NotFoundException("Company does not exist"));
         if (company.isEnableEmailNotification() != companyDto.enableEmailNotification()) {
+            ServiceRequest serviceRequest = new ServiceRequest(UUID.fromString(appExternalId));
             if (companyDto.enableEmailNotification()) {
                 kycWebClient.post()
                         .uri("/sapi/linked/register")
                         .headers(headers -> headers.setBearerAuth(tokenValue))
+                        .bodyValue(serviceRequest)
                         .retrieve()
                         .bodyToMono(LinkedInfo.class)
                         .blockOptional()
@@ -81,10 +87,10 @@ public class CompanyService {
                 kycWebClient.post()
                         .uri("/sapi/linked/unregister")
                         .headers(headers -> headers.setBearerAuth(tokenValue))
+                        .bodyValue(serviceRequest)
                         .retrieve()
-                        .bodyToMono(LinkedInfo.class)
-                        .blockOptional()
-                        .orElseThrow(() -> new IllegalStateException("Error linking App for company " + companyDto.peppolId()));
+                        .toBodilessEntity()
+                        .block();
             }
         }
         if (!company.getName().equals(companyDto.displayName()) && StringUtils.hasText(companyDto.displayName())) {

@@ -5,6 +5,7 @@ import com.helger.ubl21.UBL21Marshaller;
 import com.helger.xml.serialize.read.DOMReader;
 import com.helger.xml.serialize.read.DOMReaderSettings;
 import jakarta.activation.DataSource;
+import jakarta.annotation.PostConstruct;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.util.ByteArrayDataSource;
@@ -93,11 +94,12 @@ public class EmailService {
         if (job.getPayload() == null || job.getPayload().isBlank()) {
             throw new IllegalArgumentException("Email job payload is empty");
         }
+        log.info("Sending email notification to {}", job.getToAddress());
 
         DocumentNotificationEmailDto dto = objectMapper.readValue(job.getPayload(), DocumentNotificationEmailDto.class);
 
         MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, false, StandardCharsets.UTF_8.name());
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.name());
 
         if (dto.from() != null && !dto.from().isBlank()) {
             helper.setFrom(dto.from());

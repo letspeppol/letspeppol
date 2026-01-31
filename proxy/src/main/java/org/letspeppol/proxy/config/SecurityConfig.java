@@ -59,7 +59,7 @@ public class SecurityConfig {
             if (ROLE_SERVICE.equals(jwt.getClaims().get("role"))) {
                 authorities.add(new SimpleGrantedAuthority(ROLE_SERVICE));
             }
-            if (jwt.hasClaim(PEPPOL_ID)) {
+            if (jwt.hasClaim(UID)) {
                 authorities.add(new SimpleGrantedAuthority(ROLE_KYC_USER));
             }
             return authorities;

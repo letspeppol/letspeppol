@@ -50,15 +50,15 @@ public class JwtService {
 
     public String getAppTokenFromKyc() {
         try {
-            return kycWebClient.get()
-                    .uri("/api/jwt/auth/app")
+            return kycWebClient.post()
+                    .uri("/api/jwt/auth")
                     .headers(headers -> headers.setBasicAuth(appExternalId, appPassword))
                     .retrieve()
                     .bodyToMono(String.class)
                     .blockOptional()
                     .orElseThrow(() -> new IllegalStateException("Account was not know at KYC"));
         } catch (Exception e) {
-            log.error("Call to KYC /api/jwt/auth/app failed", e);
+            log.error("Call to KYC /api/jwt/auth failed", e);
             throw new AppException(AppErrorCodes.KYC_REST_ERROR);
         }
     }

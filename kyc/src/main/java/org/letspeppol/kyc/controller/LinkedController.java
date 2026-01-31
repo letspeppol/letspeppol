@@ -3,8 +3,8 @@ package org.letspeppol.kyc.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.letspeppol.kyc.dto.ServiceRequest;
 import org.letspeppol.kyc.dto.NewUserRequest;
+import org.letspeppol.kyc.dto.ServiceRequest;
 import org.letspeppol.kyc.exception.ForbiddenException;
 import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.mapper.AccountMapper;
@@ -44,7 +44,7 @@ public class LinkedController {
         if (jwtInfo.accountType() != AccountType.ADMIN) {
             throw new ForbiddenException(KycErrorCodes.NOT_ADMIN);
         }
-        return ResponseEntity.ok(AccountMapper.toLinkedInfo(identityVerificationService.createUser(accountService.getAdminByExternalId(jwtInfo.uid()), request)));
+        return ResponseEntity.ok(AccountMapper.toLinkedInfo(identityVerificationService.createUser(jwtInfo.uid(), request)));
     }
 
     /// Registers a service for account
@@ -54,7 +54,7 @@ public class LinkedController {
         if (jwtInfo.accountType() != AccountType.ADMIN) {
             throw new ForbiddenException(KycErrorCodes.NOT_ADMIN);
         }
-        return ResponseEntity.ok(AccountMapper.toLinkedInfo(accountService.linkServiceToAccount(accountService.getAdminByExternalId(jwtInfo.uid()), request)));
+        return ResponseEntity.ok(AccountMapper.toLinkedInfo(accountService.linkServiceToAccount(jwtInfo.uid(), request)));
     }
 
     /// Unregisters a service for account
@@ -64,7 +64,7 @@ public class LinkedController {
         if (jwtInfo.accountType() != AccountType.ADMIN) {
             throw new ForbiddenException(KycErrorCodes.NOT_ADMIN);
         }
-        accountService.unlinkServiceFromAccount(accountService.getAdminByExternalId(jwtInfo.uid()), request);
+        accountService.unlinkServiceFromAccount(jwtInfo.uid(), request);
         return ResponseEntity.noContent().build();
     }
 }

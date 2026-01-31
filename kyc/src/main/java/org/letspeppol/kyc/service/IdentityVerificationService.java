@@ -10,22 +10,22 @@ import org.letspeppol.kyc.dto.IdentityVerificationRequest;
 import org.letspeppol.kyc.dto.IdentityVerificationResponse;
 import org.letspeppol.kyc.dto.NewUserRequest;
 import org.letspeppol.kyc.dto.RegistrationResponse;
-import org.letspeppol.kyc.exception.KycErrorCodes;
-import org.letspeppol.kyc.exception.KycException;
 import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.model.AccountIdentityVerification;
 import org.letspeppol.kyc.model.AccountType;
 import org.letspeppol.kyc.repository.AccountIdentityVerificationRepository;
-import org.letspeppol.kyc.repository.AccountRepository;
 import org.letspeppol.kyc.repository.DirectorRepository;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import javax.security.auth.x500.X500Principal;
 import java.security.cert.X509Certificate;
 import java.time.Instant;
+import java.util.UUID;
+
 import static org.letspeppol.kyc.service.SigningService.isAllowedToSign;
 import static org.letspeppol.kyc.service.signing.CertificateUtil.getRDNName;
 
@@ -94,7 +94,8 @@ public class IdentityVerificationService {
         return new IdentityVerificationResponse(account, registrationResponse);
     }
 
-    public Account createUser(Account admin, NewUserRequest req) {
+    public Account createUser(UUID adminExternalId, NewUserRequest req) {
+        Account admin = accountService.getAdminByExternalId(adminExternalId);
         accountService.verifyNotRegistered(req.email());
         Account account = new Account();
         account.setType(AccountType.USER);

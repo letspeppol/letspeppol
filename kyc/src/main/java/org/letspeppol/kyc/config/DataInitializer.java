@@ -79,8 +79,8 @@ public class DataInitializer implements CommandLineRunner {
             Account account = Account.builder()
                     .company(c)
                     .type(AccountType.APP)
-                    .name("be.letspeppol.org App")
-                    .email("info@letspeppol.org")
+                    .name("Let's Peppol Email Notification App")
+                    .email("support@letspeppol.org")
                     .passwordHash(passwordEncoder.encode("letspeppol"))
                     .externalId(appUUID)
                     .build();

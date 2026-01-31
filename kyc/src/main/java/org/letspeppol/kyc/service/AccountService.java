@@ -53,11 +53,21 @@ public class AccountService {
         return accountRepository.findFirstByTypeAndCompanyPeppolId(AccountType.ADMIN, peppolId).orElseThrow(() -> new NotFoundException(KycErrorCodes.ACCOUNT_NOT_FOUND));
     }
 
-    public Account findAccountWithCredentials(String email, String password) {
-        Account account = accountRepository.findByEmail(email.toLowerCase()).orElseThrow(() -> {
-            authenticationCounterFailure.increment();
-            return new NotFoundException(KycErrorCodes.ACCOUNT_NOT_FOUND);
-        });
+    public Account findAccountWithCredentials(String emailOrUuid, String password) {
+        Account account = null;
+        if (!emailOrUuid.contains("@")) {
+            try {
+                account = accountRepository.findByExternalId(UUID.fromString(emailOrUuid)).orElse(null);
+            } catch(IllegalArgumentException e) {
+                log.warn("{} does not seem to be a valid UUID", emailOrUuid);
+            }
+        }
+        if (account == null) {
+            account = accountRepository.findByEmail(emailOrUuid.toLowerCase()).orElseThrow(() -> {
+                authenticationCounterFailure.increment();
+                return new NotFoundException(KycErrorCodes.ACCOUNT_NOT_FOUND);
+            });
+        }
         if (!passwordEncoder.matches(password, account.getPasswordHash())) {
             authenticationCounterFailure.increment();
             throw new KycException(KycErrorCodes.WRONG_PASSWORD);
@@ -90,18 +100,20 @@ public class AccountService {
         accountRepository.save(admin); //TODO : check does this work ?
     }
 
-    public Account linkServiceToAccount(Account admin, ServiceRequest request) {
+    public Account linkServiceToAccount(UUID adminExternalId, ServiceRequest request) {
+        Account admin = getAdminByExternalId(adminExternalId);
         Account service = getAppByExternalId(request.uid());
         link(admin, service);
-        String token = jwtService.generateInternalToken(admin.getCompany().getPeppolId(), admin.getCompany().isPeppolActive());
+        String token = jwtService.generateInternalToken(admin.getCompany().getPeppolId(), admin.getCompany().isPeppolActive(), adminExternalId);
         proxyService.allowService(token, request);
         return service;
     }
 
-    public void unlinkServiceFromAccount(Account admin, ServiceRequest request) {
+    public void unlinkServiceFromAccount(UUID adminExternalId, ServiceRequest request) {
+        Account admin = getAdminByExternalId(adminExternalId);
         Account service = getAppByExternalId(request.uid());
         unlink(admin, service);
-        String token = jwtService.generateInternalToken(admin.getCompany().getPeppolId(), admin.getCompany().isPeppolActive());
+        String token = jwtService.generateInternalToken(admin.getCompany().getPeppolId(), admin.getCompany().isPeppolActive(), adminExternalId);
         proxyService.rejectService(token, request);
     }
 }

@@ -1,6 +1,7 @@
 package org.letspeppol.app.service;
 
 import io.micrometer.core.instrument.Counter;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.app.dto.*;
@@ -49,6 +50,7 @@ public class DocumentService {
     private final BackupService backupService;
     private final ValidationService validationService;
     private final NotificationService notificationService;
+    private final JwtService jwtService;
     @Qualifier("proxyWebClient")
     private final WebClient proxyWebClient;
     private final Counter documentBackupCounter;
@@ -367,7 +369,20 @@ public class DocumentService {
         return documentRepository.save(document);
     }
 
-    private void synchronizeNewDocuments(String tokenValue) {
+    @PostConstruct
+    public void periodicSynchronize() {
+        try {
+            String appTokenFromKyc = jwtService.getAppTokenFromKyc();
+            List<UblDocumentDto> ublDocumentDtos;
+            do {
+                ublDocumentDtos = synchronizeNewDocuments(appTokenFromKyc);
+            } while (ublDocumentDtos.size() >= 100);
+        } catch (Exception e) {
+            log.error("Error synchronizing documents", e);
+        }
+    }
+
+    private List<UblDocumentDto> synchronizeNewDocuments(String tokenValue) {
         //TODO : record Page<T>(List<T> results, Integer total, Integer page, Integer size) {}
         //and use :
         //.bodyToMono(new ParameterizedTypeReference<Page<UblDocumentDto>>() {})
@@ -405,6 +420,7 @@ public class DocumentService {
                 )
                 .toBodilessEntity()
                 .block();
+        return ublDocumentDtos;
     }
 
     private void synchronizeDocuments(String peppolId, String tokenValue) {

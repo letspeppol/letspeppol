@@ -45,9 +45,9 @@ public class AuthController {
             authenticationCounterFailure.increment();
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Basic authentication format");
         }
-        String email = values[0];
+        String emailOrUuid = values[0];
         String password = values[1];
-        Account account = accountService.findAccountWithCredentials(email, password);
+        Account account = accountService.findAccountWithCredentials(emailOrUuid, password);
 
         String token = jwtService.generateToken(
                 account.getType(),

@@ -10,7 +10,7 @@ import java.util.UUID;
 public class JwtUtil {
 
     public static AccountType getAccountType(Jwt jwt) {
-        AccountType accountType = jwt.getClaim(SecurityConfig.ACCOUNT_TYPE);
+        AccountType accountType = AccountType.valueOf(jwt.getClaim(SecurityConfig.ACCOUNT_TYPE));
         if (accountType == null) {
             throw new SecurityException("Does not contain Account Type");
         }
@@ -18,7 +18,7 @@ public class JwtUtil {
     }
 
     public static String getUserPeppolId(Jwt jwt) {
-        AccountType accountType = jwt.getClaim(SecurityConfig.ACCOUNT_TYPE);
+        AccountType accountType =  AccountType.valueOf(jwt.getClaim(SecurityConfig.ACCOUNT_TYPE));
         if (!accountType.isUser()) {
             throw new SecurityException("Not a user");
         }
@@ -30,7 +30,7 @@ public class JwtUtil {
     }
 
     public static UUID getAppUid(Jwt jwt) {
-        AccountType accountType = jwt.getClaim(SecurityConfig.ACCOUNT_TYPE);
+        AccountType accountType =  AccountType.valueOf(jwt.getClaim(SecurityConfig.ACCOUNT_TYPE));
         if (!accountType.isApp()) {
             throw new SecurityException("Not an app");
         }

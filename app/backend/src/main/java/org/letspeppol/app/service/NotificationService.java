@@ -50,7 +50,7 @@ public class NotificationService {
             String body = getEmailNotificationTemplateContents()
                     .replace("{{supplier}}", document.getPartnerName())
                     .replace("{{reference}}", document.getInvoiceReference())
-                    .replace("{{total_amount}}", document.getAmount().toString())
+                    .replace("{{totalAmount}}", document.getAmount().toString())
                     .replace("{{uuid}}", document.getId().toString());
 
             DocumentNotificationEmailDto emailDto = new DocumentNotificationEmailDto(
