@@ -1,0 +1,1087 @@
+apiVersion: 1
+groups:
+    - orgId: 1
+      name: host-metrics
+      folder: Infrastructure
+      interval: 5m
+      rules:
+        - uid: cf9up1s2nb8qoa
+          title: Root filesystem low disk space
+          condition: Less than 15% disk space left
+          data:
+            - refId: available-size-root
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: mimir
+              model:
+                editorMode: code
+                exemplar: false
+                expr: |-
+                    node_filesystem_avail_bytes{mountpoint="/"}
+                    /
+                    node_filesystem_size_bytes{mountpoint="/"}
+                instant: false
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: true
+                refId: available-size-root
+            - refId: Available disk space
+              queryType: expression
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: available-size-root
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: Available disk space
+                type: reduce
+            - refId: Less than 15% disk space left
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0.15
+                        type: lt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: Available disk space
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: Less than 15% disk space left
+                type: threshold
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          keepFiringFor: 10m
+          annotations:
+            summary: Low disk space on {{ $labels.server }}
+          labels:
+            severity: warning
+          isPaused: false
+          notification_settings:
+            receiver: ops-discord
+        - uid: df9uwdwxj1w5cd
+          title: Adminer down
+          condition: Is down
+          data:
+            - refId: Adminer down
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: mimir
+              model:
+                editorMode: code
+                expr: |-
+                    (time() - container_last_seen{container_label_com_docker_compose_service="adminer"} > bool 180)
+                    or absent(container_last_seen{container_label_com_docker_compose_service="adminer"})
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: Adminer down
+            - refId: Is down
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: Last
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: Is down
+                type: threshold
+            - refId: Last
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: Adminer down
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: Last
+                type: reduce
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          keepFiringFor: 10m
+          annotations: {}
+          labels:
+            severity: critical
+          isPaused: false
+          notification_settings:
+            receiver: ops-discord
+        - uid: cf9vaaboisirkc
+          title: Mimir down
+          condition: Is down
+          data:
+            - refId: Mimir down
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: mimir
+              model:
+                editorMode: code
+                expr: |-
+                    (time() - container_last_seen{container_label_com_docker_compose_service="mimir"} > bool 180)
+                    or absent(container_last_seen{container_label_com_docker_compose_service="mimir"})
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: Mimir down
+            - refId: Is down
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: Last
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: Is down
+                type: threshold
+            - refId: Last
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: Mimir down
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: Last
+                type: reduce
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          keepFiringFor: 10m
+          annotations: {}
+          labels:
+            severity: critical
+          isPaused: false
+          notification_settings:
+            receiver: ops-discord
+        - uid: bf9vak5j6z0n4b
+          title: App down
+          condition: Is down
+          data:
+            - refId: App down
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: mimir
+              model:
+                editorMode: code
+                expr: |-
+                    (time() - container_last_seen{container_label_com_docker_compose_service="app"} > bool 180)
+                    or absent(container_last_seen{container_label_com_docker_compose_service="app"})
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: App down
+            - refId: Is down
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: Last
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: Is down
+                type: threshold
+            - refId: Last
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: App down
+                hide: false
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: Last
+                type: reduce
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          keepFiringFor: 10m
+          annotations: {}
+          labels:
+            severity: critical
+          isPaused: false
+          notification_settings:
+            receiver: ops-discord
+        - uid: df9vaws587b40f
+          title: KYC down
+          condition: Is down
+          data:
+            - refId: KYC down
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: mimir
+              model:
+                editorMode: code
+                expr: |-
+                    (time() - container_last_seen{container_label_com_docker_compose_service="kyc"} > bool 180)
+                    or absent(container_last_seen{container_label_com_docker_compose_service="kyc"})
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: KYC down
+            - refId: Is down
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: Last
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: Is down
+                type: threshold
+            - refId: Last
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: KYC down
+                hide: false
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: Last
+                type: reduce
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          keepFiringFor: 10m
+          annotations: {}
+          labels:
+            severity: critical
+          isPaused: false
+          notification_settings:
+            receiver: ops-discord
+        - uid: bf9vb4998w2dce
+          title: Alloy down
+          condition: Is down
+          data:
+            - refId: Alloy down
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: mimir
+              model:
+                editorMode: code
+                expr: |-
+                    (time() - container_last_seen{container_label_com_docker_compose_service="alloy"} > bool 180)
+                    or absent(container_last_seen{container_label_com_docker_compose_service="alloy"})
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: Alloy down
+            - refId: Is down
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: Last
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: Is down
+                type: threshold
+            - refId: Last
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: Alloy down
+                hide: false
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: Last
+                type: reduce
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          keepFiringFor: 10m
+          annotations: {}
+          labels:
+            severity: critical
+          isPaused: false
+          notification_settings:
+            receiver: ops-discord
+        - uid: ff9vbbidea328d
+          title: Loki down
+          condition: Is down
+          data:
+            - refId: Loki down
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: mimir
+              model:
+                editorMode: code
+                expr: |-
+                    (time() - container_last_seen{container_label_com_docker_compose_service="loki"} > bool 180)
+                    or absent(container_last_seen{container_label_com_docker_compose_service="loki"})
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: Loki down
+            - refId: Is down
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: Last
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: Is down
+                type: threshold
+            - refId: Last
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: Loki down
+                hide: false
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: Last
+                type: reduce
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          keepFiringFor: 10m
+          annotations: {}
+          labels:
+            severity: critical
+          isPaused: false
+          notification_settings:
+            receiver: ops-discord
+        - uid: cf9vbhzbce9kwc
+          title: Db down
+          condition: Is down
+          data:
+            - refId: Db down
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: mimir
+              model:
+                editorMode: code
+                expr: |-
+                    (time() - container_last_seen{container_label_com_docker_compose_service="db"} > bool 180)
+                    or absent(container_last_seen{container_label_com_docker_compose_service="db"})
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: Db down
+            - refId: Is down
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: Last
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: Is down
+                type: threshold
+            - refId: Last
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: Db down
+                hide: false
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: Last
+                type: reduce
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          keepFiringFor: 10m
+          annotations: {}
+          labels:
+            severity: critical
+          isPaused: false
+          notification_settings:
+            receiver: ops-discord
+        - uid: cf9vbq1zi18n4c
+          title: Proxy down
+          condition: Is down
+          data:
+            - refId: Proxy down
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: mimir
+              model:
+                editorMode: code
+                expr: |-
+                    (time() - container_last_seen{container_label_com_docker_compose_service="proxy"} > bool 180)
+                    or absent(container_last_seen{container_label_com_docker_compose_service="proxy"})
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: Proxy down
+            - refId: Is down
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: Last
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: Is down
+                type: threshold
+            - refId: Last
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: Proxy down
+                hide: false
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: Last
+                type: reduce
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          keepFiringFor: 10m
+          annotations: {}
+          labels:
+            severity: critical
+          isPaused: false
+          notification_settings:
+            receiver: ops-discord
+        - uid: bf9vbvdml39j4f
+          title: Grafana down
+          condition: Is down
+          data:
+            - refId: Grafana down
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: mimir
+              model:
+                editorMode: code
+                expr: |-
+                    (time() - container_last_seen{container_label_com_docker_compose_service="grafana"} > bool 180)
+                    or absent(container_last_seen{container_label_com_docker_compose_service="grafana"})
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: Grafana down
+            - refId: Is down
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: Last
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: Is down
+                type: threshold
+            - refId: Last
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: Grafana down
+                hide: false
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: Last
+                type: reduce
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          keepFiringFor: 10m
+          annotations: {}
+          labels:
+            severity: critical
+          isPaused: false
+          notification_settings:
+            receiver: ops-discord
+        - uid: ff9vc1u3ydpfkd
+          title: Backup down
+          condition: Is down
+          data:
+            - refId: Backup down
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: mimir
+              model:
+                editorMode: code
+                expr: |-
+                    (time() - container_last_seen{container_label_com_docker_compose_service="backup"} > bool 180)
+                    or absent(container_last_seen{container_label_com_docker_compose_service="backup"})
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: Backup down
+            - refId: Is down
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: Last
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: Is down
+                type: threshold
+            - refId: Last
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: Backup down
+                hide: false
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: Last
+                type: reduce
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          keepFiringFor: 10m
+          annotations: {}
+          labels:
+            severity: critical
+          isPaused: false
+          notification_settings:
+            receiver: ops-discord
+        - uid: cf9vc6ssjwdmod
+          title: Cadvisor down
+          condition: Is down
+          data:
+            - refId: Cadvisor down
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: mimir
+              model:
+                editorMode: code
+                expr: |-
+                    (time() - container_last_seen{container_label_com_docker_compose_service="cadvisor"} > bool 180)
+                    or absent(container_last_seen{container_label_com_docker_compose_service="cadvisor"})
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: Cadvisor down
+            - refId: Is down
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: Last
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: Is down
+                type: threshold
+            - refId: Last
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: Cadvisor down
+                hide: false
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: Last
+                type: reduce
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          keepFiringFor: 10m
+          annotations: {}
+          labels:
+            severity: critical
+          isPaused: false
+          notification_settings:
+            receiver: ops-discord
+        - uid: bf9vcbspm3zeoe
+          title: Node exporter down
+          condition: Is down
+          data:
+            - refId: Node exporter down
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: mimir
+              model:
+                editorMode: code
+                expr: |-
+                    (time() - container_last_seen{container_label_com_docker_compose_service="node_exporter"} > bool 180)
+                    or absent(container_last_seen{container_label_com_docker_compose_service="node_exporter"})
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: Node exporter down
+            - refId: Is down
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: Last
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: Is down
+                type: threshold
+            - refId: Last
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: Node exporter down
+                hide: false
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: Last
+                type: reduce
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          keepFiringFor: 10m
+          annotations: {}
+          labels:
+            severity: critical
+          isPaused: false
+          notification_settings:
+            receiver: ops-discord

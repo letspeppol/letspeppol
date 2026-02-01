@@ -4,14 +4,11 @@ services:
     image: minio/minio
     command: "minio server --address ':9000' --console-address ':9001' /data"
     environment:
-      - MINIO_ROOT_USER=mimir
-      - MINIO_ROOT_PASSWORD=supersecret
-      - MINIO_DEFAULT_BUCKETS=mimir
+      MINIO_ROOT_USER: mimir
+      MINIO_ROOT_PASSWORD: supersecret
+      MINIO_DEFAULT_BUCKETS: mimir
     volumes:
       - minio_data:/data
-#    ports:
-#      - "9000:9000"
-#      - "9001:9001"
     networks:
       - observability
 
@@ -40,18 +37,13 @@ services:
     volumes:
       - ./mimir/config.yml:/etc/mimir.yaml
       - mimir_data:/data
-#    ports:
-#      - "9009:9009"
     networks:
       - observability
 
   alloy:
     image: grafana/alloy:latest
-    ports:
-      - "3200:3200"      # KYC log-push endpoint
-      - "3201:3201"      # App log-push endpoint
-      - "3202:3202"      # Proxy log-push endpoint
-      - "12345:12345"
+    environment:
+      SERVER_NAME: ${SERVER_NAME}
     volumes:
       - ./alloy/config.alloy:/etc/alloy/config.alloy
       - /var/run/docker.sock:/var/run/docker.sock
@@ -65,8 +57,6 @@ services:
 
   loki:
     image: grafana/loki:latest
-#    ports:
-#      - "3100:3100"
     volumes:
       - ./loki/config.yml:/etc/loki/config.yml
       - loki_data:/loki
@@ -76,11 +66,11 @@ services:
 
   grafana:
     image: grafana/grafana:latest
-    ports:
-      - "3000:3000"
     environment:
-      - GF_SECURITY_ADMIN_USER=${GRAFANA_USER:-admin}
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASS:-admin}
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASS:-admin}
+      GF_SERVER_ROOT_URL: https://${GRAFANA_DOMAIN}/
+      DISCORD_WEBHOOK_URL: ${DISCORD_WEBHOOK_URL}
     volumes:
       - grafana_data:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning
@@ -96,6 +86,34 @@ services:
       - "traefik.http.routers.grafana.entrypoints=websecure"
       - "traefik.http.routers.grafana.tls.certresolver=${CERT_RESOLVER}"
       - "traefik.http.services.grafana.loadbalancer.server.port=3000"
+
+  node_exporter:
+    image: prom/node-exporter:latest
+    restart: unless-stopped
+    networks:
+      - observability
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--path.rootfs=/rootfs'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    restart: unless-stopped
+    networks:
+      - observability
+    volumes:
+      - /:/rootfs:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    command:
+      - "--docker_only=true"
 
 networks:
   observability:
