@@ -14,9 +14,7 @@
                 <label class="field full">
                     <span t="invoice.dateModal.payment-terms">Payment Terms</span>
                     <select value.bind="selectedPaymentTerm">
-                        <option repeat.for="term of possiblePaymentTerms" value.bind="term.key">
-                            <span>${term.translation}</span>
-                        </option>
+                        <option repeat.for="term of possiblePaymentTerms" value.bind="term.key">${term.translation}</option>
                     </select>
                 </label>
                 <label class="field" if.bind="documentType === 'INVOICE'">
