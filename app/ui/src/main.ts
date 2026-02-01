@@ -7,6 +7,7 @@ import {AuthenticationHook} from "./app/authentication-hook";
 import * as en from "./app/locale/translation_en.json";
 import * as fr from "./app/locale/translation_fr.json";
 import * as nl from "./app/locale/translation_nl.json";
+import * as de from "./app/locale/translation_de.json";
 
 Aurelia
     .register(RouterConfiguration.customize({
@@ -21,6 +22,7 @@ Aurelia
                     nl: { translation: nl },
                     fr: { translation: fr },
                     en: { translation: en },
+                    de: { translation: de },
                 }
             };
         })
