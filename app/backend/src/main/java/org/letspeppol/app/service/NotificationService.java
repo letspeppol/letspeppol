@@ -59,7 +59,7 @@ public class NotificationService {
                     company.getEmailNotificationCcList(),
                     null,
                     null,
-                    "New invoice received",
+                    "New invoice %s received from %s".formatted(document.getInvoiceReference(), document.getPartnerName()),
                     body,
                     null,
                     company.isAddAttachmentToNotification() ? document.getId() : null
