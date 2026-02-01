@@ -6,6 +6,7 @@ import {RegistrationService} from "../services/kyc/registration-service";
 import {PeppolDirService} from "../services/peppol/peppol-dir-service";
 import {ChangePasswordModal} from "./change-password-modal";
 import {ConfirmationModalContext} from "../components/confirmation/confirmation-modal-context";
+import {validateEmail} from "../app/util/email-validation";
 
 export class Account {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -96,7 +97,7 @@ export class Account {
 
     async registerOnPeppol() {
         try {
-            this.company.peppolActive = await this.registrationService.registerCompany()
+            this.company.peppolActive = await this.registrationService.registerCompany();
             localStorage.setItem('peppolActive', this.company.peppolActive);
             this.ea.publish('alert', {alertType: AlertType.Success, text: "Activated company on Peppol"});
             window.location.reload();
@@ -173,6 +174,23 @@ export class Account {
             a.remove();
         } catch {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to download signed contract"});
+        }
+    }
+
+    validateEmailNotificationCCList() {
+        if (this.company.emailNotificationCCList) {
+            const validEmails = [];
+            const emails = this.company.emailNotificationCCList.replace('\n', '').replace(' ', '').split(',');
+            for (const email of emails) {
+                if (validateEmail(email)) {
+                    validEmails.push(email);
+                }
+            }
+            if (validEmails.length) {
+                this.company.emailNotificationCCList = validEmails.join(',');
+            } else {
+                this.company.emailNotificationCCList = undefined;
+            }
         }
     }
 }

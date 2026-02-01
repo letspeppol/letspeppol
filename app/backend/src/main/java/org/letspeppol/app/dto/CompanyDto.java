@@ -11,8 +11,11 @@ public record CompanyDto(
         String iban,
         String paymentAccountName,
         String lastInvoiceReference,
-// TODO        boolean noArchive,
+        // TODO boolean noArchive,
         boolean peppolActive,
+        boolean enableEmailNotification,
+        boolean addAttachmentToNotification,
+        String emailNotificationCCList,
         AddressDto registeredOffice
 )
 {}

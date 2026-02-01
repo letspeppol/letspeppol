@@ -2,7 +2,7 @@
 <import from="../theme/theme-selector"></import>
 
 <header class="app-header">
-    <div style="display: flex; justify-content: space-between; align-items: center">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
         <div class="brand">
             <img src.bind="this.theme.themeDark?'logo-dark.png':'logo.png'" class="logo" height="30" alt="Let's Peppol" t="[alt]navigation.brand-alt" />
             <i data-lucide="menu"></i>
@@ -30,6 +30,7 @@
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-building-icon lucide-building"><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M12 6h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/><path d="M8 6h.01"/><path d="M9 22v-3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><rect x="4" y="2" width="16" height="20" rx="2"/></svg>
                     <span t="navigation.account">Account</span>
                 </button>
+                <p class="new-feature"><span class="new-feature-icon">&#10559;</span> <span t="navigation.new-feature">New feature "Notification" added in Account</span></p>
             </nav>
         </div>
 

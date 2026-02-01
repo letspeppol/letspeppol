@@ -1,0 +1,7 @@
+Hello,
+
+We received a new invoice on your behalf from {{supplier}} with reference {{reference}} and total amount {{totalAmount}}.
+You can inspect the document at https://be.letspeppol.org/invoices/{{uuid}}
+
+Kind regards,
+Let’s Peppol Team

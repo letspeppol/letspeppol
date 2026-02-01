@@ -7,6 +7,7 @@ import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.KycException;
+import org.letspeppol.kyc.model.AccountType;
 import org.letspeppol.kyc.service.jwt.JwtInfo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ public class JwtService {
     public static final String PEPPOL_ACTIVE = "peppolActive";
     public static final String UID = "uid"; //Needed for multiple accounts to a joined Peppol ID
     public static final String ROLE_SERVICE = "service";
+    public static final String ACCOUNT_TYPE = "accountType";
     private final Key key;
 
     public JwtService(@Value("${jwt.secret}") String secretKey) {
@@ -31,10 +33,11 @@ public class JwtService {
     }
 
     // External
-    public String generateToken(String peppolId, boolean peppolActive, UUID uid) {
+    public String generateToken(AccountType accountType, String peppolId, boolean peppolActive, UUID uid) {
         long expirationTime = 1000 * 60 * 60; // 1 hour
         return Jwts.builder()
                 .setIssuer("app")
+                .claim(ACCOUNT_TYPE, accountType)
                 .claim(PEPPOL_ID, peppolId)
                 .claim(PEPPOL_ACTIVE, peppolActive)
                 //TODO : add proxy url, to have multiple proxy possible and n-to-n relation with app, store registered proxy in kyc database
@@ -57,6 +60,7 @@ public class JwtService {
                 .getBody();
         return new JwtInfo(
                 token,
+                AccountType.valueOf(claims.get(ACCOUNT_TYPE, String.class)),
                 claims.get(PEPPOL_ID, String.class),
                 claims.get(PEPPOL_ACTIVE, Boolean.class),
                 UUID.fromString(claims.get(UID, String.class))
@@ -65,12 +69,14 @@ public class JwtService {
 
     // Internal
 
-    public String generateInternalToken(String peppolId, boolean peppolActive) {
-        long expirationTime = 1000 * 60 * 60 * 24; // 1 day
+    public String generateInternalToken(String peppolId, boolean peppolActive, UUID uid) {
+        long expirationTime = 1000 * 60 * 60 * 24; // 1 day //TODO : why 24 hours ?
         return Jwts.builder()
                 .setIssuer("kyc")
+                .claim(ACCOUNT_TYPE, AccountType.ADMIN) //TODO : can we copy this from the used JWT ?
                 .claim(PEPPOL_ID, peppolId)
                 .claim(PEPPOL_ACTIVE, peppolActive)
+                .claim(UID, uid)
                 .claim("role", ROLE_SERVICE)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))

@@ -195,7 +195,8 @@
     "products": "Products",
     "account": "Account",
     "brand-alt": "Let's Peppol",
-    "toggle-theme": "Toggle theme"
+    "toggle-theme": "Toggle theme",
+    "new-feature": "New feature “Notifications” added in Account"
   },
   "alert": {
     "success": "Success",
@@ -398,6 +399,7 @@
     "title": "Account",
     "cancel": "Cancel",
     "save": "Save",
+    "notifications": "Notifications",
     "subscriber-info": "Subscriber Info",
     "download-contract": "Download Contract",
     "change-password": "Change Password",
@@ -413,6 +415,9 @@
     "iban": "IBAN",
     "account-name": "Account Name",
     "payment-terms": "Payment Terms",
+    "enable-email-notification": "Enable email notifications",
+    "add-attachment-to-notification": "Add attachment to notification",
+    "email-notification-cc-list": "Email notification CC list",
     "registration-failed": {
       "contact-us": "Registration was not finalized. Please contact support at support@letspeppol.org for the next steps.",
       "contact-provider": "Your Peppol ID is currently registered with {{provider}}. Please contact them to unregister it, then log in and try activating again.",

@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.kyc.dto.RegistrationRequest;
 import org.letspeppol.kyc.dto.RegistrationResponse;
 import org.letspeppol.kyc.dto.RegistryDto;
+import org.letspeppol.kyc.dto.ServiceRequest;
 import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.KycException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class ProxyService {
     private WebClient webClient;
 
     public boolean isCompanyPeppolActive(String token) {
-        RegistryDto registryDto = this.webClient.get()
+        RegistryDto registryDto = webClient.get()
                 .uri("/sapi/registry")
                 .header("Authorization", "Bearer " + token)
                 .retrieve()
@@ -36,7 +37,7 @@ public class ProxyService {
 
     public RegistrationResponse registerCompany(String token, String companyName) {
         try {
-            RegistryDto registryDto = this.webClient.post()
+            RegistryDto registryDto = webClient.post()
                     .uri("/sapi/registry")
                     .body(Mono.just(new RegistrationRequest(companyName, "NL", "BE")), RegistrationRequest.class)
                     .header("Authorization", "Bearer " + token)
@@ -64,7 +65,7 @@ public class ProxyService {
 
     public boolean unregisterCompany(String token) {
         try {
-            RegistryDto registryDto = this.webClient.put()
+            RegistryDto registryDto = webClient.put()
                     .uri("/sapi/registry/unregister")
                     .header("Authorization", "Bearer " + token)
                     .retrieve()
@@ -79,4 +80,35 @@ public class ProxyService {
         }
     }
 
+    public void allowService(String token, ServiceRequest request) {
+        try {
+            webClient.put()
+                    .uri("/sapi/registry/allow")
+                    .body(Mono.just(request), ServiceRequest.class)
+                    .header("Authorization", "Bearer " + token)
+                    .retrieve()
+                    .toBodilessEntity()
+                    .block();
+
+        } catch (Exception ex) {
+            log.error("Allowing of service on proxy failed", ex);
+            throw new KycException(KycErrorCodes.PROXY_ALLOW_SERVICE_FAILED);
+        }
+    }
+
+    public void rejectService(String token, ServiceRequest request) {
+        try {
+            webClient.put()
+                    .uri("/sapi/registry/reject")
+                    .body(Mono.just(request), ServiceRequest.class)
+                    .header("Authorization", "Bearer " + token)
+                    .retrieve()
+                    .toBodilessEntity()
+                    .block();
+
+        } catch (Exception ex) {
+            log.error("Rejecting of service on proxy failed", ex);
+            throw new KycException(KycErrorCodes.PROXY_REJECT_SERVICE_FAILED);
+        }
+    }
 }

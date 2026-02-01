@@ -1,3 +1,16 @@
+@keyframes newFeatureBlinkBorder {
+    from {border-color: var(--primary-strong);}
+    to {border-color: var(--border-soft);}
+}
+
+.new-feature-border {
+    border-width: 2px;
+    animation-name: newFeatureBlinkBorder;
+    animation-duration: 1s;
+    animation-direction: alternate;
+    animation-iteration-count: infinite;
+}
+
 .card h2 {
     font-size: 1rem;
     color: var(--muted);

@@ -6,6 +6,9 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.domain.Pageable;
 import org.letspeppol.proxy.model.DocumentDirection;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
@@ -40,5 +43,21 @@ public interface UblDocumentRepository extends JpaRepository<UblDocument, UUID> 
             DocumentDirection direction,
             Instant startInclusive,
             Instant endExclusive
+    );
+
+    @Query("""
+        select d
+        from UblDocument d, AppLink l
+        where l.id.linkedUid = :uid
+          and l.id.peppolId = d.ownerPeppolId
+          and d.downloadCount = :downloadCount
+          and d.direction = :direction
+        order by d.createdOn desc
+    """)
+    List<UblDocument> findAllNewByLinkedUid(
+            @Param("uid") UUID uid,
+            @Param("downloadCount") int downloadCount,
+            @Param("direction") DocumentDirection direction,
+            Pageable pageable
     );
 }

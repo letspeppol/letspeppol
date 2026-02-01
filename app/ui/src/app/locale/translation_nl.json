@@ -194,7 +194,8 @@
     "products" : "Producten",
     "account" : "Account",
     "brand-alt" : "Let's Peppol",
-    "toggle-theme" : "Thema wisselen"
+    "toggle-theme" : "Thema wisselen",
+    "new-feature": "Nieuwe functie “Meldingen” toegevoegd aan Account"
   },
   "alert" : {
     "success" : "Succes",
@@ -325,8 +326,6 @@
       "title" : "Factuur",
       "document" : "Document",
       "invoice-number" : "Factuurnummer",
-      "buyer-reference" : "Referentie koper",
-      "order-reference" : "Orderreferentie",
       "note-optional" : "Notitie (optioneel)",
       "note-placeholder" : "Extra notities voor deze factuur",
       "reference-required" : "Referentie koper OF orderreferentie is verplicht"
@@ -398,6 +397,7 @@
     "title" : "Account",
     "cancel" : "Annuleren",
     "save" : "Opslaan",
+    "notifications": "Meldingen",
     "subscriber-info" : "Abonnee-info",
     "download-contract" : "Contract downloaden",
     "change-password" : "Wachtwoord wijzigen",
@@ -413,6 +413,9 @@
     "iban" : "IBAN",
     "account-name" : "Accountnaam",
     "payment-terms" : "Betalingsvoorwaarden",
+    "enable-email-notification": "E-mailmeldingen inschakelen",
+    "add-attachment-to-notification": "Bijlage toevoegen aan de melding",
+    "email-notification-cc-list": "CC-lijst voor e-mailmeldingen",
     "registration-failed": {
       "contact-us": "De registratie is niet afgerond. Neem contact op met support via support@letspeppol.org voor de volgende stappen.",
       "contact-provider": "Uw Peppol-ID is momenteel geregistreerd bij {{provider}}. Neem contact met hen op om het uit te schrijven, log daarna in en probeer opnieuw te activeren.",

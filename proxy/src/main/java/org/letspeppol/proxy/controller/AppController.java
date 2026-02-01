@@ -6,6 +6,7 @@ import org.letspeppol.proxy.dto.PeppolParties;
 import org.letspeppol.proxy.dto.UblDocumentDto;
 import org.letspeppol.proxy.exception.SecurityException;
 import org.letspeppol.proxy.model.AccessPoint;
+import org.letspeppol.proxy.model.AccountType;
 import org.letspeppol.proxy.service.*;
 import org.letspeppol.proxy.util.JwtUtil;
 import org.letspeppol.proxy.util.UblParser;
@@ -37,14 +38,20 @@ public class AppController {
 
     @GetMapping()
     public List<UblDocumentDto> getAllNew(@AuthenticationPrincipal Jwt jwt, @RequestParam(defaultValue = DEFAULT_SIZE) int size) {
-        String peppolId = JwtUtil.getPeppolId(jwt);
-        return ublDocumentReceiverService.findAllNew(peppolId, size);
+        AccountType accountType = JwtUtil.getAccountType(jwt);
+        if (accountType.isUser()) {
+            return ublDocumentReceiverService.findAllNew(JwtUtil.getUserPeppolId(jwt), size);
+        } else if (accountType.isApp()) {
+            return ublDocumentReceiverService.findAllNewByAppLink(JwtUtil.getAppUid(jwt), size);
+        } else {
+            throw new SecurityException("Not correct account type");
+        }
     }
 
     @PostMapping("status")
     public List<UblDocumentDto> getStatusUpdates(@AuthenticationPrincipal Jwt jwt, @RequestBody List<UUID> ids) {
-        String peppolId = JwtUtil.getPeppolId(jwt);
-        return ublDocumentService.findByIds(ids, peppolId);
+        String peppolId = JwtUtil.getUserPeppolId(jwt);
+        return ublDocumentService.findByIds(ids, peppolId); //TODO : map to statusDto !
     }
 
     /* *
@@ -65,7 +72,7 @@ public class AppController {
 
     @GetMapping("{id}")
     public UblDocumentDto getById(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
-        String peppolId = JwtUtil.getPeppolId(jwt);
+        String peppolId = JwtUtil.getUserPeppolId(jwt);
         return ublDocumentService.findById(id, peppolId);
     }
 
@@ -89,27 +96,39 @@ public class AppController {
 
     @PutMapping("{id}/downloaded")
     public ResponseEntity<Object> downloaded(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestParam(defaultValue = "false") boolean noArchive) {
-        String peppolId = JwtUtil.getPeppolId(jwt);
-        ublDocumentReceiverService.downloaded(List.of(id), peppolId, noArchive);
+        AccountType accountType = JwtUtil.getAccountType(jwt);
+        if (accountType.isUser()) {
+            ublDocumentReceiverService.downloaded(List.of(id), JwtUtil.getUserPeppolId(jwt), noArchive);
+        } else if (accountType.isApp()) {
+            ublDocumentReceiverService.downloaded(List.of(id), JwtUtil.getAppUid(jwt), noArchive);
+        } else {
+            throw new SecurityException("Not correct account type");
+        }
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PutMapping("downloaded")
     public ResponseEntity<Object> downloadedBatch(@AuthenticationPrincipal Jwt jwt, @RequestBody List<UUID> ids, @RequestParam(defaultValue = "false") boolean noArchive) {
-        String peppolId = JwtUtil.getPeppolId(jwt);
-        ublDocumentReceiverService.downloaded(ids, peppolId, noArchive);
+        AccountType accountType = JwtUtil.getAccountType(jwt);
+        if (accountType.isUser()) {
+            ublDocumentReceiverService.downloaded(ids, JwtUtil.getUserPeppolId(jwt), noArchive);
+        } else if (accountType.isApp()) {
+            ublDocumentReceiverService.downloaded(ids, JwtUtil.getAppUid(jwt), noArchive);
+        } else {
+            throw new SecurityException("Not correct account type");
+        }
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<Object> delete(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestParam(defaultValue = "false") boolean noArchive) {
-        String peppolId = JwtUtil.getPeppolId(jwt);
+        String peppolId = JwtUtil.getUserPeppolId(jwt);
         ublDocumentSenderService.cancel(id, peppolId, noArchive);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     private void validateSender(Jwt jwt, UblDocumentDto ublDocumentDto) throws SecurityException {
-        String peppolId = JwtUtil.getPeppolId(jwt);
+        String peppolId = JwtUtil.getUserPeppolId(jwt);
         if (!ublDocumentDto.ownerPeppolId().equals(peppolId)) {
             log.error("Peppol ID {} not the owner {} of document {}", peppolId, ublDocumentDto.ownerPeppolId(), ublDocumentDto.id());
             throw new SecurityException("Peppol ID not the owner");

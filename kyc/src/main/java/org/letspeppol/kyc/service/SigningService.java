@@ -271,7 +271,7 @@ public class SigningService {
                 certificates[0],
                 CertificateUtil.getX500Name(certificates)
         );
-        IdentityVerificationResponse identityVerificationResponse = identityVerificationService.create(identityVerificationRequest);
+        IdentityVerificationResponse identityVerificationResponse = identityVerificationService.createAdmin(identityVerificationRequest);
         activationService.setVerified(signingRequest.emailToken());
 
         return new FinalizeSigningResponse(writeContractToFile(tokenVerificationResponse.company().peppolId(), identityVerificationResponse.account(), finalPdfBytes), identityVerificationResponse.registrationResponse());
