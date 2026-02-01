@@ -1,0 +1,26 @@
+@keyframes newFeatureBlink {
+    from {color: var(--primary-strong);}
+    to {color: var(--primary);}
+}
+
+.new-feature {
+    font-weight: 500;
+    animation-name: newFeatureBlink;
+    animation-duration: 1s;
+    animation-direction: alternate;
+    animation-iteration-count: infinite;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transform: translateY(100%) translateX(80%);
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+@media (max-width: 1000px){
+    .new-feature{
+        left: 20px;
+        top: 100%;
+        transform: translateY(0rem);
+    }
+}
