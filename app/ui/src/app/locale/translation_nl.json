@@ -194,7 +194,8 @@
     "products" : "Producten",
     "account" : "Account",
     "brand-alt" : "Let's Peppol",
-    "toggle-theme" : "Thema wisselen"
+    "toggle-theme" : "Thema wisselen",
+    "new-feature": "Nieuwe functie “Meldingen” toegevoegd aan Account"
   },
   "alert" : {
     "success" : "Succes",

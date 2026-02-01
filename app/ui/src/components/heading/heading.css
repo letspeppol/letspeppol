@@ -12,15 +12,22 @@
     position: absolute;
     right: 0;
     top: 0;
-    transform: translateY(100%) translateX(80%);
+    transform: translateY(100%) translateX(85%);
     white-space: nowrap;
     pointer-events: none;
 }
 
-@media (max-width: 1000px){
+.new-feature-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+  display: inline-block;
+  vertical-align: -0.1em;
+}
+
+@media (max-width: 1000px) {
     .new-feature{
         left: 20px;
-        top: 100%;
+        top: 95%;
         transform: translateY(0rem);
     }
 }

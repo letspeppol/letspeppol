@@ -194,7 +194,8 @@
     "products" : "Produits",
     "account" : "Compte",
     "brand-alt" : "Let's Peppol",
-    "toggle-theme" : "Changer de thème"
+    "toggle-theme" : "Changer de thème",
+    "new-feature": "Nouvelle fonctionnalité “Notifications” ajoutée au Compte"
   },
   "alert" : {
     "success" : "Succès",
