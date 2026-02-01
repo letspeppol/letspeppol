@@ -11,9 +11,7 @@
                     <label class="field" >
                         <span t="invoice.modal.document">Document</span>
                         <select name="documentType" value.bind="selectedDocumentType" required>
-                            <option repeat.for="type of documentTypes" value.bind="type">
-                                <span t="documentType.${type}"></span>
-                            </option>
+                            <option repeat.for="type of documentTypes" value.bind="type" t="documentType.${type}"></option>
                         </select>
                     </label>
                     <label class="field">

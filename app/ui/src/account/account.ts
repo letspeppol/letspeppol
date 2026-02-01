@@ -180,7 +180,7 @@ export class Account {
     validateEmailNotificationCCList() {
         if (this.company.emailNotificationCCList) {
             const validEmails = [];
-            const emails = this.company.emailNotificationCCList.replace('\n', '').split(',');
+            const emails = this.company.emailNotificationCCList.replace('\n', '').replace(' ', '').split(',');
             for (const email of emails) {
                 if (validateEmail(email)) {
                     validEmails.push(email);
