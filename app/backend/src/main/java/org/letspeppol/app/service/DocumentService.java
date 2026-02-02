@@ -23,6 +23,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -369,7 +370,7 @@ public class DocumentService {
         return documentRepository.save(document);
     }
 
-    @PostConstruct
+    @Scheduled(cron = "0 0 * * * *")
     public void periodicSynchronize() {
         try {
             String appTokenFromKyc = jwtService.getAppTokenFromKyc();
