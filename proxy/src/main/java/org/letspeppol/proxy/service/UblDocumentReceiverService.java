@@ -115,7 +115,7 @@ public class UblDocumentReceiverService {
                 log.error("Document {} is owned by {} and not {} when trying to flag as downloaded", id, ublDocument.getOwnerPeppolId(), ownerPeppolId);
                 continue;
             }
-            if (ownerPeppolId == null && appLinkRepository.existsById(new AppLink.AppLinkId(ublDocument.getOwnerPeppolId(), appUid))) {
+            if (ownerPeppolId == null && !appLinkRepository.existsById(new AppLink.AppLinkId(ublDocument.getOwnerPeppolId(), appUid))) {
                 log.error("Document {} is owned by {} and App {} has no access when trying to flag as downloaded", id, ublDocument.getOwnerPeppolId(), appUid);
                 continue;
             }
