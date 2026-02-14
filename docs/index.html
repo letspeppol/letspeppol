@@ -12,72 +12,8 @@
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://letspeppol.org/" />
   <meta name="twitter:card" content="summary_large_image" />
+  <link rel="stylesheet" href="css/styles.css">
 
-  <style>
-    :root {
-      --primary: #2C3C69;
-      --accent: #FAA21D;
-      --ink: #0f172a;
-      --muted: #475569;
-      --border: #e2e8f0;
-      --bg: #f8fafc;
-      --white: #ffffff;
-    }
-    html, body { margin:0; padding:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji"; color: var(--ink); background: var(--bg); }
-    .container { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
-    header.sticky { position: sticky; top: 0; z-index: 40; background: color-mix(in srgb, var(--white) 94%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(255,255,255,.12); }
-    .nav { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
-    .brand { display:flex; gap:12px; align-items:center; color:var(--primary); }
-    .nav a { color: var(--primary); text-decoration:none; font-size:14px; margin-left:20px; }
-    .btn { display:inline-flex; align-items:center; gap:8px; text-decoration:none; font-weight:700; border-radius: 12px; padding: 12px 16px; }
-    .btn-accent { background: var(--accent); color: #121212; }
-    .btn-ghost { color:#fff; border:1px solid rgba(255,255,255,.35); background: rgba(255,255,255,.12); }
-    .actions > .btn-ghost { background: var(--primary); color: var(--white); }
-    .actions > .btn-ghost:hover { background: color-mix(in srgb, var(--primary) 80%, transparent); }
-    .bar { background: color-mix(in srgb, var(--primary), var(--accent) 20%); color:#fff; border-bottom:1px solid rgba(255,255,255,.12); }
-    .bar .inner { display:flex; align-items:center; justify-content:space-between; gap:12px; padding: 8px 0; flex-wrap:wrap; }
-    .pill { display:inline-flex; align-items:center; border-radius:999px; padding:4px 10px; background: rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.18); font-size:12px; }
-    .hero { position:relative; color:#fff; background:
-      radial-gradient(1200px 600px at 10% -10%, color-mix(in srgb, var(--primary) 12%, transparent), transparent 70%),
-      radial-gradient(1200px 600px at 110% 10%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 60%),
-      var(--primary);
-      padding: 56px 0 72px;
-    }
-    h1 { font-size: clamp(28px, 4vw, 48px); line-height:1.1; margin: 0 0 12px; }
-    .lead { font-size: clamp(16px, 2.2vw, 20px); color: #eef2ff; opacity:.9; }
-    .cta-row { display:flex; flex-wrap:wrap; gap:12px; margin-top:16px; align-items:center; }
-    .small { font-size:12px; opacity:.9; }
-    .badges { display:flex; flex-wrap:wrap; gap:8px; margin-top:18px; }
-    .badge { background:#eef2ff; color:#334155; padding:4px 10px; border-radius:999px; font-size:12px; }
-
-    section { padding: 64px 0; }
-    h2 { font-size: clamp(22px, 3vw, 32px); margin:0 0 10px; }
-    p.muted { color: var(--muted); }
-    .grid { display:grid; gap:16px; }
-    .grid-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
-    @media (max-width: 900px){ .grid-3 { grid-template-columns: 1fr; } }
-    .card { background:#fff; border:1px solid var(--border); border-radius: 18px; padding: 20px; box-shadow: 0 2px 10px rgba(2,6,23,.05); }
-    .list { list-style:none; padding:0; margin:12px 0 0; }
-    .list li { display:flex; gap:8px; align-items:flex-start; margin: 8px 0; color: var(--muted); font-size:14px; }
-    .check { color: var(--primary); font-weight:900; }
-
-    .resp{display:grid;gap:40px;grid-template-columns:1fr 1fr;align-items:center}
-    @media (max-width:1000px){.resp{grid-template-columns:1fr}}
-    .preview { background:#fff; border:1px solid rgba(255,255,255,.2); border-radius: 22px; padding: 12px; box-shadow: 0 20px 60px rgba(2,6,23,.2); display:none; }
-    @media(min-width:1000px){.preview{display:block}}
-
-    .partners { display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:12px; margin-top:12px; }
-    @media (max-width: 900px){ .partners { grid-template-columns: 1fr; } }
-    .partner a { color: var(--primary); text-decoration:none; font-weight:700; }
-    .partner p { margin:6px 0 0; }
-
-    footer { background:#fff; border-top:1px solid var(--border); }
-    .footer { display:flex; align-items:center; justify-content:space-between; gap:12px; padding: 18px 0; color: var(--muted); font-size:14px; flex-wrap:wrap; }
-    .lang a { color: var(--ink); text-decoration:none; margin-left:12px; }
-    .actions a:hover { filter: brightness(0.95); }
-    .ghost:hover { background: rgba(255,255,255,.2); }
-    .accent:hover { filter: brightness(.96); }
-  </style>
 
   <script type="application/ld+json">
   {
@@ -107,7 +43,7 @@
         <a href="#how">How it works</a>
         <a href="#features">Features</a>
         <a href="#compliance">Compliance</a>
-        <a href="#partners">Partners</a>
+        <a href="#supporters">Supporters</a>
         <a href="#open">Open-source</a>
         <a href="#faq">FAQ</a>
         <a class="btn btn-ghost ghost" href="https://letspeppol.org/invoice_example.png" target="_blank" rel="noreferrer">View preview</a>
@@ -178,7 +114,7 @@
       <div class="card"><h3>Data ownership</h3><p class="muted">You always own your data. We do not mine or sell access to your business information.</p></div>
       <div class="card"><h3>Trust by design</h3><p class="muted">GDPR-friendly, EU hosting, transparent code, and audits through community processes.</p></div>
       <div class="card"><h3>Open-source</h3><p class="muted">Free as in freedom. No license fees. Contribute integrations over time together with the community.</p></div>
-      <div class="card"><h3>No costs and no fees</h3><p class="muted">Started and maintained by a non-profit organization, driven by community and supported by donors and partners.</p></div>
+      <div class="card"><h3>No costs and no fees</h3><p class="muted">Started and maintained by a non-profit organization, driven by community and supported by donors and supporters.</p></div>
     </div>
   </section>
 
@@ -254,44 +190,109 @@
     </div>
   </section>
 
-  <!-- Partners / Sponsors -->
-  <section id="partners">
+  <!-- Supporters -->
+  <section id="supporters">
     <div class="container card">
-      <h3>Sponsors &amp; partners</h3>
+      <h3>Supporters</h3>
       <p class="muted">
         Let's Peppol is supported by organizations that want a healthy, open e-invoicing ecosystem for SMEs.
         If you like the idea of boring infrastructure done right, these organisations helped make it happen.
       </p>
 
-      <div class="partners">
-        <div class="card partner">
-          <a href="https://softwareoplossing.be" target="_blank" rel="noreferrer">SoftwareOplossing.be</a>
-          <p class="muted">Partner</p>
+      <div class="supporters">
+        <div class="card supporter">
+          <a href="https://softwareoplossing.be" target="_blank" rel="noreferrer" class="supporter-link">
+            <div class="supporter-logo-wrap">
+              <img src="img/supporters/software-oplossing-be.svg" alt="SoftwareOplossing.be logo" class="supporter-logo">
+            </div>
+            <div class="supporter-meta">
+              <span class="supporter-badges">
+                <span class="supporter-badge">Founding</span>
+                <span class="supporter-badge">Recurring donor</span>
+              </span>
+            </div>
+          </a>
         </div>
-        <div class="card partner">
-          <a href="https://pondersource.com" target="_blank" rel="noreferrer">Ponder Source</a>
-          <p class="muted">Partner</p>
+        <div class="card supporter">
+          <a href="https://pondersource.com" target="_blank" rel="noreferrer" class="supporter-link">
+            <div class="supporter-logo-wrap">
+              <img src="img/supporters/ponder-source.png" alt="Ponder Source logo" class="supporter-logo">
+            </div>
+            <div class="supporter-meta">
+              <span class="supporter-badges">
+                <span class="supporter-badge">Founding</span>
+                <span class="supporter-badge">Recurring donor</span>
+              </span>
+            </div>
+          </a>
         </div>
-        <div class="card partner">
-          <a href="https://nlnet.nl" target="_blank" rel="noreferrer">NLnet Foundation</a>
-          <p class="muted">Sponsor</p>
+        <div class="card supporter">
+          <a href="https://nlnet.nl" target="_blank" rel="noreferrer" class="supporter-link">
+            <div class="supporter-logo-wrap">
+              <img src="img/supporters/nlnet.svg" alt="NLnet Foundation logo" class="supporter-logo">
+            </div>
+            <div class="supporter-meta">
+              <span class="supporter-badges">
+                <span class="supporter-badge">Grant</span>
+              </span>
+            </div>
+          </a>
         </div>
-        <div class="card partner">
-          <a href="https://brightest.be" target="_blank" rel="noreferrer">brightest</a>
-          <p class="muted">Partner</p>
+        <div class="card supporter">
+          <a href="https://brightest.be" target="_blank" rel="noreferrer" class="supporter-link">
+            <div class="supporter-logo-wrap">
+              <img src="img/supporters/brightest.svg" alt="brightest logo" class="supporter-logo">
+            </div>
+            <div class="supporter-meta">
+              <span class="supporter-badges">
+                <span class="supporter-badge">Security testing</span>
+              </span>
+            </div>
+          </a>
         </div>
-        <div class="card partner">
-          <a href="https://consenso.be" target="_blank" rel="noreferrer">consenso advocaten</a>
-          <p class="muted">Partner</p>
+        <div class="card supporter">
+          <a href="https://consenso.be" target="_blank" rel="noreferrer" class="supporter-link">
+            <div class="supporter-logo-wrap">
+              <img src="img/supporters/consenso.svg" alt="consenso advocaten logo" class="supporter-logo">
+            </div>
+            <div class="supporter-meta">
+              <span class="supporter-badges">
+                <span class="supporter-badge">Legal (pro bono)</span>
+              </span>
+            </div>
+          </a>
         </div>
-        <div class="card partner">
-          <a href="https://wimnet.eu" target="_blank" rel="noreferrer">WimNet</a>
-          <p class="muted">Partner</p>
+        <div class="card supporter">
+          <a href="https://wimnet.eu" target="_blank" rel="noreferrer" class="supporter-link">
+            <div class="supporter-logo-wrap">
+              <img src="img/supporters/wimnet.png" alt="WimNet logo" class="supporter-logo">
+            </div>
+            <div class="supporter-meta">
+              <span class="supporter-badges">
+                <span class="supporter-badge">Hardware donation</span>
+              </span>
+            </div>
+          </a>
+        </div>
+        <div class="card supporter">
+          <a href="https://www.hetzner.com" target="_blank" rel="noreferrer" class="supporter-link">
+            <div class="supporter-logo-wrap">
+              <img src="img/supporters/hetzner.svg" alt="Hetzner logo" class="supporter-logo">
+            </div>
+            <div class="supporter-meta">
+              <span class="supporter-badges">
+                <span class="supporter-badge">Compute credits</span>
+              </span>
+            </div>
+          </a>
         </div>
       </div>
 
       <p class="small" style="margin-top:12px; color:var(--muted)">
-        Want to support or partner? Reach out via <a href="mailto:contact@letspeppol.org" style="color:var(--primary); text-decoration:none;">contact@letspeppol.org</a>.
+        Want to support? Reach out via
+        <a href="mailto:contact@letspeppol.org" style="color:var(--primary); text-decoration:none;">
+          contact@letspeppol.org
+        </a>.
       </p>
     </div>
   </section>
@@ -302,7 +303,7 @@
       <h3>Open-source &amp; growing the network</h3>
       <p class="muted">
         Let's Peppol is developed and maintained by <strong>BARGE vzw (Business Applications Research Group Europe)</strong>,
-        supported by donors and partners. We welcome contributions and sponsorship via OpenCollective.
+        supported by donors and supporters. We welcome contributions and sponsorship via OpenCollective.
       </p>
       <p class="muted">
         <strong>Other countries:</strong> if you want to help expand Let's Peppol beyond Belgium, contact
@@ -364,7 +365,7 @@
     <div class="container" style="display:grid; grid-template-columns:1fr 1fr; gap:20px; padding:32px 0;">
       <div>
         <h3>Contact</h3>
-        <p class="muted">Have questions or want to partner? Reach out via email.</p>
+        <p class="muted">Have questions or want to support? Reach out via email.</p>
         <p><a href="mailto:contact@letspeppol.org" style="color:var(--primary); text-decoration:none;">contact@letspeppol.org</a></p>
         <p><a href="mailto:country@letspeppol.org" style="color:var(--primary); text-decoration:none;">country@letspeppol.org</a> (other countries)</p>
         <p><a href="https://letspeppol.org/join" style="color:var(--primary); text-decoration:none;">Join the waitlist</a></p>
