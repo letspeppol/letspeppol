@@ -5,23 +5,31 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.service.spi.ServiceException;
+import org.letspeppol.app.dto.DocumentDto;
+import org.letspeppol.app.dto.DocumentFilter;
 import org.letspeppol.app.dto.EmailDto;
+import org.letspeppol.app.dto.accountant.CustomerDto;
 import org.letspeppol.app.dto.accountant.LinkCustomerDto;
 import org.letspeppol.app.events.EmailJobCreatedEvent;
+import org.letspeppol.app.mapper.DocumentMapper;
 import org.letspeppol.app.model.AccountantCustomer;
 import org.letspeppol.app.model.Company;
+import org.letspeppol.app.model.Document;
 import org.letspeppol.app.model.EmailJob;
-import org.letspeppol.app.repository.AccountantCustomerRepository;
-import org.letspeppol.app.repository.CompanyRepository;
-import org.letspeppol.app.repository.EmailJobRepository;
+import org.letspeppol.app.repository.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.time.Instant;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -34,6 +42,7 @@ public class AccountantService {
 
     private final AccountantCustomerRepository accountantCustomerRepository;
     private final CompanyRepository companyRepository;
+    private final DocumentRepository documentRepository;
     private final EmailTemplateService emailTemplateService;
     private final EmailJobRepository emailJobRepository;
     private final ObjectMapper objectMapper;
@@ -104,4 +113,24 @@ public class AccountantService {
         accountantCustomerRepository.save(accountantCustomer.get());
         log.info("Customer {} linked to accountant {}", customerPeppolId, accountantCustomer.get().getAccountantExternalId());
     }
+
+    public List<CustomerDto> getCustomersForAccountant(UUID uid) {
+        return accountantCustomerRepository.findCustomerDtosByAccountantExternalId(uid);
+    }
+
+    public Page<DocumentDto> getCustomerDocuments(UUID uid, String customerPeppolId, Pageable pageable) {
+        if (!accountantCustomerRepository.exists(customerPeppolId, uid)) {
+            log.error("Accountant {} tried to fetch documents for customer {} but no link is established", uid, customerPeppolId);
+            throw new ServiceException("Wrong customer");
+        }
+        DocumentFilter filter = new DocumentFilter();
+        filter.setOwnerPeppolId(customerPeppolId);
+        Sort sort = Sort.by(Sort.Direction.DESC, "issueDate").and(Sort.by(Sort.Direction.DESC, "createdOn"));
+        if (pageable == null) {
+            pageable = PageRequest.of(0, 20, sort);
+        }
+        Page<Document> page = documentRepository.findAll(DocumentSpecifications.build(filter), pageable);
+        return page.map(DocumentMapper::toDto);
+    }
+
 }
