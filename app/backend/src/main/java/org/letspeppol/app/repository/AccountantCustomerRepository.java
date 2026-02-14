@@ -18,7 +18,6 @@ public interface AccountantCustomerRepository extends JpaRepository<AccountantCu
 
     @Query("""
             SELECT new org.letspeppol.app.dto.accountant.CustomerDto(
-                ac.id,
                 ac.customerPeppolId,
                 ac.customerEmail,
                 CASE WHEN ac.customerName IS NOT NULL AND ac.customerName <> ''
