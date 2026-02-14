@@ -51,7 +51,7 @@ public class AccountantController {
     }
 
     @GetMapping("/documents")
-    public PageResponse getCustomerDocuments(@AuthenticationPrincipal Jwt jwt, @RequestParam String customerPeppolId, Pageable pageable) {
+    public PageResponse<DocumentDto> getCustomerDocuments(@AuthenticationPrincipal Jwt jwt, @RequestParam String customerPeppolId, Pageable pageable) {
         UUID uid = JwtUtil.getUid(jwt);
         Page<DocumentDto> page = accountantService.getCustomerDocuments(uid, customerPeppolId, pageable);
         return new PageResponse<>(
