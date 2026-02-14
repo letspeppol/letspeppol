@@ -8,10 +8,7 @@ import org.letspeppol.app.util.JwtUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -23,11 +20,20 @@ public class AccountantController {
 
     private final AccountantService accountantService;
 
-    @PostMapping("/link-company")
-    public ResponseEntity<Void> linkCompany(@AuthenticationPrincipal Jwt jwt, @RequestBody LinkCustomerDto linkCustomerDto) {
+    /// Accountant tries to link a customer company to itself
+    @PostMapping("/link-customer")
+    public ResponseEntity<Void> linkCustomer(@AuthenticationPrincipal Jwt jwt, @RequestBody LinkCustomerDto linkCustomerDto) {
         UUID uid = JwtUtil.getUid(jwt);
         String peppolId = JwtUtil.getPeppolId(jwt);
         accountantService.linkCustomer(uid, peppolId, linkCustomerDto);
+        return ResponseEntity.ok().build();
+    }
+
+    /// Customer confirms the accountant linkage
+    @PostMapping("/confirm-customer-link")
+    public ResponseEntity<Void> confirmLink(@AuthenticationPrincipal Jwt jwt, @RequestParam String token) {
+        String peppolId = JwtUtil.getPeppolId(jwt);
+        accountantService.confirmLink(peppolId, token);
         return ResponseEntity.ok().build();
     }
 
