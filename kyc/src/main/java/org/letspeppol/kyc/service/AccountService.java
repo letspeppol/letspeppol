@@ -80,8 +80,16 @@ public class AccountService {
         accountRepository.save(account);
     }
 
-    public void verifyNotRegistered(String email) {
+    public void verifyPeppolIdNotRegistered(String peppolId) {
+        if (accountRepository.existsByTypeAndCompanyPeppolId(AccountType.ADMIN, peppolId)) { //TODO : maybe accounts of suspended companies can request again ? Or not make them ADMIN yet ?
+            log.warn("User tried to register for company {} but was already registered", peppolId);
+            throw new KycException(KycErrorCodes.COMPANY_ALREADY_REGISTERED);
+        }
+    }
+
+    public void verifyEmailNotRegistered(String email) {
         if (accountRepository.existsByEmail(email.toLowerCase())) {
+            log.warn("User tried to register with email {} but was already registered", email);
             throw new KycException(KycErrorCodes.ACCOUNT_ALREADY_LINKED);
         }
     }

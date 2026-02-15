@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 import java.time.Instant;
 
@@ -21,6 +23,14 @@ public class EmailVerification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "requester_account_id")
+    private Account requester;
+
+    @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    private AccountType type;
 
     @NotNull
     @NotBlank
@@ -42,7 +52,9 @@ public class EmailVerification {
     @Column(nullable = false)
     private Instant createdOn;
 
-    public EmailVerification(String email, String peppolId, String token, Instant expiresOn) {
+    public EmailVerification(Account requester, AccountType type, String email, String peppolId, String token, Instant expiresOn) {
+        this.requester = requester;
+        this.type = type;
         this.email = email;
         this.peppolId = peppolId;
         this.token = token;

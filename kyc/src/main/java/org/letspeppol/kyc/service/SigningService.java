@@ -27,7 +27,11 @@ import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.letspeppol.kyc.dto.*;
+import org.letspeppol.kyc.exception.KycErrorCodes;
+import org.letspeppol.kyc.exception.KycException;
 import org.letspeppol.kyc.model.Account;
+import org.letspeppol.kyc.model.AccountType;
+import org.letspeppol.kyc.model.EmailVerification;
 import org.letspeppol.kyc.model.kbo.Director;
 import org.letspeppol.kyc.repository.DirectorRepository;
 import org.letspeppol.kyc.service.signing.CertificateUtil;
@@ -57,6 +61,9 @@ import static org.letspeppol.kyc.service.signing.CertificateUtil.getRDNName;
 public class SigningService {
 
     private final ActivationService activationService;
+    private final CompanyService companyService;
+    private final Counter companyRegistrationCounterSuccess;
+    private final Counter companyRegistrationCounterFailure;
 
     public static final String LETS_PEPPOL_CONTRACT_TEMPLATE = "/docs/LetsPeppol_contract_template.pdf";
     public static final String IDENTIFICATION_CONTENT = "%s, a legal entity according to Belgian law, " +
@@ -146,9 +153,9 @@ public class SigningService {
 
     public PrepareSigningResponse prepareSigning(PrepareSigningRequest request) {
         prepareSigningCounter.increment();
-        TokenVerificationResponse tokenVerificationResponse = activationService.verify(request.emailToken());
-        Director director = getDirector(request.directorId(), tokenVerificationResponse);
-        log.info("Preparing contract signing for company {} and email {}", tokenVerificationResponse.company().peppolId(), tokenVerificationResponse.email());
+        EmailVerification emailVerification = activationService.getValidTokenInformation(request.emailToken());
+        Director director = getDirector(request.directorId(), emailVerification.getPeppolId());
+        log.info("Preparing contract signing for company {} and email {}", emailVerification.getPeppolId(), emailVerification.getEmail());
 
         byte[] generatedPdf = generateFilledContract(director);
         byte[] preparedPdfBytes;
@@ -246,9 +253,12 @@ public class SigningService {
 
     public FinalizeSigningResponse finalizeSign(FinalizeSigningRequest signingRequest) {
         finalizeSigningCounter.increment();
-        TokenVerificationResponse tokenVerificationResponse = activationService.verify(signingRequest.emailToken());
-        Director director = getDirector(signingRequest.directorId(), tokenVerificationResponse);
-        log.info("Finalizing contract signing for company {} and email {}", tokenVerificationResponse.company().peppolId(), tokenVerificationResponse.email());
+        EmailVerification emailVerification = activationService.getValidTokenInformation(signingRequest.emailToken());
+        if (emailVerification.getType() != AccountType.ADMIN && emailVerification.getType() != AccountType.ACCOUNTANT) {
+            throw new KycException(KycErrorCodes.INVALID_ACCOUNT_TYPE);
+        }
+        Director director = getDirector(signingRequest.directorId(), emailVerification.getPeppolId());
+        log.info("Finalizing contract signing for company {} and email {}", emailVerification.getPeppolId(), emailVerification.getEmail());
 
         X509Certificate[] certificates;
         try {
@@ -258,10 +268,10 @@ public class SigningService {
             throw new RuntimeException(e);
         }
 
-        byte[] finalPdfBytes = createFinalContract(certificates, signingRequest, tokenVerificationResponse);
+        byte[] finalPdfBytes = createFinalContract(certificates, signingRequest, emailVerification.getPeppolId());
 
         IdentityVerificationRequest identityVerificationRequest = new IdentityVerificationRequest(
-                tokenVerificationResponse.email(),
+                emailVerification.getEmail(),
                 director,
                 signingRequest.password(),
                 signingRequest.signatureAlgorithm().toString(),
@@ -271,10 +281,19 @@ public class SigningService {
                 certificates[0],
                 CertificateUtil.getX500Name(certificates)
         );
-        IdentityVerificationResponse identityVerificationResponse = identityVerificationService.createAdmin(identityVerificationRequest);
-        activationService.setVerified(signingRequest.emailToken());
-
-        return new FinalizeSigningResponse(writeContractToFile(tokenVerificationResponse.company().peppolId(), identityVerificationResponse.account(), finalPdfBytes), identityVerificationResponse.registrationResponse());
+        Account account = identityVerificationService.createVerifiedAccount(emailVerification.getType(), identityVerificationRequest);
+        RegistrationResponse registrationResponse = null;
+        if (emailVerification.getType() == AccountType.ADMIN) {
+            if (!account.getCompany().isSuspended()) {
+                registrationResponse = companyService.registerCompany(account.getCompany());
+                if (registrationResponse.peppolActive() && registrationResponse.errorCode() == null) {
+                    companyRegistrationCounterSuccess.increment();
+                } else if (!registrationResponse.peppolActive()) {
+                    companyRegistrationCounterFailure.increment();
+                }
+            }
+        }
+        return new FinalizeSigningResponse(writeContractToFile(emailVerification.getPeppolId(), account, finalPdfBytes), registrationResponse);
     }
 
     public byte[] getContract(String peppolId, Long accountId) {
@@ -297,7 +316,7 @@ public class SigningService {
         }
     }
 
-    private byte[] createFinalContract(X509Certificate[] certificates, FinalizeSigningRequest request, TokenVerificationResponse tokenVerificationResponse) {
+    private byte[] createFinalContract(X509Certificate[] certificates, FinalizeSigningRequest request, String peppolId) {
         File preparedPdf = new File(workingDirectory, "contract_en_%s_prepare.pdf".formatted(request.hashToFinalize()));
         if (!preparedPdf.exists()) {
             throw new RuntimeException("FinalizeSigningRequest invalid");
@@ -319,15 +338,15 @@ public class SigningService {
             PdfSigner.signDeferred(new PdfReader(preparedPdf), SIGNING_FORMFIELD, outputStream, finalizeSignatureContainer);
             return outputStream.toByteArray();
         } catch (Exception e) {
-            log.error("Error finalizing contract signature for company {}: {}", tokenVerificationResponse.company().peppolId(), e.getMessage(), e);
+            log.error("Error finalizing contract signature for company {}: {}", peppolId, e.getMessage(), e);
             throw new RuntimeException("Failed to finalize contract signature", e);
         }
     }
 
-    public Director getDirector(Long directorId, TokenVerificationResponse tokenVerificationResponse) {
+    public Director getDirector(Long directorId, String peppolId) {
         Director director = directorRepository.findById(directorId).orElseThrow(() -> new RuntimeException("Invalid director"));
-        if (!director.getCompany().getPeppolId().equals(tokenVerificationResponse.company().peppolId())) {
-            log.error("Security alert, director {} company {} mismatch", director.getCompany().getPeppolId(), tokenVerificationResponse.company().peppolId());
+        if (!director.getCompany().getPeppolId().equals(peppolId)) {
+            log.error("Security alert, director {} company {} mismatch", director.getCompany().getPeppolId(), peppolId);
             throw new RuntimeException("Invalid director");
         }
         return director;
