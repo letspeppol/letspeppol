@@ -42,14 +42,13 @@ public class IdentityVerificationService {
     private final EncryptionService encryptionService;
     private final CompanyService companyService;
     private final PasswordEncoder passwordEncoder;
-    private final Counter companyRegistrationCounterSuccess;
-    private final Counter companyRegistrationCounterFailure;
 
-    public IdentityVerificationResponse createAdmin(IdentityVerificationRequest req) {
-        accountService.verifyNotRegistered(req.email());
+    public Account createVerifiedAccount(AccountType accountType, IdentityVerificationRequest req) {
+        accountService.verifyPeppolIdNotRegistered(req.director().getCompany().getPeppolId());
+        accountService.verifyEmailNotRegistered(req.email());
 
         Account account = new Account();
-        account.setType(AccountType.ADMIN);
+        account.setType(accountType);
         account.setName(req.director().getName());
         account.setEmail(req.email().toLowerCase());
         account.setIdentityVerified(true);
@@ -76,27 +75,19 @@ public class IdentityVerificationService {
         req.director().setRegistered(true);
         directorRepository.save(req.director());
 
-        RegistrationResponse registrationResponse = null;
-        if (isAllowedToSign(req.x500Name(), req.director())) {
-            registrationResponse = companyService.registerCompany(req.director().getCompany());
-            if (registrationResponse.peppolActive() && registrationResponse.errorCode() == null) {
-                companyRegistrationCounterSuccess.increment();
-            } else if(!registrationResponse.peppolActive()) {
-                companyRegistrationCounterFailure.increment();
-            }
-        } else {
+        if (!isAllowedToSign(req.x500Name(), req.director())) {
             companyService.suspendCompany(req.director().getCompany());
             log.warn("Peppol not activated for email={} director={} signer={} {} serial={}", account.getEmail(), req.director().getName(), getRDNName(req.x500Name(), BCStyle.GIVENNAME), getRDNName(req.x500Name(), BCStyle.SURNAME), req.x509Certificate().getSerialNumber());
             sendManualVerificationEmail(account.getEmail(), req.director().getCompany().getPeppolId(), req.director().getCompany().getName(), req.director().getName(), getRDNName(req.x500Name(), BCStyle.GIVENNAME), getRDNName(req.x500Name(), BCStyle.SURNAME)); //TODO : check, mail does not work !
         }
 
         log.info("Identity verified for email={} director={} serial={}", account.getEmail(), req.director().getName(), req.x509Certificate().getSerialNumber());
-        return new IdentityVerificationResponse(account, registrationResponse);
+        return account;
     }
 
     public Account createUser(UUID adminExternalId, NewUserRequest req) {
         Account admin = accountService.getAdminByExternalId(adminExternalId);
-        accountService.verifyNotRegistered(req.email());
+        accountService.verifyEmailNotRegistered(req.email());
         Account account = new Account();
         account.setType(AccountType.USER);
         account.setName(req.name());
@@ -114,7 +105,6 @@ public class IdentityVerificationService {
 
         log.info("New user created name={} email={} company={}", account.getName(), account.getEmail(), account.getCompany().getPeppolId());
         return account;
-        //return new IdentityVerificationResponse(account, new RegistrationResponse(account.getCompany().isPeppolActive(), null, null));
     }
 
     private String getCN(X509Certificate certificate) {

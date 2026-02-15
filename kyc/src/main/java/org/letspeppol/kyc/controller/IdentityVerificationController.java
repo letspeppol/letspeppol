@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.letspeppol.kyc.dto.*;
 import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.KycException;
+import org.letspeppol.kyc.model.EmailVerification;
 import org.letspeppol.kyc.model.kbo.Director;
 import org.letspeppol.kyc.service.ActivationService;
 import org.letspeppol.kyc.service.SigningService;
@@ -30,8 +31,8 @@ public class IdentityVerificationController {
     /// *Registration step 5* Generates contract for selected (i.e. step 4) director to be signed
     @GetMapping("/contract/{directorId}")
     public ResponseEntity<byte[]> getContract(@PathVariable Long directorId, @RequestParam String token) {
-        TokenVerificationResponse tokenVerificationResponse = activationService.verify(token);
-        Director director = signingService.getDirector(directorId, tokenVerificationResponse);
+        EmailVerification emailVerification = activationService.getValidTokenInformation(token);
+        Director director = signingService.getDirector(directorId, emailVerification.getPeppolId());
         byte[] preparedPdf = signingService.generateFilledContract(director);
         if (preparedPdf == null || preparedPdf.length == 0) {
             throw new KycException(KycErrorCodes.CONTRACT_NOT_FOUND);

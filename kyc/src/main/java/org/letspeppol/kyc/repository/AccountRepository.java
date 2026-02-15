@@ -12,6 +12,7 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     boolean existsByEmail(String email);
 
     Optional<Account> findByExternalId(UUID externalId);
+    boolean existsByTypeAndCompanyPeppolId(AccountType accountType, String peppolId);
     Optional<Account> findFirstByTypeAndCompanyPeppolId(AccountType accountType, String peppolId);
 }
 
