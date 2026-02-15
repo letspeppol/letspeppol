@@ -14,6 +14,10 @@ public final class KycErrorCodes {
     public static final String ACCOUNT_NOT_APP = "account_not_app";
     public static final String WRONG_PASSWORD = "wrong_password";
     public static final String ACCOUNT_ALREADY_LINKED = "account_already_linked"; // restored
+    public static final String REQUESTER_NOT_VERIFIED = "requester_not_verified";
+    public static final String REQUESTER_NOT_VALID = "requester_not_valid";
+    public static final String ONLY_ONE_ADMIN_ALLOWED = "only_one_admin_allowed";
+    public static final String INVALID_ACCOUNTANT_REQUEST = "invalid_accountant_request";
     // Password reset
     public static final String PASSWORD_RESET_TOKEN_NOT_FOUND = "password_reset_token_not_found";
     public static final String PASSWORD_RESET_TOKEN_EXPIRED = "password_reset_token_expired";
@@ -37,6 +41,7 @@ public final class KycErrorCodes {
     public static final String KBO_SERVICE_ERROR = "kbo_service_error";
     // Signing / certificates
     public static final String INVALID_CERTIFICATE = "invalid_certificate";
+    public static final String INVALID_ACCOUNT_TYPE = "invalid_account_type";
     // Contract
     public static final String CONTRACT_NOT_FOUND = "contract_not_found";
     // Generic

@@ -10,6 +10,7 @@ import org.letspeppol.kyc.dto.TokenVerificationResponse;
 import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.KycException;
 import org.letspeppol.kyc.exception.NotFoundException;
+import org.letspeppol.kyc.model.AccountType;
 import org.letspeppol.kyc.model.EmailVerification;
 import org.letspeppol.kyc.repository.EmailVerificationRepository;
 import org.letspeppol.kyc.service.mail.ActivationEmailTemplateProvider;
@@ -49,13 +50,12 @@ public class ActivationService {
 
     @Transactional
     public void requestActivation(ConfirmCompanyRequest request, String acceptLanguage) {
-        if (isVerified(request.peppolId())) {
-            log.warn("User with email {} tried to register for company {} but company was already registered", request.email(), request.peppolId());
-            throw new KycException(KycErrorCodes.COMPANY_ALREADY_REGISTERED);
-        }
-        accountService.verifyNotRegistered(request.email());
+        accountService.verifyPeppolIdNotRegistered(request.peppolId()); //Even for not ADMIN registration, if already registered, we need to use the ADMIN account
+        accountService.verifyEmailNotRegistered(request.email()); //TODO : improve UI error message & rethink if we want to have multiple companies for 1 email
         String token = generateToken();
         EmailVerification verification = new EmailVerification(
+                request.requester(),
+                request.type(),
                 request.email().toLowerCase(),
                 request.peppolId(),
                 token,
@@ -67,37 +67,61 @@ public class ActivationService {
         activationRequestedCounter.increment();
     }
 
-    // Backwards compatibility
-    public void requestActivation(ConfirmCompanyRequest request) { requestActivation(request, null); }
+    @Transactional
+    public EmailVerification getValidTokenInformation(String token) {
+        EmailVerification emailVerification = verificationRepository.findByToken(token)
+                .orElseThrow(() -> new KycException(KycErrorCodes.TOKEN_NOT_FOUND));
+        if (emailVerification.isVerified()) {
+            throw new KycException(KycErrorCodes.TOKEN_ALREADY_VERIFIED);
+        }
+        if (emailVerification.getExpiresOn().isBefore(Instant.now())) {
+            throw new KycException(KycErrorCodes.TOKEN_EXPIRED);
+        }
+        accountService.verifyEmailNotRegistered(emailVerification.getEmail());
+        return emailVerification;
+    }
 
     @Transactional
     public TokenVerificationResponse verify(String token) {
-        EmailVerification verification = verificationRepository.findByToken(token)
-            .orElseThrow(() -> new KycException(KycErrorCodes.TOKEN_NOT_FOUND));
-        if (verification.isVerified()) {
-            throw new KycException(KycErrorCodes.TOKEN_ALREADY_VERIFIED);
+        EmailVerification emailVerification = getValidTokenInformation(token);
+        if (emailVerification.getRequester() == null) {
+            accountService.verifyPeppolIdNotRegistered(emailVerification.getPeppolId());
+            CompanyResponse companyResponse = companyService.getByPeppolId(emailVerification.getPeppolId())
+                    .orElseThrow(() -> new NotFoundException(KycErrorCodes.COMPANY_NOT_FOUND));
+            return new TokenVerificationResponse(emailVerification.getEmail(), companyResponse);
         }
-        if (verification.getExpiresOn().isBefore(Instant.now())) {
-            throw new KycException(KycErrorCodes.TOKEN_EXPIRED);
+        if (!emailVerification.getRequester().isIdentityVerified()) {
+            log.error("Verifying a token {} requested by unverified account {}", token, emailVerification.getRequester().getExternalId());
+            throw new KycException(KycErrorCodes.REQUESTER_NOT_VERIFIED);
         }
-        accountService.verifyNotRegistered(verification.getEmail());
-        CompanyResponse companyResponse = companyService.getByPeppolId(verification.getPeppolId())
-                .orElseThrow(() -> new NotFoundException(KycErrorCodes.COMPANY_NOT_FOUND));
+        switch (emailVerification.getRequester().getType()) {
+            case ADMIN:
+                if (!emailVerification.getRequester().getCompany().getPeppolId().equals(emailVerification.getPeppolId())) {
+                    throw new KycException(KycErrorCodes.REQUESTER_NOT_VALID);
+                }
+                if (emailVerification.getType() == AccountType.ADMIN) {
+                    throw new KycException(KycErrorCodes.ONLY_ONE_ADMIN_ALLOWED);
+                }
+            case USER:
+            case USER_DRAFT:
+            case USER_READ:
+            case APP:
+            case APP_USER:
+                throw new KycException(KycErrorCodes.REQUESTER_NOT_VALID);
+            case ACCOUNTANT:
+                if (emailVerification.getType() != AccountType.ADMIN) {
+                    throw new KycException(KycErrorCodes.INVALID_ACCOUNTANT_REQUEST);
+                }
+                accountService.verifyPeppolIdNotRegistered(emailVerification.getPeppolId());
+        }
+        setVerified(emailVerification);
+        return new TokenVerificationResponse(emailVerification.getEmail(), null);
+    }
+
+    public void setVerified(EmailVerification emailVerification) {
+        emailVerification.setVerified(true);
+        verificationRepository.save(emailVerification);
         tokenVerificationCounter.increment();
-        return new TokenVerificationResponse(verification.getEmail(), companyResponse);
-    }
-
-    public void setVerified(String token) {
-        EmailVerification verification = verificationRepository.findByToken(token)
-            .orElseThrow(() -> new KycException(KycErrorCodes.TOKEN_NOT_FOUND));
-        verification.setVerified(true);
-        verificationRepository.save(verification);
-    }
-
-    public boolean isVerified(String peppolId) {
-        return verificationRepository.findTopByPeppolIdOrderByCreatedOnDesc(peppolId)
-                .map(EmailVerification::isVerified)
-                .orElse(false);
     }
 
     @Transactional
@@ -124,7 +148,7 @@ public class ActivationService {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, false);
             helper.setTo(to);
-            helper.setFrom(fromAddress, "Let's Peppol");
+            helper.setFrom(fromAddress, "Let’s Peppol");
             helper.setBcc("kyc@letspeppol.org");
             helper.setReplyTo("support@letspeppol.org");
             helper.setSubject(tpl.subject());

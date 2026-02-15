@@ -30,7 +30,7 @@ public class RegistrationController {
     @PostMapping("/confirm-company")
     public SimpleMessage confirmCompany(@RequestBody ConfirmCompanyRequest request, @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, required = false) String acceptLanguage) {
         activationService.requestActivation(request, acceptLanguage);
-        return new SimpleMessage("Activation email sent (if delivery fails, check logs for link)");
+        return new SimpleMessage("Activation email sent");
     }
 
     /// *Registration step 3* Verifies email address is correct and sends company information with list of directors to select the signing director
