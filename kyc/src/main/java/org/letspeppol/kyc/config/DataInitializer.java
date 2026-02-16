@@ -4,11 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.model.AccountType;
+import org.letspeppol.kyc.model.Ownership;
 import org.letspeppol.kyc.model.kbo.Company;
 import org.letspeppol.kyc.model.kbo.Director;
 import org.letspeppol.kyc.repository.AccountRepository;
 import org.letspeppol.kyc.repository.CompanyRepository;
 import org.letspeppol.kyc.repository.DirectorRepository;
+import org.letspeppol.kyc.repository.OwnershipRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,6 +26,7 @@ import java.util.UUID;
 public class DataInitializer implements CommandLineRunner {
 
     private final AccountRepository accountRepository;
+    private final OwnershipRepository ownershipRepository;
     private final CompanyRepository companyRepository;
     private final DirectorRepository directorRepository;
     private final PasswordEncoder passwordEncoder;
@@ -33,78 +36,97 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) {
         String companyNumber = "1023290711";
         if (companyRepository.findByPeppolId("0208:"+companyNumber).isEmpty()) {
-            Company c = new Company("0208:"+companyNumber, "BE"+companyNumber, "SoftwareOplossing.be");
-            c.setAddress("Bruxelles", "1000", "Rue Example 1");
-            companyRepository.save(c);
-            directorRepository.save(new Director("Bart In Stukken", c));
-            directorRepository.save(new Director("Wout Schattebout", c));
+            Company company = new Company("0208:"+companyNumber, "BE"+companyNumber, "SoftwareOplossing.be");
+            company.setAddress("Bruxelles", "1000", "Rue Example 1");
+            companyRepository.save(company);
+            directorRepository.save(new Director("Bart In Stukken", company));
+            directorRepository.save(new Director("Wout Schattebout", company));
             Account account = Account.builder()
-                    .company(c)
-                    .type(AccountType.ADMIN)
                     .name("Bart In Stukken")
                     .email("test@softwareoplossing.be")
                     .passwordHash(passwordEncoder.encode("test"))
                     .externalId(UUID.randomUUID())
                     .build();
             accountRepository.save(account);
+            Ownership ownership = new Ownership(account, AccountType.ADMIN, company);
+            ownershipRepository.save(ownership);
             log.info("Seeded sample company {}", companyNumber);
         }
         companyNumber = "0705969661";
         if (companyRepository.findByPeppolId("0208:"+companyNumber).isEmpty()) {
-            Company c = new Company("0208:"+companyNumber, "BE"+companyNumber, "Digita bv.");
-            c.setAddress("Hasselt", "3500", "Demerstraat 2");
-            companyRepository.save(c);
-            directorRepository.save(new Director("Michiel Wouters", c));
-            directorRepository.save(new Director("Saskia Verellen", c));
+            Company company = new Company("0208:"+companyNumber, "BE"+companyNumber, "Digita bv.");
+            company.setAddress("Hasselt", "3500", "Demerstraat 2");
+            companyRepository.save(company);
+            directorRepository.save(new Director("Michiel Wouters", company));
+            directorRepository.save(new Director("Saskia Verellen", company));
             Account account = Account.builder()
-                    .company(c)
-                    .type(AccountType.ADMIN)
                     .name("Michiel Wouters")
                     .email("letspeppol@itaa.be")
                     .passwordHash(passwordEncoder.encode("letspeppol"))
                     .externalId(UUID.randomUUID())
                     .build();
             accountRepository.save(account);
+            Ownership ownership = new Ownership(account, AccountType.ADMIN, company);
+            ownershipRepository.save(ownership);
             log.info("Seeded sample company {}", companyNumber);
         }
         UUID appUUID = UUID.fromString("b095630d-1bf3-4250-bf9e-2d49e6ce505b");
         if (accountRepository.findByExternalId(appUUID).isEmpty()) {
-            Company c = companyRepository.search("BE1029545627", null, null, null).stream()
+            Company company = companyRepository.search("BE1029545627", null, null, null).stream()
                     .findFirst()
                     .orElseGet(() -> {
-                        Company company = new Company(null, "BE1029545627", "Barge VZW");
-                        companyRepository.save(company);
-                        return company;
+                        Company newCompany = new Company("0208:1029545627", "BE1029545627", "BARGE vzw");
+                        companyRepository.save(newCompany);
+                        directorRepository.save(new Director("Barst Brokken", newCompany));
+                        return newCompany;
                     });
             Account account = Account.builder()
-                    .company(c)
-                    .type(AccountType.APP)
-                    .name("Let's Peppol Email Notification App")
+                    .name("Let’s Peppol")
+                    .email("account@letspeppol.org")
+                    .passwordHash(passwordEncoder.encode("letspeppol"))
+                    .externalId(UUID.randomUUID())
+                    .build();
+            accountRepository.save(account);
+            Ownership ownership = new Ownership(account, AccountType.ADMIN, company);
+            ownershipRepository.save(ownership);
+            Account appAccount = Account.builder()
+                    .name("Let’s Peppol Email Notification App")
                     .email("support@letspeppol.org")
                     .passwordHash(passwordEncoder.encode("letspeppol"))
                     .externalId(appUUID)
                     .build();
-            accountRepository.save(account);
+            accountRepository.save(appAccount);
+//            Ownership ownership = new Ownership(appAccount, AccountType.APP, company);
+//            ownershipRepository.save(ownership);
             log.info("Seeded App account");
         }
-        UUID accountantUUID = UUID.fromString("1ea9c68f-db17-44f9-80a2-d64e15c8886e");
-        if (accountRepository.findByExternalId(accountantUUID).isEmpty()) {
-            Company c = companyRepository.search("BE0746936523", null, null, null).stream()
-                    .findFirst()
-                    .orElseGet(() -> {
-                        Company company = new Company("0208:0746936523", "BE0746936523", "DIGITAL ACCOUNTANT");
-                        companyRepository.save(company);
-                        return company;
-                    });
+        companyNumber = "0746936523";
+        if (companyRepository.findByPeppolId("0208:"+companyNumber).isEmpty()) {
+            Company company = new Company("0208:"+companyNumber, "BE"+companyNumber, "DIGITAL ACCOUNTANT");
+            company.setAddress("Heusden-Zolder", "3550", "Belikstraat 109");
+            companyRepository.save(company);
+            directorRepository.save(new Director("Jurgen Wilmans", company));
+            directorRepository.save(new Director("Alice Wonder", company));
             Account account = Account.builder()
-                    .company(c)
-                    .type(AccountType.ACCOUNTANT)
-                    .name("DIGITAL ACCOUNTANT")
-                    .email("accountant@letspeppol.org")
-                    .passwordHash(passwordEncoder.encode("letspeppol"))
-                    .externalId(accountantUUID)
+                    .name("Alice")
+                    .email("alice@letspeppol.org")
+                    .passwordHash(passwordEncoder.encode("alice"))
+                    .externalId(UUID.randomUUID())
                     .build();
             accountRepository.save(account);
+            Ownership ownership = new Ownership(account, AccountType.ADMIN, company);
+            ownershipRepository.save(ownership);
+            Ownership accountantOwnership = new Ownership(account, AccountType.ACCOUNTANT, company);
+            ownershipRepository.save(accountantOwnership);
+            Account otherAccount = Account.builder()
+                    .name("Bob")
+                    .email("bob@letspeppol.org")
+                    .passwordHash(passwordEncoder.encode("bob"))
+                    .externalId(UUID.randomUUID())
+                    .build();
+            accountRepository.save(otherAccount);
+            Ownership otherAccountantOwnership = new Ownership(otherAccount, AccountType.ACCOUNTANT, company);
+            ownershipRepository.save(otherAccountantOwnership);
             log.info("Seeded Accountant account");
         }
     }

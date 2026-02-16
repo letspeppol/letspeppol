@@ -43,7 +43,11 @@ public class CompanyService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<CompanyResponse> getByPeppolId(String peppolId) {
+    public Company getByPeppolId(String peppolId) {
+        return companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new KycException(KycErrorCodes.COMPANY_NOT_FOUND));
+    }
+
+    public Optional<CompanyResponse> getResponseByPeppolId(String peppolId) {
         Optional<Company> company = companyRepository.findByPeppolId(peppolId);
         if (company.isPresent()) {
             return Optional.of(CompanyMapper.toResponse(company.get()));
@@ -70,7 +74,7 @@ public class CompanyService {
     }
 
     public RegistrationResponse registerCompany(String peppolId) {
-        Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new KycException(KycErrorCodes.COMPANY_NOT_FOUND));
+        Company company = getByPeppolId(peppolId);
         return registerCompany(company);
     }
 
@@ -92,7 +96,7 @@ public class CompanyService {
     }
 
     public boolean unregisterCompany(String peppolId) {
-        Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new KycException(KycErrorCodes.COMPANY_NOT_FOUND));
+        Company company = getByPeppolId(peppolId);
         return unregisterCompany(company);
     }
 

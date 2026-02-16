@@ -12,10 +12,7 @@ import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 import java.time.Instant;
 
 @Entity
-@Table(name = "email_verification", indexes = {
-        @Index(name = "uk_token", columnList = "token", unique = true),
-        @Index(name = "idx_email_company", columnList = "email,peppolId")
-})
+@Table(name = "email_verification")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -25,8 +22,8 @@ public class EmailVerification {
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "requester_account_id")
-    private Account requester;
+    @JoinColumn(name = "requester_ownership_id")
+    private Ownership requester;
 
     @Enumerated(EnumType.STRING)
     @JdbcType(PostgreSQLEnumJdbcType.class)
@@ -52,7 +49,7 @@ public class EmailVerification {
     @Column(nullable = false)
     private Instant createdOn;
 
-    public EmailVerification(Account requester, AccountType type, String email, String peppolId, String token, Instant expiresOn) {
+    public EmailVerification(Ownership requester, AccountType type, String email, String peppolId, String token, Instant expiresOn) {
         this.requester = requester;
         this.type = type;
         this.email = email;

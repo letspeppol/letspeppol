@@ -49,6 +49,7 @@ public final class KycErrorCodes {
     public static final String UNEXPECTED_ERROR = "unexpected_error";
     // Auth
     public static final String AUTHENTCATION_FAILED = "auth_failed";
+    public static final String NO_OWNERSHIP = "no_ownership";
     public static final String NOT_ADMIN = "not_admin";
 
     private KycErrorCodes() {}

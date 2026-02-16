@@ -9,9 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "company", indexes = {
-        @Index(name = "uk_company_number", columnList = "peppolId", unique = true)
-})
+@Table(name = "company")
 @Getter
 @Setter
 @NoArgsConstructor

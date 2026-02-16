@@ -9,6 +9,7 @@ import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.mapper.AccountMapper;
 import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.model.AccountType;
+import org.letspeppol.kyc.model.kbo.Company;
 import org.letspeppol.kyc.service.AccountService;
 import org.letspeppol.kyc.service.CompanyService;
 import org.letspeppol.kyc.service.JwtService;
@@ -37,8 +38,10 @@ public class CompanyController {
     @GetMapping
     public ResponseEntity<?> getAccountForToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
-        Account account = (jwtInfo.accountType() == AccountType.ADMIN) ? accountService.getAdminByExternalId(jwtInfo.uid()) : accountService.getAdminByPeppolId(jwtInfo.peppolId());
-        return ResponseEntity.ok(AccountMapper.toAccountInfo(account));  //This will be the ADMIN account and thus the one who signed the contract
+//        Account account = (jwtInfo.accountType() == AccountType.ADMIN) ? accountService.getByExternalId(jwtInfo.uid()) : accountService.getAdminByPeppolId(jwtInfo.peppolId());
+        Account account = accountService.getByExternalId(jwtInfo.uid()); //TODO : We can just use name of account instead of admin
+        Company company = companyService.getByPeppolId(jwtInfo.peppolId());
+        return ResponseEntity.ok(AccountMapper.toAccountInfo(account, company));  //This will be the ADMIN account and thus the one who signed the contract
     }
 
     @GetMapping("/search")
@@ -117,7 +120,7 @@ public class CompanyController {
         }
         String peppolId = jwtInfo.peppolId();
         UUID externalId = jwtInfo.uid();
-        Account account = accountService.getAdminByExternalId(externalId);
+        Account account = accountService.getByExternalId(externalId);
         byte[] data = signingService.getContract(peppolId, account.getId());
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=contract_signed.pdf")
