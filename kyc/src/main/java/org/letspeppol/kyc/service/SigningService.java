@@ -284,8 +284,8 @@ public class SigningService {
         Account account = identityVerificationService.createVerifiedAccount(emailVerification.getType(), identityVerificationRequest);
         RegistrationResponse registrationResponse = null;
         if (emailVerification.getType() == AccountType.ADMIN) {
-            if (!account.getCompany().isSuspended()) {
-                registrationResponse = companyService.registerCompany(account.getCompany());
+            if (!director.getCompany().isSuspended()) {
+                registrationResponse = companyService.registerCompany(director.getCompany());
                 if (registrationResponse.peppolActive() && registrationResponse.errorCode() == null) {
                     companyRegistrationCounterSuccess.increment();
                 } else if (!registrationResponse.peppolActive()) {

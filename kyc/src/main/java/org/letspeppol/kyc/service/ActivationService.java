@@ -12,6 +12,7 @@ import org.letspeppol.kyc.exception.KycException;
 import org.letspeppol.kyc.exception.NotFoundException;
 import org.letspeppol.kyc.model.AccountType;
 import org.letspeppol.kyc.model.EmailVerification;
+import org.letspeppol.kyc.model.Ownership;
 import org.letspeppol.kyc.repository.EmailVerificationRepository;
 import org.letspeppol.kyc.service.mail.ActivationEmailTemplateProvider;
 import org.letspeppol.kyc.util.LocaleUtil;
@@ -36,6 +37,7 @@ public class ActivationService {
     private final JavaMailSender mailSender;
     private final CompanyService companyService;
     private final AccountService accountService;
+    private final OwnershipService ownershipService;
     private final ActivationEmailTemplateProvider templateProvider;
     private final SecureRandom random = new SecureRandom();
     private final Duration ttl = Duration.ofDays(7);
@@ -50,11 +52,17 @@ public class ActivationService {
 
     @Transactional
     public void requestActivation(ConfirmCompanyRequest request, String acceptLanguage) {
-        accountService.verifyPeppolIdNotRegistered(request.peppolId()); //Even for not ADMIN registration, if already registered, we need to use the ADMIN account
-        accountService.verifyEmailNotRegistered(request.email()); //TODO : improve UI error message & rethink if we want to have multiple companies for 1 email
+        requestActivation(null, request, acceptLanguage);
+    }
+
+    @Transactional
+    public void requestActivation(Ownership requester, ConfirmCompanyRequest request, String acceptLanguage) {
+        //TODO : only limit the verification for ADMIN type ? All activation requests could use this function ?
+        ownershipService.verifyPeppolIdNotRegistered(request.peppolId()); //Even for not ADMIN registration, if already registered, we need to use the ADMIN account
+        //accountService.verifyEmailNotRegistered(request.email()); //TODO : improve UI error message & rethink if we want to have multiple companies for 1 email
         String token = generateToken();
         EmailVerification verification = new EmailVerification(
-                request.requester(),
+                requester,
                 request.type(),
                 request.email().toLowerCase(),
                 request.peppolId(),
@@ -71,13 +79,13 @@ public class ActivationService {
     public EmailVerification getValidTokenInformation(String token) {
         EmailVerification emailVerification = verificationRepository.findByToken(token)
                 .orElseThrow(() -> new KycException(KycErrorCodes.TOKEN_NOT_FOUND));
-        if (emailVerification.isVerified()) {
+        if (emailVerification.isVerified()) { //TODO : we could remove token ?
             throw new KycException(KycErrorCodes.TOKEN_ALREADY_VERIFIED);
         }
         if (emailVerification.getExpiresOn().isBefore(Instant.now())) {
             throw new KycException(KycErrorCodes.TOKEN_EXPIRED);
         }
-        accountService.verifyEmailNotRegistered(emailVerification.getEmail());
+        //accountService.verifyEmailNotRegistered(emailVerification.getEmail()); //TODO : remove due to double accounts possible
         return emailVerification;
     }
 
@@ -85,13 +93,13 @@ public class ActivationService {
     public TokenVerificationResponse verify(String token) {
         EmailVerification emailVerification = getValidTokenInformation(token);
         if (emailVerification.getRequester() == null) {
-            accountService.verifyPeppolIdNotRegistered(emailVerification.getPeppolId());
-            CompanyResponse companyResponse = companyService.getByPeppolId(emailVerification.getPeppolId())
+            ownershipService.verifyPeppolIdNotRegistered(emailVerification.getPeppolId());
+            CompanyResponse companyResponse = companyService.getResponseByPeppolId(emailVerification.getPeppolId())
                     .orElseThrow(() -> new NotFoundException(KycErrorCodes.COMPANY_NOT_FOUND));
-            return new TokenVerificationResponse(emailVerification.getEmail(), companyResponse);
+            return new TokenVerificationResponse(emailVerification.getEmail(), companyResponse); //Send response for contract signing
         }
-        if (!emailVerification.getRequester().isIdentityVerified()) {
-            log.error("Verifying a token {} requested by unverified account {}", token, emailVerification.getRequester().getExternalId());
+        if (!emailVerification.getRequester().getAccount().isIdentityVerified()) {
+            log.error("Verifying a token {} requested by unverified account {}", token, emailVerification.getRequester().getAccount().getExternalId());
             throw new KycException(KycErrorCodes.REQUESTER_NOT_VERIFIED);
         }
         switch (emailVerification.getRequester().getType()) {
@@ -99,7 +107,7 @@ public class ActivationService {
                 if (!emailVerification.getRequester().getCompany().getPeppolId().equals(emailVerification.getPeppolId())) {
                     throw new KycException(KycErrorCodes.REQUESTER_NOT_VALID);
                 }
-                if (emailVerification.getType() == AccountType.ADMIN) {
+                if (emailVerification.getType() == AccountType.ADMIN) { //TODO : can this be used to transfer ownership ?
                     throw new KycException(KycErrorCodes.ONLY_ONE_ADMIN_ALLOWED);
                 }
             case USER:
@@ -109,13 +117,13 @@ public class ActivationService {
             case APP_USER:
                 throw new KycException(KycErrorCodes.REQUESTER_NOT_VALID);
             case ACCOUNTANT:
-                if (emailVerification.getType() != AccountType.ADMIN) {
+                if (emailVerification.getType() != AccountType.ADMIN) { //TODO : add other accountants ? Or does this always happen from ADMIN ?
                     throw new KycException(KycErrorCodes.INVALID_ACCOUNTANT_REQUEST);
                 }
-                accountService.verifyPeppolIdNotRegistered(emailVerification.getPeppolId());
+                ownershipService.verifyPeppolIdNotRegistered(emailVerification.getPeppolId()); //The ADMIN should not be validated yet, so no registration in ownership ?
         }
-        setVerified(emailVerification);
-        return new TokenVerificationResponse(emailVerification.getEmail(), null);
+        setVerified(emailVerification); //TODO : Create account or verify account
+        return new TokenVerificationResponse(emailVerification.getEmail(), null); //Send response not needing contract signing
     }
 
     public void setVerified(EmailVerification emailVerification) {

@@ -23,7 +23,7 @@ public class RegistrationController {
     /// *Registration step 1* Retrieves company info based on peppolId (= VAT number converted by UI) to confirm company information is correct to use
     @GetMapping("/company/{peppolId}")
     public CompanyResponse getCompany(@PathVariable String peppolId) {
-        return companyService.getByPeppolId(peppolId).orElseThrow(() -> new NotFoundException(KycErrorCodes.COMPANY_NOT_FOUND));
+        return companyService.getResponseByPeppolId(peppolId).orElseThrow(() -> new NotFoundException(KycErrorCodes.COMPANY_NOT_FOUND));
     }
 
     /// *Registration step 2* Sends verification email to confirm email address is correct to use after company info is confirmed to be correct
