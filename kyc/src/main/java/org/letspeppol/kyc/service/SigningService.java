@@ -293,6 +293,7 @@ public class SigningService {
                 }
             }
         }
+        activationService.setVerified(emailVerification);
         return new FinalizeSigningResponse(writeContractToFile(emailVerification.getPeppolId(), account, finalPdfBytes), registrationResponse);
     }
 

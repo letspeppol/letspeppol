@@ -49,7 +49,7 @@ public class AuthController {
         }
         String emailOrUuid = values[0];
         String password = values[1];
-        Account account = accountService.findAccountWithCredentials(emailOrUuid, password);
+        Account account = accountService.findAccountWithCredentials(emailOrUuid, password); //TODO : Check if account is verified ! Else send info for resend activation mail
         Ownership ownership = account.getOwnerships().getFirst();
         ownershipService.updateLastUsed(ownership);
 

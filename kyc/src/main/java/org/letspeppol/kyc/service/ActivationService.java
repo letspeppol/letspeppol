@@ -92,17 +92,17 @@ public class ActivationService {
     @Transactional
     public TokenVerificationResponse verify(String token) {
         EmailVerification emailVerification = getValidTokenInformation(token);
-        if (emailVerification.getRequester() == null) {
+        if (emailVerification.getRequester() == null) { //TODO : Check if company is suspended, to resign the contract
             ownershipService.verifyPeppolIdNotRegistered(emailVerification.getPeppolId());
             CompanyResponse companyResponse = companyService.getResponseByPeppolId(emailVerification.getPeppolId())
                     .orElseThrow(() -> new NotFoundException(KycErrorCodes.COMPANY_NOT_FOUND));
             return new TokenVerificationResponse(emailVerification.getEmail(), companyResponse); //Send response for contract signing
         }
-        if (!emailVerification.getRequester().getAccount().isIdentityVerified()) {
+        if (!emailVerification.getRequester().getAccount().isIdentityVerified()) { //TODO : move to step 2 confirm-company ?
             log.error("Verifying a token {} requested by unverified account {}", token, emailVerification.getRequester().getAccount().getExternalId());
             throw new KycException(KycErrorCodes.REQUESTER_NOT_VERIFIED);
         }
-        switch (emailVerification.getRequester().getType()) {
+        switch (emailVerification.getRequester().getType()) { //TODO : move to step 2 confirm-company ?
             case ADMIN:
                 if (!emailVerification.getRequester().getCompany().getPeppolId().equals(emailVerification.getPeppolId())) {
                     throw new KycException(KycErrorCodes.REQUESTER_NOT_VALID);
@@ -122,7 +122,7 @@ public class ActivationService {
                 }
                 ownershipService.verifyPeppolIdNotRegistered(emailVerification.getPeppolId()); //The ADMIN should not be validated yet, so no registration in ownership ?
         }
-        setVerified(emailVerification); //TODO : Create account or verify account
+        setVerified(emailVerification); //TODO : Create account or verify account AND check no ADMIN yet
         return new TokenVerificationResponse(emailVerification.getEmail(), null); //Send response not needing contract signing
     }
 
