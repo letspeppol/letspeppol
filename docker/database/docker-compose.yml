@@ -8,7 +8,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.adminer.rule=Host(`${ADMINER_DOMAIN}`)"
-      - "traefik.http.routers.adminer.entrypoints=websecure"
+      - "traefik.http.routers.adminer.entrypoints=internal"
       - "traefik.http.routers.adminer.tls.certresolver=${CERT_RESOLVER}"
       - "traefik.http.services.adminer.loadbalancer.server.port=8080"
 

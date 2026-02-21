@@ -83,7 +83,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.grafana.rule=Host(`${GRAFANA_DOMAIN}`)"
-      - "traefik.http.routers.grafana.entrypoints=websecure"
+      - "traefik.http.routers.grafana.entrypoints=internal"
       - "traefik.http.routers.grafana.tls.certresolver=${CERT_RESOLVER}"
       - "traefik.http.services.grafana.loadbalancer.server.port=3000"
 
