@@ -48,7 +48,6 @@ class PasswordResetServiceTests {
         account = Account.builder()
                 .name("John Doe")
                 .email("user@example.com")
-                .company(company)
                 .passwordHash(passwordEncoder.encode("initialPassword123"))
                 .build();
         accountRepository.save(account);
