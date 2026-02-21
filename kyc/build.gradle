@@ -44,12 +44,11 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok:1.18.40'
 	annotationProcessor 'org.projectlombok:lombok:1.18.34'
 
-    runtimeOnly 'com.h2database:h2'
-
 	testCompileOnly 'org.projectlombok:lombok:1.18.34'
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.testcontainers:testcontainers-postgresql:2.0.3'
 }
 
 tasks.named('test') {

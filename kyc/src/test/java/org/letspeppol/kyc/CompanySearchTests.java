@@ -1,7 +1,7 @@
 package org.letspeppol.kyc;
 
 import org.junit.jupiter.api.Test;
-import org.letspeppol.kyc.dto.CompanyResponse;
+import org.letspeppol.kyc.dto.CompanySearchResponse;
 import org.letspeppol.kyc.model.kbo.Company;
 import org.letspeppol.kyc.repository.CompanyRepository;
 import org.letspeppol.kyc.service.CompanyService;
@@ -43,17 +43,17 @@ class CompanySearchTests {
         companyRepository.save(c3);
 
         // Search by name
-        List<CompanyResponse> results = companyService.search(null, null, "Acme");
+        List<CompanySearchResponse> results = companyService.search(null, null, "Acme");
         assertThat(results).hasSize(2);
-        assertThat(results).extracting(CompanyResponse::name).contains("Acme Corp", "Acme Limited");
+        assertThat(results).extracting(CompanySearchResponse::name).contains("Acme Corp", "Acme Limited");
 
         // Search by VAT
-        results = companyService.search("BE0987", null, null);
+        results = companyService.search("BE0987654321", null, null);
         assertThat(results).hasSize(1);
         assertThat(results.get(0).name()).isEqualTo("Beta Inc");
 
         // Search by Peppol ID
-        results = companyService.search(null, "0208:1122", null);
+        results = companyService.search(null, "0208:1122334455", null);
         assertThat(results).hasSize(1);
         assertThat(results.get(0).name()).isEqualTo("Acme Limited");
 
