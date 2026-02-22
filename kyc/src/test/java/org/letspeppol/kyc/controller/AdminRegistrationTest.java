@@ -115,7 +115,7 @@ class AdminRegistrationTest {
             assertEquals("application/pdf", contractResponse.getHeaders().getContentType().toString());
 
             // 6. POST /api/identity/sign/finalize
-            String signature = "dummy-signature";
+            String signature = "Pip9ksT1yiqpP6AHEshmzl8ND+oPDF6PYjizuiKbHrwv23LqrqDRwJq/b2mbsAGScxYGdzk+sHGUsKcXr9YIiFXA9AM94GptSxwdjxulc2CA4qmd4KX9TdTjQGkCCj7qE0EMYULEtfPTMNPC61CYSic2fap4nicnBKFDGptHccblQICcNDHJ5hAN9fbFIw2OXWynomFgSBohVr0bDKcZQcUX9Chg0RUZ/4i95HdwXN306k343tLKB/doY+TO70akA3mzjBya+aGaE9QPE7zRvLF4IriRBy6QxzEPSsCHYHrP3w3mPLg2+xWX1Aw5M+m8K6XMuFC5O14Det8FZP4HWQ==";
             String password = "dummy-password";
             var finalizeRequest = new FinalizeSigningRequest(
                     token,
