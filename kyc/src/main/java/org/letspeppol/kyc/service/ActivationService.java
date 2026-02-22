@@ -10,7 +10,6 @@ import org.letspeppol.kyc.dto.TokenVerificationResponse;
 import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.KycException;
 import org.letspeppol.kyc.exception.NotFoundException;
-import org.letspeppol.kyc.model.AccountType;
 import org.letspeppol.kyc.model.EmailVerification;
 import org.letspeppol.kyc.model.Ownership;
 import org.letspeppol.kyc.repository.EmailVerificationRepository;
@@ -27,6 +26,8 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.List;
+
+import static org.letspeppol.kyc.model.AccountType.ADMIN;
 
 @Service
 @Slf4j
@@ -63,7 +64,7 @@ public class ActivationService {
         String token = generateToken();
         EmailVerification verification = new EmailVerification(
                 requester,
-                request.type(),
+                request.type() == null ? ADMIN : request.type(),
                 request.email().toLowerCase(),
                 request.peppolId(),
                 token,
@@ -107,7 +108,7 @@ public class ActivationService {
                 if (!emailVerification.getRequester().getCompany().getPeppolId().equals(emailVerification.getPeppolId())) {
                     throw new KycException(KycErrorCodes.REQUESTER_NOT_VALID);
                 }
-                if (emailVerification.getType() == AccountType.ADMIN) { //TODO : can this be used to transfer ownership ?
+                if (emailVerification.getType() == ADMIN) { //TODO : can this be used to transfer ownership ?
                     throw new KycException(KycErrorCodes.ONLY_ONE_ADMIN_ALLOWED);
                 }
             case USER:
@@ -117,7 +118,7 @@ public class ActivationService {
             case APP_USER:
                 throw new KycException(KycErrorCodes.REQUESTER_NOT_VALID);
             case ACCOUNTANT:
-                if (emailVerification.getType() != AccountType.ADMIN) { //TODO : add other accountants ? Or does this always happen from ADMIN ?
+                if (emailVerification.getType() != ADMIN) { //TODO : add other accountants ? Or does this always happen from ADMIN ?
                     throw new KycException(KycErrorCodes.INVALID_ACCOUNTANT_REQUEST);
                 }
                 ownershipService.verifyPeppolIdNotRegistered(emailVerification.getPeppolId()); //The ADMIN should not be validated yet, so no registration in ownership ?

@@ -47,6 +47,11 @@ public class Ownership {
         this.account = account;
         this.type = type;
         this.company = company;
+        this.createdOn = Instant.now();
+        this.lastUsed = Instant.now();
     }
 
+    public Ownership() {
+
+    }
 }
