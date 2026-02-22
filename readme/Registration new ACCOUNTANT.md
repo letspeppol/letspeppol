@@ -7,9 +7,10 @@ sequenceDiagram
     participant KYC as KYC
     participant App as App
     participant PeppolDirectory as PeppolDirectory
-    %%participant Proxy as Proxy%%
-    %%participant Peppol as Peppol%%
-    
+    %%participant Proxy as Proxy
+    %%participant Peppol as Peppol
+
+Note over ACCOUNTANT, PeppolDirectory: Requesting registration for new ACCOUNTANT
     Note left of ACCOUNTANT: Visit /accountant/registration
     ACCOUNTANT ->> Frontend: Create account( VAT, mail )
     Frontend ->> KYC: GET /kyc/api/register/company/{PeppolID}
@@ -25,18 +26,21 @@ sequenceDiagram
     KYC ->> Frontend: "Activation email sent"
     Frontend ->> ACCOUNTANT: "Check email" & link to /onboarding
 
+Note over ACCOUNTANT, PeppolDirectory: Verify email of new ACCOUNTANT
     Note left of ACCOUNTANT: Receives email
     ACCOUNTANT ->> Frontend: Open link in email
     Frontend ->> KYC: POST /kyc/api/register/verify?token={token}
-    Note right of KYC: Validate token <br> Requester == null <br> PeppolID has no ADMIN <br> Find company by PeppolID <br> or do CBE lookup
-    KYC ->> Frontend: TokenVerificationResponse <br> ( email, CompanyResponse )
-    Note left of Frontend: Check Peppol Directory, <br> but continue if error
-    Frontend -->> App: GET /app/api/peppol-directory?participant={PeppolID}
-    App -->> PeppolDirectory: GET /search/1.0/json?q={PeppolID}
-    PeppolDirectory -->> App: Peppol registrations
-    App -->> Frontend: Peppol registrations
+    Note right of KYC: Validate token <br> Requester == null <br> Type == ACCOUNTANT <br> PeppolID has no ADMIN <br> Find company by PeppolID <br> or do CBE lookup
+    KYC ->> Frontend: TokenVerificationResponse <br> ( email, CompanyResponse, null )
+    opt Check Peppol Directory, skip on HTTP error
+        Frontend -->> App: GET /app/api/peppol-directory?participant={PeppolID}
+        App -->> PeppolDirectory: GET /search/1.0/json?q={PeppolID}
+        PeppolDirectory -->> App: Peppol registrations
+        App -->> Frontend: Peppol registrations
+    end
     Frontend ->> ACCOUNTANT: Show company & directors <br> & registrations present
 
+Note over ACCOUNTANT, PeppolDirectory: Signing contract for new ACCOUNTANT
     Note left of ACCOUNTANT: Select director
     ACCOUNTANT ->> Frontend: Confirm( director )
     Frontend ->> ACCOUNTANT: Web eID "Select a certificate"
@@ -44,7 +48,7 @@ sequenceDiagram
     Note left of ACCOUNTANT: Validate director with eID
     ACCOUNTANT ->> Frontend: Confirm( eID )
     Frontend ->> KYC: POST /kyc/api/identity/sign/prepare <br> ( emailToken, directorId, certificate, <br> supportedSignatureAlgorithms, language )
-    Note right of KYC: Validate token <br> Generate contract for director <br> with given eID hashes
+    Note right of KYC: Validate token <br> Check & select director by eID <br> Generate contract for director <br> with given eID hashes
     KYC ->> Frontend: PrepareSigningResponse
     Frontend ->> KYC: GET /kyc/api/identity/contract/{directorId}?token={token}
     Note right of KYC: Validate token <br> Generate contract for director <br> with given eID hashes
