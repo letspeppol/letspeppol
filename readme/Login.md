@@ -19,8 +19,7 @@ Note over SME, App: Login with credentials
     Note right of App: Get company by JWT.peppolId
     opt company is unknown
         App -->> KYC: GET /sapi/company
-        %% TODO : should be ADMIN ? Else first data stored is first requested Account ?
-        Note left of KYC: Get account by JWT.uid <br> Get company by JWT.peppolId 
+        Note left of KYC: Get ADMIN account by JWT.peppolId <br> Get company by JWT.peppolId 
         KYC -->> App: AccountInfo
         Note right of App: Store company
     end
