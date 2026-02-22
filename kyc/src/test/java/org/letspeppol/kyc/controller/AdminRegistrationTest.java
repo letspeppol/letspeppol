@@ -5,6 +5,7 @@ import org.letspeppol.kyc.dto.*;
 import org.letspeppol.kyc.model.AccountType;
 import org.letspeppol.kyc.model.EmailVerification;
 import org.letspeppol.kyc.model.kbo.Company;
+import org.letspeppol.kyc.model.kbo.Director;
 import org.letspeppol.kyc.repository.CompanyRepository;
 import org.letspeppol.kyc.repository.DirectorRepository;
 import org.letspeppol.kyc.repository.EmailVerificationRepository;
@@ -44,7 +45,7 @@ class AdminRegistrationTest {
         company.setAddress("TestCity", "1234", "TestStreet");
         companyRepository.save(company);
         // Insert a director for the company
-        org.letspeppol.kyc.model.kbo.Director director = new org.letspeppol.kyc.model.kbo.Director("Test Director", company);
+        Director director = new Director("Test Director", company);
         director.setRegistered(true);
         directorRepository.save(director);
 
