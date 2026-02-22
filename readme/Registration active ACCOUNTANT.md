@@ -1,14 +1,10 @@
-# Registration active ADMIN
+# Registration active ACCOUNTANT
 
 ```mermaid
 sequenceDiagram
     actor ACCOUNTANT as ACCOUNTANT
     participant Frontend as Frontend
     participant KYC as KYC
-    %%participant App as App
-    %%participant PeppolDirectory as PeppolDirectory
-    %%participant Proxy as Proxy
-    %%participant Peppol as Peppol
 
 Note over ACCOUNTANT, KYC: Requesting registration for active ACCOUNTANT
     Note left of ACCOUNTANT: Visit /accountant/registration

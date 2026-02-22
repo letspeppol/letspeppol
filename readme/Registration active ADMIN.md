@@ -5,10 +5,6 @@ sequenceDiagram
     actor SME as SME
     participant Frontend as Frontend
     participant KYC as KYC
-    %%participant App as App
-    %%participant PeppolDirectory as PeppolDirectory
-    %%participant Proxy as Proxy
-    %%participant Peppol as Peppol
 
 Note over SME, KYC: Requesting registration for active ADMIN
     Note left of SME: Visit /registration

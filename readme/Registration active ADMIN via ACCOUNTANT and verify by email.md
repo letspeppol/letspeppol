@@ -7,9 +7,6 @@ sequenceDiagram
     participant Frontend as Frontend
     participant KYC as KYC
     participant App as App
-    %%participant PeppolDirectory as PeppolDirectory
-    %%participant Proxy as Proxy
-    %%participant Peppol as Peppol
 
 Note over SME, App: Requesting active company added to ACCOUNTANT
     Note left of ACCOUNTANT: Visit /accountant/companies

@@ -7,8 +7,6 @@ sequenceDiagram
     participant KYC as KYC
     participant App as App
     participant PeppolDirectory as PeppolDirectory
-    %%participant Proxy as Proxy
-    %%participant Peppol as Peppol
 
 Note over ACCOUNTANT, PeppolDirectory: Requesting registration for new ACCOUNTANT
     Note left of ACCOUNTANT: Visit /accountant/registration
