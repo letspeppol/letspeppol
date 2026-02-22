@@ -1,5 +1,12 @@
 package org.letspeppol.kyc.controller;
 
+import jakarta.mail.Session;
+import jakarta.mail.internet.MimeMessage;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.letspeppol.kyc.dto.*;
 import org.letspeppol.kyc.model.AccountType;
@@ -25,7 +32,10 @@ import java.security.cert.X509Certificate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    properties = {
+        "proxy.api.url=http://localhost:${mockwebserver.port}"
+    })
 class AdminRegistrationTest {
 
     @LocalServerPort private int port;
@@ -34,6 +44,30 @@ class AdminRegistrationTest {
     @Autowired private CompanyRepository companyRepository;
     @Autowired private DirectorRepository directorRepository;
     @MockitoBean private JavaMailSender javaMailSender;
+    static MockWebServer mockWebServer;
+
+    @BeforeAll
+    static void startMockServer() throws Exception {
+        mockWebServer = new MockWebServer();
+        mockWebServer.start();
+        System.setProperty("mockwebserver.port", String.valueOf(mockWebServer.getPort()));
+    }
+
+    @AfterAll
+    static void shutdownMockServer() throws Exception {
+        if (mockWebServer != null) mockWebServer.shutdown();
+    }
+
+    @BeforeEach
+    void setupMailSender() {
+        Mockito.when(javaMailSender.createMimeMessage()).thenReturn(new MimeMessage(Session.getInstance(new java.util.Properties())));
+        // Enqueue a default response for /sapi/registry POST
+        mockWebServer.enqueue(new MockResponse()
+            .setBody("""
+                    {"peppolActive":true}
+                    """)
+            .addHeader("Content-Type", "application/json"));
+    }
 
     @Test
     void happyFlow() {
