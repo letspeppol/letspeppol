@@ -34,7 +34,7 @@ Note over SME, Peppol: Requesting new company added to ACCOUNTANT
         PeppolDirectory -->> App: Peppol registrations
         App -->> Frontend: Peppol registrations
     end
-    Frontend ->> ACCOUNTANT: Account new" & "Email is sent" <br> & Show company & directors <br> & registrations present
+    Frontend ->> ACCOUNTANT: "Account new" & "Email is sent" <br> & Show company & directors <br> & registrations present
 
 Note over SME, Peppol: Signing contract for new ADMIN requested by ACCOUNTANT
     Note left of ACCOUNTANT: Select director
@@ -57,7 +57,7 @@ Note over SME, Peppol: Signing contract for new ADMIN requested by ACCOUNTANT
 
     Note left of ACCOUNTANT: Sign as director with eID & PIN
     ACCOUNTANT ->> Frontend: Sign( eID )
-    Frontend ->> KYC: POST /kyc/api/identity/sign/finalize <br> ( emailToken, directorId, certificate, <br> signature, signatureAlgorithm, <br> hashToSign, hashToFinalize, password )
+    Frontend ->> KYC: POST /kyc/api/identity/sign/finalize <br> ( emailToken, directorId, certificate, <br> signature, signatureAlgorithm, <br> hashToSign, hashToFinalize, null )
     Note right of KYC: Validate token <br> Type == ADMIN <br> Generate contract for director <br> with signature of eID <br> Create Account <br> Link as ADMIN to Company <br> Set Director as registered <br> eID != Director ? <br> Set Company as suspended
     opt Type == ADMIN && Company != suspended
         KYC -->> Proxy: POST /proxy/sapi/registry <br> KYC_JWT ( name, language, country )
@@ -66,10 +66,12 @@ Note over SME, Peppol: Signing contract for new ADMIN requested by ACCOUNTANT
         Proxy -->> KYC: RegistrationResponse <br> ( peppolActive, errorCode, body )
     end
     KYC ->> Frontend: PDF signed contract <br> Header( Registration-Status ) <br> Header( Registration-Provider )
- %%   Frontend ->> App: POST /app/sapi/accountant/verify-company <br> ( requester, peppolId, ...? )
- %%   Note right of App: JWT == ADMIN <br> Set company as active for requester accountant
- %%   App ->> Frontend: OK
-    Frontend ->> ACCOUNTANT: Show success & download signed contract <br> Registration-Status == CONFLICT ? <br> show Registration-Provider
+%%    critical We cannot do this
+%%        Frontend ->> App: POST /app/sapi/accountant/verify-company <br> ( requester, peppolId, ...? )
+%%        Note right of App: JWT == ACCOUNTANT <br> Set company as active for requester accountant
+%%        App ->> Frontend: OK
+%%    end
+    Frontend ->> ACCOUNTANT: "Click emailed link to choose password" <br> & Show success & download signed contract <br> Registration-Status == CONFLICT ? <br> show Registration-Provider
 
 Note over SME, Peppol: Verify email of new ADMIN requested by ACCOUNTANT
     Note left of SME: Receives email
@@ -81,6 +83,9 @@ Note over SME, Peppol: Verify email of new ADMIN requested by ACCOUNTANT
 
     Note left of SME: Choose password
     SME ->> Frontend: Input( password, repeat password )
+    Frontend ->> KYC: POST /kyc/api/identity/set-password ( emailToken, password )
+    Note right of KYC: Validate token <br> Type == ADMIN <br> Store password
+    KYC ->> Frontend: OK
     Frontend ->> SME: Show success <br> Show requester
 
 Note over SME, Peppol: Accepting ACCOUNTANT request by ADMIN
