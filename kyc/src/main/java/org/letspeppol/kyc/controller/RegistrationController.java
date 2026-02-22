@@ -23,14 +23,14 @@ public class RegistrationController {
     /// *Registration step 1* Retrieves company info based on peppolId (= VAT number converted by UI) to confirm company information is correct to use
     @GetMapping("/company/{peppolId}")
     public CompanyResponse getCompany(@PathVariable String peppolId) {
-        return companyService.getByPeppolId(peppolId).orElseThrow(() -> new NotFoundException(KycErrorCodes.COMPANY_NOT_FOUND));
+        return companyService.getResponseByPeppolId(peppolId).orElseThrow(() -> new NotFoundException(KycErrorCodes.COMPANY_NOT_FOUND));
     }
 
     /// *Registration step 2* Sends verification email to confirm email address is correct to use after company info is confirmed to be correct
     @PostMapping("/confirm-company")
     public SimpleMessage confirmCompany(@RequestBody ConfirmCompanyRequest request, @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, required = false) String acceptLanguage) {
         activationService.requestActivation(request, acceptLanguage);
-        return new SimpleMessage("Activation email sent (if delivery fails, check logs for link)");
+        return new SimpleMessage("Activation email sent");
     }
 
     /// *Registration step 3* Verifies email address is correct and sends company information with list of directors to select the signing director

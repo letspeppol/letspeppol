@@ -6,14 +6,13 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 import java.time.Instant;
 
 @Entity
-@Table(name = "email_verification", indexes = {
-        @Index(name = "uk_token", columnList = "token", unique = true),
-        @Index(name = "idx_email_company", columnList = "email,peppolId")
-})
+@Table(name = "email_verification")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,6 +20,14 @@ public class EmailVerification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "requester_ownership_id")
+    private Ownership requester;
+
+    @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    private AccountType type;
 
     @NotNull
     @NotBlank
@@ -42,7 +49,9 @@ public class EmailVerification {
     @Column(nullable = false)
     private Instant createdOn;
 
-    public EmailVerification(String email, String peppolId, String token, Instant expiresOn) {
+    public EmailVerification(Ownership requester, AccountType type, String email, String peppolId, String token, Instant expiresOn) {
+        this.requester = requester;
+        this.type = type;
         this.email = email;
         this.peppolId = peppolId;
         this.token = token;

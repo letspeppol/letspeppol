@@ -11,6 +11,7 @@ import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.KycException;
 import org.letspeppol.kyc.exception.NotFoundException;
 import org.letspeppol.kyc.model.EmailVerification;
+import org.letspeppol.kyc.model.Ownership;
 import org.letspeppol.kyc.repository.EmailVerificationRepository;
 import org.letspeppol.kyc.service.mail.ActivationEmailTemplateProvider;
 import org.letspeppol.kyc.util.LocaleUtil;
@@ -26,6 +27,8 @@ import java.time.Instant;
 import java.util.Base64;
 import java.util.List;
 
+import static org.letspeppol.kyc.model.AccountType.ADMIN;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -35,6 +38,7 @@ public class ActivationService {
     private final JavaMailSender mailSender;
     private final CompanyService companyService;
     private final AccountService accountService;
+    private final OwnershipService ownershipService;
     private final ActivationEmailTemplateProvider templateProvider;
     private final SecureRandom random = new SecureRandom();
     private final Duration ttl = Duration.ofDays(7);
@@ -49,13 +53,18 @@ public class ActivationService {
 
     @Transactional
     public void requestActivation(ConfirmCompanyRequest request, String acceptLanguage) {
-        if (isVerified(request.peppolId())) {
-            log.warn("User with email {} tried to register for company {} but company was already registered", request.email(), request.peppolId());
-            throw new KycException(KycErrorCodes.COMPANY_ALREADY_REGISTERED);
-        }
-        accountService.verifyNotRegistered(request.email());
+        requestActivation(null, request, acceptLanguage);
+    }
+
+    @Transactional
+    public void requestActivation(Ownership requester, ConfirmCompanyRequest request, String acceptLanguage) {
+        //TODO : only limit the verification for ADMIN type ? All activation requests could use this function ?
+        ownershipService.verifyPeppolIdNotRegistered(request.peppolId()); //Even for not ADMIN registration, if already registered, we need to use the ADMIN account
+        //accountService.verifyEmailNotRegistered(request.email()); //TODO : improve UI error message & rethink if we want to have multiple companies for 1 email
         String token = generateToken();
         EmailVerification verification = new EmailVerification(
+                requester,
+                request.type() == null ? ADMIN : request.type(),
                 request.email().toLowerCase(),
                 request.peppolId(),
                 token,
@@ -67,37 +76,61 @@ public class ActivationService {
         activationRequestedCounter.increment();
     }
 
-    // Backwards compatibility
-    public void requestActivation(ConfirmCompanyRequest request) { requestActivation(request, null); }
+    @Transactional
+    public EmailVerification getValidTokenInformation(String token) {
+        EmailVerification emailVerification = verificationRepository.findByToken(token)
+                .orElseThrow(() -> new KycException(KycErrorCodes.TOKEN_NOT_FOUND));
+        if (emailVerification.isVerified()) { //TODO : we could remove token ?
+            throw new KycException(KycErrorCodes.TOKEN_ALREADY_VERIFIED);
+        }
+        if (emailVerification.getExpiresOn().isBefore(Instant.now())) {
+            throw new KycException(KycErrorCodes.TOKEN_EXPIRED);
+        }
+        //accountService.verifyEmailNotRegistered(emailVerification.getEmail()); //TODO : remove due to double accounts possible
+        return emailVerification;
+    }
 
     @Transactional
     public TokenVerificationResponse verify(String token) {
-        EmailVerification verification = verificationRepository.findByToken(token)
-            .orElseThrow(() -> new KycException(KycErrorCodes.TOKEN_NOT_FOUND));
-        if (verification.isVerified()) {
-            throw new KycException(KycErrorCodes.TOKEN_ALREADY_VERIFIED);
+        EmailVerification emailVerification = getValidTokenInformation(token);
+        if (emailVerification.getRequester() == null) { //TODO : Check if company is suspended, to resign the contract
+            ownershipService.verifyPeppolIdNotRegistered(emailVerification.getPeppolId());
+            CompanyResponse companyResponse = companyService.getResponseByPeppolId(emailVerification.getPeppolId())
+                    .orElseThrow(() -> new NotFoundException(KycErrorCodes.COMPANY_NOT_FOUND));
+            return new TokenVerificationResponse(emailVerification.getEmail(), companyResponse); //Send response for contract signing
         }
-        if (verification.getExpiresOn().isBefore(Instant.now())) {
-            throw new KycException(KycErrorCodes.TOKEN_EXPIRED);
+        if (!emailVerification.getRequester().getAccount().isIdentityVerified()) { //TODO : move to step 2 confirm-company ?
+            log.error("Verifying a token {} requested by unverified account {}", token, emailVerification.getRequester().getAccount().getExternalId());
+            throw new KycException(KycErrorCodes.REQUESTER_NOT_VERIFIED);
         }
-        accountService.verifyNotRegistered(verification.getEmail());
-        CompanyResponse companyResponse = companyService.getByPeppolId(verification.getPeppolId())
-                .orElseThrow(() -> new NotFoundException(KycErrorCodes.COMPANY_NOT_FOUND));
+        switch (emailVerification.getRequester().getType()) { //TODO : move to step 2 confirm-company ?
+            case ADMIN:
+                if (!emailVerification.getRequester().getCompany().getPeppolId().equals(emailVerification.getPeppolId())) {
+                    throw new KycException(KycErrorCodes.REQUESTER_NOT_VALID);
+                }
+                if (emailVerification.getType() == ADMIN) { //TODO : can this be used to transfer ownership ?
+                    throw new KycException(KycErrorCodes.ONLY_ONE_ADMIN_ALLOWED);
+                }
+            case USER:
+            case USER_DRAFT:
+            case USER_READ:
+            case APP:
+            case APP_USER:
+                throw new KycException(KycErrorCodes.REQUESTER_NOT_VALID);
+            case ACCOUNTANT:
+                if (emailVerification.getType() != ADMIN) { //TODO : add other accountants ? Or does this always happen from ADMIN ?
+                    throw new KycException(KycErrorCodes.INVALID_ACCOUNTANT_REQUEST);
+                }
+                ownershipService.verifyPeppolIdNotRegistered(emailVerification.getPeppolId()); //The ADMIN should not be validated yet, so no registration in ownership ?
+        }
+        setVerified(emailVerification); //TODO : Create account or verify account AND check no ADMIN yet
+        return new TokenVerificationResponse(emailVerification.getEmail(), null); //Send response not needing contract signing
+    }
+
+    public void setVerified(EmailVerification emailVerification) {
+        emailVerification.setVerified(true);
+        verificationRepository.save(emailVerification);
         tokenVerificationCounter.increment();
-        return new TokenVerificationResponse(verification.getEmail(), companyResponse);
-    }
-
-    public void setVerified(String token) {
-        EmailVerification verification = verificationRepository.findByToken(token)
-            .orElseThrow(() -> new KycException(KycErrorCodes.TOKEN_NOT_FOUND));
-        verification.setVerified(true);
-        verificationRepository.save(verification);
-    }
-
-    public boolean isVerified(String peppolId) {
-        return verificationRepository.findTopByPeppolIdOrderByCreatedOnDesc(peppolId)
-                .map(EmailVerification::isVerified)
-                .orElse(false);
     }
 
     @Transactional
@@ -124,7 +157,7 @@ public class ActivationService {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, false);
             helper.setTo(to);
-            helper.setFrom(fromAddress, "Let's Peppol");
+            helper.setFrom(fromAddress, "Let’s Peppol");
             helper.setBcc("kyc@letspeppol.org");
             helper.setReplyTo("support@letspeppol.org");
             helper.setSubject(tpl.subject());
