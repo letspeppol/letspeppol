@@ -24,6 +24,8 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.nio.file.Files;
@@ -32,10 +34,7 @@ import java.security.cert.X509Certificate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    properties = {
-        "proxy.api.url=http://localhost:${mockwebserver.port}"
-    })
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class AdminRegistrationTest {
 
     @LocalServerPort private int port;
@@ -50,7 +49,11 @@ class AdminRegistrationTest {
     static void startMockServer() throws Exception {
         mockWebServer = new MockWebServer();
         mockWebServer.start();
-        System.setProperty("mockwebserver.port", String.valueOf(mockWebServer.getPort()));
+    }
+
+    @DynamicPropertySource
+    static void registerProperties(DynamicPropertyRegistry registry) {
+        registry.add("proxy.api.url", () -> "http://localhost:" + mockWebServer.getPort());
     }
 
     @AfterAll
