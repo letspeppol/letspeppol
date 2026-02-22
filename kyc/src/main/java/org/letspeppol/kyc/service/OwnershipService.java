@@ -34,6 +34,11 @@ public class OwnershipService {
                 .orElseThrow(() -> new KycException(KycErrorCodes.NO_OWNERSHIP));
     }
 
+    public Ownership getByPeppolIdAndType(String peppolId, AccountType type) {
+        return ownershipRepository.findFirstByCompanyPeppolIdAndTypeOrderByLastUsedDesc(peppolId, type)
+                .orElseThrow(() -> new KycException(KycErrorCodes.NO_OWNERSHIP));
+    }
+
     public List<Ownership> getByPeppolId(String peppolId) {
         return ownershipRepository.findByCompanyPeppolIdOrderByCreatedOnAsc(peppolId);
     }
