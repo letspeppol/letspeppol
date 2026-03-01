@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class CompanyMapper {
 
-    public static CompanyResponse toResponse(Company company) {
+    public static CompanyResponse toResponse(Company company, boolean hasAdmin) {
         return new CompanyResponse(
                 company.getId(),
                 company.getPeppolId(),
@@ -22,7 +22,8 @@ public class CompanyMapper {
                         .map(d -> new DirectorDto(d.getId(), d.getName()))
                         .collect(Collectors.toList()),
                 company.isHasKboAddress(),
-                company.isRegisteredOnPeppol()
+                company.isRegisteredOnPeppol(),
+                hasAdmin
         );
     }
 

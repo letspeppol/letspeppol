@@ -1,4 +1,4 @@
-# Registration existing ADMIN via ACCOUNTANT and verify by email
+# Registration active ADMIN via ACCOUNTANT and verify by email
 
 ```mermaid
 sequenceDiagram
@@ -18,7 +18,7 @@ Note over SME, App: Requesting active company added to ACCOUNTANT
 
     Note left of ACCOUNTANT: Verify information
     ACCOUNTANT ->> Frontend: Confirm()
-    Frontend ->> KYC: POST /kyc/sapi/accountant/confirm-company <br> ( AccountType.ADMIN, peppolId, email )
+    Frontend ->> KYC: POST /kyc/sapi/linked/request-company <br> ( AccountType.ADMIN, peppolId, email )
     Note right of KYC: JWT == ACCOUNTANT <br> PeppolID has ADMIN <br>(= registered) <br> Generate token (Requester = Accountant, type = ADMIN)
     KYC ->> SME: Mail "Confirm your accountant" /email-confirmation?token={token}
     KYC ->> Frontend: "Request email sent"
@@ -32,8 +32,8 @@ Note over SME, App: Accepting ACCOUNTANT request by ADMIN
     SME ->> Frontend: Open link in email
     Frontend ->> KYC: POST /kyc/api/register/verify?token={token}
     Note right of KYC: Validate token <br> Requester == ACCOUNTANT <br> Type == ADMIN <br> PeppolID has ADMIN
-    KYC ->> Frontend: TokenVerificationResponse <br> ( email, null, requester )
-    Frontend ->> SME: Show requester
+    KYC ->> Frontend: TokenVerificationResponse <br> ( email, CompanyResponse, requester )
+    Frontend ->> SME: Show requester for CompanyResponse <br> with login form for email, CompanyResponse.peppolId <br> and AccountType.ADMIN
 
     Note left of SME: Read requester
     SME ->> Frontend: LoginToConfirm( email, password )
@@ -45,7 +45,7 @@ Note over SME, App: Accepting ACCOUNTANT request by ADMIN
         Note right of App: JWT == ADMIN <br> Set company as active for requester accountant
         App -->> Frontend: OK
     end
-    Frontend ->> KYC: POST /kyc/sapi/approve?token={token}
+    Frontend ->> KYC: POST /kyc/sapi/linked/approve?token={token}
     Note right of KYC: JWT == ADMIN <br> Validate token <br> token.peppolId == JWT.peppolId <br> Set email as verified
     KYC ->> Frontend: OK
     Frontend ->> SME: Show success / Go to active connection list

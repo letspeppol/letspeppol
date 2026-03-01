@@ -12,6 +12,7 @@ public record CompanyResponse(
         String postalCode,
         List<DirectorDto> directors,
         boolean hasKboAddress,
-        boolean registeredOnPeppol
+        boolean registeredOnPeppol,
+        boolean hasAdmin
 ) {}
 
