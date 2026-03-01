@@ -346,30 +346,6 @@ class AdminRegistrationTest {
 
     @Test
     @Order(5)
-    void loginAccountantAsAdmin() {
-        if (!accountRepository.existsByEmail(accountantEmail)) {
-            registrationNewAccountant();
-        }
-
-        // Build Basic header
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBasicAuth(accountantEmail, accountantPassword, StandardCharsets.UTF_8);
-
-        // 1. POST /api/jwt/auth
-        String url = baseUrl() + "/api/jwt/auth";
-        AuthRequest authRequest = new AuthRequest(AccountType.ADMIN, accountantPeppolId);
-        HttpEntity<AuthRequest> request = new HttpEntity<>(authRequest, headers);
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo("Bearer " + response.getBody());
-        assertEquals(accountantPeppolId, jwtInfo.peppolId());
-        assertEquals(AccountType.ADMIN, jwtInfo.accountType());
-        accountantToken = response.getBody();
-    }
-
-    @Test
-    @Order(6)
     void loginAccountantAsAccountant() {
         if (!accountRepository.existsByEmail(accountantEmail)) {
             registrationNewAccountant();
@@ -393,7 +369,55 @@ class AdminRegistrationTest {
     }
 
     @Test
+    @Order(6)
+    void loginAccountantAsAdmin() {
+        if (!accountRepository.existsByEmail(accountantEmail)) {
+            registrationNewAccountant();
+        }
+
+        // Build Basic header
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBasicAuth(accountantEmail, accountantPassword, StandardCharsets.UTF_8);
+
+        // 1. POST /api/jwt/auth
+        String url = baseUrl() + "/api/jwt/auth";
+        AuthRequest authRequest = new AuthRequest(AccountType.ADMIN, accountantPeppolId);
+        HttpEntity<AuthRequest> request = new HttpEntity<>(authRequest, headers);
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        JwtInfo jwtInfo = jwtService.validateAndGetInfo("Bearer " + response.getBody());
+        assertEquals(accountantPeppolId, jwtInfo.peppolId());
+        assertEquals(AccountType.ADMIN, jwtInfo.accountType());
+        accountantToken = response.getBody();
+    }
+
+    @Test
     @Order(7)
+    void swapAccountantToAccountant() {
+        if (accountantToken == null) {
+            loginAccountantAsAdmin();
+        }
+
+        // Build JWT header
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accountantToken);
+
+        // 1. POST /sapi/jwt/swap
+        String url = baseUrl() + "/sapi/jwt/swap";
+        AuthRequest authRequest = new AuthRequest(AccountType.ACCOUNTANT, accountantPeppolId);
+        HttpEntity<AuthRequest> request = new HttpEntity<>(authRequest, headers);
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        JwtInfo jwtInfo = jwtService.validateAndGetInfo("Bearer " + response.getBody());
+        assertEquals(accountantPeppolId, jwtInfo.peppolId());
+        assertEquals(AccountType.ACCOUNTANT, jwtInfo.accountType());
+        accountantToken = response.getBody();
+    }
+
+    @Test
+    @Order(8)
     void registrationActiveAdminViaAccountantAndVerifyByEmail() {
         if (!accountRepository.existsByEmail(adminEmail)) {
             registrationNewAdmin();
