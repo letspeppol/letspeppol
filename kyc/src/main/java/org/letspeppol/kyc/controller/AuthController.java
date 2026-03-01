@@ -3,7 +3,7 @@ package org.letspeppol.kyc.controller;
 import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.letspeppol.kyc.dto.AuthSwapRequest;
+import org.letspeppol.kyc.dto.AuthRequest;
 import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.model.Ownership;
 import org.letspeppol.kyc.service.AccountService;
@@ -32,7 +32,7 @@ public class AuthController {
 
     /// Generates JWT token on login
     @PostMapping("/api/jwt/auth")
-    public ResponseEntity<String> auth(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+    public ResponseEntity<String> auth(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader, @RequestBody(required = false) AuthRequest request) {
         if (authHeader == null || !authHeader.startsWith("Basic ")) {
             authenticationCounterFailure.increment();
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing or invalid Authorization header");
@@ -50,7 +50,10 @@ public class AuthController {
         String emailOrUuid = values[0];
         String password = values[1];
         Account account = accountService.findAccountWithCredentials(emailOrUuid, password); //TODO : Check if account is verified ! Else send info for resend activation mail
-        Ownership ownership = account.getOwnerships().getFirst();
+        Ownership ownership = (request == null) ? account.getOwnerships().getFirst() : account.getOwnerships().stream().filter(o -> request.peppolId().equals(o.getCompany().getPeppolId()) && request.type().equals(o.getType()) ).findFirst().orElse(null);
+        if (ownership == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid AuthRequest");
+        }
         ownershipService.updateLastUsed(ownership);
 
         String token = jwtService.generateToken(
@@ -66,7 +69,7 @@ public class AuthController {
 
     /// Generates JWT token on swap
     @PostMapping("/sapi/jwt/swap")
-    public ResponseEntity<String> swap(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader, @RequestBody AuthSwapRequest request) {
+    public ResponseEntity<String> swap(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader, @RequestBody AuthRequest request) {
         JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
         Ownership ownership = ownershipService.getByAccountExternalIdPeppolIdAndType(jwtInfo.uid(), request.peppolId(), request.type());
         ownershipService.updateLastUsed(ownership);

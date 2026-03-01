@@ -9,6 +9,7 @@ public class OwnershipMapper {
                 ownership.getType(),
                 ownership.getAccount().getName(),
                 ownership.getAccount().getEmail(),
+                ownership.getCompany().getName(),
                 ownership.getCreatedOn(),
                 ownership.getAccount().getIdentityVerifiedOn()
         );
