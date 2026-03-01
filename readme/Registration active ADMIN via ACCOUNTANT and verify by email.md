@@ -38,7 +38,7 @@ Note over SME, App: Accepting ACCOUNTANT request by ADMIN
     Note left of SME: Read requester
     SME ->> Frontend: LoginToConfirm( email, password )
     Frontend ->> KYC: POST /api/jwt/auth <br> ( AccountType.ADMIN, peppolId )
-    Note right of KYC: Validate credentials <br> Update last used ownership
+    Note right of KYC: Validate credentials <br> Validate ownership ADMIN for peppolId <br> Update last used ownership
     KYC ->> Frontend: JWT ( AccountType.ADMIN, peppolId, peppolActive, uid )
     opt if accepted
         Frontend -->> App: POST /app/sapi/accountant/verify-company <br> ( requester, peppolId, ...? )
