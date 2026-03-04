@@ -19,6 +19,7 @@ export class InvoiceContext {
     // Overview
     draftPage: DocumentPageDto = undefined;
     invoicePage: DocumentPageDto = undefined;
+    activeBox: string = 'ALL';
     // Current invoice
     lines : undefined | InvoiceLine[] | CreditNoteLine[];
     @observable selectedInvoice:  undefined | Invoice | CreditNote;
@@ -30,9 +31,21 @@ export class InvoiceContext {
     partnerMissing: boolean = false;
 
     clearSelectedInvoice() {
-        history.replaceState({}, '', `/invoices`);
         this.selectedInvoice = undefined;
         this.selectedDocument = undefined;
+        this.activeBox = 'ALL';
+    }
+
+    setActiveBoxFromDocument(doc: DocumentDto) {
+        if (doc?.draftedOn) {
+            this.activeBox = 'DRAFTS';
+        } else if (doc?.direction === DocumentDirection.INCOMING) {
+            this.activeBox = DocumentDirection.INCOMING;
+        } else if (doc?.direction === DocumentDirection.OUTGOING) {
+            this.activeBox = DocumentDirection.OUTGOING;
+        } else {
+            this.activeBox = 'ALL';
+        }
     }
 
     selectedInvoiceChanged(newValue: UBLDoc) {
