@@ -41,7 +41,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/scrada/**").permitAll()
                         .requestMatchers("/api/e-invoice/**").permitAll()
                         .requestMatchers("/api/monitor/**").permitAll()//.hasAuthority(ROLE_SERVICE) --> /sapi/monitor/ ???
-                        .requestMatchers("/sapi/registry/**").hasAuthority(ROLE_SERVICE)
+                        .requestMatchers("/sapi/registry/**").hasAnyAuthority(ROLE_SERVICE, ROLE_KYC_USER)
                         .requestMatchers("/sapi/**").hasAuthority(ROLE_KYC_USER)
                         .anyRequest().denyAll()
                 )

@@ -1,18 +1,18 @@
-import {Params, RouteNode} from "@aurelia/router";
-import {resolve} from "@aurelia/kernel";
+import { Params, RouteNode } from "@aurelia/router";
+import { resolve } from "@aurelia/kernel";
 import * as webeid from '@web-eid/web-eid-library/web-eid';
-import {IEventAggregator} from "aurelia";
-import {AlertType} from "../components/alert/alert";
-import {KYCApi} from "../services/kyc/kyc-api";
+import { IEventAggregator } from "aurelia";
+import { AlertType } from "../components/alert/alert";
+import { KYCApi } from "../services/kyc/kyc-api";
 import {
     Director,
     PrepareSigningResponse,
     RegistrationService,
     TokenVerificationResponse
 } from "../services/kyc/registration-service";
-import {PeppolDirectoryResponse, PeppolDirService} from "../services/peppol/peppol-dir-service";
-import {SignatureAlgorithm} from "@web-eid/web-eid-library/models/SignatureAlgorithm";
-import {LibrarySignResponse} from "@web-eid/web-eid-library/models/message/LibraryResponse";
+import { PeppolDirectoryResponse, PeppolDirService } from "../services/peppol/peppol-dir-service";
+import { SignatureAlgorithm } from "@web-eid/web-eid-library/models/SignatureAlgorithm";
+import { LibrarySignResponse } from "@web-eid/web-eid-library/models/message/LibraryResponse";
 
 export class EmailConfirmation {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -34,6 +34,7 @@ export class EmailConfirmation {
     private confirmInProgress = false;
     private warningKey;
     private alreadyRegisteredProvider = '';
+    private bypassEid = false;
 
     public loading(params: Params, next: RouteNode) {
         this.emailToken = next.queryParams.get('token');
@@ -43,10 +44,11 @@ export class EmailConfirmation {
         }
         this.registrationService.verifyToken(this.emailToken).then(result => {
             this.tokenVerificationResponse = result;
+            this.bypassEid = result.bypassEid;
             this.step = 1;
             this.checkPeppolDirectory(result.company.peppolId);
         }).catch(error => {
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Token invalid"});
+            this.ea.publish('alert', { alertType: AlertType.Danger, text: "Token invalid" });
         });
     }
 
@@ -95,47 +97,59 @@ export class EmailConfirmation {
     public async confirmContract() {
         this.confirmInProgress = true;
         try {
-//             const {
-//                 certificate,
-//                 supportedSignatureAlgorithms
-//             } = await webeid.getSigningCertificate({lang: 'en'});
-//
-//             const {
-//                 signatureAlgorithm,
-//                 prepareSigningResponse
-//             } = await this.prepareSigning(supportedSignatureAlgorithms, certificate);
+            //             const {
+            //                 certificate,
+            //                 supportedSignatureAlgorithms
+            //             } = await webeid.getSigningCertificate({lang: 'en'});
+            //
+            //             const {
+            //                 signatureAlgorithm,
+            //                 prepareSigningResponse
+            //             } = await this.prepareSigning(supportedSignatureAlgorithms, certificate);
             const certificate = this.certificate;
             const signatureAlgorithm = this.signatureAlgorithm;
             const prepareSigningResponse = this.prepareSigningResponse;
 
-            const signResponse = await webeid.sign(
-                certificate,
-                prepareSigningResponse.hashToSign,
-                signatureAlgorithm.hashFunction
-            );
+            let signResponse;
+            if (this.bypassEid && certificate === 'MOCK') {
+                signResponse = {
+                    signature: 'MOCK',
+                    signatureAlgorithm: {
+                        hashFunction: 'SHA-256',
+                        paddingScheme: 'PKCS1.5',
+                        cryptoAlgorithm: 'RSA'
+                    }
+                };
+            } else {
+                signResponse = await webeid.sign(
+                    certificate,
+                    prepareSigningResponse.hashToSign,
+                    signatureAlgorithm.hashFunction
+                );
+            }
             const finalizeSigningResponse = await this.finalizeSigning(certificate, signResponse, prepareSigningResponse);
             this.step = 3;
             const registrationStatus = finalizeSigningResponse.headers.get('Registration-Status'); // OK | FAILED | SUSPENDED | CONFLICT | UNKNOWN
             switch (registrationStatus) {
-              case 'UNKNOWN':
-              case 'FAILED':
-                this.warningKey = 'account.registration-failed.try-again-one-day';
-                break;
-              case 'SUSPENDED':
-                this.warningKey = 'account.registration-failed.contact-us';
-                break;
-              case 'CONFLICT':
-                const raw = finalizeSigningResponse.headers.get('Registration-Provider') ?? '';
-                const provider = raw ? decodeURIComponent(raw) : '';
-                this.warningKey = 'account.registration-failed.contact-provider';
-                this.alreadyRegisteredProvider = provider;
-                break;
-              case 'OK':
-              default:
-                break;
+                case 'UNKNOWN':
+                case 'FAILED':
+                    this.warningKey = 'account.registration-failed.try-again-one-day';
+                    break;
+                case 'SUSPENDED':
+                    this.warningKey = 'account.registration-failed.contact-us';
+                    break;
+                case 'CONFLICT':
+                    const raw = finalizeSigningResponse.headers.get('Registration-Provider') ?? '';
+                    const provider = raw ? decodeURIComponent(raw) : '';
+                    this.warningKey = 'account.registration-failed.contact-provider';
+                    this.alreadyRegisteredProvider = provider;
+                    break;
+                case 'OK':
+                default:
+                    break;
             }
             await this.downloadFile(finalizeSigningResponse);
-            this.ea.publish('alert', {alertType: AlertType.Success, text: "Signed contract downloaded!"});
+            this.ea.publish('alert', { alertType: AlertType.Success, text: "Signed contract downloaded!" });
         } catch (error) {
             let text = "Signing contract failed";
             if (error instanceof Response) {
@@ -164,7 +178,7 @@ export class EmailConfirmation {
             language: 'en'
         };
         const prepareSigningResponse = await this.registrationService.prepareSign(prepareSigningRequest);
-        return {signatureAlgorithm, prepareSigningResponse};
+        return { signatureAlgorithm, prepareSigningResponse };
     }
 
     private async finalizeSigning(certificate: string, signResponse: LibrarySignResponse, prepareSigningResponse: PrepareSigningResponse): Promise<Response> {
@@ -197,11 +211,26 @@ export class EmailConfirmation {
     public async confirmDirector(director: Director) {
         if (this.confirmedDirector) return; // already confirmed one
         this.confirmedDirector = director;
+
+        if (this.bypassEid) {
+            this.certificate = 'MOCK';
+            this.signatureAlgorithm = { hashFunction: 'SHA-256' };
+            this.prepareSigningResponse = await this.registrationService.prepareSign({
+                emailToken: this.emailToken,
+                directorId: director.id,
+                certificate: 'MOCK',
+                supportedSignatureAlgorithms: [],
+                language: 'en'
+            });
+            this.step = 2;
+            return;
+        }
+
         try {
             const {
                 certificate,
                 supportedSignatureAlgorithms
-            } = await webeid.getSigningCertificate({lang: 'en'});
+            } = await webeid.getSigningCertificate({ lang: 'en' });
 
             const {
                 signatureAlgorithm,

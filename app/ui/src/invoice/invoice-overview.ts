@@ -1,7 +1,7 @@
-import {resolve} from "@aurelia/kernel";
-import {InvoiceContext} from "./invoice-context";
-import {AlertType} from "../components/alert/alert";
-import {IEventAggregator, watch} from "aurelia";
+import { resolve } from "@aurelia/kernel";
+import { InvoiceContext } from "./invoice-context";
+import { AlertType } from "../components/alert/alert";
+import { IEventAggregator, watch } from "aurelia";
 import {
     DocumentType,
     DocumentDto,
@@ -9,7 +9,7 @@ import {
     InvoiceService, DocumentDirection,
 } from "../services/app/invoice-service";
 import moment from "moment";
-import {PartnerService} from "../services/app/partner-service";
+import { PartnerService } from "../services/app/partner-service";
 
 export class InvoiceOverview {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -17,7 +17,7 @@ export class InvoiceOverview {
     private partnerService = resolve(PartnerService);
     private invoiceContext = resolve(InvoiceContext);
     box = 'ALL'
-    query: DocumentQuery = {pageable: {page: 0, size: 20}};
+    query: DocumentQuery = { pageable: { page: 0, size: 20, sort: [{ property: 'draftedOn', direction: 'desc' }, { property: 'createdOn', direction: 'desc' }] } };
 
     attached() {
         this.loadInvoices();
@@ -26,21 +26,23 @@ export class InvoiceOverview {
     }
 
     async loadDrafts() {
-        this.invoiceContext.draftPage = await this.invoiceService.getDocuments({...this.query, draft: true });
+        this.invoiceContext.draftPage = await this.invoiceService.getDocuments({ ...this.query, draft: true });
     }
 
     @watch((vm) => [vm.query.invoiceReference, vm.query.partnerName])
     loadInvoices() {
-        if (this.box === 'drafts') {
-            this.invoiceService.getDocuments({...this.query, draft: true }).then(page => this.invoiceContext.invoicePage = page);
+        if (this.box === 'DRAFTS') {
+            this.invoiceService.getDocuments({ ...this.query, draft: true }).then(page => this.invoiceContext.invoicePage = page);
             // this.invoices = this.invoiceContext.drafts.filter(i => {
             //    return (!this.query.type || i.docType === this.query.type) &&
             //     (!this.query.counterPartyNameLike || !i.counterPartyName || i.counterPartyName.toLowerCase().includes(this.query.counterPartyNameLike.toLowerCase())) &&
             //     (!this.query.docId || !i.docId || i.docId.toLowerCase() === this.query.docId.toLowerCase())
             //     ;
             // });
+        } else if (this.box === 'ALL') {
+            this.invoiceService.getDocuments({ ...this.query, draft: undefined }).then(page => this.invoiceContext.invoicePage = page);
         } else {
-            this.invoiceService.getDocuments({...this.query, draft: false}).then(page => this.invoiceContext.invoicePage = page);
+            this.invoiceService.getDocuments({ ...this.query, draft: false }).then(page => this.invoiceContext.invoicePage = page);
         }
     }
 
@@ -105,10 +107,10 @@ export class InvoiceOverview {
         try {
             await this.invoiceService.deleteDocument(draft.id)
             this.invoiceContext.deleteDraft(draft);
-            this.ea.publish('alert', {alertType: AlertType.Success, text: "Draft deleted"});
+            this.ea.publish('alert', { alertType: AlertType.Success, text: "Draft deleted" });
         } catch (e) {
             console.log(e);
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to delete draft"});
+            this.ea.publish('alert', { alertType: AlertType.Danger, text: "Failed to delete draft" });
         }
         return false;
     }
@@ -124,13 +126,13 @@ export class InvoiceOverview {
             await this.invoiceService.togglePaidDocument(item.id);
             if (item.paidOn) {
                 item.paidOn = undefined;
-                this.ea.publish('alert', {alertType: AlertType.Success, text: "Invoice marked as unpaid"});
+                this.ea.publish('alert', { alertType: AlertType.Success, text: "Invoice marked as unpaid" });
             } else {
                 item.paidOn = datePaid;
-                this.ea.publish('alert', {alertType: AlertType.Success, text: "Invoice marked as paid"});
+                this.ea.publish('alert', { alertType: AlertType.Success, text: "Invoice marked as paid" });
             }
         } catch (e) {
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to change invoice paid status"});
+            this.ea.publish('alert', { alertType: AlertType.Danger, text: "Failed to change invoice paid status" });
         }
     }
 }

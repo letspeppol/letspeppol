@@ -1,9 +1,9 @@
 {
-  "label" : {
-    "email" : "Email",
-    "password" : "Password",
-    "confirm-password" : "Confirm Password",
-    "vat-number" : "VAT number",
+  "label": {
+    "email": "Email",
+    "password": "Password",
+    "confirm-password": "Confirm Password",
+    "vat-number": "VAT number",
     "name": "Name",
     "city": "City",
     "postal-code": "Postal Code",
@@ -42,9 +42,9 @@
     "number": "Number",
     "peppolId": "Peppol ID"
   },
-  "placeholder" : {
-    "email" : "you@company.com",
-    "vat-number" : "BE0123456789",
+  "placeholder": {
+    "email": "you@company.com",
+    "vat-number": "BE0123456789",
     "password": "••••••••",
     "product-search": "Search product",
     "partner-search": "Search partner",
@@ -55,20 +55,29 @@
     "customer-search": "Search by name or VAT number",
     "name": "Name"
   },
-  "login" : {
-    "action" : "Log in",
-    "title" : "Sign in to your account",
-    "new" : "New here?",
-    "register" : "Register your company",
-    "continue" : "Sign in",
-    "forgot" : "Forgot my password",
+  "login": {
+    "action": "Log in",
+    "title": "Sign in to your account",
+    "new": "New here?",
+    "register": "Register your company",
+    "continue": "Sign in",
+    "forgot": "Forgot my password",
     "remember": "Remember me"
   },
   "onboarding": {
     "title": "Onboarding steps",
     "or": "or",
-    "os": { "windows": "Windows", "macos": "macOS", "linux": "Linux" },
-    "browser": { "chrome": "Chrome", "firefox": "Firefox", "safari": "Safari", "edge": "Microsoft Edge" },
+    "os": {
+      "windows": "Windows",
+      "macos": "macOS",
+      "linux": "Linux"
+    },
+    "browser": {
+      "chrome": "Chrome",
+      "firefox": "Firefox",
+      "safari": "Safari",
+      "edge": "Microsoft Edge"
+    },
     "step": {
       "register-company": "Register your company",
       "prepare-eid": {
@@ -104,11 +113,11 @@
     "anim-caption-sign": "Insert your eID card and press confirm to verify installation.",
     "anim-reader-label": "READER"
   },
-  "registration" : {
-    "title-step0" : "Register your company",
-    "create-account" : "Create account",
-    "already-registered" : "Already registered?",
-    "title-step1" : "Confirm your company",
+  "registration": {
+    "title-step0": "Register your company",
+    "create-account": "Create account",
+    "already-registered": "Already registered?",
+    "title-step1": "Confirm your company",
     "confirm-company": "Confirm",
     "wrong-company": "Wrong company?",
     "back": "Back",
@@ -118,27 +127,29 @@
     "instructions-go-checklist": "Go to checklist",
     "instructions-finally": "<b>Finally</b>, open the confirmation email and click the verification link."
   },
-  "error" : {
-    "login-failed" : "Login failed",
-    "registration-company-not-found" : "Company not found",
-    "registration-company-already-registered" : "Company already registered",
-    "registration-company-already-registered-on-peppol" : "It looks like this Peppol ID is already registered with another provider. Activation here requires unregistering there first. You can still complete the signing process and handle this afterward.",
-    "not-peppol-active" : "You are currently not registered on Peppol",
-    "not-peppol-active-action" : "Solve this now"
+  "error": {
+    "login-failed": "Login failed",
+    "registration-company-not-found": "Company not found",
+    "registration-company-already-registered": "Company already registered",
+    "registration-account-already-linked": "This email is already associated with an account",
+    "registration-error": "Registration failed. Please try again later or contact support",
+    "registration-company-already-registered-on-peppol": "It looks like this Peppol ID is already registered with another provider. Activation here requires unregistering there first. You can still complete the signing process and handle this afterward.",
+    "not-peppol-active": "You are currently not registered on Peppol",
+    "not-peppol-active-action": "Solve this now"
   },
-  "paymentTerms" : {
-    "15_DAYS" :  "15 days",
-    "30_DAYS" :  "30 days",
-    "60_DAYS" : "60 days",
-    "END_OF_NEXT_MONTH" : "End of the month"
+  "paymentTerms": {
+    "15_DAYS": "15 days",
+    "30_DAYS": "30 days",
+    "60_DAYS": "60 days",
+    "END_OF_NEXT_MONTH": "End of the month"
   },
-  "documentDirection" : {
-    "OUTGOING" : "Outgoing",
-    "INCOMING" : "Incoming"
+  "documentDirection": {
+    "OUTGOING": "Outgoing",
+    "INCOMING": "Incoming"
   },
-  "documentType" : {
-    "INVOICE" : "Invoice",
-    "CREDIT_NOTE" : "Credit Note"
+  "documentType": {
+    "INVOICE": "Invoice",
+    "CREDIT_NOTE": "Credit Note"
   },
   "confirmation": {
     "header": "Confirm Identity",
@@ -195,8 +206,7 @@
     "products": "Products",
     "account": "Account",
     "brand-alt": "Let's Peppol",
-    "toggle-theme": "Toggle theme",
-    "new-feature": "New feature “Notifications” added in Account"
+    "toggle-theme": "Toggle theme"
   },
   "alert": {
     "success": "Success",
@@ -329,7 +339,7 @@
       "invoice-number": "Invoice number",
       "note-optional": "Note (optional)",
       "note-placeholder": "Additional notes for this invoice",
-      "reference-required" : "Either buyer reference OR order reference is required"
+      "reference-required": "Either buyer reference OR order reference is required"
     },
     "dateModal": {
       "title": "Date",
@@ -386,7 +396,7 @@
       "total": "Total",
       "invoice-lines": "Invoice lines",
       "pos": "Pos",
-      "amount": "Amount",
+      "amount": "Quantity",
       "unit-price": "Unit price",
       "actions": "Actions",
       "add-line": "Add line",

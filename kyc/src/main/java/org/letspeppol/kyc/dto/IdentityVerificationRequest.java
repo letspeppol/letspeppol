@@ -15,7 +15,7 @@ public record IdentityVerificationRequest(
         @NotNull String hashToSign,
         @NotNull String signature,
         @NotNull String certificate,
-        @NotNull X509Certificate x509Certificate,
+        X509Certificate x509Certificate,
         X500Name x500Name
 ) {}
 

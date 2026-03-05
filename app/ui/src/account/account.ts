@@ -1,12 +1,12 @@
-import {CompanyDto, CompanyService} from "../services/app/company-service";
-import {resolve} from "@aurelia/kernel";
-import {AlertType} from "../components/alert/alert";
-import {IEventAggregator, IDisposable} from "aurelia";
-import {RegistrationService} from "../services/kyc/registration-service";
-import {PeppolDirService} from "../services/peppol/peppol-dir-service";
-import {ChangePasswordModal} from "./change-password-modal";
-import {ConfirmationModalContext} from "../components/confirmation/confirmation-modal-context";
-import {validateEmail} from "../app/util/email-validation";
+import { CompanyDto, CompanyService } from "../services/app/company-service";
+import { resolve } from "@aurelia/kernel";
+import { AlertType } from "../components/alert/alert";
+import { IEventAggregator, IDisposable } from "aurelia";
+import { RegistrationService } from "../services/kyc/registration-service";
+import { PeppolDirService } from "../services/peppol/peppol-dir-service";
+import { ChangePasswordModal } from "./change-password-modal";
+import { ConfirmationModalContext } from "../components/confirmation/confirmation-modal-context";
+import { validateEmail } from "../app/util/email-validation";
 
 export class Account {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -24,7 +24,7 @@ export class Account {
 
     attaching() {
         this.getCompany().catch(() => {
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to get account"});
+            this.ea.publish('alert', { alertType: AlertType.Danger, text: "Failed to get account" });
         });
         this.sub = this.ea.subscribe('account:register', () => {
             this.register();
@@ -59,10 +59,10 @@ export class Account {
         try {
             this.ea.publish('showOverlay', "Saving...");
             await this.companyService.updateCompany(this.company);
-            this.ea.publish('alert', {alertType: AlertType.Success, text: "Account updated successfully"});
-        } catch(e) {
+            this.ea.publish('alert', { alertType: AlertType.Success, text: "Account updated successfully" });
+        } catch (e) {
             console.error(e);
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to update account"});
+            this.ea.publish('alert', { alertType: AlertType.Danger, text: "Failed to update account" });
         } finally {
             this.ea.publish('hideOverlay');
         }
@@ -70,7 +70,7 @@ export class Account {
 
     cancelChanges() {
         this.company = JSON.parse(JSON.stringify(this.companyService.myCompany));
-        this.ea.publish('alert', {alertType: AlertType.Info, text: "Account changes reverted"});
+        this.ea.publish('alert', { alertType: AlertType.Info, text: "Account changes reverted" });
     }
 
     async register() {
@@ -99,7 +99,7 @@ export class Account {
         try {
             this.company.peppolActive = await this.registrationService.registerCompany();
             localStorage.setItem('peppolActive', this.company.peppolActive);
-            this.ea.publish('alert', {alertType: AlertType.Success, text: "Activated company on Peppol"});
+            this.ea.publish('alert', { alertType: AlertType.Success, text: "Activated company on Peppol" });
             window.location.reload();
         } catch (response: Response) {
             if (!response) {
@@ -147,10 +147,10 @@ export class Account {
         try {
             this.company.peppolActive = await this.registrationService.unregisterCompany()
             localStorage.setItem('peppolActive', this.company.peppolActive);
-            this.ea.publish('alert', {alertType: AlertType.Success, text: "Removed company from Peppol"});
+            this.ea.publish('alert', { alertType: AlertType.Success, text: "Removed company from Peppol" });
             window.location.reload();
         } catch {
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to remove company from Peppol"});
+            this.ea.publish('alert', { alertType: AlertType.Danger, text: "Failed to remove company from Peppol" });
         }
     }
 
@@ -164,7 +164,7 @@ export class Account {
 
     async downloadContract() {
         try {
-            const blob = await this.registrationService.downloadSignedContract().then( res => res.blob() )
+            const blob = await this.registrationService.downloadSignedContract().then(res => res.blob())
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -173,7 +173,7 @@ export class Account {
             a.click();
             a.remove();
         } catch {
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to download signed contract"});
+            this.ea.publish('alert', { alertType: AlertType.Danger, text: "Failed to download signed contract" });
         }
     }
 

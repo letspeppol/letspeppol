@@ -76,6 +76,9 @@ public class SigningService {
     @Value("${contract.data.dir:#{null}}")
     private String dataDirectory;
 
+    @Value("${app.kyc.bypass-eid:false}")
+    private boolean bypassEid;
+
     private String workingDirectory;
     private String contractDirectory;
 
@@ -250,26 +253,33 @@ public class SigningService {
         Director director = getDirector(signingRequest.directorId(), tokenVerificationResponse);
         log.info("Finalizing contract signing for company {} and email {}", tokenVerificationResponse.company().peppolId(), tokenVerificationResponse.email());
 
-        X509Certificate[] certificates;
-        try {
-            certificates = CertificateUtil.getCertificateChain(signingRequest.certificate());
-        } catch (Exception e) {
-            log.error("Error getting certificate chain for signing: {}", e.getMessage(), e);
-            throw new RuntimeException(e);
-        }
+        boolean isMock = bypassEid && "MOCK".equals(signingRequest.certificate());
 
-        byte[] finalPdfBytes = createFinalContract(certificates, signingRequest, tokenVerificationResponse);
+        X509Certificate[] certificates = null;
+        byte[] finalPdfBytes = null;
+
+        if (isMock) {
+            finalPdfBytes = generateFilledContract(director); // Just the filled PDF, no signature
+        } else {
+            try {
+                certificates = CertificateUtil.getCertificateChain(signingRequest.certificate());
+            } catch (Exception e) {
+                log.error("Error getting certificate chain for signing: {}", e.getMessage(), e);
+                throw new RuntimeException(e);
+            }
+            finalPdfBytes = createFinalContract(certificates, signingRequest, tokenVerificationResponse);
+        }
 
         IdentityVerificationRequest identityVerificationRequest = new IdentityVerificationRequest(
                 tokenVerificationResponse.email(),
                 director,
                 signingRequest.password(),
-                signingRequest.signatureAlgorithm().toString(),
+                signingRequest.signatureAlgorithm().hashFunction(),
                 signingRequest.hashToSign(),
                 signingRequest.signature(),
                 signingRequest.certificate(),
-                certificates[0],
-                CertificateUtil.getX500Name(certificates)
+                isMock ? null : certificates[0],
+                isMock ? null : CertificateUtil.getX500Name(certificates)
         );
         IdentityVerificationResponse identityVerificationResponse = identityVerificationService.createAdmin(identityVerificationRequest);
         activationService.setVerified(signingRequest.emailToken());

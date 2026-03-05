@@ -1,9 +1,9 @@
 {
-  "label" : {
-    "email" : "E-Mail",
-    "password" : "Passwort",
-    "confirm-password" : "Passwort bestätigen",
-    "vat-number" : "USt-IdNr.",
+  "label": {
+    "email": "E-Mail",
+    "password": "Passwort",
+    "confirm-password": "Passwort bestätigen",
+    "vat-number": "USt-IdNr.",
     "name": "Name",
     "city": "Ort",
     "postal-code": "Postleitzahl",
@@ -42,9 +42,9 @@
     "number": "Nummer",
     "peppolId": "Peppol-ID"
   },
-  "placeholder" : {
-    "email" : "you@company.com",
-    "vat-number" : "BE0123456789",
+  "placeholder": {
+    "email": "you@company.com",
+    "vat-number": "BE0123456789",
     "password": "••••••••",
     "product-search": "Produkt suchen",
     "partner-search": "Partner suchen",
@@ -55,20 +55,29 @@
     "customer-search": "Suche nach Name oder USt-IdNr.",
     "name": "Name"
   },
-  "login" : {
-    "action" : "Anmelden",
-    "title" : "Bei Ihrem Konto anmelden",
-    "new" : "Neu hier?",
-    "register" : "Unternehmen registrieren",
-    "continue" : "Anmelden",
-    "forgot" : "Passwort vergessen",
+  "login": {
+    "action": "Anmelden",
+    "title": "Bei Ihrem Konto anmelden",
+    "new": "Neu hier?",
+    "register": "Unternehmen registrieren",
+    "continue": "Anmelden",
+    "forgot": "Passwort vergessen",
     "remember": "Angemeldet bleiben"
   },
   "onboarding": {
     "title": "Onboarding-Schritte",
     "or": "oder",
-    "os": { "windows": "Windows", "macos": "macOS", "linux": "Linux" },
-    "browser": { "chrome": "Chrome", "firefox": "Firefox", "safari": "Safari", "edge": "Microsoft Edge" },
+    "os": {
+      "windows": "Windows",
+      "macos": "macOS",
+      "linux": "Linux"
+    },
+    "browser": {
+      "chrome": "Chrome",
+      "firefox": "Firefox",
+      "safari": "Safari",
+      "edge": "Microsoft Edge"
+    },
     "step": {
       "register-company": "Unternehmen registrieren",
       "prepare-eid": {
@@ -104,11 +113,11 @@
     "anim-caption-sign": "Stecken Sie Ihre eID-Karte ein und drücken Sie auf Bestätigen, um die Installation zu überprüfen.",
     "anim-reader-label": "LESER"
   },
-  "registration" : {
-    "title-step0" : "Unternehmen registrieren",
-    "create-account" : "Konto erstellen",
-    "already-registered" : "Bereits registriert?",
-    "title-step1" : "Unternehmen bestätigen",
+  "registration": {
+    "title-step0": "Unternehmen registrieren",
+    "create-account": "Konto erstellen",
+    "already-registered": "Bereits registriert?",
+    "title-step1": "Unternehmen bestätigen",
     "confirm-company": "Bestätigen",
     "wrong-company": "Falsches Unternehmen?",
     "back": "Zurück",
@@ -118,27 +127,29 @@
     "instructions-go-checklist": "Zur Checkliste",
     "instructions-finally": "<b>Zum Schluss</b> öffnen Sie die Bestätigungs-E-Mail und klicken Sie auf den Bestätigungslink."
   },
-  "error" : {
-    "login-failed" : "Anmeldung fehlgeschlagen",
-    "registration-company-not-found" : "Unternehmen nicht gefunden",
-    "registration-company-already-registered" : "Unternehmen bereits registriert",
-    "registration-company-already-registered-on-peppol" : "Diese Peppol-ID ist offenbar bereits bei einem anderen Anbieter registriert. Um sie hier zu aktivieren, muss sie dort zuerst abgemeldet werden. Sie können den Signaturprozess trotzdem abschließen und das anschließend erledigen.",
-    "not-peppol-active" : "Sie sind derzeit nicht bei Peppol registriert",
-    "not-peppol-active-action" : "Jetzt lösen"
+  "error": {
+    "login-failed": "Anmeldung fehlgeschlagen",
+    "registration-company-not-found": "Unternehmen nicht gefunden",
+    "registration-company-already-registered": "Unternehmen bereits registriert",
+    "registration-account-already-linked": "Diese E-Mail ist bereits mit einem Konto verknüpft",
+    "registration-error": "Registrierung fehlgeschlagen. Bitte versuchen Sie es später erneut oder kontaktieren Sie den Support",
+    "registration-company-already-registered-on-peppol": "Es sieht so aus, ob diese Peppol-ID bereits bei einem anderen Anbieter registriert ist. Die Aktivierung hier erfordert, dass Sie sich dort zuerst abmelden. Sie können den Signiervorgang dennoch abschließen und sich danach darum kümmern.",
+    "not-peppol-active": "Sie sind derzeit nicht bei Peppol registriert",
+    "not-peppol-active-action": "Jetzt lösen"
   },
-  "paymentTerms" : {
-    "15_DAYS" :  "15 Tage",
-    "30_DAYS" :  "30 Tage",
-    "60_DAYS" : "60 Tage",
-    "END_OF_NEXT_MONTH" : "Ende des Monats"
+  "paymentTerms": {
+    "15_DAYS": "15 Tage",
+    "30_DAYS": "30 Tage",
+    "60_DAYS": "60 Tage",
+    "END_OF_NEXT_MONTH": "Ende des Monats"
   },
-  "documentDirection" : {
-    "OUTGOING" : "Ausgehend",
-    "INCOMING" : "Eingehend"
+  "documentDirection": {
+    "OUTGOING": "Ausgehend",
+    "INCOMING": "Eingehend"
   },
-  "documentType" : {
-    "INVOICE" : "Rechnung",
-    "CREDIT_NOTE" : "Gutschrift"
+  "documentType": {
+    "INVOICE": "Rechnung",
+    "CREDIT_NOTE": "Gutschrift"
   },
   "confirmation": {
     "header": "Identität bestätigen",
@@ -195,8 +206,7 @@
     "products": "Produkte",
     "account": "Konto",
     "brand-alt": "Let's Peppol",
-    "toggle-theme": "Theme umschalten",
-    "new-feature": "Neue Funktion „Benachrichtigungen“ im Konto hinzugefügt"
+    "toggle-theme": "Theme umschalten"
   },
   "alert": {
     "success": "Erfolg",
@@ -329,7 +339,7 @@
       "invoice-number": "Rechnungsnummer",
       "note-optional": "Notiz (optional)",
       "note-placeholder": "Zusätzliche Notizen zu dieser Rechnung",
-      "reference-required" : "Entweder Käuferreferenz ODER Bestellreferenz ist erforderlich"
+      "reference-required": "Entweder Käuferreferenz ODER Bestellreferenz ist erforderlich"
     },
     "dateModal": {
       "title": "Datum",

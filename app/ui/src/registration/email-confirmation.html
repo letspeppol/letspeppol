@@ -3,146 +3,288 @@
 <import from="../components/eid/card-reader"></import>
 
 <wizard-view>
-    <stepper if.bind="step !== 3" au-slot="stepper" steps.bind="[1,2,3,4,5]" completed-steps.bind="step+2"></stepper>
-    <h1 au-slot="header" t="confirmation.header" if.bind="step === 1">Confirm Identity</h1>
-    <h1 au-slot="header" t="confirmation.header-sign" if.bind="step === 2">Sign Contract</h1>
-    <template if.bind="errorMessage">
-        <div class="alert error">${errorMessage}</div>
-    </template>
-    <template if.bind="warningKey">
-        <div class="alert alert--warning warning-box" t.bind="warningKey" t-params.bind="{ provider: alreadyRegisteredProvider }"></div>
-    </template>
-    <template if.bind="!errorMessage && !tokenVerificationResponse">
-        <div class="loading-msg" t="confirmation.loading">Loading company details…</div>
-    </template>
-    <form class="auth-form" if.bind="tokenVerificationResponse">
-        <div class="confirmation-layout" if.bind="step === 1">
-            <div>
-                <h3 t="confirmation.company">1. Verify the company</h3>
-                <div class="grid single">
-                    <label class="field full">
-                        <span t="label.vat-number">VAT number</span>
-                        <input name="tokenVerificationResponse.vatNumber" type="text" readonly value.bind="tokenVerificationResponse.company.vatNumber"/>
-                    </label>
-                    <label class="field full">
-                        <span t="label.name">Name</span>
-                        <input name="tokenVerificationResponse.companyName" type="text" readonly value.bind="tokenVerificationResponse.company.name"/>
-                    </label>
-                </div>
-            </div>
-
-            <div class="vertical-separator"></div>
-
-            <div class="directors-section">
-                <h3 t="confirmation.directors">2. Select the director</h3>
-                <div class="directors-layout">
-                    <div class="directors-table-col">
-                        <template if.bind="tokenVerificationResponse.company.directors.length">
-                            <div class="table-wrapper" style="max-height: 230px">
-                                <table class="data-table directors-table">
-                                    <thead>
-                                    <tr>
-                                        <th t="confirmation.table.name">Name</th>
-                                        <th class="actions-col" t="confirmation.table.action">Action</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr repeat.for="d of tokenVerificationResponse.company.directors">
-                                        <td>${d.name}</td>
-                                        <td class="actions-col">
-                                            <button class="btn primary small" type="button"
-                                                    disabled.bind="confirmedDirector"
-                                                    click.trigger="confirmDirector(d)">
-                                                <span if.bind="confirmedDirector === d" t="confirmation.director-confirmed">Confirmed</span>
-                                                <span if.bind="confirmedDirector !== d" t="confirmation.director-confirm">Confirm</span>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </template>
-                        <template else>
-                            <div class="empty-state" t="confirmation.no-directors">No directors found.</div>
-                        </template>
-                    </div>
-                </div>
-            </div>
-
-            <div class="vertical-separator"></div>
-
-            <div>
-                <h3 t="confirmation.sign-eid-title">3. Validate with eID of the director</h3>
-                <card-reader caption-key="confirmation.anim-caption-validate" reader-label-key="confirmation.anim-reader-label" signed.bind="confirmedDirector"></card-reader>
-            </div>
+  <stepper
+    if.bind="step !== 3"
+    au-slot="stepper"
+    steps.bind="[1,2,3,4,5]"
+    completed-steps.bind="step+2"
+  ></stepper>
+  <h1 au-slot="header" t="confirmation.header" if.bind="step === 1">
+    Confirm Identity
+  </h1>
+  <h1 au-slot="header" t="confirmation.header-sign" if.bind="step === 2">
+    Sign Contract
+  </h1>
+  <template if.bind="errorMessage">
+    <div class="alert error">${errorMessage}</div>
+  </template>
+  <template if.bind="warningKey">
+    <div
+      class="alert alert--warning warning-box"
+      t.bind="warningKey"
+      t-params.bind="{ provider: alreadyRegisteredProvider }"
+    ></div>
+  </template>
+  <template if.bind="!errorMessage && !tokenVerificationResponse">
+    <div class="loading-msg" t="confirmation.loading">
+      Loading company details…
+    </div>
+  </template>
+  <form class="auth-form" if.bind="tokenVerificationResponse">
+    <div class="confirmation-layout" if.bind="step === 1">
+      <div>
+        <h3 t="confirmation.company">1. Verify the company</h3>
+        <div class="grid single">
+          <label class="field full">
+            <span t="label.vat-number">VAT number</span>
+            <input
+              name="tokenVerificationResponse.vatNumber"
+              type="text"
+              readonly
+              value.bind="tokenVerificationResponse.company.vatNumber"
+            />
+          </label>
+          <label class="field full">
+            <span t="label.name">Name</span>
+            <input
+              name="tokenVerificationResponse.companyName"
+              type="text"
+              readonly
+              value.bind="tokenVerificationResponse.company.name"
+            />
+          </label>
         </div>
+      </div>
 
-        <div if.bind="step === 2" style="display: flex; flex-direction: column; gap: 1rem; align-items: center">
-            <div class="information" t="confirmation.manual-confirmation-needed" if.bind="!prepareSigningResponse.allowedToSign">Your contract requires manual review.</div>
-            <div class="confirmation-layout" style="justify-content: space-around; gap: var(--space-125)">
-                <div style="width: 100%">
-                    <h3 t="confirmation.read-contract-title">1. Read the Contract</h3>
-                    <div class="grid single">
-                        <p t="confirmation.read-contract-info">You will receive a signed copy when the registration flow is complete.</p>
-                        <label class="field full" style="display: flex">
-                            <input name="confirm" type="checkbox" checked.bind="agreedToContract" disabled.bind="confirmInProgress && agreedToContract" style="min-width: 15px; height: 15px"/>
-                            <span t="confirmation.read-contract-agree">I have read the contract and agree to the terms</span>
-                        </label>
-                    </div>
-                </div>
+      <div class="vertical-separator"></div>
 
-                <div class="vertical-separator"></div>
-
-                <div show.bind="!agreedToContract" class="contract">
-                    <iframe src.bind="getContractUrl()" width="100%" height="100%"></iframe>
-                </div>
-
-                <div style="width: 100%" show.bind="agreedToContract">
-                    <h3 t="confirmation.choose-credentials-title">2. Choose Credentials</h3>
-                    <div class="grid single">
-                        <label class="field full">
-                            <span t="label.password">Password</span>
-                            <input name="password" type="password" value.bind="password"/>
-                        </label>
-                        <label class="field full">
-                            <span t="label.confirm-password">Confirm password</span>
-                            <input name="password" type="password" value.bind="passwordDuplicate"/>
-                        </label>
-                    </div>
-                    <ul class="pw-hints" if.bind="password">
-                        <li class.bind="lengthOk?'ok':''">At least 12 characters</li>
-                        <li class.bind="lowerOk?'ok':''">At least 1 lower</li>
-                        <li class.bind="upperOk?'ok':''">At least 1 UPPER</li>
-                        <li class.bind="numberOk?'ok':''">At least 1 number</li>
-                        <li class.bind="symbolOk?'ok':''">At least 1 symbol</li>
-                        <li class.bind="matchOk?'ok':''">Passwords match</li>
-                    </ul>
-                    <meter min="0" max="8" low="4" high="7" optimum="8" value.bind="pwScore" aria-label="Password strength"></meter>
-                </div>
-
-                <div class="vertical-separator" show.bind="agreedToContract"></div>
-
-                <div show.bind="agreedToContract">
-                    <h3 t="confirmation.sign-eid-title">3. Sign with eID</h3>
-                    <card-reader caption-key="confirmation.anim-caption-sign" reader-label-key="confirmation.anim-reader-label" signed.bind="confirmedDirector"></card-reader>
-                </div>
-                <div show.bind="agreedToContract">
-                    <div class="auth-actions" style="margin-top: 15px">
-                        <button type="button" class="btn primary" disabled.bind="!pwStrong || !password || password !== passwordDuplicate || !agreedToContract || confirmInProgress" click.trigger="confirmContract()" t="confirmation.sign-button">
-                            Sign
+      <div class="directors-section">
+        <h3 t="confirmation.directors">2. Select the director</h3>
+        <div class="directors-layout">
+          <div class="directors-table-col">
+            <template
+              if.bind="tokenVerificationResponse.company.directors.length"
+            >
+              <div class="table-wrapper" style="max-height: 230px">
+                <table class="data-table directors-table">
+                  <thead>
+                    <tr>
+                      <th t="confirmation.table.name">Name</th>
+                      <th class="actions-col" t="confirmation.table.action">
+                        Action
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      repeat.for="d of tokenVerificationResponse.company.directors"
+                    >
+                      <td>${d.name}</td>
+                      <td class="actions-col">
+                        <button
+                          class="btn primary small"
+                          type="button"
+                          disabled.bind="confirmedDirector"
+                          click.trigger="confirmDirector(d)"
+                        >
+                          <span
+                            if.bind="confirmedDirector === d"
+                            t="confirmation.director-confirmed"
+                            >Confirmed</span
+                          >
+                          <span
+                            if.bind="confirmedDirector !== d"
+                            t="confirmation.director-confirm"
+                            >Confirm</span
+                          >
                         </button>
-                    </div>
-                </div>
-            </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </template>
+            <template else>
+              <div class="empty-state" t="confirmation.no-directors">
+                No directors found.
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+
+      <div class="vertical-separator"></div>
+
+      <div>
+        <h3 t="confirmation.sign-eid-title">
+          3. Validate with eID of the director
+        </h3>
+        <card-reader
+          caption-key="confirmation.anim-caption-validate"
+          reader-label-key="confirmation.anim-reader-label"
+          signed.bind="confirmedDirector"
+        ></card-reader>
+      </div>
+    </div>
+
+    <div
+      if.bind="step === 2"
+      style="
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        align-items: center;
+      "
+    >
+      <div
+        class="information"
+        t="confirmation.manual-confirmation-needed"
+        if.bind="!prepareSigningResponse.allowedToSign"
+      >
+        Your contract requires manual review.
+      </div>
+      <div
+        class="confirmation-layout"
+        style="justify-content: space-around; gap: var(--space-125)"
+      >
+        <div style="width: 100%">
+          <h3 t="confirmation.read-contract-title">1. Read the Contract</h3>
+          <div class="grid single">
+            <p t="confirmation.read-contract-info">
+              You will receive a signed copy when the registration flow is
+              complete.
+            </p>
+            <label class="field full" style="display: flex">
+              <input
+                name="confirm"
+                type="checkbox"
+                checked.bind="agreedToContract"
+                disabled.bind="confirmInProgress && agreedToContract"
+                style="min-width: 15px; height: 15px"
+              />
+              <span t="confirmation.read-contract-agree"
+                >I have read the contract and agree to the terms</span
+              >
+            </label>
+          </div>
         </div>
 
-        <div if.bind="step === 3">
-            <div style="display: flex; flex-direction: column; align-items: center; margin-left: auto; margin-right: auto">
-                <h3 class="full" t="confirmation.success-title">Success!</h3>
-                <svg width="64px" height="64px" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" color="#000000"><path d="M7 12.5L10 15.5L17 8.5" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-                <p t="confirmation.success-contract">The signed contract can be found in your downloads folder</p>
-                <p class="auth-alt"><span t="confirmation.success-login-prefix">You can now</span> <a href="../login" t="login.action">Log in</a></p>
-            </div>
+        <div class="vertical-separator"></div>
+
+        <div show.bind="!agreedToContract" class="contract">
+          <iframe
+            src.bind="getContractUrl()"
+            width="100%"
+            height="100%"
+          ></iframe>
         </div>
-    </form>
+
+        <div style="width: 100%" show.bind="agreedToContract">
+          <h3 t="confirmation.choose-credentials-title">
+            2. Choose Credentials
+          </h3>
+          <div class="grid single">
+            <label class="field full">
+              <span t="label.password">Password</span>
+              <input name="password" type="password" value.bind="password" />
+            </label>
+            <label class="field full">
+              <span t="label.confirm-password">Confirm password</span>
+              <input
+                name="password"
+                type="password"
+                value.bind="passwordDuplicate"
+              />
+            </label>
+          </div>
+          <ul class="pw-hints" if.bind="password">
+            <li class.bind="lengthOk?'ok':''">At least 12 characters</li>
+            <li class.bind="lowerOk?'ok':''">At least 1 lower</li>
+            <li class.bind="upperOk?'ok':''">At least 1 UPPER</li>
+            <li class.bind="numberOk?'ok':''">At least 1 number</li>
+            <li class.bind="symbolOk?'ok':''">At least 1 symbol</li>
+            <li class.bind="matchOk?'ok':''">Passwords match</li>
+          </ul>
+          <meter
+            min="0"
+            max="8"
+            low="4"
+            high="7"
+            optimum="8"
+            value.bind="pwScore"
+            aria-label="Password strength"
+          ></meter>
+        </div>
+
+        <div class="vertical-separator" show.bind="agreedToContract"></div>
+
+        <div show.bind="agreedToContract">
+          <h3 t="confirmation.sign-eid-title">3. Sign with eID</h3>
+          <card-reader
+            caption-key="confirmation.anim-caption-sign"
+            reader-label-key="confirmation.anim-reader-label"
+            signed.bind="confirmedDirector"
+          ></card-reader>
+        </div>
+        <div show.bind="agreedToContract">
+          <div class="auth-actions" style="margin-top: 15px">
+            <button
+              type="button"
+              class="btn primary"
+              disabled.bind="!pwStrong || !password || password !== passwordDuplicate || !agreedToContract || confirmInProgress"
+              click.trigger="confirmContract()"
+              t="confirmation.sign-button"
+            >
+              Sign
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div if.bind="step === 3">
+      <div
+        style="
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          margin-left: auto;
+          margin-right: auto;
+        "
+      >
+        <h3 class="full" t="confirmation.success-title">Success!</h3>
+        <svg
+          width="64px"
+          height="64px"
+          stroke-width="1.5"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          color="#000000"
+        >
+          <path
+            d="M7 12.5L10 15.5L17 8.5"
+            stroke="#000000"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          ></path>
+          <path
+            d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+            stroke="#000000"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          ></path>
+        </svg>
+        <p t="confirmation.success-contract">
+          The signed contract can be found in your downloads folder
+        </p>
+        <p class="auth-alt">
+          <span t="confirmation.success-login-prefix">You can now</span>
+          <a href="../login" t="login.action">Log in</a>
+        </p>
+      </div>
+    </div>
+  </form>
 </wizard-view>

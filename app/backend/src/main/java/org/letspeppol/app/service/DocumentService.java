@@ -370,7 +370,7 @@ public class DocumentService {
         return documentRepository.save(document);
     }
 
-    @Scheduled(cron = "0 0 * * * *")
+    @Scheduled(cron = "0 * * * * *")
     public void periodicSynchronize() {
         try {
             String appTokenFromKyc = jwtService.getAppTokenFromKyc();

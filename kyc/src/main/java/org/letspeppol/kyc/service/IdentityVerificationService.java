@@ -15,6 +15,7 @@ import org.letspeppol.kyc.model.AccountIdentityVerification;
 import org.letspeppol.kyc.model.AccountType;
 import org.letspeppol.kyc.repository.AccountIdentityVerificationRepository;
 import org.letspeppol.kyc.repository.DirectorRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -45,6 +46,9 @@ public class IdentityVerificationService {
     private final Counter companyRegistrationCounterSuccess;
     private final Counter companyRegistrationCounterFailure;
 
+    @Value("${app.kyc.bypass-eid:false}")
+    private boolean bypassEid;
+
     public IdentityVerificationResponse createAdmin(IdentityVerificationRequest req) {
         accountService.verifyNotRegistered(req.email());
 
@@ -60,12 +64,14 @@ public class IdentityVerificationService {
         account.setCompany(req.director().getCompany());
         accountService.create(account);
 
+        boolean isMock = bypassEid && "MOCK".equals(req.certificate());
+
         AccountIdentityVerification accountIdentityVerification = new AccountIdentityVerification(
                 account,
                 req.director(),
                 req.director().getName(),
-                getCN(req.x509Certificate()),
-                encryptionService.encrypt(req.x509Certificate().getSerialNumber().toString()),
+                isMock ? "MOCK" : getCN(req.x509Certificate()),
+                isMock ? encryptionService.encrypt("MOCK") : encryptionService.encrypt(req.x509Certificate().getSerialNumber().toString()),
                 req.algorithm(),
                 req.hashToSign(),
                 encryptionService.encrypt(req.certificate()),
@@ -77,11 +83,11 @@ public class IdentityVerificationService {
         directorRepository.save(req.director());
 
         RegistrationResponse registrationResponse = null;
-        if (isAllowedToSign(req.x500Name(), req.director())) {
+        if (isMock || isAllowedToSign(req.x500Name(), req.director())) {
             registrationResponse = companyService.registerCompany(req.director().getCompany());
-            if (registrationResponse.peppolActive() && registrationResponse.errorCode() == null) {
+            if (registrationResponse != null && registrationResponse.peppolActive() && registrationResponse.errorCode() == null) {
                 companyRegistrationCounterSuccess.increment();
-            } else if(!registrationResponse.peppolActive()) {
+            } else if(registrationResponse != null && !registrationResponse.peppolActive()) {
                 companyRegistrationCounterFailure.increment();
             }
         } else {
@@ -90,7 +96,7 @@ public class IdentityVerificationService {
             sendManualVerificationEmail(account.getEmail(), req.director().getCompany().getPeppolId(), req.director().getCompany().getName(), req.director().getName(), getRDNName(req.x500Name(), BCStyle.GIVENNAME), getRDNName(req.x500Name(), BCStyle.SURNAME)); //TODO : check, mail does not work !
         }
 
-        log.info("Identity verified for email={} director={} serial={}", account.getEmail(), req.director().getName(), req.x509Certificate().getSerialNumber());
+        log.info("Identity verified for email={} director={} serial={}", account.getEmail(), req.director().getName(), isMock ? "MOCK" : req.x509Certificate().getSerialNumber());
         return new IdentityVerificationResponse(account, registrationResponse);
     }
 

@@ -1,4 +1,4 @@
 package org.letspeppol.kyc.dto;
 
-public record TokenVerificationResponse(String email, CompanyResponse company) {
+public record TokenVerificationResponse(String email, CompanyResponse company, boolean bypassEid) {
 }

@@ -2,6 +2,8 @@ services:
   adminer:
     image: adminer
     restart: always
+    environment:
+      ADMINER_DEFAULT_SERVER: db:${DB_PORT}
     depends_on:
       db:
         condition: service_healthy
@@ -13,23 +15,22 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: postgres
+      PGPORT: ${DB_PORT}
       APP_USER: ${APP_USER}
       APP_PASS: ${APP_PASS}
-      KYC_USER: ${KYC_USER}
-      KYC_PASS: ${KYC_PASS}
       PROXY_USER: ${PROXY_USER}
       PROXY_PASS: ${PROXY_PASS}
     volumes:
       - db-data:/var/lib/postgresql/data
       - ../../postgres/init:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      test: ["CMD-SHELL", "pg_isready -p ${DB_PORT} -U ${POSTGRES_USER}"]
       interval: 5s
       timeout: 5s
       retries: 12
       start_period: 10s
     ports:
-      - "${DB_PORT:-5432}:5432"
+      - "${DB_PORT}:${DB_PORT}"
 
   proxy:
     build:
@@ -103,8 +104,8 @@ services:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}
-      DB_USER: ${KYC_USER}
-      DB_PASS: ${KYC_PASS}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASS: ${POSTGRES_PASSWORD}
       MAIL_HOST: ${MAIL_HOST}
       MAIL_PORT: ${MAIL_PORT}
       MAIL_USER: ${MAIL_USER}
@@ -125,6 +126,7 @@ services:
       KBO_SFTP_DELTA_DIR: ${KBO_SFTP_DELTA_DIR}
       KBO_SFTP_DELTA_CRON: ${KBO_SFTP_DELTA_CRON}
       CONTRACT_DATA_DIR: /opt/data/kyc
+      KYC_BYPASS_EID: ${KYC_BYPASS_EID:-false}
     volumes:
       - ./opt/data/kyc:/opt/data/kyc
     networks:

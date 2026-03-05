@@ -70,6 +70,9 @@ public class ActivationService {
     // Backwards compatibility
     public void requestActivation(ConfirmCompanyRequest request) { requestActivation(request, null); }
 
+    @Value("${app.kyc.bypass-eid:false}")
+    private boolean bypassEid;
+
     @Transactional
     public TokenVerificationResponse verify(String token) {
         EmailVerification verification = verificationRepository.findByToken(token)
@@ -84,7 +87,7 @@ public class ActivationService {
         CompanyResponse companyResponse = companyService.getByPeppolId(verification.getPeppolId())
                 .orElseThrow(() -> new NotFoundException(KycErrorCodes.COMPANY_NOT_FOUND));
         tokenVerificationCounter.increment();
-        return new TokenVerificationResponse(verification.getEmail(), companyResponse);
+        return new TokenVerificationResponse(verification.getEmail(), companyResponse, bypassEid);
     }
 
     public void setVerified(String token) {

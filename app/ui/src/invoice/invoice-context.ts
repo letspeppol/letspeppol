@@ -1,13 +1,13 @@
-import {IEventAggregator, observable, singleton} from "aurelia";
-import {CreditNote, CreditNoteLine, getLines, Invoice, InvoiceLine, Party, UBLDoc} from "../services/peppol/ubl";
-import {CompanyService} from "../services/app/company-service";
-import {InvoiceComposer} from "./invoice-composer";
-import {InvoiceCalculator} from "./invoice-calculator";
-import {AlertType} from "../components/alert/alert";
-import {DocumentDirection, DocumentDto, DocumentPageDto, DocumentType} from "../services/app/invoice-service";
-import {parseCreditNote, parseInvoice} from "../services/peppol/ubl-parser";
-import {PartnerDto, PartnerService} from "../services/app/partner-service";
-import {resolve} from "@aurelia/kernel";
+import { IEventAggregator, observable, singleton } from "aurelia";
+import { CreditNote, CreditNoteLine, getLines, Invoice, InvoiceLine, Party, UBLDoc } from "../services/peppol/ubl";
+import { CompanyService } from "../services/app/company-service";
+import { InvoiceComposer } from "./invoice-composer";
+import { InvoiceCalculator } from "./invoice-calculator";
+import { AlertType } from "../components/alert/alert";
+import { DocumentDirection, DocumentDto, DocumentPageDto, DocumentType } from "../services/app/invoice-service";
+import { parseCreditNote, parseInvoice } from "../services/peppol/ubl-parser";
+import { PartnerDto, PartnerService } from "../services/app/partner-service";
+import { resolve } from "@aurelia/kernel";
 
 @singleton()
 export class InvoiceContext {
@@ -17,11 +17,11 @@ export class InvoiceContext {
     private readonly invoiceComposer = resolve(InvoiceComposer);
     private readonly invoiceCalculator = resolve(InvoiceCalculator);
     // Overview
-    draftPage: DocumentPageDto = undefined;
-    invoicePage: DocumentPageDto = undefined;
+    draftPage: DocumentPageDto = { content: [], page: 0, size: 20, totalElements: 0, totalPages: 0, last: true };
+    invoicePage: DocumentPageDto = { content: [], page: 0, size: 20, totalElements: 0, totalPages: 0, last: true };
     // Current invoice
-    lines : undefined | InvoiceLine[] | CreditNoteLine[];
-    @observable selectedInvoice:  undefined | Invoice | CreditNote;
+    lines: undefined | InvoiceLine[] | CreditNoteLine[];
+    @observable selectedInvoice: undefined | Invoice | CreditNote;
     selectedDocument: DocumentDto;
     selectedDocumentType: DocumentType = DocumentType.INVOICE;
     lastInvoiceReference: string = undefined;
@@ -57,7 +57,7 @@ export class InvoiceContext {
         }
         if (this.readOnly) {
             this.partnerMissing = true;
-            this.partnerService.searchPartners({peppolId: item.partnerPeppolId})
+            this.partnerService.searchPartners({ peppolId: item.partnerPeppolId })
                 .then((list) => this.partnerMissing = list.length === 0);
         }
     }
@@ -67,12 +67,12 @@ export class InvoiceContext {
             try {
                 await this.companyService.getAndSetMyCompanyForToken();
             } catch {
-                this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to get company info"});
+                this.ea.publish('alert', { alertType: AlertType.Danger, text: "Failed to get company info" });
             }
         }
     }
 
-    newUBLDocument(documentType : DocumentType = DocumentType.INVOICE) {
+    newUBLDocument(documentType: DocumentType = DocumentType.INVOICE) {
         if (documentType === DocumentType.INVOICE) {
             this.selectedInvoice = this.invoiceComposer.createInvoice();
         } else {
@@ -140,7 +140,7 @@ export class InvoiceContext {
     }
 
     // Drafts
-    
+
     deleteDraft(draft: DocumentDto) {
         const index = this.draftPage.content.findIndex(item => item.id === draft.id);
         if (index > -1) {

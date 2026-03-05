@@ -1,7 +1,7 @@
-import {resolve} from "@aurelia/kernel";
-import {IEventAggregator} from "aurelia";
-import {KycCompanyResponse, RegistrationService} from "../services/kyc/registration-service";
-import {IRouter} from '@aurelia/router';
+import { resolve } from "@aurelia/kernel";
+import { IEventAggregator } from "aurelia";
+import { KycCompanyResponse, RegistrationService } from "../services/kyc/registration-service";
+import { IRouter } from '@aurelia/router';
 
 export class Registration {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -9,8 +9,8 @@ export class Registration {
     private readonly router = resolve(IRouter);
     step = 0;
     email: string | undefined;
-    vatNumber : string | undefined;
-    company : KycCompanyResponse | undefined;
+    vatNumber: string | undefined;
+    company: KycCompanyResponse | undefined;
     errorCode: string | undefined;
 
     async checkVatNumber() {
@@ -43,9 +43,24 @@ export class Registration {
             this.ea.publish('showOverlay', "Confirming registration request");
             await this.registrationService.confirmCompany(this.company.peppolId, this.email);
             this.step++;
-        } catch(e) {
+        } catch (e) {
             console.log(e);
-            this.errorCode = "registration-company-already-registered";
+            if (e instanceof Response) {
+                try {
+                    const error = await e.json() as { errorCode: string };
+                    if (error.errorCode === 'company_already_registered') {
+                        this.errorCode = "registration-company-already-registered";
+                    } else if (error.errorCode === 'account_already_linked') {
+                        this.errorCode = "registration-account-already-linked";
+                    } else {
+                        this.errorCode = "registration-error";
+                    }
+                } catch {
+                    this.errorCode = "registration-error";
+                }
+            } else {
+                this.errorCode = "registration-error";
+            }
         } finally {
             this.ea.publish('hideOverlay');
         }

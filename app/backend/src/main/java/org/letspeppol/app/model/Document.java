@@ -93,7 +93,7 @@ public class Document implements Persistable<UUID> {
     @Override
     @Transient
     public boolean isNew() {
-        return createdOn == null; //Only insert when createdOn is null
+        return createdOn == null;
     }
 
     public Document(
@@ -131,7 +131,7 @@ public class Document implements Persistable<UUID> {
         this.processedStatus = processedStatus;
         this.ubl             = ubl;
 //        this.company         = company;
-        this.createdOn       = Instant.now(); //createdOn;
+//        this.createdOn       = Instant.now(); //createdOn;
         this.draftedOn       = draftedOn;
         this.readOn          = readOn;
         this.paidOn          = paidOn;

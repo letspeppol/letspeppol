@@ -24,6 +24,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<Map<String, Object>> handleForbidden(ForbiddenException ex) {
+        log.warn("Forbidden: {} - code: {}", ex.getMessage(), ex.getCode());
         Map<String, Object> body = new HashMap<>();
         body.put("errorCode", ex.getCode());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(body);
@@ -31,6 +32,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(KycException.class)
     public ResponseEntity<Map<String, Object>> handleKycException(KycException ex) {
+        log.warn("KycException: {} - code: {}", ex.getMessage(), ex.getCode());
         Map<String, Object> body = new HashMap<>();
         body.put("errorCode", ex.getCode());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);

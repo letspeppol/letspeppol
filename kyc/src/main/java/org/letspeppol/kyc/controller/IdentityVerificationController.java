@@ -7,6 +7,7 @@ import org.letspeppol.kyc.exception.KycException;
 import org.letspeppol.kyc.model.kbo.Director;
 import org.letspeppol.kyc.service.ActivationService;
 import org.letspeppol.kyc.service.SigningService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriUtils;
@@ -21,9 +22,15 @@ public class IdentityVerificationController {
     private final SigningService signingService;
     private final ActivationService activationService;
 
+    @Value("${app.kyc.bypass-eid:false}")
+    private boolean bypassEid;
+
     /// *Registration step 4* Generates contract hashes as preparation used for signing with Web eID (pdf gets a temporary signature placeholder). This happens right after the "Select a certificate" and before the "Signing" steps of Web eID
     @PostMapping("/sign/prepare")
     public PrepareSigningResponse prepare(@RequestBody PrepareSigningRequest request) {
+        if (bypassEid && "MOCK".equals(request.certificate())) {
+            return new PrepareSigningResponse("MOCK", request.sha256(), "SHA-256", true);
+        }
         return signingService.prepareSigning(request);
     }
 

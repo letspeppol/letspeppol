@@ -13,6 +13,7 @@ import org.letspeppol.proxy.exception.ServiceUnavailableException;
 import org.letspeppol.proxy.model.AccessPoint;
 import org.letspeppol.proxy.model.UblDocument;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,9 @@ import java.util.Map;
 @Transactional
 @Service
 public class ScradaService implements AccessPointServiceInterface {
+    @Value("${scrada.mock.enabled:false}")
+    private boolean mockEnabled;
+
 
     public static final String PARTICIPANT_SCHEME = "iso6523-actorid-upis";
     public static final String INVOICES_SCHEME = "busdox-docid-qns";
@@ -52,6 +56,11 @@ public class ScradaService implements AccessPointServiceInterface {
     /// DOCS : [Scrada : Register company](https://www.scrada.be/api-documentation/#tag/Peppol-inbound/paths/~1v1~1company~1%7BcompanyID%7D~1peppol~1register/post)
     @Override
     public Map<String, Object> register(String peppolId, RegistrationRequest data) {
+        if (mockEnabled) {
+            log.info("[DEVELOPMENT MOCK] Simulating Scrada registration success for {}", peppolId);
+            return Map.of("uuid", java.util.UUID.randomUUID().toString());
+        }
+
         try {
             RegisterRequest registerRequest = new RegisterRequest(
                     new ParticipantIdentifier(
