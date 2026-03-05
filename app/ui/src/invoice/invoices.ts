@@ -18,7 +18,6 @@ export class Invoices {
     loading(params: Params) {
         if (params.id) {
             this.invoiceService.getDocument(params.id).then((doc) => {
-                this.invoiceContext.setActiveBoxFromDocument(doc);
                 this.invoiceContext.selectInvoice(doc);
             }).catch(() => this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to get invoice"}));
         } else {
