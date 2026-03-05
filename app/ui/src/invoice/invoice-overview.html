@@ -6,16 +6,16 @@
     <aside class="mailbox">
         <div class="mailbox-title" t="invoice.direction">Direction</div>
         <nav>
-            <button active.class="box === 'ALL'" class="mail-item" click.trigger="setActiveItems('ALL')">
+            <button active.class="invoiceContext.activeBox === 'ALL'" class="mail-item" click.trigger="setActiveItems('ALL')">
                 <span class="label" t="invoice.all">All</span>
             </button>
-            <button active.class="box === 'OUTGOING'" class="mail-item" click.trigger="setActiveItems('OUTGOING')">
+            <button active.class="invoiceContext.activeBox === 'OUTGOING'" class="mail-item" click.trigger="setActiveItems('OUTGOING')">
                 <span class="label" t="invoice.outgoing">Outgoing</span>
             </button>
-            <button active.class="box === 'INCOMING'" class="mail-item" click.trigger="setActiveItems('INCOMING')">
+            <button active.class="invoiceContext.activeBox === 'INCOMING'" class="mail-item" click.trigger="setActiveItems('INCOMING')">
                 <span class="label" t="invoice.incoming">Incoming</span>
             </button>
-            <button active.class="box === 'DRAFTS'" class="mail-item" click.trigger="setActiveItems('DRAFTS')">
+            <button active.class="invoiceContext.activeBox === 'DRAFTS'" class="mail-item" click.trigger="setActiveItems('DRAFTS')">
                 <span class="label" t="invoice.drafts">Drafts</span>
                 <span class="badge">${invoiceContext.draftPage.totalElements}</span>
             </button>
@@ -114,9 +114,9 @@
                                 </div>
                             </th>
                             <th>
-                                <span if.bind="box === 'OUTGOING' || box === 'DRAFTS'" t="invoice.customer">Customer</span>
-                                <span if.bind="box === 'INCOMING'" t="invoice.supplier">Supplier</span>
-                                <span if.bind="box === 'ALL'" t="invoice.partner">Partner</span>
+                                <span if.bind="invoiceContext.activeBox === 'OUTGOING' || invoiceContext.activeBox === 'DRAFTS'" t="invoice.customer">Customer</span>
+                                <span if.bind="invoiceContext.activeBox === 'INCOMING'" t="invoice.supplier">Supplier</span>
+                                <span if.bind="invoiceContext.activeBox === 'ALL'" t="invoice.partner">Partner</span>
                             </th>
                             <th t="invoice.table.total">Total</th>
                             <th t="invoice.table.status">Status</th>
@@ -140,7 +140,7 @@
                                     <span class="pill error" if.bind="item.processedStatus" t="invoice.status.error" title.bind="item.processedStatus">Error</span>
                                 </td>
                                 <td class="actions-col">
-                                    <button if.bind="box === 'DRAFTS'" class="icon-btn" title="Remove" t="[title]common.remove" click.trigger="deleteDraft($event, item)">
+                                    <button if.bind="invoiceContext.activeBox === 'DRAFTS'" class="icon-btn" title="Remove" t="[title]common.remove" click.trigger="deleteDraft($event, item)">
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-icon lucide-trash"><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                                     </button>
                                     <button if.bind="item.paidOn" class="icon-btn" title="Mark invoice as unpaid" click.trigger="markPaid($event, item)">
