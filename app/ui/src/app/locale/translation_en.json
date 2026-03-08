@@ -418,6 +418,8 @@
     "enable-email-notification": "Enable email notifications",
     "add-attachment-to-notification": "Add attachment to notification",
     "email-notification-cc-list": "Email notification CC list",
+    "add-pdf-to-sending-invoice": "Add pdf to invoice",
+    "invoice-settings": "Invoice Settings",
     "registration-failed": {
       "contact-us": "Registration was not finalized. Please contact support at support@letspeppol.org for the next steps.",
       "contact-provider": "Your Peppol ID is currently registered with {{provider}}. Please contact them to unregister it, then log in and try activating again.",

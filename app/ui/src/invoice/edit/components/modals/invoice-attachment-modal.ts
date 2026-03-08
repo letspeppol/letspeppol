@@ -9,6 +9,10 @@ export class InvoiceAttachmentModal {
     additionalDocumentReference: AdditionalDocumentReference[] = [];
     open = false;
     validated = false;
+    uploadWrapper: HTMLElement;
+    invoiceUploadWrapper: HTMLElement;
+    isDraggingFile = false;
+    isDraggingInvoice = false;
 
     showModal() {
         this.validated = false;
@@ -55,7 +59,28 @@ export class InvoiceAttachmentModal {
         return true;
     }
 
-    async dragDrop(e) {
+    dragEnter(event: DragEvent, type: 'file' | 'invoice') {
+        event.preventDefault();
+        if (type === 'file') {
+            this.isDraggingFile = true;
+        } else {
+            this.isDraggingInvoice = true;
+        }
+    }
+
+    dragLeave(event: DragEvent, type: 'file' | 'invoice') {
+        event.preventDefault();
+        const wrapper = type === 'file' ? this.uploadWrapper : this.invoiceUploadWrapper;
+        if (!wrapper.contains(event.relatedTarget as Node)) {
+            if (type === 'file') {
+                this.isDraggingFile = false;
+            } else {
+                this.isDraggingInvoice = false;
+            }
+        }
+    }
+
+    async dragDrop(e: DragEvent, type: 'file' | 'invoice') {
         e.preventDefault();
 
         const file = e.dataTransfer.files[0];
@@ -64,15 +89,27 @@ export class InvoiceAttachmentModal {
             this.ea.publish('alert', {alertType: AlertType.Warning, text: "File can not be more than 5MB"});
             return;
         }
-        // BR-CL-24
-        if (!['application/pdf',
+
+        // Validate file type based on upload type
+        if (type === 'file') {
+            // BR-CL-24
+            const allowedTypes: string[] = [
+                'application/pdf',
                 'image/png',
                 'image/jpeg',
                 'text/csv',
                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                 'application/vnd.oasis.opendocument.spreadsheet'
-            ].includes(file.type)) {
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "File type not supported"});
+            ];
+            if (!allowedTypes.includes(file.type as string)) {
+                this.ea.publish('alert', {alertType: AlertType.Danger, text: "File type not supported"});
+            }
+        } else {
+            if (file.type !== 'application/pdf') {
+                this.ea.publish('alert', {alertType: AlertType.Danger, text: "Only PDF files are allowed for invoice upload"});
+                this.isDraggingInvoice = false;
+                return;
+            }
         }
 
         try {
@@ -89,9 +126,20 @@ export class InvoiceAttachmentModal {
                     }
                 }
             } as AdditionalDocumentReference);
+            if (type === 'file') {
+                this.isDraggingFile = false;
+            } else {
+                this.isDraggingInvoice = false;
+                this.invoiceContext.addPdfToSendingInvoice = false;
+            }
         } catch(error) {
             console.log(error);
             this.ea.publish('alert', {alertType: AlertType.Danger, text: "Error uploading file"});
+            if (type === 'file') {
+                this.isDraggingFile = false;
+            } else {
+                this.isDraggingInvoice = false;
+            }
             return false;
         }
         return true;

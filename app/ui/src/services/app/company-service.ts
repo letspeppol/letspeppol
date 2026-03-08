@@ -16,6 +16,7 @@ export interface CompanyDto {
     peppolActive: boolean,
     enableEmailNotification: boolean,
     addAttachmentToNotification: boolean,
+    addPdfToSendingInvoice: boolean,
     emailNotificationCCList: string,
     registeredOffice: Address
 }
