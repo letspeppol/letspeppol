@@ -11,8 +11,8 @@ import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.model.AccountType;
 import org.letspeppol.kyc.service.AccountService;
 import org.letspeppol.kyc.service.CompanyService;
-import org.letspeppol.kyc.service.JwtService;
 import org.letspeppol.kyc.service.SigningService;
+import org.letspeppol.kyc.service.jwt.JwtClaimExtractor;
 import org.letspeppol.kyc.service.jwt.JwtInfo;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,15 +30,15 @@ public class CompanyController {
 
     private final AccountService accountService;
     private final CompanyService companyService;
-    private final JwtService jwtService;
+    private final JwtClaimExtractor jwtClaimExtractor;
     private final SigningService signingService;
 
     /// Retrieves account info based on valid JWT token, used by App when peppolId is unknown on getCompany (called by UI right after obtaining JWT token)
     @GetMapping
-    public ResponseEntity<?> getAccountForToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
+    public ResponseEntity<?> getAccountForToken() {
+        JwtInfo jwtInfo = jwtClaimExtractor.extract();
         Account account = (jwtInfo.accountType() == AccountType.ADMIN) ? accountService.getAdminByExternalId(jwtInfo.uid()) : accountService.getAdminByPeppolId(jwtInfo.peppolId());
-        return ResponseEntity.ok(AccountMapper.toAccountInfo(account));  //This will be the ADMIN account and thus the one who signed the contract
+        return ResponseEntity.ok(AccountMapper.toAccountInfo(account));
     }
 
     @GetMapping("/search")
@@ -46,13 +46,13 @@ public class CompanyController {
             @RequestParam(value = "vatNumber", required = false) String vatNumber,
             @RequestParam(value = "peppolId", required = false) String peppolId,
             @RequestParam(value = "companyName", required = false) String companyName) {
-        return ResponseEntity.ok(companyService.search(vatNumber, peppolId, companyName)); //TODO : not really using the JWT, do we need to validate ? Also no comment :-o
+        return ResponseEntity.ok(companyService.search(vatNumber, peppolId, companyName));
     }
 
     /// Registers peppolId on the Peppol Directory, must call Proxy to register on AP
     @PostMapping("/peppol/register")
-    public ResponseEntity<?> register(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
+    public ResponseEntity<?> register() {
+        JwtInfo jwtInfo = jwtClaimExtractor.extract();
         if (jwtInfo.accountType() != AccountType.ADMIN) {
             throw new ForbiddenException(KycErrorCodes.NOT_ADMIN);
         }
@@ -64,13 +64,8 @@ public class CompanyController {
                 }
                 return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("Access Point registration failed; state unchanged.");
             }
-            String token = jwtService.generateToken(
-                    jwtInfo.accountType(),
-                    jwtInfo.peppolId(),
-                    registrationResponse.peppolActive(),
-                    jwtInfo.uid()
-            );
-            return ResponseEntity.ok(token);
+            // peppolActive state changed — client should re-authenticate to get a fresh token
+            return ResponseEntity.ok().build();
         }
         return (ResponseEntity<?>) switch (registrationResponse.errorCode()) {
             case KycErrorCodes.PROXY_REGISTRATION_FAILED,
@@ -87,8 +82,8 @@ public class CompanyController {
 
     /// Unregisters (not deleting) peppolId from the Peppol Directory, must call Proxy to unregister from AP
     @PostMapping("/peppol/unregister")
-    public ResponseEntity<?> unregister(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
+    public ResponseEntity<?> unregister() {
+        JwtInfo jwtInfo = jwtClaimExtractor.extract();
         if (jwtInfo.accountType() != AccountType.ADMIN) {
             throw new ForbiddenException(KycErrorCodes.NOT_ADMIN);
         }
@@ -99,19 +94,14 @@ public class CompanyController {
             }
             return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("Access Point unregistration failed; state unchanged.");
         }
-        String token = jwtService.generateToken(
-                jwtInfo.accountType(),
-                jwtInfo.peppolId(),
-                peppolActive,
-                jwtInfo.uid()
-        );
-        return ResponseEntity.ok(token);
+        // peppolActive state changed — client should re-authenticate to get a fresh token
+        return ResponseEntity.ok().build();
     }
 
     /// Download signed contract saved for peppolId
     @GetMapping("signed-contract")
-    public ResponseEntity<?> signedContract(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
+    public ResponseEntity<?> signedContract() {
+        JwtInfo jwtInfo = jwtClaimExtractor.extract();
         if (jwtInfo.accountType() != AccountType.ADMIN) {
             throw new ForbiddenException(KycErrorCodes.NOT_ADMIN);
         }

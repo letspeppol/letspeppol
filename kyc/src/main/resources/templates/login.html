@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log in — Let's Peppol</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+    <script>
+        (function() {
+            var theme = localStorage.getItem('peppol.theme.v1') || 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+</head>
+<body>
+<button class="theme-toggle" id="theme-toggle" type="button" title="Toggle theme">
+    <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+    <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>
+</button>
+<div class="centered">
+    <div class="card">
+        <div class="logo">
+            <img th:src="@{/images/logo.png}" alt="Let's Peppol" width="192" height="80">
+        </div>
+        <h1>Log in</h1>
+        <form class="auth-form" th:action="@{/login}" method="post">
+            <div class="grid">
+                <label class="field full">
+                    <span>Email</span>
+                    <input name="username" type="email" placeholder="you@company.com" required autofocus>
+                </label>
+                <label class="field full">
+                    <div style="display: flex; justify-content: space-between">
+                        <span>Password</span>
+                        <a th:href="${uiBaseUrl + '/forgot-password'}">Forgot my password</a>
+                    </div>
+                    <input name="password" type="password" required>
+                </label>
+                <label class="field full checkbox">
+                    <input type="checkbox" name="remember-me">
+                    <span>Remember me</span>
+                </label>
+            </div>
+            <p th:if="${error}" class="form-error" aria-live="assertive">Login failed. Please check your credentials.</p>
+            <div class="auth-actions">
+                <button type="submit" class="btn primary">Sign in</button>
+            </div>
+            <div class="auth-info">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 16v-4"/>
+                    <path d="M12 8h.01"/>
+                </svg>
+                <span>New here?</span>
+                <a th:href="${uiBaseUrl + '/registration'}">Register your company</a>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    (function() {
+        var btn = document.getElementById('theme-toggle');
+        function updateIcon() {
+            var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            btn.querySelector('.icon-sun').style.display = isDark ? 'none' : 'block';
+            btn.querySelector('.icon-moon').style.display = isDark ? 'block' : 'none';
+        }
+        updateIcon();
+        btn.addEventListener('click', function() {
+            var current = document.documentElement.getAttribute('data-theme');
+            var next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('peppol.theme.v1', next);
+            updateIcon();
+        });
+    })();
+</script>
+</body>
+</html>

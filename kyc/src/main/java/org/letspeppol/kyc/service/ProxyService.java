@@ -9,7 +9,6 @@ import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.KycException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -23,31 +22,29 @@ public class ProxyService {
     @Autowired
     private WebClient webClient;
 
-    public boolean isCompanyPeppolActive(String token) {
+    public boolean isCompanyPeppolActive() {
         RegistryDto registryDto = webClient.get()
                 .uri("/sapi/registry")
-                .header("Authorization", "Bearer " + token)
                 .retrieve()
                 .bodyToMono(RegistryDto.class)
                 .blockOptional()
-                .orElseThrow( () -> new KycException(KycErrorCodes.PROXY_FAILED));
+                .orElseThrow(() -> new KycException(KycErrorCodes.PROXY_FAILED));
 
         return registryDto.peppolActive();
     }
 
-    public RegistrationResponse registerCompany(String token, String companyName) {
+    public RegistrationResponse registerCompany(String companyName) {
         try {
             RegistryDto registryDto = webClient.post()
                     .uri("/sapi/registry")
                     .body(Mono.just(new RegistrationRequest(companyName, "NL", "BE")), RegistrationRequest.class)
-                    .header("Authorization", "Bearer " + token)
                     .retrieve()
                     .bodyToMono(RegistryDto.class)
                     .blockOptional()
-                    .orElseThrow( () -> new KycException(KycErrorCodes.PROXY_REGISTRATION_FAILED));
+                    .orElseThrow(() -> new KycException(KycErrorCodes.PROXY_REGISTRATION_FAILED));
 
             return new RegistrationResponse(registryDto.peppolActive(), null, null);
-        } catch (WebClientResponseException e) { // HTTP error (non-2xx)
+        } catch (WebClientResponseException e) {
             int status = e.getRawStatusCode();
             String body = e.getResponseBodyAsString();
             log.warn("Registering company to proxy could not succeed {}: {}", status, body, e);
@@ -63,29 +60,27 @@ public class ProxyService {
         }
     }
 
-    public boolean unregisterCompany(String token) {
+    public boolean unregisterCompany() {
         try {
             RegistryDto registryDto = webClient.put()
                     .uri("/sapi/registry/unregister")
-                    .header("Authorization", "Bearer " + token)
                     .retrieve()
                     .bodyToMono(RegistryDto.class)
                     .blockOptional()
-                    .orElseThrow( () -> new KycException(KycErrorCodes.PROXY_UNREGISTRATION_FAILED));
+                    .orElseThrow(() -> new KycException(KycErrorCodes.PROXY_UNREGISTRATION_FAILED));
 
             return registryDto.peppolActive();
         } catch (Exception ex) {
             log.error("Unregistering company to proxy failed", ex);
-            return isCompanyPeppolActive(token);
+            return isCompanyPeppolActive();
         }
     }
 
-    public void allowService(String token, ServiceRequest request) {
+    public void allowService(ServiceRequest request) {
         try {
             webClient.put()
                     .uri("/sapi/registry/allow")
                     .body(Mono.just(request), ServiceRequest.class)
-                    .header("Authorization", "Bearer " + token)
                     .retrieve()
                     .toBodilessEntity()
                     .block();
@@ -96,12 +91,11 @@ public class ProxyService {
         }
     }
 
-    public void rejectService(String token, ServiceRequest request) {
+    public void rejectService(ServiceRequest request) {
         try {
             webClient.put()
                     .uri("/sapi/registry/reject")
                     .body(Mono.just(request), ServiceRequest.class)
-                    .header("Authorization", "Bearer " + token)
                     .retrieve()
                     .toBodilessEntity()
                     .block();

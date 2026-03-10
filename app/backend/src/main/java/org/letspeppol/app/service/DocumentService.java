@@ -54,10 +54,11 @@ public class DocumentService {
     private final BackupService backupService;
     private final ValidationService validationService;
     private final NotificationService notificationService;
-    private final JwtService jwtService;
     private final UblInvoicePdfService ublInvoicePdfService;
     @Qualifier("proxyWebClient")
     private final WebClient proxyWebClient;
+    @Qualifier("serviceProxyWebClient")
+    private final WebClient serviceProxyWebClient;
     private final Counter documentBackupCounter;
     private final Counter documentCreateCounter;
     private final Counter documentSendCounter;
@@ -125,7 +126,7 @@ public class DocumentService {
 
     public void synchronize(String peppolId, String tokenValue) throws InterruptedException {
         companyRepository.findByPeppolId(peppolId).ifPresent(company -> {
-            synchronizeNewDocuments(tokenValue);
+            synchronizeNewDocuments(proxyWebClient, tokenValue);
             synchronizeDocuments(peppolId, tokenValue);
         });
     }
@@ -381,25 +382,24 @@ public class DocumentService {
     @Scheduled(cron = "0 0 * * * *")
     public void periodicSynchronize() {
         try {
-            String appTokenFromKyc = jwtService.getAppTokenFromKyc();
             List<UblDocumentDto> ublDocumentDtos;
             do {
-                ublDocumentDtos = synchronizeNewDocuments(appTokenFromKyc);
+                ublDocumentDtos = synchronizeNewDocuments();
             } while (ublDocumentDtos.size() >= 100);
         } catch (Exception e) {
             log.error("Error synchronizing documents", e);
         }
     }
 
-    private List<UblDocumentDto> synchronizeNewDocuments(String tokenValue) {
-        //TODO : record Page<T>(List<T> results, Integer total, Integer page, Integer size) {}
-        //and use :
-        //.bodyToMono(new ParameterizedTypeReference<Page<UblDocumentDto>>() {})
-        //.map(Page::results)
+    private List<UblDocumentDto> synchronizeNewDocuments() {
+        // TODO: support paging
+        return synchronizeNewDocuments(serviceProxyWebClient, null);
+    }
 
-        List<UblDocumentDto> ublDocumentDtos = proxyWebClient.get()
+    private List<UblDocumentDto> synchronizeNewDocuments(WebClient client, String tokenValue) {
+        List<UblDocumentDto> ublDocumentDtos = client.get()
                 .uri("/sapi/document")
-                .headers(headers -> headers.setBearerAuth(tokenValue))
+                .headers(headers -> { if (tokenValue != null) headers.setBearerAuth(tokenValue); })
                 .retrieve()
                 .bodyToFlux(UblDocumentDto.class)
                 .collectList()
@@ -416,9 +416,9 @@ public class DocumentService {
             }
         }
 
-        proxyWebClient.put()
+        client.put()
                 .uri("/sapi/document/downloaded")
-                .headers(headers -> headers.setBearerAuth(tokenValue))
+                .headers(headers -> { if (tokenValue != null) headers.setBearerAuth(tokenValue); })
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(ids)
                 .retrieve()
