@@ -1,7 +1,7 @@
 import {resolve} from "@aurelia/kernel";
 import {InvoiceContext} from "./invoice-context";
 import {AlertType} from "../components/alert/alert";
-import {IEventAggregator, watch} from "aurelia";
+import {IDisposable, IEventAggregator, watch} from "aurelia";
 import {
     DocumentType,
     DocumentDto,
@@ -9,20 +9,25 @@ import {
     InvoiceService, DocumentDirection,
 } from "../services/app/invoice-service";
 import moment from "moment";
-import {PartnerService} from "../services/app/partner-service";
+import {IRouter} from "@aurelia/router";
 
 export class InvoiceOverview {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
     private invoiceService = resolve(InvoiceService);
-    private partnerService = resolve(PartnerService);
     private invoiceContext = resolve(InvoiceContext);
-    box = 'ALL'
+    private router = resolve(IRouter);
     query: DocumentQuery = {pageable: {page: 0, size: 20}};
+    private resetSubscription: IDisposable;
 
     attached() {
-        this.loadInvoices();
-        this.loadDrafts();
         this.invoiceContext.initCompany();
+        this.resetSubscription = this.ea.subscribe('invoicesReset', () => this.setActiveItems(this.invoiceContext.activeBox));
+        this.setActiveItems(this.invoiceContext.activeBox);
+        this.loadDrafts();
+    }
+
+    detaching() {
+        this.resetSubscription?.dispose();
     }
 
     async loadDrafts() {
@@ -31,17 +36,10 @@ export class InvoiceOverview {
 
     @watch((vm) => [vm.query.invoiceReference, vm.query.partnerName])
     loadInvoices() {
-        if (this.box === 'drafts') {
-            this.invoiceService.getDocuments({...this.query, draft: true }).then(page => this.invoiceContext.invoicePage = page);
-            // this.invoices = this.invoiceContext.drafts.filter(i => {
-            //    return (!this.query.type || i.docType === this.query.type) &&
-            //     (!this.query.counterPartyNameLike || !i.counterPartyName || i.counterPartyName.toLowerCase().includes(this.query.counterPartyNameLike.toLowerCase())) &&
-            //     (!this.query.docId || !i.docId || i.docId.toLowerCase() === this.query.docId.toLowerCase())
-            //     ;
-            // });
-        } else {
-            this.invoiceService.getDocuments({...this.query, draft: false}).then(page => this.invoiceContext.invoicePage = page);
-        }
+        this.invoiceService.getDocuments({
+            ...this.query,
+            draft: this.invoiceContext.activeBox === 'drafts'
+        }).then(page => this.invoiceContext.invoicePage = page);
     }
 
     changeDocType(value: DocumentType) {
@@ -50,7 +48,7 @@ export class InvoiceOverview {
     }
 
     setActiveItems(box) {
-        this.box = box;
+        this.invoiceContext.activeBox = box;
         switch (box) {
             case 'ALL':
                 this.query.direction = undefined;
@@ -76,8 +74,7 @@ export class InvoiceOverview {
     }
 
     selectItem(item: DocumentDto) {
-        history.replaceState({}, '', `/invoices/${item.id}`);
-        this.invoiceContext.selectInvoice(item);
+        this.router.load(`/invoices/${item.id}`);
     }
 
     nextPage() {
