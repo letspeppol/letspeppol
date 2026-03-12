@@ -4,6 +4,9 @@ import io.micrometer.core.instrument.Counter;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.AttachmentType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.DocumentReferenceType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.EmbeddedDocumentBinaryObjectType;
 import org.letspeppol.app.dto.*;
 import org.letspeppol.app.exception.*;
 import org.letspeppol.app.exception.SecurityException;
@@ -52,6 +55,7 @@ public class DocumentService {
     private final ValidationService validationService;
     private final NotificationService notificationService;
     private final JwtService jwtService;
+    private final UblInvoicePdfService ublInvoicePdfService;
     @Qualifier("proxyWebClient")
     private final WebClient proxyWebClient;
     private final Counter documentBackupCounter;
@@ -126,9 +130,13 @@ public class DocumentService {
         });
     }
 
-    public DocumentDto createFromUbl(String peppolId, String ublXml, boolean draft, Instant schedule, String tokenValue) {
+    public DocumentDto createFromUbl(String peppolId, String ublXml, boolean addPdfToSendingInvoice, boolean draft, Instant schedule, String tokenValue) {
         Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new NotFoundException("Company does not exist"));
         UblDto ublDto = readUBL(DocumentDirection.OUTGOING, ublXml, peppolId, draft);
+        if (addPdfToSendingInvoice) {
+            ublXml = ublInvoicePdfService.addRenderedPdfToUbl(ublXml, ublDto.invoiceReference());
+        }
+
         if (!draft) {
              if (documentRepository.existsByInvoiceReferenceAndOwnerPeppolId(ublDto.invoiceReference(), peppolId)) {
                  throw new AppException(AppErrorCodes.INVOICE_NUMBER_ALREADY_USED);

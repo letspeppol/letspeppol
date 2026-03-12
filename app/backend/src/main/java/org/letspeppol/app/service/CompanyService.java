@@ -104,6 +104,7 @@ public class CompanyService {
         company.setEnableEmailNotification(companyDto.enableEmailNotification());
         company.setAddAttachmentToNotification(companyDto.addAttachmentToNotification());
         company.setEmailNotificationCcList(companyDto.emailNotificationCCList());
+        company.setAddPdfToSendingInvoice(companyDto.addPdfToSendingInvoice());
         // TODO        company.setNoArchive(companyDto.noArchive());
         company.getRegisteredOffice().setCity(companyDto.registeredOffice().city());
         company.getRegisteredOffice().setPostalCode(companyDto.registeredOffice().postalCode());

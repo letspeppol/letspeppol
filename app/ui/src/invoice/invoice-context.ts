@@ -29,6 +29,7 @@ export class InvoiceContext {
     nextInvoiceReference: string = undefined;
     readOnly: boolean = false;
     partnerMissing: boolean = false;
+    addPdfToSendingInvoice: boolean = false;
 
     clearSelectedInvoice() {
         this.selectedInvoice = undefined;
@@ -83,6 +84,7 @@ export class InvoiceContext {
                 this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to get company info"});
             }
         }
+        this.addPdfToSendingInvoice = this.companyService.myCompany.addPdfToSendingInvoice;
     }
 
     newUBLDocument(documentType : DocumentType = DocumentType.INVOICE) {

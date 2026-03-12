@@ -15,6 +15,7 @@ public record CompanyDto(
         boolean peppolActive,
         boolean enableEmailNotification,
         boolean addAttachmentToNotification,
+        boolean addPdfToSendingInvoice,
         String emailNotificationCCList,
         AddressDto registeredOffice
 )
