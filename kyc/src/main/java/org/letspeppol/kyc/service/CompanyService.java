@@ -10,10 +10,12 @@ import org.letspeppol.kyc.dto.RegistrationResponse;
 import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.KycException;
 import org.letspeppol.kyc.mapper.CompanyMapper;
+import org.letspeppol.kyc.model.AccountType;
 import org.letspeppol.kyc.model.kbo.Company;
 import org.letspeppol.kyc.model.kbo.Director;
 import org.letspeppol.kyc.repository.CompanyRepository;
 import org.letspeppol.kyc.repository.DirectorRepository;
+import org.letspeppol.kyc.repository.OwnershipRepository;
 import org.letspeppol.kyc.service.kbo.KboLookupService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,7 @@ public class CompanyService {
 
     private final CompanyRepository companyRepository;
     private final DirectorRepository directorRepository;
+    private final OwnershipRepository ownershipRepository;
     private final KboLookupService kboLookupService;
     private final JwtService jwtService;
     private final ProxyService proxyService;
@@ -43,16 +46,21 @@ public class CompanyService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<CompanyResponse> getByPeppolId(String peppolId) {
+    public Company getByPeppolId(String peppolId) {
+        return companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new KycException(KycErrorCodes.COMPANY_NOT_FOUND));
+    }
+
+    public Optional<CompanyResponse> getResponseByPeppolId(String peppolId) {
         Optional<Company> company = companyRepository.findByPeppolId(peppolId);
         if (company.isPresent()) {
-            return Optional.of(CompanyMapper.toResponse(company.get()));
+            boolean hasAdmin = ownershipRepository.existsByTypeAndCompanyPeppolId(AccountType.ADMIN, peppolId);
+            return Optional.of(CompanyMapper.toResponse(company.get(), hasAdmin)); //TODO : maybe not returning directors, but only when request originates from ACCOUNTANT ?
         }
 
-        Optional<CompanyResponse> companyLookup = kboLookupService.findCompany(peppolId);
+        Optional<CompanyResponse> companyLookup = kboLookupService.findCompany(peppolId); //TODO: what with inactive ?
         if (companyLookup.isPresent()) {
             Company companyToStore = storeCompanyAndDirectors(peppolId, companyLookup.get());
-            return Optional.of(CompanyMapper.toResponse(companyToStore));
+            return Optional.of(CompanyMapper.toResponse(companyToStore, false)); //TODO : maybe not returning directors, but only when request originates from ACCOUNTANT ?
         }
 
         return Optional.empty();
@@ -70,7 +78,7 @@ public class CompanyService {
     }
 
     public RegistrationResponse registerCompany(String peppolId) {
-        Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new KycException(KycErrorCodes.COMPANY_NOT_FOUND));
+        Company company = getByPeppolId(peppolId);
         return registerCompany(company);
     }
 
@@ -92,7 +100,7 @@ public class CompanyService {
     }
 
     public boolean unregisterCompany(String peppolId) {
-        Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new KycException(KycErrorCodes.COMPANY_NOT_FOUND));
+        Company company = getByPeppolId(peppolId);
         return unregisterCompany(company);
     }
 
