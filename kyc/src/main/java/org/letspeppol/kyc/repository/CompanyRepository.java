@@ -4,9 +4,11 @@ import org.letspeppol.kyc.model.kbo.Company;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,4 +39,11 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
                          @Param("peppolId") String peppolId,
                          @Param("name") String name,
                          Pageable pageable);
+
+    @Modifying
+    @Query("UPDATE Company c SET c.inactive = :inactiveDate WHERE c.peppolId = :peppolId")
+    int deactivateCompany(
+            @Param("peppolId") String peppolId,
+            @Param("inactiveDate") LocalDate inactiveDate
+    );
 }

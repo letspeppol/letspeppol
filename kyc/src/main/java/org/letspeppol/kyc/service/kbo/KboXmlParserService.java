@@ -13,6 +13,8 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.InputStream;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -26,6 +28,7 @@ public class KboXmlParserService {
 
     private final CompanyRepository companyRepository;
     private final KboBatchPersistenceService kboBatchPersistenceService;
+    private final DateTimeFormatter validityDateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     public void importEnterprises(InputStream xmlStream) {
         Objects.requireNonNull(xmlStream, "xmlStream must not be null");
@@ -157,12 +160,14 @@ public class KboXmlParserService {
         totalValidEnterprises.incrementAndGet();
 
         String peppolId = buildPeppolIdFromNbr(enterprise.nbr);
-        String vatNumber = buildVatNumberFromNbr(enterprise.nbr);
 
         if (enterprise.ended) {
             boolean hasRegisteredDirector = companyRepository.existsRegisteredDirectorForPeppolId(peppolId);
             if (hasRegisteredDirector) {
-                log.warn("Skipping deletion of company with Peppol ID {} because it has registered directors", peppolId);
+                log.warn("Marking company with Peppol ID {} as inactive (unable to delete due to registered director)", peppolId);
+                if (companyRepository.deactivateCompany(peppolId, enterprise.endDate) < 1) {
+                    log.error("Could not deactivate company with Peppol ID {}", peppolId);
+                }
                 return;
             }
 
@@ -173,7 +178,7 @@ public class KboXmlParserService {
 
         Company company = companyRepository.findWithDirectorsByPeppolId(peppolId).orElseGet(() -> {
             log.debug("Creating new company with Peppol ID {}", peppolId);
-            return createCompany(peppolId, vatNumber, enterprise);
+            return createCompany(peppolId, enterprise.nbr, enterprise);
         });
 
         boolean isNewCompany = company.getId() == null;
@@ -195,14 +200,18 @@ public class KboXmlParserService {
         }
     }
 
-    private Company createCompany(String peppolId, String vatNumber, EnterpriseData enterprise) {
-        Company newCompany = new Company(peppolId, vatNumber, enterprise.name);
+    private Company createCompany(String peppolId, String enterpriseNumber, EnterpriseData enterprise) {
+        Company newCompany = new Company(peppolId, enterpriseNumber, enterprise.name);
         if (enterprise.address != null) {
             newCompany.setAddress(enterprise.address.city, enterprise.address.postalCode, enterprise.address.street);
             newCompany.setHasKboAddress(true);
         }
         newCompany.setIban(enterprise.iban);
         newCompany.setBusinessUnit(enterprise.businessUnit);
+        if (enterprise.subjectToVat) {
+            String vatNumber = buildVatNumberFromNbr(enterprise.nbr);
+            newCompany.setVatNumber(vatNumber);
+        }
         return newCompany;
     }
 
@@ -211,6 +220,7 @@ public class KboXmlParserService {
 
         if (!Objects.equals(company.getName(), enterprise.name)
             || !Objects.equals(company.getIban(), enterprise.iban)
+            || (!enterprise.subjectToVat && company.getVatNumber() != null)
             || (enterprise.address != null && (
                 !Objects.equals(company.getCity(), enterprise.address.city)
                 || !Objects.equals(company.getPostalCode(), enterprise.address.postalCode)
@@ -224,6 +234,12 @@ public class KboXmlParserService {
                 company.setStreet(enterprise.address.street);
             }
             company.setIban(enterprise.iban);
+            if (enterprise.subjectToVat) {
+                String vatNumber = buildVatNumberFromNbr(enterprise.nbr);
+                company.setVatNumber(vatNumber);
+            } else {
+                company.setVatNumber(null);
+            }
             changed = true;
         }
         return changed;
@@ -316,6 +332,8 @@ public class KboXmlParserService {
 
         List<FunctionData> directors = new ArrayList<>();
         boolean enterpriseEnded = false;
+        LocalDate endDate = null;
+        boolean subjectToVat = false;
         int depth = 0;
 
         while (reader.hasNext()) {
@@ -347,6 +365,7 @@ public class KboXmlParserService {
                     ValidityFlags flags = readValidity(reader);
                     if (depth == 1 && flags.hasEnd) {
                         enterpriseEnded = true;
+                        endDate = flags.endDate;
                     }
                     depth--;
                 } else if ("LinkedEnterprise".equals(localName)) {
@@ -355,6 +374,9 @@ public class KboXmlParserService {
                     }
                 } else if ("BankAccounts".equals(localName)) {
                     iban = readBankAccounts(reader);
+                    depth--;
+                } else if ("Authorizations".equals(localName)) {
+                    subjectToVat = hasAuthorizationCode00084NotEnded(reader);
                     depth--;
                 }
             } else if (event == XMLStreamConstants.END_ELEMENT) {
@@ -386,7 +408,43 @@ public class KboXmlParserService {
             return null;
         }
 
-        return new EnterpriseData(nbr, denominationName, address, directors, enterpriseEnded, iban, linkedEnterpriseNbr);
+        return new EnterpriseData(nbr, denominationName, address, directors, enterpriseEnded, endDate, iban, linkedEnterpriseNbr, subjectToVat);
+    }
+
+    private boolean hasAuthorizationCode00084NotEnded(XMLStreamReader reader) throws XMLStreamException {
+        while (reader.hasNext()) {
+            int event = reader.next();
+            if (event == XMLStreamConstants.START_ELEMENT && "Authorization".equals(reader.getLocalName())) {
+                AuthorizationCode authorizationCode = readAuthorizationCode(reader);
+                if ("00084".equals(authorizationCode.code)) {
+                    return !authorizationCode.ended;
+                }
+            } else if (event == XMLStreamConstants.END_ELEMENT && "Authorizations".equals(reader.getLocalName())) {
+                break;
+            }
+        }
+
+        return false;
+    }
+
+    private AuthorizationCode readAuthorizationCode(XMLStreamReader reader) throws XMLStreamException {
+        String code = null;
+        boolean ended = false;
+        while (reader.hasNext()) {
+            int event = reader.next();
+            if (event == XMLStreamConstants.START_ELEMENT) {
+                String localName = reader.getLocalName();
+                if ("Code".equals(localName)) {
+                    code = readSimpleTextElement(reader);
+                } else if ("Validity".equals(localName)) {
+                    ValidityFlags flags = readValidity(reader);
+                    ended = flags.hasEnd;
+                }
+            } else if (event == XMLStreamConstants.END_ELEMENT && "Authorization".equals(reader.getLocalName())) {
+                break;
+            }
+        }
+        return new AuthorizationCode(code, ended);
     }
 
     private String readBankAccounts(XMLStreamReader reader) throws XMLStreamException {
@@ -728,6 +786,7 @@ public class KboXmlParserService {
 
     private ValidityFlags readValidity(XMLStreamReader reader) throws XMLStreamException {
         boolean hasEnd = false;
+        LocalDate endDate = null;
 
         while (reader.hasNext()) {
             int event = reader.next();
@@ -737,6 +796,11 @@ public class KboXmlParserService {
                     String end = readSimpleTextElement(reader);
                     if (end != null && !end.isBlank()) {
                         hasEnd = true;
+                        try {
+                            endDate = LocalDate.parse(end, validityDateFormatter);
+                        } catch (Exception e) {
+                            log.warn("Could not parse end date {}", end);
+                        }
                     }
                 }
             } else if (event == XMLStreamConstants.END_ELEMENT && "Validity".equals(reader.getLocalName())) {
@@ -744,7 +808,7 @@ public class KboXmlParserService {
             }
         }
 
-        return new ValidityFlags(hasEnd);
+        return new ValidityFlags(hasEnd, endDate);
     }
 
     private HeldByPersonData readHeldByPerson(XMLStreamReader reader) throws XMLStreamException {
@@ -803,9 +867,11 @@ public class KboXmlParserService {
 
     private record HeldByPersonData(String firstName, String lastName) {}
 
-    private record EnterpriseData(String nbr, String name, AddressData address, List<FunctionData> directors, boolean ended, String iban, String businessUnit) {}
+    private record EnterpriseData(String nbr, String name, AddressData address, List<FunctionData> directors, boolean ended, LocalDate endDate, String iban, String businessUnit, boolean subjectToVat) {}
 
-    private record ValidityFlags(boolean hasEnd) {}
+    private record ValidityFlags(boolean hasEnd, LocalDate endDate) {}
 
     private record BusinessUnitData(String nbr, AddressData address, boolean ended) {}
+
+    private record AuthorizationCode(String code, boolean ended) {}
 }
