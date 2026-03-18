@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Log in — Let's Peppol</title>
     <link rel="stylesheet" th:href="@{/css/login.css}">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <meta name="_kyc_base" th:content="@{/}">
+    <meta name="_ui_base" th:content="${uiBaseUrl}">
     <script>
         (function() {
             var theme = localStorage.getItem('peppol.theme.v1') || 'light';
@@ -27,7 +31,7 @@
             <div class="grid">
                 <label class="field full">
                     <span>Email</span>
-                    <input name="username" type="email" placeholder="you@company.com" required autofocus>
+                    <input name="username" type="email" placeholder="you@company.com" required autofocus autocomplete="username webauthn">
                 </label>
                 <label class="field full">
                     <div style="display: flex; justify-content: space-between">
@@ -45,6 +49,11 @@
             <div class="auth-actions">
                 <button type="submit" class="btn primary">Sign in</button>
             </div>
+            <div class="passkey-divider" id="passkey-divider" style="display:none"><span>or</span></div>
+            <button type="button" class="btn passkey-btn" id="passkey-login-btn" style="display:none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"/><path d="m21 2-9.6 9.6"/><circle cx="7.5" cy="15.5" r="5.5"/></svg>
+                Sign in with a passkey
+            </button>
             <div class="auth-info">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -58,6 +67,7 @@
         </form>
     </div>
 </div>
+<script th:src="@{/js/webauthn-login.js}" defer></script>
 <script>
     (function() {
         var btn = document.getElementById('theme-toggle');

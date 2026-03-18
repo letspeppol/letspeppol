@@ -5,66 +5,47 @@ import {watch} from "aurelia";
 export class RefreshSessionModal {
     private readonly loginService = resolve(LoginService);
     private timeout?: number | undefined;
-    private email;
-    private password;
-    private open = false;
-    private error = false;
 
     created() {
-        this.verifyAuthenticated();
+        this.scheduleRefresh();
     }
 
     @watch((vm) => vm.loginService.authenticated)
-    startTimer() {
-        this.verifyAuthenticated();
+    onAuthChanged() {
+        this.scheduleRefresh();
     }
 
-    verifyAuthenticated() {
-        if (this.loginService.authenticated) {
-            this.clearTimer();
+    private scheduleRefresh() {
+        this.clearTimer();
+        if (!this.loginService.authenticated) return;
+
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        const expiryDate = this.loginService.getTokenExpiryDateInSeconds(token);
+        const currentDate = this.loginService.getCurrentDateInSeconds();
+        const secondsUntilExpiry = expiryDate - currentDate;
+
+        if (secondsUntilExpiry <= 0) return;
+
+        // Refresh 5 minutes before expiry
+        const refreshInMs = Math.max((secondsUntilExpiry - 300) * 1000, 0);
+        this.timeout = window.setTimeout(() => this.attemptRefresh(), refreshInMs);
+    }
+
+    private async attemptRefresh() {
+        const success = await this.loginService.refreshToken();
+        if (success) {
+            this.scheduleRefresh();
         } else {
-            this.clearTimer();
+            this.loginService.logout();
         }
     }
 
-    clearTimer() {
+    private clearTimer() {
         if (this.timeout) {
             clearTimeout(this.timeout);
-        }
-    }
-
-    setTimer() {
-        let timeoutInMillis = 55 * 60 * 1000;
-        const token = localStorage.getItem('token');
-        if (token) {
-            const expiryDate = this.loginService.getTokenExpiryDateInSeconds(token);
-            const currentDate = this.loginService.getCurrentDateInSeconds();
-            if (expiryDate > currentDate && ((expiryDate - currentDate) < 300)) {
-                timeoutInMillis = ((expiryDate - currentDate) - 300) * 1000;
-            }
-        }
-        setTimeout(() => this.showModal(), timeoutInMillis);
-    }
-
-    showModal() {
-        if (this.open === true) {
-            return;
-        }
-        this.error = false;
-        const email = localStorage.getItem("email");
-        if (email) {
-            this.email = email;
-        }
-        this.open = true;
-    }
-
-    async verifyLogin() {
-        try {
-            await this.loginService.auth(this.email, this.password);
-            this.open = false;
-            this.setTimer();
-        } catch {
-            this.error = true;
+            this.timeout = undefined;
         }
     }
 }

@@ -212,6 +212,59 @@ h1 {
     text-decoration: underline;
 }
 
+/* Passkey divider */
+.passkey-divider {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0.25rem 0;
+}
+
+.passkey-divider::before,
+.passkey-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--color-border);
+}
+
+.passkey-divider span {
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    text-transform: lowercase;
+}
+
+/* Passkey button */
+.passkey-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.625rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-panel);
+    color: var(--color-text);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+}
+
+.passkey-btn:hover {
+    border-color: var(--color-primary);
+    background: var(--color-bg);
+}
+
+.passkey-btn:active {
+    opacity: 0.8;
+}
+
+.passkey-btn svg {
+    flex-shrink: 0;
+}
+
 /* Theme toggle button */
 .theme-toggle {
     position: fixed;

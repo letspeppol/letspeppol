@@ -112,6 +112,8 @@ services:
       KBO_SFTP_FULL_DIR: ${KBO_SFTP_FULL_DIR}
       KBO_SFTP_DELTA_DIR: ${KBO_SFTP_DELTA_DIR}
       KBO_SFTP_DELTA_CRON: ${KBO_SFTP_DELTA_CRON}
+      WEBAUTHN_RP_ID: ${WEBAUTHN_RP_ID}
+      WEBAUTHN_RP_ORIGINS: ${WEBAUTHN_RP_ORIGINS}
       CONTRACT_DATA_DIR: /opt/data/kyc
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -h $DB_HOST -p $DB_PORT -U $DB_USER"]

@@ -43,6 +43,7 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -82,8 +83,12 @@ public class SecurityConfig {
 
         OAuth2AuthorizationServerConfigurer configurer = new OAuth2AuthorizationServerConfigurer();
 
+        HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
+        requestCache.setMatchingRequestParameterName(null);
+
         http
                 .securityMatcher(configurer.getEndpointsMatcher())
+                .requestCache(rc -> rc.requestCache(requestCache))
                 .authorizeHttpRequests(a -> a.anyRequest().authenticated())
                 .csrf(csrf -> csrf.ignoringRequestMatchers(configurer.getEndpointsMatcher()))
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
@@ -98,10 +103,14 @@ public class SecurityConfig {
     @Bean
     @Order(2)
     public SecurityFilterChain resourceServerSecurityFilterChain(HttpSecurity http, JwtDecoder jwtDecoder, CorsConfigurationSource corsConfigurationSource) throws Exception {
+        HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
+        requestCache.setMatchingRequestParameterName(null);
+
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
+                .requestCache(rc -> rc.requestCache(requestCache))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/error", "/css/**", "/images/**", "/favicon.ico").permitAll()
+                        .requestMatchers("/login", "/error", "/css/**", "/images/**", "/js/**", "/favicon.ico").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/api/**").permitAll()
                         .requestMatchers("/sapi/**").hasAuthority(ROLE_KYC_USER)
