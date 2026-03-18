@@ -35,6 +35,14 @@ public class AccountUserDetails implements UserDetails {
         return account.getType();
     }
 
+    public boolean isTotpEnabled() {
+        return account.isTotpEnabled();
+    }
+
+    public Long getAccountId() {
+        return account.getId();
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(SecurityConfig.ROLE_KYC_USER));

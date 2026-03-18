@@ -96,7 +96,7 @@ public class SecurityConfig {
                 .exceptionHandling(e -> e.defaultAuthenticationEntryPointFor(
                         new LoginUrlAuthenticationEntryPoint("/login"),
                         new MediaTypeRequestMatcher(MediaType.TEXT_HTML)))
-                .formLogin(form -> form.loginPage("/login").permitAll());
+                .formLogin(form -> form.loginPage("/login").successHandler(totpAuthenticationSuccessHandler()).permitAll());
         return http.build();
     }
 
@@ -110,13 +110,13 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .requestCache(rc -> rc.requestCache(requestCache))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/error", "/css/**", "/images/**", "/js/**", "/favicon.ico").permitAll()
+                        .requestMatchers("/login", "/totp-verify", "/error", "/css/**", "/images/**", "/js/**", "/favicon.ico").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/api/**").permitAll()
                         .requestMatchers("/sapi/**").hasAuthority(ROLE_KYC_USER)
                         .anyRequest().denyAll()
                 )
-                .formLogin(form -> form.loginPage("/login").permitAll())
+                .formLogin(form -> form.loginPage("/login").successHandler(totpAuthenticationSuccessHandler()).permitAll())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt
                         .decoder(jwtDecoder)
                         .jwtAuthenticationConverter(jwtAuthenticationConverter())
@@ -230,6 +230,11 @@ public class SecurityConfig {
                 claims.claim("accountType", userDetails.getAccountType().name());
             }
         };
+    }
+
+    @Bean
+    public TotpAuthenticationSuccessHandler totpAuthenticationSuccessHandler() {
+        return new TotpAuthenticationSuccessHandler();
     }
 
     @Bean
