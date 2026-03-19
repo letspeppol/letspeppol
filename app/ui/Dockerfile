@@ -8,6 +8,8 @@ RUN npm install --include=dev
 
 # Copy source
 COPY . .
+ARG VITE_LEADINFO_ID
+ENV VITE_LEADINFO_ID=$VITE_LEADINFO_ID
 RUN npm run build
 
 # Production image using nginx to serve static assets
