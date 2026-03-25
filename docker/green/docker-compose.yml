@@ -131,6 +131,7 @@ services:
       - app
     environment:
       NODE_ENV: production
+      VITE_LEADINFO_ID: ${VITE_LEADINFO_ID}
     expose:
       - "80"
     labels:
