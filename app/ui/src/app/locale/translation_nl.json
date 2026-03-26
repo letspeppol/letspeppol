@@ -198,7 +198,7 @@
     "account" : "Account",
     "brand-alt" : "Let's Peppol",
     "toggle-theme" : "Thema wisselen",
-    “new-feature”: “Nieuwe functies in Account: Passkeys, Tweefactorauthenticatie & Meldingen”
+    "new-feature": "Nieuwe functies in Account: Passkeys, Tweefactorauthenticatie & Meldingen"
   },
   "alert" : {
     "success" : "Succes",
