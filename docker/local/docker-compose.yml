@@ -144,6 +144,7 @@ services:
       dockerfile: Dockerfile
       args:
         ENVIRONMENT: local
+        VITE_LEADINFO_ID: ${VITE_LEADINFO_ID}
     image: lp-ui:latest
     depends_on:
       - app

@@ -131,6 +131,8 @@ services:
     build:
       context: ../../app/ui
       dockerfile: Dockerfile
+      args:
+        VITE_LEADINFO_ID: ${VITE_LEADINFO_ID}
     image: lp-ui:latest
     depends_on:
       - app
