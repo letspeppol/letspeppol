@@ -3,7 +3,10 @@ package org.letspeppol.kyc.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.samstevens.totp.code.*;
+import dev.samstevens.totp.code.CodeVerifier;
+import dev.samstevens.totp.code.DefaultCodeGenerator;
+import dev.samstevens.totp.code.DefaultCodeVerifier;
+import dev.samstevens.totp.code.HashingAlgorithm;
 import dev.samstevens.totp.qr.QrData;
 import dev.samstevens.totp.qr.QrGenerator;
 import dev.samstevens.totp.qr.ZxingPngQrGenerator;
@@ -21,7 +24,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import static dev.samstevens.totp.util.Utils.getDataUriForImage;
 
@@ -58,6 +63,11 @@ public class TotpService {
     @Transactional
     public TotpSetupResponse generateSetup(UUID uid) {
         Account account = findByExternalId(uid);
+
+        if (account.isTotpEnabled()) {
+            throw new IllegalStateException("TOTP is already enabled. Disable it first before setting up again.");
+        }
+
         String secret = secretGenerator.generate();
 
         // Store encrypted secret but keep TOTP disabled until verified
@@ -109,18 +119,19 @@ public class TotpService {
         return new TotpEnableResponse(recoveryCodes);
     }
 
-    public boolean verify(Long accountId, String code) {
-        Account account = accountRepository.findById(accountId)
+    public Account findById(Long accountId) {
+        return accountRepository.findById(accountId)
                 .orElseThrow(() -> new IllegalArgumentException("Account not found"));
+    }
+
+    public boolean verify(Account account, String code) {
         String secret = decryptSecret(account);
         if (secret == null) return false;
         return codeVerifier.isValidCode(secret, code);
     }
 
     @Transactional
-    public boolean verifyRecoveryCode(Long accountId, String code) {
-        Account account = accountRepository.findById(accountId)
-                .orElseThrow(() -> new IllegalArgumentException("Account not found"));
+    public boolean verifyRecoveryCode(Account account, String code) {
 
         String encryptedCodes = account.getTotpRecoveryCodes();
         if (encryptedCodes == null) return false;
@@ -132,7 +143,7 @@ public class TotpService {
                 hashedCodes.remove(i);
                 account.setTotpRecoveryCodes(encryptionService.encrypt(serializeList(hashedCodes)));
                 accountRepository.save(account);
-                log.info("Recovery code used for account id {}, {} codes remaining", accountId, hashedCodes.size());
+                log.info("Recovery code used for account id {}, {} codes remaining", account.getId(), hashedCodes.size());
                 return true;
             }
         }

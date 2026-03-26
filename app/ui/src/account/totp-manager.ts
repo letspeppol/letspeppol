@@ -1,13 +1,15 @@
 import {resolve} from "@aurelia/kernel";
 import {IEventAggregator} from "aurelia";
+import {I18N} from "@aurelia/i18n";
 import {TotpService, TotpSetupResponse} from "../services/kyc/totp-service";
 import {AlertType} from "../components/alert/alert";
 
-type TotpState = 'loading' | 'disabled' | 'setup' | 'verify' | 'recovery-codes' | 'enabled' | 'disabling';
+type TotpState = 'loading' | 'disabled' | 'setup' | 'recovery-codes' | 'enabled' | 'disabling';
 
 export class TotpManager {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
     private readonly totpService = resolve(TotpService);
+    private readonly i18n: I18N = resolve(I18N);
 
     state: TotpState = 'loading';
     setupData: TotpSetupResponse | null = null;
@@ -18,6 +20,11 @@ export class TotpManager {
     disableError = false;
     busy = false;
 
+    get verifyingText() { return this.i18n.tr('totp.verifying'); }
+    get verifyEnableText() { return this.i18n.tr('totp.verify-enable'); }
+    get disablingText() { return this.i18n.tr('totp.disabling'); }
+    get disableText() { return this.i18n.tr('totp.disable'); }
+
     attaching() {
         this.loadStatus();
     }
@@ -27,7 +34,7 @@ export class TotpManager {
             const status = await this.totpService.getStatus();
             this.state = status.enabled ? 'enabled' : 'disabled';
         } catch {
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to load 2FA status"});
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('totp.load-error')});
             this.state = 'disabled';
         }
     }
@@ -40,7 +47,7 @@ export class TotpManager {
             this.verifyError = false;
             this.state = 'setup';
         } catch {
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to start 2FA setup"});
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('totp.setup-error')});
         } finally {
             this.busy = false;
         }
@@ -54,7 +61,7 @@ export class TotpManager {
             const response = await this.totpService.enable(this.verifyCode.trim());
             this.recoveryCodes = response.recoveryCodes;
             this.state = 'recovery-codes';
-            this.ea.publish('alert', {alertType: AlertType.Success, text: "Two-factor authentication enabled"});
+            this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('totp.enabled-alert')});
         } catch {
             this.verifyError = true;
         } finally {
@@ -85,7 +92,7 @@ export class TotpManager {
             this.disableError = false;
             await this.totpService.disable(this.disableCode.trim());
             this.state = 'disabled';
-            this.ea.publish('alert', {alertType: AlertType.Success, text: "Two-factor authentication disabled"});
+            this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('totp.disabled-alert')});
         } catch {
             this.disableError = true;
         } finally {
@@ -101,9 +108,9 @@ export class TotpManager {
     async copyRecoveryCodes() {
         try {
             await navigator.clipboard.writeText(this.recoveryCodes.join('\n'));
-            this.ea.publish('alert', {alertType: AlertType.Success, text: "Recovery codes copied"});
+            this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('totp.recovery-copied')});
         } catch {
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to copy"});
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('totp.copy-error')});
         }
     }
 

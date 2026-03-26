@@ -50,7 +50,7 @@ public class ProxyConfig {
     }
 
     /// WebClient for user-context proxy calls (token forwarded from request)
-    @Bean
+    @Bean("proxyWebClient")
     public WebClient proxyWebClient(@Value("${proxy.api.url}") String apiUrl) {
         return WebClient.builder()
                 .baseUrl(apiUrl)
@@ -60,7 +60,7 @@ public class ProxyConfig {
     }
 
     /// WebClient for service-to-service proxy calls (auto Client Credentials)
-    @Bean
+    @Bean("serviceProxyWebClient")
     public WebClient serviceProxyWebClient(
             @Value("${proxy.api.url}") String apiUrl,
             ReactiveClientRegistrationRepository clientRegistrationRepository) {

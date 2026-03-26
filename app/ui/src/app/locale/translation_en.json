@@ -62,7 +62,10 @@
     "register" : "Register your company",
     "continue" : "Sign in",
     "forgot" : "Forgot my password",
-    "remember": "Remember me"
+    "remember": "Remember me",
+    "passkey": "Sign in with a passkey",
+    "or": "or",
+    "redirecting": "Redirecting to login..."
   },
   "onboarding": {
     "title": "Onboarding steps",
@@ -196,7 +199,7 @@
     "account": "Account",
     "brand-alt": "Let's Peppol",
     "toggle-theme": "Toggle theme",
-    "new-feature": "New feature “Notifications” added in Account"
+    “new-feature”: “New features in Account: Passkeys, Two-Factor Authentication & Notifications”
   },
   "alert": {
     "success": "Success",
@@ -442,5 +445,53 @@
   },
   "session": {
     "continue-title": "Continue Session"
+  },
+  "totp": {
+    "title": "Two-Factor Authentication",
+    "loading": "Loading...",
+    "disabled": "Two-factor authentication is not enabled.",
+    "enable": "Enable 2FA",
+    "scan-qr": "Scan this QR code with your authenticator app:",
+    "manual-entry": "Can't scan? Enter this key manually",
+    "enter-code": "Enter the 6-digit code from your app",
+    "invalid-code": "Invalid code. Please try again.",
+    "verifying": "Verifying...",
+    "verify-enable": "Verify & Enable",
+    "recovery-warning": "Save these recovery codes. You won't see them again.",
+    "copy": "Copy",
+    "download": "Download",
+    "done": "Done",
+    "enabled": "Two-factor authentication is enabled.",
+    "disable": "Disable 2FA",
+    "disable-confirm": "Enter your current authenticator code to disable 2FA:",
+    "auth-code": "Authentication code",
+    "invalid-code-short": "Invalid code.",
+    "disabling": "Disabling...",
+    "enabled-alert": "Two-factor authentication enabled",
+    "disabled-alert": "Two-factor authentication disabled",
+    "load-error": "Failed to load 2FA status",
+    "setup-error": "Failed to start 2FA setup",
+    "recovery-copied": "Recovery codes copied",
+    "copy-error": "Failed to copy"
+  },
+  "passkey": {
+    "title": "Passkeys",
+    "not-supported": "Your browser does not support passkeys.",
+    "empty": "No passkeys registered yet.",
+    "name-placeholder": "Passkey name (e.g. MacBook Pro)",
+    "add": "Add passkey",
+    "registering": "Registering...",
+    "last-used-never": "Never",
+    "added": "Added",
+    "last-used": "Last used",
+    "default-name": "My passkey",
+    "registered": "Passkey registered",
+    "load-error": "Failed to load passkeys",
+    "register-error": "Failed to register passkey",
+    "delete-title": "Delete passkey",
+    "delete-confirm": "Are you sure you want to delete the passkey \"{{name}}\"?",
+    "deleted": "Passkey deleted",
+    "delete-error": "Failed to delete passkey",
+    "rename-error": "Failed to rename passkey"
   }
 }

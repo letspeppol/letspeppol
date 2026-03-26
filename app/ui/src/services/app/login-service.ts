@@ -8,6 +8,10 @@ import {generateCodeVerifier, generateCodeChallenge, generateState, storePkce, r
 const KYC_BASE = '/kyc';
 const CLIENT_ID = 'letspeppol-ui';
 const CALLBACK_PATH = '/callback';
+const TOKEN_KEY = 'token';
+const REFRESH_TOKEN_KEY = 'refresh_token';
+const ID_TOKEN_KEY = 'id_token';
+const PEPPOL_ACTIVE_KEY = 'peppolActive';
 
 @singleton()
 export class LoginService {
@@ -19,8 +23,12 @@ export class LoginService {
         this.verifyAuthenticated();
     }
 
+    private get redirectUri(): string {
+        return `${window.location.origin}${CALLBACK_PATH}`;
+    }
+
     verifyAuthenticated() {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem(TOKEN_KEY);
         if (token && !this.isExpired(token)) {
             this.setAuthHeader(token);
             this.authenticated = true;
@@ -49,11 +57,10 @@ export class LoginService {
         const state = generateState();
         storePkce(verifier, state);
 
-        const redirectUri = `${window.location.origin}${CALLBACK_PATH}`;
         const params = new URLSearchParams({
             response_type: 'code',
             client_id: CLIENT_ID,
-            redirect_uri: redirectUri,
+            redirect_uri: this.redirectUri,
             code_challenge: challenge,
             code_challenge_method: 'S256',
             state: state,
@@ -69,12 +76,11 @@ export class LoginService {
             throw new Error('Invalid state parameter');
         }
 
-        const redirectUri = `${window.location.origin}${CALLBACK_PATH}`;
         const body = new URLSearchParams({
             grant_type: 'authorization_code',
             client_id: CLIENT_ID,
             code: code,
-            redirect_uri: redirectUri,
+            redirect_uri: this.redirectUri,
             code_verifier: pkce.verifier,
         });
 
@@ -89,19 +95,11 @@ export class LoginService {
         }
 
         const data = await response.json();
-        localStorage.setItem('token', data.access_token);
-        if (data.refresh_token) {
-            localStorage.setItem('refresh_token', data.refresh_token);
-        }
-        if (data.id_token) {
-            localStorage.setItem('id_token', data.id_token);
-        }
-        this.setAuthHeader(data.access_token);
-        this.authenticated = true;
+        this.storeTokenResponse(data);
     }
 
     async refreshToken(): Promise<boolean> {
-        const refreshToken = localStorage.getItem('refresh_token');
+        const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
         if (!refreshToken) return false;
 
         const body = new URLSearchParams({
@@ -120,12 +118,7 @@ export class LoginService {
             if (!response.ok) return false;
 
             const data = await response.json();
-            localStorage.setItem('token', data.access_token);
-            if (data.refresh_token) {
-                localStorage.setItem('refresh_token', data.refresh_token);
-            }
-            this.setAuthHeader(data.access_token);
-            this.authenticated = true;
+            this.storeTokenResponse(data);
             return true;
         } catch {
             return false;
@@ -133,9 +126,21 @@ export class LoginService {
     }
 
     updateToken(token: string) {
-        localStorage.setItem('token', token);
+        localStorage.setItem(TOKEN_KEY, token);
         this.setAuthHeader(token);
-        this.verifyAuthenticated();
+        this.authenticated = true;
+    }
+
+    private storeTokenResponse(data: any) {
+        localStorage.setItem(TOKEN_KEY, data.access_token);
+        if (data.refresh_token) {
+            localStorage.setItem(REFRESH_TOKEN_KEY, data.refresh_token);
+        }
+        if (data.id_token) {
+            localStorage.setItem(ID_TOKEN_KEY, data.id_token);
+        }
+        this.setAuthHeader(data.access_token);
+        this.authenticated = true;
     }
 
     setAuthHeader(token: string) {
@@ -146,11 +151,11 @@ export class LoginService {
     logout(redirectToAuthServer = true) {
         this.kycApi.httpClient.configure(config => config.withDefaults({ headers: {'Authorization': ''} }));
         this.appApi.httpClient.configure(config => config.withDefaults({ headers: {'Authorization': ''} }));
-        const idToken = localStorage.getItem('id_token');
-        localStorage.removeItem('token');
-        localStorage.removeItem('refresh_token');
-        localStorage.removeItem('id_token');
-        localStorage.removeItem('peppolActive');
+        const idToken = localStorage.getItem(ID_TOKEN_KEY);
+        localStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem(REFRESH_TOKEN_KEY);
+        localStorage.removeItem(ID_TOKEN_KEY);
+        localStorage.removeItem(PEPPOL_ACTIVE_KEY);
         this.authenticated = false;
 
         if (redirectToAuthServer && idToken) {

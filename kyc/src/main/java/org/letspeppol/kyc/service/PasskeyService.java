@@ -75,8 +75,6 @@ public class PasskeyService {
         this.credentialDataConverter = new AttestedCredentialDataConverter(new ObjectConverter());
     }
 
-    // --- Registration (from SPA, authenticated with JWT) ---
-
     public Map<String, Object> generateRegistrationOptions(UUID accountExternalId, String displayName) {
         Account account = accountRepo.findByExternalId(accountExternalId)
                 .orElseThrow(() -> new IllegalArgumentException("Account not found"));
@@ -167,8 +165,6 @@ public class PasskeyService {
         passkeyRepo.save(credential);
     }
 
-    // --- Authentication (from login page, session-based) ---
-
     public Map<String, Object> generateAuthenticationOptions(String email, HttpSession session) {
         byte[] challenge = new byte[32];
         secureRandom.nextBytes(challenge);
@@ -231,12 +227,8 @@ public class PasskeyService {
         stored.setLastUsedOn(Instant.now());
         passkeyRepo.save(stored);
 
-        // Eagerly load the Account to avoid LazyInitializationException after transaction ends
-        return accountRepo.findById(stored.getAccount().getId())
-                .orElseThrow(() -> new IllegalArgumentException("Account not found"));
+        return stored.getAccount();
     }
-
-    // --- Management ---
 
     public List<PasskeyDto> listCredentials(UUID accountExternalId) {
         return passkeyRepo.findAllByAccountExternalId(accountExternalId).stream()

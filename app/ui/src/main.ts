@@ -4,6 +4,8 @@ import {I18nConfiguration} from "@aurelia/i18n";
 import { LetsPeppol } from './app/lets-peppol';
 import {Alert} from "./components/alert/alert";
 import {AuthenticationHook} from "./app/authentication-hook";
+import {DateFormatConverter} from "./app/value-converters/date-format";
+import {DateTimeFormatConverter} from "./app/value-converters/date-time-format";
 import * as en from "./app/locale/translation_en.json";
 import * as fr from "./app/locale/translation_fr.json";
 import * as nl from "./app/locale/translation_nl.json";
@@ -27,6 +29,6 @@ Aurelia
             };
         })
     )
-    .register(Alert, AuthenticationHook)
+    .register(Alert, AuthenticationHook, DateFormatConverter, DateTimeFormatConverter)
     .app(LetsPeppol)
     .start();

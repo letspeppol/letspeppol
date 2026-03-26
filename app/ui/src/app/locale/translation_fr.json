@@ -61,7 +61,10 @@
     "register" : "Enregistrez votre entreprise",
     "continue" : "Se connecter",
     "forgot" : "Mot de passe oublié",
-    "remember" : "Se souvenir de moi"
+    "remember" : "Se souvenir de moi",
+    "passkey": "Se connecter avec une clé d'accès",
+    "or": "ou",
+    "redirecting": "Redirection vers la connexion..."
   },
   "onboarding": {
     "title": "Étapes d’onboarding",
@@ -195,7 +198,7 @@
     "account" : "Compte",
     "brand-alt" : "Let's Peppol",
     "toggle-theme" : "Changer de thème",
-    "new-feature": "Nouvelle fonctionnalité “Notifications” ajoutée au Compte"
+    “new-feature”: “Nouvelles fonctionnalités dans le Compte : Clés d'accès, Authentification à deux facteurs & Notifications”
   },
   "alert" : {
     "success" : "Succès",
@@ -441,5 +444,53 @@
   },
   "session" : {
     "continue-title" : "Continuer la session"
+  },
+  "totp": {
+    "title": "Authentification à deux facteurs",
+    "loading": "Chargement...",
+    "disabled": "L'authentification à deux facteurs n'est pas activée.",
+    "enable": "Activer la 2FA",
+    "scan-qr": "Scannez ce QR code avec votre application d'authentification :",
+    "manual-entry": "Impossible de scanner ? Entrez cette clé manuellement",
+    "enter-code": "Entrez le code à 6 chiffres de votre application",
+    "invalid-code": "Code invalide. Veuillez réessayer.",
+    "verifying": "Vérification...",
+    "verify-enable": "Vérifier et activer",
+    "recovery-warning": "Sauvegardez ces codes de récupération. Vous ne les reverrez plus.",
+    "copy": "Copier",
+    "download": "Télécharger",
+    "done": "Terminé",
+    "enabled": "L'authentification à deux facteurs est activée.",
+    "disable": "Désactiver la 2FA",
+    "disable-confirm": "Entrez votre code d'authentification actuel pour désactiver la 2FA :",
+    "auth-code": "Code d'authentification",
+    "invalid-code-short": "Code invalide.",
+    "disabling": "Désactivation...",
+    "enabled-alert": "Authentification à deux facteurs activée",
+    "disabled-alert": "Authentification à deux facteurs désactivée",
+    "load-error": "Échec du chargement du statut 2FA",
+    "setup-error": "Échec du démarrage de la configuration 2FA",
+    "recovery-copied": "Codes de récupération copiés",
+    "copy-error": "Échec de la copie"
+  },
+  "passkey": {
+    "title": "Clés d'accès",
+    "not-supported": "Votre navigateur ne prend pas en charge les clés d'accès.",
+    "empty": "Aucune clé d'accès enregistrée.",
+    "name-placeholder": "Nom de la clé (ex. MacBook Pro)",
+    "add": "Ajouter une clé",
+    "registering": "Enregistrement...",
+    "last-used-never": "Jamais",
+    "added": "Ajoutée le",
+    "last-used": "Dernière utilisation",
+    "default-name": "Ma clé d'accès",
+    "registered": "Clé d'accès enregistrée",
+    "load-error": "Échec du chargement des clés d'accès",
+    "register-error": "Échec de l'enregistrement de la clé d'accès",
+    "delete-title": "Supprimer la clé d'accès",
+    "delete-confirm": "Êtes-vous sûr de vouloir supprimer la clé d'accès \"{{name}}\" ?",
+    "deleted": "Clé d'accès supprimée",
+    "delete-error": "Échec de la suppression de la clé d'accès",
+    "rename-error": "Échec du renommage de la clé d'accès"
   }
 }

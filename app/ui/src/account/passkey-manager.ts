@@ -1,5 +1,6 @@
 import {resolve} from "@aurelia/kernel";
 import {IEventAggregator} from "aurelia";
+import {I18N} from "@aurelia/i18n";
 import {PasskeyDto, PasskeyService} from "../services/kyc/passkey-service";
 import {AlertType} from "../components/alert/alert";
 import {ConfirmationModalContext} from "../components/confirmation/confirmation-modal-context";
@@ -8,6 +9,7 @@ export class PasskeyManager {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
     private readonly passkeyService = resolve(PasskeyService);
     private readonly confirmationModalContext = resolve(ConfirmationModalContext);
+    private readonly i18n: I18N = resolve(I18N);
 
     passkeys: PasskeyDto[] = [];
     supported = false;
@@ -15,6 +17,10 @@ export class PasskeyManager {
     newPasskeyName = '';
     editingId: number | null = null;
     editingName = '';
+
+    get neverText() { return this.i18n.tr('passkey.last-used-never'); }
+    get addText() { return this.i18n.tr('passkey.add'); }
+    get registeringText() { return this.i18n.tr('passkey.registering'); }
 
     attaching() {
         this.supported = !!window.PublicKeyCredential;
@@ -27,13 +33,13 @@ export class PasskeyManager {
         try {
             this.passkeys = await this.passkeyService.listPasskeys();
         } catch {
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to load passkeys"});
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('passkey.load-error')});
         }
     }
 
     async addPasskey() {
         if (!this.newPasskeyName.trim()) {
-            this.newPasskeyName = 'My passkey';
+            this.newPasskeyName = this.i18n.tr('passkey.default-name');
         }
         const displayName = this.newPasskeyName.trim();
 
@@ -43,13 +49,13 @@ export class PasskeyManager {
             const credential = await navigator.credentials.create({publicKey: options}) as PublicKeyCredential;
             if (!credential) return;
             await this.passkeyService.verifyRegistration(credential, challengeToken, displayName);
-            this.ea.publish('alert', {alertType: AlertType.Success, text: "Passkey registered"});
+            this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('passkey.registered')});
             this.newPasskeyName = '';
             await this.loadPasskeys();
         } catch (e: any) {
             if (e.name !== 'AbortError' && e.name !== 'NotAllowedError') {
                 console.error('Passkey registration failed:', e);
-                this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to register passkey"});
+                this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('passkey.register-error')});
             }
         } finally {
             this.adding = false;
@@ -58,8 +64,8 @@ export class PasskeyManager {
 
     confirmDelete(passkey: PasskeyDto) {
         this.confirmationModalContext.showConfirmationModal(
-            "Delete passkey",
-            `Are you sure you want to delete the passkey "${passkey.displayName}"?`,
+            this.i18n.tr('passkey.delete-title'),
+            this.i18n.tr('passkey.delete-confirm', {name: passkey.displayName}),
             () => this.deletePasskey(passkey.id),
             undefined
         );
@@ -68,10 +74,10 @@ export class PasskeyManager {
     async deletePasskey(id: number) {
         try {
             await this.passkeyService.deletePasskey(id);
-            this.ea.publish('alert', {alertType: AlertType.Success, text: "Passkey deleted"});
+            this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('passkey.deleted')});
             await this.loadPasskeys();
         } catch {
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to delete passkey"});
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('passkey.delete-error')});
         }
     }
 
@@ -93,15 +99,7 @@ export class PasskeyManager {
             this.editingId = null;
             this.editingName = '';
         } catch {
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to rename passkey"});
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('passkey.rename-error')});
         }
-    }
-
-    formatDate(dateStr: string | null): string {
-        if (!dateStr) return 'Never';
-        return new Date(dateStr).toLocaleDateString(undefined, {
-            year: 'numeric', month: 'short', day: 'numeric',
-            hour: '2-digit', minute: '2-digit'
-        });
     }
 }

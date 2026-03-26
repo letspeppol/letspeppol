@@ -3,7 +3,6 @@ import {LoginService} from "../services/app/login-service";
 
 export class Callback {
     private readonly loginService = resolve(LoginService);
-    error = false;
     message = 'Completing login...';
 
     async attached() {
@@ -22,7 +21,6 @@ export class Callback {
             window.location.href = '/';
         } catch (e) {
             console.error('Callback failed:', e);
-            this.error = true;
             this.message = `Authentication failed: ${e instanceof Error ? e.message : e}`;
         }
     }

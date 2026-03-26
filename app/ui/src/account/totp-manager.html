@@ -2,42 +2,42 @@
     <import from="./totp-manager.css"></import>
 
     <!-- Loading -->
-    <div if.bind="state === 'loading'" class="totp-status">
+    <div if.bind="state === 'loading'" class="totp-status" t="totp.loading">
         Loading...
     </div>
 
     <!-- Disabled -->
     <div if.bind="state === 'disabled'">
-        <p class="totp-status">Two-factor authentication is not enabled.</p>
+        <p class="totp-status" t="totp.disabled">Two-factor authentication is not enabled.</p>
         <button type="button" class="btn primary" click.trigger="startSetup()" disabled.bind="busy">
             <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
-            <span>Enable 2FA</span>
+            <span t="totp.enable">Enable 2FA</span>
         </button>
     </div>
 
     <!-- Setup: show QR + verify -->
     <div if.bind="state === 'setup'" class="totp-setup">
-        <p>Scan this QR code with your authenticator app:</p>
+        <p t="totp.scan-qr">Scan this QR code with your authenticator app:</p>
         <div class="totp-qr">
             <img src.bind="setupData.qrCodeDataUri" alt="TOTP QR Code" width="200" height="200">
         </div>
         <details class="totp-manual-entry">
-            <summary>Can't scan? Enter this key manually</summary>
+            <summary t="totp.manual-entry">Can't scan? Enter this key manually</summary>
             <code class="totp-secret">${setupData.secret}</code>
         </details>
         <div class="totp-verify-input">
             <label class="field">
-                <span>Enter the 6-digit code from your app</span>
+                <span t="totp.enter-code">Enter the 6-digit code from your app</span>
                 <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6"
                        value.bind="verifyCode" placeholder="000000"
                        keyup.trigger="$event.key === 'Enter' ? verifyAndEnable() : undefined"
                        style="text-align: center; font-size: 1.25rem; letter-spacing: 0.3rem;">
             </label>
-            <p if.bind="verifyError" class="form-error">Invalid code. Please try again.</p>
+            <p if.bind="verifyError" class="form-error" t="totp.invalid-code">Invalid code. Please try again.</p>
             <div class="totp-setup-actions">
-                <button type="button" class="btn" click.trigger="cancelSetup()">Cancel</button>
+                <button type="button" class="btn" click.trigger="cancelSetup()" t="common.cancel">Cancel</button>
                 <button type="button" class="btn primary" click.trigger="verifyAndEnable()" disabled.bind="busy || !verifyCode.trim()">
-                    ${busy ? 'Verifying...' : 'Verify & Enable'}
+                    ${busy ? verifyingText : verifyEnableText}
                 </button>
             </div>
         </div>
@@ -47,7 +47,7 @@
     <div if.bind="state === 'recovery-codes'" class="totp-recovery">
         <div class="totp-recovery-warning">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
-            <span>Save these recovery codes. You won't see them again.</span>
+            <span t="totp.recovery-warning">Save these recovery codes. You won't see them again.</span>
         </div>
         <div class="totp-recovery-grid">
             <code repeat.for="code of recoveryCodes" class="totp-recovery-code">${code}</code>
@@ -55,13 +55,13 @@
         <div class="totp-recovery-actions">
             <button type="button" class="btn" click.trigger="copyRecoveryCodes()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-                Copy
+                <span t="totp.copy">Copy</span>
             </button>
             <button type="button" class="btn" click.trigger="downloadRecoveryCodes()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-                Download
+                <span t="totp.download">Download</span>
             </button>
-            <button type="button" class="btn primary" click.trigger="finishSetup()">Done</button>
+            <button type="button" class="btn primary" click.trigger="finishSetup()" t="totp.done">Done</button>
         </div>
     </div>
 
@@ -69,27 +69,27 @@
     <div if.bind="state === 'enabled'">
         <p class="totp-status totp-status--enabled">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
-            Two-factor authentication is enabled.
+            <span t="totp.enabled">Two-factor authentication is enabled.</span>
         </p>
-        <button type="button" class="btn danger" click.trigger="startDisable()">Disable 2FA</button>
+        <button type="button" class="btn danger" click.trigger="startDisable()" t="totp.disable">Disable 2FA</button>
     </div>
 
     <!-- Disabling: confirm with code -->
     <div if.bind="state === 'disabling'">
-        <p class="totp-status">Enter your current authenticator code to disable 2FA:</p>
+        <p class="totp-status" t="totp.disable-confirm">Enter your current authenticator code to disable 2FA:</p>
         <div class="totp-verify-input">
             <label class="field">
-                <span>Authentication code</span>
+                <span t="totp.auth-code">Authentication code</span>
                 <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6"
                        value.bind="disableCode" placeholder="000000"
                        keyup.trigger="$event.key === 'Enter' ? confirmDisable() : undefined"
                        style="text-align: center; font-size: 1.25rem; letter-spacing: 0.3rem;">
             </label>
-            <p if.bind="disableError" class="form-error">Invalid code.</p>
+            <p if.bind="disableError" class="form-error" t="totp.invalid-code-short">Invalid code.</p>
             <div class="totp-setup-actions">
-                <button type="button" class="btn" click.trigger="cancelDisable()">Cancel</button>
+                <button type="button" class="btn" click.trigger="cancelDisable()" t="common.cancel">Cancel</button>
                 <button type="button" class="btn danger" click.trigger="confirmDisable()" disabled.bind="busy || !disableCode.trim()">
-                    ${busy ? 'Disabling...' : 'Disable 2FA'}
+                    ${busy ? disablingText : disableText}
                 </button>
             </div>
         </div>

@@ -62,7 +62,10 @@
     "register" : "Unternehmen registrieren",
     "continue" : "Anmelden",
     "forgot" : "Passwort vergessen",
-    "remember": "Angemeldet bleiben"
+    "remember": "Angemeldet bleiben",
+    "passkey": "Mit Passkey anmelden",
+    "or": "oder",
+    "redirecting": "Weiterleitung zur Anmeldung..."
   },
   "onboarding": {
     "title": "Onboarding-Schritte",
@@ -196,7 +199,7 @@
     "account": "Konto",
     "brand-alt": "Let's Peppol",
     "toggle-theme": "Theme umschalten",
-    "new-feature": "Neue Funktion „Benachrichtigungen“ im Konto hinzugefügt"
+    “new-feature”: “Neue Funktionen im Konto: Passkeys, Zwei-Faktor-Authentifizierung & Benachrichtigungen”
   },
   "alert": {
     "success": "Erfolg",
@@ -442,5 +445,53 @@
   },
   "session": {
     "continue-title": "Sitzung fortsetzen"
+  },
+  "totp": {
+    "title": "Zwei-Faktor-Authentifizierung",
+    "loading": "Laden...",
+    "disabled": "Zwei-Faktor-Authentifizierung ist nicht aktiviert.",
+    "enable": "2FA aktivieren",
+    "scan-qr": "Scannen Sie diesen QR-Code mit Ihrer Authentifizierungs-App:",
+    "manual-entry": "Scannen nicht möglich? Geben Sie diesen Schlüssel manuell ein",
+    "enter-code": "Geben Sie den 6-stelligen Code aus Ihrer App ein",
+    "invalid-code": "Ungültiger Code. Bitte versuchen Sie es erneut.",
+    "verifying": "Überprüfung...",
+    "verify-enable": "Überprüfen und aktivieren",
+    "recovery-warning": "Speichern Sie diese Wiederherstellungscodes. Sie werden sie nicht erneut sehen.",
+    "copy": "Kopieren",
+    "download": "Herunterladen",
+    "done": "Fertig",
+    "enabled": "Zwei-Faktor-Authentifizierung ist aktiviert.",
+    "disable": "2FA deaktivieren",
+    "disable-confirm": "Geben Sie Ihren aktuellen Authentifizierungscode ein, um 2FA zu deaktivieren:",
+    "auth-code": "Authentifizierungscode",
+    "invalid-code-short": "Ungültiger Code.",
+    "disabling": "Deaktivierung...",
+    "enabled-alert": "Zwei-Faktor-Authentifizierung aktiviert",
+    "disabled-alert": "Zwei-Faktor-Authentifizierung deaktiviert",
+    "load-error": "Laden des 2FA-Status fehlgeschlagen",
+    "setup-error": "Starten der 2FA-Einrichtung fehlgeschlagen",
+    "recovery-copied": "Wiederherstellungscodes kopiert",
+    "copy-error": "Kopieren fehlgeschlagen"
+  },
+  "passkey": {
+    "title": "Passkeys",
+    "not-supported": "Ihr Browser unterstützt keine Passkeys.",
+    "empty": "Noch keine Passkeys registriert.",
+    "name-placeholder": "Passkey-Name (z.B. MacBook Pro)",
+    "add": "Passkey hinzufügen",
+    "registering": "Registrierung...",
+    "last-used-never": "Nie",
+    "added": "Hinzugefügt am",
+    "last-used": "Zuletzt verwendet",
+    "default-name": "Mein Passkey",
+    "registered": "Passkey registriert",
+    "load-error": "Laden der Passkeys fehlgeschlagen",
+    "register-error": "Registrierung des Passkeys fehlgeschlagen",
+    "delete-title": "Passkey löschen",
+    "delete-confirm": "Möchten Sie den Passkey \"{{name}}\" wirklich löschen?",
+    "deleted": "Passkey gelöscht",
+    "delete-error": "Löschen des Passkeys fehlgeschlagen",
+    "rename-error": "Umbenennung des Passkeys fehlgeschlagen"
   }
 }

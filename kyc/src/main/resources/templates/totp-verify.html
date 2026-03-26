@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Two-Factor Authentication — Let's Peppol</title>
+    <title th:text="#{totp.page-title}">Two-Factor Authentication — Let's Peppol</title>
     <link rel="stylesheet" th:href="@{/css/login.css}">
     <meta name="_csrf" th:content="${_csrf.token}">
     <meta name="_csrf_header" th:content="${_csrf.headerName}">
@@ -26,41 +26,41 @@
         <div class="logo">
             <img th:src="@{/images/logo.png}" alt="Let's Peppol" width="192" height="80">
         </div>
-        <h1>Two-Factor Authentication</h1>
-        <p style="text-align: center; color: var(--text-secondary); margin-bottom: 1rem;">
+        <h1 th:text="#{totp.heading}">Two-Factor Authentication</h1>
+        <p style="text-align: center; color: var(--text-secondary); margin-bottom: 1rem;" th:text="#{totp.instructions}">
             Enter the 6-digit code from your authenticator app.
         </p>
         <div id="totp-form">
             <div class="grid">
                 <label class="field full">
-                    <span>Authentication code</span>
+                    <span th:text="#{totp.code-label}">Authentication code</span>
                     <input id="totp-code" type="text" inputmode="numeric" pattern="[0-9]*"
                            maxlength="6" placeholder="000000" required autofocus autocomplete="one-time-code"
                            style="text-align: center; font-size: 1.5rem; letter-spacing: 0.5rem;">
                 </label>
             </div>
-            <p id="totp-error" class="form-error" style="display: none" aria-live="assertive">Invalid code. Please try again.</p>
+            <p id="totp-error" class="form-error" style="display: none" aria-live="assertive" th:text="#{totp.code-error}">Invalid code. Please try again.</p>
             <div class="auth-actions">
-                <button type="button" id="verify-btn" class="btn primary" onclick="verifyCode()">Verify</button>
+                <button type="button" id="verify-btn" class="btn primary" onclick="verifyCode()" th:text="#{totp.verify-button}">Verify</button>
             </div>
             <div style="text-align: center; margin-top: 1rem;">
-                <a href="#" id="toggle-recovery" onclick="toggleRecovery(event)">Use a recovery code instead</a>
+                <a href="#" id="toggle-recovery" onclick="toggleRecovery(event)" th:text="#{totp.use-recovery}">Use a recovery code instead</a>
             </div>
         </div>
         <div id="recovery-form" style="display: none">
             <div class="grid">
                 <label class="field full">
-                    <span>Recovery code</span>
+                    <span th:text="#{totp.recovery-label}">Recovery code</span>
                     <input id="recovery-code" type="text" maxlength="8" placeholder="XXXXXXXX" required
                            style="text-align: center; font-size: 1.25rem; letter-spacing: 0.25rem;">
                 </label>
             </div>
-            <p id="recovery-error" class="form-error" style="display: none" aria-live="assertive">Invalid recovery code.</p>
+            <p id="recovery-error" class="form-error" style="display: none" aria-live="assertive" th:text="#{totp.recovery-error}">Invalid recovery code.</p>
             <div class="auth-actions">
-                <button type="button" id="recovery-btn" class="btn primary" onclick="verifyRecovery()">Verify</button>
+                <button type="button" id="recovery-btn" class="btn primary" onclick="verifyRecovery()" th:text="#{totp.verify-button}">Verify</button>
             </div>
             <div style="text-align: center; margin-top: 1rem;">
-                <a href="#" id="toggle-totp" onclick="toggleTotp(event)">Use authenticator code instead</a>
+                <a href="#" id="toggle-totp" onclick="toggleTotp(event)" th:text="#{totp.use-authenticator}">Use authenticator code instead</a>
             </div>
         </div>
         <div class="auth-info">
@@ -70,8 +70,8 @@
                 <path d="M12 16v-4"/>
                 <path d="M12 8h.01"/>
             </svg>
-            <span>Lost your authenticator?</span>
-            <a href="#" onclick="toggleRecovery(event)">Use a recovery code</a>
+            <span th:text="#{totp.lost-authenticator}">Lost your authenticator?</span>
+            <a href="#" onclick="toggleRecovery(event)" th:text="#{totp.recovery-link}">Use a recovery code</a>
         </div>
     </div>
 </div>
@@ -138,23 +138,6 @@
         if (e.key === 'Enter') verifyRecovery();
     });
 </script>
-<script>
-    (function() {
-        var btn = document.getElementById('theme-toggle');
-        function updateIcon() {
-            var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-            btn.querySelector('.icon-sun').style.display = isDark ? 'none' : 'block';
-            btn.querySelector('.icon-moon').style.display = isDark ? 'block' : 'none';
-        }
-        updateIcon();
-        btn.addEventListener('click', function() {
-            var current = document.documentElement.getAttribute('data-theme');
-            var next = current === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', next);
-            localStorage.setItem('peppol.theme.v1', next);
-            updateIcon();
-        });
-    })();
-</script>
+<script th:src="@{/js/theme-toggle.js}" defer></script>
 </body>
 </html>
