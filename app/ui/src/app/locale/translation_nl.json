@@ -416,6 +416,8 @@
     "enable-email-notification": "E-mailmeldingen inschakelen",
     "add-attachment-to-notification": "Bijlage toevoegen aan de melding",
     "email-notification-cc-list": "CC-lijst voor e-mailmeldingen",
+    "add-pdf-to-sending-invoice": "PDF toevoegen aan factuur",
+    "invoice-settings": "Factuurinstellingen",
     "registration-failed": {
       "contact-us": "De registratie is niet afgerond. Neem contact op met support via support@letspeppol.org voor de volgende stappen.",
       "contact-provider": "Uw Peppol-ID is momenteel geregistreerd bij {{provider}}. Neem contact met hen op om het uit te schrijven, log daarna in en probeer opnieuw te activeren.",

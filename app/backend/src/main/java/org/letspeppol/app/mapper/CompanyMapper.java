@@ -24,6 +24,7 @@ public class CompanyMapper {
                 peppolActive,
                 company.isEnableEmailNotification(),
                 company.isAddAttachmentToNotification(),
+                company.isAddPdfToSendingInvoice(),
                 company.getEmailNotificationCcList(),
                 AddressMapper.toDto(company.getRegisteredOffice())
         );

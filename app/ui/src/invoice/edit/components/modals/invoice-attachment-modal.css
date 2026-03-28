@@ -13,3 +13,7 @@
 .upload-wrapper p {
     margin-top: 0;
 }
+
+.upload-wrapper.dragging {
+    background-color: #2C3C6911; /* Light blue background for drag over */
+}

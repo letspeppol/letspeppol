@@ -1,9 +1,22 @@
 package org.letspeppol.app.service;
 
+import com.helger.ubl21.UBL21Marshaller;
+import com.helger.xml.serialize.read.DOMReader;
+import com.helger.xml.serialize.read.DOMReaderSettings;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
+import lombok.extern.slf4j.Slf4j;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.AttachmentType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.DocumentReferenceType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.DocumentDescriptionType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.EmbeddedDocumentBinaryObjectType;
+import oasis.names.specification.ubl.schema.xsd.creditnote_21.CreditNoteType;
+import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
+import org.hibernate.service.spi.ServiceException;
 import org.letspeppol.app.exception.UblException;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+import org.springframework.web.filter.RequestContextFilter;
+import org.w3c.dom.Document;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
@@ -23,10 +36,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
+@Slf4j
 @Service
 public class UblInvoicePdfService {
+
+    private final RequestContextFilter requestContextFilter;
 
     public enum RenderMode {
         FINAL,
@@ -36,13 +54,15 @@ public class UblInvoicePdfService {
 
     private static final String INVOICE_XSLT = "pdf/ubl-invoice-to-html.xsl";
     private static final String CREDITNOTE_XSLT = "pdf/ubl-creditnote-to-html.xsl";
+    private static final String INVOICE_FILENAME = "generated-invoice.pdf";
 
     private final Templates invoiceToHtmlTemplates;
     private final Templates creditNoteToHtmlTemplates;
 
-    public UblInvoicePdfService() {
+    public UblInvoicePdfService(RequestContextFilter requestContextFilter) {
         this.invoiceToHtmlTemplates = compileTemplates(INVOICE_XSLT);
         this.creditNoteToHtmlTemplates = compileTemplates(CREDITNOTE_XSLT);
+        this.requestContextFilter = requestContextFilter;
     }
 
     public byte[] toPdf(String ublXml) {
@@ -144,5 +164,82 @@ public class UblInvoicePdfService {
         } catch (IOException e) {
             throw new IllegalStateException("Failed to load XSLT template from classpath: " + classpathLocation, e);
         }
+    }
+
+    public String addRenderedPdfToUbl(String ublXml, String invoiceNumber) {
+        byte[] pdfBytes = toPdf(ublXml);
+        DocumentReferenceType documentReferenceType = createDocumentReferenceType(invoiceNumber, pdfBytes);
+        byte[] updatedUbl = addAttachmentToUbl(ublXml.getBytes(StandardCharsets.UTF_8), documentReferenceType);
+        return new String(updatedUbl, Charset.defaultCharset());
+    }
+
+    private DocumentReferenceType createDocumentReferenceType(String invoiceNumber, byte[] pdfBytes) {
+        EmbeddedDocumentBinaryObjectType embeddedDocumentBinaryObjectType = new EmbeddedDocumentBinaryObjectType();
+        embeddedDocumentBinaryObjectType.setFilename(INVOICE_FILENAME);
+        embeddedDocumentBinaryObjectType.setMimeCode("application/pdf");
+        embeddedDocumentBinaryObjectType.setValue(pdfBytes);
+
+        AttachmentType attachmentType = new AttachmentType();
+        attachmentType.setEmbeddedDocumentBinaryObject(embeddedDocumentBinaryObjectType);
+
+        DocumentReferenceType documentReferenceType = new DocumentReferenceType();
+        documentReferenceType.setID(invoiceNumber);
+        documentReferenceType.setAttachment(attachmentType);
+        return documentReferenceType;
+    }
+
+    private byte[] addAttachmentToUbl(byte[] originalUbl, DocumentReferenceType documentReferenceType) {
+        try {
+            // Parse XML as invoice
+            Document doc = DOMReader.readXMLDOM(
+                    new ByteArrayInputStream(originalUbl),
+                    new DOMReaderSettings().setSchema(UBL21Marshaller.invoice().getSchema())
+            );
+            if (doc != null) {
+                final InvoiceType invoice = UBL21Marshaller.invoice().read(doc);
+                if (invoice == null) {
+                    throw new UblException("Could not parse invoice ubl");
+                }
+                if (hasGeneratedPdfAttachment(invoice.getAdditionalDocumentReference())) {
+                    log.warn("Ubl already has generated invoice, not adding a new one");
+                    return originalUbl;
+                }
+                invoice.getAdditionalDocumentReference().addFirst(documentReferenceType);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                UBL21Marshaller.invoice().write(invoice, baos);
+                return baos.toByteArray();
+            }
+
+            // Parse XML as credit note
+            doc = DOMReader.readXMLDOM(
+                    new ByteArrayInputStream(originalUbl),
+                    new DOMReaderSettings().setSchema(UBL21Marshaller.creditNote().getSchema())
+            );
+            if (doc != null) {
+                final CreditNoteType creditNote = UBL21Marshaller.creditNote().read(doc);
+                if (creditNote == null) {
+                    throw new UblException("Could not parse credit note ubl");
+                }
+                if (hasGeneratedPdfAttachment(creditNote.getAdditionalDocumentReference())) {
+                    log.warn("Ubl already has generated credit note, not adding a new one");
+                    return originalUbl;
+                }
+                creditNote.getAdditionalDocumentReference().addFirst(documentReferenceType);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                UBL21Marshaller.creditNote().write(creditNote, baos);
+                return baos.toByteArray();
+            }
+            throw new UblException("Unknown ubl type");
+        } catch (Exception e) {
+            log.error("Could not parse ubl", e);
+            throw e;
+        }
+    }
+
+    private boolean hasGeneratedPdfAttachment(List<DocumentReferenceType> documentReferenceTypes) {
+        return documentReferenceTypes.stream().anyMatch(documentReference ->
+                documentReference.getAttachment() != null &&
+                documentReference.getAttachment().getEmbeddedDocumentBinaryObject() != null &&
+                INVOICE_FILENAME.equals(documentReference.getAttachment().getEmbeddedDocumentBinaryObject().getFilename()));
     }
 }

@@ -33,6 +33,7 @@ public class Company extends GenericEntity{
 
     private boolean enableEmailNotification;
     private boolean addAttachmentToNotification;
+    private boolean addPdfToSendingInvoice;
     private String emailNotificationCcList; // comma-separated list
 
 // TODO    private boolean noArchive; //Setting by user that data should not be stored once processed (user is absolute owner & responsible)

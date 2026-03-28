@@ -417,6 +417,8 @@
     "enable-email-notification": "Activer les notifications par e-mail",
     "add-attachment-to-notification": "Ajouter une pièce jointe à la notification",
     "email-notification-cc-list": "Liste des destinataires en copie (CC) des notifications par e-mail",
+    "add-pdf-to-sending-invoice": "Ajouter un PDF à la facture",
+    "invoice-settings": "Paramètres de facturation",
     "registration-failed": {
       "contact-us": "L'inscription n'a pas été finalisée. Veuillez contacter le support à l’adresse support@letspeppol.org pour la suite.",
       "contact-provider": "Votre identifiant Peppol est actuellement enregistré auprès de {{provider}}. Veuillez les contacter pour le désinscrire, puis connectez-vous et réessayez l’activation.",
