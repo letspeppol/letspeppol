@@ -29,7 +29,7 @@
                             <div style="display: flex; gap: var(--space-1)">
                                 <label class="field">
                                     <span t="label.enterprise-number">Enterprise Number</span>
-                                    <input type="text" value.bind="partnerContext.selectedPartner.identifier" change.trigger="enterpriseNumberChanged()"/>
+                                    <input type="text" value.bind="customer.PartyLegalEntity.CompanyID.value" change.trigger="enterpriseNumberChanged()"/>
                                 </label>
                                 <label class="field">
                                     <span t="label.vat-number">VAT Number</span>

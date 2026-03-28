@@ -141,6 +141,7 @@ export class InvoiceContext {
 
     public mapPartner(party: Party): PartnerDto {
         return {
+            identifier: party.PartyLegalEntity?.CompanyID.value,
             vatNumber: party.PartyTaxScheme?.CompanyID?.value,
             name: party.PartyName?.Name,
             peppolId: `${party.EndpointID.__schemeID}:${party.EndpointID.value}`,
