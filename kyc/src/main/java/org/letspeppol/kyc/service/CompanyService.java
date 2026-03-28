@@ -37,8 +37,8 @@ public class CompanyService {
     private final ProxyService proxyService;
     private final Counter companyUnregistrationCounter;
 
-    public List<CompanySearchResponse> search(String vatNumber, String peppolId, String name) {
-        return companyRepository.search(vatNumber, peppolId, name != null ? name.toLowerCase(Locale.ROOT) + "%" : null, Pageable.ofSize(5)).stream()
+    public List<CompanySearchResponse> search(String identifier, String vatNumber, String peppolId, String name) {
+        return companyRepository.search(identifier, vatNumber, peppolId, name != null ? name.toLowerCase(Locale.ROOT) + "%" : null, Pageable.ofSize(5)).stream()
                 .map(CompanyMapper::toSearchResponse)
                 .collect(Collectors.toList());
     }

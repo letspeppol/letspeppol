@@ -34,6 +34,7 @@ public class DataInitializer implements CommandLineRunner {
         if (companyRepository.findByPeppolId(peppolId).isEmpty()) {
             AccountInfo accountInfo = new AccountInfo(
                     peppolId,
+                    "0705969661",
                     "BE0705969661",
                     "Digita bv.",
                     "Demerstraat 2",
@@ -45,6 +46,7 @@ public class DataInitializer implements CommandLineRunner {
             companyService.add(accountInfo);
             PartnerDto partner = new PartnerDto(
                     null,
+                    "1023290711",
                     "BE1023290711",
                     "John Doe",
                     "john@doe.com",
@@ -59,6 +61,7 @@ public class DataInitializer implements CommandLineRunner {
             partnerService.createPartner(peppolId, partner);
             PartnerDto partner2 = new PartnerDto(
                     null,
+                    "0202239951",
                     "BE0202239951",
                     "Jane Smith",
                     "jane@smith.com",
@@ -91,6 +94,7 @@ public class DataInitializer implements CommandLineRunner {
         if (companyRepository.findByPeppolId(peppolId).isEmpty()) {
             AccountInfo accountInfo = new AccountInfo(
                     peppolId,
+                    "1023290711",
                     "BE1023290711",
                     "SoftwareOplossing bv.",
                     "Demerstraat 2",

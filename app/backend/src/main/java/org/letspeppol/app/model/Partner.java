@@ -12,6 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Partner extends GenericEntity {
 
+    private String identifier;
     private String vatNumber;
     private String name;
     private String email;
@@ -31,9 +32,10 @@ public class Partner extends GenericEntity {
     @JoinColumn(name = "registered_office_id", referencedColumnName = "id")
     private Address registeredOffice;
 
-    public Partner(String vatNumber, String name, String email, String peppolId, Boolean customer, Boolean supplier,
-                   String paymentTerms, String iban, String paymentAccountName,
+    public Partner(String identifier, String vatNumber, String name, String email, String peppolId,
+                   Boolean customer, Boolean supplier, String paymentTerms, String iban, String paymentAccountName,
                  String city, String postalCode, String street, String countryCode) {
+        this.identifier = identifier;
         this.vatNumber = vatNumber;
         this.name = name;
         this.email = email;

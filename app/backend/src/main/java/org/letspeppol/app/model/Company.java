@@ -16,7 +16,7 @@ public class Company extends GenericEntity{
 
     @Column(nullable = false, unique = true)
     private String peppolId;
-
+    private String identifier;
     private String vatNumber;
 
     @Column(nullable = false)
@@ -49,9 +49,10 @@ public class Company extends GenericEntity{
     @JoinColumn(name = "registered_office_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_company_registered_office"))
     private Address registeredOffice;
 
-    public Company(String peppolId, String vatNumber, String name, String subscriber, String subscriberEmail,
+    public Company(String peppolId, String identifier, String vatNumber, String name, String subscriber, String subscriberEmail,
                    String city, String postalCode, String street, String countryCode) {
         this.peppolId = peppolId;
+        this.identifier = identifier;
         this.vatNumber = vatNumber;
         this.name = name;
         this.subscriber = subscriber;

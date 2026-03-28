@@ -43,22 +43,22 @@ class CompanySearchTests {
         companyRepository.save(c3);
 
         // Search by name
-        List<CompanyResponse> results = companyService.search(null, null, "Acme");
+        List<CompanyResponse> results = companyService.search(identifier, null, null, "Acme");
         assertThat(results).hasSize(2);
         assertThat(results).extracting(CompanyResponse::name).contains("Acme Corp", "Acme Limited");
 
         // Search by VAT
-        results = companyService.search("BE0987", null, null);
+        results = companyService.search(identifier, "BE0987", null, null);
         assertThat(results).hasSize(1);
         assertThat(results.get(0).name()).isEqualTo("Beta Inc");
 
         // Search by Peppol ID
-        results = companyService.search(null, "0208:1122", null);
+        results = companyService.search(identifier, null, "0208:1122", null);
         assertThat(results).hasSize(1);
         assertThat(results.get(0).name()).isEqualTo("Acme Limited");
 
         // Search case insensitive
-        results = companyService.search(null, null, "acme");
+        results = companyService.search(identifier, null, null, "acme");
         assertThat(results).hasSize(2);
     }
 }

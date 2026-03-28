@@ -5,6 +5,7 @@ package org.letspeppol.kyc.dto;
  */
 public record AccountInfo(
         String peppolId,
+        String identifier,
         String vatNumber,
         String companyName,
         String street,

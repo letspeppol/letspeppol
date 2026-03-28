@@ -69,7 +69,7 @@ public class DataInitializer implements CommandLineRunner {
         }
         UUID appUUID = UUID.fromString("b095630d-1bf3-4250-bf9e-2d49e6ce505b");
         if (accountRepository.findByExternalId(appUUID).isEmpty()) {
-            Company c = companyRepository.search("BE1029545627", null, null, null).stream()
+            Company c = companyRepository.search("1029545627", "BE1029545627", null, null, null).stream()
                     .findFirst()
                     .orElseGet(() -> {
                         Company company = new Company(null, "BE1029545627", "Barge VZW");

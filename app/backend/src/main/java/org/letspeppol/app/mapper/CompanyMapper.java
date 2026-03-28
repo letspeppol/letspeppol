@@ -10,6 +10,7 @@ public class CompanyMapper {
     public static CompanyDto toDto(Company company, boolean peppolActive) {
         return new CompanyDto(
                 company.getPeppolId(),
+                company.getIdentifier(),
                 company.getVatNumber(),
                 company.getName(),
                 Objects.requireNonNullElse(company.getDisplayName(), company.getName()),

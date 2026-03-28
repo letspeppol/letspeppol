@@ -31,11 +31,13 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
 
     @Query("""
             SELECT c FROM Company c WHERE
+            (:identifier IS NULL OR c.identifier = :identifier) AND
             (:vatNumber IS NULL OR c.vatNumber = :vatNumber) AND
             (:peppolId IS NULL OR c.peppolId = :peppolId) AND
             (:name IS NULL OR LOWER(c.name) LIKE :name)
             """)
-    List<Company> search(@Param("vatNumber") String vatNumber,
+    List<Company> search(@Param("identifier") String identifier,
+                         @Param("vatNumber") String vatNumber,
                          @Param("peppolId") String peppolId,
                          @Param("name") String name,
                          Pageable pageable);

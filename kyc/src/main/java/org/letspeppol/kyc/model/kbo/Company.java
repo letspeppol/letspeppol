@@ -23,28 +23,21 @@ public class Company {
 
     @Column(nullable = true, unique = true)
     private String peppolId;
-
     private String identifier;
-
     private String vatNumber;
 
     @Column(nullable = false)
     private String name;
 
     private String city;
-
     private String postalCode;
-
     private String street;
 
     private String businessUnit;
-
     private String iban;
 
     private boolean hasKboAddress = true;
-
     private boolean registeredOnPeppol = false;
-
     private boolean suspended = false;
 
     private LocalDate inactive;

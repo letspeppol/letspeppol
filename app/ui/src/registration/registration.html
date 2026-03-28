@@ -8,8 +8,8 @@
         <div class="information" t="confirmation.belgian-only">Currently, we only activate Belgian companies. Please contact us if you’d like support for other countries.</div>
         <div class="grid">
             <label class="field full">
-                <span t="label.vat-number">VAT number</span>
-                <input name="vatNumber" type="text" t="[placeholder]placeholder.vat-number" required value.bind="vatNumber"/>
+                <span t="label.enterprise-number">Enterprise number</span>
+                <input name="enterpriseNumber" type="number" t="[placeholder]placeholder.enterprise-number" required value.bind="enterpriseNumber"/>
             </label>
             <label class="field full">
                 <span t="label.email">Email</span>
@@ -18,7 +18,7 @@
         </div>
         <p if.bind="errorCode" class="form-error" aria-live="assertive" t="error.${errorCode}">Login failed</p>
         <div class="auth-actions">
-            <button type="submit" class="btn primary" disabled.bind="!email || !vatNumber || companyService.http.isRequesting" click.trigger="checkVatNumber()">
+            <button type="submit" class="btn primary" disabled.bind="!email || !enterpriseNumber || companyService.http.isRequesting" click.trigger="checkEnterpriseNumber()">
                 <span class="loader"></span>
                 <span t="registration.create-account">Create account</span>
             </button>
@@ -29,7 +29,11 @@
     <h1 if.bind="step === 1" au-slot="header" t="registration.title-step1">Confirm your company</h1>
     <form if.bind="step === 1" class="auth-form" style="max-width: 400px">
         <div class="grid grid-col-73">
-            <label class="field full">
+            <label class="field">
+                <span t="label.enterprise-number">Enterprise nr.</span>
+                <input name="enterpriseNumber" type="number" disabled="disabled" value.to-view="company.identifier"/>
+            </label>
+            <label class="field">
                 <span t="label.vat-number">VAT number</span>
                 <input name="vatNumber" type="text" disabled="disabled" value.to-view="company.vatNumber"/>
             </label>
@@ -56,7 +60,7 @@
         </div>
         <p if.bind="errorCode" class="form-error" aria-live="assertive" t="error.${errorCode}">Login failed</p>
         <div class="auth-actions">
-            <button type="button" class="btn primary" disabled.bind="!email || !vatNumber || companyService.http.isRequesting" click.trigger="confirmCompany()">
+            <button type="button" class="btn primary" disabled.bind="!email || !enterpriseNumber || companyService.http.isRequesting" click.trigger="confirmCompany()">
                 <span t="registration.confirm-company">Confirm</span>
             </button>
         </div>

@@ -76,6 +76,9 @@ public class KboXmlSyncService {
 
         Path localXml = extractSingleXml(localZip);
 
+//        Path localXml = Path.of("/opt/documents/bits/letspeppol_docs/D20260307.KBO/D20260307.xml"); // For testing purposes only
+//        String remoteZipName = "D20260307.xml";
+
         log.info("Importing initial KBO XML from {}", localXml);
         try (InputStream in = Files.newInputStream(localXml)) {
             kboXmlParserService.importEnterprises(in);

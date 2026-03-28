@@ -4,6 +4,7 @@ import {AppApi} from "./app-api";
 
 export interface CompanyDto {
     peppolId: string,
+    identifier: string,
     vatNumber: string,
     name: string,
     displayName: string,

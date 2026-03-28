@@ -40,10 +40,12 @@
     "due-date": "Due Date",
     "type": "Type",
     "number": "Number",
-    "peppolId": "Peppol ID"
+    "peppolId": "Peppol ID",
+    "enterprise-number": "Enterprise nr."
   },
   "placeholder" : {
     "email" : "you@company.com",
+    "enterprise-number" : "0123456789",
     "vat-number" : "BE0123456789",
     "password": "••••••••",
     "product-search": "Search product",
@@ -260,6 +262,7 @@
       "postal-code": "Postal code",
       "city": "City",
       "country": "Country",
+      "kbo": "KBO",
       "vat": "VAT",
       "actions": "Actions"
     },

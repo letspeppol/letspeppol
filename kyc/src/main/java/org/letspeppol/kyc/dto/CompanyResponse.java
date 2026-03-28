@@ -5,6 +5,7 @@ import java.util.List;
 public record CompanyResponse(
         Long id,
         String peppolId,
+        String identifier,
         String vatNumber,
         String name,
         String street,
