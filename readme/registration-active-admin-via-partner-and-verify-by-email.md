@@ -1,37 +1,37 @@
-# Registration active ADMIN via ACCOUNTANT and verify by email
+# Registration active ADMIN via PARTNER and verify by email
 
 ```mermaid
 sequenceDiagram
     actor SME as SME
-    actor ACCOUNTANT as ACCOUNTANT
+    actor PARTNER as PARTNER
     participant Frontend as Frontend
     participant KYC as KYC
     participant App as App
 
-Note over SME, App: Requesting active company added to ACCOUNTANT
-    Note left of ACCOUNTANT: Visit /accountant/companies
-    ACCOUNTANT ->> Frontend: Add account( VAT, mail )
+Note over SME, App: Requesting active company added to PARTNER
+    Note left of PARTNER: Visit /partner/companies
+    PARTNER ->> Frontend: Add account( VAT, mail )
     Frontend ->> KYC: GET /kyc/api/register/company/{PeppolID}
     Note right of KYC: Find company by PeppolID <br> or do CBE lookup
     KYC ->> Frontend: CompanyResponse <br> with hasAdmin == true
-    Frontend ->> ACCOUNTANT: Show company details
+    Frontend ->> PARTNER: Show company details
 
-    Note left of ACCOUNTANT: Verify information
-    ACCOUNTANT ->> Frontend: Confirm()
+    Note left of PARTNER: Verify information
+    PARTNER ->> Frontend: Confirm()
     Frontend ->> KYC: POST /kyc/sapi/linked/request-company <br> ( AccountType.ADMIN, peppolId, email )
-    Note right of KYC: JWT == ACCOUNTANT <br> PeppolID has ADMIN <br>(= registered) <br> Generate token (Requester = Accountant, type = ADMIN)
-    KYC ->> SME: Mail "Confirm your accountant" /email-confirmation?token={token}
+    Note right of KYC: JWT == PARTNER <br> PeppolID has ADMIN <br>(= registered) <br> Generate token (Requester = Partner, type = ADMIN)
+    KYC ->> SME: Mail "Confirm your partner" /email-confirmation?token={token}
     KYC ->> Frontend: "Request email sent"
-    Frontend ->> App: POST /app/sapi/accountant/add-company <br> ( peppolId, email, name, ...? )
-    Note right of App: JWT == ACCOUNTANT <br> Store active company add request
+    Frontend ->> App: POST /app/sapi/partner/add-company <br> ( peppolId, email, name, ...? )
+    Note right of App: JWT == PARTNER <br> Store active company add request
     App ->> Frontend: OK
-    Frontend ->> ACCOUNTANT: "Account active" & "Email is sent"
+    Frontend ->> PARTNER: "Account active" & "Email is sent"
 
-Note over SME, App: Accepting ACCOUNTANT request by ADMIN
+Note over SME, App: Accepting PARTNER request by ADMIN
     Note left of SME: Receives email
     SME ->> Frontend: Open link in email
     Frontend ->> KYC: POST /kyc/api/register/verify?token={token}
-    Note right of KYC: Validate token <br> Requester == ACCOUNTANT <br> Type == ADMIN <br> PeppolID has ADMIN
+    Note right of KYC: Validate token <br> Requester == PARTNER <br> Type == ADMIN <br> PeppolID has ADMIN
     KYC ->> Frontend: TokenVerificationResponse <br> ( email, CompanyResponse, requester )
     Frontend ->> SME: Show requester for CompanyResponse <br> with login form for email, CompanyResponse.peppolId <br> and AccountType.ADMIN
 
@@ -41,8 +41,8 @@ Note over SME, App: Accepting ACCOUNTANT request by ADMIN
     Note right of KYC: Validate credentials <br> Validate ownership ADMIN for peppolId <br> Update last used ownership
     KYC ->> Frontend: JWT ( AccountType.ADMIN, peppolId, peppolActive, uid )
     opt if accepted
-        Frontend -->> App: POST /app/sapi/accountant/verify-company <br> ( requester, peppolId, ...? )
-        Note right of App: JWT == ADMIN <br> Set company as active for requester accountant
+        Frontend -->> App: POST /app/sapi/partner/verify-company <br> ( requester, peppolId, ...? )
+        Note right of App: JWT == ADMIN <br> Set company as active for requester partner
         App -->> Frontend: OK
     end
     Frontend ->> KYC: POST /kyc/sapi/linked/approve?token={token}

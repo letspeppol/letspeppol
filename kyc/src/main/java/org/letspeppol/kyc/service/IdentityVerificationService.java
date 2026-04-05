@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.letspeppol.kyc.dto.IdentityVerificationRequest;
-import org.letspeppol.kyc.dto.NewUserRequest;
 import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.model.DirectorIdentityVerification;
 import org.letspeppol.kyc.model.AccountType;
@@ -21,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.security.auth.x500.X500Principal;
 import java.security.cert.X509Certificate;
 import java.time.Instant;
-import java.util.UUID;
 
 import static org.letspeppol.kyc.service.SigningService.isAllowedToSign;
 import static org.letspeppol.kyc.service.signing.CertificateUtil.getRDNName;
@@ -54,7 +52,7 @@ public class IdentityVerificationService {
         String passwordHash = passwordEncoder.encode(req.password());
         account.setPasswordHash(passwordHash);
         accountService.create(account);
-        if (accountType == AccountType.ACCOUNTANT) { //TODO : do we automatically create ADMIN here ? do we check if this is correct ?
+        if (accountType == AccountType.PARTNER) { //TODO : do we automatically create ADMIN here ? do we check if this is correct ?
             ownershipService.link(account, AccountType.ADMIN, req.director().getCompany());
         }
         ownershipService.link(account, accountType, req.director().getCompany());

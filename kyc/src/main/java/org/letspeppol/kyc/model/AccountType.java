@@ -7,5 +7,5 @@ public enum AccountType {
     USER_READ,      //This account can only read invoices, never change anything in data
     APP,            //This account is an app that receives for multiple users
     // APP_USER,       //This account is an app can request USER JWT for operating as USER --> OAuth2 should be used
-    ACCOUNTANT      //This account is an accountant working in Company and can send registration requests and (App Only) can download invoices that are flagged for accounting
+    PARTNER         //This account is a partner part of Company and can send registration requests with custom url forward on approval, useful for accountants via App that can download invoices that are flagged for accounting
 }

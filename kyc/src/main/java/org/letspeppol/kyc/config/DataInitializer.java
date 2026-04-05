@@ -102,7 +102,7 @@ public class DataInitializer implements CommandLineRunner {
         }
         companyNumber = "0746936523";
         if (companyRepository.findByPeppolId("0208:"+companyNumber).isEmpty()) {
-            Company company = new Company("0208:"+companyNumber, "BE"+companyNumber, "DIGITAL ACCOUNTANT");
+            Company company = new Company("0208:"+companyNumber, "BE"+companyNumber, "DIGITAL PARTNER");
             company.setAddress("Heusden-Zolder", "3550", "Belikstraat 109");
             companyRepository.save(company);
             directorRepository.save(new Director("Jurgen Wilmans", company));
@@ -116,8 +116,8 @@ public class DataInitializer implements CommandLineRunner {
             accountRepository.save(account);
             Ownership ownership = new Ownership(account, AccountType.ADMIN, company);
             ownershipRepository.save(ownership);
-            Ownership accountantOwnership = new Ownership(account, AccountType.ACCOUNTANT, company);
-            ownershipRepository.save(accountantOwnership);
+            Ownership partnerOwnership = new Ownership(account, AccountType.PARTNER, company);
+            ownershipRepository.save(partnerOwnership);
             Account otherAccount = Account.builder()
                     .name("Bob")
                     .email("bob@letspeppol.org")
@@ -125,9 +125,9 @@ public class DataInitializer implements CommandLineRunner {
                     .externalId(UUID.randomUUID())
                     .build();
             accountRepository.save(otherAccount);
-            Ownership otherAccountantOwnership = new Ownership(otherAccount, AccountType.ACCOUNTANT, company);
-            ownershipRepository.save(otherAccountantOwnership);
-            log.info("Seeded Accountant account");
+            Ownership otherPartnerOwnership = new Ownership(otherAccount, AccountType.PARTNER, company);
+            ownershipRepository.save(otherPartnerOwnership);
+            log.info("Seeded Partner account");
         }
     }
 }
