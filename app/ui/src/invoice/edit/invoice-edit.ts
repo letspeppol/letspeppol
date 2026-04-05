@@ -46,6 +46,7 @@ export class InvoiceEdit {
 
     returnToOverview() {
         this.invoiceContext.setActiveBoxFromDocument(this.invoiceContext.selectedDocument);
+        this.invoiceContext.clearSelectedInvoice();
         this.router.load('/invoices');
     }
 
