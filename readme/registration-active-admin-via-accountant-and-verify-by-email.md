@@ -13,7 +13,7 @@ Note over SME, App: Requesting active company added to ACCOUNTANT
     ACCOUNTANT ->> Frontend: Add account( VAT, mail )
     Frontend ->> KYC: GET /kyc/api/register/company/{PeppolID}
     Note right of KYC: Find company by PeppolID <br> or do CBE lookup
-    KYC ->> Frontend: CompanyResponse
+    KYC ->> Frontend: CompanyResponse <br> with hasAdmin == true
     Frontend ->> ACCOUNTANT: Show company details
 
     Note left of ACCOUNTANT: Verify information

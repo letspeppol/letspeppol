@@ -12,9 +12,9 @@ sequenceDiagram
 
 Note over SME, App: Login with credentials
     SME ->> Frontend: Login( email, password )
-    Frontend ->> KYC: POST /api/jwt/auth
-    Note right of KYC: Validate credentials <br> Use last used ownership <br> Update last used ownership
-    KYC ->> Frontend: JWT ( lastUsed.AccountType, lastUsed.peppolId, lastUsed.peppolActive, uid )
+    Frontend ->> KYC: POST /api/jwt/auth <br> ( AccountType, peppolId )
+    Note right of KYC: Validate credentials <br> Get ownership based on AccountType and peppolId <br> or use last used ownership if empty body <br> Update last used ownership
+    KYC ->> Frontend: JWT ( AccountType, peppolId, peppolActive, uid )
     Frontend ->> App: GET /app/sapi/company
     Note right of App: Get company by JWT.peppolId
     opt company is unknown

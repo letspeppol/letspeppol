@@ -114,7 +114,7 @@ public class ActivationService {
             case USER_DRAFT:
             case USER_READ:
             case APP:
-            case APP_USER:
+//            case APP_USER:
                 throw new KycException(KycErrorCodes.REQUESTER_NOT_VALID);
             case ACCOUNTANT:
                 if (emailVerification.getType() != ADMIN) { //TODO : add other accountants ? Or does this always happen from ADMIN ?
