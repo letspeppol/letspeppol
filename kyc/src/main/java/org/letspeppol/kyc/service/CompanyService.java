@@ -54,13 +54,13 @@ public class CompanyService {
         Optional<Company> company = companyRepository.findByPeppolId(peppolId);
         if (company.isPresent()) {
             boolean hasAdmin = ownershipRepository.existsByTypeAndCompanyPeppolId(AccountType.ADMIN, peppolId);
-            return Optional.of(CompanyMapper.toResponse(company.get(), hasAdmin)); //TODO : maybe not returning directors, but only when request originates from ACCOUNTANT ?
+            return Optional.of(CompanyMapper.toResponse(company.get(), hasAdmin)); //TODO : maybe not returning directors, but only when request originates from PARTNER ?
         }
 
         Optional<CompanyResponse> companyLookup = kboLookupService.findCompany(peppolId); //TODO: what with inactive ?
         if (companyLookup.isPresent()) {
             Company companyToStore = storeCompanyAndDirectors(peppolId, companyLookup.get());
-            return Optional.of(CompanyMapper.toResponse(companyToStore, false)); //TODO : maybe not returning directors, but only when request originates from ACCOUNTANT ?
+            return Optional.of(CompanyMapper.toResponse(companyToStore, false)); //TODO : maybe not returning directors, but only when request originates from PARTNER ?
         }
 
         return Optional.empty();

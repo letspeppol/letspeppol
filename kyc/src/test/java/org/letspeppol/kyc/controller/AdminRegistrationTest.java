@@ -53,20 +53,20 @@ class AdminRegistrationTest {
     String adminPassword = "dummy-password";
     String adminToken = null;
 
-    String accountantCompany = "Test Accountant";
-    String accountantPeppolId = "0208:0987654321";
-    String accountantEmail = "test@accountant.com";
-    String accountantPassword = "dummy-password";
-    String accountantToken = null;
+    String partnerCompany = "Test Partner";
+    String partnerPeppolId = "0208:0987654321";
+    String partnerEmail = "test@partner.com";
+    String partnerPassword = "dummy-password";
+    String partnerToken = null;
 
-    /// Bob is a company that has been invited by Accountant to register and handles this at home
+    /// Bob is a company that has been invited by Partner to register and handles this at home
     String bobCompany = "Bob Company";
     String bobPeppolId = "0208:1111111111";
     String bobEmail = "bob@company.com";
     String bobPassword = "bob-password";
     String bobToken = null;
 
-    /// Charlie is a company that has been invited by Accountant to register and tries at home, but needs the accountant to sign contract
+    /// Charlie is a company that has been invited by Partner to register and tries at home, but needs the partner to sign contract
     String charlieCompany = "Charlie Company";
     String charliePeppolId = "0208:2222222222";
     String charlieEmail = "charlie@company.com";
@@ -247,26 +247,26 @@ class AdminRegistrationTest {
 
     @Test
     @Order(3)
-    void registrationNewAccountant() {
-        prepareDatabase(accountantPeppolId, accountantCompany);
+    void registrationNewPartner() {
+        prepareDatabase(partnerPeppolId, partnerCompany);
 
         // 1. GET /api/register/company/{peppolId}
-        String url = baseUrl() + "/api/register/company/" + accountantPeppolId;
+        String url = baseUrl() + "/api/register/company/" + partnerPeppolId;
         CompanyResponse companyResponse = restTemplate.getForObject(url, CompanyResponse.class);
         assertNotNull(companyResponse);
-        assertEquals(accountantPeppolId, companyResponse.peppolId());
+        assertEquals(partnerPeppolId, companyResponse.peppolId());
         assertFalse(companyResponse.hasAdmin());
 
         // 2. POST /api/register/confirm-company
         url = baseUrl() + "/api/register/confirm-company";
-        ConfirmCompanyRequest confirmRequest = new ConfirmCompanyRequest(AccountType.ACCOUNTANT, accountantPeppolId, accountantEmail, "TestCity", "1234", "TestStreet");
+        ConfirmCompanyRequest confirmRequest = new ConfirmCompanyRequest(AccountType.PARTNER, partnerPeppolId, partnerEmail, "TestCity", "1234", "TestStreet");
         SimpleMessage confirmResponse = restTemplate.postForObject(url, confirmRequest, SimpleMessage.class);
         assertNotNull(confirmResponse);
         assertTrue(confirmResponse.message().contains("Activation email sent"));
 
         // Simulate activation token
         EmailVerification verification = emailVerificationRepository.findAll().stream()
-                .filter(v -> !v.isVerified() && accountantEmail.equals(v.getEmail()) && accountantPeppolId.equals(v.getPeppolId()))
+                .filter(v -> !v.isVerified() && partnerEmail.equals(v.getEmail()) && partnerPeppolId.equals(v.getPeppolId()))
                 .findFirst().orElseThrow();
         String token = verification.getToken();
 
@@ -274,8 +274,8 @@ class AdminRegistrationTest {
         url = baseUrl() + "/api/register/verify?token=" + token;
         TokenVerificationResponse verifyResponse = restTemplate.postForObject(url, null, TokenVerificationResponse.class);
         assertNotNull(verifyResponse);
-        assertEquals(accountantEmail, verifyResponse.email());
-        assertEquals(accountantPeppolId, verifyResponse.company().peppolId());
+        assertEquals(partnerEmail, verifyResponse.email());
+        assertEquals(partnerPeppolId, verifyResponse.company().peppolId());
         assertNull(verifyResponse.requester());
 
         // Mock certificate chain for signing using mockStatic
@@ -328,7 +328,7 @@ class AdminRegistrationTest {
                     signatureAlgorithm,
                     prepareResponse.hashToSign(),
                     prepareResponse.hashToFinalize(),
-                    accountantPassword
+                    partnerPassword
             );
             String finalizeUrl = baseUrl() + "/api/identity/sign/finalize";
             ResponseEntity<byte[]> finalizeResponse = restTemplate.postForEntity(finalizeUrl, finalizeRequest, byte[].class);
@@ -339,22 +339,22 @@ class AdminRegistrationTest {
             assertEquals("application/pdf", finalizeResponse.getHeaders().getContentType().toString());
             assertNotNull(finalizeResponse.getHeaders().get("Registration-Status"));
         }
-        assertTrue(ownershipRepository.existsByTypeAndCompanyPeppolId(AccountType.ADMIN, accountantPeppolId));
-        assertTrue(ownershipRepository.existsByTypeAndCompanyPeppolId(AccountType.ACCOUNTANT, accountantPeppolId));
+        assertTrue(ownershipRepository.existsByTypeAndCompanyPeppolId(AccountType.ADMIN, partnerPeppolId));
+        assertTrue(ownershipRepository.existsByTypeAndCompanyPeppolId(AccountType.PARTNER, partnerPeppolId));
     }
 
     @Test
     @Order(4)
-    void registrationActiveAccountant() {
-        if (!accountRepository.existsByEmail(accountantEmail)) {
-            registrationNewAccountant();
+    void registrationActivePartner() {
+        if (!accountRepository.existsByEmail(partnerEmail)) {
+            registrationNewPartner();
         }
 
         // 1. GET /api/register/company/{peppolId}
-        String url = baseUrl() + "/api/register/company/" + accountantPeppolId;
+        String url = baseUrl() + "/api/register/company/" + partnerPeppolId;
         CompanyResponse companyResponse = restTemplate.getForObject(url, CompanyResponse.class);
         assertNotNull(companyResponse);
-        assertEquals(accountantPeppolId, companyResponse.peppolId());
+        assertEquals(partnerPeppolId, companyResponse.peppolId());
         assertTrue(companyResponse.hasAdmin());
     }
 
@@ -393,59 +393,59 @@ class AdminRegistrationTest {
 
     @Test
     @Order(5)
-    void loginAccountantAsAccountant() {
-        if (!accountRepository.existsByEmail(accountantEmail)) {
-            registrationNewAccountant();
+    void loginPartnerAsPartner() {
+        if (!accountRepository.existsByEmail(partnerEmail)) {
+            registrationNewPartner();
         }
-        accountantToken = login(accountantEmail, accountantPassword, AccountType.ACCOUNTANT, accountantPeppolId);
+        partnerToken = login(partnerEmail, partnerPassword, AccountType.PARTNER, partnerPeppolId);
     }
 
     @Test
     @Order(5)
-    void loginAccountantAsAdmin() {
-        if (!accountRepository.existsByEmail(accountantEmail)) {
-            registrationNewAccountant();
+    void loginPartnerAsAdmin() {
+        if (!accountRepository.existsByEmail(partnerEmail)) {
+            registrationNewPartner();
         }
-        accountantToken = login(accountantEmail, accountantPassword, AccountType.ADMIN, accountantPeppolId);
+        partnerToken = login(partnerEmail, partnerPassword, AccountType.ADMIN, partnerPeppolId);
     }
 
     @Test
     @Order(6)
-    void swapAccountantToAccountant() {
-        if (accountantToken == null) {
-            loginAccountantAsAdmin();
+    void swapPartnerToPartner() {
+        if (partnerToken == null) {
+            loginPartnerAsAdmin();
         }
 
         // Build JWT header
         HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(accountantToken);
+        headers.setBearerAuth(partnerToken);
 
         // 1. POST /sapi/jwt/swap
         String url = baseUrl() + "/sapi/jwt/swap";
-        AuthRequest authRequest = new AuthRequest(AccountType.ACCOUNTANT, accountantPeppolId);
+        AuthRequest authRequest = new AuthRequest(AccountType.PARTNER, partnerPeppolId);
         HttpEntity<AuthRequest> request = new HttpEntity<>(authRequest, headers);
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         JwtInfo jwtInfo = jwtService.validateAndGetInfo("Bearer " + response.getBody());
-        assertEquals(accountantPeppolId, jwtInfo.peppolId());
-        assertEquals(AccountType.ACCOUNTANT, jwtInfo.accountType());
-        accountantToken = response.getBody();
+        assertEquals(partnerPeppolId, jwtInfo.peppolId());
+        assertEquals(AccountType.PARTNER, jwtInfo.accountType());
+        partnerToken = response.getBody();
     }
 
     @Test
     @Order(7)
-    void registrationActiveAdminViaAccountantAndVerifyByEmail() {
+    void registrationActiveAdminViaPartnerAndVerifyByEmail() {
         if (!accountRepository.existsByEmail(adminEmail)) {
             registrationNewAdmin();
         }
-        if (accountantToken == null) {
-            loginAccountantAsAccountant();
+        if (partnerToken == null) {
+            loginPartnerAsPartner();
         }
 
         // Build JWT header
         HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(accountantToken);
+        headers.setBearerAuth(partnerToken);
 
         // 1. GET /api/register/company/{peppolId}
         String url = baseUrl() + "/api/register/company/" + adminPeppolId;
@@ -466,7 +466,7 @@ class AdminRegistrationTest {
 
         // Simulate activation token
         EmailVerification verification = emailVerificationRepository.findAll().stream()
-                .filter(v -> !v.isVerified() && adminEmail.equals(v.getEmail())) //TODO : should we be able to do && (v.getRequester() != null && v.getRequester().getCompany() != null && v.getRequester().getAccount() != null && accountantPeppolId.equals(v.getRequester().getCompany().getPeppolId()) && accountantEmail.equals(v.getRequester().getAccount().getEmail())))
+                .filter(v -> !v.isVerified() && adminEmail.equals(v.getEmail())) //TODO : should we be able to do && (v.getRequester() != null && v.getRequester().getCompany() != null && v.getRequester().getAccount() != null && partnerPeppolId.equals(v.getRequester().getCompany().getPeppolId()) && partnerEmail.equals(v.getRequester().getAccount().getEmail())))
                 .findFirst().orElseThrow();
         String token = verification.getToken();
 
@@ -478,12 +478,12 @@ class AdminRegistrationTest {
         assertNotNull(verifyResponse.company());
         assertTrue(verifyResponse.company().hasAdmin());
         assertEquals(adminPeppolId, verifyResponse.company().peppolId());
-        assertEquals(accountantEmail, verifyResponse.requester().email());
-        assertEquals(accountantCompany, verifyResponse.requester().company());
+        assertEquals(partnerEmail, verifyResponse.requester().email());
+        assertEquals(partnerCompany, verifyResponse.requester().company());
 
         // 4. login as Admin to approve
         loginAdminAsAdmin();
-        //NOTE : call App to store verifyResponse.requester() as accountant (and use the adminToken)
+        //NOTE : call App to store verifyResponse.requester() as partner (and use the adminToken)
 
         // 5. POST /sapi/linked/approve
         HttpHeaders adminJwtHeaders = new HttpHeaders();
@@ -506,16 +506,16 @@ class AdminRegistrationTest {
 
     @Test
     @Order(8)
-    void registrationNewAdminViaAccountantAndVerifyByEmailBeforeSigning() {
+    void registrationNewAdminViaPartnerAndVerifyByEmailBeforeSigning() {
         prepareDatabase(bobPeppolId, bobCompany);
 
-        if (accountantToken == null) {
-            loginAccountantAsAccountant();
+        if (partnerToken == null) {
+            loginPartnerAsPartner();
         }
 
         // Build JWT header
         HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(accountantToken);
+        headers.setBearerAuth(partnerToken);
 
         // 1. GET /api/register/company/{peppolId}
         String url = baseUrl() + "/api/register/company/" + bobPeppolId;
@@ -536,7 +536,7 @@ class AdminRegistrationTest {
 
         // Simulate activation token
         EmailVerification verification = emailVerificationRepository.findAll().stream()
-                .filter(v -> !v.isVerified() && bobEmail.equals(v.getEmail())) //TODO : should we be able to do && (v.getRequester() != null && v.getRequester().getCompany() != null && v.getRequester().getAccount() != null && accountantPeppolId.equals(v.getRequester().getCompany().getPeppolId()) && accountantEmail.equals(v.getRequester().getAccount().getEmail())))
+                .filter(v -> !v.isVerified() && bobEmail.equals(v.getEmail())) //TODO : should we be able to do && (v.getRequester() != null && v.getRequester().getCompany() != null && v.getRequester().getAccount() != null && partnerPeppolId.equals(v.getRequester().getCompany().getPeppolId()) && partnerEmail.equals(v.getRequester().getAccount().getEmail())))
                 .findFirst().orElseThrow();
         String token = verification.getToken();
 
@@ -548,8 +548,8 @@ class AdminRegistrationTest {
         assertNotNull(verifyResponse.company());
         assertFalse(verifyResponse.company().hasAdmin());
         assertEquals(bobPeppolId, verifyResponse.company().peppolId());
-        assertEquals(accountantEmail, verifyResponse.requester().email());
-        assertEquals(accountantCompany, verifyResponse.requester().company());
+        assertEquals(partnerEmail, verifyResponse.requester().email());
+        assertEquals(partnerCompany, verifyResponse.requester().company());
 
         // Mock certificate chain for signing using mockStatic
         try (org.mockito.MockedStatic<CertificateUtil> mocked = Mockito.mockStatic(CertificateUtil.class)) {
@@ -616,7 +616,7 @@ class AdminRegistrationTest {
 
         // 4. login as Admin to approve
         bobToken = login(bobEmail, bobPassword, AccountType.ADMIN, bobPeppolId);
-        //NOTE : call App to store verifyResponse.requester() as accountant (and use the adminToken)
+        //NOTE : call App to store verifyResponse.requester() as partner (and use the adminToken)
 
         // 5. POST /sapi/linked/approve
         HttpHeaders adminJwtHeaders = new HttpHeaders();
@@ -639,16 +639,16 @@ class AdminRegistrationTest {
 
     @Test
     @Order(9)
-    void registrationNewAdminViaAccountantAndSignBeforeEmailVerification() {
+    void registrationNewAdminViaPartnerAndSignBeforeEmailVerification() {
         prepareDatabase(charliePeppolId, charlieCompany);
 
-        if (accountantToken == null) {
-            loginAccountantAsAccountant();
+        if (partnerToken == null) {
+            loginPartnerAsPartner();
         }
 
         // Build JWT header
         HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(accountantToken);
+        headers.setBearerAuth(partnerToken);
 
         // 1. GET /api/register/company/{peppolId}
         String url = baseUrl() + "/api/register/company/" + charliePeppolId;
@@ -732,7 +732,7 @@ class AdminRegistrationTest {
 
         // Simulate activation token
         EmailVerification verification = emailVerificationRepository.findAll().stream()
-                .filter(v -> !v.isVerified() && charlieEmail.equals(v.getEmail())) //TODO : should we be able to do && (v.getRequester() != null && v.getRequester().getCompany() != null && v.getRequester().getAccount() != null && accountantPeppolId.equals(v.getRequester().getCompany().getPeppolId()) && accountantEmail.equals(v.getRequester().getAccount().getEmail())))
+                .filter(v -> !v.isVerified() && charlieEmail.equals(v.getEmail())) //TODO : should we be able to do && (v.getRequester() != null && v.getRequester().getCompany() != null && v.getRequester().getAccount() != null && partnerPeppolId.equals(v.getRequester().getCompany().getPeppolId()) && partnerEmail.equals(v.getRequester().getAccount().getEmail())))
                 .findFirst().orElseThrow();
         String token = verification.getToken();
 
@@ -749,7 +749,7 @@ class AdminRegistrationTest {
 
         // 4. login as Admin to approve
         charlieToken = login(charlieEmail, charliePassword, AccountType.ADMIN, charliePeppolId);
-        //NOTE : call App to store verifyResponse.requester() as accountant (and use the adminToken)
+        //NOTE : call App to store verifyResponse.requester() as partner (and use the adminToken)
 
         // 5. POST /sapi/linked/approve
         HttpHeaders adminJwtHeaders = new HttpHeaders();
