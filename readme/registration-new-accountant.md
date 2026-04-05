@@ -13,7 +13,7 @@ Note over ACCOUNTANT, PeppolDirectory: Requesting registration for new ACCOUNTAN
     ACCOUNTANT ->> Frontend: Create account( VAT, mail )
     Frontend ->> KYC: GET /kyc/api/register/company/{PeppolID}
     Note right of KYC: Find company by PeppolID <br> or do CBE lookup
-    KYC ->> Frontend: CompanyResponse
+    KYC ->> Frontend: CompanyResponse <br> with hasAdmin == false
     Frontend ->> ACCOUNTANT: Show company details
 
     Note left of ACCOUNTANT: Verify information

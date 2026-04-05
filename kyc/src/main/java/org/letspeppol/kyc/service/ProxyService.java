@@ -39,7 +39,7 @@ public class ProxyService {
         try {
             RegistryDto registryDto = webClient.post()
                     .uri("/sapi/registry")
-                    .body(Mono.just(new RegistrationRequest(companyName, "NL", "BE")), RegistrationRequest.class)
+                    .body(Mono.just(new RegistrationRequest(companyName, "EN", "BE")), RegistrationRequest.class) //TODO : not default NL
                     .header("Authorization", "Bearer " + token)
                     .retrieve()
                     .bodyToMono(RegistryDto.class)

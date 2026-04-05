@@ -15,7 +15,7 @@ Note over SME, Peppol: Requesting registration for new ADMIN
     SME ->> Frontend: Create account( VAT, mail )
     Frontend ->> KYC: GET /kyc/api/register/company/{PeppolID}
     Note right of KYC: Find company by PeppolID <br> or do CBE lookup
-    KYC ->> Frontend: CompanyResponse
+    KYC ->> Frontend: CompanyResponse <br> with hasAdmin == false
     Frontend ->> SME: Show company details
 
     Note left of SME: Verify information

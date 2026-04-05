@@ -115,6 +115,24 @@ class AdminRegistrationTest {
         directorRepository.save(director);
     }
 
+    String login(String email, String password, AccountType accountType, String peppolId) {
+        // Build Basic header
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBasicAuth(email, password, StandardCharsets.UTF_8);
+
+        // 1. POST /api/jwt/auth
+        String url = baseUrl() + "/api/jwt/auth";
+        AuthRequest authRequest = new AuthRequest(accountType, peppolId);
+        HttpEntity<AuthRequest> request = new HttpEntity<>(authRequest, headers);
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        JwtInfo jwtInfo = jwtService.validateAndGetInfo("Bearer " + response.getBody());
+        assertEquals(peppolId, jwtInfo.peppolId());
+        assertEquals(accountType, jwtInfo.accountType());
+        return response.getBody();
+    }
+
     @Test
     @Order(1)
     void registrationNewAdmin() {
@@ -214,6 +232,21 @@ class AdminRegistrationTest {
 
     @Test
     @Order(2)
+    void registrationActiveAdmin() {
+        if (!accountRepository.existsByEmail(adminEmail)) {
+            registrationNewAdmin();
+        }
+
+        // 1. GET /api/register/company/{peppolId}
+        String url = baseUrl() + "/api/register/company/" + adminPeppolId;
+        CompanyResponse companyResponse = restTemplate.getForObject(url, CompanyResponse.class);
+        assertNotNull(companyResponse);
+        assertEquals(adminPeppolId, companyResponse.peppolId());
+        assertTrue(companyResponse.hasAdmin());
+    }
+
+    @Test
+    @Order(3)
     void registrationNewAccountant() {
         prepareDatabase(accountantPeppolId, accountantCompany);
 
@@ -311,7 +344,22 @@ class AdminRegistrationTest {
     }
 
     @Test
-    @Order(3)
+    @Order(4)
+    void registrationActiveAccountant() {
+        if (!accountRepository.existsByEmail(accountantEmail)) {
+            registrationNewAccountant();
+        }
+
+        // 1. GET /api/register/company/{peppolId}
+        String url = baseUrl() + "/api/register/company/" + accountantPeppolId;
+        CompanyResponse companyResponse = restTemplate.getForObject(url, CompanyResponse.class);
+        assertNotNull(companyResponse);
+        assertEquals(accountantPeppolId, companyResponse.peppolId());
+        assertTrue(companyResponse.hasAdmin());
+    }
+
+    @Test
+    @Order(5)
     void loginAdmin() {
         if (!accountRepository.existsByEmail(adminEmail)) {
             registrationNewAdmin();
@@ -335,27 +383,12 @@ class AdminRegistrationTest {
     }
 
     @Test
-    @Order(4)
+    @Order(5)
     void loginAdminAsAdmin() {
         if (!accountRepository.existsByEmail(adminEmail)) {
             registrationNewAdmin();
         }
-
-        // Build Basic header
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBasicAuth(adminEmail, adminPassword, StandardCharsets.UTF_8);
-
-        // 1. POST /api/jwt/auth
-        String url = baseUrl() + "/api/jwt/auth";
-        AuthRequest authRequest = new AuthRequest(AccountType.ADMIN, adminPeppolId);
-        HttpEntity<AuthRequest> request = new HttpEntity<>(authRequest, headers);
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo("Bearer " + response.getBody());
-        assertEquals(adminPeppolId, jwtInfo.peppolId());
-        assertEquals(AccountType.ADMIN, jwtInfo.accountType());
-        adminToken = response.getBody();
+        adminToken = login(adminEmail, adminPassword, AccountType.ADMIN, adminPeppolId);
     }
 
     @Test
@@ -364,50 +397,20 @@ class AdminRegistrationTest {
         if (!accountRepository.existsByEmail(accountantEmail)) {
             registrationNewAccountant();
         }
-
-        // Build Basic header
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBasicAuth(accountantEmail, accountantPassword, StandardCharsets.UTF_8);
-
-        // 1. POST /api/jwt/auth
-        String url = baseUrl() + "/api/jwt/auth";
-        AuthRequest authRequest = new AuthRequest(AccountType.ACCOUNTANT, accountantPeppolId);
-        HttpEntity<AuthRequest> request = new HttpEntity<>(authRequest, headers);
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo("Bearer " + response.getBody());
-        assertEquals(accountantPeppolId, jwtInfo.peppolId());
-        assertEquals(AccountType.ACCOUNTANT, jwtInfo.accountType());
-        accountantToken = response.getBody();
+        accountantToken = login(accountantEmail, accountantPassword, AccountType.ACCOUNTANT, accountantPeppolId);
     }
 
     @Test
-    @Order(6)
+    @Order(5)
     void loginAccountantAsAdmin() {
         if (!accountRepository.existsByEmail(accountantEmail)) {
             registrationNewAccountant();
         }
-
-        // Build Basic header
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBasicAuth(accountantEmail, accountantPassword, StandardCharsets.UTF_8);
-
-        // 1. POST /api/jwt/auth
-        String url = baseUrl() + "/api/jwt/auth";
-        AuthRequest authRequest = new AuthRequest(AccountType.ADMIN, accountantPeppolId);
-        HttpEntity<AuthRequest> request = new HttpEntity<>(authRequest, headers);
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo("Bearer " + response.getBody());
-        assertEquals(accountantPeppolId, jwtInfo.peppolId());
-        assertEquals(AccountType.ADMIN, jwtInfo.accountType());
-        accountantToken = response.getBody();
+        accountantToken = login(accountantEmail, accountantPassword, AccountType.ADMIN, accountantPeppolId);
     }
 
     @Test
-    @Order(7)
+    @Order(6)
     void swapAccountantToAccountant() {
         if (accountantToken == null) {
             loginAccountantAsAdmin();
@@ -431,7 +434,7 @@ class AdminRegistrationTest {
     }
 
     @Test
-    @Order(8)
+    @Order(7)
     void registrationActiveAdminViaAccountantAndVerifyByEmail() {
         if (!accountRepository.existsByEmail(adminEmail)) {
             registrationNewAdmin();
@@ -502,7 +505,7 @@ class AdminRegistrationTest {
     }
 
     @Test
-    @Order(9)
+    @Order(8)
     void registrationNewAdminViaAccountantAndVerifyByEmailBeforeSigning() {
         prepareDatabase(bobPeppolId, bobCompany);
 
@@ -610,6 +613,161 @@ class AdminRegistrationTest {
             assertNotNull(finalizeResponse.getHeaders().get("Registration-Status"));
         }
         assertTrue(ownershipRepository.existsByTypeAndCompanyPeppolId(AccountType.ADMIN, bobPeppolId));
+
+        // 4. login as Admin to approve
+        bobToken = login(bobEmail, bobPassword, AccountType.ADMIN, bobPeppolId);
+        //NOTE : call App to store verifyResponse.requester() as accountant (and use the adminToken)
+
+        // 5. POST /sapi/linked/approve
+        HttpHeaders adminJwtHeaders = new HttpHeaders();
+        adminJwtHeaders.setBearerAuth(bobToken);
+        url = baseUrl() + "/sapi/linked/approve?token=" + token;
+        HttpEntity<Void> requestApprove = new HttpEntity<>(null, adminJwtHeaders);
+        ResponseEntity<Void> responseApprove = restTemplate.exchange(url, HttpMethod.POST, requestApprove, Void.class);
+        assertEquals(HttpStatus.OK, responseApprove.getStatusCode());
+        assertNull(responseApprove.getBody());
+
+        /// ---- ADDITIONAL TEST ----
+        // +. POST /api/register/verify --> Should be invalid token
+        url = baseUrl() + "/api/register/verify?token=" + token;
+        ResponseEntity<String> failedResponse = restTemplate.exchange(url, HttpMethod.POST, HttpEntity.EMPTY, String.class);
+        assertEquals(HttpStatus.BAD_REQUEST, failedResponse.getStatusCode());
+        String body = failedResponse.getBody(); //Maybe not needed to verify ?
+        assertNotNull(body);
+        assertTrue(body.contains("\"errorCode\":\"token_already_verified\""));
+    }
+
+    @Test
+    @Order(9)
+    void registrationNewAdminViaAccountantAndSignBeforeEmailVerification() {
+        prepareDatabase(charliePeppolId, charlieCompany);
+
+        if (accountantToken == null) {
+            loginAccountantAsAccountant();
+        }
+
+        // Build JWT header
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accountantToken);
+
+        // 1. GET /api/register/company/{peppolId}
+        String url = baseUrl() + "/api/register/company/" + charliePeppolId;
+        CompanyResponse companyResponse = restTemplate.getForObject(url, CompanyResponse.class);
+        assertNotNull(companyResponse);
+        assertEquals(charliePeppolId, companyResponse.peppolId());
+        assertFalse(companyResponse.hasAdmin());
+
+        // 2. POST /sapi/linked/request-company
+        url = baseUrl() + "/sapi/linked/request-company";
+        ConfirmCompanyRequest confirmRequest = new ConfirmCompanyRequest(AccountType.ADMIN, charliePeppolId, charlieEmail, "TestCity", "1234", "TestStreet");
+        HttpEntity<ConfirmCompanyRequest> request = new HttpEntity<>(confirmRequest, headers);
+        ResponseEntity<SimpleMessage> response = restTemplate.exchange(url, HttpMethod.POST, request, SimpleMessage.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        SimpleMessage confirmResponse = response.getBody();
+        assertTrue(confirmResponse.message().contains("Request email sent"));
+
+        // Mock certificate chain for signing using mockStatic
+        try (org.mockito.MockedStatic<CertificateUtil> mocked = Mockito.mockStatic(CertificateUtil.class)) {
+            mocked.when(() -> CertificateUtil.getCertificateChain(Mockito.anyString()))
+                    .thenReturn(new X509Certificate[] { Mockito.mock(X509Certificate.class) });
+
+            // 4. POST /api/identity/sign/prepare
+            Long directorId = companyResponse.directors().get(0).id();
+            // Read a valid base64-encoded certificate from test resources
+            String certificate;
+            try {
+                certificate = Files.readString(Paths.get("src/test/resources/test-certificate-base64.txt")).replaceAll("\\s+", "");
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to read test certificate", e);
+            }
+            var signatureAlgorithm = new SignatureAlgorithm("SHA256", "PKCS1", "RSA");
+            var prepareRequest = new PrepareSigningRequest(
+                    null, //TODO : check this !!!
+                    directorId,
+                    certificate,
+                    java.util.List.of(signatureAlgorithm),
+                    "en"
+            );
+            String prepareUrl = baseUrl() + "/api/identity/sign/prepare";
+            PrepareSigningResponse prepareResponse = restTemplate.postForObject(prepareUrl, prepareRequest, PrepareSigningResponse.class);
+            System.out.println("prepareResponse: " + prepareResponse);
+            assertNotNull(prepareResponse);
+            assertNotNull(prepareResponse.hashToSign());
+            assertNotNull(prepareResponse.hashToFinalize());
+            assertEquals("SHA-256", prepareResponse.hashFunction());
+            assertTrue(prepareResponse.allowedToSign());
+
+            // 5. GET /api/identity/contract/{directorId}?token=...
+            String contractUrl = baseUrl() + "/api/identity/contract/" + directorId + "?token=" + null; //TODO : check this !!!
+            ResponseEntity<byte[]> contractResponse = restTemplate.getForEntity(contractUrl, byte[].class);
+            assertEquals(200, contractResponse.getStatusCode().value());
+            assertNotNull(contractResponse.getBody());
+            assertTrue(contractResponse.getBody().length > 0);
+            assertNotNull(contractResponse.getHeaders().getContentType());
+            assertEquals("application/pdf", contractResponse.getHeaders().getContentType().toString());
+
+            // 6. POST /api/identity/sign/finalize
+            String signature = "Pip9ksT1yiqpP6AHEshmzl8ND+oPDF6PYjizuiKbHrwv23LqrqDRwJq/b2mbsAGScxYGdzk+sHGUsKcXr9YIiFXA9AM94GptSxwdjxulc2CA4qmd4KX9TdTjQGkCCj7qE0EMYULEtfPTMNPC61CYSic2fap4nicnBKFDGptHccblQICcNDHJ5hAN9fbFIw2OXWynomFgSBohVr0bDKcZQcUX9Chg0RUZ/4i95HdwXN306k343tLKB/doY+TO70akA3mzjBya+aGaE9QPE7zRvLF4IriRBy6QxzEPSsCHYHrP3w3mPLg2+xWX1Aw5M+m8K6XMuFC5O14Det8FZP4HWQ==";
+            var finalizeRequest = new FinalizeSigningRequest(
+                    null, //TODO : check this !!!
+                    directorId,
+                    certificate,
+                    signature,
+                    signatureAlgorithm,
+                    prepareResponse.hashToSign(),
+                    prepareResponse.hashToFinalize(),
+                    bobPassword
+            );
+            String finalizeUrl = baseUrl() + "/api/identity/sign/finalize";
+            ResponseEntity<byte[]> finalizeResponse = restTemplate.postForEntity(finalizeUrl, finalizeRequest, byte[].class);
+            assertEquals(200, finalizeResponse.getStatusCode().value());
+            assertNotNull(finalizeResponse.getBody());
+            assertTrue(finalizeResponse.getBody().length > 0);
+            assertNotNull(finalizeResponse.getHeaders().getContentType());
+            assertEquals("application/pdf", finalizeResponse.getHeaders().getContentType().toString());
+            assertNotNull(finalizeResponse.getHeaders().get("Registration-Status"));
+        }
+        assertTrue(ownershipRepository.existsByTypeAndCompanyPeppolId(AccountType.ADMIN, charliePeppolId));
+
+        // Simulate activation token
+        EmailVerification verification = emailVerificationRepository.findAll().stream()
+                .filter(v -> !v.isVerified() && charlieEmail.equals(v.getEmail())) //TODO : should we be able to do && (v.getRequester() != null && v.getRequester().getCompany() != null && v.getRequester().getAccount() != null && accountantPeppolId.equals(v.getRequester().getCompany().getPeppolId()) && accountantEmail.equals(v.getRequester().getAccount().getEmail())))
+                .findFirst().orElseThrow();
+        String token = verification.getToken();
+
+        // 3. POST /api/register/verify
+        url = baseUrl() + "/api/register/verify?token=" + token;
+        TokenVerificationResponse verifyResponse = restTemplate.postForObject(url, null, TokenVerificationResponse.class);
+        assertNotNull(verifyResponse);
+        assertEquals(charlieEmail, verifyResponse.email());
+        assertNotNull(verifyResponse.company());
+        assertTrue(verifyResponse.company().hasAdmin());
+        assertEquals(charliePeppolId, verifyResponse.company().peppolId());
+        assertEquals(charlieEmail, verifyResponse.requester().email());
+        assertEquals(charlieCompany, verifyResponse.requester().company());
+
+        // 4. login as Admin to approve
+        charlieToken = login(charlieEmail, charliePassword, AccountType.ADMIN, charliePeppolId);
+        //NOTE : call App to store verifyResponse.requester() as accountant (and use the adminToken)
+
+        // 5. POST /sapi/linked/approve
+        HttpHeaders adminJwtHeaders = new HttpHeaders();
+        adminJwtHeaders.setBearerAuth(charlieToken);
+        url = baseUrl() + "/sapi/linked/approve?token=" + token;
+        HttpEntity<Void> requestApprove = new HttpEntity<>(null, adminJwtHeaders);
+        ResponseEntity<Void> responseApprove = restTemplate.exchange(url, HttpMethod.POST, requestApprove, Void.class);
+        assertEquals(HttpStatus.OK, responseApprove.getStatusCode());
+        assertNull(responseApprove.getBody());
+
+        /// ---- ADDITIONAL TEST ----
+        // +. POST /api/register/verify --> Should be invalid token
+        url = baseUrl() + "/api/register/verify?token=" + token;
+        ResponseEntity<String> failedResponse = restTemplate.exchange(url, HttpMethod.POST, HttpEntity.EMPTY, String.class);
+        assertEquals(HttpStatus.BAD_REQUEST, failedResponse.getStatusCode());
+        String body = failedResponse.getBody(); //Maybe not needed to verify ?
+        assertNotNull(body);
+        assertTrue(body.contains("\"errorCode\":\"token_already_verified\""));
     }
 
     /**
