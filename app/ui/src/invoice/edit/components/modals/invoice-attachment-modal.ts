@@ -2,6 +2,7 @@ import {bindable, IEventAggregator, watch} from "aurelia";
 import {AdditionalDocumentReference} from "../../../../services/peppol/ubl";
 import {resolve} from "@aurelia/kernel";
 import {AlertType} from "../../../../components/alert/alert";
+import moment from "moment";
 
 export class InvoiceAttachmentModal {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -9,10 +10,8 @@ export class InvoiceAttachmentModal {
     additionalDocumentReference: AdditionalDocumentReference[] = [];
     open = false;
     validated = false;
-    uploadWrapper: HTMLElement;
-    invoiceUploadWrapper: HTMLElement;
     isDraggingFile = false;
-    isDraggingInvoice = false;
+    uploadWrapper: HTMLElement;
 
     showModal() {
         this.validated = false;
@@ -40,7 +39,7 @@ export class InvoiceAttachmentModal {
 
     addExternalLink() {
         this.additionalDocumentReference.push({
-            ID: undefined,
+            ID: moment().toISOString(),
             DocumentDescription: undefined,
             Attachment: {
                 ExternalReference: {
@@ -59,64 +58,53 @@ export class InvoiceAttachmentModal {
         return true;
     }
 
-    dragEnter(event: DragEvent, type: 'file' | 'invoice') {
+    dragEnter(event: DragEvent) {
         event.preventDefault();
-        if (type === 'file') {
-            this.isDraggingFile = true;
-        } else {
-            this.isDraggingInvoice = true;
+        this.isDraggingFile = true;
+    }
+
+    dragLeave(event: DragEvent) {
+        event.preventDefault();
+        if (!this.uploadWrapper.contains(event.relatedTarget as Node)) {
+            this.isDraggingFile = false;
         }
     }
 
-    dragLeave(event: DragEvent, type: 'file' | 'invoice') {
-        event.preventDefault();
-        const wrapper = type === 'file' ? this.uploadWrapper : this.invoiceUploadWrapper;
-        if (!wrapper.contains(event.relatedTarget as Node)) {
-            if (type === 'file') {
-                this.isDraggingFile = false;
-            } else {
-                this.isDraggingInvoice = false;
-            }
-        }
-    }
-
-    async dragDrop(e: DragEvent, type: 'file' | 'invoice') {
+    async dragDrop(e: DragEvent) {
         e.preventDefault();
 
         const file = e.dataTransfer.files[0];
         if (!file) return;
-        if (file.size > (5 * (1024 ** 3))) {
-            this.ea.publish('alert', {alertType: AlertType.Warning, text: "File can not be more than 5MB"});
+        if (file.size > (3 * (1024 ** 2))) {
+            this.ea.publish('alert', {alertType: AlertType.Warning, text: "File can not be more than 3MB"});
             return;
         }
-
-        // Validate file type based on upload type
-        if (type === 'file') {
-            // BR-CL-24
-            const allowedTypes: string[] = [
-                'application/pdf',
-                'image/png',
-                'image/jpeg',
-                'text/csv',
-                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                'application/vnd.oasis.opendocument.spreadsheet'
-            ];
-            if (!allowedTypes.includes(file.type as string)) {
-                this.ea.publish('alert', {alertType: AlertType.Danger, text: "File type not supported"});
-            }
-        } else {
-            if (file.type !== 'application/pdf') {
-                this.ea.publish('alert', {alertType: AlertType.Danger, text: "Only PDF files are allowed for invoice upload"});
-                this.isDraggingInvoice = false;
-                return;
-            }
+        const totalSize = this.additionalDocumentReference.filter(item => item.Attachment?.EmbeddedDocumentBinaryObject)
+            .map(item => (item.Attachment.EmbeddedDocumentBinaryObject.value.length * 3) / 4)
+            .reduce((sum, value) => sum + value, 0)
+            + ((file.size * 4) / 3);
+        if (totalSize > (10 * (1024 ** 2))) {
+            this.ea.publish('alert', {alertType: AlertType.Warning, text: "Sum of all file sizes can not be more than 10MB"});
+            return;
         }
-
+        // BR-CL-24
+        const allowedTypes: string[] = [
+            'application/pdf',
+            'image/png',
+            'image/jpeg',
+            'text/csv',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'application/vnd.oasis.opendocument.spreadsheet'
+        ];
+        if (!allowedTypes.includes(file.type as string)) {
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: "File type not supported"});
+            return;
+        }
         try {
             const dataUrl: string = await this.toBase64(file);
             const base64String = dataUrl.split(',')[1];
             this.additionalDocumentReference.push({
-                ID: undefined,
+                ID: moment().toISOString(),
                 DocumentDescription: undefined,
                 Attachment: {
                     EmbeddedDocumentBinaryObject: {
@@ -126,20 +114,11 @@ export class InvoiceAttachmentModal {
                     }
                 }
             } as AdditionalDocumentReference);
-            if (type === 'file') {
-                this.isDraggingFile = false;
-            } else {
-                this.isDraggingInvoice = false;
-                this.invoiceContext.addPdfToSendingInvoice = false;
-            }
+            this.isDraggingFile = false;
         } catch(error) {
             console.log(error);
             this.ea.publish('alert', {alertType: AlertType.Danger, text: "Error uploading file"});
-            if (type === 'file') {
-                this.isDraggingFile = false;
-            } else {
-                this.isDraggingInvoice = false;
-            }
+            this.isDraggingFile = false;
             return false;
         }
         return true;

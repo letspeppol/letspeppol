@@ -1,5 +1,5 @@
 import {
-    AccountingParty,
+    AccountingParty, AdditionalDocumentReference,
     CreditNote,
     CreditNoteLine,
     Invoice,
@@ -45,7 +45,7 @@ export class InvoiceComposer {
             Note: undefined,
             DocumentCurrencyCode: "EUR",
             BuyerReference: "NA",
-            AdditionalDocumentReference: undefined,
+            AdditionalDocumentReference: this.getAdditionalDocumentReference(),
             AccountingSupplierParty: this.getAccountingSupplierParty(),
             AccountingCustomerParty: this.getAccountingCustomerParty(),
             PaymentMeans : undefined,
@@ -76,7 +76,7 @@ export class InvoiceComposer {
             Note: undefined,
             DocumentCurrencyCode: "EUR",
             BuyerReference: "NA",
-            AdditionalDocumentReference: undefined,
+            AdditionalDocumentReference: this.getAdditionalDocumentReference(),
             AccountingSupplierParty: this.getAccountingSupplierParty(),
             AccountingCustomerParty: this.getAccountingCustomerParty(),
             PaymentMeans : undefined,
@@ -353,5 +353,19 @@ export class InvoiceComposer {
                 Price: line.Price,
             })),
         } as Invoice;
+    }
+
+    private getAdditionalDocumentReference() {
+        return [{
+            ID: 'generated_invoice',
+            DocumentDescription: 'Generated Invoice PDF',
+            Attachment: {
+                EmbeddedDocumentBinaryObject: {
+                    __mimeCode: 'application/pdf',
+                    __filename: 'generated_invoice.pdf',
+                    value: 'ZW1wdHk='
+                }
+            }
+        } as AdditionalDocumentReference];
     }
 }

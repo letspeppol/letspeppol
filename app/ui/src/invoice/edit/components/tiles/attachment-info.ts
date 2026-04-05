@@ -3,17 +3,23 @@ import {AlertType} from "../../../../components/alert/alert";
 import {resolve} from "@aurelia/kernel";
 import {InvoiceContext} from "../../../invoice-context";
 import {bindable, IEventAggregator} from "aurelia";
+import {InvoiceService} from "../../../../services/app/invoice-service";
 
 export class AttachmentInfo {
     private invoiceContext = resolve(InvoiceContext);
+    private invoiceService = resolve(InvoiceService);
     private ea: IEventAggregator = resolve(IEventAggregator);
 
     @bindable readOnly: boolean;
     @bindable showAttachmentModal;
 
-    downloadAttachment(attachment: Attachment) {
+    async downloadAttachment(attachment: Attachment) {
         if (attachment.EmbeddedDocumentBinaryObject) {
-            const source = `data:${attachment.EmbeddedDocumentBinaryObject.__mimeCode};base64,${attachment.EmbeddedDocumentBinaryObject.value}`;
+            let source = `data:${attachment.EmbeddedDocumentBinaryObject.__mimeCode};base64,${attachment.EmbeddedDocumentBinaryObject.value}`;
+            if (attachment.EmbeddedDocumentBinaryObject.value === '') {
+                const blob = await this.invoiceService.downloadPdf(this.invoiceContext.selectedDocument.id).then(res => res.blob());
+                source = URL.createObjectURL(blob);
+            }
             const link = document.createElement('a');
             document.body.appendChild(link);
             link.href = source;

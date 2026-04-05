@@ -54,7 +54,7 @@ public class UblInvoicePdfService {
 
     private static final String INVOICE_XSLT = "pdf/ubl-invoice-to-html.xsl";
     private static final String CREDITNOTE_XSLT = "pdf/ubl-creditnote-to-html.xsl";
-    private static final String INVOICE_FILENAME = "generated-invoice.pdf";
+    private static final String GENERATED_INVOICE_ID = "generated_invoice";
 
     private final Templates invoiceToHtmlTemplates;
     private final Templates creditNoteToHtmlTemplates;
@@ -167,15 +167,13 @@ public class UblInvoicePdfService {
     }
 
     public String addRenderedPdfToUbl(String ublXml, String invoiceNumber) {
-        byte[] pdfBytes = toPdf(ublXml);
-        DocumentReferenceType documentReferenceType = createDocumentReferenceType(invoiceNumber, pdfBytes);
-        byte[] updatedUbl = addAttachmentToUbl(ublXml.getBytes(StandardCharsets.UTF_8), documentReferenceType);
+        byte[] updatedUbl = addAttachmentToUbl(ublXml, invoiceNumber);
         return new String(updatedUbl, Charset.defaultCharset());
     }
 
     private DocumentReferenceType createDocumentReferenceType(String invoiceNumber, byte[] pdfBytes) {
         EmbeddedDocumentBinaryObjectType embeddedDocumentBinaryObjectType = new EmbeddedDocumentBinaryObjectType();
-        embeddedDocumentBinaryObjectType.setFilename(INVOICE_FILENAME);
+        embeddedDocumentBinaryObjectType.setFilename(invoiceNumber + ".pdf");
         embeddedDocumentBinaryObjectType.setMimeCode("application/pdf");
         embeddedDocumentBinaryObjectType.setValue(pdfBytes);
 
@@ -183,16 +181,16 @@ public class UblInvoicePdfService {
         attachmentType.setEmbeddedDocumentBinaryObject(embeddedDocumentBinaryObjectType);
 
         DocumentReferenceType documentReferenceType = new DocumentReferenceType();
-        documentReferenceType.setID(invoiceNumber);
+        documentReferenceType.setID(GENERATED_INVOICE_ID);
         documentReferenceType.setAttachment(attachmentType);
         return documentReferenceType;
     }
 
-    private byte[] addAttachmentToUbl(byte[] originalUbl, DocumentReferenceType documentReferenceType) {
+    private byte[] addAttachmentToUbl(String originalUbl, String invoiceNumber) {
         try {
             // Parse XML as invoice
             Document doc = DOMReader.readXMLDOM(
-                    new ByteArrayInputStream(originalUbl),
+                    new ByteArrayInputStream(originalUbl.getBytes(StandardCharsets.UTF_8)),
                     new DOMReaderSettings().setSchema(UBL21Marshaller.invoice().getSchema())
             );
             if (doc != null) {
@@ -200,10 +198,12 @@ public class UblInvoicePdfService {
                 if (invoice == null) {
                     throw new UblException("Could not parse invoice ubl");
                 }
-                if (hasGeneratedPdfAttachment(invoice.getAdditionalDocumentReference())) {
-                    log.warn("Ubl already has generated invoice, not adding a new one");
-                    return originalUbl;
+                if (!removeGeneratedPdfAttachments(invoice.getAdditionalDocumentReference())) {
+                    log.warn("Ubl has no generated invoice placeholder, not adding a new one");
+                    return originalUbl.getBytes(StandardCharsets.UTF_8);
                 }
+                byte[] pdfBytes = toPdf(originalUbl);
+                DocumentReferenceType documentReferenceType = createDocumentReferenceType(invoiceNumber, pdfBytes);
                 invoice.getAdditionalDocumentReference().addFirst(documentReferenceType);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 UBL21Marshaller.invoice().write(invoice, baos);
@@ -212,7 +212,7 @@ public class UblInvoicePdfService {
 
             // Parse XML as credit note
             doc = DOMReader.readXMLDOM(
-                    new ByteArrayInputStream(originalUbl),
+                    new ByteArrayInputStream(originalUbl.getBytes(StandardCharsets.UTF_8)),
                     new DOMReaderSettings().setSchema(UBL21Marshaller.creditNote().getSchema())
             );
             if (doc != null) {
@@ -220,10 +220,12 @@ public class UblInvoicePdfService {
                 if (creditNote == null) {
                     throw new UblException("Could not parse credit note ubl");
                 }
-                if (hasGeneratedPdfAttachment(creditNote.getAdditionalDocumentReference())) {
+                if (!removeGeneratedPdfAttachments(creditNote.getAdditionalDocumentReference())) {
                     log.warn("Ubl already has generated credit note, not adding a new one");
-                    return originalUbl;
+                    return originalUbl.getBytes(StandardCharsets.UTF_8);
                 }
+                byte[] pdfBytes = toPdf(originalUbl);
+                DocumentReferenceType documentReferenceType = createDocumentReferenceType(invoiceNumber, pdfBytes);
                 creditNote.getAdditionalDocumentReference().addFirst(documentReferenceType);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 UBL21Marshaller.creditNote().write(creditNote, baos);
@@ -236,10 +238,12 @@ public class UblInvoicePdfService {
         }
     }
 
-    private boolean hasGeneratedPdfAttachment(List<DocumentReferenceType> documentReferenceTypes) {
-        return documentReferenceTypes.stream().anyMatch(documentReference ->
+    private boolean removeGeneratedPdfAttachments(List<DocumentReferenceType> documentReferenceTypes) {
+        return documentReferenceTypes.removeIf(documentReference ->
                 documentReference.getAttachment() != null &&
-                documentReference.getAttachment().getEmbeddedDocumentBinaryObject() != null &&
-                INVOICE_FILENAME.equals(documentReference.getAttachment().getEmbeddedDocumentBinaryObject().getFilename()));
+                        documentReference.getAttachment().getEmbeddedDocumentBinaryObject() != null &&
+                        documentReference.getIDValue() != null &&
+                        GENERATED_INVOICE_ID.equals(documentReference.getIDValue())
+        );
     }
 }

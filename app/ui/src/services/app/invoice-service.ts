@@ -120,8 +120,8 @@ export class InvoiceService {
         return await this.appApi.httpClient.get(`/sapi/document/${id}`).then(response => response.json());
     }
 
-    async createDocument(xml: string, addPdfToSendingInvoice: boolean = false, draft: boolean = false) : Promise<DocumentDto> {
-        return await this.appApi.httpClient.post(`/sapi/document?addPdfToSendingInvoice=${addPdfToSendingInvoice}&draft=${draft}`, xml).then(response => response.json());
+    async createDocument(xml: string, draft: boolean = false) : Promise<DocumentDto> {
+        return await this.appApi.httpClient.post(`/sapi/document?draft=${draft}`, xml).then(response => response.json());
     }
 
     async updateDocument(id: string, xml: string, draft: boolean = false) : Promise<DocumentDto> {
@@ -150,6 +150,5 @@ export class InvoiceService {
 
     async downloadPdf(id: string) {
         return await this.appApi.httpClient.get(`/sapi/document/${id}/pdf`);
-
     }
 }
