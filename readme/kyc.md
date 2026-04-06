@@ -56,13 +56,13 @@ The pages below should be read in the same order as the scenarios covered by `Ad
 
 1. [Registration new ADMIN](./registration-new-admin.md)
 2. [Registration active ADMIN](./registration-active-admin.md)
-3. [Registration new PARTNER](./registration-new-partner.md)
-4. [Registration active PARTNER](./registration-active-partner.md)
+3. [Registration new AFFILIATE](./registration-new-affiliate.md)
+4. [Registration active AFFILIATE](./registration-active-affiliate.md)
 5. [Login](./login.md)
 6. [Swap](./swap.md)
-7. [Registration active ADMIN via PARTNER and verify by email](./registration-active-admin-via-partner-and-verify-by-email.md)
-8. [Registration new ADMIN via PARTNER and verify email before signing](./registration-new-admin-via-partner-and-verify-email-before-signing.md)
-9. [Registration new ADMIN via PARTNER and sign before email verification](./registration-new-admin-via-partner-and-sign-before-email-verification.md)
+7. [Registration active ADMIN via AFFILIATE and verify by email](./registration-active-admin-via-affiliate-and-verify-by-email.md)
+8. [Registration new ADMIN via AFFILIATE and verify email before signing](./registration-new-admin-via-affiliate-and-verify-email-before-signing.md)
+9. [Registration new ADMIN via AFFILIATE and sign before email verification](./registration-new-admin-via-affiliate-and-sign-before-email-verification.md)
 
 ## How to read the flow pages
 

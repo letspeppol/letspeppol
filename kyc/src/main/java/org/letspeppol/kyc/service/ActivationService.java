@@ -116,9 +116,9 @@ public class ActivationService {
             case APP:
 //            case APP_USER:
                 throw new KycException(KycErrorCodes.REQUESTER_NOT_VALID);
-            case PARTNER:
-                if (emailVerification.getType() != ADMIN) { //TODO : add other partners ? Or does this always happen from ADMIN ?
-                    throw new KycException(KycErrorCodes.INVALID_PARTNER_REQUEST);
+            case AFFILIATE:
+                if (emailVerification.getType() != ADMIN) { //TODO : add other affiliates ? Or does this always happen from ADMIN ?
+                    throw new KycException(KycErrorCodes.INVALID_AFFILIATE_REQUEST);
                 }
 //                ownershipService.verifyPeppolIdNotRegistered(emailVerification.getPeppolId()); //The ADMIN should not be validated yet, so no registration in ownership ?
         }

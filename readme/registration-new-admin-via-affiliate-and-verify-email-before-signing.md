@@ -1,9 +1,9 @@
-# Registration new ADMIN via PARTNER and verify email before signing
+# Registration new ADMIN via AFFILIATE and verify email before signing
 
 ```mermaid
 sequenceDiagram
     actor SME as SME
-    actor PARTNER as PARTNER
+    actor AFFILIATE as AFFILIATE
     participant Frontend as Frontend
     participant KYC as KYC
     participant App as App
@@ -11,22 +11,22 @@ sequenceDiagram
     participant Proxy as Proxy
     participant Peppol as Peppol
 
-Note over SME, Peppol: Requesting new company added to PARTNER
-    Note left of PARTNER: Visit /partner/companies
-    PARTNER ->> Frontend: Add account( VAT, mail )
+Note over SME, Peppol: Requesting new company added to AFFILIATE
+    Note left of AFFILIATE: Visit /affiliate/companies
+    AFFILIATE ->> Frontend: Add account( VAT, mail )
     Frontend ->> KYC: GET /kyc/api/register/company/{PeppolID}
     Note right of KYC: Find company by PeppolID <br> or do CBE lookup
     KYC ->> Frontend: CompanyResponse <br> with hasAdmin == false
-    Frontend ->> PARTNER: Show company details
+    Frontend ->> AFFILIATE: Show company details
 
-    Note left of PARTNER: Verify information
-    PARTNER ->> Frontend: Confirm()
+    Note left of AFFILIATE: Verify information
+    AFFILIATE ->> Frontend: Confirm()
     Frontend ->> KYC: POST /kyc/sapi/linked/request-company <br> ( AccountType.ADMIN, peppolId, email )
-    Note right of KYC: JWT == PARTNER <br> PeppolID has no ADMIN <br>(= not registered) <br> Generate token (Requester = Partner, type = ADMIN)
-    KYC ->> SME: Mail "Confirm your email and your partner" /email-confirmation?token={token}
+    Note right of KYC: JWT == AFFILIATE <br> PeppolID has no ADMIN <br>(= not registered) <br> Generate token (Requester = Affiliate, type = ADMIN)
+    KYC ->> SME: Mail "Confirm your email and your affiliate" /email-confirmation?token={token}
     KYC ->> Frontend: "Activation email sent"
-    Frontend ->> App: POST /app/sapi/partner/add-company <br> ( peppolId, email, name, ...? )
-    Note right of App: JWT == PARTNER <br> Store new company add request
+    Frontend ->> App: POST /app/sapi/affiliate/add-company <br> ( peppolId, email, name, ...? )
+    Note right of App: JWT == AFFILIATE <br> Store new company add request
     App ->> Frontend: OK
     opt Check Peppol Directory, skip on HTTP error
         Frontend -->> App: GET /app/api/peppol-directory?participant={PeppolID}
@@ -34,13 +34,13 @@ Note over SME, Peppol: Requesting new company added to PARTNER
         PeppolDirectory -->> App: Peppol registrations
         App -->> Frontend: Peppol registrations
     end
-    Frontend ->> PARTNER: "Account new" & "Email is sent" <br> & Show company & directors <br> & registrations present
+    Frontend ->> AFFILIATE: "Account new" & "Email is sent" <br> & Show company & directors <br> & registrations present
 
-Note over SME, Peppol: Verify email of new ADMIN started by PARTNER
+Note over SME, Peppol: Verify email of new ADMIN started by AFFILIATE
     Note left of SME: Receives email
     SME ->> Frontend: Open link in email
     Frontend ->> KYC: POST /kyc/api/register/verify?token={token}
-    Note right of KYC: Validate token <br> Requester == PARTNER <br> Type == ADMIN <br> PeppolID has no ADMIN <br> Find company by PeppolID <br> or do CBE lookup
+    Note right of KYC: Validate token <br> Requester == AFFILIATE <br> Type == ADMIN <br> PeppolID has no ADMIN <br> Find company by PeppolID <br> or do CBE lookup
     KYC ->> Frontend: TokenVerificationResponse <br> ( email, CompanyResponse, requester )
     opt Check Peppol Directory, skip on HTTP error
         Frontend -->> App: GET /app/api/peppol-directory?participant={PeppolID}
@@ -50,7 +50,7 @@ Note over SME, Peppol: Verify email of new ADMIN started by PARTNER
     end
     Frontend ->> SME: Show company & directors <br> & registrations present
 
-Note over SME, Peppol: Signing contract for new ADMIN requested by PARTNER
+Note over SME, Peppol: Signing contract for new ADMIN requested by AFFILIATE
     Note left of SME: Select director
     SME ->> Frontend: Confirm( director )
     Frontend ->> SME: Web eID "Select a certificate"
@@ -86,15 +86,15 @@ Note over SME, Peppol: Signing contract for new ADMIN requested by PARTNER
     KYC ->> Frontend: PDF signed contract <br> Header( Registration-Status ) <br> Header( Registration-Provider )
     Frontend ->> SME: Show success & download signed contract <br> Registration-Status == CONFLICT ? <br> show Registration-Provider <br> Show requester
 
-Note over SME, Peppol: Accepting PARTNER request by ADMIN
+Note over SME, Peppol: Accepting AFFILIATE request by ADMIN
     Note left of SME: Read requester
     SME ->> Frontend: LoginToConfirm( email, password )
     Frontend ->> KYC: POST /api/jwt/auth <br> ( AccountType.ADMIN, peppolId )
     Note right of KYC: Validate credentials <br> Update last used ownership
     KYC ->> Frontend: JWT ( AccountType.ADMIN, peppolId, peppolActive, uid )
     opt if accepted
-        Frontend -->> App: POST /app/sapi/partner/verify-company <br> ( requester, peppolId, ...? )
-        Note right of App: JWT == ADMIN <br> Set company as active for requester partner
+        Frontend -->> App: POST /app/sapi/affiliate/verify-company <br> ( requester, peppolId, ...? )
+        Note right of App: JWT == ADMIN <br> Set company as active for requester affiliate
         App -->> Frontend: OK
     end
     Frontend ->> KYC: POST /kyc/sapi/approve?token={token}

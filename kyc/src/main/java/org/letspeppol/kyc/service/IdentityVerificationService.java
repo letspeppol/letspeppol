@@ -52,7 +52,7 @@ public class IdentityVerificationService {
         String passwordHash = passwordEncoder.encode(req.password());
         account.setPasswordHash(passwordHash);
         accountService.create(account);
-        if (accountType == AccountType.PARTNER) { //TODO : do we automatically create ADMIN here ? do we check if this is correct ?
+        if (accountType == AccountType.AFFILIATE) { //TODO : do we automatically create ADMIN here ? do we check if this is correct ?
             ownershipService.link(account, AccountType.ADMIN, req.director().getCompany());
         }
         ownershipService.link(account, accountType, req.director().getCompany());

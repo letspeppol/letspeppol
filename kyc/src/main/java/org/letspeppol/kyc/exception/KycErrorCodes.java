@@ -17,7 +17,7 @@ public final class KycErrorCodes {
     public static final String REQUESTER_NOT_VERIFIED = "requester_not_verified";
     public static final String REQUESTER_NOT_VALID = "requester_not_valid";
     public static final String ONLY_ONE_ADMIN_ALLOWED = "only_one_admin_allowed";
-    public static final String INVALID_PARTNER_REQUEST = "invalid_partner_request";
+    public static final String INVALID_AFFILIATE_REQUEST = "invalid_affiliate_request";
     // Password reset
     public static final String PASSWORD_RESET_TOKEN_NOT_FOUND = "password_reset_token_not_found";
     public static final String PASSWORD_RESET_TOKEN_EXPIRED = "password_reset_token_expired";

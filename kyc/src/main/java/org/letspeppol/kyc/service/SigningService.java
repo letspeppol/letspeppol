@@ -254,7 +254,7 @@ public class SigningService {
     public FinalizeSigningResponse finalizeSign(FinalizeSigningRequest signingRequest) {
         finalizeSigningCounter.increment();
         EmailVerification emailVerification = activationService.getValidTokenInformation(signingRequest.emailToken());
-        if (emailVerification.getType() != AccountType.ADMIN && emailVerification.getType() != AccountType.PARTNER) {
+        if (emailVerification.getType() != AccountType.ADMIN && emailVerification.getType() != AccountType.AFFILIATE) {
             throw new KycException(KycErrorCodes.INVALID_ACCOUNT_TYPE);
         }
         Director director = getDirector(signingRequest.directorId(), emailVerification.getPeppolId());
