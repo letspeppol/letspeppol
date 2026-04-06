@@ -1,4 +1,4 @@
-import {Attachment} from "../../../../services/peppol/ubl";
+import {AdditionalDocumentReference} from "../../../../services/peppol/ubl";
 import {AlertType} from "../../../../components/alert/alert";
 import {resolve} from "@aurelia/kernel";
 import {InvoiceContext} from "../../../invoice-context";
@@ -13,10 +13,15 @@ export class AttachmentInfo {
     @bindable readOnly: boolean;
     @bindable showAttachmentModal;
 
-    async downloadAttachment(attachment: Attachment) {
+    async downloadAttachment(additionalDocumentReference: AdditionalDocumentReference) {
+        const attachment = additionalDocumentReference.Attachment;
         if (attachment.EmbeddedDocumentBinaryObject) {
             let source = `data:${attachment.EmbeddedDocumentBinaryObject.__mimeCode};base64,${attachment.EmbeddedDocumentBinaryObject.value}`;
-            if (attachment.EmbeddedDocumentBinaryObject.value === '') {
+            if (additionalDocumentReference.ID === 'generated_invoice') {
+                if (!this.invoiceContext.selectedDocument || !this.invoiceContext.selectedDocument.id) {
+                    this.ea.publish('alert', {alertType: AlertType.Warning, text: `Document not saved. PDF render not available.`});
+                    return;
+                }
                 const blob = await this.invoiceService.downloadPdf(this.invoiceContext.selectedDocument.id).then(res => res.blob());
                 source = URL.createObjectURL(blob);
             }
