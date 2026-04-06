@@ -3,14 +3,17 @@ import {AdditionalDocumentReference} from "../../../../services/peppol/ubl";
 import {resolve} from "@aurelia/kernel";
 import {AlertType} from "../../../../components/alert/alert";
 import moment from "moment";
+import {InvoiceComposer} from "../../../invoice-composer";
 
 export class InvoiceAttachmentModal {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
+    private readonly invoiceComposer = resolve(InvoiceComposer);
     @bindable invoiceContext;
     additionalDocumentReference: AdditionalDocumentReference[] = [];
     open = false;
     validated = false;
     isDraggingFile = false;
+    generatedPdfPresent = false;
     uploadWrapper: HTMLElement;
 
     showModal() {
@@ -30,6 +33,15 @@ export class InvoiceAttachmentModal {
     @watch((vm) => vm.additionalDocumentReference.length)
     validate() {
         this.validated = !this.additionalDocumentReference.length || this.additionalDocumentReference.filter(item => !item.ID || (item.Attachment.ExternalReference && !item.Attachment.ExternalReference.URI)).length === 0;
+    }
+
+    @watch((vm) => vm.additionalDocumentReference.length)
+    checkGeneratedPdf() {
+        this.generatedPdfPresent = this.additionalDocumentReference.length && this.additionalDocumentReference.some(item => item.ID === 'generated_invoice');
+    }
+
+    addGeneratedPdf() {
+        this.additionalDocumentReference.push(...this.invoiceComposer.getAdditionalDocumentReference());
     }
 
     saveAttachments() {

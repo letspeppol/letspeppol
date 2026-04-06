@@ -37,5 +37,4 @@ export class AttachmentInfo {
             window.open(attachment.ExternalReference.URI, '_blank');
         }
     }
-
 }

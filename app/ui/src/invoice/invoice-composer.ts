@@ -355,7 +355,7 @@ export class InvoiceComposer {
         } as Invoice;
     }
 
-    private getAdditionalDocumentReference() {
+    public getAdditionalDocumentReference() {
         return [{
             ID: 'generated_invoice',
             DocumentDescription: 'Generated Invoice PDF',
