@@ -1,4 +1,4 @@
-ALTER TYPE account_type RENAME VALUE 'ACCOUNTANT' TO 'PARTNER';
+ALTER TYPE account_type RENAME VALUE 'ACCOUNTANT' TO 'AFFILIATE';
 
 -- Ownership (FK -> account, company)
 CREATE TABLE IF NOT EXISTS ownership (
