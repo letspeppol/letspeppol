@@ -168,7 +168,7 @@ public class UblInvoicePdfService {
 
     public String addRenderedPdfToUbl(String ublXml, String invoiceNumber) {
         byte[] updatedUbl = addAttachmentToUbl(ublXml, invoiceNumber);
-        return new String(updatedUbl, Charset.defaultCharset());
+        return new String(updatedUbl, StandardCharsets.UTF_8);
     }
 
     private DocumentReferenceType createDocumentReferenceType(String invoiceNumber, byte[] pdfBytes) {

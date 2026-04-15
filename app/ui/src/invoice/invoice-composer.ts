@@ -16,6 +16,8 @@ import {CompanyService} from "../services/app/company-service";
 import {DocumentType} from "../services/app/invoice-service";
 import {I18N} from "@aurelia/i18n";
 
+const GENERATED_INVOICE = 'generated_invoice';
+
 @singleton()
 export class InvoiceComposer {
     private i18n = resolve(I18N);
@@ -357,12 +359,12 @@ export class InvoiceComposer {
 
     public getAdditionalDocumentReference() {
         return [{
-            ID: 'generated_invoice',
+            ID: GENERATED_INVOICE,
             DocumentDescription: 'Generated Invoice PDF',
             Attachment: {
                 EmbeddedDocumentBinaryObject: {
                     __mimeCode: 'application/pdf',
-                    __filename: 'generated_invoice.pdf',
+                    __filename: `${GENERATED_INVOICE}.pdf`,
                     value: 'ZW1wdHk='
                 }
             }

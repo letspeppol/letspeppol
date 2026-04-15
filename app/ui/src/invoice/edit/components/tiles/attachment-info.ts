@@ -17,13 +17,15 @@ export class AttachmentInfo {
         const attachment = additionalDocumentReference.Attachment;
         if (attachment.EmbeddedDocumentBinaryObject) {
             let source = `data:${attachment.EmbeddedDocumentBinaryObject.__mimeCode};base64,${attachment.EmbeddedDocumentBinaryObject.value}`;
+            let objectUrl: string | null = null;
             if (additionalDocumentReference.ID === 'generated_invoice') {
                 if (!this.invoiceContext.selectedDocument || !this.invoiceContext.selectedDocument.id) {
                     this.ea.publish('alert', {alertType: AlertType.Warning, text: `Document not saved. PDF render not available.`});
                     return;
                 }
                 const blob = await this.invoiceService.downloadPdf(this.invoiceContext.selectedDocument.id).then(res => res.blob());
-                source = URL.createObjectURL(blob);
+                objectUrl = URL.createObjectURL(blob);
+                source = objectUrl;
             }
             const link = document.createElement('a');
             document.body.appendChild(link);
@@ -31,6 +33,9 @@ export class AttachmentInfo {
             link.target = '_self';
             link.download = attachment.EmbeddedDocumentBinaryObject.__filename;
             link.click();
+            if (objectUrl) {
+                URL.revokeObjectURL(objectUrl);
+            }
             this.ea.publish('alert', {alertType: AlertType.Info, text: `File '${attachment.EmbeddedDocumentBinaryObject.__filename}' downloaded`});
         }
         if (attachment.ExternalReference && attachment.ExternalReference.URI) {

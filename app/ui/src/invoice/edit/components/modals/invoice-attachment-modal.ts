@@ -92,7 +92,7 @@ export class InvoiceAttachmentModal {
             return;
         }
         const totalSize = this.additionalDocumentReference.filter(item => item.Attachment?.EmbeddedDocumentBinaryObject)
-            .map(item => (item.Attachment.EmbeddedDocumentBinaryObject.value.length * 3) / 4)
+            .map(item => item.Attachment.EmbeddedDocumentBinaryObject.value.length )
             .reduce((sum, value) => sum + value, 0)
             + ((file.size * 4) / 3);
         if (totalSize > (10 * (1024 ** 2))) {
