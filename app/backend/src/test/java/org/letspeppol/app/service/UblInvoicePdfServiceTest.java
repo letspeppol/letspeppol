@@ -23,7 +23,7 @@ class UblInvoicePdfServiceTest {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         UBL21Marshaller.invoice().write(invoiceType, byteArrayOutputStream);
 
-        UblInvoicePdfService sut = new UblInvoicePdfService();
+        UblInvoicePdfService sut = new UblInvoicePdfService(null);
         byte[] pdf = sut.toPdf(byteArrayOutputStream.toString(StandardCharsets.UTF_8));
 
         Files.createDirectories(Paths.get("build", "debug"));
@@ -34,7 +34,7 @@ class UblInvoicePdfServiceTest {
     @SneakyThrows
     @Test
     void draftModeOmitsInvoiceNumberAndAddsWatermark() {
-        UblInvoicePdfService sut = new UblInvoicePdfService();
+        UblInvoicePdfService sut = new UblInvoicePdfService(null);
         byte[] pdf = sut.toPdf(xml, UblInvoicePdfService.RenderMode.DRAFT);
 
         assertNotNull(pdf);
@@ -51,7 +51,7 @@ class UblInvoicePdfServiceTest {
     @SneakyThrows
     @Test
     void proformaModeOmitsInvoiceNumberAndAddsWatermark() {
-        UblInvoicePdfService sut = new UblInvoicePdfService();
+        UblInvoicePdfService sut = new UblInvoicePdfService(null);
         byte[] pdf = sut.toPdf(xml, UblInvoicePdfService.RenderMode.PROFORMA);
 
         assertNotNull(pdf);
