@@ -14,6 +14,7 @@ import org.letspeppol.app.mapper.DocumentMapper;
 import org.letspeppol.app.model.Company;
 import org.letspeppol.app.model.Document;
 import org.letspeppol.app.model.DocumentDirection;
+import org.letspeppol.app.model.DocumentType;
 import org.letspeppol.app.repository.CompanyRepository;
 import org.letspeppol.app.repository.DocumentRepository;
 import org.letspeppol.app.repository.DocumentSpecifications;
@@ -138,7 +139,7 @@ public class DocumentService {
         }
 
         if (!draft) {
-             if (documentRepository.existsByInvoiceReferenceAndOwnerPeppolId(ublDto.invoiceReference(), peppolId)) {
+             if (documentRepository.existsByInvoiceReferenceAndTypeAndOwnerPeppolId(ublDto.invoiceReference(), ublDto.type(), peppolId)) {
                  throw new AppException(AppErrorCodes.INVOICE_NUMBER_ALREADY_USED);
              }
         }
@@ -344,7 +345,12 @@ public class DocumentService {
         document.setProcessedOn(ublDocumentDto.processedOn());
         document.setProcessedStatus(ublDocumentDto.processedStatus());
         document.setUbl(ublDocumentDto.ubl());
-        document.getCompany().setLastInvoiceReference(document.getInvoiceReference());
+        if (DocumentType.CREDIT_NOTE.equals(document.getType())) {
+            document.getCompany().setLastCreditNoteReference(document.getInvoiceReference());
+        } else {
+            document.getCompany().setLastInvoiceReference(document.getInvoiceReference());
+        }
+
         return documentRepository.save(document);
     }
 
@@ -374,7 +380,11 @@ public class DocumentService {
         document.setScheduledOn(ublDocumentDto.scheduledOn());
         document.setProcessedOn(ublDocumentDto.processedOn());
         document.setProcessedStatus(ublDocumentDto.processedStatus());
-        document.getCompany().setLastInvoiceReference(document.getInvoiceReference());
+        if (DocumentType.CREDIT_NOTE.equals(document.getType())) {
+            document.getCompany().setLastCreditNoteReference(document.getInvoiceReference());
+        } else {
+            document.getCompany().setLastInvoiceReference(document.getInvoiceReference());
+        }
         return documentRepository.save(document);
     }
 

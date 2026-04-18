@@ -30,6 +30,7 @@ public class Company extends GenericEntity{
     private String iban;
     private String paymentAccountName;
     private String lastInvoiceReference;
+    private String lastCreditNoteReference;
 
     private boolean enableEmailNotification;
     private boolean addAttachmentToNotification;
