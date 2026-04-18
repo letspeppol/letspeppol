@@ -97,8 +97,5 @@ Note over SME, Peppol: Accepting AFFILIATE request by ADMIN
         Note right of App: JWT == ADMIN <br> Set company as active for requester affiliate
         App -->> Frontend: OK
     end
-    Frontend ->> KYC: POST /kyc/sapi/approve?token={token}
-    Note right of KYC: JWT == ADMIN <br> Validate token <br> token.peppolId == JWT.peppolId <br> Set email as verified
-    KYC ->> Frontend: OK
     Frontend ->> SME: Show success / Go to active connection list
 ```
