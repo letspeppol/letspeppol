@@ -34,7 +34,6 @@ export class InvoiceContext {
     clearSelectedInvoice() {
         this.selectedInvoice = undefined;
         this.selectedDocument = undefined;
-        this.activeBox = 'ALL';
     }
 
     setActiveBoxFromDocument(doc: DocumentDto) {

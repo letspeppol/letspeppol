@@ -83,14 +83,13 @@ public class DocumentController {
     @PostMapping()
     public DocumentDto create(@AuthenticationPrincipal Jwt jwt,
                               @RequestBody String ublXml,
-                              @RequestParam(required = false) boolean addPdfToSendingInvoice,
                               @RequestParam(required = false) boolean draft,
                               @RequestParam(required = false) Instant schedule) {
         if (!JwtUtil.isPeppolActive(jwt)) {
             draft = true;
         }
         String peppolId = JwtUtil.getPeppolId(jwt);
-        return documentService.createFromUbl(peppolId, ublXml, addPdfToSendingInvoice, draft, schedule, jwt.getTokenValue());
+        return documentService.createFromUbl(peppolId, ublXml, draft, schedule, jwt.getTokenValue());
     }
 
     @PutMapping("{id}")

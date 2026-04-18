@@ -46,6 +46,7 @@ export class InvoiceEdit {
 
     returnToOverview() {
         this.invoiceContext.setActiveBoxFromDocument(this.invoiceContext.selectedDocument);
+        this.invoiceContext.clearSelectedInvoice();
         this.router.load('/invoices');
     }
 
@@ -106,7 +107,7 @@ export class InvoiceEdit {
                 return;
             }
 
-            const doc = await this.invoiceService.createDocument(xml, this.invoiceContext.addPdfToSendingInvoice);
+            const doc = await this.invoiceService.createDocument(xml);
             this.ea.publish('alert', {alertType: AlertType.Success, text: "Invoice sent successfully"});
             this.invoiceContext.invoicePage.content.unshift(doc);
             if (this.invoiceContext.selectedDocument.draftedOn) {
@@ -148,7 +149,7 @@ export class InvoiceEdit {
                 const newDraft = await this.invoiceService.updateDocument(this.invoiceContext.selectedDocument.id, xml, true);
                 this.invoiceContext.draftPage.content.splice(this.invoiceContext.draftPage.content.findIndex(item => item.id === newDraft.id), 1, newDraft);
             } else {
-                const documentDraftDto = await this.invoiceService.createDocument(xml, false, true);
+                const documentDraftDto = await this.invoiceService.createDocument(xml, true);
                 this.invoiceContext.selectedDocument = documentDraftDto;
                 this.invoiceContext.draftPage.content.unshift(documentDraftDto);
                 this.invoiceContext.draftPage.totalElements++;
