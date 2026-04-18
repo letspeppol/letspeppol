@@ -13,7 +13,6 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestComponent;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -27,16 +26,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestComponent
 public class RegistrationSteps {
 
-    @LocalServerPort private int port;
     @Autowired private TestRestTemplate restTemplate;
     @Autowired private EmailVerificationRepository emailVerificationRepository;
     @Autowired private CompanyRepository companyRepository;
     @Autowired private DirectorRepository directorRepository;
     @Autowired private JwtService jwtService;
-
-    private String baseUrl() {
-        return "http://localhost:" + port;
-    }
 
     private HttpHeaders basicHeader(String email, String password) {
         // Build Basic header
@@ -65,7 +59,7 @@ public class RegistrationSteps {
 
     String login(String email, String password, String peppolId) {
         // POST /api/jwt/auth
-        String url = baseUrl() + "/api/jwt/auth";
+        String url = "/api/jwt/auth";
         HttpEntity<Void> request = new HttpEntity<>(basicHeader(email, password));
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -78,7 +72,7 @@ public class RegistrationSteps {
 
     String login(String email, String password, AccountType accountType, String peppolId) {
         // POST /api/jwt/auth
-        String url = baseUrl() + "/api/jwt/auth";
+        String url = "/api/jwt/auth";
         AuthRequest authRequest = new AuthRequest(accountType, peppolId);
         HttpEntity<AuthRequest> request = new HttpEntity<>(authRequest, basicHeader(email, password));
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
@@ -92,7 +86,7 @@ public class RegistrationSteps {
 
     String swap(String token, AccountType accountType, String peppolId) {
         // POST /sapi/jwt/swap
-        String url = baseUrl() + "/sapi/jwt/swap";
+        String url = "/sapi/jwt/swap";
         AuthRequest authRequest = new AuthRequest(accountType, peppolId);
         HttpEntity<AuthRequest> request = new HttpEntity<>(authRequest, jwtHeader(token));
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
@@ -106,7 +100,7 @@ public class RegistrationSteps {
 
     CompanyResponse getCompany(String peppolId) {
         // GET /api/register/company/{peppolId}
-        String url = baseUrl() + "/api/register/company/" + peppolId;
+        String url = "/api/register/company/" + peppolId;
         CompanyResponse companyResponse = restTemplate.getForObject(url, CompanyResponse.class);
         assertNotNull(companyResponse);
         assertEquals(peppolId, companyResponse.peppolId());
@@ -126,7 +120,7 @@ public class RegistrationSteps {
 
     String confirmCompany(AccountType accountType, String peppolId, String email, String city, String postCode, String street) {
         // POST /api/register/confirm-company
-        String url = baseUrl() + "/api/register/confirm-company";
+        String url = "/api/register/confirm-company";
         ConfirmCompanyRequest confirmRequest = new ConfirmCompanyRequest(accountType, peppolId, email, city, postCode, street);
         SimpleMessage confirmResponse = restTemplate.postForObject(url, confirmRequest, SimpleMessage.class);
         assertNotNull(confirmResponse);
@@ -141,7 +135,7 @@ public class RegistrationSteps {
 
     String requestCompany(String affiliateToken, AccountType accountType, String peppolId, String email, String city, String postCode, String street) {
         // POST /sapi/linked/request-company
-        String url = baseUrl() + "/sapi/linked/request-company";
+        String url = "/sapi/linked/request-company";
         ConfirmCompanyRequest confirmRequest = new ConfirmCompanyRequest(accountType, peppolId, email, city, postCode, street); //TODO : no email ? Why address ?
         HttpEntity<ConfirmCompanyRequest> request = new HttpEntity<>(confirmRequest, jwtHeader(affiliateToken));
         ResponseEntity<SimpleMessage> response = restTemplate.exchange(url, HttpMethod.POST, request, SimpleMessage.class);
@@ -159,7 +153,7 @@ public class RegistrationSteps {
 
     TokenVerificationResponse verify(String token, String peppolId, String email) {
         // POST /api/register/verify
-        String url = baseUrl() + "/api/register/verify?token=" + token;
+        String url = "/api/register/verify?token=" + token;
         TokenVerificationResponse verifyResponse = restTemplate.postForObject(url, null, TokenVerificationResponse.class);
         assertNotNull(verifyResponse);
         assertEquals(email, verifyResponse.email());
@@ -214,7 +208,7 @@ public class RegistrationSteps {
                     java.util.List.of(signatureAlgorithm),
                     "en"
             );
-            String prepareUrl = baseUrl() + "/api/identity/sign/prepare";
+            String prepareUrl = "/api/identity/sign/prepare";
             PrepareSigningResponse prepareResponse = restTemplate.postForObject(prepareUrl, prepareRequest, PrepareSigningResponse.class);
             System.out.println("prepareResponse: " + prepareResponse);
             assertNotNull(prepareResponse);
@@ -224,7 +218,7 @@ public class RegistrationSteps {
             assertTrue(prepareResponse.allowedToSign());
 
             // GET /api/identity/contract/{directorId}?token=...
-            String contractUrl = baseUrl() + "/api/identity/contract/" + directorId + "?token=" + token;
+            String contractUrl = "/api/identity/contract/" + directorId + "?token=" + token;
             ResponseEntity<byte[]> contractResponse = restTemplate.getForEntity(contractUrl, byte[].class);
             assertEquals(200, contractResponse.getStatusCode().value());
             assertNotNull(contractResponse.getBody());
@@ -244,7 +238,7 @@ public class RegistrationSteps {
                     prepareResponse.hashToFinalize(),
                     password
             );
-            String finalizeUrl = baseUrl() + "/api/identity/sign/finalize";
+            String finalizeUrl = "/api/identity/sign/finalize";
             ResponseEntity<byte[]> finalizeResponse = restTemplate.postForEntity(finalizeUrl, finalizeRequest, byte[].class);
             assertEquals(200, finalizeResponse.getStatusCode().value());
             assertNotNull(finalizeResponse.getBody());
