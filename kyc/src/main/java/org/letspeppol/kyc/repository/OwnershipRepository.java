@@ -11,6 +11,8 @@ import java.util.UUID;
 public interface OwnershipRepository extends JpaRepository<Ownership, Long> {
     Optional<Ownership> findFirstByAccountExternalIdAndCompanyPeppolIdAndTypeOrderByLastUsedDesc(UUID externalId, String peppolId, AccountType type);
     Optional<Ownership> findFirstByCompanyPeppolIdAndTypeOrderByLastUsedDesc(String peppolId, AccountType type);
+    Optional<Ownership> findFirstByAccountEmailAndCompanyPeppolIdAndTypeOrderByCreatedOnDesc(String email, String peppolId, AccountType type);
+    Optional<Ownership> findFirstByAccountIdAndCompanyIdAndType(Long accountId, Long companyId, AccountType type);
     List<Ownership> findByCompanyPeppolIdOrderByCreatedOnAsc(String peppolId);
     boolean existsByTypeAndCompanyPeppolId(AccountType type, String peppolId);
 }

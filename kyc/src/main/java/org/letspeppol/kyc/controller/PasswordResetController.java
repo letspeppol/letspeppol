@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.letspeppol.kyc.dto.ChangePasswordRequest;
 import org.letspeppol.kyc.dto.ForgotPasswordRequest;
-import org.letspeppol.kyc.dto.ResetPasswordRequest;
+import org.letspeppol.kyc.dto.SetPasswordRequest;
 import org.letspeppol.kyc.dto.SimpleMessage;
 import org.letspeppol.kyc.service.JwtService;
 import org.letspeppol.kyc.service.PasswordResetService;
@@ -30,7 +30,7 @@ public class PasswordResetController {
 
     /// Changes password based on password recovery mail
     @PostMapping("/api/password/reset")
-    public ResponseEntity<Void> reset(@Valid @RequestBody ResetPasswordRequest request) {
+    public ResponseEntity<Void> reset(@Valid @RequestBody SetPasswordRequest request) {
         passwordResetService.resetPassword(request.token(), request.newPassword());
         return ResponseEntity.noContent().build();
     }

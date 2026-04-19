@@ -58,6 +58,17 @@ class RegistrationTest {
     String charliePassword = "charlie-password";
     String charlieToken = null;
 
+    String deltaCompany = "Delta Company";
+    String deltaPeppolId = "0208:3333333333";
+
+    String echoCompany = "Echo Company";
+    String echoPeppolId = "0208:4444444444";
+    String echoEmail = "echo@company.com";
+    String echoPassword = "echo-password";
+
+    String foxtrotCompany = "Foxtrot Company";
+    String foxtrotPeppolId = "0208:5555555555";
+
     @BeforeAll
     static void startMockServer() throws Exception {
         mockWebServer = new MockWebServer();
@@ -103,7 +114,8 @@ class RegistrationTest {
         // 4. POST /api/identity/sign/prepare
         // 5. GET /api/identity/contract/{directorId}?token=...
         // 6. POST /api/identity/sign/finalize
-        registrationSteps.signContract(emailToken, directorId, adminPassword);
+        registrationSteps.signContract(adminPeppolId, adminEmail, directorId);
+        registrationSteps.activateAccount(emailToken, adminPassword);
         assertTrue(ownershipRepository.existsByTypeAndCompanyPeppolId(AccountType.ADMIN, adminPeppolId));
     }
 
@@ -135,7 +147,8 @@ class RegistrationTest {
         // 4. POST /api/identity/sign/prepare
         // 5. GET /api/identity/contract/{directorId}?token=...
         // 6. POST /api/identity/sign/finalize
-        registrationSteps.signContract(emailToken, directorId, affiliatePassword);
+        registrationSteps.signContract(affiliatePeppolId, affiliateEmail, directorId);
+        registrationSteps.activateAccount(emailToken, affiliatePassword);
         assertTrue(ownershipRepository.existsByTypeAndCompanyPeppolId(AccountType.ADMIN, affiliatePeppolId));
         assertTrue(ownershipRepository.existsByTypeAndCompanyPeppolId(AccountType.AFFILIATE, affiliatePeppolId));
     }
@@ -259,7 +272,8 @@ class RegistrationTest {
         // 4. POST /api/identity/sign/prepare
         // 5. GET /api/identity/contract/{directorId}?token=...
         // 6. POST /api/identity/sign/finalize
-        registrationSteps.signContract(emailToken, directorId, bobPassword);
+        registrationSteps.signContract(bobPeppolId, bobEmail, directorId);
+        registrationSteps.activateAccount(emailToken, bobPassword);
         assertTrue(ownershipRepository.existsByTypeAndCompanyPeppolId(AccountType.ADMIN, bobPeppolId));
 
         // 7. login as Admin to approve
@@ -303,11 +317,11 @@ class RegistrationTest {
         // 3. POST /api/identity/sign/prepare
         // 4. GET /api/identity/contract/{directorId}?token=...
         // 5. POST /api/identity/sign/finalize
-        registrationSteps.signContract(null, directorId, charliePassword);
+        registrationSteps.signContract(charliePeppolId, charlieEmail, directorId);
         assertTrue(ownershipRepository.existsByTypeAndCompanyPeppolId(AccountType.ADMIN, charliePeppolId));
 
-        // 6. POST /api/register/verify
-        registrationSteps.verifyAsActiveAndRequestedByAffiliated(emailToken, charliePeppolId, charlieEmail, affiliateEmail, affiliateCompany);
+        // 6. POST /api/register/activate
+        registrationSteps.activateAccount(emailToken, charliePassword);
 
         // 7. login as Admin to approve
         charlieToken = registrationSteps.login(charlieEmail, charliePassword, AccountType.ADMIN, charliePeppolId);
@@ -330,6 +344,61 @@ class RegistrationTest {
 //        String body = failedResponse.getBody(); //Maybe not needed to verify ?
 //        assertNotNull(body);
 //        assertTrue(body.contains("\"errorCode\":\"token_already_verified\""));
+    }
+
+    @Test
+    @Order(10)
+    void loggedInAdminCanSignForAdditionalCompany() {
+        if (adminToken == null) {
+            loginAdminAsAdmin();
+        }
+        registrationSteps.prepareDatabase(deltaPeppolId, deltaCompany);
+        Long directorId = registrationSteps.companyIsNewCompany(deltaPeppolId).getFirst().id();
+        registrationSteps.signContractAsLoggedIn(adminToken, deltaPeppolId, directorId);
+        assertTrue(ownershipRepository.existsByTypeAndCompanyPeppolId(AccountType.ADMIN, deltaPeppolId));
+        assertTrue(accountRepository.existsByEmail(adminEmail));
+    }
+
+    @Test
+    @Order(11)
+    void affiliateCanSignForPendingNewAdminBeforeEmailVerification() {
+        registrationSteps.prepareDatabase(echoPeppolId, echoCompany);
+
+        if (affiliateToken == null) {
+            loginAffiliateAsAffiliate();
+        }
+
+        Long directorId = registrationSteps.companyIsNewCompany(echoPeppolId).getFirst().id();
+        String emailToken = registrationSteps.requestCompany(affiliateToken, AccountType.ADMIN, echoPeppolId, echoEmail, "TestCity", "1234", "TestStreet");
+
+        registrationSteps.signContractAsRequester(affiliateToken, echoPeppolId, echoEmail, directorId);
+        assertTrue(ownershipRepository.existsByTypeAndCompanyPeppolId(AccountType.ADMIN, echoPeppolId));
+
+        registrationSteps.activateAccount(emailToken, echoPassword);
+        String echoToken = registrationSteps.login(echoEmail, echoPassword, AccountType.ADMIN, echoPeppolId);
+        assertNotNull(echoToken);
+    }
+
+    @Test
+    @Order(12)
+    void affiliateCanLinkExistingAdminToAdditionalCompany() {
+        if (affiliateToken == null) {
+            loginAffiliateAsAffiliate();
+        }
+        if (adminToken == null) {
+            loginAdminAsAdmin();
+        }
+
+        registrationSteps.prepareDatabase(foxtrotPeppolId, foxtrotCompany);
+        Long directorId = registrationSteps.companyIsNewCompany(foxtrotPeppolId).getFirst().id();
+        String emailToken = registrationSteps.requestCompany(affiliateToken, AccountType.ADMIN, foxtrotPeppolId, adminEmail, "TestCity", "1234", "TestStreet");
+
+        registrationSteps.verifyAsNewAndRequestedByAffiliated(emailToken, foxtrotPeppolId, adminEmail, affiliateEmail, affiliateCompany);
+        registrationSteps.signContractAsRequester(affiliateToken, foxtrotPeppolId, adminEmail, directorId);
+
+        assertTrue(ownershipRepository.existsByTypeAndCompanyPeppolId(AccountType.ADMIN, foxtrotPeppolId));
+        String foxtrotAdminToken = registrationSteps.login(adminEmail, adminPassword, AccountType.ADMIN, foxtrotPeppolId);
+        assertNotNull(foxtrotAdminToken);
     }
 
     /**

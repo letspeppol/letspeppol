@@ -39,6 +39,11 @@ public class OwnershipService {
                 .orElseThrow(() -> new KycException(KycErrorCodes.NO_OWNERSHIP));
     }
 
+    public Ownership getByAccountEmailAndPeppolIdAndType(String email, String peppolId, AccountType type) {
+        return ownershipRepository.findFirstByAccountEmailAndCompanyPeppolIdAndTypeOrderByCreatedOnDesc(email.toLowerCase(), peppolId, type)
+                .orElseThrow(() -> new KycException(KycErrorCodes.NO_OWNERSHIP));
+    }
+
     public List<Ownership> getByPeppolId(String peppolId) {
         return ownershipRepository.findByCompanyPeppolIdOrderByCreatedOnAsc(peppolId);
     }
@@ -58,6 +63,14 @@ public class OwnershipService {
     public Ownership link(Account account, AccountType type, Company company) {
         Ownership ownership = new Ownership(account, type, company);
         return ownershipRepository.save(ownership);
+    }
+
+    public Ownership ensureOwnership(Account account, AccountType type, Company company) {
+        return ownershipRepository.findFirstByAccountIdAndCompanyIdAndType(account.getId(), company.getId(), type).orElseGet(() -> link(account, type, company));
+    }
+
+    public Ownership ensureAdminOwnership(Account account, Company company) {
+        return ensureOwnership(account, AccountType.ADMIN, company);
     }
 
     public void unlink(UUID uid, AccountType type, String peppolId) {

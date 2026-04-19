@@ -41,7 +41,7 @@ public class Account {
     @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = true, length = 100)
     private String passwordHash;
 
     @Builder.Default
@@ -50,8 +50,8 @@ public class Account {
 
     @Builder.Default
     @Column(nullable = false)
-    private boolean identityVerified = false;
-    private Instant identityVerifiedOn;
+    private boolean verified = false;
+    private Instant verifiedOn;
 
     @Builder.Default
     @Column(unique = true, nullable = false)

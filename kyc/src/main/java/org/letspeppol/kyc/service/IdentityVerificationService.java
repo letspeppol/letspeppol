@@ -8,18 +8,15 @@ import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.letspeppol.kyc.dto.IdentityVerificationRequest;
 import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.model.DirectorIdentityVerification;
-import org.letspeppol.kyc.model.AccountType;
 import org.letspeppol.kyc.repository.AccountIdentityVerificationRepository;
 import org.letspeppol.kyc.repository.DirectorRepository;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.security.auth.x500.X500Principal;
 import java.security.cert.X509Certificate;
-import java.time.Instant;
 
 import static org.letspeppol.kyc.service.SigningService.isAllowedToSign;
 import static org.letspeppol.kyc.service.signing.CertificateUtil.getRDNName;
@@ -31,32 +28,12 @@ import static org.letspeppol.kyc.service.signing.CertificateUtil.getRDNName;
 public class IdentityVerificationService {
 
     private final AccountIdentityVerificationRepository accountIdentityVerificationRepository;
-    private final AccountService accountService;
-    private final OwnershipService ownershipService;
     private final DirectorRepository directorRepository;
     private final JavaMailSender mailSender;
     private final EncryptionService encryptionService;
     private final CompanyService companyService;
-    private final PasswordEncoder passwordEncoder;
 
-    public Account createVerifiedAccount(AccountType accountType, IdentityVerificationRequest req) {
-        ownershipService.verifyPeppolIdNotRegistered(req.director().getCompany().getPeppolId()); //TODO : check how do we create other verified accounts ?
-//        accountService.verifyEmailNotRegistered(req.email()); //TODO : check for multiple email addresses
-
-        Account account = new Account();
-        account.setName(req.director().getName());
-        account.setEmail(req.email().toLowerCase());
-        account.setIdentityVerified(true);
-        account.setIdentityVerifiedOn(Instant.now());
-        account.setCreatedOn(Instant.now());
-        String passwordHash = passwordEncoder.encode(req.password());
-        account.setPasswordHash(passwordHash);
-        accountService.create(account);
-        if (accountType == AccountType.AFFILIATE) { //TODO : do we automatically create ADMIN here ? do we check if this is correct ?
-            ownershipService.link(account, AccountType.ADMIN, req.director().getCompany());
-        }
-        ownershipService.link(account, accountType, req.director().getCompany());
-
+    public DirectorIdentityVerification recordDirectorSignature(Account account, IdentityVerificationRequest req) {
         DirectorIdentityVerification directorIdentityVerification = new DirectorIdentityVerification(
                 account,
                 req.director(),
@@ -80,7 +57,7 @@ public class IdentityVerificationService {
         }
 
         log.info("Identity verified for email={} director={} serial={}", account.getEmail(), req.director().getName(), req.x509Certificate().getSerialNumber());
-        return account;
+        return directorIdentityVerification;
     }
 
 //    public Account createUser(UUID adminExternalId, NewUserRequest req) {

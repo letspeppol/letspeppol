@@ -146,7 +146,9 @@ public class RegistrationSteps {
 
         // Simulate activation token
         EmailVerification verification = emailVerificationRepository.findAll().stream()
-                .filter(v -> !v.isVerified() && email.equals(v.getEmail())) //TODO : should we be able to do && (v.getRequester() != null && v.getRequester().getCompany() != null && v.getRequester().getAccount() != null && affiliatePeppolId.equals(v.getRequester().getCompany().getPeppolId()) && affiliateEmail.equals(v.getRequester().getAccount().getEmail())))
+                .filter(v -> !v.isVerified())
+                .filter(v -> email.equals(v.getEmail()))
+                .filter(v -> peppolId.equals(v.getPeppolId()))
                 .findFirst().orElseThrow();
         return verification.getToken();
     }
@@ -186,14 +188,12 @@ public class RegistrationSteps {
         assertEquals(affiliateCompany, verifyResponse.requester().company());
     }
 
-    void signContract(String token, Long directorId, String password) {
+    void signContract(String peppolId, String email, Long directorId) {
         // Mock certificate chain for signing using mockStatic
         try (org.mockito.MockedStatic<CertificateUtil> mocked = Mockito.mockStatic(CertificateUtil.class)) {
             mocked.when(() -> CertificateUtil.getCertificateChain(Mockito.anyString()))
                     .thenReturn(new X509Certificate[] { Mockito.mock(X509Certificate.class) });
 
-            // POST /api/identity/sign/prepare
-            // Read a valid base64-encoded certificate from test resources
             String certificate;
             try {
                 certificate = Files.readString(Paths.get("src/test/resources/test-certificate-base64.txt")).replaceAll("\\s+", "");
@@ -202,7 +202,7 @@ public class RegistrationSteps {
             }
             var signatureAlgorithm = new SignatureAlgorithm("SHA256", "PKCS1", "RSA");
             var prepareRequest = new PrepareSigningRequest(
-                    token,
+                    peppolId,
                     directorId,
                     certificate,
                     java.util.List.of(signatureAlgorithm),
@@ -210,15 +210,13 @@ public class RegistrationSteps {
             );
             String prepareUrl = "/api/identity/sign/prepare";
             PrepareSigningResponse prepareResponse = restTemplate.postForObject(prepareUrl, prepareRequest, PrepareSigningResponse.class);
-            System.out.println("prepareResponse: " + prepareResponse);
             assertNotNull(prepareResponse);
             assertNotNull(prepareResponse.hashToSign());
             assertNotNull(prepareResponse.hashToFinalize());
             assertEquals("SHA-256", prepareResponse.hashFunction());
             assertTrue(prepareResponse.allowedToSign());
 
-            // GET /api/identity/contract/{directorId}?token=...
-            String contractUrl = "/api/identity/contract/" + directorId + "?token=" + token;
+            String contractUrl = "/api/identity/contract/" + peppolId + "/" + directorId;
             ResponseEntity<byte[]> contractResponse = restTemplate.getForEntity(contractUrl, byte[].class);
             assertEquals(200, contractResponse.getStatusCode().value());
             assertNotNull(contractResponse.getBody());
@@ -226,17 +224,16 @@ public class RegistrationSteps {
             assertNotNull(contractResponse.getHeaders().getContentType());
             assertEquals("application/pdf", contractResponse.getHeaders().getContentType().toString());
 
-            // POST /api/identity/sign/finalize
             String signature = "Pip9ksT1yiqpP6AHEshmzl8ND+oPDF6PYjizuiKbHrwv23LqrqDRwJq/b2mbsAGScxYGdzk+sHGUsKcXr9YIiFXA9AM94GptSxwdjxulc2CA4qmd4KX9TdTjQGkCCj7qE0EMYULEtfPTMNPC61CYSic2fap4nicnBKFDGptHccblQICcNDHJ5hAN9fbFIw2OXWynomFgSBohVr0bDKcZQcUX9Chg0RUZ/4i95HdwXN306k343tLKB/doY+TO70akA3mzjBya+aGaE9QPE7zRvLF4IriRBy6QxzEPSsCHYHrP3w3mPLg2+xWX1Aw5M+m8K6XMuFC5O14Det8FZP4HWQ==";
             var finalizeRequest = new FinalizeSigningRequest(
-                    token,
+                    peppolId,
                     directorId,
+                    email,
                     certificate,
                     signature,
                     signatureAlgorithm,
                     prepareResponse.hashToSign(),
-                    prepareResponse.hashToFinalize(),
-                    password
+                    prepareResponse.hashToFinalize()
             );
             String finalizeUrl = "/api/identity/sign/finalize";
             ResponseEntity<byte[]> finalizeResponse = restTemplate.postForEntity(finalizeUrl, finalizeRequest, byte[].class);
@@ -247,6 +244,94 @@ public class RegistrationSteps {
             assertEquals("application/pdf", finalizeResponse.getHeaders().getContentType().toString());
             assertNotNull(finalizeResponse.getHeaders().get("Registration-Status"));
         }
+    }
+
+    void signContractAsLoggedIn(String jwtToken, String peppolId, Long directorId) {
+        try (org.mockito.MockedStatic<CertificateUtil> mocked = Mockito.mockStatic(CertificateUtil.class)) {
+            mocked.when(() -> CertificateUtil.getCertificateChain(Mockito.anyString()))
+                    .thenReturn(new X509Certificate[] { Mockito.mock(X509Certificate.class) });
+
+            String certificate;
+            try {
+                certificate = Files.readString(Paths.get("src/test/resources/test-certificate-base64.txt")).replaceAll("\\s+", "");
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to read test certificate", e);
+            }
+            var signatureAlgorithm = new SignatureAlgorithm("SHA256", "PKCS1", "RSA");
+            var prepareRequest = new PrepareSigningRequest(
+                    peppolId,
+                    directorId,
+                    certificate,
+                    java.util.List.of(signatureAlgorithm),
+                    "en"
+            );
+            PrepareSigningResponse prepareResponse = restTemplate.postForObject("/api/identity/sign/prepare", prepareRequest, PrepareSigningResponse.class);
+            assertNotNull(prepareResponse);
+
+            String signature = "Pip9ksT1yiqpP6AHEshmzl8ND+oPDF6PYjizuiKbHrwv23LqrqDRwJq/b2mbsAGScxYGdzk+sHGUsKcXr9YIiFXA9AM94GptSxwdjxulc2CA4qmd4KX9TdTjQGkCCj7qE0EMYULEtfPTMNPC61CYSic2fap4nicnBKFDGptHccblQICcNDHJ5hAN9fbFIw2OXWynomFgSBohVr0bDKcZQcUX9Chg0RUZ/4i95HdwXN306k343tLKB/doY+TO70akA3mzjBya+aGaE9QPE7zRvLF4IriRBy6QxzEPSsCHYHrP3w3mPLg2+xWX1Aw5M+m8K6XMuFC5O14Det8FZP4HWQ==";
+            var finalizeRequest = new FinalizeSigningRequest(
+                    peppolId,
+                    directorId,
+                    null,
+                    certificate,
+                    signature,
+                    signatureAlgorithm,
+                    prepareResponse.hashToSign(),
+                    prepareResponse.hashToFinalize()
+            );
+            HttpEntity<FinalizeSigningRequest> request = new HttpEntity<>(finalizeRequest, jwtHeader(jwtToken));
+            ResponseEntity<byte[]> finalizeResponse = restTemplate.exchange("/api/identity/sign/finalize", HttpMethod.POST, request, byte[].class);
+            assertEquals(200, finalizeResponse.getStatusCode().value());
+            assertNotNull(finalizeResponse.getBody());
+        }
+    }
+
+    void signContractAsRequester(String jwtToken, String peppolId, String email, Long directorId) {
+        try (org.mockito.MockedStatic<CertificateUtil> mocked = Mockito.mockStatic(CertificateUtil.class)) {
+            mocked.when(() -> CertificateUtil.getCertificateChain(Mockito.anyString()))
+                    .thenReturn(new X509Certificate[] { Mockito.mock(X509Certificate.class) });
+
+            String certificate;
+            try {
+                certificate = Files.readString(Paths.get("src/test/resources/test-certificate-base64.txt")).replaceAll("\\s+", "");
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to read test certificate", e);
+            }
+            var signatureAlgorithm = new SignatureAlgorithm("SHA256", "PKCS1", "RSA");
+            var prepareRequest = new PrepareSigningRequest(
+                    peppolId,
+                    directorId,
+                    certificate,
+                    java.util.List.of(signatureAlgorithm),
+                    "en"
+            );
+            PrepareSigningResponse prepareResponse = restTemplate.postForObject("/api/identity/sign/prepare", prepareRequest, PrepareSigningResponse.class);
+            assertNotNull(prepareResponse);
+
+            String signature = "Pip9ksT1yiqpP6AHEshmzl8ND+oPDF6PYjizuiKbHrwv23LqrqDRwJq/b2mbsAGScxYGdzk+sHGUsKcXr9YIiFXA9AM94GptSxwdjxulc2CA4qmd4KX9TdTjQGkCCj7qE0EMYULEtfPTMNPC61CYSic2fap4nicnBKFDGptHccblQICcNDHJ5hAN9fbFIw2OXWynomFgSBohVr0bDKcZQcUX9Chg0RUZ/4i95HdwXN306k343tLKB/doY+TO70akA3mzjBya+aGaE9QPE7zRvLF4IriRBy6QxzEPSsCHYHrP3w3mPLg2+xWX1Aw5M+m8K6XMuFC5O14Det8FZP4HWQ==";
+            var finalizeRequest = new FinalizeSigningRequest(
+                    peppolId,
+                    directorId,
+                    email,
+                    certificate,
+                    signature,
+                    signatureAlgorithm,
+                    prepareResponse.hashToSign(),
+                    prepareResponse.hashToFinalize()
+            );
+            HttpEntity<FinalizeSigningRequest> request = new HttpEntity<>(finalizeRequest, jwtHeader(jwtToken));
+            ResponseEntity<byte[]> finalizeResponse = restTemplate.exchange("/api/identity/sign/finalize", HttpMethod.POST, request, byte[].class);
+            assertEquals(200, finalizeResponse.getStatusCode().value());
+            assertNotNull(finalizeResponse.getBody());
+            assertTrue(finalizeResponse.getBody().length > 0);
+        }
+    }
+
+    void activateAccount(String token, String password) {
+        String url = "/api/register/verify-account";
+        SetPasswordRequest request = new SetPasswordRequest(token, password);
+        ResponseEntity<Void> response = restTemplate.postForEntity(url, request, Void.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
 }

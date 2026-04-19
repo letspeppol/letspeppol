@@ -9,6 +9,5 @@ public record OwnershipInfo(
         String name,
         String email,
         String company,
-        Instant createdOn,
-        Instant identityVerifiedOn
+        Instant createdOn
 ) {}
