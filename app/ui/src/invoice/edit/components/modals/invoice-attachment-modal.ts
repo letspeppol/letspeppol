@@ -84,6 +84,7 @@ export class InvoiceAttachmentModal {
 
     async dragDrop(e: DragEvent) {
         e.preventDefault();
+        this.isDraggingFile = false;
 
         const file = e.dataTransfer.files[0];
         if (!file) return;
@@ -126,11 +127,9 @@ export class InvoiceAttachmentModal {
                     }
                 }
             } as AdditionalDocumentReference);
-            this.isDraggingFile = false;
         } catch(error) {
             console.log(error);
             this.ea.publish('alert', {alertType: AlertType.Danger, text: "Error uploading file"});
-            this.isDraggingFile = false;
             return false;
         }
         return true;

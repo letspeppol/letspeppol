@@ -90,6 +90,8 @@ public class Document implements Persistable<UUID> {
 
     private String paymentTerms; //When there is no due date, the payment terms are used for overview
 
+    private Boolean createdExternally;
+
     @Override
     @Transient
     public boolean isNew() {
@@ -120,31 +122,33 @@ public class Document implements Persistable<UUID> {
             BigDecimal amount,
             Instant issueDate,
             Instant dueDate,
-            String paymentTerms) {
-        this.id              = id == null ? UUID.randomUUID() : id;
-        this.direction       = direction;
-        this.ownerPeppolId   = ownerPeppolId;
-        this.partnerPeppolId = partnerPeppolId;
-        this.proxyOn         = proxyOn;
-        this.scheduledOn     = scheduledOn;
-        this.processedOn     = processedOn;
-        this.processedStatus = processedStatus;
-        this.ubl             = ubl;
-//        this.company         = company;
-        this.createdOn       = Instant.now(); //createdOn;
-        this.draftedOn       = draftedOn;
-        this.readOn          = readOn;
-        this.paidOn          = paidOn;
-        this.partnerName     = partnerName;
-        this.invoiceReference= invoiceReference;
-        this.buyerReference  = buyerReference;
-        this.orderReference  = orderReference;
-        this.type            = type;
-        this.currency        = currency;
-        this.amount          = amount;
-        this.issueDate       = issueDate;
-        this.dueDate         = dueDate;
-        this.paymentTerms    = paymentTerms;
+            String paymentTerms,
+            Boolean createdExternally) {
+        this.id                 = id == null ? UUID.randomUUID() : id;
+        this.direction          = direction;
+        this.ownerPeppolId      = ownerPeppolId;
+        this.partnerPeppolId    = partnerPeppolId;
+        this.proxyOn            = proxyOn;
+        this.scheduledOn        = scheduledOn;
+        this.processedOn        = processedOn;
+        this.processedStatus    = processedStatus;
+        this.ubl                = ubl;
+//        this.company          = company;
+        this.createdOn          = Instant.now(); //createdOn;
+        this.draftedOn          = draftedOn;
+        this.readOn             = readOn;
+        this.paidOn             = paidOn;
+        this.partnerName        = partnerName;
+        this.invoiceReference   = invoiceReference;
+        this.buyerReference     = buyerReference;
+        this.orderReference     = orderReference;
+        this.type               = type;
+        this.currency           = currency;
+        this.amount             = amount;
+        this.issueDate          = issueDate;
+        this.dueDate            = dueDate;
+        this.paymentTerms       = paymentTerms;
+        this.createdExternally  = createdExternally;
     }
 }
 

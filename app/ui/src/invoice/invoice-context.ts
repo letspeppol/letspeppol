@@ -61,6 +61,9 @@ export class InvoiceContext {
         if (item.draftedOn) {
             this.getLastInvoiceReference();
         }
+        if (item.createdExternally) {
+            this.readOnly = true;
+        }
         if (item.type === DocumentType.CREDIT_NOTE) {
             this.selectedDocumentType = DocumentType.CREDIT_NOTE;
             this.selectedInvoice = parseCreditNote(item.ubl);
