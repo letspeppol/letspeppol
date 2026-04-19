@@ -85,7 +85,7 @@ public class DocumentController {
                               @RequestBody String ublXml,
                               @RequestParam(required = false) boolean draft,
                               @RequestParam(required = false) Instant schedule,
-                              @RequestParam(required = false) Boolean createdExternally) {
+                              @RequestParam(required = false, defaultValue = "true") boolean createdExternally) {
         if (!JwtUtil.isPeppolActive(jwt)) {
             draft = true;
         }

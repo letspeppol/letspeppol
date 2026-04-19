@@ -127,7 +127,7 @@ public class DocumentService {
         });
     }
 
-    public DocumentDto createFromUbl(String peppolId, String ublXml, boolean draft, Instant schedule, Boolean createdExternally, String tokenValue) {
+    public DocumentDto createFromUbl(String peppolId, String ublXml, boolean draft, Instant schedule, boolean createdExternally, String tokenValue) {
         Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new NotFoundException("Company does not exist"));
         UblDto ublDto = readUBL(DocumentDirection.OUTGOING, ublXml, peppolId, draft);
         if (!draft) {
@@ -201,7 +201,7 @@ public class DocumentService {
                 ublDto.issueDate(),
                 ublDto.dueDate(),
                 ublDto.paymentTerms(),
-                null
+                true
         );
         document.setCompany(company);
         document = documentRepository.save(document);

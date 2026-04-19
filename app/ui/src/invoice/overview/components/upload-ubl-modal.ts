@@ -81,6 +81,7 @@ export class UploadUblModal {
             this.invoiceContext.draftPage.totalElements++;
             this.ea.publish('alert', {alertType: AlertType.Success, text: "Invoice draft created successfully"});
             this.closeModal();
+            this.invoiceContext.selectInvoice(documentDraftDto);
         } catch (e: unknown) {
             const errorResponse = await toErrorResponse(e);
             if (errorResponse?.errorCode === 'INVOICE_NUMBER_ALREADY_USED') {
