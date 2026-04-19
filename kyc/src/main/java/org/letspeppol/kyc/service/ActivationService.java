@@ -13,6 +13,8 @@ import org.letspeppol.kyc.exception.NotFoundException;
 import org.letspeppol.kyc.mapper.OwnershipMapper;
 import org.letspeppol.kyc.model.EmailVerification;
 import org.letspeppol.kyc.model.Ownership;
+import org.letspeppol.kyc.model.AccountType;
+import org.letspeppol.kyc.repository.AccountIdentityVerificationRepository;
 import org.letspeppol.kyc.repository.EmailVerificationRepository;
 import org.letspeppol.kyc.service.mail.ActivationEmailTemplateProvider;
 import org.letspeppol.kyc.util.LocaleUtil;
@@ -40,6 +42,8 @@ public class ActivationService {
     private final CompanyService companyService;
     private final AccountService accountService;
     private final OwnershipService ownershipService;
+    private final AccountIdentityVerificationRepository directorIdentityVerificationRepository;
+    private final PasswordResetService passwordResetService;
     private final ActivationEmailTemplateProvider templateProvider;
     private final SecureRandom random = new SecureRandom();
     private final Duration ttl = Duration.ofDays(7);
@@ -90,6 +94,16 @@ public class ActivationService {
     }
 
     @Transactional
+    public EmailVerification getPendingVerification(String email, String peppolId) {
+        return verificationRepository.findFirstByEmailIgnoreCaseAndPeppolIdAndVerifiedFalseAndExpiresOnAfterOrderByCreatedOnDesc(
+                        email,
+                        peppolId,
+                        Instant.now()
+                )
+                .orElseThrow(() -> new KycException(KycErrorCodes.TOKEN_NOT_FOUND));
+    }
+
+    @Transactional
     public TokenVerificationResponse verify(String token) {
         EmailVerification emailVerification = getValidTokenInformation(token);
         CompanyResponse companyResponse = companyService.getResponseByPeppolId(emailVerification.getPeppolId())
@@ -98,7 +112,7 @@ public class ActivationService {
             ownershipService.verifyPeppolIdNotRegistered(emailVerification.getPeppolId());
             return new TokenVerificationResponse(emailVerification.getEmail(), companyResponse, null); //Send response for contract signing
         }
-        if (!emailVerification.getRequester().getAccount().isIdentityVerified()) { //TODO : move to step 2 confirm-company ?
+        if (!directorIdentityVerificationRepository.existsByAccountId(emailVerification.getRequester().getAccount().getId())) { //TODO : move to step 2 confirm-company ?
             log.error("Verifying a token {} requested by unverified account {}", token, emailVerification.getRequester().getAccount().getExternalId());
             throw new KycException(KycErrorCodes.REQUESTER_NOT_VERIFIED);
         }
@@ -134,6 +148,28 @@ public class ActivationService {
         } else {
             throw new KycException(KycErrorCodes.NO_OWNERSHIP);
         }
+    }
+
+    @Transactional
+    public EmailVerification verifyAccount(String token, String newPassword) {
+        EmailVerification emailVerification = getValidTokenInformation(token);
+        Ownership ownership = ownershipService.getByAccountEmailAndPeppolIdAndType(emailVerification.getEmail(), emailVerification.getPeppolId(), AccountType.ADMIN);
+        if (ownership.getAccount().isVerified()) {
+            throw new KycException(KycErrorCodes.TOKEN_ALREADY_VERIFIED);
+        }
+        if (!directorIdentityVerificationRepository.existsByAccountId(ownership.getAccount().getId())) {
+            throw new KycException(KycErrorCodes.ACCOUNT_NOT_VERIFIED);
+        }
+        passwordResetService.setPassword(ownership.getAccount(), newPassword);
+        accountService.verify(ownership.getAccount());
+        setVerified(emailVerification);
+        return emailVerification;
+    }
+
+    @Transactional
+    public void linkAffiliateOwnership(EmailVerification emailVerification) {
+        Ownership ownership = ownershipService.getByAccountEmailAndPeppolIdAndType(emailVerification.getEmail(), emailVerification.getPeppolId(), AccountType.ADMIN);
+        ownershipService.ensureOwnership(ownership.getAccount(), AccountType.AFFILIATE, ownership.getCompany());
     }
 
     public void setVerified(EmailVerification emailVerification) {

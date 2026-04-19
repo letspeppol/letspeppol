@@ -14,6 +14,7 @@ public final class KycErrorCodes {
     public static final String ACCOUNT_NOT_APP = "account_not_app";
     public static final String WRONG_PASSWORD = "wrong_password";
     public static final String ACCOUNT_ALREADY_LINKED = "account_already_linked"; // restored
+    public static final String ACCOUNT_NOT_VERIFIED = "account_not_verified";
     public static final String REQUESTER_NOT_VERIFIED = "requester_not_verified";
     public static final String REQUESTER_NOT_VALID = "requester_not_valid";
     public static final String ONLY_ONE_ADMIN_ALLOWED = "only_one_admin_allowed";

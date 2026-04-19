@@ -31,7 +31,7 @@ import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.KycException;
 import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.model.AccountType;
-import org.letspeppol.kyc.model.EmailVerification;
+import org.letspeppol.kyc.model.DirectorIdentityVerification;
 import org.letspeppol.kyc.model.kbo.Director;
 import org.letspeppol.kyc.repository.DirectorRepository;
 import org.letspeppol.kyc.service.signing.CertificateUtil;
@@ -76,6 +76,8 @@ public class SigningService {
     private static final String HASH_ALGORITHM = "SHA-256";
     private static final SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
     private final IdentityVerificationService identityVerificationService;
+    private final OwnershipService ownershipService;
+    private final SignerAccountResolverService signerAccountResolverService;
     private final DirectorRepository directorRepository;
     private final Counter prepareSigningCounter;
     private final Counter finalizeSigningCounter;
@@ -153,9 +155,8 @@ public class SigningService {
 
     public PrepareSigningResponse prepareSigning(PrepareSigningRequest request) {
         prepareSigningCounter.increment();
-        EmailVerification emailVerification = activationService.getValidTokenInformation(request.emailToken());
-        Director director = getDirector(request.directorId(), emailVerification.getPeppolId());
-        log.info("Preparing contract signing for company {} and email {}", emailVerification.getPeppolId(), emailVerification.getEmail());
+        Director director = getDirector(request.directorId(), request.peppolId());
+        log.info("Preparing contract signing for company {} and director {}", request.peppolId(), request.directorId());
 
         byte[] generatedPdf = generateFilledContract(director);
         byte[] preparedPdfBytes;
@@ -251,14 +252,10 @@ public class SigningService {
         return NameMatchUtil.matches(givenName, surName, fullName);
     }
 
-    public FinalizeSigningResponse finalizeSign(FinalizeSigningRequest signingRequest) {
+    public FinalizeSigningResponse finalizeSign(FinalizeSigningRequest signingRequest, String authHeader) {
         finalizeSigningCounter.increment();
-        EmailVerification emailVerification = activationService.getValidTokenInformation(signingRequest.emailToken());
-        if (emailVerification.getType() != AccountType.ADMIN && emailVerification.getType() != AccountType.AFFILIATE) {
-            throw new KycException(KycErrorCodes.INVALID_ACCOUNT_TYPE);
-        }
-        Director director = getDirector(signingRequest.directorId(), emailVerification.getPeppolId());
-        log.info("Finalizing contract signing for company {} and email {}", emailVerification.getPeppolId(), emailVerification.getEmail());
+        Director director = getDirector(signingRequest.directorId(), signingRequest.peppolId());
+        log.info("Finalizing contract signing for company {} and director {}", signingRequest.peppolId(), signingRequest.directorId());
 
         X509Certificate[] certificates;
         try {
@@ -268,12 +265,10 @@ public class SigningService {
             throw new RuntimeException(e);
         }
 
-        byte[] finalPdfBytes = createFinalContract(certificates, signingRequest, emailVerification.getPeppolId());
+        byte[] finalPdfBytes = createFinalContract(certificates, signingRequest, signingRequest.peppolId());
 
         IdentityVerificationRequest identityVerificationRequest = new IdentityVerificationRequest(
-                emailVerification.getEmail(),
                 director,
-                signingRequest.password(),
                 signingRequest.signatureAlgorithm().toString(),
                 signingRequest.hashToSign(),
                 signingRequest.signature(),
@@ -281,20 +276,20 @@ public class SigningService {
                 certificates[0],
                 CertificateUtil.getX500Name(certificates)
         );
-        Account account = identityVerificationService.createVerifiedAccount(emailVerification.getType(), identityVerificationRequest);
+        SignerAccountResolverService.SignerResolution signerResolution = signerAccountResolverService.resolveSignerAccount(signingRequest, authHeader, director.getName());
+        Account account = signerResolution.account();
+        ownershipService.ensureAdminOwnership(account, director.getCompany());
+        DirectorIdentityVerification ignored = identityVerificationService.recordDirectorSignature(account, identityVerificationRequest);
         RegistrationResponse registrationResponse = null;
-        if (emailVerification.getType() == AccountType.ADMIN) {
-            if (!director.getCompany().isSuspended()) {
-                registrationResponse = companyService.registerCompany(director.getCompany());
-                if (registrationResponse.peppolActive() && registrationResponse.errorCode() == null) {
-                    companyRegistrationCounterSuccess.increment();
-                } else if (!registrationResponse.peppolActive()) {
-                    companyRegistrationCounterFailure.increment();
-                }
+        if (signerResolution.requestedType() == AccountType.ADMIN && !director.getCompany().isSuspended()) {
+            registrationResponse = companyService.registerCompany(director.getCompany());
+            if (registrationResponse.peppolActive() && registrationResponse.errorCode() == null) {
+                companyRegistrationCounterSuccess.increment();
+            } else if (!registrationResponse.peppolActive()) {
+                companyRegistrationCounterFailure.increment();
             }
         }
-        activationService.setVerified(emailVerification);
-        return new FinalizeSigningResponse(writeContractToFile(emailVerification.getPeppolId(), account, finalPdfBytes), registrationResponse);
+        return new FinalizeSigningResponse(writeContractToFile(signingRequest.peppolId(), account, finalPdfBytes), registrationResponse);
     }
 
     public byte[] getContract(String peppolId, Long accountId) {

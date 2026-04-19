@@ -14,6 +14,8 @@ import org.letspeppol.kyc.repository.AccountRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -28,6 +30,10 @@ public class AccountService {
 
     public Account getByExternalId(UUID externalId) {
         return accountRepository.findByExternalId(externalId).orElseThrow(() -> new NotFoundException(KycErrorCodes.ACCOUNT_NOT_FOUND));
+    }
+
+    public Optional<Account> findByEmail(String email) {
+        return accountRepository.findByEmail(email.toLowerCase());
     }
 
     public Account findAccountWithCredentials(String emailOrUuid, String password) {
@@ -45,15 +51,29 @@ public class AccountService {
                 return new NotFoundException(KycErrorCodes.ACCOUNT_NOT_FOUND);
             });
         }
+        if (account.getPasswordHash() == null || account.getPasswordHash().isBlank()) {
+            authenticationCounterFailure.increment();
+            throw new KycException(KycErrorCodes.ACCOUNT_NOT_VERIFIED);
+        }
         if (!passwordEncoder.matches(password, account.getPasswordHash())) {
             authenticationCounterFailure.increment();
             throw new KycException(KycErrorCodes.WRONG_PASSWORD);
+        }
+        if (!account.isVerified()) {
+            authenticationCounterFailure.increment();
+            throw new KycException(KycErrorCodes.ACCOUNT_NOT_VERIFIED);
         }
         return account;
     }
 
     public void updatePassword(Account account, String rawPassword) {
         account.setPasswordHash(passwordEncoder.encode(rawPassword));
+        accountRepository.save(account);
+    }
+
+    public void verify(Account account) {
+        account.setVerified(true);
+        account.setVerifiedOn(java.time.Instant.now());
         accountRepository.save(account);
     }
 
@@ -66,6 +86,17 @@ public class AccountService {
 
     public void create(Account account) {
         accountRepository.save(account);
+    }
+
+    public Account createPendingAccount(String email, String name) {
+        Account account = new Account();
+        account.setName(name);
+        account.setEmail(email.toLowerCase());
+        account.setVerified(false);
+        account.setCreatedOn(Instant.now());
+        account.setPasswordHash(null);
+        accountRepository.save(account);
+        return account;
     }
 
 }
