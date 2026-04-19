@@ -84,12 +84,13 @@ public class DocumentController {
     public DocumentDto create(@AuthenticationPrincipal Jwt jwt,
                               @RequestBody String ublXml,
                               @RequestParam(required = false) boolean draft,
-                              @RequestParam(required = false) Instant schedule) {
+                              @RequestParam(required = false) Instant schedule,
+                              @RequestParam(required = false, defaultValue = "true") boolean createdExternally) {
         if (!JwtUtil.isPeppolActive(jwt)) {
             draft = true;
         }
         String peppolId = JwtUtil.getPeppolId(jwt);
-        return documentService.createFromUbl(peppolId, ublXml, draft, schedule, jwt.getTokenValue());
+        return documentService.createFromUbl(peppolId, ublXml, draft, schedule, createdExternally, jwt.getTokenValue());
     }
 
     @PutMapping("{id}")

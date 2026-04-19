@@ -1,6 +1,7 @@
 import {singleton} from "aurelia";
 import {resolve} from "@aurelia/kernel";
 import {AppApi} from "./app-api";
+import {create} from "node:domain";
 
 export interface DocumentPageDto {
     content: DocumentDto[];
@@ -69,6 +70,7 @@ export interface DocumentDto {
     issueDate?: string;             // ISO datetime (Instant)
     dueDate?: string;               // ISO datetime (Instant)
     paymentTerms?: string;
+    createdExternally?: boolean;
 }
 
 export interface ValidationResultDto {
@@ -120,8 +122,9 @@ export class InvoiceService {
         return await this.appApi.httpClient.get(`/sapi/document/${id}`).then(response => response.json());
     }
 
-    async createDocument(xml: string, draft: boolean = false) : Promise<DocumentDto> {
-        return await this.appApi.httpClient.post(`/sapi/document?draft=${draft}`, xml).then(response => response.json());
+    async createDocument(xml: string, draft: boolean = false, createdExternally: boolean = false) : Promise<DocumentDto> {
+        let url = `/sapi/document?draft=${draft}&createdExternally=${createdExternally}`;
+        return await this.appApi.httpClient.post(url, xml).then(response => response.json());
     }
 
     async updateDocument(id: string, xml: string, draft: boolean = false) : Promise<DocumentDto> {

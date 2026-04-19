@@ -1,15 +1,16 @@
 import {resolve} from "@aurelia/kernel";
-import {InvoiceContext} from "./invoice-context";
-import {AlertType} from "../components/alert/alert";
-import {IDisposable, IEventAggregator, watch} from "aurelia";
+import {InvoiceContext} from "../invoice-context";
+import {AlertType} from "../../components/alert/alert";
+import {bindable, IDisposable, IEventAggregator, watch} from "aurelia";
 import {
     DocumentType,
     DocumentDto,
     DocumentQuery,
     InvoiceService, DocumentDirection,
-} from "../services/app/invoice-service";
+} from "../../services/app/invoice-service";
 import moment from "moment";
 import {IRouter} from "@aurelia/router";
+import {UploadUblModal} from "./components/upload-ubl-modal";
 
 export class InvoiceOverview {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -18,6 +19,8 @@ export class InvoiceOverview {
     private router = resolve(IRouter);
     query: DocumentQuery = {pageable: {page: 0, size: 20}};
     private resetSubscription: IDisposable;
+
+    @bindable uploadUblModal: UploadUblModal;
 
     attached() {
         this.invoiceContext.initCompany();
@@ -129,5 +132,9 @@ export class InvoiceOverview {
         } catch (e) {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to change invoice paid status"});
         }
+    }
+
+    showUploadUblModal() {
+        this.uploadUblModal.showModal();
     }
 }

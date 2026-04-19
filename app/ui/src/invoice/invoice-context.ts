@@ -56,7 +56,7 @@ export class InvoiceContext {
     }
 
     selectInvoice(item: DocumentDto) {
-        this.readOnly = (item.direction === DocumentDirection.INCOMING || item.proxyOn != null);
+        this.readOnly = (item.direction === DocumentDirection.INCOMING || item.proxyOn != null || item.createdExternally);
         this.selectedDocument = item;
         if (item.draftedOn) {
             this.getLastInvoiceReference();

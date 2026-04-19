@@ -1,12 +1,8 @@
 package org.letspeppol.app.service;
 
 import io.micrometer.core.instrument.Counter;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.AttachmentType;
-import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.DocumentReferenceType;
-import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.EmbeddedDocumentBinaryObjectType;
 import org.letspeppol.app.dto.*;
 import org.letspeppol.app.exception.*;
 import org.letspeppol.app.exception.SecurityException;
@@ -131,7 +127,7 @@ public class DocumentService {
         });
     }
 
-    public DocumentDto createFromUbl(String peppolId, String ublXml, boolean draft, Instant schedule, String tokenValue) {
+    public DocumentDto createFromUbl(String peppolId, String ublXml, boolean draft, Instant schedule, boolean createdExternally, String tokenValue) {
         Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new NotFoundException("Company does not exist"));
         UblDto ublDto = readUBL(DocumentDirection.OUTGOING, ublXml, peppolId, draft);
         if (!draft) {
@@ -164,7 +160,8 @@ public class DocumentService {
                 ublDto.amount(),
                 ublDto.issueDate(),
                 ublDto.dueDate(),
-                ublDto.paymentTerms()
+                ublDto.paymentTerms(),
+                createdExternally
         );
         document.setCompany(company);
         document = documentRepository.save(document);
@@ -203,7 +200,8 @@ public class DocumentService {
                 ublDto.amount(),
                 ublDto.issueDate(),
                 ublDto.dueDate(),
-                ublDto.paymentTerms()
+                ublDto.paymentTerms(),
+                true
         );
         document.setCompany(company);
         document = documentRepository.save(document);
