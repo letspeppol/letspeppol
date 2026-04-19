@@ -2,6 +2,7 @@ package org.letspeppol.app.repository;
 
 import org.letspeppol.app.dto.TotalsDto;
 import org.letspeppol.app.model.Document;
+import org.letspeppol.app.model.DocumentType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -21,10 +22,10 @@ public interface DocumentRepository extends JpaRepository<Document, UUID>, JpaSp
 
     @Query("""
         SELECT COUNT(document) > 0 FROM Document document
-        WHERE document.invoiceReference = :invoiceReference AND document.company.peppolId = :ownerPeppolId
-        AND document.draftedOn IS NULL AND document.proxyOn IS NOT NULL
+        WHERE document.invoiceReference = :invoiceReference AND document.company.peppolId = :ownerPeppolId and document.type = :type
+        AND document.draftedOn IS NULL AND document.proxyOn IS NOT NULL AND document.direction = 'OUTGOING'
         """)
-    boolean existsByInvoiceReferenceAndOwnerPeppolId(String invoiceReference, String ownerPeppolId);
+    boolean existsByInvoiceReferenceAndTypeAndOwnerPeppolId(String invoiceReference, DocumentType type, String ownerPeppolId);
 
     @Query(value = """
     SELECT
