@@ -42,10 +42,10 @@ dependencies {
     implementation 'com.github.loki4j:loki-logback-appender:2.0.1'
     implementation 'com.jcraft:jsch:0.1.55'
 	compileOnly 'org.projectlombok:lombok:1.18.40'
-	annotationProcessor 'org.projectlombok:lombok:1.18.34'
+	annotationProcessor 'org.projectlombok:lombok:1.18.40'
 
-	testCompileOnly 'org.projectlombok:lombok:1.18.34'
-	testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
+	testCompileOnly 'org.projectlombok:lombok:1.18.40'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.40'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testImplementation 'org.testcontainers:testcontainers-postgresql:2.0.3'
