@@ -1,0 +1,94 @@
+publiccodeYmlVersion: 0.5.0
+name: Let’s Peppol
+url: https://github.com/letspeppol/letspeppol
+landingURL: https://letspeppol.org/
+releaseDate: 2026-01-01
+logo: docs/logo.png
+platforms:
+  - web
+categories:
+  - billing-and-invoicing
+organisation:
+  uri: https://letspeppol.org
+  name: Business Application Research Group Europe
+fundedBy:
+  - name: NLnet
+    uri: https://nlnet.nl
+usedBy:
+  - Sole proprietorship
+  - Non-profit organisation
+  - Company
+developmentStatus: stable
+softwareType: standalone/web
+intendedAudience:
+  countries:
+    - BE
+  scope:
+    - finance-and-economic-development
+description:
+  en:
+    shortDescription: Free and open-source Peppol access point for e-invoicing.
+    longDescription: >-
+      A free alternative to become Peppol-compliant
+
+      Purpose-built for SMEs, freelancers, and accountants. No lock-in. Your
+      data remains yours. Backed by a Belgian non-profit and a global
+      open-source community.
+
+
+      Inbox-like UI
+
+      Send and receive e-invoices and credit notes through a web interface that
+      feels familiar — like email.
+
+
+      Peppol BIS / UBL
+
+      Built around Peppol BIS 3.0 and UBL 2.1 standards to interoperate with the
+      network from day one.
+
+
+      Data ownership
+
+      You always own your data. We do not mine or sell access to your business
+      information.
+
+
+      Trust by design
+
+      GDPR-friendly, EU hosting, transparent code, and audits through community
+      processes.
+
+
+      Open-source
+
+      Free as in freedom. No license fees. Contribute integrations over time
+      together with the community.
+
+
+      No costs and no fees
+
+      Started and maintained by a non-profit organization, driven by community
+      and supported by donors and supporters.
+    features:
+      - Send & receive e-invoices over the Peppol network with an inbox that
+        feels like email
+    screenshots:
+      - docs/invoice_example.png
+    videos:
+      - https://www.youtube.com/watch?v=aLlimZZ8zOw
+legal:
+  license: MIT
+maintenance:
+  type: community
+  contacts:
+    - name: Let’s Peppol Team
+      email: info@letspeppol.org
+      affiliation: BARGE
+localisation:
+  localisationReady: true
+  availableLanguages:
+    - en
+    - nl
+    - de
+    - fr
