@@ -31,6 +31,7 @@
                 <span style="margin-left: var(--space-05); margin-right: var(--space-05)" >${invoiceContext.selectedInvoice.ID}</span>
                 <template if.bind="invoiceContext.selectedDocument">
                     <span class="pill" if.bind="invoiceContext.selectedDocument.draftedOn" t="invoice.status.draft">Drafted</span>
+                    <span class="pill" style="margin-left: 3px; margin-right: 3px" if.bind="invoiceContext.selectedDocument.createdExternally">Uploaded</span>
                     <span class="pill scheduled" if.bind="invoiceContext.selectedDocument.scheduledOn && !invoiceContext.selectedDocument.processedOn" t="invoice.status.scheduled">Scheduled</span>
                     <span class="pill processed" if.bind="invoiceContext.selectedDocument.processedOn && !invoiceContext.selectedDocument.processedStatus" t="invoice.status.processed">Processed</span>
                     <span class="pill error" if.bind="invoiceContext.selectedDocument.processedStatus" t="invoice.status.error" title.bind="invoiceContext.selectedDocument.processedStatus">Error</span>
@@ -38,10 +39,6 @@
             </h1>
         </div>
         <div class="editor-header-actions">
-            <label if.bind="!readOnly" class="field checkbox">
-                <input type="checkbox" checked.bind="invoiceContext.addPdfToSendingInvoice" />
-                <span t="account.add-pdf-to-sending-invoice">Add pdf to sending invoice</span>
-            </label>
             <button if.bind="!readOnly" type="button" class="btn" click.trigger="saveAsDraft()">
                 <span if.bind="invoiceContext.selectedDraft" t="invoice.edit.update-draft">Update draft</span>
                 <span if.bind="!invoiceContext.selectedDraft" t="invoice.edit.save-draft">Save draft</span>
@@ -60,7 +57,7 @@
                 <span t="invoice.edit.delete-draft">Delete draft</span>
             </button>
             <button type="button" class="btn" click.trigger="returnToOverview()" t="invoice.edit.cancel">Cancel</button>
-            <button if.bind="!readOnly" type="button" class="btn primary" click.trigger="verifyNumberAndSend()" disabled.bind="!isValid" t="invoice.edit.send.${selectedDocumentType}">Send invoice</button>
+            <button if.bind="!invoiceContext.selectedDocument.proxyOn" type="button" class="btn primary" click.trigger="verifyNumberAndSend()" disabled.bind="!isValid" t="invoice.edit.send.${selectedDocumentType}">Send invoice</button>
         </div>
     </div>
 

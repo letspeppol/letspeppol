@@ -1,5 +1,5 @@
 import {
-    AccountingParty,
+    AccountingParty, AdditionalDocumentReference,
     CreditNote,
     CreditNoteLine,
     Invoice,
@@ -15,6 +15,8 @@ import {resolve} from "@aurelia/kernel";
 import {CompanyService} from "../services/app/company-service";
 import {DocumentType} from "../services/app/invoice-service";
 import {I18N} from "@aurelia/i18n";
+
+const GENERATED_INVOICE = 'generated_invoice';
 
 @singleton()
 export class InvoiceComposer {
@@ -45,7 +47,7 @@ export class InvoiceComposer {
             Note: undefined,
             DocumentCurrencyCode: "EUR",
             BuyerReference: "NA",
-            AdditionalDocumentReference: undefined,
+            AdditionalDocumentReference: this.getAdditionalDocumentReference(),
             AccountingSupplierParty: this.getAccountingSupplierParty(),
             AccountingCustomerParty: this.getAccountingCustomerParty(),
             PaymentMeans : undefined,
@@ -76,7 +78,7 @@ export class InvoiceComposer {
             Note: undefined,
             DocumentCurrencyCode: "EUR",
             BuyerReference: "NA",
-            AdditionalDocumentReference: undefined,
+            AdditionalDocumentReference: this.getAdditionalDocumentReference(),
             AccountingSupplierParty: this.getAccountingSupplierParty(),
             AccountingCustomerParty: this.getAccountingCustomerParty(),
             PaymentMeans : undefined,
@@ -353,5 +355,19 @@ export class InvoiceComposer {
                 Price: line.Price,
             })),
         } as Invoice;
+    }
+
+    public getAdditionalDocumentReference() {
+        return [{
+            ID: GENERATED_INVOICE,
+            DocumentDescription: 'Generated Invoice PDF',
+            Attachment: {
+                EmbeddedDocumentBinaryObject: {
+                    __mimeCode: 'application/pdf',
+                    __filename: `${GENERATED_INVOICE}.pdf`,
+                    value: 'ZW1wdHk='
+                }
+            }
+        } as AdditionalDocumentReference];
     }
 }

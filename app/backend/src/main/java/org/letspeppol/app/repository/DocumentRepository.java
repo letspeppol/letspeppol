@@ -2,6 +2,7 @@ package org.letspeppol.app.repository;
 
 import org.letspeppol.app.dto.TotalsDto;
 import org.letspeppol.app.model.Document;
+import org.letspeppol.app.model.DocumentType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -21,21 +22,29 @@ public interface DocumentRepository extends JpaRepository<Document, UUID>, JpaSp
 
     @Query("""
         SELECT COUNT(document) > 0 FROM Document document
-        WHERE document.invoiceReference = :invoiceReference AND document.company.peppolId = :ownerPeppolId
-        AND document.draftedOn IS NULL AND document.proxyOn IS NOT NULL
+        WHERE document.invoiceReference = :invoiceReference AND document.company.peppolId = :ownerPeppolId and document.type = :type
+        AND document.draftedOn IS NULL AND document.proxyOn IS NOT NULL AND document.direction = 'OUTGOING'
         """)
-    boolean existsByInvoiceReferenceAndOwnerPeppolId(String invoiceReference, String ownerPeppolId);
+    boolean existsByInvoiceReferenceAndTypeAndOwnerPeppolId(String invoiceReference, DocumentType type, String ownerPeppolId);
 
     @Query(value = """
     SELECT
-      COALESCE(SUM(CASE WHEN drafted_on IS NULL AND direction = 'INCOMING' AND paid_on IS NULL THEN amount ELSE 0 END), 0) AS totalPayableOpen,
-      COALESCE(SUM(CASE WHEN drafted_on IS NULL AND direction = 'INCOMING' AND paid_on IS NULL AND due_date < NOW() THEN amount ELSE 0 END), 0) AS totalPayableOverdue,
-      COALESCE(SUM(CASE WHEN drafted_on IS NULL AND direction = 'INCOMING' AND EXTRACT(YEAR FROM issue_date) = EXTRACT(YEAR FROM NOW()) THEN amount ELSE 0 END), 0) AS totalPayableThisYear,
-      COALESCE(SUM(CASE WHEN drafted_on IS NULL AND direction = 'OUTGOING' AND paid_on IS NULL THEN amount ELSE 0 END), 0) AS totalReceivableOpen,
-      COALESCE(SUM(CASE WHEN drafted_on IS NULL AND direction = 'OUTGOING' AND paid_on IS NULL AND due_date < NOW() THEN amount ELSE 0 END), 0) AS totalReceivableOverdue,
-      COALESCE(SUM(CASE WHEN drafted_on IS NULL AND direction = 'OUTGOING' AND EXTRACT(YEAR FROM issue_date) = EXTRACT(YEAR FROM NOW()) THEN amount ELSE 0 END), 0) AS totalReceivableThisYear
-    FROM app.document
-    WHERE owner_peppol_id = :ownerPeppolId
+      COALESCE(SUM(CASE WHEN direction = 'INCOMING' AND paid_on IS NULL THEN signed_amount END), 0) AS totalPayableOpen,
+      COALESCE(SUM(CASE WHEN direction = 'INCOMING' AND paid_on IS NULL AND due_date < NOW() THEN signed_amount END), 0) AS totalPayableOverdue,
+      COALESCE(SUM(CASE WHEN direction = 'INCOMING' AND issue_date >= date_trunc('year', NOW()) AND issue_date < date_trunc('year', NOW()) + INTERVAL '1 year' THEN signed_amount END), 0) AS totalPayableThisYear,
+      COALESCE(SUM(CASE WHEN direction = 'OUTGOING' AND paid_on IS NULL THEN signed_amount END), 0) AS totalReceivableOpen,
+      COALESCE(SUM(CASE WHEN direction = 'OUTGOING' AND paid_on IS NULL AND due_date < NOW() THEN signed_amount END), 0) AS totalReceivableOverdue,
+      COALESCE(SUM(CASE WHEN direction = 'OUTGOING' AND issue_date >= date_trunc('year', NOW()) AND issue_date < date_trunc('year', NOW()) + INTERVAL '1 year' THEN signed_amount END), 0) AS totalReceivableThisYear
+    FROM (
+      SELECT
+        direction,
+        paid_on,
+        due_date,
+        issue_date,
+        CASE WHEN type = 'CREDIT_NOTE' THEN -amount ELSE amount END AS signed_amount
+      FROM app.document
+      WHERE owner_peppol_id = :ownerPeppolId AND drafted_on IS NULL
+    ) d
     """, nativeQuery = true)
     TotalsDto totalsByOwner(@Param("ownerPeppolId") String ownerPeppolId);
 

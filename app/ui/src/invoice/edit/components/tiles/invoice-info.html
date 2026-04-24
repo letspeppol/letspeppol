@@ -12,8 +12,8 @@
     <div><span t="documentType.${invoiceContext.selectedDocumentType}"></span> <span t="invoice.edit.number">Number</span></div>
 
     <template if.bind="!invoiceContext.selectedInvoice.ID">
-        <i if.bind="!invoiceContext.nextInvoiceReference" style="color: var(--muted); font-size: var(--space-09)">Last number: ${invoiceContext.lastInvoiceReference}</i>
-        <i else style="color: var(--muted); font-size: var(--space-09)">${invoiceContext.nextInvoiceReference}</i>
+        <i if.bind="!invoiceContext.nextReference" style="color: var(--muted); font-size: var(--space-09)">Last number: ${invoiceContext.lastReference}</i>
+        <i else style="color: var(--muted); font-size: var(--space-09)">${invoiceContext.nextReference}</i>
     </template>
     <template else>
         <b>${invoiceContext.selectedInvoice.ID}</b>

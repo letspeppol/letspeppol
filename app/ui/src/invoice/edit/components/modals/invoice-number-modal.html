@@ -6,7 +6,7 @@
             <button class="icon-btn" click.trigger="closeModal()" aria-label="Close dialog" t="[aria-label]common.close" title="Close" t="[title]common.close">×</button>
         </header>
         <div class="modal-body">
-            <p if.bind="invoiceContext.lastInvoiceReference" style="color: var(--muted)">Last number: <strong>${invoiceContext.lastInvoiceReference}</strong></p>
+            <p if.bind="invoiceContext.lastReference" style="color: var(--muted)">Last number: <strong>${invoiceContext.lastReference}</strong></p>
             <div style="display: inline-grid; gap: var(--space-1)">
                 <label class="field required">
                     <span t="label.invoice-number">Name</span>

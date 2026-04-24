@@ -1,12 +1,8 @@
 package org.letspeppol.app.service;
 
 import io.micrometer.core.instrument.Counter;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.AttachmentType;
-import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.DocumentReferenceType;
-import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.EmbeddedDocumentBinaryObjectType;
 import org.letspeppol.app.dto.*;
 import org.letspeppol.app.exception.*;
 import org.letspeppol.app.exception.SecurityException;
@@ -14,6 +10,7 @@ import org.letspeppol.app.mapper.DocumentMapper;
 import org.letspeppol.app.model.Company;
 import org.letspeppol.app.model.Document;
 import org.letspeppol.app.model.DocumentDirection;
+import org.letspeppol.app.model.DocumentType;
 import org.letspeppol.app.repository.CompanyRepository;
 import org.letspeppol.app.repository.DocumentRepository;
 import org.letspeppol.app.repository.DocumentSpecifications;
@@ -131,17 +128,16 @@ public class DocumentService {
         });
     }
 
-    public DocumentDto createFromUbl(String peppolId, String ublXml, boolean addPdfToSendingInvoice, boolean draft, Instant schedule, String tokenValue) {
+    public DocumentDto createFromUbl(String peppolId, String ublXml, boolean draft, Instant schedule, boolean createdExternally, String tokenValue) {
         Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new NotFoundException("Company does not exist"));
         UblDto ublDto = readUBL(DocumentDirection.OUTGOING, ublXml, peppolId, draft);
-        if (addPdfToSendingInvoice) {
-            ublXml = ublInvoicePdfService.addRenderedPdfToUbl(ublXml, ublDto.invoiceReference());
-        }
-
         if (!draft) {
-             if (documentRepository.existsByInvoiceReferenceAndOwnerPeppolId(ublDto.invoiceReference(), peppolId)) {
+             if (documentRepository.existsByInvoiceReferenceAndTypeAndOwnerPeppolId(ublDto.invoiceReference(), ublDto.type(), peppolId)) {
                  throw new AppException(AppErrorCodes.INVOICE_NUMBER_ALREADY_USED);
              }
+        }
+        if (!draft && company.isAddPdfToSendingInvoice()) {
+            ublXml = ublInvoicePdfService.addRenderedPdfToUbl(ublXml, ublDto.invoiceReference());
         }
         Document document = new Document(
                 null, //Hibernate generates UUID
@@ -165,7 +161,8 @@ public class DocumentService {
                 ublDto.amount(),
                 ublDto.issueDate(),
                 ublDto.dueDate(),
-                ublDto.paymentTerms()
+                ublDto.paymentTerms(),
+                createdExternally
         );
         document.setCompany(company);
         document = documentRepository.save(document);
@@ -204,7 +201,8 @@ public class DocumentService {
                 ublDto.amount(),
                 ublDto.issueDate(),
                 ublDto.dueDate(),
-                ublDto.paymentTerms()
+                ublDto.paymentTerms(),
+                true
         );
         document.setCompany(company);
         document = documentRepository.save(document);
@@ -345,7 +343,12 @@ public class DocumentService {
         document.setProcessedOn(ublDocumentDto.processedOn());
         document.setProcessedStatus(ublDocumentDto.processedStatus());
         document.setUbl(ublDocumentDto.ubl());
-        document.getCompany().setLastInvoiceReference(document.getInvoiceReference());
+        if (DocumentType.CREDIT_NOTE.equals(document.getType())) {
+            document.getCompany().setLastCreditNoteReference(document.getInvoiceReference());
+        } else {
+            document.getCompany().setLastInvoiceReference(document.getInvoiceReference());
+        }
+
         return documentRepository.save(document);
     }
 
@@ -375,7 +378,11 @@ public class DocumentService {
         document.setScheduledOn(ublDocumentDto.scheduledOn());
         document.setProcessedOn(ublDocumentDto.processedOn());
         document.setProcessedStatus(ublDocumentDto.processedStatus());
-        document.getCompany().setLastInvoiceReference(document.getInvoiceReference());
+        if (DocumentType.CREDIT_NOTE.equals(document.getType())) {
+            document.getCompany().setLastCreditNoteReference(document.getInvoiceReference());
+        } else {
+            document.getCompany().setLastInvoiceReference(document.getInvoiceReference());
+        }
         return documentRepository.save(document);
     }
 

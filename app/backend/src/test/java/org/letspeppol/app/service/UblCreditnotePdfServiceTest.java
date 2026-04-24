@@ -26,7 +26,7 @@ class UblCreditnotePdfServiceTest {
         UBL21Marshaller.creditNote().write(creditNoteType, byteArrayOutputStream);
 
 
-        UblInvoicePdfService sut = new UblInvoicePdfService();
+        UblInvoicePdfService sut = new UblInvoicePdfService(null);
         byte[] pdf = sut.toPdf(byteArrayOutputStream.toString(StandardCharsets.UTF_8));
 
         Files.createDirectories(Paths.get("build", "debug"));
@@ -62,7 +62,7 @@ class UblCreditnotePdfServiceTest {
                 </CreditNote>
                 """;
 
-        UblInvoicePdfService sut = new UblInvoicePdfService();
+        UblInvoicePdfService sut = new UblInvoicePdfService(null);
         byte[] pdf = sut.toPdf(xml, UblInvoicePdfService.RenderMode.DRAFT);
 
         String pdfText = new String(pdf, StandardCharsets.ISO_8859_1);
