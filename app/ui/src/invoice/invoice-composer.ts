@@ -75,7 +75,7 @@ export class InvoiceComposer {
             ID: "",
             IssueDate: moment().format('YYYY-MM-DD'),
             CreditNoteTypeCode: 381,
-            Note: undefined,
+            Note: this.i18n.tr('invoice.modal.credit-note-vat-note'),
             DocumentCurrencyCode: "EUR",
             BuyerReference: "NA",
             AdditionalDocumentReference: this.getAdditionalDocumentReference(),
@@ -305,15 +305,25 @@ export class InvoiceComposer {
      */
 
     invoiceToCreditNote(invoice: Invoice): CreditNote {
+        const vatNote = this.i18n.tr('invoice.modal.credit-note-vat-note');
+        const billingReference = invoice.ID
+            ? [{
+                InvoiceDocumentReference: {
+                    ID: invoice.ID,
+                    IssueDate: invoice.IssueDate,
+                }
+            }]
+            : undefined;
         return {
             CustomizationID: invoice.CustomizationID,
             ProfileID: invoice.ProfileID,
             ID: invoice.ID,
             IssueDate: invoice.IssueDate,
             CreditNoteTypeCode: 381,
-            Note: invoice.Note,
+            Note: invoice.Note && invoice.Note.trim() ? invoice.Note : vatNote,
             DocumentCurrencyCode: "EUR",
             BuyerReference: invoice.BuyerReference, // or OrderReference
+            BillingReference: billingReference,
             AccountingSupplierParty: invoice.AccountingSupplierParty,
             AccountingCustomerParty: invoice.AccountingCustomerParty,
             PaymentMeans: invoice.PaymentMeans,

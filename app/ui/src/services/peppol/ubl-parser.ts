@@ -16,6 +16,7 @@ const parser = new XMLParser({
             name === "TaxSubtotal" ||
             name === "TaxTotal" ||
             name === "PartyIdentification" ||
+            name === "BillingReference" ||
             false
         );
     },

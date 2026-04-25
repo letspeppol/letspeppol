@@ -1,3 +1,5 @@
+<import from="../../../../app/value-converters/date-format.ts"></import>
+
 <div class="modal" role="dialog" aria-modal="true" show.bind="open">
     <div class="modal-backdrop"></div>
     <div class="modal-card">
@@ -25,6 +27,15 @@
                     <label class="field">
                         <span t="invoice.order-reference">Order Reference</span>
                         <input type="text" name="reference" value.bind="orderReference" keydown.trigger="onKeyDown($event)" required />
+                    </label>
+                    <label class="field full" if.bind="isCreditNote">
+                        <span t="invoice.modal.invoice-reference">Select invoice reference</span>
+                        <select name="invoiceReference" value.bind="selectedInvoiceReferenceId">
+                            <option model.bind="undefined" t="invoice.modal.invoice-reference-none"></option>
+                            <option repeat.for="inv of referenceableInvoices" model.bind="inv.invoiceReference">
+                                ${inv.invoiceReference} — ${inv.issueDate | dateFormat}
+                            </option>
+                        </select>
                     </label>
                     <label class="field full">
                         <details open.bind="isCreditNote">
