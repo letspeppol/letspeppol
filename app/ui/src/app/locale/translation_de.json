@@ -325,10 +325,16 @@
     },
     "modal": {
       "title": "Rechnung",
+      "title-credit-note": "Gutschrift",
       "document": "Dokument",
       "invoice-number": "Rechnungsnummer",
+      "credit-note-number": "Gutschriftsnummer",
+      "invoice-reference": "Rechnungsreferenz auswählen",
+      "invoice-reference-none": "Keine",
       "note-optional": "Notiz (optional)",
       "note-placeholder": "Zusätzliche Notizen zu dieser Rechnung",
+      "credit-note-note-placeholder": "Zusätzliche Notizen zu dieser Gutschrift",
+      "credit-note-vat-note": "MwSt. an den Staat zurückzuzahlen in dem Maße, wie sie ursprünglich in Abzug gebracht wurde",
       "reference-required" : "Entweder Käuferreferenz ODER Bestellreferenz ist erforderlich"
     },
     "dateModal": {

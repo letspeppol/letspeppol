@@ -2,7 +2,7 @@
     <div class="modal-backdrop"></div>
     <div class="modal-card">
         <header class="modal-header">
-            <h2 t="invoice.modal.title">Invoice</h2>
+            <h2 t="${isCreditNote ? 'invoice.modal.title-credit-note' : 'invoice.modal.title'}">Invoice</h2>
             <button class="icon-btn" click.trigger="closeModal()" aria-label="Close dialog" t="[aria-label]common.close" title="Close" t="[title]common.close">×</button>
         </header>
         <div class="modal-body">
@@ -15,8 +15,8 @@
                         </select>
                     </label>
                     <label class="field">
-                        <span t="invoice.modal.invoice-number">Invoice number</span>
-                        <input id="docNumber" type="text" name="docNumber" placeholder.bind="selectedDocumentType === 'INVOICE' ? 'INV-2025-0001' : 'CRN-2025-0001'" value.bind="id" keydown.trigger="onKeyDown($event)" required />
+                        <span t="${isCreditNote ? 'invoice.modal.credit-note-number' : 'invoice.modal.invoice-number'}">Invoice number</span>
+                        <input id="docNumber" type="text" name="docNumber" placeholder.bind="isCreditNote ? 'CRN-2025-0001' : 'INV-2025-0001'" value.bind="id" keydown.trigger="onKeyDown($event)" required />
                     </label>
                     <label class="field">
                         <span t="invoice.buyer-reference">Buyer Reference</span>
@@ -27,9 +27,9 @@
                         <input type="text" name="reference" value.bind="orderReference" keydown.trigger="onKeyDown($event)" required />
                     </label>
                     <label class="field full">
-                        <details>
+                        <details open.bind="isCreditNote">
                             <summary><span t="invoice.modal.note-optional">Note (optional)</span></summary>
-                            <textarea name="note" style="min-width: 100%" placeholder="Additional notes for this invoice" t="[placeholder]invoice.modal.note-placeholder" value.bind="note"></textarea>
+                            <textarea name="note" style="min-width: 100%" placeholder="Additional notes for this invoice" t="[placeholder]${isCreditNote ? 'invoice.modal.credit-note-note-placeholder' : 'invoice.modal.note-placeholder'}" value.bind="note"></textarea>
                         </details>
                     </label>
                 </div>

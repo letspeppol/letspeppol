@@ -324,10 +324,16 @@
     },
     "modal" : {
       "title" : "Factuur",
+      "title-credit-note" : "Creditnota",
       "document" : "Document",
       "invoice-number" : "Factuurnummer",
+      "credit-note-number" : "Creditnotanummer",
+      "invoice-reference" : "Factuur nr referentie selecteren",
+      "invoice-reference-none" : "Geen",
       "note-optional" : "Notitie (optioneel)",
       "note-placeholder" : "Extra notities voor deze factuur",
+      "credit-note-note-placeholder" : "Extra notities voor deze creditnota",
+      "credit-note-vat-note" : "BTW terug te storten aan de Staat in de mate waarin ze oorspronkelijk in aftrek werd gebracht",
       "reference-required" : "Referentie koper OF orderreferentie is verplicht"
     },
     "dateModal" : {

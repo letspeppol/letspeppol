@@ -325,10 +325,16 @@
     },
     "modal": {
       "title": "Invoice",
+      "title-credit-note": "Credit Note",
       "document": "Document",
       "invoice-number": "Invoice number",
+      "credit-note-number": "Credit note number",
+      "invoice-reference": "Select invoice reference",
+      "invoice-reference-none": "None",
       "note-optional": "Note (optional)",
       "note-placeholder": "Additional notes for this invoice",
+      "credit-note-note-placeholder": "Additional notes for this credit note",
+      "credit-note-vat-note": "VAT to be refunded to the State to the extent that it was originally deducted",
       "reference-required" : "Either buyer reference OR order reference is required"
     },
     "dateModal": {

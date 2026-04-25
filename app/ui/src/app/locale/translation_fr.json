@@ -324,10 +324,16 @@
     },
     "modal" : {
       "title" : "Facture",
+      "title-credit-note" : "Note de crédit",
       "document" : "Document",
       "invoice-number" : "Numéro de facture",
+      "credit-note-number" : "Numéro de note de crédit",
+      "invoice-reference" : "Sélectionner la référence de facture",
+      "invoice-reference-none" : "Aucune",
       "note-optional" : "Note (optionnel)",
       "note-placeholder" : "Notes supplémentaires pour cette facture",
+      "credit-note-note-placeholder" : "Notes supplémentaires pour cette note de crédit",
+      "credit-note-vat-note" : "TVA à reverser à l'État dans la mesure où elle a été initialement déduite",
       "reference-required" : "La référence acheteur OU la référence de commande est obligatoire"
     },
     "dateModal" : {
