@@ -9,10 +9,8 @@ import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.mapper.AccountMapper;
 import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.model.AccountType;
-import org.letspeppol.kyc.service.AccountService;
-import org.letspeppol.kyc.service.CompanyService;
-import org.letspeppol.kyc.service.JwtService;
-import org.letspeppol.kyc.service.SigningService;
+import org.letspeppol.kyc.model.kbo.Company;
+import org.letspeppol.kyc.service.*;
 import org.letspeppol.kyc.service.jwt.JwtInfo;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -29,16 +27,27 @@ import java.util.UUID;
 public class CompanyController {
 
     private final AccountService accountService;
+    private final OwnershipService ownershipService;
     private final CompanyService companyService;
     private final JwtService jwtService;
     private final SigningService signingService;
 
     /// Retrieves account info based on valid JWT token, used by App when peppolId is unknown on getCompany (called by UI right after obtaining JWT token)
     @GetMapping
+    public ResponseEntity<?> getAdminAccountForToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
+        Account account = ownershipService.getByPeppolIdAndType(jwtInfo.peppolId(), AccountType.ADMIN).getAccount();
+        Company company = companyService.getByPeppolId(jwtInfo.peppolId());
+        return ResponseEntity.ok(AccountMapper.toAccountInfo(account, company)); //This will be the ADMIN account and thus the one who signed the contract
+    }
+
+    /// Retrieves account info based on valid JWT token, used by App when peppolId is unknown on getCompany (called by UI right after obtaining JWT token)
+    @GetMapping("/account")
     public ResponseEntity<?> getAccountForToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
-        Account account = (jwtInfo.accountType() == AccountType.ADMIN) ? accountService.getAdminByExternalId(jwtInfo.uid()) : accountService.getAdminByPeppolId(jwtInfo.peppolId());
-        return ResponseEntity.ok(AccountMapper.toAccountInfo(account));  //This will be the ADMIN account and thus the one who signed the contract
+        Account account = accountService.getByExternalId(jwtInfo.uid());
+        Company company = companyService.getByPeppolId(jwtInfo.peppolId());
+        return ResponseEntity.ok(AccountMapper.toAccountInfo(account, company));
     }
 
     @GetMapping("/search")
@@ -117,7 +126,7 @@ public class CompanyController {
         }
         String peppolId = jwtInfo.peppolId();
         UUID externalId = jwtInfo.uid();
-        Account account = accountService.getAdminByExternalId(externalId);
+        Account account = accountService.getByExternalId(externalId);
         byte[] data = signingService.getContract(peppolId, account.getId());
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=contract_signed.pdf")

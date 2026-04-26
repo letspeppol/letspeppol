@@ -15,10 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "account", indexes = {
-        @Index(name = "idx_account_company_email", columnList = "company_id,email"),
-        @Index(name = "idx_account_external_id", columnList = "external_id")
-})
+@Table(name = "account")
 @Getter
 @Setter
 @Builder
@@ -33,13 +30,10 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    @JdbcType(PostgreSQLEnumJdbcType.class)
-    private AccountType type;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "company_id", nullable = false)
-    private Company company;
+    @Builder.Default
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OrderBy("lastUsed DESC")
+    private List<Ownership> ownerships = new ArrayList<>();
 
     @Column(nullable = false)
     private String name;
@@ -47,7 +41,7 @@ public class Account {
     @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = true, length = 100)
     private String passwordHash;
 
     @Builder.Default
@@ -56,20 +50,11 @@ public class Account {
 
     @Builder.Default
     @Column(nullable = false)
-    private boolean identityVerified = false;
-    private Instant identityVerifiedOn;
-
-    @Column(unique = true, nullable = false)
-    private UUID externalId; //Is an ID that is allowed to be exposed externally
+    private boolean verified = false;
+    private Instant verifiedOn;
 
     @Builder.Default
-    @ManyToMany
-    @JoinTable(
-            name = "account_link",
-            joinColumns = @JoinColumn(name = "account_id"),
-            inverseJoinColumns = @JoinColumn(name = "linked_account_id"),
-            uniqueConstraints = @UniqueConstraint(name = "uk_account_link_pair", columnNames = {"account_id", "linked_account_id"})
-    )
-    private List<Account> linkedAccounts = new ArrayList<>();
+    @Column(unique = true, nullable = false)
+    private UUID externalId = UUID.randomUUID(); //Is an ID that is allowed to be exposed externally
 
 }

@@ -5,7 +5,6 @@ import org.letspeppol.kyc.dto.*;
 import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.KycException;
 import org.letspeppol.kyc.model.kbo.Director;
-import org.letspeppol.kyc.service.ActivationService;
 import org.letspeppol.kyc.service.SigningService;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +18,6 @@ import java.util.Objects;
 public class IdentityVerificationController {
 
     private final SigningService signingService;
-    private final ActivationService activationService;
 
     /// *Registration step 4* Generates contract hashes as preparation used for signing with Web eID (pdf gets a temporary signature placeholder). This happens right after the "Select a certificate" and before the "Signing" steps of Web eID
     @PostMapping("/sign/prepare")
@@ -28,10 +26,9 @@ public class IdentityVerificationController {
     }
 
     /// *Registration step 5* Generates contract for selected (i.e. step 4) director to be signed
-    @GetMapping("/contract/{directorId}")
-    public ResponseEntity<byte[]> getContract(@PathVariable Long directorId, @RequestParam String token) {
-        TokenVerificationResponse tokenVerificationResponse = activationService.verify(token);
-        Director director = signingService.getDirector(directorId, tokenVerificationResponse);
+    @GetMapping("/contract/{peppolId}/{directorId}")
+    public ResponseEntity<byte[]> getContract(@PathVariable String peppolId, @PathVariable Long directorId) {
+        Director director = signingService.getDirector(directorId, peppolId);
         byte[] preparedPdf = signingService.generateFilledContract(director);
         if (preparedPdf == null || preparedPdf.length == 0) {
             throw new KycException(KycErrorCodes.CONTRACT_NOT_FOUND);
@@ -44,8 +41,8 @@ public class IdentityVerificationController {
 
     /// *Registration step 6* Signs contract by selected director and used Web eID during "Signing" step and sends certificate information to store and generate signed contract
     @PostMapping("/sign/finalize")
-    public ResponseEntity finalize(@RequestBody FinalizeSigningRequest request) {
-        FinalizeSigningResponse finalizeSigningResponse = signingService.finalizeSign(request);
+    public ResponseEntity finalize(@RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authHeader, @RequestBody FinalizeSigningRequest request) {
+        FinalizeSigningResponse finalizeSigningResponse = signingService.finalizeSign(request, authHeader);
         String status;
         RegistrationResponse registrationResponse = finalizeSigningResponse.registrationResponse();
         if (registrationResponse == null) {

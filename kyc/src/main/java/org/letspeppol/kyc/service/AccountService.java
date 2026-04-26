@@ -10,11 +10,12 @@ import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.KycException;
 import org.letspeppol.kyc.exception.NotFoundException;
 import org.letspeppol.kyc.model.Account;
-import org.letspeppol.kyc.model.AccountType;
 import org.letspeppol.kyc.repository.AccountRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -26,31 +27,13 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
     private final Counter authenticationCounterFailure;
-    private final JwtService jwtService;
-    private final ProxyService proxyService;
 
     public Account getByExternalId(UUID externalId) {
         return accountRepository.findByExternalId(externalId).orElseThrow(() -> new NotFoundException(KycErrorCodes.ACCOUNT_NOT_FOUND));
     }
 
-    public Account getAdminByExternalId(UUID externalId) {
-        Account account = getByExternalId(externalId);
-        if (account.getType() != AccountType.ADMIN) {
-            throw new ForbiddenException(KycErrorCodes.ACCOUNT_NOT_ADMIN);
-        }
-        return account;
-    }
-
-    public Account getAppByExternalId(UUID externalId) {
-        Account account = getByExternalId(externalId);
-        if (account.getType() != AccountType.APP) {
-            throw new ForbiddenException(KycErrorCodes.ACCOUNT_NOT_APP);
-        }
-        return account;
-    }
-
-    public Account getAdminByPeppolId(String peppolId) {
-        return accountRepository.findFirstByTypeAndCompanyPeppolId(AccountType.ADMIN, peppolId).orElseThrow(() -> new NotFoundException(KycErrorCodes.ACCOUNT_NOT_FOUND));
+    public Optional<Account> findByEmail(String email) {
+        return accountRepository.findByEmail(email.toLowerCase());
     }
 
     public Account findAccountWithCredentials(String emailOrUuid, String password) {
@@ -68,9 +51,17 @@ public class AccountService {
                 return new NotFoundException(KycErrorCodes.ACCOUNT_NOT_FOUND);
             });
         }
+        if (account.getPasswordHash() == null || account.getPasswordHash().isBlank()) {
+            authenticationCounterFailure.increment();
+            throw new KycException(KycErrorCodes.ACCOUNT_NOT_VERIFIED);
+        }
         if (!passwordEncoder.matches(password, account.getPasswordHash())) {
             authenticationCounterFailure.increment();
             throw new KycException(KycErrorCodes.WRONG_PASSWORD);
+        }
+        if (!account.isVerified()) {
+            authenticationCounterFailure.increment();
+            throw new KycException(KycErrorCodes.ACCOUNT_NOT_VERIFIED);
         }
         return account;
     }
@@ -80,8 +71,15 @@ public class AccountService {
         accountRepository.save(account);
     }
 
-    public void verifyNotRegistered(String email) {
+    public void verify(Account account) {
+        account.setVerified(true);
+        account.setVerifiedOn(java.time.Instant.now());
+        accountRepository.save(account);
+    }
+
+    public void verifyEmailNotRegistered(String email) {
         if (accountRepository.existsByEmail(email.toLowerCase())) {
+            log.warn("User tried to register with email {} but was already registered", email);
             throw new KycException(KycErrorCodes.ACCOUNT_ALREADY_LINKED);
         }
     }
@@ -90,30 +88,15 @@ public class AccountService {
         accountRepository.save(account);
     }
 
-    public void link(Account admin, Account account) {
-        admin.getLinkedAccounts().add(account);
-        accountRepository.save(admin); //TODO : check does this work ?
+    public Account createPendingAccount(String email, String name) {
+        Account account = new Account();
+        account.setName(name);
+        account.setEmail(email.toLowerCase());
+        account.setVerified(false);
+        account.setCreatedOn(Instant.now());
+        account.setPasswordHash(null);
+        accountRepository.save(account);
+        return account;
     }
 
-    public void unlink(Account admin, Account account) {
-        admin.getLinkedAccounts().remove(account); //TODO : make this work
-        accountRepository.save(admin); //TODO : check does this work ?
-    }
-
-    public Account linkServiceToAccount(UUID adminExternalId, ServiceRequest request) {
-        Account admin = getAdminByExternalId(adminExternalId);
-        Account service = getAppByExternalId(request.uid());
-        link(admin, service);
-        String token = jwtService.generateInternalToken(admin.getCompany().getPeppolId(), admin.getCompany().isPeppolActive(), adminExternalId);
-        proxyService.allowService(token, request);
-        return service;
-    }
-
-    public void unlinkServiceFromAccount(UUID adminExternalId, ServiceRequest request) {
-        Account admin = getAdminByExternalId(adminExternalId);
-        Account service = getAppByExternalId(request.uid());
-        unlink(admin, service);
-        String token = jwtService.generateInternalToken(admin.getCompany().getPeppolId(), admin.getCompany().isPeppolActive(), adminExternalId);
-        proxyService.rejectService(token, request);
-    }
 }
