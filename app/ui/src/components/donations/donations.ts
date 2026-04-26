@@ -29,7 +29,7 @@ export class Donations {
         if (this.sponsors?.length) {
             this.activeSponsorIndex = 0;
             this.activeSponsor = this.sponsors[0];
-            this.sponsorInterval = setInterval(() => this.rotateSponsor(), 5000);
+            this.sponsorInterval = setInterval(() => this.rotateSponsor(), 60_000);
         }
     }
 
