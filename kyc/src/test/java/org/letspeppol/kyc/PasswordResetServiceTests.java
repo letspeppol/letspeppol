@@ -8,6 +8,7 @@ import org.letspeppol.kyc.exception.KycException;
 import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.model.PasswordResetToken;
 import org.letspeppol.kyc.model.kbo.Company;
+import org.letspeppol.kyc.repository.AccountIdentityVerificationRepository;
 import org.letspeppol.kyc.repository.AccountRepository;
 import org.letspeppol.kyc.repository.CompanyRepository;
 import org.letspeppol.kyc.repository.PasswordResetTokenRepository;
@@ -36,6 +37,8 @@ class PasswordResetServiceTests {
     @Autowired
     AccountRepository accountRepository;
     @Autowired
+    AccountIdentityVerificationRepository accountIdentityVerificationRepository;
+    @Autowired
     CompanyRepository companyRepository;
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -45,6 +48,7 @@ class PasswordResetServiceTests {
     @BeforeEach
     void setup() {
         tokenRepository.deleteAll();
+        accountIdentityVerificationRepository.deleteAll();
         accountRepository.deleteAll();
         companyRepository.deleteAll();
         Company company = new Company("0208:0123456789", "BE0123456789", "TestCo");

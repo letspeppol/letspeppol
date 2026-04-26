@@ -78,10 +78,4 @@ public class LinkedController {
         return new SimpleMessage("Request email sent");
     }
 
-    @PostMapping("/approve")
-    public void approve(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader, @RequestParam String token) {
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
-        Ownership ownership = ownershipService.getByAccountExternalIdPeppolIdAndType(jwtInfo.uid(), jwtInfo.peppolId(), jwtInfo.accountType());
-        activationService.approve(token, ownership);
-    }
 }
