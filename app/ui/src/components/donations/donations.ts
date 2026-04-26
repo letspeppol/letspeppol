@@ -27,8 +27,8 @@ export class Donations {
         this.accountInfo = await this.statisticsService.getDonationStats();
         this.sponsors = (await this.sponsorService.getSponsors()).sponsors;
         if (this.sponsors?.length) {
-            this.activeSponsorIndex = 0;
-            this.activeSponsor = this.sponsors[0];
+            this.activeSponsorIndex = Math.floor(Math.random() * this.sponsors.length);
+            this.activeSponsor = this.sponsors[this.activeSponsorIndex];
             this.sponsorInterval = setInterval(() => this.rotateSponsor(), 60_000);
         }
     }
