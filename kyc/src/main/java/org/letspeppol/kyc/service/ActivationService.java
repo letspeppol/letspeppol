@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.kyc.dto.CompanyResponse;
 import org.letspeppol.kyc.dto.ConfirmCompanyRequest;
+import org.letspeppol.kyc.dto.OwnershipInfo;
 import org.letspeppol.kyc.dto.TokenVerificationResponse;
 import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.KycException;
@@ -83,9 +84,6 @@ public class ActivationService {
     public EmailVerification getValidTokenInformation(String token) {
         EmailVerification emailVerification = verificationRepository.findByToken(token)
                 .orElseThrow(() -> new KycException(KycErrorCodes.TOKEN_NOT_FOUND));
-        if (emailVerification.isVerified()) { //TODO : we could remove token ?
-            throw new KycException(KycErrorCodes.TOKEN_ALREADY_VERIFIED);
-        }
         if (emailVerification.getExpiresOn().isBefore(Instant.now())) {
             throw new KycException(KycErrorCodes.TOKEN_EXPIRED);
         }
@@ -108,61 +106,36 @@ public class ActivationService {
         EmailVerification emailVerification = getValidTokenInformation(token);
         CompanyResponse companyResponse = companyService.getResponseByPeppolId(emailVerification.getPeppolId())
                 .orElseThrow(() -> new NotFoundException(KycErrorCodes.COMPANY_NOT_FOUND));
-        if (emailVerification.getRequester() == null) { //TODO : Check if company is suspended, to resign the contract
-            ownershipService.verifyPeppolIdNotRegistered(emailVerification.getPeppolId());
-            return new TokenVerificationResponse(emailVerification.getEmail(), companyResponse, null); //Send response for contract signing
-        }
-        if (!directorIdentityVerificationRepository.existsByAccountId(emailVerification.getRequester().getAccount().getId())) { //TODO : move to step 2 confirm-company ?
-            log.error("Verifying a token {} requested by unverified account {}", token, emailVerification.getRequester().getAccount().getExternalId());
-            throw new KycException(KycErrorCodes.REQUESTER_NOT_VERIFIED);
-        }
-        switch (emailVerification.getRequester().getType()) { //TODO : move to step 2 confirm-company ?
-            case ADMIN:
-                if (!emailVerification.getRequester().getCompany().getPeppolId().equals(emailVerification.getPeppolId())) {
-                    throw new KycException(KycErrorCodes.REQUESTER_NOT_VALID);
-                }
-                if (emailVerification.getType() == ADMIN) { //TODO : can this be used to transfer ownership ?
-                    throw new KycException(KycErrorCodes.ONLY_ONE_ADMIN_ALLOWED);
-                }
-            case USER:
-            case USER_DRAFT:
-            case USER_READ:
-            case APP:
-//            case APP_USER:
-                throw new KycException(KycErrorCodes.REQUESTER_NOT_VALID);
-            case AFFILIATE:
-                if (emailVerification.getType() != ADMIN) { //TODO : add other affiliates ? Or does this always happen from ADMIN ?
-                    throw new KycException(KycErrorCodes.INVALID_AFFILIATE_REQUEST);
-                }
-//                ownershipService.verifyPeppolIdNotRegistered(emailVerification.getPeppolId()); //The ADMIN should not be validated yet, so no registration in ownership ?
-        }
-        //setVerified(emailVerification); //TODO : Create account or verify account AND check no ADMIN yet
-        return new TokenVerificationResponse(emailVerification.getEmail(), companyResponse, OwnershipMapper.toOwnershipInfo(emailVerification.getRequester())); //Send response not needing contract signing
-    }
-
-    @Transactional
-    public void approve(String token, Ownership owner) {
-        EmailVerification emailVerification = getValidTokenInformation(token);
-        if (emailVerification.getEmail().equals(owner.getAccount().getEmail()) && emailVerification.getPeppolId().equals(owner.getCompany().getPeppolId()) && emailVerification.getType().equals(owner.getType())) {
-            setVerified(emailVerification);
-        } else {
-            throw new KycException(KycErrorCodes.NO_OWNERSHIP);
-        }
+        var account = accountService.findByEmail(emailVerification.getEmail());
+        boolean accountExists = account.isPresent();
+        boolean accountVerified = account.map(org.letspeppol.kyc.model.Account::isVerified).orElse(false);
+        boolean directorSigned = account
+                .map(existingAccount -> directorIdentityVerificationRepository.existsByAccountIdAndDirectorCompanyPeppolId(existingAccount.getId(), emailVerification.getPeppolId()))
+                .orElse(false);
+        OwnershipInfo requester = emailVerification.getRequester() == null ? null : OwnershipMapper.toOwnershipInfo(emailVerification.getRequester());
+        return new TokenVerificationResponse(
+                emailVerification.getEmail(),
+                accountExists,
+                accountVerified,
+                directorSigned,
+                emailVerification.getType(),
+                companyResponse,
+                requester
+        );
     }
 
     @Transactional
     public EmailVerification verifyAccount(String token, String newPassword) {
         EmailVerification emailVerification = getValidTokenInformation(token);
         Ownership ownership = ownershipService.getByAccountEmailAndPeppolIdAndType(emailVerification.getEmail(), emailVerification.getPeppolId(), AccountType.ADMIN);
-        if (ownership.getAccount().isVerified()) {
-            throw new KycException(KycErrorCodes.TOKEN_ALREADY_VERIFIED);
-        }
         if (!directorIdentityVerificationRepository.existsByAccountId(ownership.getAccount().getId())) {
             throw new KycException(KycErrorCodes.ACCOUNT_NOT_VERIFIED);
         }
-        passwordResetService.setPassword(ownership.getAccount(), newPassword);
-        accountService.verify(ownership.getAccount());
-        setVerified(emailVerification);
+        if (!ownership.getAccount().isVerified()) {
+            passwordResetService.setPassword(ownership.getAccount(), newPassword);
+            accountService.verify(ownership.getAccount());
+        }
+        tokenVerificationCounter.increment();
         return emailVerification;
     }
 
@@ -170,12 +143,6 @@ public class ActivationService {
     public void linkAffiliateOwnership(EmailVerification emailVerification) {
         Ownership ownership = ownershipService.getByAccountEmailAndPeppolIdAndType(emailVerification.getEmail(), emailVerification.getPeppolId(), AccountType.ADMIN);
         ownershipService.ensureOwnership(ownership.getAccount(), AccountType.AFFILIATE, ownership.getCompany());
-    }
-
-    public void setVerified(EmailVerification emailVerification) {
-        emailVerification.setVerified(true);
-        verificationRepository.save(emailVerification);
-        tokenVerificationCounter.increment();
     }
 
     @Transactional

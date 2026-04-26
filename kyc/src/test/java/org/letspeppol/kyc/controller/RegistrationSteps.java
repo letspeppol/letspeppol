@@ -128,8 +128,10 @@ public class RegistrationSteps {
 
         // Simulate activation token
         EmailVerification verification = emailVerificationRepository.findAll().stream()
-                .filter(v -> !v.isVerified() && email.equals(v.getEmail()) && peppolId.equals(v.getPeppolId()))
-                .findFirst().orElseThrow();
+                .filter(v -> email.equals(v.getEmail()))
+                .filter(v -> peppolId.equals(v.getPeppolId()))
+                .max(java.util.Comparator.comparing(EmailVerification::getCreatedOn))
+                .orElseThrow();
         return verification.getToken();
     }
 
@@ -146,10 +148,10 @@ public class RegistrationSteps {
 
         // Simulate activation token
         EmailVerification verification = emailVerificationRepository.findAll().stream()
-                .filter(v -> !v.isVerified())
                 .filter(v -> email.equals(v.getEmail()))
                 .filter(v -> peppolId.equals(v.getPeppolId()))
-                .findFirst().orElseThrow();
+                .max(java.util.Comparator.comparing(EmailVerification::getCreatedOn))
+                .orElseThrow();
         return verification.getToken();
     }
 

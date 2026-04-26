@@ -9,6 +9,7 @@ import java.util.Optional;
 public interface AccountIdentityVerificationRepository extends JpaRepository<DirectorIdentityVerification, Long> {
     List<DirectorIdentityVerification> findByAccountId(Long accountId);
     boolean existsByAccountId(Long accountId);
+    boolean existsByAccountIdAndDirectorCompanyPeppolId(Long accountId, String peppolId);
     Optional<DirectorIdentityVerification> findTopByAccountIdOrderByCreatedOnDesc(Long accountId);
 }
 
