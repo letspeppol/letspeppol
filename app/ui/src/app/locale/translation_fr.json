@@ -187,6 +187,10 @@
     "edit" : "Éditer",
     "close" : "Fermer"
   },
+  "new-feature" : {
+    "label" : "✨ Nouveau",
+    "click-to-dismiss" : "Cliquer pour fermer"
+  },
   "navigation" : {
     "dashboard" : "Tableau de bord",
     "invoices" : "Factures",
@@ -194,8 +198,7 @@
     "products" : "Produits",
     "account" : "Compte",
     "brand-alt" : "Let's Peppol",
-    "toggle-theme" : "Changer de thème",
-    "new-feature": "Nouvelle fonctionnalité “Notifications” ajoutée au Compte"
+    "toggle-theme" : "Changer de thème"
   },
   "alert" : {
     "success" : "Succès",
