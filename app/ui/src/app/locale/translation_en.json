@@ -188,6 +188,10 @@
     "edit": "Edit",
     "close": "Close"
   },
+  "new-feature": {
+    "label": "✨ New",
+    "click-to-dismiss": "Click to dismiss"
+  },
   "navigation": {
     "dashboard": "Dashboard",
     "invoices": "Invoices",
@@ -195,8 +199,7 @@
     "products": "Products",
     "account": "Account",
     "brand-alt": "Let's Peppol",
-    "toggle-theme": "Toggle theme",
-    "new-feature": "New feature “Notifications” added in Account"
+    "toggle-theme": "Toggle theme"
   },
   "alert": {
     "success": "Success",

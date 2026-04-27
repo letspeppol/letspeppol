@@ -4,10 +4,16 @@ import {I18nConfiguration} from "@aurelia/i18n";
 import { LetsPeppol } from './app/lets-peppol';
 import {Alert} from "./components/alert/alert";
 import {AuthenticationHook} from "./app/authentication-hook";
-import * as en from "./app/locale/translation_en.json";
-import * as fr from "./app/locale/translation_fr.json";
-import * as nl from "./app/locale/translation_nl.json";
-import * as de from "./app/locale/translation_de.json";
+import {
+    FeatureAckRegistration,
+    NewFeatureCustomAttribute,
+    NewFeatureSectionCustomAttribute,
+} from "./components/new-feature";
+import "./components/new-feature/rainbow-border.css";
+import en from "./app/locale/translation_en.json";
+import fr from "./app/locale/translation_fr.json";
+import nl from "./app/locale/translation_nl.json";
+import de from "./app/locale/translation_de.json";
 
 Aurelia
     .register(RouterConfiguration.customize({
@@ -27,6 +33,12 @@ Aurelia
             };
         })
     )
-    .register(Alert, AuthenticationHook)
+    .register(
+        Alert,
+        AuthenticationHook,
+        FeatureAckRegistration,
+        NewFeatureCustomAttribute,
+        NewFeatureSectionCustomAttribute,
+    )
     .app(LetsPeppol)
     .start();

@@ -187,6 +187,10 @@
     "edit" : "Bewerken",
     "close" : "Sluiten"
   },
+  "new-feature" : {
+    "label" : "✨ Nieuw",
+    "click-to-dismiss" : "Klik om te sluiten"
+  },
   "navigation" : {
     "dashboard" : "Dashboard",
     "invoices" : "Facturen",
@@ -194,8 +198,7 @@
     "products" : "Producten",
     "account" : "Account",
     "brand-alt" : "Let's Peppol",
-    "toggle-theme" : "Thema wisselen",
-    "new-feature": "Nieuwe functie “Meldingen” toegevoegd aan Account"
+    "toggle-theme" : "Thema wisselen"
   },
   "alert" : {
     "success" : "Succes",
