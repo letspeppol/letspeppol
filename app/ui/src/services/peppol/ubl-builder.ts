@@ -569,6 +569,7 @@ export function buildCreditNoteXml(creditNote: CreditNote): string {
         textElement('cbc:AccountingCost', creditNote.AccountingCost),
         textElement('cbc:BuyerReference', creditNote.BuyerReference),
         buildOrderReference(creditNote.OrderReference),
+        buildAdditionalDocumentReference(creditNote.AdditionalDocumentReference),
         buildAccountingParty('cac:AccountingSupplierParty', creditNote.AccountingSupplierParty),
         buildAccountingParty('cac:AccountingCustomerParty', creditNote.AccountingCustomerParty),
         buildAllowanceCharge(creditNote.AllowanceCharge),
