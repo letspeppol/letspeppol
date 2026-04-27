@@ -51,11 +51,11 @@ span.rainbow-border {
     top: 8px;
     right: 8px;
     z-index: 2;
+    isolation: isolate;
     padding: 2px 10px;
     border-radius: 999px;
-    border: 1px solid var(--border-soft, rgb(0 0 0 / 12%));
-    background: var(--surface, #fff);
-    color: var(--muted, #555);
+    background: var(--panel);
+    color: var(--text);
     font-size: 0.7rem;
     font-weight: 500;
     line-height: 1.3;
@@ -66,20 +66,38 @@ span.rainbow-border {
     white-space: nowrap;
     pointer-events: none;
     user-select: none;
-    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
 }
 
 .new-feature-hint::before {
     content: attr(data-label);
 }
 
-.new-feature-dismissable:hover .new-feature-hint,
-.new-feature-hint-corner {
-    background: linear-gradient(90deg, #c9003d, #c46000, #a88a00, #009a40, #0090a8, #1f4ad6, #7a00cc);
-    color: #fff;
-    border-color: transparent;
-    font-weight: 600;
-    text-shadow: 0 0 3px rgb(0 0 0 / 55%), 0 1px 1px rgb(0 0 0 / 40%);
+.new-feature-hint::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    z-index: -1;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(
+        90deg,
+        #ff004d, #ff7a00, #ffd400, #00c853,
+        #00b8d4, #2962ff, #a0f, #ff004d
+    );
+    background-size: 200% 200%;
+    animation: rainbow-border-spin 3s linear infinite;
+    /* stylelint-disable-next-line property-no-vendor-prefix -- needed for Safari */
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    /* stylelint-disable-next-line property-no-vendor-prefix -- needed for Safari */
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
 }
 
 .new-feature-dismissable:hover .new-feature-hint {
@@ -100,7 +118,8 @@ span.rainbow-border {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .rainbow-border::before {
+    .rainbow-border::before,
+    .new-feature-hint::after {
         animation: none;
     }
 
