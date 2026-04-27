@@ -7,6 +7,7 @@ import type {
     Address,
     AdditionalDocumentReference,
     AllowanceCharge,
+    BillingReference,
     ClassifiedTaxCategory,
     CommodityClassification,
     CreditNote,
@@ -96,6 +97,24 @@ function buildOrderReference(or?: OrderReference): string {
         textElement('cbc:SalesOrderID', hasSalesOrderId ? or.SalesOrderID : undefined),
         '</cac:OrderReference>',
     ]);
+}
+
+function buildBillingReference(list?: BillingReference[]): string {
+    if (!list || list.length === 0) return '';
+    return joinNonEmpty(
+        list.map((br) => {
+            const idr = br?.InvoiceDocumentReference;
+            if (!idr || typeof idr.ID !== 'string' || idr.ID.trim() === '') return '';
+            return joinNonEmpty([
+                '<cac:BillingReference>',
+                '<cac:InvoiceDocumentReference>',
+                textElement('cbc:ID', idr.ID),
+                textElement('cbc:IssueDate', idr.IssueDate),
+                '</cac:InvoiceDocumentReference>',
+                '</cac:BillingReference>',
+            ]);
+        }),
+    );
 }
 
 // --- Root namespace constants ---------------------------------------------
@@ -569,6 +588,7 @@ export function buildCreditNoteXml(creditNote: CreditNote): string {
         textElement('cbc:AccountingCost', creditNote.AccountingCost),
         textElement('cbc:BuyerReference', creditNote.BuyerReference),
         buildOrderReference(creditNote.OrderReference),
+        buildBillingReference(creditNote.BillingReference),
         buildAdditionalDocumentReference(creditNote.AdditionalDocumentReference),
         buildAccountingParty('cac:AccountingSupplierParty', creditNote.AccountingSupplierParty),
         buildAccountingParty('cac:AccountingCustomerParty', creditNote.AccountingCustomerParty),
