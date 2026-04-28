@@ -221,7 +221,13 @@ export class InvoiceEdit {
     }
 
     private downloadFilename(): string {
-        let name = this.invoiceContext.selectedInvoice.ID || moment().format('DD-MM-YYYY');
+        let name = '';
+        if (this.invoiceContext.selectedDocumentType === DocumentType.INVOICE) {
+            name = 'invoice-';
+        } else {
+            name = 'creditnote-';
+        }
+        name += this.invoiceContext.selectedInvoice.ID ?? moment().format('DD-MM-YYYY');
         if (!this.readOnly) {
             name += '-draft';
         }
