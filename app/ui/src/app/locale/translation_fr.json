@@ -188,7 +188,7 @@
     "close" : "Fermer"
   },
   "new-feature" : {
-    "label" : "✨ Nouveau",
+    "label" : "Nouveau",
     "click-to-dismiss" : "Cliquer pour fermer"
   },
   "navigation" : {
@@ -294,6 +294,8 @@
     "partner" : "Partenaire",
     "buyer-reference" : "Référence acheteur",
     "order-reference" : "Référence de commande",
+    "invoice-reference" : "Référence de facture",
+    "invoice-reference-date" : "Date de facture",
     "new" : {
       "INVOICE" : "Nouvelle facture",
       "CREDIT_NOTE" : "Nouvelle note de crédit"
