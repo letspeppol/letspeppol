@@ -31,6 +31,13 @@ export class InvoiceContext {
     partnerMissing: boolean = false;
     addPdfToSendingInvoice: boolean = false;
 
+    getCurrentDocumentTypeName(startWithCapital = true) {
+        if (this.selectedDocumentType === DocumentType.CREDIT_NOTE) {
+            return startWithCapital ? 'Credit note' : 'credit note';
+        }
+        return startWithCapital ? 'Invoice' : 'invoice';
+    }
+
     clearSelectedInvoice() {
         this.selectedInvoice = undefined;
         this.selectedDocument = undefined;
