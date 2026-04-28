@@ -192,7 +192,7 @@ export class InvoiceEdit {
 
         const a = document.createElement("a");
         a.href = url;
-        a.download = `${this.invoiceContext.selectedInvoice.ID}.xml`;
+        a.download = `${this.downloadFilename()}.xml`;
         document.body.appendChild(a);
         a.click();
 
@@ -210,29 +210,22 @@ export class InvoiceEdit {
         const blob = await this.invoiceService.downloadPdf(this.invoiceContext.selectedDocument.id).then(res => res.blob());
         const url = URL.createObjectURL(blob);
 
-        let filename;
-        if (this.invoiceContext.selectedDocumentType === DocumentType.INVOICE) {
-            filename = 'invoice-';
-        } else {
-            filename = 'creditnote-';
-        }
-        if (this.invoiceContext.selectedInvoice.ID) {
-            filename += this.invoiceContext.selectedInvoice.ID;
-        } else {
-            filename += moment().format('DD-MM-YYYY');
-        }
-        if (!this.readOnly) {
-            filename += '-draft';
-        }
-
         const a = document.createElement("a");
         a.href = url;
-        a.download = `${filename}.pdf`;
+        a.download = `${this.downloadFilename()}.pdf`;
         document.body.appendChild(a);
         a.click();
 
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
+    }
+
+    private downloadFilename(): string {
+        let name = this.invoiceContext.selectedInvoice.ID || moment().format('DD-MM-YYYY');
+        if (!this.readOnly) {
+            name += '-draft';
+        }
+        return name;
     }
 
     async validate() {
