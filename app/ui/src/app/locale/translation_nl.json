@@ -294,6 +294,8 @@
     "partner": "Partner",
     "buyer-reference" : "Referentie koper",
     "order-reference" : "Orderreferentie",
+    "invoice-reference" : "Factuurreferentie",
+    "invoice-reference-date" : "Factuurdatum",
     "new" : {
       "INVOICE" : "Nieuwe factuur",
       "CREDIT_NOTE" : "Nieuwe creditnota"

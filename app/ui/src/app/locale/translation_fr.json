@@ -294,6 +294,8 @@
     "partner" : "Partenaire",
     "buyer-reference" : "Référence acheteur",
     "order-reference" : "Référence de commande",
+    "invoice-reference" : "Référence de facture",
+    "invoice-reference-date" : "Date de facture",
     "new" : {
       "INVOICE" : "Nouvelle facture",
       "CREDIT_NOTE" : "Nouvelle note de crédit"

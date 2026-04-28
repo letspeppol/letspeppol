@@ -295,6 +295,8 @@
     "partner": "Partner",
     "buyer-reference": "Käuferreferenz",
     "order-reference": "Bestellreferenz",
+    "invoice-reference": "Rechnungsreferenz",
+    "invoice-reference-date": "Rechnungsdatum",
     "new": {
       "INVOICE": "Neue Rechnung",
       "CREDIT_NOTE": "Neue Gutschrift"

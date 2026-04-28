@@ -26,6 +26,7 @@ export interface DocumentQuery {
     type?: DocumentType;
     direction?: DocumentDirection;
     partnerName?: string;
+    partnerPeppolId?: string;
     invoiceReference?: string;
     paid?: boolean;
     read?: boolean;
@@ -102,6 +103,7 @@ export class InvoiceService {
         if (query.type) search.append("type", query.type);
         if (query.direction) search.append("direction", query.direction);
         if (query.partnerName) search.append("partnerName", query.partnerName);
+        if (query.partnerPeppolId) search.append("partnerPeppolId", query.partnerPeppolId);
         if (query.invoiceReference) search.append("invoiceReference", query.invoiceReference);
         if (query.paid !== undefined) search.append("paid", String(query.paid));
         if (query.read !== undefined) search.append("read", String(query.read));

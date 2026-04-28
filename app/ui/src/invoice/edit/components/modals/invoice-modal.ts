@@ -113,12 +113,21 @@ export class InvoiceModal {
             const page = await this.invoiceService.getDocuments({
                 type: DocumentType.INVOICE,
                 direction: DocumentDirection.OUTGOING,
+                partnerPeppolId: this.customerPeppolId(),
                 pageable: {page: 0, size: 100, sort: [{property: 'issueDate', direction: 'desc'}]},
             });
             this.referenceableInvoices = page.content.filter(d => !!d.invoiceReference);
         } catch {
             this.referenceableInvoices = [];
         }
+    }
+
+    private customerPeppolId(): string | undefined {
+        const endpoint = this.invoiceContext?.selectedInvoice?.AccountingCustomerParty?.Party?.EndpointID;
+        const value = endpoint?.value?.trim();
+        if (!value) return undefined;
+        const scheme = endpoint?.__schemeID?.trim();
+        return scheme ? `${scheme}:${value}` : value;
     }
 
     selectedDocumentTypeChanged() {
