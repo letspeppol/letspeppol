@@ -189,7 +189,7 @@
     "close": "Close"
   },
   "new-feature": {
-    "label": "✨ New",
+    "label": "New",
     "click-to-dismiss": "Click to dismiss"
   },
   "navigation": {
@@ -295,6 +295,8 @@
     "partner": "Partner",
     "buyer-reference": "Buyer Reference",
     "order-reference": "Order Reference",
+    "invoice-reference": "Invoice Reference",
+    "invoice-reference-date": "Invoice Date",
     "new": {
       "INVOICE": "New Invoice",
       "CREDIT_NOTE": "New Credit Note"

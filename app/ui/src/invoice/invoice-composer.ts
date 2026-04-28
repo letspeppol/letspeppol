@@ -197,7 +197,7 @@ export class InvoiceComposer {
         const i = s.indexOf(":");
         if (i < 0)
             return undefined;
-        let value = s.slice(i + 1).trim();
+        const value = s.slice(i + 1).trim();
         return `${value}`;
     }
 
