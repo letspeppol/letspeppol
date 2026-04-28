@@ -98,7 +98,8 @@ export class InvoiceEdit {
 
     async sendInvoice() {
         try {
-            this.ea.publish('showOverlay', "Sending invoice");
+            const overlayMsg = `Sending ${this.invoiceContext.getCurrentDocumentTypeName(false)}`;
+            this.ea.publish('showOverlay', overlayMsg);
             const xml = this.buildXml();
 
             const response = await this.invoiceService.validate(xml);
