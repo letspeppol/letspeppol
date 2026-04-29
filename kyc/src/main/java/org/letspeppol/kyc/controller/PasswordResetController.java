@@ -6,8 +6,8 @@ import org.letspeppol.kyc.dto.ChangePasswordRequest;
 import org.letspeppol.kyc.dto.ForgotPasswordRequest;
 import org.letspeppol.kyc.dto.ResetPasswordRequest;
 import org.letspeppol.kyc.dto.SimpleMessage;
-import org.letspeppol.kyc.service.JwtService;
 import org.letspeppol.kyc.service.PasswordResetService;
+import org.letspeppol.kyc.service.jwt.JwtClaimExtractor;
 import org.letspeppol.kyc.service.jwt.JwtInfo;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class PasswordResetController {
 
     private final PasswordResetService passwordResetService;
-    private final JwtService jwtService;
+    private final JwtClaimExtractor jwtClaimExtractor;
 
     /// Sends password recovery mail
     @PostMapping("/api/password/forgot")
@@ -37,8 +37,8 @@ public class PasswordResetController {
 
     /// Changes password based on valid credentials
     @PostMapping("/sapi/password/change") //Is sapi for early bad JWT protection
-    public ResponseEntity<Void> change(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader, @Valid @RequestBody ChangePasswordRequest request) {
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
+    public ResponseEntity<Void> change(@Valid @RequestBody ChangePasswordRequest request) {
+        JwtInfo jwtInfo = jwtClaimExtractor.extract();
         passwordResetService.changePassword(jwtInfo.uid(), request);
         return ResponseEntity.noContent().build();
     }

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{totp.page-title}">Two-Factor Authentication — Let's Peppol</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <meta name="_kyc_base" th:content="@{/}">
+    <meta name="_ui_base" th:content="${uiBaseUrl}">
+    <script>
+        (function() {
+            var theme = localStorage.getItem('peppol.theme.v1') || 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+</head>
+<body>
+<button class="theme-toggle" id="theme-toggle" type="button" title="Toggle theme">
+    <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+    <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>
+</button>
+<div class="centered">
+    <div class="card">
+        <div class="logo">
+            <img th:src="@{/images/logo.png}" alt="Let's Peppol" width="192" height="80">
+        </div>
+        <h1 th:text="#{totp.heading}">Two-Factor Authentication</h1>
+        <p style="text-align: center; color: var(--text-secondary); margin-bottom: 1rem;" th:text="#{totp.instructions}">
+            Enter the 6-digit code from your authenticator app.
+        </p>
+        <div id="totp-form">
+            <div class="grid">
+                <label class="field full">
+                    <span th:text="#{totp.code-label}">Authentication code</span>
+                    <input id="totp-code" type="text" inputmode="numeric" pattern="[0-9]*"
+                           maxlength="6" placeholder="000000" required autofocus autocomplete="one-time-code"
+                           style="text-align: center; font-size: 1.5rem; letter-spacing: 0.5rem;">
+                </label>
+            </div>
+            <p id="totp-error" class="form-error" style="display: none" aria-live="assertive" th:text="#{totp.code-error}">Invalid code. Please try again.</p>
+            <div class="auth-actions">
+                <button type="button" id="verify-btn" class="btn primary" onclick="verifyCode()" th:text="#{totp.verify-button}">Verify</button>
+            </div>
+            <div style="text-align: center; margin-top: 1rem;">
+                <a href="#" id="toggle-recovery" onclick="toggleRecovery(event)" th:text="#{totp.use-recovery}">Use a recovery code instead</a>
+            </div>
+        </div>
+        <div id="recovery-form" style="display: none">
+            <div class="grid">
+                <label class="field full">
+                    <span th:text="#{totp.recovery-label}">Recovery code</span>
+                    <input id="recovery-code" type="text" maxlength="8" placeholder="XXXXXXXX" required
+                           style="text-align: center; font-size: 1.25rem; letter-spacing: 0.25rem;">
+                </label>
+            </div>
+            <p id="recovery-error" class="form-error" style="display: none" aria-live="assertive" th:text="#{totp.recovery-error}">Invalid recovery code.</p>
+            <div class="auth-actions">
+                <button type="button" id="recovery-btn" class="btn primary" onclick="verifyRecovery()" th:text="#{totp.verify-button}">Verify</button>
+            </div>
+            <div style="text-align: center; margin-top: 1rem;">
+                <a href="#" id="toggle-totp" onclick="toggleTotp(event)" th:text="#{totp.use-authenticator}">Use authenticator code instead</a>
+            </div>
+        </div>
+        <div class="auth-info">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 16v-4"/>
+                <path d="M12 8h.01"/>
+            </svg>
+            <span th:text="#{totp.lost-authenticator}">Lost your authenticator?</span>
+            <a href="#" onclick="toggleRecovery(event)" th:text="#{totp.recovery-link}">Use a recovery code</a>
+        </div>
+    </div>
+</div>
+<script>
+    var csrfToken = document.querySelector('meta[name="_csrf"]').content;
+    var csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+    var kycBase = document.querySelector('meta[name="_kyc_base"]').content;
+
+    function verifyCode() {
+        var code = document.getElementById('totp-code').value.trim();
+        if (!code) return;
+        submitCode(code, 'totp-error');
+    }
+
+    function verifyRecovery() {
+        var code = document.getElementById('recovery-code').value.trim();
+        if (!code) return;
+        submitCode(code, 'recovery-error');
+    }
+
+    function submitCode(code, errorId) {
+        var headers = { 'Content-Type': 'application/json' };
+        headers[csrfHeader] = csrfToken;
+
+        fetch(kycBase + 'api/totp/verify', {
+            method: 'POST',
+            headers: headers,
+            credentials: 'same-origin',
+            body: JSON.stringify({ code: code })
+        }).then(function(res) {
+            return res.json().then(function(data) {
+                if (res.ok && data.redirectUrl) {
+                    window.location.href = data.redirectUrl;
+                } else {
+                    document.getElementById(errorId).style.display = 'block';
+                }
+            });
+        }).catch(function() {
+            document.getElementById(errorId).style.display = 'block';
+        });
+    }
+
+    function toggleRecovery(e) {
+        e.preventDefault();
+        document.getElementById('totp-form').style.display = 'none';
+        document.getElementById('recovery-form').style.display = 'block';
+        document.getElementById('totp-error').style.display = 'none';
+        document.getElementById('recovery-code').focus();
+    }
+
+    function toggleTotp(e) {
+        e.preventDefault();
+        document.getElementById('recovery-form').style.display = 'none';
+        document.getElementById('totp-form').style.display = 'block';
+        document.getElementById('recovery-error').style.display = 'none';
+        document.getElementById('totp-code').focus();
+    }
+
+    // Allow Enter key to submit
+    document.getElementById('totp-code').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') verifyCode();
+    });
+    document.getElementById('recovery-code').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') verifyRecovery();
+    });
+</script>
+<script th:src="@{/js/theme-toggle.js}" defer></script>
+</body>
+</html>

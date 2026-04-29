@@ -11,9 +11,8 @@ import org.letspeppol.kyc.mapper.AccountMapper;
 import org.letspeppol.kyc.model.AccountType;
 import org.letspeppol.kyc.service.AccountService;
 import org.letspeppol.kyc.service.IdentityVerificationService;
-import org.letspeppol.kyc.service.JwtService;
+import org.letspeppol.kyc.service.jwt.JwtClaimExtractor;
 import org.letspeppol.kyc.service.jwt.JwtInfo;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,12 +24,12 @@ public class LinkedController {
 
     private final AccountService accountService;
     private final IdentityVerificationService identityVerificationService;
-    private final JwtService jwtService;
+    private final JwtClaimExtractor jwtClaimExtractor;
 
     /// Retrieves linked info based on valid JWT token, used by App to show what users or services have access to this account
     @GetMapping
-    public ResponseEntity<?> getLinkedForToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
+    public ResponseEntity<?> getLinkedForToken() {
+        JwtInfo jwtInfo = jwtClaimExtractor.extract();
         if (jwtInfo.accountType() != AccountType.ADMIN) {
             throw new ForbiddenException(KycErrorCodes.NOT_ADMIN);
         }
@@ -39,8 +38,8 @@ public class LinkedController {
 
     /// Create a new USER account
     @PostMapping("/create")
-    public ResponseEntity<?> create(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader, @Valid @RequestBody NewUserRequest request) {
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
+    public ResponseEntity<?> create(@Valid @RequestBody NewUserRequest request) {
+        JwtInfo jwtInfo = jwtClaimExtractor.extract();
         if (jwtInfo.accountType() != AccountType.ADMIN) {
             throw new ForbiddenException(KycErrorCodes.NOT_ADMIN);
         }
@@ -49,8 +48,8 @@ public class LinkedController {
 
     /// Registers a service for account
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader, @Valid @RequestBody ServiceRequest request) {
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
+    public ResponseEntity<?> register(@Valid @RequestBody ServiceRequest request) {
+        JwtInfo jwtInfo = jwtClaimExtractor.extract();
         if (jwtInfo.accountType() != AccountType.ADMIN) {
             throw new ForbiddenException(KycErrorCodes.NOT_ADMIN);
         }
@@ -59,8 +58,8 @@ public class LinkedController {
 
     /// Unregisters a service for account
     @PostMapping("/unregister")
-    public ResponseEntity<?> unregister(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader, @Valid @RequestBody ServiceRequest request) {
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
+    public ResponseEntity<?> unregister(@Valid @RequestBody ServiceRequest request) {
+        JwtInfo jwtInfo = jwtClaimExtractor.extract();
         if (jwtInfo.accountType() != AccountType.ADMIN) {
             throw new ForbiddenException(KycErrorCodes.NOT_ADMIN);
         }

@@ -26,7 +26,6 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
     private final Counter authenticationCounterFailure;
-    private final JwtService jwtService;
     private final ProxyService proxyService;
 
     public Account getByExternalId(UUID externalId) {
@@ -104,8 +103,7 @@ public class AccountService {
         Account admin = getAdminByExternalId(adminExternalId);
         Account service = getAppByExternalId(request.uid());
         link(admin, service);
-        String token = jwtService.generateInternalToken(admin.getCompany().getPeppolId(), admin.getCompany().isPeppolActive(), adminExternalId);
-        proxyService.allowService(token, request);
+        proxyService.allowService(request);
         return service;
     }
 
@@ -113,7 +111,6 @@ public class AccountService {
         Account admin = getAdminByExternalId(adminExternalId);
         Account service = getAppByExternalId(request.uid());
         unlink(admin, service);
-        String token = jwtService.generateInternalToken(admin.getCompany().getPeppolId(), admin.getCompany().isPeppolActive(), adminExternalId);
-        proxyService.rejectService(token, request);
+        proxyService.rejectService(request);
     }
 }
