@@ -191,6 +191,10 @@
     "edit": "Bearbeiten",
     "close": "Schließen"
   },
+  "new-feature": {
+    "label": "Neu",
+    "click-to-dismiss": "Zum Schließen klicken"
+  },
   "navigation": {
     "dashboard": "Dashboard",
     "invoices": "Rechnungen",
@@ -198,8 +202,7 @@
     "products": "Produkte",
     "account": "Konto",
     "brand-alt": "Let's Peppol",
-    "toggle-theme": "Theme umschalten",
-    "new-feature": "Neue Funktionen im Konto: Passkeys, Zwei-Faktor-Authentifizierung & Benachrichtigungen"
+    "toggle-theme": "Theme umschalten"
   },
   "alert": {
     "success": "Erfolg",
@@ -295,6 +298,8 @@
     "partner": "Partner",
     "buyer-reference": "Käuferreferenz",
     "order-reference": "Bestellreferenz",
+    "invoice-reference": "Rechnungsreferenz",
+    "invoice-reference-date": "Rechnungsdatum",
     "new": {
       "INVOICE": "Neue Rechnung",
       "CREDIT_NOTE": "Neue Gutschrift"
@@ -328,10 +333,16 @@
     },
     "modal": {
       "title": "Rechnung",
+      "title-credit-note": "Gutschrift",
       "document": "Dokument",
       "invoice-number": "Rechnungsnummer",
+      "credit-note-number": "Gutschriftsnummer",
+      "invoice-reference": "Rechnungsreferenz auswählen",
+      "invoice-reference-none": "Keine",
       "note-optional": "Notiz (optional)",
       "note-placeholder": "Zusätzliche Notizen zu dieser Rechnung",
+      "credit-note-note-placeholder": "Zusätzliche Notizen zu dieser Gutschrift",
+      "credit-note-vat-note": "MwSt. an den Staat zurückzuzahlen in dem Maße, wie sie ursprünglich in Abzug gebracht wurde",
       "reference-required" : "Entweder Käuferreferenz ODER Bestellreferenz ist erforderlich"
     },
     "dateModal": {

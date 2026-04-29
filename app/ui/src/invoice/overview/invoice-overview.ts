@@ -35,6 +35,9 @@ export class InvoiceOverview {
 
     async loadDrafts() {
         this.invoiceContext.draftPage = await this.invoiceService.getDocuments({...this.query, draft: true });
+        if (this.invoiceContext.activeBox === 'DRAFTS') {
+            this.invoiceContext.invoicePage = this.invoiceContext.draftPage;
+        }
     }
 
     @watch((vm) => [vm.query.invoiceReference, vm.query.partnerName])

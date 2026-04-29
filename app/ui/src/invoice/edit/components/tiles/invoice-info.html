@@ -1,3 +1,5 @@
+<import from="../../../../app/value-converters/date-format.ts"></import>
+
 <div class="composer-info">
     <div style="display: flex; flex-direction: row;" click.trigger="showInvoiceModal()">
         <div class="card-header">
@@ -27,5 +29,15 @@
     <template if.bind="invoiceContext.selectedInvoice.OrderReference.ID">
         <span t="invoice.order-reference">Order Reference</span>
         <b>${invoiceContext.selectedInvoice.OrderReference.ID}</b>
+    </template>
+
+    <template if.bind="invoiceContext.selectedInvoice.BillingReference[0].InvoiceDocumentReference.ID">
+        <span t="invoice.invoice-reference">Invoice Reference</span>
+        <b>${invoiceContext.selectedInvoice.BillingReference[0].InvoiceDocumentReference.ID}</b>
+    </template>
+
+    <template if.bind="invoiceContext.selectedInvoice.BillingReference[0].InvoiceDocumentReference.IssueDate">
+        <span t="invoice.invoice-reference-date">Invoice Date</span>
+        <b>${invoiceContext.selectedInvoice.BillingReference[0].InvoiceDocumentReference.IssueDate | dateFormat}</b>
     </template>
 </div>

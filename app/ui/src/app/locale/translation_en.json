@@ -191,6 +191,10 @@
     "edit": "Edit",
     "close": "Close"
   },
+  "new-feature": {
+    "label": "New",
+    "click-to-dismiss": "Click to dismiss"
+  },
   "navigation": {
     "dashboard": "Dashboard",
     "invoices": "Invoices",
@@ -198,8 +202,7 @@
     "products": "Products",
     "account": "Account",
     "brand-alt": "Let's Peppol",
-    "toggle-theme": "Toggle theme",
-    "new-feature": "New features in Account: Passkeys, Two-Factor Authentication & Notifications"
+    "toggle-theme": "Toggle theme"
   },
   "alert": {
     "success": "Success",
@@ -295,6 +298,8 @@
     "partner": "Partner",
     "buyer-reference": "Buyer Reference",
     "order-reference": "Order Reference",
+    "invoice-reference": "Invoice Reference",
+    "invoice-reference-date": "Invoice Date",
     "new": {
       "INVOICE": "New Invoice",
       "CREDIT_NOTE": "New Credit Note"
@@ -328,10 +333,16 @@
     },
     "modal": {
       "title": "Invoice",
+      "title-credit-note": "Credit Note",
       "document": "Document",
       "invoice-number": "Invoice number",
+      "credit-note-number": "Credit note number",
+      "invoice-reference": "Select invoice reference",
+      "invoice-reference-none": "None",
       "note-optional": "Note (optional)",
       "note-placeholder": "Additional notes for this invoice",
+      "credit-note-note-placeholder": "Additional notes for this credit note",
+      "credit-note-vat-note": "VAT to be refunded to the State to the extent that it was originally deducted",
       "reference-required" : "Either buyer reference OR order reference is required"
     },
     "dateModal": {

@@ -190,6 +190,10 @@
     "edit" : "Éditer",
     "close" : "Fermer"
   },
+  "new-feature" : {
+    "label" : "Nouveau",
+    "click-to-dismiss" : "Cliquer pour fermer"
+  },
   "navigation" : {
     "dashboard" : "Tableau de bord",
     "invoices" : "Factures",
@@ -197,8 +201,7 @@
     "products" : "Produits",
     "account" : "Compte",
     "brand-alt" : "Let's Peppol",
-    "toggle-theme" : "Changer de thème",
-    "new-feature": "Nouvelles fonctionnalités dans le Compte : Clés d'accès, Authentification à deux facteurs & Notifications"
+    "toggle-theme" : "Changer de thème"
   },
   "alert" : {
     "success" : "Succès",
@@ -294,6 +297,8 @@
     "partner" : "Partenaire",
     "buyer-reference" : "Référence acheteur",
     "order-reference" : "Référence de commande",
+    "invoice-reference" : "Référence de facture",
+    "invoice-reference-date" : "Date de facture",
     "new" : {
       "INVOICE" : "Nouvelle facture",
       "CREDIT_NOTE" : "Nouvelle note de crédit"
@@ -327,10 +332,16 @@
     },
     "modal" : {
       "title" : "Facture",
+      "title-credit-note" : "Note de crédit",
       "document" : "Document",
       "invoice-number" : "Numéro de facture",
+      "credit-note-number" : "Numéro de note de crédit",
+      "invoice-reference" : "Sélectionner la référence de facture",
+      "invoice-reference-none" : "Aucune",
       "note-optional" : "Note (optionnel)",
       "note-placeholder" : "Notes supplémentaires pour cette facture",
+      "credit-note-note-placeholder" : "Notes supplémentaires pour cette note de crédit",
+      "credit-note-vat-note" : "TVA à reverser à l'État dans la mesure où elle a été initialement déduite",
       "reference-required" : "La référence acheteur OU la référence de commande est obligatoire"
     },
     "dateModal" : {

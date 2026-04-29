@@ -98,7 +98,8 @@ export class InvoiceEdit {
 
     async sendInvoice() {
         try {
-            this.ea.publish('showOverlay', "Sending invoice");
+            const overlayMsg = `Sending ${this.invoiceContext.getCurrentDocumentTypeName(false)}`;
+            this.ea.publish('showOverlay', overlayMsg);
             const xml = this.buildXml();
 
             const response = await this.invoiceService.validate(xml);
@@ -108,7 +109,8 @@ export class InvoiceEdit {
             }
 
             const doc = await this.invoiceService.createDocument(xml);
-            this.ea.publish('alert', {alertType: AlertType.Success, text: "Invoice sent successfully"});
+            const msg = `${this.invoiceContext.getCurrentDocumentTypeName()} sent successfully`;
+            this.ea.publish('alert', {alertType: AlertType.Success, text: msg});
             this.invoiceContext.invoicePage.content.unshift(doc);
             if (this.invoiceContext.selectedDocument.draftedOn) {
                 await this.deleteDraft();
@@ -118,11 +120,13 @@ export class InvoiceEdit {
         } catch (e: unknown) {
             const errorResponse = await toErrorResponse(e);
             if (errorResponse?.errorCode === 'INVOICE_NUMBER_ALREADY_USED') {
-                this.ea.publish('alert', { alertType: AlertType.Danger, text: 'Invoice number already used' });
+                const msg = `${this.invoiceContext.getCurrentDocumentTypeName()} number already used`;
+                this.ea.publish('alert', { alertType: AlertType.Danger, text: msg });
             } else if (errorResponse?.message) {
                 this.ea.publish('alert', { alertType: AlertType.Danger, text: errorResponse.message });
             } else {
-                this.ea.publish('alert', { alertType: AlertType.Danger, text: 'Failed to send invoice' });
+                const msg = `Failed to send ${this.invoiceContext.getCurrentDocumentTypeName(false)}`;
+                this.ea.publish('alert', { alertType: AlertType.Danger, text: msg});
             }
         } finally {
             this.ea.publish('hideOverlay');
@@ -157,10 +161,12 @@ export class InvoiceEdit {
             if (returnToOverview) {
                 this.returnToOverview();
             }
-            this.ea.publish('alert', {alertType: AlertType.Success, text: "Invoice draft saved"});
+            const msg = `${this.invoiceContext.getCurrentDocumentTypeName()} draft saved`;
+            this.ea.publish('alert', {alertType: AlertType.Success, text: msg});
         } catch(e) {
             console.error(e);
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to save invoice as draft"});
+            const msg = `Failed to save ${this.invoiceContext.getCurrentDocumentTypeName(false)} as draft`;
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: msg});
         }
     }
 
@@ -176,10 +182,12 @@ export class InvoiceEdit {
             await this.invoiceService.deleteDocument(this.invoiceContext.selectedDocument.id);
             this.invoiceContext.deleteDraft(this.invoiceContext.selectedDocument);
             this.returnToOverview();
-            this.ea.publish('alert', {alertType: AlertType.Success, text: "Invoice draft removed"});
+            const msg = `${this.invoiceContext.getCurrentDocumentTypeName()} draft removed`;
+            this.ea.publish('alert', {alertType: AlertType.Success, text: msg});
         } catch(e) {
             console.error(e);
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to delete invoice draft"});
+            const msg = `Failed to delete ${this.invoiceContext.getCurrentDocumentTypeName(false)} draft`;
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: msg});
         }
     }
 
@@ -192,7 +200,7 @@ export class InvoiceEdit {
 
         const a = document.createElement("a");
         a.href = url;
-        a.download = `${this.invoiceContext.selectedInvoice.ID}.xml`;
+        a.download = `${this.downloadFilename()}.xml`;
         document.body.appendChild(a);
         a.click();
 
@@ -210,29 +218,22 @@ export class InvoiceEdit {
         const blob = await this.invoiceService.downloadPdf(this.invoiceContext.selectedDocument.id).then(res => res.blob());
         const url = URL.createObjectURL(blob);
 
-        let filename;
-        if (this.invoiceContext.selectedDocumentType === DocumentType.INVOICE) {
-            filename = 'invoice-';
-        } else {
-            filename = 'creditnote-';
-        }
-        if (this.invoiceContext.selectedInvoice.ID) {
-            filename += this.invoiceContext.selectedInvoice.ID;
-        } else {
-            filename += moment().format('DD-MM-YYYY');
-        }
-        if (!this.readOnly) {
-            filename += '-draft';
-        }
-
         const a = document.createElement("a");
         a.href = url;
-        a.download = `${filename}.pdf`;
+        a.download = `${this.downloadFilename()}.pdf`;
         document.body.appendChild(a);
         a.click();
 
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
+    }
+
+    private downloadFilename(): string {
+        let name = this.invoiceContext.selectedInvoice.ID || moment().format('DD-MM-YYYY');
+        if (!this.readOnly) {
+            name += '-draft';
+        }
+        return name;
     }
 
     async validate() {

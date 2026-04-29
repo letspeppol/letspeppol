@@ -11,6 +11,7 @@ public class DocumentFilter {
     private DocumentType type;
     private DocumentDirection direction;
     private String partnerName;
+    private String partnerPeppolId;
     private String invoiceReference;
     private Boolean paid;
     private Boolean read;

@@ -6,10 +6,16 @@ import {Alert} from "./components/alert/alert";
 import {AuthenticationHook} from "./app/authentication-hook";
 import {DateFormatConverter} from "./app/value-converters/date-format";
 import {DateTimeFormatConverter} from "./app/value-converters/date-time-format";
-import * as en from "./app/locale/translation_en.json";
-import * as fr from "./app/locale/translation_fr.json";
-import * as nl from "./app/locale/translation_nl.json";
-import * as de from "./app/locale/translation_de.json";
+import {
+    FeatureAckRegistration,
+    NewFeatureCustomAttribute,
+    NewFeatureSectionCustomAttribute,
+} from "./components/new-feature";
+import "./components/new-feature/rainbow-border.css";
+import en from "./app/locale/translation_en.json";
+import fr from "./app/locale/translation_fr.json";
+import nl from "./app/locale/translation_nl.json";
+import de from "./app/locale/translation_de.json";
 
 Aurelia
     .register(RouterConfiguration.customize({
@@ -29,6 +35,14 @@ Aurelia
             };
         })
     )
-    .register(Alert, AuthenticationHook, DateFormatConverter, DateTimeFormatConverter)
+    .register(
+        Alert,
+        AuthenticationHook,
+        FeatureAckRegistration,
+        NewFeatureCustomAttribute,
+        NewFeatureSectionCustomAttribute,
+        DateFormatConverter,
+        DateTimeFormatConverter
+    )
     .app(LetsPeppol)
     .start();

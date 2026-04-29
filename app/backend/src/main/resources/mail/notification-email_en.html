@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<body style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
+  <p>Hello,</p>
+
+  <p>
+    We received a new invoice on your behalf from <strong>{{supplier}}</strong>
+    with reference <strong>{{reference}}</strong>
+    and total amount <strong>{{totalAmount}}</strong>.
+  </p>
+
+  <p>
+    You can inspect the document at
+    <a href="https://be.letspeppol.org/invoices/{{uuid}}">https://be.letspeppol.org/invoices/{{uuid}}</a>
+  </p>
+
+  <p>Kind regards,<br>Let's Peppol Team</p>
+  <a href="https://letspeppol.org" target="_blank">
+    <img src="https://letspeppol.org/logo.png" alt="Let's Peppol" style="max-height: 48px; max-width: 200px; margin-top: 8px;">
+  </a>
+
+  <hr style="border: none; border-top: 1px solid #eee; margin: 24px 0;">
+
+  <p style="font-size: 12px; color: #888; margin-bottom: 8px;">{{supportedByText}}</p>
+  <a href="{{sponsorUrl}}" target="_blank">
+    <img src="{{sponsorLogoUrl}}" alt="{{sponsorName}}" style="max-height: 48px; max-width: 200px;">
+  </a>
+</body>
+</html>
+

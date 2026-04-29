@@ -1,5 +1,5 @@
 import {resolve} from "@aurelia/kernel";
-import {InvoiceService, ValidationResultDto} from "../../../services/app/invoice-service";
+import {DocumentType, InvoiceService, ValidationResultDto} from "../../../services/app/invoice-service";
 import {AlertType} from "../../../components/alert/alert";
 import {IEventAggregator} from "aurelia";
 import {toErrorResponse} from "../../../app/util/error-response-handler";
@@ -79,17 +79,20 @@ export class UploadUblModal {
             const documentDraftDto = await this.invoiceService.createDocument(xml, true, true);
             this.invoiceContext.draftPage.content.unshift(documentDraftDto);
             this.invoiceContext.draftPage.totalElements++;
-            this.ea.publish('alert', {alertType: AlertType.Success, text: "Invoice draft created successfully"});
+            const msg = `${this.invoiceContext.getCurrentDocumentTypeName()} draft created successfully`;
+            this.ea.publish('alert', {alertType: AlertType.Success, text: msg});
             this.closeModal();
             this.invoiceContext.selectInvoice(documentDraftDto);
         } catch (e: unknown) {
             const errorResponse = await toErrorResponse(e);
             if (errorResponse?.errorCode === 'INVOICE_NUMBER_ALREADY_USED') {
-                this.ea.publish('alert', { alertType: AlertType.Danger, text: 'Invoice number already used' });
+                const msg = `${this.invoiceContext.getCurrentDocumentTypeName()} number already used`;
+                this.ea.publish('alert', { alertType: AlertType.Danger, text: msg });
             } else if (errorResponse?.message) {
                 this.ea.publish('alert', { alertType: AlertType.Danger, text: errorResponse.message });
             } else {
-                this.ea.publish('alert', { alertType: AlertType.Danger, text: 'Failed to send invoice' });
+                const msg = `Failed to send ${this.invoiceContext.getCurrentDocumentTypeName()}`;
+                this.ea.publish('alert', { alertType: AlertType.Danger, text: msg});
             }
         } finally {
             this.ea.publish('hideOverlay');

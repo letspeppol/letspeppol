@@ -190,6 +190,10 @@
     "edit" : "Bewerken",
     "close" : "Sluiten"
   },
+  "new-feature" : {
+    "label" : "Nieuw",
+    "click-to-dismiss" : "Klik om te sluiten"
+  },
   "navigation" : {
     "dashboard" : "Dashboard",
     "invoices" : "Facturen",
@@ -197,8 +201,7 @@
     "products" : "Producten",
     "account" : "Account",
     "brand-alt" : "Let's Peppol",
-    "toggle-theme" : "Thema wisselen",
-    "new-feature": "Nieuwe functies in Account: Passkeys, Tweefactorauthenticatie & Meldingen"
+    "toggle-theme" : "Thema wisselen"
   },
   "alert" : {
     "success" : "Succes",
@@ -294,6 +297,8 @@
     "partner": "Partner",
     "buyer-reference" : "Referentie koper",
     "order-reference" : "Orderreferentie",
+    "invoice-reference" : "Factuurreferentie",
+    "invoice-reference-date" : "Factuurdatum",
     "new" : {
       "INVOICE" : "Nieuwe factuur",
       "CREDIT_NOTE" : "Nieuwe creditnota"
@@ -327,10 +332,16 @@
     },
     "modal" : {
       "title" : "Factuur",
+      "title-credit-note" : "Creditnota",
       "document" : "Document",
       "invoice-number" : "Factuurnummer",
+      "credit-note-number" : "Creditnotanummer",
+      "invoice-reference" : "Factuur nr referentie selecteren",
+      "invoice-reference-none" : "Geen",
       "note-optional" : "Notitie (optioneel)",
       "note-placeholder" : "Extra notities voor deze factuur",
+      "credit-note-note-placeholder" : "Extra notities voor deze creditnota",
+      "credit-note-vat-note" : "BTW terug te storten aan de Staat in de mate waarin ze oorspronkelijk in aftrek werd gebracht",
       "reference-required" : "Referentie koper OF orderreferentie is verplicht"
     },
     "dateModal" : {

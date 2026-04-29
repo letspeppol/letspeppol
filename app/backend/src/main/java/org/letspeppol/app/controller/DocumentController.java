@@ -47,6 +47,7 @@ public class DocumentController {
                                     @RequestParam(required = false) DocumentType type,
                                     @RequestParam(required = false) DocumentDirection direction,
                                     @RequestParam(required = false) String partnerName,
+                                    @RequestParam(required = false) String partnerPeppolId,
                                     @RequestParam(required = false) String invoiceReference,
                                     @RequestParam(required = false) Boolean paid,
                                     @RequestParam(required = false) Boolean read,
@@ -59,6 +60,7 @@ public class DocumentController {
         filter.setType(type);
         filter.setDirection(direction);
         filter.setPartnerName(partnerName != null && !partnerName.isBlank() ? partnerName.trim() : null);
+        filter.setPartnerPeppolId(partnerPeppolId != null && !partnerPeppolId.isBlank() ? partnerPeppolId.trim() : null);
         filter.setInvoiceReference(invoiceReference != null && !invoiceReference.isBlank() ? invoiceReference.trim() : null);
         filter.setPaid(paid);
         filter.setRead(read);
