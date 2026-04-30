@@ -23,7 +23,7 @@ public interface DocumentRepository extends JpaRepository<Document, UUID>, JpaSp
     @Query("""
         SELECT COUNT(document) > 0 FROM Document document
         WHERE document.invoiceReference = :invoiceReference AND document.company.peppolId = :ownerPeppolId and document.type = :type
-        AND document.draftedOn IS NULL AND document.proxyOn IS NOT NULL AND document.direction = 'OUTGOING'
+        AND document.draftedOn IS NULL AND document.proxyOn IS NOT NULL AND document.direction = 'OUTGOING' AND document.processedStatus IS NULL
         """)
     boolean existsByInvoiceReferenceAndTypeAndOwnerPeppolId(String invoiceReference, DocumentType type, String ownerPeppolId);
 
