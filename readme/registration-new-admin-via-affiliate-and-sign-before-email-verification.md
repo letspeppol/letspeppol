@@ -21,10 +21,10 @@ Note over SME, Peppol: Requesting new company added to AFFILIATE
 
     Note left of AFFILIATE: Verify information
     AFFILIATE ->> Frontend: Confirm()
-    Frontend ->> KYC: POST /kyc/sapi/linked/request-company <br> ( AccountType.ADMIN, peppolId, email )
+    Frontend ->> KYC: POST /kyc/sapi/linked/request-company <br> Authorization: Bearer AFFILIATE_JWT <br> ( AccountType.ADMIN, peppolId, email, <br> city, postCode, street )
     Note right of KYC: JWT == AFFILIATE <br> PeppolID has no ADMIN <br>(= not registered) <br> Generate token (Requester = Affiliate, type = ADMIN)
     KYC ->> SME: Mail "Confirm your email and your affiliate" /email-confirmation?token={token}
-    KYC ->> Frontend: "Activation email sent"
+    KYC ->> Frontend: "Request email sent"
     Frontend ->> App: POST /app/sapi/affiliate/add-company <br> ( peppolId, email, name, ...? )
     Note right of App: JWT == AFFILIATE <br> Store new company add request
     App ->> Frontend: OK
@@ -43,11 +43,11 @@ Note over SME, Peppol: Signing contract for new ADMIN requested by AFFILIATE
 
     Note left of AFFILIATE: Validate director with eID
     AFFILIATE ->> Frontend: Confirm( eID )
-    Frontend ->> KYC: POST /kyc/api/identity/sign/prepare <br> ( emailToken, directorId, certificate, <br> supportedSignatureAlgorithms, language )
-    Note right of KYC: Validate token <br> Generate contract for director <br> with given eID hashes
+    Frontend ->> KYC: POST /kyc/api/identity/sign/prepare <br> ( peppolId, directorId, certificate, <br> supportedSignatureAlgorithms, language )
+    Note right of KYC: Validate director belongs to peppolId <br> Generate contract hashes <br> with given eID certificate
     KYC ->> Frontend: PrepareSigningResponse
-    Frontend ->> KYC: GET /kyc/api/identity/contract/{directorId}?token={token}
-    Note right of KYC: Validate token <br> Generate contract for director <br> with given eID hashes
+    Frontend ->> KYC: GET /kyc/api/identity/contract/{peppolId}/{directorId}
+    Note right of KYC: Validate director belongs to peppolId <br> Generate contract for director
     KYC ->> Frontend: PDF prepared contract
     Frontend ->> AFFILIATE: Show contract
 
@@ -57,8 +57,8 @@ Note over SME, Peppol: Signing contract for new ADMIN requested by AFFILIATE
 
     Note left of AFFILIATE: Sign as director with eID & PIN
     AFFILIATE ->> Frontend: Sign( eID )
-    Frontend ->> KYC: POST /kyc/api/identity/sign/finalize <br> ( emailToken, directorId, certificate, <br> signature, signatureAlgorithm, <br> hashToSign, hashToFinalize, null )
-    Note right of KYC: Validate token <br> Type == ADMIN <br> Generate contract for director <br> with signature of eID <br> Create Account <br> Link as ADMIN to Company <br> Set Director as registered <br> eID != Director ? <br> Set Company as suspended
+    Frontend ->> KYC: POST /kyc/api/identity/sign/finalize <br> ( peppolId, directorId, email, certificate, <br> signature, signatureAlgorithm, <br> hashToSign, hashToFinalize )
+    Note right of KYC: Resolve pending email verification <br> Type == ADMIN <br> Generate signed contract <br> Create pending Account if needed <br> Link as ADMIN to Company <br> Record director signature <br> eID != Director ? <br> Set Company as suspended
     opt Type == ADMIN && Company != suspended
         KYC -->> Proxy: POST /proxy/sapi/registry <br> KYC_JWT ( name, language, country )
         Proxy -->> Peppol: Register( PeppolID )
@@ -77,14 +77,14 @@ Note over SME, Peppol: Verify email of new ADMIN requested by AFFILIATE
     Note left of SME: Receives email
     SME ->> Frontend: Open link in email
     Frontend ->> KYC: POST /kyc/api/register/verify?token={token}
-    Note right of KYC: Validate token <br> Requester == AFFILIATE <br> Company != suspended <br> Type == ADMIN <br> PeppolID has ADMIN
-    KYC ->> Frontend: TokenVerificationResponse <br> ( email, null )
+    Note right of KYC: Validate token <br> Requester == AFFILIATE <br> Type == ADMIN <br> PeppolID has ADMIN <br> Account exists <br> Director already signed
+    KYC ->> Frontend: TokenVerificationResponse <br> ( email, accountExists=true, <br> accountVerified=false, directorSigned=true, <br> requestedType=ADMIN, CompanyResponse, requester )
     Frontend ->> SME: Choose credentials
 
     Note left of SME: Choose password
     SME ->> Frontend: Input( password, repeat password )
-    Frontend ->> KYC: POST /kyc/api/identity/set-password ( emailToken, password )
-    Note right of KYC: Validate token <br> Type == ADMIN <br> Store password
+    Frontend ->> KYC: POST /kyc/api/register/verify-account <br> ( token, newPassword )
+    Note right of KYC: Validate token <br> Require ADMIN ownership <br> Require director signature <br> Store password <br> Mark account verified
     KYC ->> Frontend: OK
     Frontend ->> SME: Show success <br> Show requester
 

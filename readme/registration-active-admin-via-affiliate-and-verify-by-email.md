@@ -18,7 +18,7 @@ Note over SME, App: Requesting active company added to AFFILIATE
 
     Note left of AFFILIATE: Verify information
     AFFILIATE ->> Frontend: Confirm()
-    Frontend ->> KYC: POST /kyc/sapi/linked/request-company <br> ( AccountType.ADMIN, peppolId, email )
+    Frontend ->> KYC: POST /kyc/sapi/linked/request-company <br> Authorization: Bearer AFFILIATE_JWT <br> ( AccountType.ADMIN, peppolId, email, <br> city, postCode, street )
     Note right of KYC: JWT == AFFILIATE <br> PeppolID has ADMIN <br>(= registered) <br> Generate token (Requester = Affiliate, type = ADMIN)
     KYC ->> SME: Mail "Confirm your affiliate" /email-confirmation?token={token}
     KYC ->> Frontend: "Request email sent"
@@ -32,7 +32,7 @@ Note over SME, App: Accepting AFFILIATE request by ADMIN
     SME ->> Frontend: Open link in email
     Frontend ->> KYC: POST /kyc/api/register/verify?token={token}
     Note right of KYC: Validate token <br> Requester == AFFILIATE <br> Type == ADMIN <br> PeppolID has ADMIN
-    KYC ->> Frontend: TokenVerificationResponse <br> ( email, CompanyResponse, requester )
+    KYC ->> Frontend: TokenVerificationResponse <br> ( email, accountExists, accountVerified, <br> directorSigned, requestedType, CompanyResponse, requester )
     Frontend ->> SME: Show requester for CompanyResponse <br> with login form for email, CompanyResponse.peppolId <br> and AccountType.ADMIN
 
     Note left of SME: Read requester

@@ -10,8 +10,8 @@ sequenceDiagram
     %%participant Proxy as Proxy
     %%participant Peppol as Peppol
 
-Note over SME, App: Login with credentials
-    SME ->> Frontend: Login( email, password )
+Note over SME, App: Swap active ownership with an existing JWT
+    SME ->> Frontend: Select ownership( AccountType, peppolId )
     Frontend ->> KYC: POST /sapi/jwt/swap <br> ( AccountType, peppolId )
     Note right of KYC: Validate JWT <br> Validate ownership AccountType for peppolId <br> Update last used ownership
     KYC ->> Frontend: JWT ( AccountType, peppolId, peppolId.peppolActive, JWT.uid )
