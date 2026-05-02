@@ -348,7 +348,7 @@ class RegistrationTest {
 
     @Test
     @Order(10)
-    void loggedInAdminCanSignForAdditionalCompany() {
+    void registrationNewAdminByActiveAdmin() {
         if (adminToken == null) {
             loginAdminAsAdmin();
         }
@@ -357,48 +357,6 @@ class RegistrationTest {
         registrationSteps.signContractAsLoggedIn(adminToken, deltaPeppolId, directorId);
         assertTrue(ownershipRepository.existsByTypeAndCompanyPeppolId(AccountType.ADMIN, deltaPeppolId));
         assertTrue(accountRepository.existsByEmail(adminEmail));
-    }
-
-    @Test
-    @Order(11)
-    void affiliateCanSignForPendingNewAdminBeforeEmailVerification() {
-        registrationSteps.prepareDatabase(echoPeppolId, echoCompany);
-
-        if (affiliateToken == null) {
-            loginAffiliateAsAffiliate();
-        }
-
-        Long directorId = registrationSteps.companyIsNewCompany(echoPeppolId).getFirst().id();
-        String emailToken = registrationSteps.requestCompany(affiliateToken, AccountType.ADMIN, echoPeppolId, echoEmail, "TestCity", "1234", "TestStreet");
-
-        registrationSteps.signContractAsRequester(affiliateToken, echoPeppolId, echoEmail, directorId);
-        assertTrue(ownershipRepository.existsByTypeAndCompanyPeppolId(AccountType.ADMIN, echoPeppolId));
-
-        registrationSteps.activateAccount(emailToken, echoPassword);
-        String echoToken = registrationSteps.login(echoEmail, echoPassword, AccountType.ADMIN, echoPeppolId);
-        assertNotNull(echoToken);
-    }
-
-    @Test
-    @Order(12)
-    void affiliateCanLinkExistingAdminToAdditionalCompany() {
-        if (affiliateToken == null) {
-            loginAffiliateAsAffiliate();
-        }
-        if (adminToken == null) {
-            loginAdminAsAdmin();
-        }
-
-        registrationSteps.prepareDatabase(foxtrotPeppolId, foxtrotCompany);
-        Long directorId = registrationSteps.companyIsNewCompany(foxtrotPeppolId).getFirst().id();
-        String emailToken = registrationSteps.requestCompany(affiliateToken, AccountType.ADMIN, foxtrotPeppolId, adminEmail, "TestCity", "1234", "TestStreet");
-
-        registrationSteps.verifyAsNewAndRequestedByAffiliated(emailToken, foxtrotPeppolId, adminEmail, affiliateEmail, affiliateCompany);
-        registrationSteps.signContractAsRequester(affiliateToken, foxtrotPeppolId, adminEmail, directorId);
-
-        assertTrue(ownershipRepository.existsByTypeAndCompanyPeppolId(AccountType.ADMIN, foxtrotPeppolId));
-        String foxtrotAdminToken = registrationSteps.login(adminEmail, adminPassword, AccountType.ADMIN, foxtrotPeppolId);
-        assertNotNull(foxtrotAdminToken);
     }
 
     /**

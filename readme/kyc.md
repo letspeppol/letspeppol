@@ -50,7 +50,7 @@ It focuses on:
 
 The KYC API is organized as a sequence of steps. Each step represents part of the onboarding and verification process. The flows are documented separately using Mermaid sequence diagrams.
 
-The pages below should be read in the same order as the scenarios covered by `AdminRegistrationTest` in the KYC project.
+The pages below should be read in the same order as the scenarios covered by `RegistrationTest` in the KYC project.
 
 ## Flow documentation
 
@@ -63,6 +63,7 @@ The pages below should be read in the same order as the scenarios covered by `Ad
 7. [Registration active ADMIN via AFFILIATE and verify by email](./registration-active-admin-via-affiliate-and-verify-by-email.md)
 8. [Registration new ADMIN via AFFILIATE and verify email before signing](./registration-new-admin-via-affiliate-and-verify-email-before-signing.md)
 9. [Registration new ADMIN via AFFILIATE and sign before email verification](./registration-new-admin-via-affiliate-and-sign-before-email-verification.md)
+10. [Registration new ADMIN by active ADMIN](registration-new-admin-by-active-admin.md)
 
 ## How to read the flow pages
 
@@ -95,7 +96,7 @@ Incorrect, incomplete, or suspicious input should be detected early in the flow 
 The registration process should follow a clear order, with each step depending on the outcome of the previous one.
 
 ### 5. Documentation should mirror test behavior
-The documented order of flows should match the order used in `AdminRegistrationTest`, so the implementation, tests, and documentation remain aligned.
+The documented order of flows should match the order used in `RegistrationTest`, so the implementation, tests, and documentation remain aligned.
 
 ## Intended audience
 
