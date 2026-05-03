@@ -3,6 +3,7 @@ package org.letspeppol.kyc.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.letspeppol.kyc.dto.AuthRequest;
 import org.letspeppol.kyc.dto.ServiceRequest;
 import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.KycException;
@@ -32,6 +33,32 @@ public class OwnershipService {
     public Ownership getByAccountExternalIdPeppolIdAndType(UUID uid, String peppolId, AccountType type) {
         return ownershipRepository.findFirstByAccountExternalIdAndCompanyPeppolIdAndTypeOrderByLastUsedDesc(uid, peppolId, type)
                 .orElseThrow(() -> new KycException(KycErrorCodes.NO_OWNERSHIP));
+    }
+
+    public String generateAuthToken(Account account, AuthRequest request) {
+        Ownership ownership = (request == null)
+                ? ownershipRepository.findFirstByAccountIdOrderByLastUsedDesc(account.getId())
+                .orElseThrow(() -> new KycException(KycErrorCodes.NO_OWNERSHIP))
+                : ownershipRepository.findFirstByAccountIdAndCompanyPeppolIdAndTypeOrderByLastUsedDesc(account.getId(), request.peppolId(), request.type())
+                .orElseThrow(() -> new KycException(KycErrorCodes.NO_OWNERSHIP));
+        updateLastUsed(ownership);
+        return jwtService.generateToken(
+                ownership.getType(),
+                ownership.getCompany().getPeppolId(),
+                ownership.getCompany().isPeppolActive(),
+                account.getExternalId()
+        );
+    }
+
+    public String generateSwapToken(UUID uid, AuthRequest request) {
+        Ownership ownership = getByAccountExternalIdPeppolIdAndType(uid, request.peppolId(), request.type());
+        updateLastUsed(ownership);
+        return jwtService.generateToken(
+                ownership.getType(),
+                ownership.getCompany().getPeppolId(),
+                ownership.getCompany().isPeppolActive(),
+                uid
+        );
     }
 
     public Ownership getByPeppolIdAndType(String peppolId, AccountType type) {

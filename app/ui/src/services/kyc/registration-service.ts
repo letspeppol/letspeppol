@@ -5,7 +5,12 @@ import {LoginService} from "../app/login-service";
 
 export interface TokenVerificationResponse {
     email: string;
+    accountExists: boolean;
+    accountVerified: boolean;
+    directorSigned: boolean;
+    requestedType: string;
     company: KycCompanyResponse;
+    requester?: unknown;
 }
 
 export interface KycCompanyResponse {
@@ -25,7 +30,7 @@ export interface Director {
 }
 
 export interface PrepareSigningRequest {
-    emailToken: string,
+    peppolId: string,
     directorId: number,
     certificate: string,
     supportedSignatureAlgorithms: Array<SignatureAlgorithm>,
@@ -40,14 +45,19 @@ export interface PrepareSigningResponse {
 }
 
 export interface FinalizeSigningRequest {
-    emailToken: string,
+    peppolId: string,
     directorId: number,
+    email: string,
     certificate: string,
     signature: string,
     signatureAlgorithm: SignatureAlgorithm,
     hashToSign: string,
-    hashToFinalize: string,
-    password: string,
+    hashToFinalize: string
+}
+
+export interface VerifyAccountRequest {
+    token: string,
+    newPassword: string
 }
 
 export class RegistrationService {
@@ -78,12 +88,16 @@ export class RegistrationService {
         return response.json();
     }
 
-    getContractUrl(directorId: number, token: string): string {
-        return `${this.kycApi.httpClient.baseUrl}/api/identity/contract/${directorId}?token=${token}`;
+    getContractUrl(peppolId: string, directorId: number): string {
+        return `${this.kycApi.httpClient.baseUrl}/api/identity/contract/${encodeURIComponent(peppolId)}/${directorId}`;
     }
 
     async finalizeSign(request: FinalizeSigningRequest) : Promise<Response> {
         return await this.kycApi.httpClient.post(`/api/identity/sign/finalize`, JSON.stringify(request));
+    }
+
+    async verifyAccount(request: VerifyAccountRequest): Promise<Response> {
+        return await this.kycApi.httpClient.post(`/api/register/verify-account`, JSON.stringify(request));
     }
 
     async unregisterCompany(): Promise<boolean> {
