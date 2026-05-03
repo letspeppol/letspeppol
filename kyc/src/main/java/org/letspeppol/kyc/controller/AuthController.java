@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.kyc.dto.AuthRequest;
 import org.letspeppol.kyc.model.Account;
-import org.letspeppol.kyc.model.Ownership;
 import org.letspeppol.kyc.service.AccountService;
 import org.letspeppol.kyc.service.JwtService;
 import org.letspeppol.kyc.service.OwnershipService;
@@ -24,8 +23,8 @@ import java.util.Base64;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final JwtService jwtService;
     private final AccountService accountService;
+    private final JwtService jwtService;
     private final OwnershipService ownershipService;
     private final Counter authenticationCounterSuccess;
     private final Counter authenticationCounterFailure;
@@ -50,18 +49,7 @@ public class AuthController {
         String emailOrUuid = values[0];
         String password = values[1];
         Account account = accountService.findAccountWithCredentials(emailOrUuid, password); //TODO : Check if account is verified ! Else send info for resend activation mail
-        Ownership ownership = (request == null) ? account.getOwnerships().getFirst() : account.getOwnerships().stream().filter(o -> request.peppolId().equals(o.getCompany().getPeppolId()) && request.type().equals(o.getType()) ).findFirst().orElse(null);
-        if (ownership == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid AuthRequest");
-        }
-        ownershipService.updateLastUsed(ownership);
-
-        String token = jwtService.generateToken(
-                ownership.getType(),
-                ownership.getCompany().getPeppolId(),
-                ownership.getCompany().isPeppolActive(),
-                account.getExternalId()
-        );
+        String token = ownershipService.generateAuthToken(account, request);
         authenticationCounterSuccess.increment();
 
         return ResponseEntity.ok(token);
@@ -71,15 +59,7 @@ public class AuthController {
     @PostMapping("/sapi/jwt/swap")
     public ResponseEntity<String> swap(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader, @RequestBody AuthRequest request) {
         JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
-        Ownership ownership = ownershipService.getByAccountExternalIdPeppolIdAndType(jwtInfo.uid(), request.peppolId(), request.type());
-        ownershipService.updateLastUsed(ownership);
-
-        String token = jwtService.generateToken(
-                ownership.getType(),
-                ownership.getCompany().getPeppolId(),
-                ownership.getCompany().isPeppolActive(),
-                jwtInfo.uid()
-        );
+        String token = ownershipService.generateSwapToken(jwtInfo.uid(), request);
         authenticationCounterSuccess.increment();
 
         return ResponseEntity.ok(token);

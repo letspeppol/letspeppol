@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Slf4j
@@ -45,6 +46,8 @@ public class DataInitializer implements CommandLineRunner {
                     .name("Bart In Stukken")
                     .email("test@softwareoplossing.be")
                     .passwordHash(passwordEncoder.encode("test"))
+                    .verified(true)
+                    .verifiedOn(Instant.now())
                     .externalId(UUID.randomUUID())
                     .build();
             accountRepository.save(account);
@@ -63,6 +66,8 @@ public class DataInitializer implements CommandLineRunner {
                     .name("Michiel Wouters")
                     .email("letspeppol@itaa.be")
                     .passwordHash(passwordEncoder.encode("letspeppol"))
+                    .verified(true)
+                    .verifiedOn(Instant.now())
                     .externalId(UUID.randomUUID())
                     .build();
             accountRepository.save(account);
@@ -84,6 +89,8 @@ public class DataInitializer implements CommandLineRunner {
                     .name("Let’s Peppol")
                     .email("account@letspeppol.org")
                     .passwordHash(passwordEncoder.encode("letspeppol"))
+                    .verified(true)
+                    .verifiedOn(Instant.now())
                     .externalId(UUID.randomUUID())
                     .build();
             accountRepository.save(account);
@@ -93,6 +100,8 @@ public class DataInitializer implements CommandLineRunner {
                     .name("Let’s Peppol Email Notification App")
                     .email("support@letspeppol.org")
                     .passwordHash(passwordEncoder.encode("letspeppol"))
+                    .verified(true)
+                    .verifiedOn(Instant.now())
                     .externalId(appUUID)
                     .build();
             accountRepository.save(appAccount);
@@ -111,6 +120,8 @@ public class DataInitializer implements CommandLineRunner {
                     .name("Alice")
                     .email("alice@letspeppol.org")
                     .passwordHash(passwordEncoder.encode("alice"))
+                    .verified(true)
+                    .verifiedOn(Instant.now())
                     .externalId(UUID.randomUUID())
                     .build();
             accountRepository.save(account);
@@ -122,6 +133,8 @@ public class DataInitializer implements CommandLineRunner {
                     .name("Bob")
                     .email("bob@letspeppol.org")
                     .passwordHash(passwordEncoder.encode("bob"))
+                    .verified(true)
+                    .verifiedOn(Instant.now())
                     .externalId(UUID.randomUUID())
                     .build();
             accountRepository.save(otherAccount);
