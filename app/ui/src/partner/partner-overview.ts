@@ -3,11 +3,13 @@ import {PartnerDto, PartnerService} from "../services/app/partner-service";
 import {PartnerContext} from "./partner-context";
 import {IEventAggregator, watch} from "aurelia";
 import {AlertType} from "../components/alert/alert";
+import {I18N} from "@aurelia/i18n";
 
 export class PartnerOverview {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
     private partnerContext = resolve(PartnerContext);
     private partnerService = resolve(PartnerService);
+    private readonly i18n = resolve(I18N);
     searchQuery = '';
     category = 'all'
 
@@ -48,10 +50,10 @@ export class PartnerOverview {
         try {
             await this.partnerService.deletePartner(partner.id)
             this.partnerContext.deletePartner(partner);
-            this.ea.publish('alert', {alertType: AlertType.Success, text: "Partner deleted"});
+            this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.partner.deleted')});
         } catch (e) {
             console.log(e);
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to delete partner"});
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.partner.delete-failed')});
         }
         return false;
     }

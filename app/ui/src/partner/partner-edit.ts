@@ -8,29 +8,31 @@ import {countryListAlpha2} from "../app/countries"
 import {normalizeVatNumber} from "./vat-normalizer";
 import {CompanySearchService} from "../services/kyc/company-search-service";
 import {KycCompanyResponse} from "../services/kyc/registration-service";
+import {I18N} from "@aurelia/i18n";
 
 export class PartnerEdit {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
     private readonly companySearchService = resolve(CompanySearchService);
     private readonly partnerService = resolve(PartnerService);
     private readonly partnerContext = resolve(PartnerContext);
+    private readonly i18n = resolve(I18N);
     private countryList = countryListAlpha2;
 
     async savePartner() {
         try {
-            let successMessage = "Partner updated successfully";
+            let successKey = 'alert.partner.updated';
             if (this.partnerContext.selectedPartner.id) {
                 await this.partnerService.updatePartner(this.partnerContext.selectedPartner.id, this.partnerContext.selectedPartner);
             } else {
                 const partner = await this.partnerService.createPartner(this.partnerContext.selectedPartner);
                 this.partnerContext.addPartner(partner);
-                successMessage = "Partner created successfully";
+                successKey = 'alert.partner.created';
             }
-            this.ea.publish('alert', {alertType: AlertType.Success, text: successMessage});
+            this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(successKey)});
             this.partnerContext.selectedPartner = undefined;
         } catch(e) {
             console.error(e);
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to update account"});
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.partner.update-failed')});
         }
     }
 
