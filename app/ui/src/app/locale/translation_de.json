@@ -206,10 +206,115 @@
     "info": "Info",
     "warning": "Warnung",
     "danger": "Fehler",
-    "neutral": "Nachricht"
+    "neutral": "Nachricht",
+    "account": {
+      "load-failed": "Konto konnte nicht geladen werden",
+      "updated": "Konto erfolgreich aktualisiert",
+      "update-failed": "Konto konnte nicht aktualisiert werden",
+      "reverted": "Kontoänderungen rückgängig gemacht",
+      "peppol-activated": "Unternehmen auf Peppol aktiviert",
+      "peppol-activation-request-failed": "Aktivierungsanfrage konnte nicht gesendet werden",
+      "peppol-activation-failed": "Unternehmen konnte nicht auf Peppol aktiviert werden",
+      "peppol-removed": "Unternehmen aus Peppol entfernt",
+      "peppol-remove-failed": "Unternehmen konnte nicht aus Peppol entfernt werden",
+      "contract-download-failed": "Unterschriebener Vertrag konnte nicht heruntergeladen werden"
+    },
+    "password": {
+      "changed": "Passwort geändert"
+    },
+    "registration": {
+      "token-invalid": "Token ungültig",
+      "contract-downloaded": "Unterschriebener Vertrag heruntergeladen!"
+    },
+    "partner": {
+      "deleted": "Partner gelöscht",
+      "delete-failed": "Partner konnte nicht gelöscht werden",
+      "updated": "Partner aktualisiert",
+      "update-failed": "Partner konnte nicht aktualisiert werden",
+      "created": "Partner angelegt",
+      "create-failed": "Partner konnte nicht angelegt werden"
+    },
+    "product": {
+      "deleted": "Produkt gelöscht",
+      "delete-failed": "Produkt konnte nicht gelöscht werden",
+      "created": "Produkt angelegt",
+      "updated": "Produkt aktualisiert",
+      "update-failed": "Produkt konnte nicht aktualisiert werden"
+    },
+    "peppol-search": {
+      "failed": "Suche im Peppol-Verzeichnis fehlgeschlagen",
+      "no-results": "Keine Ergebnisse gefunden"
+    },
+    "company": {
+      "info-failed": "Unternehmensinformationen konnten nicht geladen werden",
+      "save-failed": "Unternehmen konnte nicht gespeichert werden"
+    },
+    "invoice": {
+      "load-failed": "Rechnung konnte nicht geladen werden",
+      "sent": {
+        "INVOICE": "Rechnung erfolgreich gesendet",
+        "CREDIT_NOTE": "Gutschrift erfolgreich gesendet"
+      },
+      "number-used": {
+        "INVOICE": "Rechnungsnummer bereits verwendet",
+        "CREDIT_NOTE": "Gutschriftsnummer bereits verwendet"
+      },
+      "send-failed": {
+        "INVOICE": "Senden der Rechnung fehlgeschlagen",
+        "CREDIT_NOTE": "Senden der Gutschrift fehlgeschlagen"
+      },
+      "draft-saved": {
+        "INVOICE": "Rechnungsentwurf gespeichert",
+        "CREDIT_NOTE": "Gutschriftsentwurf gespeichert"
+      },
+      "draft-save-failed": {
+        "INVOICE": "Rechnungsentwurf konnte nicht gespeichert werden",
+        "CREDIT_NOTE": "Gutschriftsentwurf konnte nicht gespeichert werden"
+      },
+      "draft-removed": {
+        "INVOICE": "Rechnungsentwurf entfernt",
+        "CREDIT_NOTE": "Gutschriftsentwurf entfernt"
+      },
+      "draft-delete-failed": {
+        "INVOICE": "Rechnungsentwurf konnte nicht gelöscht werden",
+        "CREDIT_NOTE": "Gutschriftsentwurf konnte nicht gelöscht werden"
+      },
+      "draft-created": {
+        "INVOICE": "Rechnungsentwurf erfolgreich erstellt",
+        "CREDIT_NOTE": "Gutschriftsentwurf erfolgreich erstellt"
+      },
+      "draft-deleted": "Entwurf gelöscht",
+      "draft-delete-overview-failed": "Entwurf konnte nicht gelöscht werden",
+      "marked-paid": "Rechnung als bezahlt markiert",
+      "marked-unpaid": "Rechnung als unbezahlt markiert",
+      "paid-status-failed": "Zahlungsstatus konnte nicht geändert werden",
+      "no-ubl-data": "Keine UBL-Daten verfügbar"
+    },
+    "iban": {
+      "saved": "IBAN gespeichert"
+    },
+    "upload": {
+      "size-too-large": "Die Gesamtgröße aller Dateien darf 10 MB nicht überschreiten",
+      "type-unsupported": "Dateityp nicht unterstützt",
+      "upload-error": "Fehler beim Hochladen der Datei"
+    },
+    "attachment": {
+      "size-too-large-3mb": "Datei darf nicht größer als 3 MB sein",
+      "document-not-saved": "Dokument nicht gespeichert. PDF-Vorschau nicht verfügbar.",
+      "downloaded": "Datei '{{filename}}' heruntergeladen"
+    }
   },
   "overlay": {
-    "saving-account": "Konto wird gespeichert, bitte warten"
+    "saving": "Wird gespeichert...",
+    "saving-account": "Konto wird gespeichert, bitte warten",
+    "sending": {
+      "INVOICE": "Rechnung wird gesendet",
+      "CREDIT_NOTE": "Gutschrift wird gesendet"
+    },
+    "validating": "Validierung",
+    "creating-draft": "Entwurf wird erstellt",
+    "searching-company": "Unternehmen wird gesucht",
+    "confirming-registration": "Registrierungsanfrage wird bestätigt"
   },
   "product": {
     "categories": "Kategorien",

@@ -5,12 +5,14 @@ import {ProductContext} from "./product-context";
 import {AlertType} from "../components/alert/alert";
 import {ProductCategoryDto, ProductCategoryService} from "../services/app/product-category-service";
 import {ProductCategoryModal} from "./product-category-modal";
+import {I18N} from "@aurelia/i18n";
 
 export class ProductOverview {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
     private productContext = resolve(ProductContext);
     private productService = resolve(ProductService);
     private productCategoryService = resolve(ProductCategoryService);
+    private readonly i18n = resolve(I18N);
     @bindable productCategoryModal: ProductCategoryModal;
     searchQuery = '';
 
@@ -35,10 +37,10 @@ export class ProductOverview {
         try {
             await this.productService.deleteProduct(product.id)
             this.productContext.deleteProduct(product);
-            this.ea.publish('alert', {alertType: AlertType.Success, text: "Product deleted"});
+            this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.product.deleted')});
         } catch (e) {
             console.log(e);
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to delete product"});
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.product.delete-failed')});
         }
         return false;
     }

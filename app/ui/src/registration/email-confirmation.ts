@@ -13,12 +13,14 @@ import {
 import {PeppolDirectoryResponse, PeppolDirService} from "../services/peppol/peppol-dir-service";
 import {SignatureAlgorithm} from "@web-eid/web-eid-library/models/SignatureAlgorithm";
 import {LibrarySignResponse} from "@web-eid/web-eid-library/models/message/LibraryResponse";
+import {I18N} from "@aurelia/i18n";
 
 export class EmailConfirmation {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
     readonly kycApi = resolve(KYCApi);
     readonly registrationService = resolve(RegistrationService);
     readonly peppolDirService = resolve(PeppolDirService);
+    readonly i18n = resolve(I18N);
     public errorMessage: string | undefined; // made public for template binding
     public emailToken: string;
     public tokenVerificationResponse: TokenVerificationResponse | undefined; // made public for template binding
@@ -46,7 +48,7 @@ export class EmailConfirmation {
             this.step = 1;
             this.checkPeppolDirectory(result.company.peppolId);
         }).catch(error => {
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Token invalid"});
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.registration.token-invalid')});
         });
     }
 
@@ -135,7 +137,7 @@ export class EmailConfirmation {
                 break;
             }
             await this.downloadFile(finalizeSigningResponse);
-            this.ea.publish('alert', {alertType: AlertType.Success, text: "Signed contract downloaded!"});
+            this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.registration.contract-downloaded')});
         } catch (error) {
             let text = "Signing contract failed";
             if (error instanceof Response) {

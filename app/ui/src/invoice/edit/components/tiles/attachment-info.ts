@@ -4,11 +4,13 @@ import {resolve} from "@aurelia/kernel";
 import {InvoiceContext} from "../../../invoice-context";
 import {bindable, IEventAggregator} from "aurelia";
 import {InvoiceService} from "../../../../services/app/invoice-service";
+import {I18N} from "@aurelia/i18n";
 
 export class AttachmentInfo {
     private invoiceContext = resolve(InvoiceContext);
     private invoiceService = resolve(InvoiceService);
     private ea: IEventAggregator = resolve(IEventAggregator);
+    private readonly i18n = resolve(I18N);
 
     @bindable readOnly: boolean;
     @bindable showAttachmentModal;
@@ -20,7 +22,7 @@ export class AttachmentInfo {
             let objectUrl: string | null = null;
             if (additionalDocumentReference.ID === 'generated_invoice') {
                 if (!this.invoiceContext.selectedDocument || !this.invoiceContext.selectedDocument.id) {
-                    this.ea.publish('alert', {alertType: AlertType.Warning, text: `Document not saved. PDF render not available.`});
+                    this.ea.publish('alert', {alertType: AlertType.Warning, text: this.i18n.tr('alert.attachment.document-not-saved')});
                     return;
                 }
                 const blob = await this.invoiceService.downloadPdf(this.invoiceContext.selectedDocument.id).then(res => res.blob());
@@ -36,7 +38,7 @@ export class AttachmentInfo {
             if (objectUrl) {
                 URL.revokeObjectURL(objectUrl);
             }
-            this.ea.publish('alert', {alertType: AlertType.Info, text: `File '${attachment.EmbeddedDocumentBinaryObject.__filename}' downloaded`});
+            this.ea.publish('alert', {alertType: AlertType.Info, text: this.i18n.tr('alert.attachment.downloaded', {filename: attachment.EmbeddedDocumentBinaryObject.__filename})});
         }
         if (attachment.ExternalReference && attachment.ExternalReference.URI) {
             window.open(attachment.ExternalReference.URI, '_blank');

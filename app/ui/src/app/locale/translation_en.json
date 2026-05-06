@@ -206,10 +206,115 @@
     "info": "Info",
     "warning": "Warning",
     "danger": "Error",
-    "neutral": "Message"
+    "neutral": "Message",
+    "account": {
+      "load-failed": "Failed to get account",
+      "updated": "Account updated successfully",
+      "update-failed": "Failed to update account",
+      "reverted": "Account changes reverted",
+      "peppol-activated": "Activated company on Peppol",
+      "peppol-activation-request-failed": "Failed to send activation request",
+      "peppol-activation-failed": "Failed to activate company on Peppol",
+      "peppol-removed": "Removed company from Peppol",
+      "peppol-remove-failed": "Failed to remove company from Peppol",
+      "contract-download-failed": "Failed to download signed contract"
+    },
+    "password": {
+      "changed": "Password changed"
+    },
+    "registration": {
+      "token-invalid": "Token invalid",
+      "contract-downloaded": "Signed contract downloaded!"
+    },
+    "partner": {
+      "deleted": "Partner deleted",
+      "delete-failed": "Failed to delete partner",
+      "updated": "Partner updated",
+      "update-failed": "Failed to update partner",
+      "created": "Partner created",
+      "create-failed": "Partner creation failed"
+    },
+    "product": {
+      "deleted": "Product deleted",
+      "delete-failed": "Failed to delete product",
+      "created": "Product created",
+      "updated": "Product updated",
+      "update-failed": "Failed to update product"
+    },
+    "peppol-search": {
+      "failed": "Searching Peppol directory failed",
+      "no-results": "No results found"
+    },
+    "company": {
+      "info-failed": "Failed to get company info",
+      "save-failed": "Company save failed"
+    },
+    "invoice": {
+      "load-failed": "Failed to get invoice",
+      "sent": {
+        "INVOICE": "Invoice sent successfully",
+        "CREDIT_NOTE": "Credit note sent successfully"
+      },
+      "number-used": {
+        "INVOICE": "Invoice number already used",
+        "CREDIT_NOTE": "Credit note number already used"
+      },
+      "send-failed": {
+        "INVOICE": "Failed to send invoice",
+        "CREDIT_NOTE": "Failed to send credit note"
+      },
+      "draft-saved": {
+        "INVOICE": "Invoice draft saved",
+        "CREDIT_NOTE": "Credit note draft saved"
+      },
+      "draft-save-failed": {
+        "INVOICE": "Failed to save invoice as draft",
+        "CREDIT_NOTE": "Failed to save credit note as draft"
+      },
+      "draft-removed": {
+        "INVOICE": "Invoice draft removed",
+        "CREDIT_NOTE": "Credit note draft removed"
+      },
+      "draft-delete-failed": {
+        "INVOICE": "Failed to delete invoice draft",
+        "CREDIT_NOTE": "Failed to delete credit note draft"
+      },
+      "draft-created": {
+        "INVOICE": "Invoice draft created successfully",
+        "CREDIT_NOTE": "Credit note draft created successfully"
+      },
+      "draft-deleted": "Draft deleted",
+      "draft-delete-overview-failed": "Failed to delete draft",
+      "marked-paid": "Invoice marked as paid",
+      "marked-unpaid": "Invoice marked as unpaid",
+      "paid-status-failed": "Failed to change invoice paid status",
+      "no-ubl-data": "No UBL data available"
+    },
+    "iban": {
+      "saved": "IBAN saved"
+    },
+    "upload": {
+      "size-too-large": "Sum of all file sizes can not be more than 10MB",
+      "type-unsupported": "File type not supported",
+      "upload-error": "Error uploading file"
+    },
+    "attachment": {
+      "size-too-large-3mb": "File can not be more than 3MB",
+      "document-not-saved": "Document not saved. PDF render not available.",
+      "downloaded": "File '{{filename}}' downloaded"
+    }
   },
   "overlay": {
-    "saving-account": "Saving account, please wait"
+    "saving": "Saving...",
+    "saving-account": "Saving account, please wait",
+    "sending": {
+      "INVOICE": "Sending invoice",
+      "CREDIT_NOTE": "Sending credit note"
+    },
+    "validating": "Validating",
+    "creating-draft": "Creating draft",
+    "searching-company": "Searching company",
+    "confirming-registration": "Confirming registration request"
   },
   "product": {
     "categories": "Categories",
