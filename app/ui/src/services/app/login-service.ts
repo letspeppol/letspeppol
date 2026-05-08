@@ -3,6 +3,15 @@ import {singleton} from "aurelia";
 import {jwtDecode} from "jwt-decode";
 import {KYCApi} from "../kyc/kyc-api";
 import {AppApi} from "./app-api";
+import {generateCodeVerifier, generateCodeChallenge, generateState, storePkce, retrievePkce} from "./pkce";
+
+const KYC_BASE = '/kyc';
+const CLIENT_ID = 'letspeppol-ui';
+const CALLBACK_PATH = '/callback';
+const TOKEN_KEY = 'token';
+const REFRESH_TOKEN_KEY = 'refresh_token';
+const ID_TOKEN_KEY = 'id_token';
+const PEPPOL_ACTIVE_KEY = 'peppolActive';
 
 @singleton()
 export class LoginService {
@@ -14,9 +23,14 @@ export class LoginService {
         this.verifyAuthenticated();
     }
 
+    private get redirectUri(): string {
+        return `${window.location.origin}${CALLBACK_PATH}`;
+    }
+
     verifyAuthenticated() {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem(TOKEN_KEY);
         if (token && !this.isExpired(token)) {
+            this.setAuthHeader(token);
             this.authenticated = true;
         }
     }
@@ -37,25 +51,96 @@ export class LoginService {
         return Math.floor(Date.now() / 1000);
     }
 
-    async auth(username: string, password: string) : Promise<void> {
-        const token = await this.getJwtToken(username, password);
-        localStorage.setItem('token', token);
+    async initiateLogin(): Promise<void> {
+        const verifier = generateCodeVerifier();
+        const challenge = await generateCodeChallenge(verifier);
+        const state = generateState();
+        storePkce(verifier, state);
+
+        const params = new URLSearchParams({
+            response_type: 'code',
+            client_id: CLIENT_ID,
+            redirect_uri: this.redirectUri,
+            code_challenge: challenge,
+            code_challenge_method: 'S256',
+            state: state,
+            scope: 'openid',
+        });
+
+        window.location.href = `${KYC_BASE}/oauth2/authorize?${params.toString()}`;
+    }
+
+    async handleCallback(code: string, state: string): Promise<void> {
+        const pkce = retrievePkce();
+        if (!pkce || pkce.state !== state) {
+            throw new Error('Invalid state parameter');
+        }
+
+        const body = new URLSearchParams({
+            grant_type: 'authorization_code',
+            client_id: CLIENT_ID,
+            code: code,
+            redirect_uri: this.redirectUri,
+            code_verifier: pkce.verifier,
+        });
+
+        const response = await fetch(`${KYC_BASE}/oauth2/token`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: body.toString(),
+        });
+
+        if (!response.ok) {
+            throw new Error('Token exchange failed');
+        }
+
+        const data = await response.json();
+        this.storeTokenResponse(data);
+    }
+
+    async refreshToken(): Promise<boolean> {
+        const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
+        if (!refreshToken) return false;
+
+        const body = new URLSearchParams({
+            grant_type: 'refresh_token',
+            client_id: CLIENT_ID,
+            refresh_token: refreshToken,
+        });
+
+        try {
+            const response = await fetch(`${KYC_BASE}/oauth2/token`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: body.toString(),
+            });
+
+            if (!response.ok) return false;
+
+            const data = await response.json();
+            this.storeTokenResponse(data);
+            return true;
+        } catch {
+            return false;
+        }
+    }
+
+    updateToken(token: string) {
+        localStorage.setItem(TOKEN_KEY, token);
         this.setAuthHeader(token);
         this.authenticated = true;
     }
 
-    updateToken(token: string) {
-        localStorage.setItem('token', token);
-        this.setAuthHeader(token);
-        this.verifyAuthenticated();
-    }
-
-    async getJwtToken(username: string, password: string) {
-        const authHeaders: Headers = new Headers;
-        authHeaders.append('Authorization', `Basic ${btoa(`${username}:${password}`)}` );
-        const requestInit: RequestInit = { headers: authHeaders }
-        const response = await this.kycApi.httpClient.post(`/api/jwt/auth`, undefined, requestInit);
-        return await response.text();
+    private storeTokenResponse(data: any) {
+        localStorage.setItem(TOKEN_KEY, data.access_token);
+        if (data.refresh_token) {
+            localStorage.setItem(REFRESH_TOKEN_KEY, data.refresh_token);
+        }
+        if (data.id_token) {
+            localStorage.setItem(ID_TOKEN_KEY, data.id_token);
+        }
+        this.setAuthHeader(data.access_token);
+        this.authenticated = true;
     }
 
     setAuthHeader(token: string) {
@@ -63,11 +148,19 @@ export class LoginService {
         this.appApi.httpClient.configure(config => config.withDefaults({ headers: {'Authorization': `Bearer ${token}`} }));
     }
 
-    logout() {
+    logout(redirectToAuthServer = true) {
         this.kycApi.httpClient.configure(config => config.withDefaults({ headers: {'Authorization': ''} }));
         this.appApi.httpClient.configure(config => config.withDefaults({ headers: {'Authorization': ''} }));
-        localStorage.removeItem('token');
-        localStorage.removeItem('peppolActive');
+        const idToken = localStorage.getItem(ID_TOKEN_KEY);
+        localStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem(REFRESH_TOKEN_KEY);
+        localStorage.removeItem(ID_TOKEN_KEY);
+        localStorage.removeItem(PEPPOL_ACTIVE_KEY);
         this.authenticated = false;
+
+        if (redirectToAuthServer && idToken) {
+            const postLogoutRedirect = encodeURIComponent(window.location.origin + '/login');
+            window.location.href = `${KYC_BASE}/connect/logout?id_token_hint=${encodeURIComponent(idToken)}&post_logout_redirect_uri=${postLogoutRedirect}&client_id=${CLIENT_ID}`;
+        }
     }
 }

@@ -4,6 +4,8 @@ import {I18nConfiguration} from "@aurelia/i18n";
 import { LetsPeppol } from './app/lets-peppol';
 import {Alert} from "./components/alert/alert";
 import {AuthenticationHook} from "./app/authentication-hook";
+import {DateFormatConverter} from "./app/value-converters/date-format";
+import {DateTimeFormatConverter} from "./app/value-converters/date-time-format";
 import {
     FeatureAckRegistration,
     NewFeatureCustomAttribute,
@@ -39,6 +41,8 @@ Aurelia
         FeatureAckRegistration,
         NewFeatureCustomAttribute,
         NewFeatureSectionCustomAttribute,
+        DateFormatConverter,
+        DateTimeFormatConverter
     )
     .app(LetsPeppol)
     .start();

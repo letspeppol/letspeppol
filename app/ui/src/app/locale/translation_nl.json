@@ -61,7 +61,10 @@
     "register" : "Registreer uw bedrijf",
     "continue" : "Inloggen",
     "forgot" : "Wachtwoord vergeten",
-    "remember" : "Onthoud mij"
+    "remember" : "Onthoud mij",
+    "passkey": "Inloggen met een passkey",
+    "or": "of",
+    "redirecting": "Doorverwijzen naar inloggen..."
   },
   "onboarding": {
     "title": "Onboardingstappen",
@@ -451,5 +454,53 @@
   },
   "session" : {
     "continue-title" : "Sessies voortzetten"
+  },
+  "totp": {
+    "title": "Tweefactorauthenticatie",
+    "loading": "Laden...",
+    "disabled": "Tweefactorauthenticatie is niet ingeschakeld.",
+    "enable": "2FA inschakelen",
+    "scan-qr": "Scan deze QR-code met uw authenticatie-app:",
+    "manual-entry": "Kan niet scannen? Voer deze sleutel handmatig in",
+    "enter-code": "Voer de 6-cijferige code in van uw app",
+    "invalid-code": "Ongeldige code. Probeer het opnieuw.",
+    "verifying": "Verifiëren...",
+    "verify-enable": "Verifiëren en inschakelen",
+    "recovery-warning": "Bewaar deze herstelcodes. U zult ze niet meer zien.",
+    "copy": "Kopiëren",
+    "download": "Downloaden",
+    "done": "Klaar",
+    "enabled": "Tweefactorauthenticatie is ingeschakeld.",
+    "disable": "2FA uitschakelen",
+    "disable-confirm": "Voer uw huidige authenticatiecode in om 2FA uit te schakelen:",
+    "auth-code": "Authenticatiecode",
+    "invalid-code-short": "Ongeldige code.",
+    "disabling": "Uitschakelen...",
+    "enabled-alert": "Tweefactorauthenticatie ingeschakeld",
+    "disabled-alert": "Tweefactorauthenticatie uitgeschakeld",
+    "load-error": "Laden van 2FA-status mislukt",
+    "setup-error": "Starten van 2FA-configuratie mislukt",
+    "recovery-copied": "Herstelcodes gekopieerd",
+    "copy-error": "Kopiëren mislukt"
+  },
+  "passkey": {
+    "title": "Passkeys",
+    "not-supported": "Uw browser ondersteunt geen passkeys.",
+    "empty": "Nog geen passkeys geregistreerd.",
+    "name-placeholder": "Passkey-naam (bijv. MacBook Pro)",
+    "add": "Passkey toevoegen",
+    "registering": "Registreren...",
+    "last-used-never": "Nooit",
+    "added": "Toegevoegd op",
+    "last-used": "Laatst gebruikt",
+    "default-name": "Mijn passkey",
+    "registered": "Passkey geregistreerd",
+    "load-error": "Laden van passkeys mislukt",
+    "register-error": "Registratie van passkey mislukt",
+    "delete-title": "Passkey verwijderen",
+    "delete-confirm": "Weet u zeker dat u de passkey \"{{name}}\" wilt verwijderen?",
+    "deleted": "Passkey verwijderd",
+    "delete-error": "Verwijderen van passkey mislukt",
+    "rename-error": "Hernoemen van passkey mislukt"
   }
 }
