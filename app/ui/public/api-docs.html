@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Let's Peppol API Docs</title>
+    <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css">
+    <style>
+        html, body {
+            margin: 0;
+            height: 100%;
+            font-family: "Segoe UI", sans-serif;
+            background: #f4f6f8;
+        }
+
+        .topbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            padding: 12px 16px;
+            background: linear-gradient(90deg, #0d3b66, #2a6f97);
+            color: #fff;
+        }
+
+        .topbar h1 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .topbar a {
+            color: #d9f0ff;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .topbar .links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-left: auto;
+        }
+
+        #swagger-ui {
+            height: calc(100% - 56px);
+        }
+    </style>
+</head>
+<body>
+<div class="topbar">
+    <h1>Let's Peppol API Docs</h1>
+    <div class="links">
+        <a href="http://localhost:8084/swagger-ui.html">KYC UI</a>
+        <a href="http://localhost:8085/swagger-ui.html">App UI</a>
+        <a href="http://localhost:8086/swagger-ui.html">Proxy UI</a>
+    </div>
+</div>
+<div id="swagger-ui"></div>
+
+<script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+<script>
+    window.ui = SwaggerUIBundle({
+        dom_id: '#swagger-ui',
+        urls: [
+            { url: 'http://localhost:8084/v3/api-docs', name: 'KYC API' },
+            { url: 'http://localhost:8086/v3/api-docs', name: 'Proxy API' },
+            { url: 'http://localhost:8085/v3/api-docs', name: 'App API' }
+        ],
+        "urls.primaryName": 'App API',
+        deepLinking: true,
+        displayRequestDuration: true,
+        persistAuthorization: true,
+        tryItOutEnabled: true
+    });
+</script>
+</body>
+</html>
