@@ -1,5 +1,8 @@
 package org.letspeppol.kyc.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.letspeppol.kyc.dto.AccountInfo;
 import org.letspeppol.kyc.dto.CompanySearchResponse;
@@ -24,6 +27,8 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/sapi/company")
 @RequiredArgsConstructor
+@Tag(name = "KYC Company Management", description = "Authenticated company endpoints for loading account context, searching companies, and activating or deactivating Peppol registration.")
+@SecurityRequirement(name = "bearerAuth")
 public class CompanyController {
 
     private final AccountService accountService;
@@ -34,6 +39,7 @@ public class CompanyController {
 
     /// Retrieves account info based on valid JWT token, used by App when peppolId is unknown on getCompany (called by UI right after obtaining JWT token)
     @GetMapping
+    @Operation(summary = "Load admin company account", description = "Returns the primary admin account and company details for the authenticated Peppol identifier.")
     public ResponseEntity<?> getAdminAccountForToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
         Account account = ownershipService.getByPeppolIdAndType(jwtInfo.peppolId(), AccountType.ADMIN).getAccount();
@@ -43,6 +49,7 @@ public class CompanyController {
 
     /// Retrieves account info based on valid JWT token, used by App when peppolId is unknown on getCompany (called by UI right after obtaining JWT token)
     @GetMapping("/account")
+    @Operation(summary = "Load current account details", description = "Returns the currently authenticated user account together with the related company information.")
     public ResponseEntity<?> getAccountForToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
         Account account = accountService.getByExternalId(jwtInfo.uid());
@@ -51,6 +58,7 @@ public class CompanyController {
     }
 
     @GetMapping("/search")
+    @Operation(summary = "Search companies", description = "Searches company records by VAT number, Peppol identifier, or company name for onboarding and administrative workflows.")
     public ResponseEntity<List<CompanySearchResponse>> search(
             @RequestParam(value = "vatNumber", required = false) String vatNumber,
             @RequestParam(value = "peppolId", required = false) String peppolId,
@@ -60,6 +68,7 @@ public class CompanyController {
 
     /// Registers peppolId on the Peppol Directory, must call Proxy to register on AP
     @PostMapping("/peppol/register")
+    @Operation(summary = "Activate Peppol registration", description = "Registers the authenticated company on the access point and updates the Peppol activation state reflected in the JWT.")
     public ResponseEntity<?> register(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
         if (jwtInfo.accountType() != AccountType.ADMIN) {
@@ -96,6 +105,7 @@ public class CompanyController {
 
     /// Unregisters (not deleting) peppolId from the Peppol Directory, must call Proxy to unregister from AP
     @PostMapping("/peppol/unregister")
+    @Operation(summary = "Deactivate Peppol registration", description = "Unregisters the authenticated company from the access point while keeping the company account itself intact.")
     public ResponseEntity<?> unregister(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
         if (jwtInfo.accountType() != AccountType.ADMIN) {
@@ -119,6 +129,7 @@ public class CompanyController {
 
     /// Download signed contract saved for peppolId
     @GetMapping("signed-contract")
+    @Operation(summary = "Download signed contract", description = "Returns the signed onboarding contract PDF stored for the authenticated company.")
     public ResponseEntity<?> signedContract(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
         if (jwtInfo.accountType() != AccountType.ADMIN) {

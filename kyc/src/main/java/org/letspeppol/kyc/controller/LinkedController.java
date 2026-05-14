@@ -1,5 +1,8 @@
 package org.letspeppol.kyc.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +24,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/sapi/linked")
 @RequiredArgsConstructor
+@Tag(name = "KYC Linked Access", description = "Administrative endpoints for viewing and managing services or related identities linked to a company account.")
+@SecurityRequirement(name = "bearerAuth")
 public class LinkedController {
 
     private final AccountService accountService;
@@ -31,6 +36,7 @@ public class LinkedController {
 
     /// Retrieves linked info based on valid JWT token, used by App to show what users or services have access to this account
     @GetMapping
+    @Operation(summary = "List linked access", description = "Returns the services and related access records linked to the authenticated company account. Intended for admin users.")
     public ResponseEntity<?> getOwnershipsForToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
         if (jwtInfo.accountType() != AccountType.ADMIN) {
@@ -51,6 +57,7 @@ public class LinkedController {
 
     /// Registers a service for account
     @PostMapping("/register")
+    @Operation(summary = "Link a service to the company", description = "Registers a service integration or linked service account for the authenticated company. Intended for admin users.")
     public ResponseEntity<?> register(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader, @Valid @RequestBody ServiceRequest request) {
         JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
         if (jwtInfo.accountType() != AccountType.ADMIN) {
@@ -61,6 +68,7 @@ public class LinkedController {
 
     /// Unregisters a service for account
     @PostMapping("/unregister")
+    @Operation(summary = "Unlink a service from the company", description = "Removes a previously linked service integration from the authenticated company. Intended for admin users.")
     public ResponseEntity<?> unregister(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader, @Valid @RequestBody ServiceRequest request) {
         JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
         if (jwtInfo.accountType() != AccountType.ADMIN) {
@@ -71,6 +79,7 @@ public class LinkedController {
     }
 
     @PostMapping("/request-company")
+    @Operation(summary = "Request onboarding for another company", description = "Starts an additional company request flow based on the currently authenticated ownership context.")
     public SimpleMessage requestCompany(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader, @RequestBody ConfirmCompanyRequest request, @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, required = false) String acceptLanguage) {
         JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
         Ownership ownership = ownershipService.getByAccountExternalIdPeppolIdAndType(jwtInfo.uid(), jwtInfo.peppolId(), jwtInfo.accountType());

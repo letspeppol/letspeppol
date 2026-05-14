@@ -1,5 +1,7 @@
 package org.letspeppol.kyc.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.letspeppol.kyc.dto.*;
 import org.letspeppol.kyc.exception.KycErrorCodes;
@@ -15,18 +17,21 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/api/identity")
 @RequiredArgsConstructor
+@Tag(name = "KYC Identity Verification", description = "Endpoints used during the director signing flow, including contract generation and Web eID signature finalization.")
 public class IdentityVerificationController {
 
     private final SigningService signingService;
 
     /// *Registration step 4* Generates contract hashes as preparation used for signing with Web eID (pdf gets a temporary signature placeholder). This happens right after the "Select a certificate" and before the "Signing" steps of Web eID
     @PostMapping("/sign/prepare")
+    @Operation(summary = "Prepare contract signing", description = "Builds the pre-signature payload and digest information required before the Web eID signing step.")
     public PrepareSigningResponse prepare(@RequestBody PrepareSigningRequest request) {
         return signingService.prepareSigning(request);
     }
 
     /// *Registration step 5* Generates contract for selected (i.e. step 4) director to be signed
     @GetMapping("/contract/{peppolId}/{directorId}")
+    @Operation(summary = "Download unsigned contract", description = "Generates the contract PDF for the selected company director so it can be reviewed and signed.")
     public ResponseEntity<byte[]> getContract(@PathVariable String peppolId, @PathVariable Long directorId) {
         Director director = signingService.getDirector(directorId, peppolId);
         byte[] preparedPdf = signingService.generateFilledContract(director);
@@ -41,6 +46,7 @@ public class IdentityVerificationController {
 
     /// *Registration step 6* Signs contract by selected director and used Web eID during "Signing" step and sends certificate information to store and generate signed contract
     @PostMapping("/sign/finalize")
+    @Operation(summary = "Finalize contract signing", description = "Stores the signature result from Web eID, persists the signed contract, and returns registration status information in the response headers.")
     public ResponseEntity finalize(@RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authHeader, @RequestBody FinalizeSigningRequest request) {
         FinalizeSigningResponse finalizeSigningResponse = signingService.finalizeSign(request, authHeader);
         String status;
