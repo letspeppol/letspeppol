@@ -1,6 +1,10 @@
 package org.letspeppol.kyc.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.letspeppol.kyc.dto.*;
@@ -47,7 +51,10 @@ public class IdentityVerificationController {
     /// *Registration step 6* Signs contract by selected director and used Web eID during "Signing" step and sends certificate information to store and generate signed contract
     @PostMapping("/sign/finalize")
     @Operation(summary = "Finalize contract signing", description = "Stores the signature result from Web eID, persists the signed contract, and returns registration status information in the response headers.")
-    public ResponseEntity finalize(@RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authHeader, @RequestBody FinalizeSigningRequest request) {
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Signed contract PDF with registration status headers", content = @Content(mediaType = "application/pdf", schema = @Schema(type = "string", format = "binary")))
+    })
+    public ResponseEntity<byte[]> finalize(@RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authHeader, @RequestBody FinalizeSigningRequest request) {
         FinalizeSigningResponse finalizeSigningResponse = signingService.finalizeSign(request, authHeader);
         String status;
         RegistrationResponse registrationResponse = finalizeSigningResponse.registrationResponse();

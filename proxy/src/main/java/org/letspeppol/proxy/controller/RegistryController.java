@@ -54,7 +54,7 @@ public class RegistryController {
 
     @PutMapping("allow")
     @Operation(summary = "Allow app link", description = "Approves an app identity so it can act on behalf of the authenticated company through the proxy.")
-    public ResponseEntity<?> allow(@AuthenticationPrincipal Jwt jwt, @RequestBody AppLinkRequest data) {
+    public ResponseEntity<Void> allow(@AuthenticationPrincipal Jwt jwt, @RequestBody AppLinkRequest data) {
         String peppolId = JwtUtil.getUserPeppolId(jwt);
         appLinkService.add(peppolId, data.uid());
         return ResponseEntity.noContent().build();
@@ -62,7 +62,7 @@ public class RegistryController {
 
     @PutMapping("reject")
     @Operation(summary = "Reject app link", description = "Revokes or rejects an app identity that should no longer act on behalf of the authenticated company.")
-    public ResponseEntity<?> reject(@AuthenticationPrincipal Jwt jwt, @RequestBody AppLinkRequest data) {
+    public ResponseEntity<Void> reject(@AuthenticationPrincipal Jwt jwt, @RequestBody AppLinkRequest data) {
         String peppolId = JwtUtil.getUserPeppolId(jwt);
         appLinkService.remove(peppolId, data.uid());
         return ResponseEntity.noContent().build();
@@ -70,7 +70,7 @@ public class RegistryController {
 
     @DeleteMapping()
     @Operation(summary = "Delete registry record", description = "Removes the stored proxy registry entry for the authenticated company.")
-    public ResponseEntity<Object> delete(@AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<Void> delete(@AuthenticationPrincipal Jwt jwt) {
         String peppolId = JwtUtil.getUserPeppolId(jwt);
         registryService.remove(peppolId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

@@ -107,7 +107,7 @@ public class AppController {
 
     @PutMapping("{id}/downloaded")
     @Operation(summary = "Acknowledge one downloaded document", description = "Marks a single inbound document as downloaded by the authenticated user or linked app.")
-    public ResponseEntity<Object> downloaded(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestParam(defaultValue = "false") boolean noArchive) {
+    public ResponseEntity<Void> downloaded(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestParam(defaultValue = "false") boolean noArchive) {
         AccountType accountType = JwtUtil.getAccountType(jwt);
         if (accountType.isUser()) {
             ublDocumentReceiverService.downloaded(List.of(id), JwtUtil.getUserPeppolId(jwt), noArchive);
@@ -121,7 +121,7 @@ public class AppController {
 
     @PutMapping("downloaded")
     @Operation(summary = "Acknowledge multiple downloaded documents", description = "Marks a batch of inbound documents as downloaded by the authenticated user or linked app.")
-    public ResponseEntity<Object> downloadedBatch(@AuthenticationPrincipal Jwt jwt, @RequestBody List<UUID> ids, @RequestParam(defaultValue = "false") boolean noArchive) {
+    public ResponseEntity<Void> downloadedBatch(@AuthenticationPrincipal Jwt jwt, @RequestBody List<UUID> ids, @RequestParam(defaultValue = "false") boolean noArchive) {
         AccountType accountType = JwtUtil.getAccountType(jwt);
         if (accountType.isUser()) {
             ublDocumentReceiverService.downloaded(ids, JwtUtil.getUserPeppolId(jwt), noArchive);
@@ -135,7 +135,7 @@ public class AppController {
 
     @DeleteMapping("{id}")
     @Operation(summary = "Cancel outbound proxy document", description = "Cancels an outbound document that should no longer be sent through the proxy.")
-    public ResponseEntity<Object> delete(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestParam(defaultValue = "false") boolean noArchive) {
+    public ResponseEntity<Void> delete(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestParam(defaultValue = "false") boolean noArchive) {
         String peppolId = JwtUtil.getUserPeppolId(jwt);
         ublDocumentSenderService.cancel(id, peppolId, noArchive);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

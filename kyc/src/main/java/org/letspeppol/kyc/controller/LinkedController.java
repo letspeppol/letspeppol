@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.kyc.dto.ConfirmCompanyRequest;
+import org.letspeppol.kyc.dto.OwnershipInfo;
 import org.letspeppol.kyc.dto.ServiceRequest;
 import org.letspeppol.kyc.dto.SimpleMessage;
 import org.letspeppol.kyc.exception.ForbiddenException;
@@ -19,6 +20,8 @@ import org.letspeppol.kyc.service.jwt.JwtInfo;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -37,7 +40,7 @@ public class LinkedController {
     /// Retrieves linked info based on valid JWT token, used by App to show what users or services have access to this account
     @GetMapping
     @Operation(summary = "List linked access", description = "Returns the services and related access records linked to the authenticated company account. Intended for admin users.")
-    public ResponseEntity<?> getOwnershipsForToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+    public ResponseEntity<List<OwnershipInfo>> getOwnershipsForToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
         if (jwtInfo.accountType() != AccountType.ADMIN) {
             throw new ForbiddenException(KycErrorCodes.NOT_ADMIN);
@@ -58,7 +61,7 @@ public class LinkedController {
     /// Registers a service for account
     @PostMapping("/register")
     @Operation(summary = "Link a service to the company", description = "Registers a service integration or linked service account for the authenticated company. Intended for admin users.")
-    public ResponseEntity<?> register(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader, @Valid @RequestBody ServiceRequest request) {
+    public ResponseEntity<OwnershipInfo> register(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader, @Valid @RequestBody ServiceRequest request) {
         JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
         if (jwtInfo.accountType() != AccountType.ADMIN) {
             throw new ForbiddenException(KycErrorCodes.NOT_ADMIN);
@@ -69,7 +72,7 @@ public class LinkedController {
     /// Unregisters a service for account
     @PostMapping("/unregister")
     @Operation(summary = "Unlink a service from the company", description = "Removes a previously linked service integration from the authenticated company. Intended for admin users.")
-    public ResponseEntity<?> unregister(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader, @Valid @RequestBody ServiceRequest request) {
+    public ResponseEntity<Void> unregister(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader, @Valid @RequestBody ServiceRequest request) {
         JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
         if (jwtInfo.accountType() != AccountType.ADMIN) {
             throw new ForbiddenException(KycErrorCodes.NOT_ADMIN);

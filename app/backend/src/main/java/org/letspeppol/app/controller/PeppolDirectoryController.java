@@ -32,7 +32,7 @@ public class PeppolDirectoryController {
 
     @GetMapping
     @Operation(summary = "Search Peppol Directory", description = "Searches the external Peppol Directory either by participant identifier or by organization name.")
-    public ResponseEntity find(@RequestParam(name = "name", required = false) String name, @RequestParam(name = "participant", required = false) String participant) {
+    public ResponseEntity<String> find(@RequestParam(name = "name", required = false) String name, @RequestParam(name = "participant", required = false) String participant) {
 
         WebClient.RequestHeadersSpec<?> requestSpec;
         if (name != null) {

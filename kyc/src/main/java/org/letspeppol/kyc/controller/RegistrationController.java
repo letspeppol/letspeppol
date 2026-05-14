@@ -1,6 +1,7 @@
 package org.letspeppol.kyc.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.letspeppol.kyc.dto.CompanyResponse;
@@ -15,6 +16,7 @@ import org.letspeppol.kyc.model.EmailVerification;
 import org.letspeppol.kyc.service.ActivationService;
 import org.letspeppol.kyc.service.CompanyService;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -51,11 +53,13 @@ public class RegistrationController {
     /// *Registration step 7* Verifies the email token and sets the first password for an already signed account
     @PostMapping("/verify-account")
     @Operation(summary = "Activate account after signing", description = "Finalizes account creation by validating the token received after signing and storing the first password.")
-    public void verifyAccount(@RequestBody SetPasswordRequest request) {
+    @ApiResponse(responseCode = "200", description = "Account activated")
+    public ResponseEntity<Void> verifyAccount(@RequestBody SetPasswordRequest request) {
         EmailVerification verification = activationService.verifyAccount(request.token(), request.newPassword());
         if (verification.getType() == AccountType.AFFILIATE) {
             activationService.linkAffiliateOwnership(verification);
         }
+        return ResponseEntity.ok().build();
     }
 
 }

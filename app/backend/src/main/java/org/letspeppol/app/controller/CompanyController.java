@@ -38,7 +38,7 @@ public class CompanyController {
     /// Updates Company info by UI (only stored in App)
     @PutMapping
     @Operation(summary = "Update company profile", description = "Updates application-managed company fields while enforcing that the authenticated company can only modify its own profile.")
-    public ResponseEntity updateCompany(@AuthenticationPrincipal Jwt jwt, @RequestBody CompanyDto companyDto) {
+    public ResponseEntity<CompanyDto> updateCompany(@AuthenticationPrincipal Jwt jwt, @RequestBody CompanyDto companyDto) {
         String peppolId = JwtUtil.getPeppolId(jwt);
         if (!Objects.equals(companyDto.peppolId(), peppolId)) {
             log.warn("Malicious update attempt for peppolId {} company {} {}", peppolId, companyDto.peppolId(), companyDto.name());

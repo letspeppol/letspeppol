@@ -1,6 +1,10 @@
 package org.letspeppol.kyc.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +44,7 @@ public class CompanyController {
     /// Retrieves account info based on valid JWT token, used by App when peppolId is unknown on getCompany (called by UI right after obtaining JWT token)
     @GetMapping
     @Operation(summary = "Load admin company account", description = "Returns the primary admin account and company details for the authenticated Peppol identifier.")
-    public ResponseEntity<?> getAdminAccountForToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+    public ResponseEntity<AccountInfo> getAdminAccountForToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
         Account account = ownershipService.getByPeppolIdAndType(jwtInfo.peppolId(), AccountType.ADMIN).getAccount();
         Company company = companyService.getByPeppolId(jwtInfo.peppolId());
@@ -50,7 +54,7 @@ public class CompanyController {
     /// Retrieves account info based on valid JWT token, used by App when peppolId is unknown on getCompany (called by UI right after obtaining JWT token)
     @GetMapping("/account")
     @Operation(summary = "Load current account details", description = "Returns the currently authenticated user account together with the related company information.")
-    public ResponseEntity<?> getAccountForToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+    public ResponseEntity<AccountInfo> getAccountForToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
         Account account = accountService.getByExternalId(jwtInfo.uid());
         Company company = companyService.getByPeppolId(jwtInfo.peppolId());
@@ -69,6 +73,14 @@ public class CompanyController {
     /// Registers peppolId on the Peppol Directory, must call Proxy to register on AP
     @PostMapping("/peppol/register")
     @Operation(summary = "Activate Peppol registration", description = "Registers the authenticated company on the access point and updates the Peppol activation state reflected in the JWT.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Updated JWT token with refreshed activation state", content = @Content(schema = @Schema(implementation = String.class))),
+            @ApiResponse(responseCode = "204", description = "Company already active; no response body"),
+            @ApiResponse(responseCode = "403", description = "Registration suspended", content = @Content(schema = @Schema(implementation = String.class))),
+            @ApiResponse(responseCode = "409", description = "Registration conflict with existing provider", content = @Content(schema = @Schema(implementation = String.class))),
+            @ApiResponse(responseCode = "424", description = "Access point registration failed", content = @Content(schema = @Schema(implementation = String.class))),
+            @ApiResponse(responseCode = "503", description = "Registration temporarily unavailable")
+    })
     public ResponseEntity<?> register(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
         if (jwtInfo.accountType() != AccountType.ADMIN) {
@@ -106,6 +118,11 @@ public class CompanyController {
     /// Unregisters (not deleting) peppolId from the Peppol Directory, must call Proxy to unregister from AP
     @PostMapping("/peppol/unregister")
     @Operation(summary = "Deactivate Peppol registration", description = "Unregisters the authenticated company from the access point while keeping the company account itself intact.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Updated JWT token with refreshed activation state", content = @Content(schema = @Schema(implementation = String.class))),
+            @ApiResponse(responseCode = "204", description = "Company already inactive; no response body"),
+            @ApiResponse(responseCode = "424", description = "Access point unregistration failed", content = @Content(schema = @Schema(implementation = String.class)))
+    })
     public ResponseEntity<?> unregister(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
         if (jwtInfo.accountType() != AccountType.ADMIN) {
