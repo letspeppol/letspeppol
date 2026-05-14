@@ -183,6 +183,7 @@
     "yes" : "Oui",
     "no" : "Non",
     "remove" : "Retirer",
+    "switch-account" : "Changer de compte",
     "logout" : "Se déconnecter",
     "edit" : "Éditer",
     "close" : "Fermer"

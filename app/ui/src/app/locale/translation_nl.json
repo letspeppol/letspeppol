@@ -183,6 +183,7 @@
     "yes" : "Ja",
     "no" : "Nee",
     "remove" : "Verwijderen",
+    "switch-account" : "Account wisselen",
     "logout" : "Uitloggen",
     "edit" : "Bewerken",
     "close" : "Sluiten"

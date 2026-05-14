@@ -33,7 +33,24 @@
             </nav>
         </div>
 
-        <div style="display: flex; align-items: center; padding: var(--space-09) var(--space-12)">
+        <div style="display: flex; align-items: center; gap: var(--space-06); padding: var(--space-09) var(--space-12)">
+            <label if.bind="showOwnershipSwitcher" class="heading-switcher" title.bind="'Switch account' & t">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users-icon lucide-users" aria-hidden="true">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                    <path d="M16 3.128a4 4 0 0 1 0 7.744"></path>
+                    <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                </svg>
+                <select value.bind="selectedOwnershipKey"
+                        change.trigger="changeOwnership()"
+                        disabled.bind="swapping"
+                        title.bind="'Switch account' & t"
+                        aria-label.bind="'Switch account' & t">
+                    <option repeat.for="ownership of ownerships" model.bind="getOwnershipKey(ownership)">
+                        ${getOwnershipLabel(ownership)}
+                    </option>
+                </select>
+            </label>
             <button class="btn ghost" title="Log out" t="[title]common.logout" click.trigger="logout()" t="common.logout">Log out</button>
             <theme-selector></theme-selector>
             <language-selector></language-selector>

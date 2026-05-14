@@ -30,5 +30,8 @@ public interface OwnershipRepository extends JpaRepository<Ownership, Long> {
     @EntityGraph(attributePaths = {"account", "company"})
     List<Ownership> findByCompanyPeppolIdOrderByCreatedOnAsc(String peppolId);
 
+    @EntityGraph(attributePaths = {"account", "company"})
+    List<Ownership> findByAccountExternalIdOrderByCreatedOnAsc(UUID externalId);
+
     boolean existsByTypeAndCompanyPeppolId(AccountType type, String peppolId);
 }

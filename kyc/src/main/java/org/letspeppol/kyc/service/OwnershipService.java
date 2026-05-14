@@ -4,9 +4,11 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.kyc.dto.AuthRequest;
+import org.letspeppol.kyc.dto.OwnershipSummary;
 import org.letspeppol.kyc.dto.ServiceRequest;
 import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.KycException;
+import org.letspeppol.kyc.mapper.OwnershipMapper;
 import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.model.AccountType;
 import org.letspeppol.kyc.model.Ownership;
@@ -73,6 +75,12 @@ public class OwnershipService {
 
     public List<Ownership> getByPeppolId(String peppolId) {
         return ownershipRepository.findByCompanyPeppolIdOrderByCreatedOnAsc(peppolId);
+    }
+
+    public List<OwnershipSummary> getOwnershipSummaries(UUID uid) {
+        return ownershipRepository.findByAccountExternalIdOrderByCreatedOnAsc(uid).stream()
+                .map(OwnershipMapper::toOwnershipSummary)
+                .toList();
     }
 
     public void updateLastUsed(Ownership ownership) {
