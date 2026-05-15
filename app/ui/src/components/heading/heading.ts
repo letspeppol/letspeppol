@@ -36,8 +36,17 @@ export class Heading {
 
     async refreshOwnerships() {
         this.ownerships = this.ownershipService.getCachedOwnerships();
-        this.selectedOwnershipKey = this.ownershipService.getCurrentOwnershipKey() ?? '';
+        const currentOwnershipKey = this.ownershipService.getCurrentOwnershipKey() ?? '';
+        this.selectedOwnershipKey = currentOwnershipKey;
         this.canAddOwnership = this.ownershipService.getCurrentOwnershipType() === 'ADMIN';
+        if (currentOwnershipKey && this.ownerships.some(ownership => this.getOwnershipKey(ownership) === currentOwnershipKey)) {
+            queueMicrotask(() => {
+                this.selectedOwnershipKey = currentOwnershipKey;
+            });
+            setTimeout(() => {
+                this.selectedOwnershipKey = currentOwnershipKey;
+            }, 0);
+        }
     }
 
     getOwnershipLabel(ownership: OwnershipSummary) {
@@ -64,7 +73,8 @@ export class Heading {
         try {
             await this.ownershipService.swapOwnership(nextOwnership);
             this.selectedOwnershipKey = this.ownershipService.getCurrentOwnershipKey() ?? '';
-            this.clearInvoice();
+            this.invoiceContext.clearAccountCache();
+            this.ea.publish('account:switched');
             await this.router.load('dashboard');
         } catch (error) {
             console.error(error);

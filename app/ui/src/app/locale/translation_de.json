@@ -339,6 +339,7 @@
       "clear": "Leeren",
       "apply": "Anwenden"
     },
+    "loading": "Rechnungen werden geladen...",
     "empty": "Keine Rechnungen entsprechen Ihren Filtern.",
     "pager": {
       "previous": "Zurück",

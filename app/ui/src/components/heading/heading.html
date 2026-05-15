@@ -57,7 +57,8 @@
                             disabled.bind="swapping"
                             title.bind="'Switch account' & t"
                             aria-label.bind="'Switch account' & t">
-                        <option repeat.for="ownership of ownerships" model.bind="getOwnershipKey(ownership)">
+                        <option repeat.for="ownership of ownerships"
+                                value.bind="getOwnershipKey(ownership)">
                             ${getOwnershipLabel(ownership)}
                         </option>
                     </select>

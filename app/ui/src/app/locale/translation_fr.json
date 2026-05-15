@@ -338,6 +338,7 @@
       "clear" : "Effacer",
       "apply" : "Appliquer"
     },
+    "loading" : "Chargement des factures...",
     "empty" : "Aucune facture ne correspond à vos filtres.",
     "pager" : {
       "previous" : "Précédent",

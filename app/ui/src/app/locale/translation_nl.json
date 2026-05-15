@@ -338,6 +338,7 @@
       "clear" : "Wissen",
       "apply" : "Toepassen"
     },
+    "loading" : "Facturen laden...",
     "empty" : "Geen facturen voldoen aan uw filters.",
     "pager" : {
       "previous" : "Vorige",

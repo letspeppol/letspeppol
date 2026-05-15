@@ -339,6 +339,7 @@
       "clear": "Clear",
       "apply": "Apply"
     },
+    "loading": "Loading invoices...",
     "empty": "No invoices match your filters.",
     "pager": {
       "previous": "Previous",
