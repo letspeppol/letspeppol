@@ -70,6 +70,7 @@
     "browser": { "chrome": "Chrome", "firefox": "Firefox", "safari": "Safari", "edge": "Microsoft Edge" },
     "step": {
       "register-company": "Enregistrez votre entreprise",
+      "register-affiliate": "S’inscrire comme affilié",
       "prepare-eid": {
         "title": "Préparez votre logiciel eID, votre lecteur et votre carte",
         "install-web-eid": "Installez l’application Web eID",
@@ -105,9 +106,14 @@
   },
   "registration" : {
     "title-step0" : "Enregistrez votre entreprise",
+    "affiliate-title-step0" : "S’inscrire comme affilié",
     "create-account" : "Créer un compte",
+    "affiliate-create-account" : "Créer un compte affilié",
     "already-registered" : "Déjà enregistré ?",
+    "affiliate-already-registered" : "Déjà affilié ?",
     "title-step1" : "Confirmez votre entreprise",
+    "affiliate-title-step1" : "Confirmez votre entreprise affiliée",
+    "affiliate-intro" : "Inscrivez-vous comme affilié pour votre propre entreprise belge.<br />Si votre entreprise est déjà gérée par un administrateur,<br />demandez-lui d’ajouter ou d’approuver votre accès.",
     "confirm-company" : "Confirmer",
     "wrong-company" : "Mauvaise entreprise ?",
     "back" : "Retour",
@@ -121,6 +127,7 @@
     "login-failed" : "Échec de la connexion",
     "registration-company-not-found" : "Entreprise introuvable",
     "registration-company-already-registered" : "Entreprise déjà enregistrée",
+    "registration-company-affiliate-contact-admin" : "Cette entreprise a déjà un administrateur. Veuillez contacter votre administrateur pour poursuivre l’onboarding affilié.",
     "registration-company-already-registered-on-peppol" : "Il semble que cet identifiant Peppol soit déjà enregistré auprès d’un autre fournisseur. L’activation ici nécessite que vous vous désinscriviez d’abord là-bas. Vous pouvez tout de même finaliser le processus de signature et vous en occuper ensuite.",
     "not-peppol-active" : "Vous n'êtes actuellement pas enregistré sur Peppol",
     "not-peppol-active-action" : "Résoudre cela maintenant"

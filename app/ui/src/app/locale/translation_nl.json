@@ -70,6 +70,7 @@
     "browser": { "chrome": "Chrome", "firefox": "Firefox", "safari": "Safari", "edge": "Microsoft Edge" },
     "step": {
       "register-company": "Registreer uw bedrijf",
+      "register-affiliate": "Registreer als affiliate",
       "prepare-eid": {
         "title": "Bereid uw eID-software, kaartlezer en kaart voor",
         "install-web-eid": "Installeer de Web eID-applicatie",
@@ -105,9 +106,14 @@
   },
   "registration" : {
     "title-step0" : "Registreer uw bedrijf",
+    "affiliate-title-step0" : "Registreer als affiliate",
     "create-account" : "Account aanmaken",
+    "affiliate-create-account" : "Affiliate-account aanmaken",
     "already-registered" : "Al geregistreerd?",
+    "affiliate-already-registered" : "Al affiliate?",
     "title-step1" : "Bevestig uw bedrijf",
+    "affiliate-title-step1" : "Bevestig uw affiliatebedrijf",
+    "affiliate-intro" : "Registreer als affiliate voor uw eigen Belgische onderneming.<br />Als uw bedrijf al door een administrator wordt beheerd,<br />vraag die administrator om uw toegang toe te voegen of goed te keuren.",
     "confirm-company" : "Bevestigen",
     "wrong-company" : "Verkeerd bedrijf?",
     "back" : "Terug",
@@ -121,6 +127,7 @@
     "login-failed" : "Inloggen mislukt",
     "registration-company-not-found" : "Bedrijf niet gevonden",
     "registration-company-already-registered" : "Bedrijf al geregistreerd",
+    "registration-company-affiliate-contact-admin" : "Dit bedrijf heeft al een administrator. Neem contact op met uw administrator om de affiliate-onboarding voort te zetten.",
     "registration-company-already-registered-on-peppol" : "Het lijkt erop dat deze Peppol-ID al bij een andere provider is geregistreerd. Activering hier vereist dat u zich daar eerst uitschrijft. U kunt het ondertekenproces wel afronden en dit daarna regelen.",
     "not-peppol-active" : "U bent momenteel niet geregistreerd op Peppol",
     "not-peppol-active-action" : "Los dit nu op"

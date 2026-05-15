@@ -3,6 +3,8 @@ import {SignatureAlgorithm} from "@web-eid/web-eid-library/models/SignatureAlgor
 import {KYCApi} from "./kyc-api";
 import {LoginService} from "../app/login-service";
 
+export type RegistrationAccountType = 'ADMIN' | 'AFFILIATE';
+
 export interface TokenVerificationResponse {
     email: string;
     accountExists: boolean;
@@ -61,6 +63,15 @@ export interface VerifyAccountRequest {
     newPassword: string
 }
 
+export interface ConfirmCompanyRequest {
+    type: RegistrationAccountType,
+    peppolId: string,
+    email: string,
+    city?: string,
+    postalCode?: string,
+    street?: string
+}
+
 export class RegistrationService {
     public kycApi = resolve(KYCApi);
     private loginService = resolve(LoginService);
@@ -70,12 +81,8 @@ export class RegistrationService {
         return response.json();
     }
 
-    async confirmCompany(peppolId: string, email: string) {
-        const body = {
-            peppolId: peppolId,
-            email: email
-        };
-        const response = await this.kycApi.httpClient.post(`/api/register/confirm-company`, JSON.stringify(body) );
+    async confirmCompany(request: ConfirmCompanyRequest) {
+        const response = await this.kycApi.httpClient.post(`/api/register/confirm-company`, JSON.stringify(request) );
         return response.json();
     }
 
@@ -129,7 +136,7 @@ export class RegistrationService {
             }
             return false;
         }
-        throw Error(response);
+        throw response;
     }
 
     async downloadSignedContract(): Promise<Response> {

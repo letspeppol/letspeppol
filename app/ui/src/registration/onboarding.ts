@@ -1,11 +1,25 @@
+import {Params, RouteNode} from "@aurelia/router";
 import {resolve} from "@aurelia/kernel";
 import * as webeid from '@web-eid/web-eid-library/web-eid';
 import {IEventAggregator} from "aurelia";
+import {AlertType} from "../components/alert/alert";
+import {RegistrationAccountType} from "../services/kyc/registration-service";
 
 export class Onboarding {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
     private certificate = null;
     private signatureAlgorithm = null;
+    registrationType: RegistrationAccountType = 'ADMIN';
+    registrationUrl = '/registration';
+    registrationLinkTextKey = 'onboarding.step.register-company';
+
+    loading(params: Params, next: RouteNode) {
+        this.registrationType = next.queryParams.get('flow') === 'affiliate' ? 'AFFILIATE' : 'ADMIN';
+        this.registrationUrl = this.registrationType === 'AFFILIATE' ? '/affiliate/registration' : '/registration';
+        this.registrationLinkTextKey = this.registrationType === 'AFFILIATE'
+            ? 'onboarding.step.register-affiliate'
+            : 'onboarding.step.register-company';
+    }
 
     public async checkWebEID() {
             try {

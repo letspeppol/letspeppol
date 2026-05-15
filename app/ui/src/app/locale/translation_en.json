@@ -71,6 +71,7 @@
     "browser": { "chrome": "Chrome", "firefox": "Firefox", "safari": "Safari", "edge": "Microsoft Edge" },
     "step": {
       "register-company": "Register your company",
+      "register-affiliate": "Register as affiliate",
       "prepare-eid": {
         "title": "Prepare your eID software, reader and card",
         "install-web-eid": "Install the Web eID application",
@@ -106,9 +107,14 @@
   },
   "registration" : {
     "title-step0" : "Register your company",
+    "affiliate-title-step0" : "Register as affiliate",
     "create-account" : "Create account",
+    "affiliate-create-account" : "Create affiliate account",
     "already-registered" : "Already registered?",
+    "affiliate-already-registered" : "Already an affiliate?",
     "title-step1" : "Confirm your company",
+    "affiliate-title-step1" : "Confirm your affiliate company",
+    "affiliate-intro" : "Register as an affiliate for your own Belgian company.<br />If your company is already managed by an administrator,<br />ask that administrator to add or approve your access.",
     "confirm-company": "Confirm",
     "wrong-company": "Wrong company?",
     "back": "Back",
@@ -122,6 +128,7 @@
     "login-failed" : "Login failed",
     "registration-company-not-found" : "Company not found",
     "registration-company-already-registered" : "Company already registered",
+    "registration-company-affiliate-contact-admin" : "This company already has an administrator. Please contact your administrator to continue affiliate onboarding.",
     "registration-company-already-registered-on-peppol" : "It looks like this Peppol ID is already registered with another provider. Activation here requires unregistering there first. You can still complete the signing process and handle this afterward.",
     "not-peppol-active" : "You are currently not registered on Peppol",
     "not-peppol-active-action" : "Solve this now"

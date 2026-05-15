@@ -98,16 +98,16 @@ export class Account {
     async registerOnPeppol() {
         try {
             this.company.peppolActive = await this.registrationService.registerCompany();
-            localStorage.setItem('peppolActive', this.company.peppolActive);
+            localStorage.setItem('peppolActive', String(this.company.peppolActive));
             this.ea.publish('alert', {alertType: AlertType.Success, text: "Activated company on Peppol"});
             window.location.reload();
-        } catch (response: Response) {
-            if (!response) {
+        } catch (error: unknown) {
+            if (!(error instanceof Response)) {
                 this.ea.publish('alert', { alertType: AlertType.Danger, text: "Failed to send activation request" });
                 return;
             }
-            const status = response.status;
-            const body = await response.text().catch(() => "");
+            const status = error.status;
+            const body = await error.text().catch(() => "");
             switch (status) {
                 case 403:
                     console.log("Forbidden: " + body);
@@ -146,7 +146,7 @@ export class Account {
     async unregisterFromPeppol() {
         try {
             this.company.peppolActive = await this.registrationService.unregisterCompany()
-            localStorage.setItem('peppolActive', this.company.peppolActive);
+            localStorage.setItem('peppolActive', String(this.company.peppolActive));
             this.ea.publish('alert', {alertType: AlertType.Success, text: "Removed company from Peppol"});
             window.location.reload();
         } catch {

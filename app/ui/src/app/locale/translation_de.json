@@ -71,6 +71,7 @@
     "browser": { "chrome": "Chrome", "firefox": "Firefox", "safari": "Safari", "edge": "Microsoft Edge" },
     "step": {
       "register-company": "Unternehmen registrieren",
+      "register-affiliate": "Als Affiliate registrieren",
       "prepare-eid": {
         "title": "eID-Software, Kartenleser und Karte vorbereiten",
         "install-web-eid": "Web-eID-Anwendung installieren",
@@ -106,9 +107,14 @@
   },
   "registration" : {
     "title-step0" : "Unternehmen registrieren",
+    "affiliate-title-step0" : "Als Affiliate registrieren",
     "create-account" : "Konto erstellen",
+    "affiliate-create-account" : "Affiliate-Konto erstellen",
     "already-registered" : "Bereits registriert?",
+    "affiliate-already-registered" : "Bereits Affiliate?",
     "title-step1" : "Unternehmen bestätigen",
+    "affiliate-title-step1" : "Bestätigen Sie Ihr Affiliate-Unternehmen",
+    "affiliate-intro" : "Registrieren Sie sich als Affiliate für Ihr eigenes belgisches Unternehmen.<br />Wenn Ihr Unternehmen bereits von einem Administrator verwaltet wird,<br />bitten Sie diesen, Ihren Zugang hinzuzufügen oder freizugeben.",
     "confirm-company": "Bestätigen",
     "wrong-company": "Falsches Unternehmen?",
     "back": "Zurück",
@@ -122,6 +128,7 @@
     "login-failed" : "Anmeldung fehlgeschlagen",
     "registration-company-not-found" : "Unternehmen nicht gefunden",
     "registration-company-already-registered" : "Unternehmen bereits registriert",
+    "registration-company-affiliate-contact-admin" : "Dieses Unternehmen hat bereits einen Administrator. Bitte wenden Sie sich an Ihren Administrator, um das Affiliate-Onboarding fortzusetzen.",
     "registration-company-already-registered-on-peppol" : "Diese Peppol-ID ist offenbar bereits bei einem anderen Anbieter registriert. Um sie hier zu aktivieren, muss sie dort zuerst abgemeldet werden. Sie können den Signaturprozess trotzdem abschließen und das anschließend erledigen.",
     "not-peppol-active" : "Sie sind derzeit nicht bei Peppol registriert",
     "not-peppol-active-action" : "Jetzt lösen"
