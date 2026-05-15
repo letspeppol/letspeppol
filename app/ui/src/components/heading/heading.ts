@@ -17,7 +17,7 @@ export class Heading {
     ownerships: OwnershipSummary[] = [];
     selectedOwnershipKey = '';
     swapping = false;
-    showOwnershipSwitcher = false;
+    canAddOwnership = false;
 
     async attached() {
         await this.refreshOwnerships();
@@ -26,7 +26,6 @@ export class Heading {
     logout() {
         this.ownerships = [];
         this.selectedOwnershipKey = '';
-        this.showOwnershipSwitcher = false;
         this.loginService.logout();
         this.router.load('login');
     }
@@ -36,9 +35,9 @@ export class Heading {
     }
 
     async refreshOwnerships() {
-        this.ownerships = await this.ownershipService.loadOwnerships();
+        this.ownerships = this.ownershipService.getCachedOwnerships();
         this.selectedOwnershipKey = this.ownershipService.getCurrentOwnershipKey() ?? '';
-        this.showOwnershipSwitcher = this.ownerships.length > 1;
+        this.canAddOwnership = this.ownershipService.getCurrentOwnershipType() === 'ADMIN';
     }
 
     getOwnershipLabel(ownership: OwnershipSummary) {
@@ -74,5 +73,10 @@ export class Heading {
         } finally {
             this.swapping = false;
         }
+    }
+
+    async goToAddOwnership() {
+        this.clearInvoice();
+        await this.router.load('/add-ownership');
     }
 }

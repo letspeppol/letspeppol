@@ -202,6 +202,21 @@
     "brand-alt": "Let's Peppol",
     "toggle-theme": "Toggle theme"
   },
+  "ownershipAdd": {
+    "action": "Add account",
+    "title": "Add account",
+    "intro": "Add another account for a company by signing as one of its directors.",
+    "cancel": "Back to dashboard",
+    "lookup": "Find company",
+    "account-info-title": "2. Confirm the account",
+    "account-info-body": "This company will be added to the existing account shown above. The password for that account will stay the same.",
+    "read-contract-info": "You will receive a signed copy when this account is added.",
+    "sign-button": "Add account",
+    "success-title": "Account added",
+    "success-body": "The signed contract has been downloaded and the new company is now available in your account switcher.",
+    "back-dashboard": "Back to dashboard",
+    "company-has-admin": "This company already has an admin account. The current flow only supports claiming companies that do not already have an admin."
+  },
   "alert": {
     "success": "Success",
     "info": "Info",

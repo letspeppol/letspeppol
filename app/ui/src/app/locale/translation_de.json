@@ -202,6 +202,21 @@
     "brand-alt": "Let's Peppol",
     "toggle-theme": "Theme umschalten"
   },
+  "ownershipAdd": {
+    "action": "Konto hinzufügen",
+    "title": "Konto hinzufügen",
+    "intro": "Fügen Sie ein weiteres Konto für ein Unternehmen hinzu, indem Sie als einer seiner Direktoren unterschreiben.",
+    "cancel": "Zurück zum Dashboard",
+    "lookup": "Unternehmen suchen",
+    "account-info-title": "2. Konto bestätigen",
+    "account-info-body": "Dieses Unternehmen wird dem oben angezeigten bestehenden Konto hinzugefügt. Das Passwort für dieses Konto bleibt unverändert.",
+    "read-contract-info": "Sie erhalten eine unterschriebene Kopie, sobald dieses Konto hinzugefügt wurde.",
+    "sign-button": "Konto hinzufügen",
+    "success-title": "Konto hinzugefügt",
+    "success-body": "Der unterschriebene Vertrag wurde heruntergeladen und das neue Unternehmen ist jetzt in Ihrer Konto-Auswahl verfügbar.",
+    "back-dashboard": "Zurück zum Dashboard",
+    "company-has-admin": "Dieses Unternehmen hat bereits ein Admin-Konto. Der aktuelle Ablauf unterstützt nur Unternehmen ohne bestehenden Admin."
+  },
   "alert": {
     "success": "Erfolg",
     "info": "Info",

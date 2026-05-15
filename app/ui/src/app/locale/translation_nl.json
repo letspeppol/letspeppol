@@ -201,6 +201,21 @@
     "brand-alt" : "Let's Peppol",
     "toggle-theme" : "Thema wisselen"
   },
+  "ownershipAdd" : {
+    "action" : "Account toevoegen",
+    "title" : "Account toevoegen",
+    "intro" : "Voeg een extra account toe voor een bedrijf door te tekenen als een van de bestuurders.",
+    "cancel" : "Terug naar dashboard",
+    "lookup" : "Bedrijf zoeken",
+    "account-info-title" : "2. Bevestig het account",
+    "account-info-body" : "Dit bedrijf wordt toegevoegd aan het bestaande account hierboven. Het wachtwoord van dat account blijft hetzelfde.",
+    "read-contract-info" : "U ontvangt een ondertekend exemplaar zodra dit account is toegevoegd.",
+    "sign-button" : "Account toevoegen",
+    "success-title" : "Account toegevoegd",
+    "success-body" : "Het ondertekende contract werd gedownload en het nieuwe bedrijf is nu beschikbaar in uw accountkeuzelijst.",
+    "back-dashboard" : "Terug naar dashboard",
+    "company-has-admin" : "Dit bedrijf heeft al een admin-account. De huidige flow ondersteunt alleen bedrijven zonder bestaande admin."
+  },
   "alert" : {
     "success" : "Succes",
     "info" : "Info",

@@ -22,6 +22,7 @@ export interface KycCompanyResponse {
     city: string;
     postalCode: string;
     directors?: Director[];
+    hasAdmin?: boolean;
 }
 
 export interface Director {
@@ -47,7 +48,7 @@ export interface PrepareSigningResponse {
 export interface FinalizeSigningRequest {
     peppolId: string,
     directorId: number,
-    email: string,
+    email: string | null,
     certificate: string,
     signature: string,
     signatureAlgorithm: SignatureAlgorithm,

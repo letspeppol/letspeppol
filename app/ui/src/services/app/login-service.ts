@@ -3,11 +3,13 @@ import {singleton} from "aurelia";
 import {jwtDecode} from "jwt-decode";
 import {KYCApi} from "../kyc/kyc-api";
 import {AppApi} from "./app-api";
+import {OwnershipService} from "./ownership-service";
 
 @singleton()
 export class LoginService {
     public kycApi = resolve(KYCApi);
     public appApi = resolve(AppApi);
+    private ownershipService = resolve(OwnershipService);
     public authenticated = false;
 
     constructor() {
@@ -42,12 +44,14 @@ export class LoginService {
         localStorage.setItem('token', token);
         this.setAuthHeader(token);
         this.authenticated = true;
+        await this.ownershipService.loadOwnerships(true);
     }
 
     updateToken(token: string) {
         localStorage.setItem('token', token);
         this.setAuthHeader(token);
         this.verifyAuthenticated();
+        void this.ownershipService.loadOwnerships(true);
     }
 
     async getJwtToken(username: string, password: string) {
@@ -69,5 +73,6 @@ export class LoginService {
         localStorage.removeItem('token');
         localStorage.removeItem('peppolActive');
         this.authenticated = false;
+        this.ownershipService.clearOwnerships();
     }
 }

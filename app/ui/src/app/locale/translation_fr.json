@@ -201,6 +201,21 @@
     "brand-alt" : "Let's Peppol",
     "toggle-theme" : "Changer de thème"
   },
+  "ownershipAdd" : {
+    "action" : "Ajouter un compte",
+    "title" : "Ajouter un compte",
+    "intro" : "Ajoutez un compte supplémentaire pour une entreprise en signant comme l’un de ses directeurs.",
+    "cancel" : "Retour au tableau de bord",
+    "lookup" : "Rechercher l’entreprise",
+    "account-info-title" : "2. Confirmer le compte",
+    "account-info-body" : "Cette entreprise sera ajoutée au compte existant affiché ci-dessus. Le mot de passe de ce compte restera inchangé.",
+    "read-contract-info" : "Vous recevrez une copie signée une fois ce compte ajouté.",
+    "sign-button" : "Ajouter le compte",
+    "success-title" : "Compte ajouté",
+    "success-body" : "Le contrat signé a été téléchargé et la nouvelle entreprise est maintenant disponible dans votre sélecteur de comptes.",
+    "back-dashboard" : "Retour au tableau de bord",
+    "company-has-admin" : "Cette entreprise a déjà un compte admin. Le flux actuel ne prend en charge que les entreprises sans admin existant."
+  },
   "alert" : {
     "success" : "Succès",
     "info" : "Info",
