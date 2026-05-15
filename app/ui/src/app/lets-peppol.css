@@ -646,6 +646,27 @@ main.container {
     color: var(--text);
 }
 
+.heading-switcher {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-05);
+    color: var(--muted);
+}
+
+.heading-switcher svg {
+    flex: 0 0 auto;
+}
+
+.heading-switcher select {
+    min-width: 180px;
+    max-width: 220px;
+    border: 1px solid var(--border-soft);
+    border-radius: .6rem;
+    background: var(--panel);
+    color: var(--text);
+    padding: var(--space-05) var(--space-06);
+}
+
 /* ============================================================================
    8. Cards, Tables & Data Display
    ============================================================================ */

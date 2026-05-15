@@ -71,6 +71,7 @@
     "browser": { "chrome": "Chrome", "firefox": "Firefox", "safari": "Safari", "edge": "Microsoft Edge" },
     "step": {
       "register-company": "Unternehmen registrieren",
+      "register-affiliate": "Als Affiliate registrieren",
       "prepare-eid": {
         "title": "eID-Software, Kartenleser und Karte vorbereiten",
         "install-web-eid": "Web-eID-Anwendung installieren",
@@ -106,9 +107,14 @@
   },
   "registration" : {
     "title-step0" : "Unternehmen registrieren",
+    "affiliate-title-step0" : "Als Affiliate registrieren",
     "create-account" : "Konto erstellen",
+    "affiliate-create-account" : "Affiliate-Konto erstellen",
     "already-registered" : "Bereits registriert?",
+    "affiliate-already-registered" : "Bereits Affiliate?",
     "title-step1" : "Unternehmen bestätigen",
+    "affiliate-title-step1" : "Bestätigen Sie Ihr Affiliate-Unternehmen",
+    "affiliate-intro" : "Registrieren Sie sich als Affiliate für Ihr eigenes belgisches Unternehmen.<br />Wenn Ihr Unternehmen bereits von einem Administrator verwaltet wird,<br />bitten Sie diesen, Ihren Zugang hinzuzufügen oder freizugeben.",
     "confirm-company": "Bestätigen",
     "wrong-company": "Falsches Unternehmen?",
     "back": "Zurück",
@@ -122,6 +128,7 @@
     "login-failed" : "Anmeldung fehlgeschlagen",
     "registration-company-not-found" : "Unternehmen nicht gefunden",
     "registration-company-already-registered" : "Unternehmen bereits registriert",
+    "registration-company-affiliate-contact-admin" : "Dieses Unternehmen hat bereits einen Administrator. Bitte wenden Sie sich an Ihren Administrator, um das Affiliate-Onboarding fortzusetzen.",
     "registration-company-already-registered-on-peppol" : "Diese Peppol-ID ist offenbar bereits bei einem anderen Anbieter registriert. Um sie hier zu aktivieren, muss sie dort zuerst abgemeldet werden. Sie können den Signaturprozess trotzdem abschließen und das anschließend erledigen.",
     "not-peppol-active" : "Sie sind derzeit nicht bei Peppol registriert",
     "not-peppol-active-action" : "Jetzt lösen"
@@ -184,6 +191,7 @@
     "yes": "Ja",
     "no": "Nein",
     "remove": "Entfernen",
+    "switch-account": "Konto wechseln",
     "logout": "Abmelden",
     "edit": "Bearbeiten",
     "close": "Schließen"
@@ -200,6 +208,21 @@
     "account": "Konto",
     "brand-alt": "Let's Peppol",
     "toggle-theme": "Theme umschalten"
+  },
+  "ownershipAdd": {
+    "action": "Konto hinzufügen",
+    "title": "Konto hinzufügen",
+    "intro": "Fügen Sie ein weiteres Konto für ein Unternehmen hinzu, indem Sie als einer seiner Direktoren unterschreiben.",
+    "cancel": "Zurück zum Dashboard",
+    "lookup": "Unternehmen suchen",
+    "account-info-title": "2. Konto bestätigen",
+    "account-info-body": "Dieses Unternehmen wird dem oben angezeigten bestehenden Konto hinzugefügt. Das Passwort für dieses Konto bleibt unverändert.",
+    "read-contract-info": "Sie erhalten eine unterschriebene Kopie, sobald dieses Konto hinzugefügt wurde.",
+    "sign-button": "Konto hinzufügen",
+    "success-title": "Konto hinzugefügt",
+    "success-body": "Der unterschriebene Vertrag wurde heruntergeladen und das neue Unternehmen ist jetzt in Ihrer Konto-Auswahl verfügbar.",
+    "back-dashboard": "Zurück zum Dashboard",
+    "company-has-admin": "Dieses Unternehmen hat bereits ein Admin-Konto. Der aktuelle Ablauf unterstützt nur Unternehmen ohne bestehenden Admin."
   },
   "alert": {
     "success": "Erfolg",
@@ -323,6 +346,7 @@
       "clear": "Leeren",
       "apply": "Anwenden"
     },
+    "loading": "Rechnungen werden geladen...",
     "empty": "Keine Rechnungen entsprechen Ihren Filtern.",
     "pager": {
       "previous": "Zurück",

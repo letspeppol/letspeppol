@@ -10,8 +10,6 @@ import java.util.UUID;
 public interface AccountRepository extends JpaRepository<Account, Long> {
     Optional<Account> findByEmail(String email);
     boolean existsByEmail(String email);
-
     Optional<Account> findByExternalId(UUID externalId);
-    Optional<Account> findFirstByTypeAndCompanyPeppolId(AccountType accountType, String peppolId);
 }
 

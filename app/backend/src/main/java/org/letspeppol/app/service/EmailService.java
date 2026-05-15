@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.helger.ubl21.UBL21Marshaller;
 import com.helger.xml.serialize.read.DOMReader;
 import com.helger.xml.serialize.read.DOMReaderSettings;
-import jakarta.activation.DataSource;
-import jakarta.annotation.PostConstruct;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.util.ByteArrayDataSource;
@@ -14,6 +12,8 @@ import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.Doc
 import oasis.names.specification.ubl.schema.xsd.creditnote_21.CreditNoteType;
 import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
 import org.letspeppol.app.dto.DocumentNotificationEmailDto;
+import org.letspeppol.app.dto.DocumentNotificationEmailDto;
+import org.letspeppol.app.dto.EmailDto;
 import org.letspeppol.app.exception.NotFoundException;
 import org.letspeppol.app.model.Document;
 import org.letspeppol.app.model.DocumentType;
@@ -96,42 +96,49 @@ public class EmailService {
         }
         log.info("Sending email notification to {}", job.getToAddress());
 
-        DocumentNotificationEmailDto dto = objectMapper.readValue(job.getPayload(), DocumentNotificationEmailDto.class);
+        // Parse payload based on template type
+        EmailDto dto;
+        if (job.getTemplate() == EmailJob.Template.DOCUMENT_NOTIFICATION) {
+            dto = objectMapper.readValue(job.getPayload(), DocumentNotificationEmailDto.class);
+        } else {
+            dto = objectMapper.readValue(job.getPayload(), EmailDto.class);
+        }
 
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.name());
 
-        if (dto.from() != null && !dto.from().isBlank()) {
-            helper.setFrom(dto.from());
+        if (dto.getFrom() != null && !dto.getFrom().isBlank()) {
+            helper.setFrom(dto.getFrom());
         }
 
-        helper.setTo(dto.to());
-        setOptionalRecipients(helper, dto.cc(), true);
-        setOptionalRecipients(helper, dto.bcc(), false);
+        helper.setTo(dto.getTo());
+        setOptionalRecipients(helper, dto.getCc(), true);
+        setOptionalRecipients(helper, dto.getBcc(), false);
 
-        if (dto.replyTo() != null && !dto.replyTo().isBlank()) {
-            helper.setReplyTo(dto.replyTo());
+        if (dto.getReplyTo() != null && !dto.getReplyTo().isBlank()) {
+            helper.setReplyTo(dto.getReplyTo());
         }
 
-        helper.setSubject(dto.subject() == null ? "" : dto.subject());
+        helper.setSubject(dto.getSubject() == null ? "" : dto.getSubject());
 
-        String html = (dto.html() != null && !dto.html().isBlank()) ? dto.html() : null;
-        String text = (dto.text() != null && !dto.text().isBlank()) ? dto.text() : "";
+        String htmlContent = (dto.getHtml() != null && !dto.getHtml().isBlank()) ? dto.getHtml() : null;
+        String textContent = (dto.getText() != null && !dto.getText().isBlank()) ? dto.getText() : "";
 
-        if (html != null) {
-            helper.setText(text, html);
+        if (htmlContent != null) {
+            helper.setText(textContent, htmlContent);
         } else {
-            helper.setText(text, false);
+            helper.setText(textContent, false);
         }
 
-        if (dto.documentId() != null) {
-            Document document = documentRepository.findById(dto.documentId()).orElseThrow(() -> new NotFoundException("Document does not exist"));
+        // Only attach document if this is a DocumentNotificationEmailDto with a documentId
+        if (dto instanceof DocumentNotificationEmailDto documentDto && documentDto.getDocumentId() != null) {
+            Document document = documentRepository.findById(documentDto.getDocumentId()).orElseThrow(() -> new NotFoundException("Document does not exist"));
             helper.addAttachment(
                     document.getInvoiceReference() + ".xml",
                     new ByteArrayDataSource(document.getUbl().getBytes(StandardCharsets.UTF_8), MediaType.APPLICATION_XML_VALUE)
             );
 
-            addPdfAttachment(document, dto, helper);
+            addPdfAttachment(document, documentDto, helper);
         }
 
         mailSender.send(message);
@@ -148,7 +155,7 @@ public class EmailService {
             if (doc != null) {
                 final InvoiceType invoice = UBL21Marshaller.invoice().read(doc);
                 if (invoice == null) {
-                    log.error("Could not parse invoice UBL {}", dto.documentId());
+                    log.error("Could not parse invoice UBL {}", dto.getDocumentId());
                 } else {
 
                     for (DocumentReferenceType documentReferenceType : invoice.getAdditionalDocumentReference()) {
@@ -177,7 +184,7 @@ public class EmailService {
             if (doc != null) {
                 final CreditNoteType creditNote = UBL21Marshaller.creditNote().read(doc);
                 if (creditNote == null) {
-                    log.error("Could not parse invoice UBL {}", dto.documentId());
+                    log.error("Could not parse invoice UBL {}", dto.getDocumentId());
                 } else {
 
                     for (DocumentReferenceType documentReferenceType : creditNote.getAdditionalDocumentReference()) {

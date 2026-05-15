@@ -1,5 +1,8 @@
 package org.letspeppol.app.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.letspeppol.app.dto.CompanyDto;
 import org.letspeppol.app.exception.AppException;
 import org.letspeppol.app.exception.AppErrorCodes;
@@ -18,12 +21,15 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/sapi/company")
+@Tag(name = "App Company", description = "Endpoints for loading and maintaining the application-specific company profile used by the frontend.")
+@SecurityRequirement(name = "bearerAuth")
 public class CompanyController {
 
     private final CompanyService companyService;
 
     /// Gets Company info on login by UI (right after retrieving JWT Token)
     @GetMapping
+    @Operation(summary = "Get company profile", description = "Loads the company profile displayed in the app immediately after authentication.")
     public ResponseEntity<CompanyDto> getCompany(@AuthenticationPrincipal Jwt jwt) {
         String peppolId = JwtUtil.getPeppolId(jwt);
         return ResponseEntity.ok(companyService.get(peppolId, jwt.getTokenValue(), JwtUtil.isPeppolActive(jwt)));
@@ -31,7 +37,8 @@ public class CompanyController {
 
     /// Updates Company info by UI (only stored in App)
     @PutMapping
-    public ResponseEntity updateCompany(@AuthenticationPrincipal Jwt jwt, @RequestBody CompanyDto companyDto) {
+    @Operation(summary = "Update company profile", description = "Updates application-managed company fields while enforcing that the authenticated company can only modify its own profile.")
+    public ResponseEntity<CompanyDto> updateCompany(@AuthenticationPrincipal Jwt jwt, @RequestBody CompanyDto companyDto) {
         String peppolId = JwtUtil.getPeppolId(jwt);
         if (!Objects.equals(companyDto.peppolId(), peppolId)) {
             log.warn("Malicious update attempt for peppolId {} company {} {}", peppolId, companyDto.peppolId(), companyDto.name());

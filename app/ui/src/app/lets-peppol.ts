@@ -12,6 +12,7 @@ import {Products} from "../product/products";
 import {ResetPassword} from "../login/reset-password";
 import {ForgotPassword} from "../login/forgot-password";
 import {Dashboard} from "../dashboard/dashboard";
+import {AddOwnership} from "../registration/add-ownership";
 
 @route({
     routes: [
@@ -19,8 +20,10 @@ import {Dashboard} from "../dashboard/dashboard";
         { path: '/forgot-password',                         component: ForgotPassword,       title: 'Forgot Password',       data: { allowEveryone: true }},
         { path: '/reset-password',                          component: ResetPassword,        title: 'Reset Password',        data: { allowEveryone: true }},
         { path: '/onboarding',                              component: Onboarding,           title: 'Onboarding',            data: { allowEveryone: true }},
-        { path: '/registration',                            component: Registration,         title: 'Registration',          data: { allowEveryone: true }},
+        { path: '/registration',                            component: Registration,         title: 'Registration',          data: { allowEveryone: true, registrationType: 'ADMIN' }},
+        { path: '/affiliate/registration',                  component: Registration,         title: 'Affiliate Registration',data: { allowEveryone: true, registrationType: 'AFFILIATE' }},
         { path: '/email-confirmation',                      component: EmailConfirmation,    title: 'Email Confirmation',    data: { allowEveryone: true }},
+        { path: '/add-ownership',                           component: AddOwnership,         title: 'Add Account',           },
         { path: ['/invoices', '/invoices/:id' ],            component: Invoices,             title: 'Invoice',               },
         { path: '/partners',                                component: Partners,             title: 'Partners',              },
         { path: '/products',                                component: Products,             title: 'Products',              },

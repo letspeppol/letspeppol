@@ -1,10 +1,13 @@
 package org.letspeppol.kyc.controller;
 
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.letspeppol.kyc.dto.ChangePasswordRequest;
 import org.letspeppol.kyc.dto.ForgotPasswordRequest;
-import org.letspeppol.kyc.dto.ResetPasswordRequest;
+import org.letspeppol.kyc.dto.SetPasswordRequest;
 import org.letspeppol.kyc.dto.SimpleMessage;
 import org.letspeppol.kyc.service.JwtService;
 import org.letspeppol.kyc.service.PasswordResetService;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping()
 @RequiredArgsConstructor
+@Tag(name = "KYC Passwords", description = "Password recovery and password change endpoints for KYC-managed accounts.")
 public class PasswordResetController {
 
     private final PasswordResetService passwordResetService;
@@ -23,20 +27,26 @@ public class PasswordResetController {
 
     /// Sends password recovery mail
     @PostMapping("/api/password/forgot")
-    public ResponseEntity<SimpleMessage> forgot(@Valid @RequestBody ForgotPasswordRequest request, @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, required = false) String acceptLanguage) {
+    @Operation(summary = "Request password reset", description = "Starts the password recovery flow by sending a reset email to the account owner.")
+    @ApiResponse(responseCode = "204", description = "Reset email accepted for processing")
+    public ResponseEntity<Void> forgot(@Valid @RequestBody ForgotPasswordRequest request, @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, required = false) String acceptLanguage) {
         passwordResetService.requestReset(request.email(), acceptLanguage);
         return ResponseEntity.noContent().build();
     }
 
     /// Changes password based on password recovery mail
     @PostMapping("/api/password/reset")
-    public ResponseEntity<Void> reset(@Valid @RequestBody ResetPasswordRequest request) {
+    @Operation(summary = "Reset password with token", description = "Completes the password recovery flow by validating the reset token and storing the new password.")
+    @ApiResponse(responseCode = "204", description = "Password has been reset")
+    public ResponseEntity<Void> reset(@Valid @RequestBody SetPasswordRequest request) {
         passwordResetService.resetPassword(request.token(), request.newPassword());
         return ResponseEntity.noContent().build();
     }
 
     /// Changes password based on valid credentials
     @PostMapping("/sapi/password/change") //Is sapi for early bad JWT protection
+    @Operation(summary = "Change password while signed in", description = "Changes the password for the currently authenticated account using the existing JWT session.")
+    @ApiResponse(responseCode = "204", description = "Password has been changed")
     public ResponseEntity<Void> change(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader, @Valid @RequestBody ChangePasswordRequest request) {
         JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
         passwordResetService.changePassword(jwtInfo.uid(), request);

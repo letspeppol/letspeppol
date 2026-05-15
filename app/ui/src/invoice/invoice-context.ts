@@ -16,10 +16,22 @@ export class InvoiceContext {
     private readonly partnerService = resolve(PartnerService);
     private readonly invoiceComposer = resolve(InvoiceComposer);
     private readonly invoiceCalculator = resolve(InvoiceCalculator);
+    private createEmptyPage(): DocumentPageDto {
+        return {
+            content: [],
+            page: 0,
+            size: 20,
+            totalElements: 0,
+            totalPages: 0,
+            last: true
+        };
+    }
     // Overview
-    draftPage: DocumentPageDto = undefined;
-    invoicePage: DocumentPageDto = undefined;
+    draftPage: DocumentPageDto = this.createEmptyPage();
+    invoicePage: DocumentPageDto = this.createEmptyPage();
     activeBox: string = 'ALL';
+    loadingInvoices = false;
+    loadingDrafts = false;
     // Current invoice
     lines : undefined | InvoiceLine[] | CreditNoteLine[];
     @observable selectedInvoice:  undefined | Invoice | CreditNote;
@@ -53,6 +65,19 @@ export class InvoiceContext {
         } else {
             this.activeBox = 'ALL';
         }
+    }
+
+    clearAccountCache() {
+        this.clearSelectedInvoice();
+        this.draftPage = this.createEmptyPage();
+        this.invoicePage = this.createEmptyPage();
+        this.loadingInvoices = false;
+        this.loadingDrafts = false;
+        this.lines = undefined;
+        this.lastInvoiceReference = undefined;
+        this.nextInvoiceReference = undefined;
+        this.readOnly = false;
+        this.partnerMissing = false;
     }
 
     selectedInvoiceChanged(newValue: UBLDoc) {

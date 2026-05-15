@@ -169,7 +169,8 @@
                             <path d="M14 3v5h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </div>
-                    <p t="invoice.empty">No invoices match your filters.</p>
+                    <p if.bind="invoiceContext.loadingInvoices" t="invoice.loading">Loading invoices...</p>
+                    <p else t="invoice.empty">No invoices match your filters.</p>
                 </div>
                 <div class="table-footer pager">
                     <button type="button" class="btn ghost" click.trigger="previousPage()" disabled.bind="query.pageable.page <= 0" t="invoice.pager.previous">← Previous</button>

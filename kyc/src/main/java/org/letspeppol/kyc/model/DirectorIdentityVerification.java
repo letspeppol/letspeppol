@@ -9,13 +9,11 @@ import org.letspeppol.kyc.model.kbo.Director;
 import java.time.Instant;
 
 @Entity
-@Table(name = "account_identity_verification", indexes = {
-        @Index(name = "idx_account_identity_verification_account_id", columnList = "account_id")
-})
+@Table(name = "director_identity_verification")
 @Getter
 @Setter
 @NoArgsConstructor
-public class AccountIdentityVerification {
+public class DirectorIdentityVerification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -54,9 +52,9 @@ public class AccountIdentityVerification {
     @Column(nullable = false)
     private Instant createdOn = Instant.now();
 
-    public AccountIdentityVerification(Account account, Director director, String directorNameSnapshot,
-                                       String certificateSubject, String certificateSerial,
-                                       String signatureAlgorithm, String dataHash, String certificate, String signature) {
+    public DirectorIdentityVerification(Account account, Director director, String directorNameSnapshot,
+                                        String certificateSubject, String certificateSerial,
+                                        String signatureAlgorithm, String dataHash, String certificate, String signature) {
         this.account = account;
         this.director = director;
         this.directorNameSnapshot = directorNameSnapshot;

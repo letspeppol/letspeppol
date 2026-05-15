@@ -2,10 +2,12 @@ import {resolve} from "@aurelia/kernel";
 import {LoginService} from "../services/app/login-service";
 import {IRouter} from "@aurelia/router";
 import {CompanyService} from "../services/app/company-service";
+import {InvoiceContext} from "../invoice/invoice-context";
 
 export class Login {
     private readonly loginService = resolve(LoginService);
     private readonly companyService = resolve(CompanyService);
+    private readonly invoiceContext = resolve(InvoiceContext);
     private readonly router: IRouter = resolve(IRouter);
     email: string;
     password: string;
@@ -32,6 +34,7 @@ export class Login {
     }
 
     async loginSuccess() {
+        this.invoiceContext.clearAccountCache();
         await this.companyService.getAndSetMyCompanyForToken().then(result => localStorage.setItem('peppolActive', result.peppolActive));
         this.error = false;
         if (this.rememberMe) {

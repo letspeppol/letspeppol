@@ -2,18 +2,22 @@ package org.letspeppol.kyc;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.letspeppol.kyc.config.TestMailConfig;
 import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.KycException;
 import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.model.PasswordResetToken;
 import org.letspeppol.kyc.model.kbo.Company;
+import org.letspeppol.kyc.repository.AccountIdentityVerificationRepository;
 import org.letspeppol.kyc.repository.AccountRepository;
 import org.letspeppol.kyc.repository.CompanyRepository;
 import org.letspeppol.kyc.repository.PasswordResetTokenRepository;
 import org.letspeppol.kyc.service.PasswordResetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -22,6 +26,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
+@Import(TestMailConfig.class)
+@ActiveProfiles("test")
 class PasswordResetServiceTests {
 
     @Autowired
@@ -30,6 +36,8 @@ class PasswordResetServiceTests {
     PasswordResetTokenRepository tokenRepository;
     @Autowired
     AccountRepository accountRepository;
+    @Autowired
+    AccountIdentityVerificationRepository accountIdentityVerificationRepository;
     @Autowired
     CompanyRepository companyRepository;
     @Autowired
@@ -40,6 +48,7 @@ class PasswordResetServiceTests {
     @BeforeEach
     void setup() {
         tokenRepository.deleteAll();
+        accountIdentityVerificationRepository.deleteAll();
         accountRepository.deleteAll();
         companyRepository.deleteAll();
         Company company = new Company("0208:0123456789", "BE0123456789", "TestCo");
@@ -48,7 +57,6 @@ class PasswordResetServiceTests {
         account = Account.builder()
                 .name("John Doe")
                 .email("user@example.com")
-                .company(company)
                 .passwordHash(passwordEncoder.encode("initialPassword123"))
                 .build();
         accountRepository.save(account);

@@ -80,6 +80,7 @@ public class KboLookupService {
                 address.get().postalCode,
                 directors,
                 true,
+                false,
                 false
         );
         return Optional.of(companyResponse);

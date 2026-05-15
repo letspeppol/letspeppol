@@ -1,5 +1,7 @@
 package org.letspeppol.app.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.letspeppol.app.exception.AppErrorCodes;
 import org.letspeppol.app.exception.AppException;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +23,7 @@ import java.time.Duration;
 @Slf4j
 @RestController
 @RequestMapping("/api/peppol-directory")
+@Tag(name = "App Peppol Directory", description = "Public lookup endpoint that proxies selected Peppol Directory search capabilities for the frontend.")
 public class PeppolDirectoryController {
 
     @Autowired
@@ -28,7 +31,8 @@ public class PeppolDirectoryController {
     private WebClient webClient;
 
     @GetMapping
-    public ResponseEntity find(@RequestParam(name = "name", required = false) String name, @RequestParam(name = "participant", required = false) String participant) {
+    @Operation(summary = "Search Peppol Directory", description = "Searches the external Peppol Directory either by participant identifier or by organization name.")
+    public ResponseEntity<String> find(@RequestParam(name = "name", required = false) String name, @RequestParam(name = "participant", required = false) String participant) {
 
         WebClient.RequestHeadersSpec<?> requestSpec;
         if (name != null) {

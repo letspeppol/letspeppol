@@ -38,6 +38,7 @@ public class SecurityConfig {
                 .cors(cors -> {})
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
                         .requestMatchers("/api/scrada/**").permitAll()
                         .requestMatchers("/api/e-invoice/**").permitAll()
                         .requestMatchers("/api/monitor/**").permitAll()//.hasAuthority(ROLE_SERVICE) --> /sapi/monitor/ ???

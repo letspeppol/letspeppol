@@ -34,18 +34,25 @@ export class InvoiceOverview {
     }
 
     async loadDrafts() {
-        this.invoiceContext.draftPage = await this.invoiceService.getDocuments({...this.query, draft: true });
-        if (this.invoiceContext.activeBox === 'DRAFTS') {
-            this.invoiceContext.invoicePage = this.invoiceContext.draftPage;
+        this.invoiceContext.loadingDrafts = true;
+        try {
+            this.invoiceContext.draftPage = await this.invoiceService.getDocuments({...this.query, draft: true });
+            if (this.invoiceContext.activeBox === 'DRAFTS') {
+                this.invoiceContext.invoicePage = this.invoiceContext.draftPage;
+            }
+        } finally {
+            this.invoiceContext.loadingDrafts = false;
         }
     }
 
     @watch((vm) => [vm.query.invoiceReference, vm.query.partnerName])
     loadInvoices() {
+        this.invoiceContext.loadingInvoices = true;
         this.invoiceService.getDocuments({
             ...this.query,
             draft: this.invoiceContext.activeBox === 'drafts'
-        }).then(page => this.invoiceContext.invoicePage = page);
+        }).then(page => this.invoiceContext.invoicePage = page)
+        .finally(() => this.invoiceContext.loadingInvoices = false);
     }
 
     changeDocType(value: DocumentType) {
@@ -67,6 +74,7 @@ export class InvoiceOverview {
                 break;
             case 'DRAFTS':
                 this.invoiceContext.invoicePage = this.invoiceContext.draftPage;
+                this.invoiceContext.loadingInvoices = this.invoiceContext.loadingDrafts;
                 break;
         }
     }
