@@ -356,6 +356,26 @@
       "reference": "Reference",
       "store-iban": "Save IBAN in account"
     },
+    "paymentQr": {
+      "title": "Invoice payment",
+      "show-and-mark-paid": "Show payment QR and mark as paid",
+      "mark-paid": "Mark invoice as paid",
+      "mark-unpaid": "Mark invoice as unpaid",
+      "mark-paid-document": {
+        "INVOICE": "Mark invoice as paid",
+        "CREDIT_NOTE": "Mark credit note as paid"
+      },
+      "mark-unpaid-document": {
+        "INVOICE": "Mark invoice as unpaid",
+        "CREDIT_NOTE": "Mark credit note as unpaid"
+      },
+      "marked-done-on": "Payment marked done on",
+      "name": "Name",
+      "iban": "IBAN",
+      "bic": "BIC",
+      "amount": "Amount",
+      "reference": "Reference"
+    },
     "validationModal": {
       "title": "Validation",
       "error-count": "Error count"

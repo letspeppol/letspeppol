@@ -356,6 +356,26 @@
       "reference": "Referenz",
       "store-iban": "IBAN im Konto speichern"
     },
+    "paymentQr": {
+      "title": "Rechnungszahlung",
+      "show-and-mark-paid": "Zahlungs-QR anzeigen und als bezahlt markieren",
+      "mark-paid": "Rechnung als bezahlt markieren",
+      "mark-unpaid": "Rechnung als unbezahlt markieren",
+      "mark-paid-document": {
+        "INVOICE": "Rechnung als bezahlt markieren",
+        "CREDIT_NOTE": "Gutschrift als bezahlt markieren"
+      },
+      "mark-unpaid-document": {
+        "INVOICE": "Rechnung als unbezahlt markieren",
+        "CREDIT_NOTE": "Gutschrift als unbezahlt markieren"
+      },
+      "marked-done-on": "Zahlung als erledigt markiert am",
+      "name": "Name",
+      "iban": "IBAN",
+      "bic": "BIC",
+      "amount": "Betrag",
+      "reference": "Referenz"
+    },
     "validationModal": {
       "title": "Validierung",
       "error-count": "Anzahl der Fehler"

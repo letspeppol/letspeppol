@@ -1,0 +1,11 @@
+.payment-state-action {
+    margin-top: var(--space-05);
+}
+
+.payment-state-note {
+    margin-top: var(--space-05);
+}
+
+.payment-state-note b {
+    color: var(--text);
+}

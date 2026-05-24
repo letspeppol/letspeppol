@@ -355,6 +355,26 @@
       "reference" : "Référence",
       "store-iban": "Enregistrer l’IBAN dans le compte"
     },
+    "paymentQr" : {
+      "title" : "Paiement de la facture",
+      "show-and-mark-paid" : "Afficher le QR de paiement et marquer comme payée",
+      "mark-paid" : "Marquer la facture comme payée",
+      "mark-unpaid" : "Marquer la facture comme impayée",
+      "mark-paid-document" : {
+        "INVOICE" : "Marquer la facture comme payée",
+        "CREDIT_NOTE" : "Marquer la note de crédit comme payée"
+      },
+      "mark-unpaid-document" : {
+        "INVOICE" : "Marquer la facture comme impayée",
+        "CREDIT_NOTE" : "Marquer la note de crédit comme impayée"
+      },
+      "marked-done-on" : "Paiement marqué comme effectué le",
+      "name" : "Nom",
+      "iban" : "IBAN",
+      "bic" : "BIC",
+      "amount" : "Montant",
+      "reference" : "Référence"
+    },
     "validationModal" : {
       "title" : "Validation",
       "error-count" : "Nombre d'erreurs"

@@ -355,6 +355,26 @@
       "reference" : "Referentie",
       "store-iban": "IBAN opslaan in account"
     },
+    "paymentQr" : {
+      "title" : "Factuurbetaling",
+      "show-and-mark-paid" : "Betalings-QR tonen en als betaald markeren",
+      "mark-paid" : "Factuur als betaald markeren",
+      "mark-unpaid" : "Factuur als onbetaald markeren",
+      "mark-paid-document" : {
+        "INVOICE" : "Factuur als betaald markeren",
+        "CREDIT_NOTE" : "Creditnota als betaald markeren"
+      },
+      "mark-unpaid-document" : {
+        "INVOICE" : "Factuur als onbetaald markeren",
+        "CREDIT_NOTE" : "Creditnota als onbetaald markeren"
+      },
+      "marked-done-on" : "Betaling als uitgevoerd gemarkeerd op",
+      "name" : "Naam",
+      "iban" : "IBAN",
+      "bic" : "BIC",
+      "amount" : "Bedrag",
+      "reference" : "Referentie"
+    },
     "validationModal" : {
       "title" : "Validatie",
       "error-count" : "Aantal fouten"
