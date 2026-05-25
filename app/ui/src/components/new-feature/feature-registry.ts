@@ -1,10 +1,12 @@
 export interface FeatureMetadata {
     section?: string;
     expiresAt?: string;
+    preservePosition?: boolean;
 }
 
 export const FEATURE_REGISTRY: Readonly<Record<string, FeatureMetadata>> = {
     'account-notifications': { section: 'account',  expiresAt: '2026-10-26' },
+    'donation-bar': { expiresAt: '2026-10-26', preservePosition: true },
 };
 
 export function getFeature(id: string): FeatureMetadata | undefined {
