@@ -23,6 +23,8 @@ import java.util.Map;
 @Slf4j
 public class DonationService {
 
+    private static final int TRANSACTION_LIMIT = 100;
+
     @Value("${document.price}")
     private BigDecimal pricePerDocument;
     private final StatisticsService statisticsService;
@@ -73,17 +75,18 @@ public class DonationService {
                 .processedToday(totalProcessedDto.totalProcessedToday())
                 .maxProcessedLastWeek(getMaxProcessedDto().maxDailyTotal())
                 .invoicesRemaining(invoicesRemaining)
+                .activeCompanies(statisticsService.activeCompanies())
                 .transactions(accountInfo.getTransactions().getNodes())
                 .build();
     }
 
     private Mono<OpenCollectiveAccountDto> queryAccount() {
         String document = """
-                        query account($slug: String) {
+                        query account($slug: String, $limit: Int) {
                             account(slug: $slug) {
                                 name
                                 slug
-                                transactions(limit: 3, type: CREDIT) {
+                                transactions(limit: $limit, type: CREDIT) {
                                     totalCount
                                     nodes {
                                         type
@@ -120,7 +123,7 @@ public class DonationService {
 
         Map<String, Object> variables = Map.of(
                 "slug", "letspeppol",
-                "limit", 3
+                "limit", TRANSACTION_LIMIT
         );
         return graphQlClient.document(document).variables(variables).retrieve("account").toEntity(OpenCollectiveAccountDto.class);
     }

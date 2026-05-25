@@ -13,5 +13,6 @@ public class DonationStatsDto {
     private Long processedToday;
     private Long maxProcessedLastWeek;
     private Long invoicesRemaining;
+    private Long activeCompanies;
     private List<OpenCollectiveAccountDto.Transaction> transactions;
 }

@@ -8,6 +8,7 @@ export interface DonationStatsDto {
     processedToday: number;
     maxProcessedLastWeek: number;
     invoicesRemaining: number;
+    activeCompanies: number;
     transactions: Transaction[];
 }
 
