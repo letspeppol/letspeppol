@@ -11,7 +11,7 @@ public interface SponsorInvoiceRepository extends JpaRepository<SponsorInvoice, 
 
     Optional<SponsorInvoice> findTopByOrderByIdDesc();
 
-    List<SponsorInvoice> findAllByOrderBySponsoredOnDesc();
+    List<SponsorInvoice> findAllByActiveTrueOrderBySponsoredOnDesc();
 
-    boolean existsByCompanyIdAndSponsoredOnAfter(Long companyId, Instant sponsoredOn);
+    boolean existsByCompanyIdAndActiveTrueAndSponsoredOnAfter(Long companyId, Instant sponsoredOn);
 }

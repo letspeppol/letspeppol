@@ -74,7 +74,7 @@ public class SponsorInvoiceService {
     public List<SponsorContributionDto> getSponsorContributions() {
         List<SponsorContributionDto> contributions = new ArrayList<>();
         try {
-            contributions.addAll(sponsorInvoiceRepository.findAllByOrderBySponsoredOnDesc().stream()
+            contributions.addAll(sponsorInvoiceRepository.findAllByActiveTrueOrderBySponsoredOnDesc().stream()
                     .map(sponsorInvoice -> new SponsorContributionDto(
                             sponsorInvoice.getName(),
                             sponsorInvoice.getMessage(),
@@ -121,7 +121,7 @@ public class SponsorInvoiceService {
     public SponsorInvoiceResponse createSponsorInvoice(String customerPeppolId, SponsorInvoiceRequest request, String actingUserToken) {
         Company customer = companyRepository.findByPeppolId(customerPeppolId)
                 .orElseThrow(() -> new NotFoundException("Company does not exist"));
-        if (sponsorInvoiceRepository.existsByCompanyIdAndSponsoredOnAfter(customer.getId(), Instant.now().minus(Duration.ofHours(48)))) {
+        if (sponsorInvoiceRepository.existsByCompanyIdAndActiveTrueAndSponsoredOnAfter(customer.getId(), Instant.now().minus(Duration.ofHours(48)))) {
             throw new ConflictException("Sponsor invoice already created within 48 hours");
         }
         int scale = Math.max(0, request.currency().getDefaultFractionDigits());
@@ -264,7 +264,7 @@ public class SponsorInvoiceService {
                 Map.entry("customerPostalCode", xml(address != null ? address.getPostalCode() : "")),
                 Map.entry("customerCountryCode", xml(address != null ? address.getCountryCode() : "BE")),
                 Map.entry("customerVatNumber", xml(vatNumber(customer))),
-                Map.entry("description", xml("by name: " + sponsorInvoice.getName() + ", with message: " + sponsorInvoice.getMessage()))
+                Map.entry("description", xml("name: " + sponsorInvoice.getName() + "\nmessage: " + sponsorInvoice.getMessage()))
         );
 
         String xml = template();
