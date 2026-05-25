@@ -18,7 +18,7 @@ services:
       - "--entrypoints.websecure.address=:443"
       - "--entrypoints.internal.address=:8443"
 
-      # Let's Encrypt (for public domains)
+      # Let’s Encrypt (for public domains)
       - "--certificatesresolvers.letsencrypt.acme.email=letsencrypt@letspeppol.org"
       - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
       - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"

@@ -79,7 +79,7 @@ export class Account {
             this.confirmationModalContext.showConfirmationModal(
                 "Activate on Peppol",
                 "It looks like you are currently registered to the Peppol network via another Access Point.\n" +
-                "Are you sure you wish to subscribe yourself to the Peppol network via Let's Peppol?\n" +
+                "Are you sure you wish to subscribe yourself to the Peppol network via Let’s Peppol?\n" +
                 "It might fail if you are still registered at the other Access Point provider.",
                 () => this.registerOnPeppol(),
                 undefined
@@ -87,7 +87,7 @@ export class Account {
         } else {
             this.confirmationModalContext.showConfirmationModal(
                 "Activate on Peppol",
-                "Are you sure you wish to subscribe yourself to the Peppol network via Let's Peppol?\n" +
+                "Are you sure you wish to subscribe yourself to the Peppol network via Let’s Peppol?\n" +
                 "Make sure you are not subscribed via another service.",
                 () => this.registerOnPeppol(),
                 undefined
