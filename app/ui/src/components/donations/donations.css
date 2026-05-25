@@ -15,7 +15,8 @@
 .donations-container {
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    align-items: center;
+    justify-content: space-between;
     font-size: 0.9rem;
     padding: 10px;
     max-height: 100px;
@@ -23,18 +24,49 @@
 }
 
 .donations-stats {
+    flex: 0 1 auto;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     gap: 1rem;
 }
 
-.donations-icon, .donations-transactions, .donations-action {
+.donations-icon, .donations-sponsor-logo, .donations-transactions, .donations-action {
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+}
+
+.donations-sponsor-logo {
+    flex: 0.2 1 200px;
+    min-width: 120px;
+}
+
+.donations-sponsor-logo-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 64px;
+}
+
+.donations-sponsor-logo-img {
+    display: block;
+    width: auto;
+    max-width: 180px;
+    max-height: 64px;
+    object-fit: contain;
+}
+
+.donations-transactions {
+    flex: 1 1 210px;
+    min-width: 180px;
+}
+
+.donations-action {
+    flex: 0 0 64px;
 }
 
 button.donations-action,
@@ -52,6 +84,28 @@ a.donations-action {
     list-style-type: none;
     margin: 0;
     padding: 0;
+    width: 100%;
+}
+
+.donations-transactions li {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-035);
+    min-width: 0;
+    white-space: nowrap;
+}
+
+.donations-transaction-index,
+.donations-transaction-amount {
+    flex: 0 0 auto;
+}
+
+.donations-transaction-name {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 button.donations-transactions {
@@ -243,7 +297,6 @@ button.donations-transactions:hover .donations-view-more {
     .donations-container {
         max-height: none;
         flex-wrap: wrap;
-        gap: var(--space-1);
     }
 
     .sponsor-fields {

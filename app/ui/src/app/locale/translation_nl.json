@@ -186,17 +186,21 @@
     "logout" : "Uitloggen",
     "edit" : "Bewerken",
     "close" : "Sluiten",
-    "view-more" : "meer bekijken..."
+    "view-more" : "meer bekijken…"
   },
   "new-feature" : {
     "label" : "Nieuw",
     "click-to-dismiss" : "Klik om te sluiten"
   },
   "donations" : {
-    "sponsors" : "sponsors",
-    "donations-received" : "donaties ontvangen",
-    "active-companies" : "actieve bedrijven",
-    "invoices-processed" : "facturen verwerkt",
+    "sponsors" : "tiersponsors",
+    "sponsors-title" : "Bronzen, zilveren en gouden sponsors samen",
+    "donations-received" : "donaties",
+    "donations-received-title" : "Totaal aantal ontvangen donaties",
+    "active-companies" : "bedrijven",
+    "active-companies-title" : "Actieve bedrijven die Let’s Peppol gebruiken",
+    "invoices-processed" : "facturen",
+    "invoices-processed-title" : "Facturen verwerkt via Let’s Peppol",
     "donate" : "doneer",
     "follow" : "volgen",
     "follow-linkedin" : "Volg ons op LinkedIn",
@@ -212,7 +216,7 @@
       "contribution" : "Bijdrage",
       "vat" : "Btw 21%",
       "total-including-vat" : "Totaal aangerekend, inclusief btw",
-      "sending" : "Verzenden...",
+      "sending" : "Verzenden…",
       "request-package" : "Sponsorpakket aanvragen",
       "create-invoice" : "Akkoord en factuur aanmaken",
       "default-message" : "Bedankt voor Let’s Peppol",

@@ -9,22 +9,26 @@
         </div>
         <div class="donations-stats-total">
             <ul style="list-style: none; padding: 0; margin: 0;">
-                <li>${sponsors.length} <span t="donations.sponsors">sponsors</span></li>
-                <li>${totalSponsorTransactions} <span t="donations.donations-received">donations received</span></li>
-                <li>${accountInfo.activeCompanies} <span t="donations.active-companies">active companies</span></li>
-                <li>${accountInfo.totalProcessed} <span t="donations.invoices-processed">invoices processed</span></li>
+                <li>${sponsors.length} <span t="[title]donations.sponsors-title;donations.sponsors">tier sponsors</span></li>
+                <li>${totalSponsorTransactions} <span t="[title]donations.donations-received-title;donations.donations-received">donations</span></li>
+                <li>${accountInfo.activeCompanies} <span t="[title]donations.active-companies-title;donations.active-companies">companies</span></li>
+                <li>${accountInfo.totalProcessed} <span t="[title]donations.invoices-processed-title;donations.invoices-processed">invoices</span></li>
             </ul>
         </div>
     </div>
-    <div class="donations-icon">
-        <a if.bind="activeSponsor" href.bind="activeSponsor.url" target="_blank" rel="noopener noreferrer" title="Go to sponsor of Let’s Peppol">
-            <img src.bind="activeSponsor.logoUrl" style="height: 80px; width: auto; max-width: 200px;"/>
+    <div class="donations-sponsor-logo">
+        <a if.bind="activeSponsor" class="donations-sponsor-logo-link" href.bind="activeSponsor.url" target="_blank" rel="noopener noreferrer" title="Go to sponsor of Let’s Peppol">
+            <img class="donations-sponsor-logo-img" src.bind="activeSponsor.logoUrl"/>
         </a>
     </div>
     <button type="button" class="donations-transactions" title="View sponsors" click.trigger="showSponsors()">
         <ul>
-            <li repeat.for="transaction of recentTransactions">${$index + 1}. <b>${transaction.name}</b> (+ ${transaction.amount} ${transaction.currency})</li>
-            <li class="donations-view-more" t="common.view-more">view more...</li>
+            <li repeat.for="transaction of recentTransactions">
+                <span class="donations-transaction-index">${$index + 1}.</span>
+                <b class="donations-transaction-name">${transaction.name}</b>
+                <span class="donations-transaction-amount">(+ ${transaction.amount} ${transaction.currency})</span>
+            </li>
+            <li class="donations-view-more" t="common.view-more">view more&hellip;</li>
         </ul>
     </button>
     <button type="button" class="donations-action donations-action-button" title="Sponsor Let’s Peppol" click.trigger="showSponsorPaymentModal()">

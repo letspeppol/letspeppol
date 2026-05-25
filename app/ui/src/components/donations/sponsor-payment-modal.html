@@ -32,11 +32,11 @@
                     </div>
                     <label class="field full">
                         <span t="donations.sponsor-payment.sponsor-name">Name on sponsor page</span>
-                        <input type="text" value.bind="name">
+                        <input type="text" maxlength="64" value.bind="name">
                     </label>
                     <label class="field full">
                         <span t="donations.sponsor-payment.message">Message</span>
-                        <textarea rows="3" value.bind="message"></textarea>
+                        <textarea rows="3" maxlength="255" value.bind="message"></textarea>
                     </label>
                 </div>
 

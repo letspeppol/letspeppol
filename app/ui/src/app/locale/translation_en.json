@@ -187,17 +187,21 @@
     "logout": "Log out",
     "edit": "Edit",
     "close": "Close",
-    "view-more": "view more..."
+    "view-more": "view more…"
   },
   "new-feature": {
     "label": "New",
     "click-to-dismiss": "Click to dismiss"
   },
   "donations": {
-    "sponsors": "sponsors",
-    "donations-received": "donations received",
-    "active-companies": "active companies",
-    "invoices-processed": "invoices processed",
+    "sponsors": "tier sponsors",
+    "sponsors-title": "Bronze, Silver and Gold sponsors combined",
+    "donations-received": "donations",
+    "donations-received-title": "Total donations received",
+    "active-companies": "companies",
+    "active-companies-title": "Active companies using Let’s Peppol",
+    "invoices-processed": "invoices",
+    "invoices-processed-title": "Invoices processed through Let’s Peppol",
     "donate": "donate",
     "follow": "follow",
     "follow-linkedin": "Follow us on LinkedIn",
@@ -213,7 +217,7 @@
       "contribution": "Contribution",
       "vat": "VAT 21%",
       "total-including-vat": "Total charged, including VAT",
-      "sending": "Sending...",
+      "sending": "Sending…",
       "request-package": "Request sponsor package",
       "create-invoice": "Agree and create invoice",
       "default-message": "Thank you for Let’s Peppol",

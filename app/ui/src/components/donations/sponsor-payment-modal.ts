@@ -7,6 +7,8 @@ import {AlertType} from "../alert/alert";
 
 export class SponsorPaymentModal {
     private static readonly DEFAULT_SPONSOR_NAME = "Incognito";
+    private static readonly MAX_SPONSOR_NAME_LENGTH = 64;
+    private static readonly MAX_MESSAGE_LENGTH = 255;
 
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
     private readonly i18n = resolve(I18N);
@@ -47,7 +49,14 @@ export class SponsorPaymentModal {
     }
 
     get sponsorName() {
-        return this.name?.trim() || SponsorPaymentModal.DEFAULT_SPONSOR_NAME;
+        return this.truncate(this.name?.trim() || SponsorPaymentModal.DEFAULT_SPONSOR_NAME, SponsorPaymentModal.MAX_SPONSOR_NAME_LENGTH);
+    }
+
+    get sponsorMessage() {
+        return this.truncate(
+            this.message?.trim() || this.i18n.tr("donations.sponsor-payment.default-message"),
+            SponsorPaymentModal.MAX_MESSAGE_LENGTH
+        );
     }
 
     async showModal() {
@@ -95,7 +104,7 @@ export class SponsorPaymentModal {
                 amount: this.validAmount,
                 currency: this.currency,
                 name: this.sponsorName,
-                message: this.message?.trim() || this.i18n.tr("donations.sponsor-payment.default-message")
+                message: this.sponsorMessage
             });
             if (response.status === "PACKAGE_REQUESTED") {
                 this.showSuccess(this.i18n.tr("donations.sponsor-payment.success-title"), response.message);
@@ -137,5 +146,9 @@ export class SponsorPaymentModal {
 
     private round(value: number) {
         return Math.round(value * 100) / 100;
+    }
+
+    private truncate(value: string, maxLength: number) {
+        return value.length > maxLength ? value.slice(0, maxLength) : value;
     }
 }
