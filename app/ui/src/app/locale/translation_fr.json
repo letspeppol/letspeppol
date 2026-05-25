@@ -185,11 +185,43 @@
     "remove" : "Retirer",
     "logout" : "Se déconnecter",
     "edit" : "Éditer",
-    "close" : "Fermer"
+    "close" : "Fermer",
+    "view-more" : "voir plus..."
   },
   "new-feature" : {
     "label" : "Nouveau",
     "click-to-dismiss" : "Cliquer pour fermer"
+  },
+  "donations" : {
+    "sponsors" : "sponsors",
+    "donations-received" : "dons reçus",
+    "active-companies" : "entreprises actives",
+    "invoices-processed" : "factures traitées",
+    "donate" : "donner",
+    "follow" : "suivre",
+    "follow-linkedin" : "Suivez-nous sur LinkedIn",
+    "sponsor-payment" : {
+      "title" : "Sponsoriser Let’s Peppol",
+      "info-invoice" : "Votre contribution sera facturee par BARGE vzw (Business Application Research Group Europe), une association belge sans but lucratif assujettie a la TVA.",
+      "info-vat" : "Vous recevrez une facture electronique Peppol avec 21% de TVA, afin que votre organisation dispose du document approprie pour le traitement TVA et la deductibilite fiscale.",
+      "amount-including-vat" : "{{total}} TVA incl.",
+      "amount-without-vat" : "Montant hors TVA",
+      "package-note" : "Nous apprecions votre contribution et vous contacterons pour convenir d'une formule de sponsoring adaptee.",
+      "sponsor-name" : "Nom sur la page des sponsors",
+      "message" : "Message",
+      "contribution" : "Contribution",
+      "vat" : "TVA 21%",
+      "total-including-vat" : "Total facture, TVA incluse",
+      "sending" : "Envoi...",
+      "request-package" : "Demander une formule de sponsoring",
+      "create-invoice" : "Accepter et creer la facture",
+      "default-message" : "Merci pour Let’s Peppol",
+      "success-title" : "Merci de soutenir Let’s Peppol.",
+      "success-invoice-created" : "Votre facture de sponsoring a ete creee et arrivera via Peppol.",
+      "duplicate-invoice" : "Nous avons deja cree une facture de sponsoring pour votre entreprise au cours des 48 dernieres heures. Elle arrivera via Peppol, TVA incluse; il n'est donc pas necessaire d'en creer une autre maintenant.",
+      "success-alert" : "Merci de sponsoriser Let’s Peppol",
+      "error-alert" : "Impossible de creer la facture de sponsoring"
+    }
   },
   "navigation" : {
     "dashboard" : "Tableau de bord",
@@ -197,7 +229,7 @@
     "partners" : "Partenaires",
     "products" : "Produits",
     "account" : "Compte",
-    "brand-alt" : "Let's Peppol",
+    "brand-alt" : "Let’s Peppol",
     "toggle-theme" : "Changer de thème"
   },
   "alert" : {

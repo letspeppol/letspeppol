@@ -186,11 +186,43 @@
     "remove": "Entfernen",
     "logout": "Abmelden",
     "edit": "Bearbeiten",
-    "close": "Schließen"
+    "close": "Schließen",
+    "view-more": "mehr anzeigen..."
   },
   "new-feature": {
     "label": "Neu",
     "click-to-dismiss": "Zum Schließen klicken"
+  },
+  "donations": {
+    "sponsors": "Sponsoren",
+    "donations-received": "Spenden erhalten",
+    "active-companies": "aktive Unternehmen",
+    "invoices-processed": "Rechnungen verarbeitet",
+    "donate": "spenden",
+    "follow": "folgen",
+    "follow-linkedin": "Folgen Sie uns auf LinkedIn",
+    "sponsor-payment": {
+      "title": "Let’s Peppol sponsern",
+      "info-invoice": "Ihr Beitrag wird von BARGE vzw (Business Application Research Group Europe), einem umsatzsteuerpflichtigen belgischen gemeinnutzigen Verein, in Rechnung gestellt.",
+      "info-vat": "Sie erhalten eine Peppol-E-Rechnung mit 21% MwSt., damit Ihre Organisation den richtigen Beleg fur die Umsatzsteuerverarbeitung und steuerliche Absetzbarkeit hat.",
+      "amount-including-vat": "{{total}} inkl. MwSt.",
+      "amount-without-vat": "Betrag ohne MwSt.",
+      "package-note": "Wir schatzen Ihren Beitrag und kontaktieren Sie, um ein passendes Sponsoring-Paket zu vereinbaren.",
+      "sponsor-name": "Name auf der Sponsorenseite",
+      "message": "Nachricht",
+      "contribution": "Beitrag",
+      "vat": "MwSt. 21%",
+      "total-including-vat": "Gesamtbetrag, inklusive MwSt.",
+      "sending": "Wird gesendet...",
+      "request-package": "Sponsoring-Paket anfragen",
+      "create-invoice": "Zustimmen und Rechnung erstellen",
+      "default-message": "Danke fur Let’s Peppol",
+      "success-title": "Danke, dass Sie Let’s Peppol unterstutzen.",
+      "success-invoice-created": "Ihre Sponsoring-Rechnung wurde erstellt und wird uber Peppol zugestellt.",
+      "duplicate-invoice": "Wir haben in den letzten 48 Stunden bereits eine Sponsoring-Rechnung fur Ihr Unternehmen erstellt. Sie wird inklusive MwSt. uber Peppol zugestellt, daher mussen Sie jetzt keine weitere erstellen.",
+      "success-alert": "Danke, dass Sie Let’s Peppol sponsern",
+      "error-alert": "Sponsoring-Rechnung konnte nicht erstellt werden"
+    }
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -198,7 +230,7 @@
     "partners": "Partner",
     "products": "Produkte",
     "account": "Konto",
-    "brand-alt": "Let's Peppol",
+    "brand-alt": "Let’s Peppol",
     "toggle-theme": "Theme umschalten"
   },
   "alert": {

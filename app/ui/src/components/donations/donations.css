@@ -1,12 +1,14 @@
 .donations-sticky {
     position: fixed;
     bottom: 10px;
-    left: 50%;
+    left: 0;
+    right: 0;
     width: 100%;
-    max-width: 700px;
-    transform: translateX(-50%);
+    max-width: 800px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
+    z-index: 60;
     padding: 0
 }
 
@@ -27,7 +29,7 @@
     gap: 1rem;
 }
 
-.donations-icon, .donations-transactions {
+.donations-icon, .donations-transactions, .donations-action {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -41,10 +43,40 @@
     padding: 0;
 }
 
+button.donations-transactions {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+button.donations-transactions:hover {
+    color: var(--primary);
+}
+
+.donations-view-more {
+    margin-top: var(--space-035);
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+button.donations-transactions:hover .donations-view-more {
+    color: var(--primary);
+}
+
 .donations-stats-total {
     display: flex;
     justify-content: space-around;
     flex-direction: column;
+}
+
+.linkedin-icon {
+    display: block;
+    flex: 0 0 auto;
 }
 
 .donations-stats-total h3 {
@@ -54,4 +86,156 @@
 
 .sticky-bottom h3 {
     margin: 0;
+}
+
+.sponsor-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    padding: 0;
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    color: var(--primary);
+    background: color-mix(in hsl, var(--primary) 6%, var(--panel));
+    cursor: pointer;
+    box-shadow: var(--elev);
+}
+
+.sponsor-button:hover {
+    color: var(--primary-strong);
+    border-color: color-mix(in hsl, var(--primary) 34%, var(--border-soft));
+    background: color-mix(in hsl, var(--primary) 10%, var(--panel));
+}
+
+.sponsor-button svg {
+    flex: 0 0 auto;
+}
+
+.linkedin-button {
+    color: inherit;
+    text-decoration: none;
+    overflow: hidden;
+}
+
+.linkedin-button:hover {
+    filter: brightness(1.06);
+}
+
+.donations-action-label {
+    margin-top: var(--space-035);
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.sponsor-payment-modal {
+    width: min(820px, calc(100% - var(--space-2rem)));
+    max-height: calc(100vh - var(--space-2rem));
+    display: flex;
+    flex-direction: column;
+}
+
+.sponsor-payment-modal .modal-body {
+    overflow: auto;
+}
+
+.sponsor-payment-body {
+    display: grid;
+    gap: var(--space-125);
+}
+
+.sponsor-payment-info {
+    display: grid;
+    gap: var(--space-05);
+    color: var(--muted);
+}
+
+.sponsor-payment-info p {
+    margin: 0;
+}
+
+.sponsor-amounts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(105px, 1fr));
+    gap: var(--space-05);
+}
+
+.sponsor-amounts .btn {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    width: 100%;
+    min-width: 0;
+    min-height: 58px;
+}
+
+.sponsor-amounts .btn small {
+    font-size: 0.72rem;
+    font-weight: 500;
+    opacity: 0.78;
+}
+
+.sponsor-fields {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-1);
+}
+
+.sponsor-package-note {
+    padding: var(--space-075);
+    border: 1px solid color-mix(in hsl, var(--primary) 28%, var(--border-soft));
+    border-radius: 8px;
+    color: var(--primary);
+    background: color-mix(in hsl, var(--primary) 8%, var(--panel));
+}
+
+.sponsor-vat-summary {
+    display: grid;
+    gap: var(--space-05);
+    padding: var(--space-1);
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    background: color-mix(in hsl, var(--primary) 5%, var(--panel));
+}
+
+.sponsor-vat-summary div {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-1);
+}
+
+.sponsor-vat-summary div:last-child {
+    padding-top: var(--space-05);
+    border-top: 1px solid var(--border-soft);
+}
+
+.sponsor-success {
+    display: grid;
+    gap: var(--space-05);
+}
+
+.sponsor-success h3,
+.sponsor-success p {
+    margin: 0;
+}
+
+@media (max-width: 750px) {
+    .donations-stats-total,
+    .donations-transactions {
+        display: none;
+    }
+
+    .donations-container {
+        max-height: none;
+        flex-wrap: wrap;
+        gap: var(--space-1);
+    }
+
+    .sponsor-fields {
+        grid-template-columns: 1fr;
+    }
 }

@@ -1,0 +1,28 @@
+.sponsors-header {
+    align-items: flex-end;
+}
+
+.sponsors-header p {
+    margin: var(--space-035) 0 0;
+    color: var(--muted);
+}
+
+.sponsors-table-card {
+    margin-bottom: 120px;
+}
+
+.sponsor-message {
+    max-width: 520px;
+    white-space: normal;
+}
+
+@media (max-width: 720px) {
+    .sponsors-header {
+        align-items: flex-start;
+    }
+
+    .sponsors-table th:nth-child(3),
+    .sponsors-table td:nth-child(3) {
+        min-width: 240px;
+    }
+}
