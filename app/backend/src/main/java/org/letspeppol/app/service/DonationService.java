@@ -76,12 +76,13 @@ public class DonationService {
         TotalProcessedDto totalProcessedDto = statisticsService.totalsProcessed();
         if (totalProcessedDto == null) return;
         OpenCollectiveAccountDto accountInfo = this.queryAccount().block();
+        List<OpenCollectiveAccountDto.Transaction> transactions = transactionsOf(accountInfo);
         List<SponsorContributionDto> peppolContributions = sponsorInvoiceRepository.findAllByActiveTrueOrderBySponsoredOnDesc().stream()
                 .map(this::toContribution)
                 .toList();
-        List<SponsorContributionDto> contributions = combinedContributions(peppolContributions, accountInfo.getTransactions().getNodes());
+        List<SponsorContributionDto> contributions = combinedContributions(peppolContributions, transactions);
 
-        Long invoicesRemaining = accountInfo.getStats().getTotalAmountReceived().getValue()
+        Long invoicesRemaining = totalAmountReceived(accountInfo)
                 .subtract(
                         pricePerDocument.multiply(BigDecimal.valueOf(totalProcessedDto.totalProcessed()))
                 )
@@ -89,13 +90,13 @@ public class DonationService {
                 .toBigInteger().longValue();
 
         donationStatsDto = DonationStatsDto.builder()
-                .totalContributions(accountInfo.getStats().getContributionsCount() + peppolContributions.size())
+                .totalContributions(contributionsCount(accountInfo) + peppolContributions.size())
                 .totalProcessed(totalProcessedDto.totalProcessed())
                 .processedToday(totalProcessedDto.totalProcessedToday())
                 .maxProcessedLastWeek(getMaxProcessedDto().maxDailyTotal())
                 .invoicesRemaining(invoicesRemaining)
                 .activeCompanies(statisticsService.activeCompanies())
-                .transactions(accountInfo.getTransactions().getNodes())
+                .transactions(transactions)
                 .contributions(contributions)
                 .build();
     }
@@ -195,5 +196,29 @@ public class DonationService {
             return null;
         }
         return Instant.parse(transaction.getCreatedAt());
+    }
+
+    private List<OpenCollectiveAccountDto.Transaction> transactionsOf(OpenCollectiveAccountDto accountInfo) {
+        if (accountInfo == null || accountInfo.getTransactions() == null || accountInfo.getTransactions().getNodes() == null) {
+            return List.of();
+        }
+        return accountInfo.getTransactions().getNodes();
+    }
+
+    private BigDecimal totalAmountReceived(OpenCollectiveAccountDto accountInfo) {
+        if (accountInfo == null
+                || accountInfo.getStats() == null
+                || accountInfo.getStats().getTotalAmountReceived() == null
+                || accountInfo.getStats().getTotalAmountReceived().getValue() == null) {
+            return BigDecimal.ZERO;
+        }
+        return accountInfo.getStats().getTotalAmountReceived().getValue();
+    }
+
+    private long contributionsCount(OpenCollectiveAccountDto accountInfo) {
+        if (accountInfo == null || accountInfo.getStats() == null || accountInfo.getStats().getContributionsCount() == null) {
+            return 0;
+        }
+        return accountInfo.getStats().getContributionsCount();
     }
 }

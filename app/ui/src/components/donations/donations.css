@@ -288,7 +288,7 @@ button.donations-transactions:hover .donations-view-more {
     margin: 0;
 }
 
-@media (max-width: 750px) {
+@media (width <= 750px) {
     .donations-stats-total,
     .donations-transactions {
         display: none;

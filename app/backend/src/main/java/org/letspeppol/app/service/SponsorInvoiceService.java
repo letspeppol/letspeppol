@@ -3,7 +3,6 @@ package org.letspeppol.app.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import lombok.RequiredArgsConstructor;
 import org.letspeppol.app.dto.DocumentNotificationEmailDto;
 import org.letspeppol.app.dto.SponsorContributionDto;
 import org.letspeppol.app.dto.SponsorInvoiceResponse;
@@ -42,7 +41,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
 @Slf4j
@@ -61,12 +59,31 @@ public class SponsorInvoiceService {
     private final ObjectMapper objectMapper;
     private final ApplicationEventPublisher eventPublisher;
     private final JwtService jwtService;
-    @Qualifier("proxyWebClient")
     private final WebClient proxyWebClient;
     @Value("${notification.mail.from}")
     private String notificationMailFrom;
     @Value("${sponsors.package-request.mail-to:partnership@letspeppol.org}")
     private String sponsorPackageRequestMailTo;
+
+    public SponsorInvoiceService(
+            CompanyRepository companyRepository,
+            SponsorInvoiceRepository sponsorInvoiceRepository,
+            DonationService donationService,
+            EmailJobRepository emailJobRepository,
+            ObjectMapper objectMapper,
+            ApplicationEventPublisher eventPublisher,
+            JwtService jwtService,
+            @Qualifier("proxyWebClient") WebClient proxyWebClient
+    ) {
+        this.companyRepository = companyRepository;
+        this.sponsorInvoiceRepository = sponsorInvoiceRepository;
+        this.donationService = donationService;
+        this.emailJobRepository = emailJobRepository;
+        this.objectMapper = objectMapper;
+        this.eventPublisher = eventPublisher;
+        this.jwtService = jwtService;
+        this.proxyWebClient = proxyWebClient;
+    }
 
     public List<SponsorContributionDto> getSponsorContributions() {
         return donationService.getDonationStats().getContributions();
