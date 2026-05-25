@@ -3,11 +3,17 @@ import {singleton} from "aurelia";
 import {jwtDecode} from "jwt-decode";
 import {KYCApi} from "../kyc/kyc-api";
 import {AppApi} from "./app-api";
+import {PartnerService} from "./partner-service";
+import {SponsorService} from "./sponsor-service";
+import {StatisticsService} from "./statistics-service";
 
 @singleton()
 export class LoginService {
     public kycApi = resolve(KYCApi);
     public appApi = resolve(AppApi);
+    private partnerService = resolve(PartnerService);
+    private sponsorService = resolve(SponsorService);
+    private statisticsService = resolve(StatisticsService);
     public authenticated = false;
 
     constructor() {
@@ -38,6 +44,7 @@ export class LoginService {
     }
 
     async auth(username: string, password: string) : Promise<void> {
+        this.clearCachedData();
         const token = await this.getJwtToken(username, password);
         localStorage.setItem('token', token);
         this.setAuthHeader(token);
@@ -45,6 +52,7 @@ export class LoginService {
     }
 
     updateToken(token: string) {
+        this.clearCachedData();
         localStorage.setItem('token', token);
         this.setAuthHeader(token);
         this.verifyAuthenticated();
@@ -64,10 +72,17 @@ export class LoginService {
     }
 
     logout() {
+        this.clearCachedData();
         this.kycApi.httpClient.configure(config => config.withDefaults({ headers: {'Authorization': ''} }));
         this.appApi.httpClient.configure(config => config.withDefaults({ headers: {'Authorization': ''} }));
         localStorage.removeItem('token');
         localStorage.removeItem('peppolActive');
         this.authenticated = false;
+    }
+
+    private clearCachedData() {
+        this.partnerService.clearCache();
+        this.sponsorService.clearCache();
+        this.statisticsService.clearCache();
     }
 }

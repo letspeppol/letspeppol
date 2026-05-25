@@ -6,6 +6,8 @@ import {SponsorService} from "../../services/app/sponsor-service";
 import {AlertType} from "../alert/alert";
 
 export class SponsorPaymentModal {
+    private static readonly DEFAULT_SPONSOR_NAME = "Incognito";
+
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
     private readonly i18n = resolve(I18N);
     private readonly companyService = resolve(CompanyService);
@@ -44,6 +46,10 @@ export class SponsorPaymentModal {
         return this.validAmount > 2500;
     }
 
+    get sponsorName() {
+        return this.name?.trim() || SponsorPaymentModal.DEFAULT_SPONSOR_NAME;
+    }
+
     async showModal() {
         this.sent = false;
         this.sending = false;
@@ -79,15 +85,16 @@ export class SponsorPaymentModal {
     }
 
     async sponsor() {
-        if (!this.validAmount || !this.name?.trim() || this.sending) {
+        if (!this.validAmount || this.sending) {
             return;
         }
         this.sending = true;
         try {
+            this.name = this.sponsorName;
             const response = await this.sponsorService.sponsor({
                 amount: this.validAmount,
                 currency: this.currency,
-                name: this.name.trim(),
+                name: this.sponsorName,
                 message: this.message?.trim() || this.i18n.tr("donations.sponsor-payment.default-message")
             });
             if (response.status === "PACKAGE_REQUESTED") {

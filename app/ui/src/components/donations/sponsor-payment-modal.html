@@ -64,13 +64,13 @@
                     type="button"
                     class="btn primary"
                     click.trigger="sponsor()"
-                    disabled.bind="!validAmount || !name"
+                    disabled.bind="!validAmount"
                     t="donations.sponsor-payment.request-package">Request sponsor package</button>
             <button if.bind="!sent && !sending && !overSelfServiceLimit"
                     type="button"
                     class="btn primary"
                     click.trigger="sponsor()"
-                    disabled.bind="!validAmount || !name"
+                    disabled.bind="!validAmount"
                     t="donations.sponsor-payment.create-invoice">Agree and create invoice</button>
         </footer>
     </div>

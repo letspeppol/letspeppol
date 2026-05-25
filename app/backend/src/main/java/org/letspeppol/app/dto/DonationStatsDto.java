@@ -15,4 +15,5 @@ public class DonationStatsDto {
     private Long invoicesRemaining;
     private Long activeCompanies;
     private List<OpenCollectiveAccountDto.Transaction> transactions;
+    private List<SponsorContributionDto> contributions;
 }

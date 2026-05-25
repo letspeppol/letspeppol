@@ -1,6 +1,6 @@
-import {StatisticsService, DonationStatsDto} from "../../services/app/statistics-service";
+import {StatisticsService, DonationStatsDto, SponsorContributionDto} from "../../services/app/statistics-service";
 import {resolve} from "@aurelia/kernel";
-import {SponsorContributionDto, SponsorDto, SponsorService} from "../../services/app/sponsor-service";
+import {SponsorDto, SponsorService} from "../../services/app/sponsor-service";
 import {SponsorPaymentModal} from "./sponsor-payment-modal";
 import {IRouter} from "@aurelia/router";
 
@@ -10,14 +10,29 @@ export class Donations {
     private router = resolve(IRouter);
     private accountInfo: DonationStatsDto;
     private sponsors: SponsorDto[] = [];
-    private contributions: SponsorContributionDto[] = [];
     private activeSponsor: SponsorDto;
     private activeSponsorIndex: number = 0;
     private sponsorInterval: ReturnType<typeof setInterval> | null = null;
     private sponsorPaymentModal: SponsorPaymentModal;
 
     get recentTransactions() {
-        return this.accountInfo?.transactions?.slice(0, 3) ?? [];
+        const contributions = this.accountInfo?.contributions;
+        if (contributions?.length) {
+            return contributions.slice(0, 3);
+        }
+        return this.openCollectiveContributions.slice(0, 3);
+    }
+
+    private get openCollectiveContributions(): SponsorContributionDto[] {
+        return this.accountInfo?.transactions
+            ?.filter(transaction => transaction.amount?.value !== undefined)
+            .map(transaction => ({
+                name: transaction.fromAccount?.name || "OpenCollective supporter",
+                message: "OpenCollective contribution",
+                amount: transaction.amount.value,
+                currency: transaction.amount.currency,
+                date: transaction.createdAt
+            })) ?? [];
     }
 
     attached() {
@@ -34,7 +49,6 @@ export class Donations {
     async loadLatestDonationInfo() {
         this.accountInfo = await this.statisticsService.getDonationStats();
         this.sponsors = (await this.sponsorService.getSponsors()).sponsors;
-        this.contributions = await this.sponsorService.getSponsorContributions();
         if (this.sponsors?.length) {
             this.activeSponsorIndex = Math.floor(Math.random() * this.sponsors.length);
             this.activeSponsor = this.sponsors[this.activeSponsorIndex];
@@ -57,6 +71,6 @@ export class Donations {
     }
 
     get totalSponsorTransactions() {
-        return this.contributions?.length ?? 0;
+        return this.accountInfo?.totalContributions ?? 0;
     }
 }

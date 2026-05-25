@@ -1,5 +1,6 @@
 import {resolve} from "@aurelia/kernel";
-import {SponsorContributionDto, SponsorService} from "../services/app/sponsor-service";
+import {SponsorService} from "../services/app/sponsor-service";
+import {SponsorContributionDto} from "../services/app/statistics-service";
 
 export class Sponsors {
     private readonly sponsorService = resolve(SponsorService);

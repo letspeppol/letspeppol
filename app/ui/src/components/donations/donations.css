@@ -37,6 +37,17 @@
     justify-content: center;
 }
 
+button.donations-action,
+a.donations-action {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-decoration: none;
+    cursor: pointer;
+}
+
 .donations-transactions ul {
     list-style-type: none;
     margin: 0;

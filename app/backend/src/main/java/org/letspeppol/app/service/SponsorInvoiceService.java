@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.letspeppol.app.dto.DocumentNotificationEmailDto;
-import org.letspeppol.app.dto.OpenCollectiveAccountDto;
 import org.letspeppol.app.dto.SponsorContributionDto;
 import org.letspeppol.app.dto.SponsorInvoiceResponse;
 import org.letspeppol.app.dto.SponsorInvoiceRequest;
@@ -39,8 +38,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -72,49 +69,7 @@ public class SponsorInvoiceService {
     private String sponsorPackageRequestMailTo;
 
     public List<SponsorContributionDto> getSponsorContributions() {
-        List<SponsorContributionDto> contributions = new ArrayList<>();
-        try {
-            contributions.addAll(sponsorInvoiceRepository.findAllByActiveTrueOrderBySponsoredOnDesc().stream()
-                    .map(sponsorInvoice -> new SponsorContributionDto(
-                            sponsorInvoice.getName(),
-                            sponsorInvoice.getMessage(),
-                            sponsorInvoice.getAmount(),
-                            sponsorInvoice.getCurrency().getCurrencyCode(),
-                            sponsorInvoice.getSponsoredOn()
-                    ))
-                    .toList());
-        } catch (Exception e) {
-            log.warn("Could not add Peppol sponsor contributions", e);
-        }
-
-        try {
-            var donationStats = donationService.getDonationStats();
-            if (donationStats == null) {
-                return contributions;
-            }
-            List<OpenCollectiveAccountDto.Transaction> transactions = donationStats.getTransactions();
-            if (transactions != null) {
-                contributions.addAll(transactions.stream()
-                        .filter(transaction -> transaction.getAmount() != null && transaction.getAmount().getValue() != null)
-                        .map(transaction -> new SponsorContributionDto(
-                                openCollectiveName(transaction),
-                                "OpenCollective contribution",
-                                transaction.getAmount().getValue(),
-                                transaction.getAmount().getCurrency(),
-                                openCollectiveDate(transaction)
-                        ))
-                        .toList());
-            }
-        } catch (Exception e) {
-            log.warn("Could not add OpenCollective sponsor contributions", e);
-        }
-
-        return contributions.stream()
-                .sorted(Comparator.comparing(
-                        SponsorContributionDto::date,
-                        Comparator.nullsLast(Comparator.reverseOrder())
-                ))
-                .toList();
+        return donationService.getDonationStats().getContributions();
     }
 
     @Transactional
@@ -162,6 +117,7 @@ public class SponsorInvoiceService {
                 .bodyToMono(UblDocumentDto.class)
                 .blockOptional()
                 .orElseThrow(() -> new IllegalStateException("Could not deliver sponsor invoice at PROXY"));
+        donationService.clearDonationStatsCache();
         return new SponsorInvoiceResponse(
                 "INVOICE_CREATED",
                 "Your sponsor invoice has been created and will arrive through Peppol.",
@@ -337,17 +293,4 @@ public class SponsorInvoiceService {
                 .replace("'", "&apos;");
     }
 
-    private String openCollectiveName(OpenCollectiveAccountDto.Transaction transaction) {
-        if (transaction.getFromAccount() == null || transaction.getFromAccount().getName() == null || transaction.getFromAccount().getName().isBlank()) {
-            return "OpenCollective supporter";
-        }
-        return transaction.getFromAccount().getName();
-    }
-
-    private Instant openCollectiveDate(OpenCollectiveAccountDto.Transaction transaction) {
-        if (transaction.getCreatedAt() == null || transaction.getCreatedAt().isBlank()) {
-            return null;
-        }
-        return Instant.parse(transaction.getCreatedAt());
-    }
 }
