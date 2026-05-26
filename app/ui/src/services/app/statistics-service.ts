@@ -42,14 +42,19 @@ export interface Amount {
 //     paid?: string;
 // };
 
+export type DirectionTotals = {
+    payableOpen: number;
+    payableOverdue: number;
+    payableThisYear: number;
+    receivableOpen: number;
+    receivableOverdue: number;
+    receivableThisYear: number;
+};
+
 export type Totals = {
-    totalPayableOpen: number;
-    totalPayableOverdue: number;
-    totalPayableThisYear: number;
-    totalReceivableOpen: number;
-    totalReceivableOverdue: number;
-    totalReceivableThisYear: number;
-}
+    inclVat: DirectionTotals;
+    exclVat: DirectionTotals;
+};
 
 // export type DocumentQuery = {
 //     userId?: string;

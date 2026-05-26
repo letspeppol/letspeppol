@@ -5,6 +5,7 @@ export interface FeatureMetadata {
 
 export const FEATURE_REGISTRY: Readonly<Record<string, FeatureMetadata>> = {
     'account-notifications': { section: 'account',  expiresAt: '2026-10-26' },
+    'vat-display':           { section: 'account',  expiresAt: '2026-11-26' },
 };
 
 export function getFeature(id: string): FeatureMetadata | undefined {

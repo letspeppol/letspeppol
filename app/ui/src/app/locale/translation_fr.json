@@ -191,6 +191,12 @@
     "label" : "Nouveau",
     "click-to-dismiss" : "Cliquer pour fermer"
   },
+  "dashboard": {
+    "vat-suffix": {
+      "incl": "TVA inc.",
+      "excl": "HT"
+    }
+  },
   "navigation" : {
     "dashboard" : "Tableau de bord",
     "invoices" : "Factures",
@@ -418,6 +424,10 @@
       "issue-date" : "Date d'émission",
       "due-date" : "Date d'échéance",
       "total" : "Total",
+      "total-vat-suffix": {
+        "incl": "TVA inc.",
+        "excl": "HT"
+      },
       "status" : "Statut",
       "actions" : "Actions"
     },
@@ -514,6 +524,12 @@
     "cancel" : "Annuler",
     "save" : "Enregistrer",
     "notifications": "Notifications",
+    "vat-display": {
+      "title": "Affichage des montants",
+      "description": "Choisissez si les totaux du tableau de bord et de la liste des factures sont affichés TVA comprise ou hors TVA.",
+      "incl": "TVA comprise",
+      "excl": "Hors TVA"
+    },
     "subscriber-info" : "Info abonné",
     "download-contract" : "Télécharger le contrat",
     "change-password" : "Changer le mot de passe",

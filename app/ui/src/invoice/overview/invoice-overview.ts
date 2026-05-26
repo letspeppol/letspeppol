@@ -8,6 +8,7 @@ import {
     DocumentQuery,
     InvoiceService, DocumentDirection,
 } from "../../services/app/invoice-service";
+import {IVatDisplay, VatDisplayMode} from "../../services/app/vat-display-service";
 import moment from "moment";
 import {IRouter} from "@aurelia/router";
 import {UploadUblModal} from "./components/upload-ubl-modal";
@@ -19,20 +20,25 @@ export class InvoiceOverview {
     private invoiceContext = resolve(InvoiceContext);
     private router = resolve(IRouter);
     private readonly i18n = resolve(I18N);
+    private vatDisplay = resolve(IVatDisplay);
+    vatMode: VatDisplayMode = this.vatDisplay.mode;
     query: DocumentQuery = {pageable: {page: 0, size: 20}};
     private resetSubscription: IDisposable;
+    private vatUnsubscribe: () => void;
 
     @bindable uploadUblModal: UploadUblModal;
 
     attached() {
         this.invoiceContext.initCompany();
         this.resetSubscription = this.ea.subscribe('invoicesReset', () => this.setActiveItems(this.invoiceContext.activeBox));
+        this.vatUnsubscribe = this.vatDisplay.subscribe(mode => this.vatMode = mode);
         this.setActiveItems(this.invoiceContext.activeBox);
         this.loadDrafts();
     }
 
     detaching() {
         this.resetSubscription?.dispose();
+        this.vatUnsubscribe?.();
     }
 
     async loadDrafts() {

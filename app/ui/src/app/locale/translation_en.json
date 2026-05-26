@@ -192,6 +192,12 @@
     "label": "New",
     "click-to-dismiss": "Click to dismiss"
   },
+  "dashboard": {
+    "vat-suffix": {
+      "incl": "incl. VAT",
+      "excl": "excl. VAT"
+    }
+  },
   "navigation": {
     "dashboard": "Dashboard",
     "invoices": "Invoices",
@@ -419,6 +425,10 @@
       "issue-date": "Issue Date",
       "due-date": "Due Date",
       "total": "Total",
+      "total-vat-suffix": {
+        "incl": "incl. VAT",
+        "excl": "excl. VAT"
+      },
       "status": "Status",
       "actions": "Actions"
     },
@@ -516,6 +526,12 @@
     "cancel": "Cancel",
     "save": "Save",
     "notifications": "Notifications",
+    "vat-display": {
+      "title": "Amount Display",
+      "description": "Choose whether totals in the dashboard and invoice list are shown including or excluding VAT.",
+      "incl": "Include VAT",
+      "excl": "Exclude VAT"
+    },
     "subscriber-info": "Subscriber Info",
     "download-contract": "Download Contract",
     "change-password": "Change Password",

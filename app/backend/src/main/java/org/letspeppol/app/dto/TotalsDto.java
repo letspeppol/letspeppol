@@ -2,11 +2,14 @@ package org.letspeppol.app.dto;
 
 import java.math.BigDecimal;
 
-public record TotalsDto(
-        BigDecimal totalPayableOpen,
-        BigDecimal totalPayableOverdue,
-        BigDecimal totalPayableThisYear,
-        BigDecimal totalReceivableOpen,
-        BigDecimal totalReceivableOverdue,
-        BigDecimal totalReceivableThisYear
-) {}
+public record TotalsDto(DirectionTotals inclVat, DirectionTotals exclVat) {
+
+    public record DirectionTotals(
+            BigDecimal payableOpen,
+            BigDecimal payableOverdue,
+            BigDecimal payableThisYear,
+            BigDecimal receivableOpen,
+            BigDecimal receivableOverdue,
+            BigDecimal receivableThisYear
+    ) {}
+}

@@ -21,7 +21,7 @@ public class StatisticsService {
     private final DocumentRepository documentRepository;
 
     public TotalsDto getTotals(String peppolId) {
-        return documentRepository.totalsByOwner(peppolId);
+        return documentRepository.totalsByOwner(peppolId).toDto();
     }
 
     public TotalProcessedDto totalsProcessed() {
