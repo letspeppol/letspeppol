@@ -468,7 +468,13 @@
       "draft" : "Concept",
       "scheduled" : "Gepland",
       "processed" : "Verwerkt",
-      "error" : "Fout"
+      "error" : "Fout",
+      "paid" : "Betaald",
+      "overdue" : "Vervallen"
+    },
+    "action" : {
+      "mark-paid" : "Markeer als betaald",
+      "mark-unpaid" : "Markeer als niet betaald"
     },
     "table" : {
       "direction" : "Richting",

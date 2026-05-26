@@ -469,7 +469,13 @@
       "draft": "Draft",
       "scheduled": "Scheduled",
       "processed": "Processed",
-      "error": "Error"
+      "error": "Error",
+      "paid": "Paid",
+      "overdue": "Overdue"
+    },
+    "action": {
+      "mark-paid": "Mark invoice as paid",
+      "mark-unpaid": "Mark invoice as unpaid"
     },
     "table": {
       "direction": "Direction",

@@ -621,6 +621,14 @@ main.container {
     color: var(--text);
 }
 
+.icon-btn.success {
+    color: var(--status-ok);
+}
+
+.icon-btn.success:hover {
+    color: color-mix(in hsl, var(--status-ok) 80%, black 20%);
+}
+
 .btn.active-route {
     box-shadow: var(--shadow-active-btn);
 }
@@ -840,13 +848,13 @@ main.container .data-table tbody td {
     border-color: var(--pill-invoice-border);
 }
 
-.pill.incoming, .pill.processed {
+.pill.incoming, .pill.processed, .pill.paid {
     color: var(--pill-incoming-fg);
     background: var(--pill-incoming-bg);
     border-color: var(--pill-incoming-border);
 }
 
-.pill.error {
+.pill.error, .pill.overdue {
     color: var(--pill-error-fg);
     background: var(--pill-error-bg);
     border-color: var(--pill-error-border);

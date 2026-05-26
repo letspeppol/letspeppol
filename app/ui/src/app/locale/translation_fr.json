@@ -468,7 +468,13 @@
       "draft" : "Brouillon",
       "scheduled" : "Planifié",
       "processed" : "Traité",
-      "error" : "Erreur"
+      "error" : "Erreur",
+      "paid" : "Payée",
+      "overdue" : "En retard"
+    },
+    "action" : {
+      "mark-paid" : "Marquer comme payée",
+      "mark-unpaid" : "Marquer comme non payée"
     },
     "table" : {
       "direction" : "Direction",

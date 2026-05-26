@@ -469,7 +469,13 @@
       "draft": "Entwurf",
       "scheduled": "Geplant",
       "processed": "Verarbeitet",
-      "error": "Fehler"
+      "error": "Fehler",
+      "paid": "Bezahlt",
+      "overdue": "Überfällig"
+    },
+    "action": {
+      "mark-paid": "Als bezahlt markieren",
+      "mark-unpaid": "Als unbezahlt markieren"
     },
     "table": {
       "direction": "Richtung",
