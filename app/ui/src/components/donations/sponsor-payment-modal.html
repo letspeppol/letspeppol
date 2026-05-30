@@ -9,7 +9,7 @@
             <div if.bind="!sent" class="sponsor-payment-body">
                 <div class="sponsor-payment-info">
                     <p t="donations.sponsor-payment.info-invoice">Your contribution will be invoiced by BARGE vzw (Business Application Research Group Europe), a VAT-registered Belgian non-profit association.</p>
-                    <p t="donations.sponsor-payment.info-vat">You will receive a Peppol e-invoice with 21% VAT, so your organization has the proper document for VAT processing and tax deductibility.</p>
+                    <p t.bind="infoVatKey">You will receive a Peppol e-invoice with 21% VAT, so your organization has the proper document for VAT processing and tax deductibility.</p>
                 </div>
 
                 <div class="sponsor-amounts">
@@ -18,7 +18,7 @@
                             class.bind="selectedFixedAmount === fixedAmount ? 'btn primary' : 'btn'"
                             click.trigger="selectAmount(fixedAmount)">
                         ${fixedAmount} ${currency}
-                        <small t="donations.sponsor-payment.amount-including-vat" t-params.bind="{ total: totalFor(fixedAmount).toFixed(2) }">${totalFor(fixedAmount).toFixed(2)} incl. VAT</small>
+                        <small t.bind="amountTotalKey" t-params.bind="{ total: totalFor(fixedAmount).toFixed(2) }">${totalFor(fixedAmount).toFixed(2)} incl. VAT</small>
                     </button>
                 </div>
 
@@ -42,8 +42,8 @@
 
                 <div class="sponsor-vat-summary">
                     <div><span t="donations.sponsor-payment.contribution">Contribution</span><strong>${validAmount.toFixed(2)} ${currency}</strong></div>
-                    <div><span t="donations.sponsor-payment.vat">VAT 21%</span><strong>${vatAmount.toFixed(2)} ${currency}</strong></div>
-                    <div><span t="donations.sponsor-payment.total-including-vat">Total charged, including VAT</span><strong>${totalAmount.toFixed(2)} ${currency}</strong></div>
+                    <div><span t.bind="vatLabelKey">VAT 21%</span><strong>${vatAmount.toFixed(2)} ${currency}</strong></div>
+                    <div><span t.bind="totalLabelKey">Total charged, including VAT</span><strong>${totalAmount.toFixed(2)} ${currency}</strong></div>
                 </div>
             </div>
 

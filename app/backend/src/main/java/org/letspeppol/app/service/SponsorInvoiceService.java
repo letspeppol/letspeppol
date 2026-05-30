@@ -39,6 +39,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @Transactional(readOnly = true)
@@ -51,6 +52,12 @@ public class SponsorInvoiceService {
     private static final String SPONSOR_PEPPOL_ID = "0208:1029545627";
     private static final BigDecimal MAX_SELF_SERVICE_AMOUNT = new BigDecimal("2500.00");
     private static final ZoneId ZONE = ZoneId.of("Europe/Brussels");
+    private static final Set<String> EU_COUNTRY_CODES = Set.of(
+            "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR",
+            "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL",
+            "PL", "PT", "RO", "SK", "SI", "ES", "SE"
+    );
+    private static final BigDecimal BELGIAN_VAT_RATE = new BigDecimal("0.21");
 
     private final CompanyRepository companyRepository;
     private final SponsorInvoiceRepository sponsorInvoiceRepository;
@@ -216,10 +223,21 @@ public class SponsorInvoiceService {
         String currency = sponsorInvoice.getCurrency().getCurrencyCode();
         int scale = Math.max(0, sponsorInvoice.getCurrency().getDefaultFractionDigits());
         BigDecimal amount = sponsorInvoice.getAmount().setScale(scale, RoundingMode.HALF_UP);
-        BigDecimal tax = amount.multiply(new BigDecimal("0.21")).setScale(scale, RoundingMode.HALF_UP);
+        Address address = customer.getRegisteredOffice();
+        String customerCountryCode = countryCode(address);
+        boolean reverseCharge = isIntraEuReverseCharge(customerCountryCode);
+        BigDecimal tax = reverseCharge
+                ? BigDecimal.ZERO.setScale(scale, RoundingMode.HALF_UP)
+                : amount.multiply(BELGIAN_VAT_RATE).setScale(scale, RoundingMode.HALF_UP);
         BigDecimal total = amount.add(tax).setScale(scale, RoundingMode.HALF_UP);
         String[] customerPeppol = splitPeppolId(customer.getPeppolId());
-        Address address = customer.getRegisteredOffice();
+        String taxCategory = reverseCharge ? "AE" : "S";
+        String taxPercent = reverseCharge ? "0" : "21";
+        String taxExemptionReason = reverseCharge
+                ? """
+                <cbc:TaxExemptionReasonCode>VATEX-EU-AE</cbc:TaxExemptionReasonCode>
+                <cbc:TaxExemptionReason>Reverse charge</cbc:TaxExemptionReason>"""
+                : "";
 
         Map<String, String> values = Map.ofEntries(
                 Map.entry("invoiceId", sponsorInvoice.getInvoiceId()),
@@ -229,13 +247,16 @@ public class SponsorInvoiceService {
                 Map.entry("amount", amount.toPlainString()),
                 Map.entry("taxAmount", tax.toPlainString()),
                 Map.entry("totalAmount", total.toPlainString()),
+                Map.entry("taxCategory", taxCategory),
+                Map.entry("taxPercent", taxPercent),
+                Map.entry("taxExemptionReason", taxExemptionReason),
                 Map.entry("customerScheme", xml(customerPeppol[0])),
                 Map.entry("customerEndpoint", xml(customerPeppol[1])),
                 Map.entry("customerName", xml(customer.getName())),
                 Map.entry("customerStreet", xml(address != null ? address.getStreet() : "")),
                 Map.entry("customerCity", xml(address != null ? address.getCity() : "")),
                 Map.entry("customerPostalCode", xml(address != null ? address.getPostalCode() : "")),
-                Map.entry("customerCountryCode", xml(address != null ? address.getCountryCode() : "BE")),
+                Map.entry("customerCountryCode", xml(customerCountryCode)),
                 Map.entry("customerVatNumber", xml(vatNumber(customer))),
                 Map.entry("description", xml("name: " + sponsorInvoice.getName() + "\nmessage: " + sponsorInvoice.getMessage()))
         );
@@ -245,6 +266,17 @@ public class SponsorInvoiceService {
             xml = xml.replace("{" + entry.getKey() + "}", entry.getValue());
         }
         return xml;
+    }
+
+    private boolean isIntraEuReverseCharge(String customerCountryCode) {
+        return EU_COUNTRY_CODES.contains(customerCountryCode) && !"BE".equals(customerCountryCode);
+    }
+
+    private String countryCode(Address address) {
+        if (address == null || address.getCountryCode() == null || address.getCountryCode().isBlank()) {
+            return "BE";
+        }
+        return address.getCountryCode().trim().toUpperCase();
     }
 
     private String template() {

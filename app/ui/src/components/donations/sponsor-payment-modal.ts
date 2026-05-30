@@ -9,6 +9,11 @@ export class SponsorPaymentModal {
     private static readonly DEFAULT_SPONSOR_NAME = "Incognito";
     private static readonly MAX_SPONSOR_NAME_LENGTH = 64;
     private static readonly MAX_MESSAGE_LENGTH = 255;
+    private static readonly EU_COUNTRY_CODES = new Set([
+        "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR",
+        "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL",
+        "PL", "PT", "RO", "SK", "SI", "ES", "SE"
+    ]);
 
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
     private readonly i18n = resolve(I18N);
@@ -26,9 +31,15 @@ export class SponsorPaymentModal {
     message = "";
     successTitle = "";
     successText = "";
+    customerCountryCode = "BE";
+
+    get reverseChargeVat() {
+        const countryCode = this.customerCountryCode?.trim().toUpperCase();
+        return SponsorPaymentModal.EU_COUNTRY_CODES.has(countryCode) && countryCode !== "BE";
+    }
 
     get vatAmount() {
-        return this.round(this.validAmount * 0.21);
+        return this.reverseChargeVat ? 0 : this.round(this.validAmount * 0.21);
     }
 
     get totalAmount() {
@@ -36,7 +47,23 @@ export class SponsorPaymentModal {
     }
 
     totalFor(amount: number) {
-        return this.round(amount * 1.21);
+        return this.reverseChargeVat ? this.round(amount) : this.round(amount * 1.21);
+    }
+
+    get vatLabelKey() {
+        return this.reverseChargeVat ? "donations.sponsor-payment.vat-reverse-charge" : "donations.sponsor-payment.vat";
+    }
+
+    get totalLabelKey() {
+        return this.reverseChargeVat ? "donations.sponsor-payment.total-reverse-charge" : "donations.sponsor-payment.total-including-vat";
+    }
+
+    get amountTotalKey() {
+        return this.reverseChargeVat ? "donations.sponsor-payment.amount-reverse-charge" : "donations.sponsor-payment.amount-including-vat";
+    }
+
+    get infoVatKey() {
+        return this.reverseChargeVat ? "donations.sponsor-payment.info-vat-reverse-charge" : "donations.sponsor-payment.info-vat";
     }
 
     get validAmount() {
@@ -139,8 +166,10 @@ export class SponsorPaymentModal {
         try {
             const company = this.companyService.myCompany || await this.companyService.getAndSetMyCompanyForToken();
             this.name = company.displayName || company.name;
+            this.customerCountryCode = company.registeredOffice?.countryCode || "BE";
         } catch {
             this.name = "";
+            this.customerCountryCode = "BE";
         }
     }
 

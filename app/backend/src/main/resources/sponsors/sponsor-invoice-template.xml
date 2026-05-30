@@ -83,8 +83,9 @@
             <cbc:TaxableAmount currencyID="{currency}">{amount}</cbc:TaxableAmount>
             <cbc:TaxAmount currencyID="{currency}">{taxAmount}</cbc:TaxAmount>
             <cac:TaxCategory>
-                <cbc:ID>S</cbc:ID>
-                <cbc:Percent>21</cbc:Percent>
+                <cbc:ID>{taxCategory}</cbc:ID>
+                <cbc:Percent>{taxPercent}</cbc:Percent>
+                {taxExemptionReason}
                 <cac:TaxScheme>
                     <cbc:ID>VAT</cbc:ID>
                 </cac:TaxScheme>
@@ -105,8 +106,9 @@
             <cbc:Description>{description}</cbc:Description>
             <cbc:Name>Sponsor</cbc:Name>
             <cac:ClassifiedTaxCategory>
-                <cbc:ID>S</cbc:ID>
-                <cbc:Percent>21</cbc:Percent>
+                <cbc:ID>{taxCategory}</cbc:ID>
+                <cbc:Percent>{taxPercent}</cbc:Percent>
+                {taxExemptionReason}
                 <cac:TaxScheme>
                     <cbc:ID>VAT</cbc:ID>
                 </cac:TaxScheme>
