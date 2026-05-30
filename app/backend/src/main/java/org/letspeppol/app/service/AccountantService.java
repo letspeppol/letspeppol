@@ -36,7 +36,7 @@ import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 @Service
 public class AccountantService {
 
@@ -53,6 +53,7 @@ public class AccountantService {
     @Value("${notification.mail.from}")
     private String mailFrom;
 
+    @Transactional
     public void linkCustomer(UUID accountantExternalId, String accountantPeppolId, LinkCustomerDto linkCustomerDto) {
         if (!StringUtils.hasText(linkCustomerDto.customerEmail())) {
             throw new ServiceException("Customer email missing");
@@ -80,16 +81,27 @@ public class AccountantService {
                 placeholders
         );
 
+        String from = StringUtils.hasText(company.getDisplayName())
+                ? company.getDisplayName()
+                : accountantPeppolId;
+
+        String to = StringUtils.hasText(linkCustomerDto.customerName())
+                ? linkCustomerDto.customerName()
+                : linkCustomerDto.customerPeppolId();
+
+        String subject = "Let’s Peppol accountant access request: %s for %s".formatted(from, to);
+
         EmailDto emailDto = new EmailDto(
                 mailFrom,
                 linkCustomerDto.customerEmail(), null, null, null,
-                "",
+                subject,
                 body, null
         );
         try {
             String json = objectMapper.writeValueAsString(emailDto);
 
             EmailJob emailJob = EmailJob.builder()
+                    .template(EmailJob.Template.ACCOUNTANT_CUSTOMER_LINK)
                     .toAddress(linkCustomerDto.customerEmail())
                     .payload(json)
                     .build();
@@ -100,6 +112,7 @@ public class AccountantService {
         }
     }
 
+    @Transactional
     public void confirmLink(String customerPeppolId, String token) {
         Optional<AccountantCustomer> accountantCustomer = accountantCustomerRepository.findByToken(token);
         if (accountantCustomer.isEmpty()) {

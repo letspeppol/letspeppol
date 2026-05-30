@@ -65,10 +65,14 @@ public class ActivationService {
 
     @Transactional
     public void requestActivation(Ownership requester, ConfirmCompanyRequest request, String acceptLanguage) {
+        AccountType requestedType = request.type() == null ? AccountType.ADMIN : request.type();
+        if (requester == null || requestedType == AccountType.ADMIN) {
+            ownershipService.verifyPeppolIdNotRegistered(request.peppolId());
+        }
         String token = generateToken();
         EmailVerification verification = new EmailVerification(
                 requester,
-                request.type() == null ? ADMIN : request.type(),
+                requestedType,
                 request.email().toLowerCase(),
                 request.peppolId(), //Always add peppolId to set the targeted company
                 token,

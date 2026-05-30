@@ -1,10 +1,7 @@
 package org.letspeppol.kyc.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 import org.letspeppol.kyc.model.kbo.Company;
@@ -20,11 +17,8 @@ import java.util.UUID;
 @Setter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class Account {
-
-    public Account() {
-        this.externalId = UUID.randomUUID();
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -43,5 +43,5 @@ public interface AccountantCustomerRepository extends JpaRepository<AccountantCu
         AND e.accountantExternalId = :accountantExternalId
         AND e.verifiedOn IS NOT NULL
         """)
-    boolean exists(String customerPeppolId, UUID accountantExternalId);
+    boolean exists(@Param("customerPeppolId")String customerPeppolId, @Param("accountantExternalId")UUID accountantExternalId);
 }

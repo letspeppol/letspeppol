@@ -6,6 +6,8 @@ import org.letspeppol.app.service.EmailService;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 @Component
 @RequiredArgsConstructor
@@ -18,7 +20,7 @@ public class EmailJobEventListener {
      * Asynchronously triggers processing when a new job is created.
      */
     @Async
-    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onEmailJobCreated(EmailJobCreatedEvent event) {
         try {
             emailService.processEmailJobs();

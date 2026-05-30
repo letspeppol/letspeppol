@@ -24,6 +24,9 @@ public class SignerAccountResolverService {
         if (authHeader != null && !authHeader.isBlank()) {
             var jwtInfo = jwtService.validateAndGetInfo(authHeader);
             if (jwtInfo.accountType() != AccountType.AFFILIATE) {
+                if (!jwtInfo.peppolId().equals(signingRequest.peppolId())) {
+                    throw new KycException(KycErrorCodes.REQUESTER_NOT_VALID);
+                }
                 Account account = accountService.getByExternalId(jwtInfo.uid());
                 if (signingRequest.email() != null && !signingRequest.email().equalsIgnoreCase(account.getEmail())) {
                     throw new KycException(KycErrorCodes.REQUESTER_NOT_VALID);
