@@ -1,23 +1,28 @@
 import {resolve} from "@aurelia/kernel";
-import {InvoiceContext} from "./invoice-context";
-import {AlertType} from "../components/alert/alert";
-import {IDisposable, IEventAggregator, watch} from "aurelia";
+import {InvoiceContext} from "../invoice-context";
+import {AlertType} from "../../components/alert/alert";
+import {bindable, IDisposable, IEventAggregator, watch} from "aurelia";
 import {
     DocumentType,
     DocumentDto,
     DocumentQuery,
     InvoiceService, DocumentDirection,
-} from "../services/app/invoice-service";
+} from "../../services/app/invoice-service";
 import moment from "moment";
 import {IRouter} from "@aurelia/router";
+import {UploadUblModal} from "./components/upload-ubl-modal";
+import {I18N} from "@aurelia/i18n";
 
 export class InvoiceOverview {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
     private invoiceService = resolve(InvoiceService);
     private invoiceContext = resolve(InvoiceContext);
     private router = resolve(IRouter);
+    private readonly i18n = resolve(I18N);
     query: DocumentQuery = {pageable: {page: 0, size: 20}};
     private resetSubscription: IDisposable;
+
+    @bindable uploadUblModal: UploadUblModal;
 
     attached() {
         this.invoiceContext.initCompany();
@@ -32,6 +37,9 @@ export class InvoiceOverview {
 
     async loadDrafts() {
         this.invoiceContext.draftPage = await this.invoiceService.getDocuments({...this.query, draft: true });
+        if (this.invoiceContext.activeBox === 'DRAFTS') {
+            this.invoiceContext.invoicePage = this.invoiceContext.draftPage;
+        }
     }
 
     @watch((vm) => [vm.query.invoiceReference, vm.query.partnerName])
@@ -102,10 +110,10 @@ export class InvoiceOverview {
         try {
             await this.invoiceService.deleteDocument(draft.id)
             this.invoiceContext.deleteDraft(draft);
-            this.ea.publish('alert', {alertType: AlertType.Success, text: "Draft deleted"});
+            this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.invoice.draft-deleted')});
         } catch (e) {
             console.log(e);
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to delete draft"});
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.invoice.draft-delete-overview-failed')});
         }
         return false;
     }
@@ -121,13 +129,17 @@ export class InvoiceOverview {
             await this.invoiceService.togglePaidDocument(item.id);
             if (item.paidOn) {
                 item.paidOn = undefined;
-                this.ea.publish('alert', {alertType: AlertType.Success, text: "Invoice marked as unpaid"});
+                this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.invoice.marked-unpaid')});
             } else {
                 item.paidOn = datePaid;
-                this.ea.publish('alert', {alertType: AlertType.Success, text: "Invoice marked as paid"});
+                this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.invoice.marked-paid')});
             }
         } catch (e) {
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to change invoice paid status"});
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.invoice.paid-status-failed')});
         }
+    }
+
+    showUploadUblModal() {
+        this.uploadUblModal.showModal();
     }
 }

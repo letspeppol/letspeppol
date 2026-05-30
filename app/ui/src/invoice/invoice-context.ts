@@ -8,6 +8,7 @@ import {DocumentDirection, DocumentDto, DocumentPageDto, DocumentType} from "../
 import {parseCreditNote, parseInvoice} from "../services/peppol/ubl-parser";
 import {PartnerDto, PartnerService} from "../services/app/partner-service";
 import {resolve} from "@aurelia/kernel";
+import {I18N} from "@aurelia/i18n";
 
 @singleton()
 export class InvoiceContext {
@@ -16,6 +17,7 @@ export class InvoiceContext {
     private readonly partnerService = resolve(PartnerService);
     private readonly invoiceComposer = resolve(InvoiceComposer);
     private readonly invoiceCalculator = resolve(InvoiceCalculator);
+    private readonly i18n = resolve(I18N);
     // Overview
     draftPage: DocumentPageDto = undefined;
     invoicePage: DocumentPageDto = undefined;
@@ -25,8 +27,8 @@ export class InvoiceContext {
     @observable selectedInvoice:  undefined | Invoice | CreditNote;
     selectedDocument: DocumentDto;
     selectedDocumentType: DocumentType = DocumentType.INVOICE;
-    lastInvoiceReference: string = undefined;
-    nextInvoiceReference: string = undefined;
+    lastReference: string = undefined;
+    nextReference: string = undefined;
     readOnly: boolean = false;
     partnerMissing: boolean = false;
     addPdfToSendingInvoice: boolean = false;
@@ -34,7 +36,6 @@ export class InvoiceContext {
     clearSelectedInvoice() {
         this.selectedInvoice = undefined;
         this.selectedDocument = undefined;
-        this.activeBox = 'ALL';
     }
 
     setActiveBoxFromDocument(doc: DocumentDto) {
@@ -57,7 +58,7 @@ export class InvoiceContext {
     }
 
     selectInvoice(item: DocumentDto) {
-        this.readOnly = (item.direction === DocumentDirection.INCOMING || item.proxyOn != null);
+        this.readOnly = (item.direction === DocumentDirection.INCOMING || item.proxyOn != null || item.createdExternally);
         this.selectedDocument = item;
         if (item.draftedOn) {
             this.getLastInvoiceReference();
@@ -81,7 +82,7 @@ export class InvoiceContext {
             try {
                 await this.companyService.getAndSetMyCompanyForToken();
             } catch {
-                this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to get company info"});
+                this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.company.info-failed')});
             }
         }
         this.addPdfToSendingInvoice = this.companyService.myCompany.addPdfToSendingInvoice;
@@ -109,18 +110,23 @@ export class InvoiceContext {
 
     getLastInvoiceReference() {
         this.companyService.getAndSetMyCompanyForToken().then(company => {
-            this.lastInvoiceReference = company.lastInvoiceReference;
-            this.nextInvoiceReference = this.computeNextInvoiceReference(this.lastInvoiceReference);
+            if (this.selectedDocumentType === DocumentType.CREDIT_NOTE) {
+                this.lastReference = company.lastCreditNoteReference;
+            } else {
+                this.lastReference = company.lastInvoiceReference;
+            }
+            this.nextReference = this.computeNextInvoiceReference(this.selectedDocumentType, this.lastReference);
         }).catch(() => {
-            this.lastInvoiceReference = undefined;
-            this.nextInvoiceReference = undefined;
+            this.lastReference = undefined;
+            this.nextReference = undefined;
         });
     }
 
-    private computeNextInvoiceReference(lastRef?: string): string {
+    private computeNextInvoiceReference(documentType: DocumentType, lastRef?: string): string {
         if (!lastRef) {
             const year = new Date().getFullYear().toString();
-            return `${year}0001`;
+            const prefix = documentType === DocumentType.CREDIT_NOTE ? 'CRN' : 'INV';
+            return `${prefix}-${year}0001`;
         }
 
         const match = lastRef.match(/(.*?)(\d+)([^0-9]*)$/);

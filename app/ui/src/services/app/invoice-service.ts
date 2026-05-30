@@ -1,6 +1,7 @@
 import {singleton} from "aurelia";
 import {resolve} from "@aurelia/kernel";
 import {AppApi} from "./app-api";
+import {create} from "node:domain";
 
 export interface DocumentPageDto {
     content: DocumentDto[];
@@ -25,6 +26,7 @@ export interface DocumentQuery {
     type?: DocumentType;
     direction?: DocumentDirection;
     partnerName?: string;
+    partnerPeppolId?: string;
     invoiceReference?: string;
     paid?: boolean;
     read?: boolean;
@@ -69,6 +71,7 @@ export interface DocumentDto {
     issueDate?: string;             // ISO datetime (Instant)
     dueDate?: string;               // ISO datetime (Instant)
     paymentTerms?: string;
+    createdExternally?: boolean;
 }
 
 export interface ValidationResultDto {
@@ -100,6 +103,7 @@ export class InvoiceService {
         if (query.type) search.append("type", query.type);
         if (query.direction) search.append("direction", query.direction);
         if (query.partnerName) search.append("partnerName", query.partnerName);
+        if (query.partnerPeppolId) search.append("partnerPeppolId", query.partnerPeppolId);
         if (query.invoiceReference) search.append("invoiceReference", query.invoiceReference);
         if (query.paid !== undefined) search.append("paid", String(query.paid));
         if (query.read !== undefined) search.append("read", String(query.read));
@@ -120,8 +124,9 @@ export class InvoiceService {
         return await this.appApi.httpClient.get(`/sapi/document/${id}`).then(response => response.json());
     }
 
-    async createDocument(xml: string, addPdfToSendingInvoice: boolean = false, draft: boolean = false) : Promise<DocumentDto> {
-        return await this.appApi.httpClient.post(`/sapi/document?addPdfToSendingInvoice=${addPdfToSendingInvoice}&draft=${draft}`, xml).then(response => response.json());
+    async createDocument(xml: string, draft: boolean = false, createdExternally: boolean = false) : Promise<DocumentDto> {
+        let url = `/sapi/document?draft=${draft}&createdExternally=${createdExternally}`;
+        return await this.appApi.httpClient.post(url, xml).then(response => response.json());
     }
 
     async updateDocument(id: string, xml: string, draft: boolean = false) : Promise<DocumentDto> {
@@ -150,6 +155,5 @@ export class InvoiceService {
 
     async downloadPdf(id: string) {
         return await this.appApi.httpClient.get(`/sapi/document/${id}/pdf`);
-
     }
 }

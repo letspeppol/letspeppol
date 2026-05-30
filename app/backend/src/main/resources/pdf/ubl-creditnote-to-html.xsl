@@ -95,8 +95,16 @@
 
             <!-- Referenced invoice(s) -->
             <xsl:variable name="invRef" select="normalize-space((/*/*[local-name()='BillingReference']/*[local-name()='InvoiceDocumentReference']/*[local-name()='ID'])[1])"/>
+            <xsl:variable name="invRefDate" select="normalize-space((/*/*[local-name()='BillingReference']/*[local-name()='InvoiceDocumentReference']/*[local-name()='IssueDate'])[1])"/>
             <xsl:if test="string-length($invRef) &gt; 0">
               <div><span class="muted">Invoice reference: </span> <xsl:value-of select="$invRef"/></div>
+            </xsl:if>
+            <xsl:if test="string-length($invRefDate) &gt; 0">
+              <div><span class="muted">Invoice date: </span>
+                <xsl:call-template name="format-ubl-date">
+                  <xsl:with-param name="value" select="$invRefDate"/>
+                </xsl:call-template>
+              </div>
             </xsl:if>
 
             <xsl:variable name="buyerReference" select="normalize-space((/*/*[local-name()='BuyerReference'])[1])"/>

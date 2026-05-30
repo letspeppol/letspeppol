@@ -27,5 +27,6 @@ public record DocumentDto(
         BigDecimal amount,
         Instant issueDate,
         Instant dueDate,
-        String paymentTerms
+        String paymentTerms,
+        Boolean createdExternally
 ) {}

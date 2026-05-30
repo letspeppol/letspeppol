@@ -2,10 +2,12 @@ import {bindable, IEventAggregator} from "aurelia";
 import {resolve} from "@aurelia/kernel";
 import {Match, PeppolDirService} from "../../services/peppol/peppol-dir-service";
 import {AlertType} from "../alert/alert";
+import {I18N} from "@aurelia/i18n";
 
 export class PeppolSearch {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
     private readonly peppolDirService = resolve(PeppolDirService);
+    private readonly i18n = resolve(I18N);
     showSuggestions = false;
     peppolMatches: Match[];
     @bindable name;
@@ -16,12 +18,12 @@ export class PeppolSearch {
 
     async searchPeppolIdByName() {
         try {
-            this.ea.publish('showOverlay', "Searching company");
+            this.ea.publish('showOverlay', this.i18n.tr('overlay.searching-company'));
             this.peppolMatches = (await this.peppolDirService.findByName(this.name)).matches;
             this.checkSuggestionsFound();
 
         } catch {
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Searching Peppol directory failed"});
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.peppol-search.failed')});
         } finally {
             this.ea.publish('hideOverlay');
         }
@@ -29,11 +31,11 @@ export class PeppolSearch {
 
     async searchPeppolIdByVAT() {
         try {
-            this.ea.publish('showOverlay', "Searching company");
+            this.ea.publish('showOverlay', this.i18n.tr('overlay.searching-company'));
             this.peppolMatches = (await this.peppolDirService.findByParticipant(this.vatNumber.replace(/\D/g, ''))).matches;
             this.checkSuggestionsFound();
         } catch {
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Searching Peppol directory failed"});
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.peppol-search.failed')});
         } finally {
             this.ea.publish('hideOverlay');
         }
@@ -42,7 +44,7 @@ export class PeppolSearch {
     checkSuggestionsFound() {
         this.showSuggestions = this.peppolMatches.length > 0;
         if (!this.showSuggestions) {
-            this.ea.publish('alert', {alertType: AlertType.Warning, text: "No results found"});
+            this.ea.publish('alert', {alertType: AlertType.Warning, text: this.i18n.tr('alert.peppol-search.no-results')});
         }
     }
 

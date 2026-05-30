@@ -273,6 +273,7 @@ export interface PaymentTerms {
 
 export interface InvoiceDocumentReference {
     ID: string;
+    IssueDate?: string;
 }
 
 export interface BillingReference {

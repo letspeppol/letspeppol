@@ -4,4 +4,7 @@ We received a new invoice on your behalf from {{supplier}} with reference {{refe
 You can inspect the document at https://be.letspeppol.org/invoices/{{uuid}}
 
 Kind regards,
-Let’s Peppol Team
+Let's Peppol Team
+
+--
+{{supportedByText}}: {{sponsorName}} ({{sponsorUrl}})

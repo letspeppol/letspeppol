@@ -29,7 +29,8 @@ public class DocumentMapper {
                 document.getAmount(),
                 document.getIssueDate(),
                 document.getDueDate(),
-                document.getPaymentTerms()
+                document.getPaymentTerms(),
+                document.getCreatedExternally()
         );
     }
 }

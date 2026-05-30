@@ -1,5 +1,5 @@
 import {
-    AccountingParty,
+    AccountingParty, AdditionalDocumentReference,
     CreditNote,
     CreditNoteLine,
     Invoice,
@@ -15,6 +15,8 @@ import {resolve} from "@aurelia/kernel";
 import {CompanyService} from "../services/app/company-service";
 import {DocumentType} from "../services/app/invoice-service";
 import {I18N} from "@aurelia/i18n";
+
+const GENERATED_INVOICE = 'generated_invoice';
 
 @singleton()
 export class InvoiceComposer {
@@ -45,7 +47,7 @@ export class InvoiceComposer {
             Note: undefined,
             DocumentCurrencyCode: "EUR",
             BuyerReference: "NA",
-            AdditionalDocumentReference: undefined,
+            AdditionalDocumentReference: this.getAdditionalDocumentReference(),
             AccountingSupplierParty: this.getAccountingSupplierParty(),
             AccountingCustomerParty: this.getAccountingCustomerParty(),
             PaymentMeans : undefined,
@@ -73,10 +75,10 @@ export class InvoiceComposer {
             ID: "",
             IssueDate: moment().format('YYYY-MM-DD'),
             CreditNoteTypeCode: 381,
-            Note: undefined,
+            Note: this.i18n.tr('invoice.modal.credit-note-vat-note'),
             DocumentCurrencyCode: "EUR",
             BuyerReference: "NA",
-            AdditionalDocumentReference: undefined,
+            AdditionalDocumentReference: this.getAdditionalDocumentReference(),
             AccountingSupplierParty: this.getAccountingSupplierParty(),
             AccountingCustomerParty: this.getAccountingCustomerParty(),
             PaymentMeans : undefined,
@@ -195,7 +197,7 @@ export class InvoiceComposer {
         const i = s.indexOf(":");
         if (i < 0)
             return undefined;
-        let value = s.slice(i + 1).trim();
+        const value = s.slice(i + 1).trim();
         return `${value}`;
     }
 
@@ -303,15 +305,25 @@ export class InvoiceComposer {
      */
 
     invoiceToCreditNote(invoice: Invoice): CreditNote {
+        const vatNote = this.i18n.tr('invoice.modal.credit-note-vat-note');
+        const billingReference = invoice.ID
+            ? [{
+                InvoiceDocumentReference: {
+                    ID: invoice.ID,
+                    IssueDate: invoice.IssueDate,
+                }
+            }]
+            : undefined;
         return {
             CustomizationID: invoice.CustomizationID,
             ProfileID: invoice.ProfileID,
             ID: invoice.ID,
             IssueDate: invoice.IssueDate,
             CreditNoteTypeCode: 381,
-            Note: invoice.Note,
+            Note: invoice.Note && invoice.Note.trim() ? invoice.Note : vatNote,
             DocumentCurrencyCode: "EUR",
             BuyerReference: invoice.BuyerReference, // or OrderReference
+            BillingReference: billingReference,
             AccountingSupplierParty: invoice.AccountingSupplierParty,
             AccountingCustomerParty: invoice.AccountingCustomerParty,
             PaymentMeans: invoice.PaymentMeans,
@@ -353,5 +365,19 @@ export class InvoiceComposer {
                 Price: line.Price,
             })),
         } as Invoice;
+    }
+
+    public getAdditionalDocumentReference() {
+        return [{
+            ID: GENERATED_INVOICE,
+            DocumentDescription: 'Generated Invoice PDF',
+            Attachment: {
+                EmbeddedDocumentBinaryObject: {
+                    __mimeCode: 'application/pdf',
+                    __filename: `${GENERATED_INVOICE}.pdf`,
+                    value: 'ZW1wdHk='
+                }
+            }
+        } as AdditionalDocumentReference];
     }
 }

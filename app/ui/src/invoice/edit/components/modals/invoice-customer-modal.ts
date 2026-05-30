@@ -1,5 +1,5 @@
 import {bindable, IEventAggregator} from "aurelia";
-import {Party} from "../../../../services/peppol/ubl";
+import {Identifier, Party} from "../../../../services/peppol/ubl";
 import {PartnerDto, PartnerService} from "../../../../services/app/partner-service";
 import {CustomerSearch} from "../customer-search";
 import {countryListAlpha2} from "../../../../app/countries"
@@ -11,12 +11,14 @@ import {CompanySearchService} from "../../../../services/kyc/company-search-serv
 import {AlertType} from "../../../../components/alert/alert";
 import {InvoiceContext} from "../../../invoice-context";
 import {InvoiceComposer} from "../../../invoice-composer";
+import {I18N} from "@aurelia/i18n";
 
 export class InvoiceCustomerModal {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
     private readonly companySearchService = resolve(CompanySearchService);
     private readonly partnerService = resolve(PartnerService);
     private invoiceComposer = resolve(InvoiceComposer);
+    private readonly i18n = resolve(I18N);
     private countryList = countryListAlpha2;
     @bindable invoiceContext: InvoiceContext;
     customerSearch: CustomerSearch;
@@ -59,7 +61,12 @@ export class InvoiceCustomerModal {
 
     saveCustomer() {
         this.open = false;
+        const previousPeppolId = this.toPeppolIdString(this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party?.EndpointID);
+        const newPeppolId = this.toPeppolIdString(this.customer?.EndpointID);
         this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party = this.customer;
+        if (previousPeppolId !== newPeppolId) {
+            this.invoiceContext.selectedInvoice.BillingReference = undefined;
+        }
         this.customerSearch.resetSearch();
         if (this.customerSavedFunction) {
             this.customerSavedFunction();
@@ -67,8 +74,8 @@ export class InvoiceCustomerModal {
         if (this.saveAsPartner) {
             const partner = this.invoiceContext.mapPartner(this.customer);
             this.partnerService.createPartner(partner)
-                .then(() => this.ea.publish('alert', {alertType: AlertType.Success, text: "Partner created"}))
-                .catch(() => this.ea.publish('alert', {alertType: AlertType.Danger, text: "Partner creation failed"}));
+                .then(() => this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.partner.created')}))
+                .catch(() => this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.partner.create-failed')}));
         }
     }
 
@@ -119,6 +126,13 @@ export class InvoiceCustomerModal {
                 Note: this.invoiceComposer.translatePaymentTerm(c.paymentTerms)
             };
         }
+    }
+
+    private toPeppolIdString(endpoint: Identifier | undefined): string | undefined {
+        const value = endpoint?.value?.trim();
+        if (!value) return undefined;
+        const scheme = endpoint?.__schemeID?.trim();
+        return scheme ? `${scheme}:${value}` : value;
     }
 
     private toParty(c: PartnerDto, scheme: string, identifier: string): Party {

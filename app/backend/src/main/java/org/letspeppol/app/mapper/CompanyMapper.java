@@ -20,6 +20,7 @@ public class CompanyMapper {
                 company.getIban(),
                 company.getPaymentAccountName(),
                 company.getLastInvoiceReference(),
+                company.getLastCreditNoteReference(),
                 // TODO company.isNoArchive(),
                 peppolActive,
                 company.isEnableEmailNotification(),

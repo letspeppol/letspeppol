@@ -14,6 +14,7 @@ export interface CompanyDto {
     iban: string,
     paymentAccountName: string,
     lastInvoiceReference: string,
+    lastCreditNoteReference: string,
     peppolActive: boolean,
     enableEmailNotification: boolean,
     addAttachmentToNotification: boolean,

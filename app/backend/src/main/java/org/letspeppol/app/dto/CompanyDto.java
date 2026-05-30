@@ -1,5 +1,7 @@
 package org.letspeppol.app.dto;
 
+import com.sun.jdi.StringReference;
+
 public record CompanyDto(
         String peppolId,
         String identifier,
@@ -12,6 +14,7 @@ public record CompanyDto(
         String iban,
         String paymentAccountName,
         String lastInvoiceReference,
+        String lastCreditNoteReference,
         // TODO boolean noArchive,
         boolean peppolActive,
         boolean enableEmailNotification,

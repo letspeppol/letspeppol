@@ -1,4 +1,5 @@
 import {bindable} from "aurelia";
+import {DocumentType} from "../../../../services/app/invoice-service";
 
 export class InvoiceNumberModal {
     @bindable invoiceContext;
@@ -6,9 +7,13 @@ export class InvoiceNumberModal {
     invoiceNumber: string = '';
     sendFunction = () => { }
 
+    get isCreditNote(): boolean {
+        return this.invoiceContext?.selectedDocumentType === DocumentType.CREDIT_NOTE;
+    }
+
     showModal(sendFunction: () => void) {
         this.sendFunction = sendFunction;
-        this.invoiceNumber = this.invoiceContext.nextInvoiceReference;
+        this.invoiceNumber = this.invoiceContext.nextReference;
         this.open = true;
     }
 

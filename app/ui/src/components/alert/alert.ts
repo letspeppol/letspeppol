@@ -44,7 +44,6 @@ export class Alert {
         // this.timeout = window.setTimeout(() => this.showElement = false, 3000);
     }
 
-
     closeAlert() {
         this.showElement = false;
     }

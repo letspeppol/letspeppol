@@ -46,3 +46,26 @@ describe('UBL string builder - OrderReference omission', () => {
         expect(rebuilt).not.toContain('<cac:OrderReference>');
     });
 });
+
+describe('UBL string builder - BillingReference (credit notes)', () => {
+    test('buildCreditNoteXml emits cac:BillingReference with InvoiceDocumentReference ID and IssueDate', () => {
+        const creditNoteObj = parseCreditNote(sampleCreditNoteXml);
+        creditNoteObj.BillingReference = [{
+            InvoiceDocumentReference: { ID: 'INV-2026-0001', IssueDate: '2026-04-01' }
+        }];
+
+        const rebuilt = buildCreditNoteXml(creditNoteObj);
+        expect(rebuilt).toContain(
+            '<cac:BillingReference><cac:InvoiceDocumentReference><cbc:ID>INV-2026-0001</cbc:ID><cbc:IssueDate>2026-04-01</cbc:IssueDate></cac:InvoiceDocumentReference></cac:BillingReference>'
+        );
+    });
+
+    test('buildCreditNoteXml omits cac:BillingReference when list is empty or missing ID', () => {
+        const creditNoteObj = parseCreditNote(sampleCreditNoteXml);
+        creditNoteObj.BillingReference = undefined;
+        expect(buildCreditNoteXml(creditNoteObj)).not.toContain('<cac:BillingReference>');
+
+        creditNoteObj.BillingReference = [{ InvoiceDocumentReference: { ID: '' } }];
+        expect(buildCreditNoteXml(creditNoteObj)).not.toContain('<cac:BillingReference>');
+    });
+});

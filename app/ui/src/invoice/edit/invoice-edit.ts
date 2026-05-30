@@ -21,6 +21,7 @@ import {PartnerService} from "../../services/app/partner-service";
 import {PaymentInfo} from "./components/tiles/payment-info";
 import moment, {Moment} from "moment";
 import {IRouter} from "@aurelia/router";
+import {I18N} from "@aurelia/i18n";
 
 export class InvoiceEdit {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -29,6 +30,7 @@ export class InvoiceEdit {
     private invoiceComposer = resolve(InvoiceComposer);
     private partnerService = resolve(PartnerService);
     private router = resolve(IRouter);
+    private readonly i18n = resolve(I18N);
     private newInvoiceSubscription: IDisposable;
     private newCreditNoteSubscription: IDisposable;
     private previousSaveDate: undefined | Moment;
@@ -46,6 +48,7 @@ export class InvoiceEdit {
 
     returnToOverview() {
         this.invoiceContext.setActiveBoxFromDocument(this.invoiceContext.selectedDocument);
+        this.invoiceContext.clearSelectedInvoice();
         this.router.load('/invoices');
     }
 
@@ -96,8 +99,9 @@ export class InvoiceEdit {
     }
 
     async sendInvoice() {
+        const type = this.selectedDocumentType;
         try {
-            this.ea.publish('showOverlay', "Sending invoice");
+            this.ea.publish('showOverlay', this.i18n.tr(`overlay.sending.${type}`));
             const xml = this.buildXml();
 
             const response = await this.invoiceService.validate(xml);
@@ -106,8 +110,8 @@ export class InvoiceEdit {
                 return;
             }
 
-            const doc = await this.invoiceService.createDocument(xml, this.invoiceContext.addPdfToSendingInvoice);
-            this.ea.publish('alert', {alertType: AlertType.Success, text: "Invoice sent successfully"});
+            const doc = await this.invoiceService.createDocument(xml);
+            this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(`alert.invoice.sent.${type}`)});
             this.invoiceContext.invoicePage.content.unshift(doc);
             if (this.invoiceContext.selectedDocument.draftedOn) {
                 await this.deleteDraft();
@@ -117,11 +121,11 @@ export class InvoiceEdit {
         } catch (e: unknown) {
             const errorResponse = await toErrorResponse(e);
             if (errorResponse?.errorCode === 'INVOICE_NUMBER_ALREADY_USED') {
-                this.ea.publish('alert', { alertType: AlertType.Danger, text: 'Invoice number already used' });
+                this.ea.publish('alert', { alertType: AlertType.Danger, text: this.i18n.tr(`alert.invoice.number-used.${type}`) });
             } else if (errorResponse?.message) {
                 this.ea.publish('alert', { alertType: AlertType.Danger, text: errorResponse.message });
             } else {
-                this.ea.publish('alert', { alertType: AlertType.Danger, text: 'Failed to send invoice' });
+                this.ea.publish('alert', { alertType: AlertType.Danger, text: this.i18n.tr(`alert.invoice.send-failed.${type}`)});
             }
         } finally {
             this.ea.publish('hideOverlay');
@@ -142,13 +146,14 @@ export class InvoiceEdit {
     }
 
     async saveAsDraft(returnToOverview: boolean = true) {
+        const type = this.selectedDocumentType;
         try {
             const xml = this.buildXml();
             if (this.invoiceContext.selectedDocument) {
                 const newDraft = await this.invoiceService.updateDocument(this.invoiceContext.selectedDocument.id, xml, true);
                 this.invoiceContext.draftPage.content.splice(this.invoiceContext.draftPage.content.findIndex(item => item.id === newDraft.id), 1, newDraft);
             } else {
-                const documentDraftDto = await this.invoiceService.createDocument(xml, false, true);
+                const documentDraftDto = await this.invoiceService.createDocument(xml, true);
                 this.invoiceContext.selectedDocument = documentDraftDto;
                 this.invoiceContext.draftPage.content.unshift(documentDraftDto);
                 this.invoiceContext.draftPage.totalElements++;
@@ -156,10 +161,10 @@ export class InvoiceEdit {
             if (returnToOverview) {
                 this.returnToOverview();
             }
-            this.ea.publish('alert', {alertType: AlertType.Success, text: "Invoice draft saved"});
+            this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(`alert.invoice.draft-saved.${type}`)});
         } catch(e) {
             console.error(e);
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to save invoice as draft"});
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr(`alert.invoice.draft-save-failed.${type}`)});
         }
     }
 
@@ -171,27 +176,28 @@ export class InvoiceEdit {
     }
 
     async deleteDraft() {
+        const type = this.selectedDocumentType;
         try {
             await this.invoiceService.deleteDocument(this.invoiceContext.selectedDocument.id);
             this.invoiceContext.deleteDraft(this.invoiceContext.selectedDocument);
             this.returnToOverview();
-            this.ea.publish('alert', {alertType: AlertType.Success, text: "Invoice draft removed"});
+            this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(`alert.invoice.draft-removed.${type}`)});
         } catch(e) {
             console.error(e);
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to delete invoice draft"});
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr(`alert.invoice.draft-delete-failed.${type}`)});
         }
     }
 
     downloadUBL() {
         if (!this.invoiceContext.selectedDocument) {
-            this.ea.publish('alert', {alertType: AlertType.Warning, text: "No UBL data available"});
+            this.ea.publish('alert', {alertType: AlertType.Warning, text: this.i18n.tr('alert.invoice.no-ubl-data')});
         }
         const blob = new Blob([this.invoiceContext.selectedDocument.ubl], { type: "application/xml" });
         const url = URL.createObjectURL(blob);
 
         const a = document.createElement("a");
         a.href = url;
-        a.download = `${this.invoiceContext.selectedInvoice.ID}.xml`;
+        a.download = `${this.downloadFilename()}.xml`;
         document.body.appendChild(a);
         a.click();
 
@@ -201,7 +207,7 @@ export class InvoiceEdit {
 
     async downloadPDF() {
         if (!this.invoiceContext.selectedDocument) {
-            this.ea.publish('alert', {alertType: AlertType.Warning, text: "No UBL data available"});
+            this.ea.publish('alert', {alertType: AlertType.Warning, text: this.i18n.tr('alert.invoice.no-ubl-data')});
         }
         if (!this.readOnly) {
             await this.saveAsDraft(false);
@@ -209,29 +215,22 @@ export class InvoiceEdit {
         const blob = await this.invoiceService.downloadPdf(this.invoiceContext.selectedDocument.id).then(res => res.blob());
         const url = URL.createObjectURL(blob);
 
-        let filename;
-        if (this.invoiceContext.selectedDocumentType === DocumentType.INVOICE) {
-            filename = 'invoice-';
-        } else {
-            filename = 'creditnote-';
-        }
-        if (this.invoiceContext.selectedInvoice.ID) {
-            filename += this.invoiceContext.selectedInvoice.ID;
-        } else {
-            filename += moment().format('DD-MM-YYYY');
-        }
-        if (!this.readOnly) {
-            filename += '-draft';
-        }
-
         const a = document.createElement("a");
         a.href = url;
-        a.download = `${filename}.pdf`;
+        a.download = `${this.downloadFilename()}.pdf`;
         document.body.appendChild(a);
         a.click();
 
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
+    }
+
+    private downloadFilename(): string {
+        let name = this.invoiceContext.selectedInvoice.ID || moment().format('DD-MM-YYYY');
+        if (!this.readOnly) {
+            name += '-draft';
+        }
+        return name;
     }
 
     async validate() {
@@ -255,10 +254,10 @@ export class InvoiceEdit {
         }
         this.partnerService.createPartner(partner)
             .then(() => {
-                this.ea.publish('alert', {alertType: AlertType.Success, text: "Partner created"});
+                this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.partner.created')});
                 this.invoiceContext.partnerMissing = false;
             })
-            .catch(() => this.ea.publish('alert', {alertType: AlertType.Danger, text: "Partner creation failed"}));
+            .catch(() => this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.partner.create-failed')}));
     }
 
     // Modals

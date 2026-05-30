@@ -1,3 +1,5 @@
+<import from="../../../../app/value-converters/date-format.ts"></import>
+
 <div class="composer-info">
     <div style="display: flex; flex-direction: row;" click.trigger="showInvoiceModal()">
         <div class="card-header">
@@ -12,8 +14,8 @@
     <div><span t="documentType.${invoiceContext.selectedDocumentType}"></span> <span t="invoice.edit.number">Number</span></div>
 
     <template if.bind="!invoiceContext.selectedInvoice.ID">
-        <i if.bind="!invoiceContext.nextInvoiceReference" style="color: var(--muted); font-size: var(--space-09)">Last number: ${invoiceContext.lastInvoiceReference}</i>
-        <i else style="color: var(--muted); font-size: var(--space-09)">${invoiceContext.nextInvoiceReference}</i>
+        <i if.bind="!invoiceContext.nextReference" style="color: var(--muted); font-size: var(--space-09)">Last number: ${invoiceContext.lastReference}</i>
+        <i else style="color: var(--muted); font-size: var(--space-09)">${invoiceContext.nextReference}</i>
     </template>
     <template else>
         <b>${invoiceContext.selectedInvoice.ID}</b>
@@ -27,5 +29,15 @@
     <template if.bind="invoiceContext.selectedInvoice.OrderReference.ID">
         <span t="invoice.order-reference">Order Reference</span>
         <b>${invoiceContext.selectedInvoice.OrderReference.ID}</b>
+    </template>
+
+    <template if.bind="invoiceContext.selectedInvoice.BillingReference[0].InvoiceDocumentReference.ID">
+        <span t="invoice.invoice-reference">Invoice Reference</span>
+        <b>${invoiceContext.selectedInvoice.BillingReference[0].InvoiceDocumentReference.ID}</b>
+    </template>
+
+    <template if.bind="invoiceContext.selectedInvoice.BillingReference[0].InvoiceDocumentReference.IssueDate">
+        <span t="invoice.invoice-reference-date">Invoice Date</span>
+        <b>${invoiceContext.selectedInvoice.BillingReference[0].InvoiceDocumentReference.IssueDate | dateFormat}</b>
     </template>
 </div>

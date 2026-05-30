@@ -187,6 +187,10 @@
     "edit" : "Éditer",
     "close" : "Fermer"
   },
+  "new-feature" : {
+    "label" : "Nouveau",
+    "click-to-dismiss" : "Cliquer pour fermer"
+  },
   "navigation" : {
     "dashboard" : "Tableau de bord",
     "invoices" : "Factures",
@@ -194,18 +198,122 @@
     "products" : "Produits",
     "account" : "Compte",
     "brand-alt" : "Let's Peppol",
-    "toggle-theme" : "Changer de thème",
-    "new-feature": "Nouvelle fonctionnalité “Notifications” ajoutée au Compte"
+    "toggle-theme" : "Changer de thème"
   },
   "alert" : {
     "success" : "Succès",
     "info" : "Info",
     "warning" : "Avertissement",
     "danger" : "Erreur",
-    "neutral" : "Message"
+    "neutral" : "Message",
+    "account" : {
+      "load-failed" : "Échec de la récupération du compte",
+      "updated" : "Compte mis à jour avec succès",
+      "update-failed" : "Échec de la mise à jour du compte",
+      "reverted" : "Modifications du compte annulées",
+      "peppol-activated" : "Entreprise activée sur Peppol",
+      "peppol-activation-request-failed" : "Échec de l'envoi de la demande d'activation",
+      "peppol-activation-failed" : "Échec de l'activation de l'entreprise sur Peppol",
+      "peppol-removed" : "Entreprise retirée de Peppol",
+      "peppol-remove-failed" : "Échec du retrait de l'entreprise de Peppol",
+      "contract-download-failed" : "Échec du téléchargement du contrat signé"
+    },
+    "password" : {
+      "changed" : "Mot de passe modifié"
+    },
+    "registration" : {
+      "token-invalid" : "Jeton invalide",
+      "contract-downloaded" : "Contrat signé téléchargé !"
+    },
+    "partner" : {
+      "deleted" : "Partenaire supprimé",
+      "delete-failed" : "Échec de la suppression du partenaire",
+      "updated" : "Partenaire mis à jour",
+      "update-failed" : "Échec de la mise à jour du partenaire",
+      "created" : "Partenaire créé",
+      "create-failed" : "Échec de la création du partenaire"
+    },
+    "product" : {
+      "deleted" : "Produit supprimé",
+      "delete-failed" : "Échec de la suppression du produit",
+      "created" : "Produit créé",
+      "updated" : "Produit mis à jour",
+      "update-failed" : "Échec de la mise à jour du produit"
+    },
+    "peppol-search" : {
+      "failed" : "Échec de la recherche dans l'annuaire Peppol",
+      "no-results" : "Aucun résultat trouvé"
+    },
+    "company" : {
+      "info-failed" : "Échec de la récupération des informations de l'entreprise",
+      "save-failed" : "Échec de l'enregistrement de l'entreprise"
+    },
+    "invoice" : {
+      "load-failed" : "Échec de la récupération de la facture",
+      "sent" : {
+        "INVOICE" : "Facture envoyée avec succès",
+        "CREDIT_NOTE" : "Note de crédit envoyée avec succès"
+      },
+      "number-used" : {
+        "INVOICE" : "Numéro de facture déjà utilisé",
+        "CREDIT_NOTE" : "Numéro de note de crédit déjà utilisé"
+      },
+      "send-failed" : {
+        "INVOICE" : "Échec de l'envoi de la facture",
+        "CREDIT_NOTE" : "Échec de l'envoi de la note de crédit"
+      },
+      "draft-saved" : {
+        "INVOICE" : "Brouillon de facture enregistré",
+        "CREDIT_NOTE" : "Brouillon de note de crédit enregistré"
+      },
+      "draft-save-failed" : {
+        "INVOICE" : "Échec de l'enregistrement de la facture comme brouillon",
+        "CREDIT_NOTE" : "Échec de l'enregistrement de la note de crédit comme brouillon"
+      },
+      "draft-removed" : {
+        "INVOICE" : "Brouillon de facture supprimé",
+        "CREDIT_NOTE" : "Brouillon de note de crédit supprimé"
+      },
+      "draft-delete-failed" : {
+        "INVOICE" : "Échec de la suppression du brouillon de facture",
+        "CREDIT_NOTE" : "Échec de la suppression du brouillon de note de crédit"
+      },
+      "draft-created" : {
+        "INVOICE" : "Brouillon de facture créé avec succès",
+        "CREDIT_NOTE" : "Brouillon de note de crédit créé avec succès"
+      },
+      "draft-deleted" : "Brouillon supprimé",
+      "draft-delete-overview-failed" : "Échec de la suppression du brouillon",
+      "marked-paid" : "Facture marquée comme payée",
+      "marked-unpaid" : "Facture marquée comme impayée",
+      "paid-status-failed" : "Échec du changement de statut de paiement",
+      "no-ubl-data" : "Aucune donnée UBL disponible"
+    },
+    "iban" : {
+      "saved" : "IBAN enregistré"
+    },
+    "upload" : {
+      "size-too-large" : "La taille totale des fichiers ne peut pas dépasser 10 Mo",
+      "type-unsupported" : "Type de fichier non pris en charge",
+      "upload-error" : "Erreur lors du téléversement du fichier"
+    },
+    "attachment" : {
+      "size-too-large-3mb" : "Le fichier ne peut pas dépasser 3 Mo",
+      "document-not-saved" : "Document non enregistré. Rendu PDF non disponible.",
+      "downloaded" : "Fichier '{{filename}}' téléchargé"
+    }
   },
   "overlay" : {
-    "saving-account" : "Sauvegarde du compte, veuillez patienter"
+    "saving" : "Enregistrement...",
+    "saving-account" : "Sauvegarde du compte, veuillez patienter",
+    "sending" : {
+      "INVOICE" : "Envoi de la facture",
+      "CREDIT_NOTE" : "Envoi de la note de crédit"
+    },
+    "validating" : "Validation",
+    "creating-draft" : "Création du brouillon",
+    "searching-company" : "Recherche de l'entreprise",
+    "confirming-registration" : "Confirmation de la demande d'inscription"
   },
   "product" : {
     "categories" : "Catégories",
@@ -291,6 +399,8 @@
     "partner" : "Partenaire",
     "buyer-reference" : "Référence acheteur",
     "order-reference" : "Référence de commande",
+    "invoice-reference" : "Référence de facture",
+    "invoice-reference-date" : "Date de facture",
     "new" : {
       "INVOICE" : "Nouvelle facture",
       "CREDIT_NOTE" : "Nouvelle note de crédit"
@@ -324,10 +434,16 @@
     },
     "modal" : {
       "title" : "Facture",
+      "title-credit-note" : "Note de crédit",
       "document" : "Document",
       "invoice-number" : "Numéro de facture",
+      "credit-note-number" : "Numéro de note de crédit",
+      "invoice-reference" : "Sélectionner la référence de facture",
+      "invoice-reference-none" : "Aucune",
       "note-optional" : "Note (optionnel)",
       "note-placeholder" : "Notes supplémentaires pour cette facture",
+      "credit-note-note-placeholder" : "Notes supplémentaires pour cette note de crédit",
+      "credit-note-vat-note" : "TVA à reverser à l'État dans la mesure où elle a été initialement déduite",
       "reference-required" : "La référence acheteur OU la référence de commande est obligatoire"
     },
     "dateModal" : {

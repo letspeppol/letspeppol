@@ -30,6 +30,9 @@ public final class DocumentSpecifications {
         if (filter.getPartnerName() != null && !filter.getPartnerName().isBlank()) {
             spec = spec.and(hasPartnerNameLike(filter.getPartnerName()));
         }
+        if (filter.getPartnerPeppolId() != null && !filter.getPartnerPeppolId().isBlank()) {
+            spec = spec.and(hasPartnerPeppolId(filter.getPartnerPeppolId()));
+        }
         if (filter.getInvoiceReference() != null && !filter.getInvoiceReference().isBlank()) {
             spec = spec.and(hasInvoiceReferenceLike(filter.getInvoiceReference()));
         }
@@ -60,6 +63,10 @@ public final class DocumentSpecifications {
 
     public static Specification<Document> hasPartnerNameLike(String partnerName) {
         return (root, query, cb) -> cb.like(cb.lower(root.get("partnerName")), "%" + partnerName.toLowerCase() + "%");
+    }
+
+    public static Specification<Document> hasPartnerPeppolId(String partnerPeppolId) {
+        return (root, query, cb) -> cb.equal(root.get("partnerPeppolId"), partnerPeppolId);
     }
 
     public static Specification<Document> hasInvoiceReferenceLike(String invoiceReference) {
