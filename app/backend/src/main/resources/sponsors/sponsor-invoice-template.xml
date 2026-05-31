@@ -9,7 +9,7 @@
     <cbc:DueDate>{dueDate}</cbc:DueDate>
     <cbc:InvoiceTypeCode>380</cbc:InvoiceTypeCode>
     <cbc:DocumentCurrencyCode>{currency}</cbc:DocumentCurrencyCode>
-    <cbc:BuyerReference>NA</cbc:BuyerReference>
+    <cbc:BuyerReference>Let’s Peppol</cbc:BuyerReference>
     <cac:AccountingSupplierParty>
         <cac:Party>
             <cbc:EndpointID schemeID="0208">1029545627</cbc:EndpointID>

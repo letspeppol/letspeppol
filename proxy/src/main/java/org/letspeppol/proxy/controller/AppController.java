@@ -38,7 +38,6 @@ public class AppController {
     private final UblDocumentReceiverService ublDocumentReceiverService;
     private final RegistryService registryService;
     private final ValidationService validationService;
-    private final AppLinkService appLinkService;
     private final JwtDecoder jwtDecoder;
 
     @GetMapping()
@@ -188,12 +187,8 @@ public class AppController {
             return new SenderValidation(JwtUtil.getUserPeppolId(jwt), null);
         }
         if (accountType.isApp()) {
-            if (!appLinkService.isLinked(ublDocumentDto.ownerPeppolId(), JwtUtil.getAppUid(jwt))) {
-                log.error("App not linked to owner {} of document {}", ublDocumentDto.ownerPeppolId(), ublDocumentDto.id());
-                throw new SecurityException("App not linked to owner");
-            }
             Jwt actingUserJwt = decodeActingUserJwt(actingUserAuthorization);
-            return new SenderValidation(ublDocumentDto.ownerPeppolId(), JwtUtil.getUserPeppolId(actingUserJwt));
+            return new SenderValidation(JwtUtil.getPeppolId(jwt), JwtUtil.getUserPeppolId(actingUserJwt));
         }
         throw new SecurityException("Not correct account type");
     }

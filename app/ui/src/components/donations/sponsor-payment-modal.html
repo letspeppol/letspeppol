@@ -2,7 +2,7 @@
     <div class="modal-backdrop"></div>
     <div class="modal-card sponsor-payment-modal">
         <header class="modal-header">
-            <h2 t="donations.sponsor-payment.title">Sponsor Let’s Peppol</h2>
+            <h2 t="donations.sponsor-payment.title">Donate to sponsor Let’s Peppol</h2>
             <button class="icon-btn" click.trigger="closeModal()" aria-label="Close dialog" title="Close" t="[aria-label]common.close;[title]common.close">×</button>
         </header>
         <div class="modal-body">
@@ -24,7 +24,7 @@
 
                 <div class="sponsor-fields">
                     <label class="field">
-                        <span t="donations.sponsor-payment.amount-without-vat">Amount without VAT</span>
+                        <span t="donations.sponsor-payment.amount-without-vat">Other amount without VAT</span>
                         <input type="number" min="1" max="2500" step="0.01" value.bind="amount" input.trigger="amountChanged($event.target.value)">
                     </label>
                     <div if.bind="overSelfServiceLimit" class="sponsor-package-note" t="donations.sponsor-payment.package-note">
