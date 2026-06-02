@@ -68,14 +68,15 @@
         </cac:Party>
     </cac:AccountingCustomerParty>
     <cac:PaymentMeans>
-        <cbc:PaymentMeansCode name="Credit Transfer">30</cbc:PaymentMeansCode>
+        <cbc:PaymentMeansCode name="Credit Transfer">15</cbc:PaymentMeansCode>
+        <cbc:PaymentID>{invoiceId}</cbc:PaymentID>
         <cac:PayeeFinancialAccount>
             <cbc:ID>BE72731070697716</cbc:ID>
             <cbc:Name>BARGE VZW</cbc:Name>
         </cac:PayeeFinancialAccount>
     </cac:PaymentMeans>
     <cac:PaymentTerms>
-        <cbc:Note>30 days</cbc:Note>
+        <cbc:Note>15 days</cbc:Note>
     </cac:PaymentTerms>
     <cac:TaxTotal>
         <cbc:TaxAmount currencyID="{currency}">{taxAmount}</cbc:TaxAmount>

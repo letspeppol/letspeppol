@@ -15,7 +15,7 @@
                 <div class="sponsor-amounts">
                     <button repeat.for="fixedAmount of fixedAmounts"
                             type="button"
-                            class.bind="selectedFixedAmount === fixedAmount ? 'btn primary' : 'btn'"
+                            class.bind="amount === fixedAmount ? 'btn primary' : 'btn'"
                             click.trigger="selectAmount(fixedAmount)">
                         ${fixedAmount} ${currency}
                         <small t.bind="amountTotalKey" t-params.bind="{ total: totalFor(fixedAmount).toFixed(2) }">${totalFor(fixedAmount).toFixed(2)} incl. VAT</small>
@@ -25,7 +25,7 @@
                 <div class="sponsor-fields">
                     <label class="field">
                         <span t="donations.sponsor-payment.amount-without-vat">Other amount without VAT</span>
-                        <input type="number" min="1" max="2500" step="0.01" value.bind="amount" input.trigger="amountChanged($event.target.value)">
+                        <input type="number" min="1" max="2500" step="0.01" value.bind="amount" input.trigger="amountChanged" blur.trigger="amountBlurred">
                     </label>
                     <div if.bind="overSelfServiceLimit" class="sponsor-package-note" t="donations.sponsor-payment.package-note">
                         We value your contribution and will contact you to agree on a fitting sponsor package.

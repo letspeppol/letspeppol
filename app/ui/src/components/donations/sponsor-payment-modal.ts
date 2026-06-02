@@ -25,7 +25,7 @@ export class SponsorPaymentModal {
     sent = false;
     fixedAmounts = [5, 10, 15, 25, 50, 100];
     amount = 10;
-    selectedFixedAmount: number | null = 10;
+    previousAmount = 10;
     currency = "EUR";
     name = "";
     message = "";
@@ -102,18 +102,20 @@ export class SponsorPaymentModal {
 
     selectAmount(amount: number) {
         this.amount = amount;
-        this.selectedFixedAmount = amount;
     }
 
-    amountChanged(value: string) {
-        const parsed = Number(value);
-        if (!Number.isFinite(parsed)) {
-            this.amount = 1;
-            this.selectedFixedAmount = null;
+    amountChanged() {
+        if (this.amount) {
+            this.previousAmount = this.amount;
+        }
+    }
+
+    amountBlurred() {
+        if (!this.amount) {
+            this.amount = this.previousAmount;
             return;
         }
-        this.amount = Math.max(1, this.round(parsed));
-        this.selectedFixedAmount = this.fixedAmounts.includes(this.amount) ? this.amount : null;
+        this.amount = Math.max(1, this.round(this.amount));
     }
 
     amountSelected(amount: number) {
