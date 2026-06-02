@@ -463,8 +463,6 @@
     "paymentQr" : {
       "title" : "Paiement de la facture",
       "show-and-mark-paid" : "Afficher le QR de paiement<br /> et marquer comme payée",
-      "mark-paid" : "Marquer la facture comme payée",
-      "mark-unpaid" : "Marquer la facture comme impayée",
       "mark-paid-document" : {
         "INVOICE" : "Marquer la facture comme payée",
         "CREDIT_NOTE" : "Marquer la note de crédit comme payée"

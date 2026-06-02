@@ -463,8 +463,6 @@
     "paymentQr" : {
       "title" : "Factuurbetaling",
       "show-and-mark-paid" : "Betalings-QR tonen<br /> en als betaald markeren",
-      "mark-paid" : "Factuur als betaald markeren",
-      "mark-unpaid" : "Factuur als onbetaald markeren",
       "mark-paid-document" : {
         "INVOICE" : "Factuur als betaald markeren",
         "CREDIT_NOTE" : "Creditnota als betaald markeren"

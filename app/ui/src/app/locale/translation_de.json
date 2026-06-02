@@ -464,8 +464,6 @@
     "paymentQr": {
       "title": "Rechnungszahlung",
       "show-and-mark-paid": "Zahlungs-QR anzeigen<br /> und als bezahlt markieren",
-      "mark-paid": "Rechnung als bezahlt markieren",
-      "mark-unpaid": "Rechnung als unbezahlt markieren",
       "mark-paid-document": {
         "INVOICE": "Rechnung als bezahlt markieren",
         "CREDIT_NOTE": "Gutschrift als bezahlt markieren"

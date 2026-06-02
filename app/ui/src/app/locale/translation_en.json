@@ -464,8 +464,6 @@
     "paymentQr": {
       "title": "Invoice payment",
       "show-and-mark-paid": "Show payment QR<br /> and mark as paid",
-      "mark-paid": "Mark invoice as paid",
-      "mark-unpaid": "Mark invoice as unpaid",
       "mark-paid-document": {
         "INVOICE": "Mark invoice as paid",
         "CREDIT_NOTE": "Mark credit note as paid"
