@@ -232,6 +232,19 @@
       "error-alert": "Could not create sponsor invoice"
     }
   },
+  "sponsors-page": {
+    "title": "Sponsors",
+    "subtitle": "Companies and people helping keep Let’s Peppol running.",
+    "table": {
+      "date": "Date",
+      "name": "Name",
+      "message": "Message",
+      "amount": "Amount"
+    },
+    "loading": "Loading sponsors...",
+    "load-error": "Could not load sponsors right now.",
+    "empty": "No sponsors yet."
+  },
   "navigation": {
     "dashboard": "Dashboard",
     "invoices": "Invoices",

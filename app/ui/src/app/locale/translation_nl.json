@@ -231,6 +231,19 @@
       "error-alert" : "Sponsorfactuur kon niet worden aangemaakt"
     }
   },
+  "sponsors-page" : {
+    "title" : "Sponsors",
+    "subtitle" : "Bedrijven en mensen die Let's Peppol mee draaiende houden.",
+    "table" : {
+      "date" : "Datum",
+      "name" : "Naam",
+      "message" : "Bericht",
+      "amount" : "Bedrag"
+    },
+    "loading" : "Sponsors laden...",
+    "load-error" : "De sponsors konden nu niet worden geladen.",
+    "empty" : "Nog geen sponsors."
+  },
   "navigation" : {
     "dashboard" : "Dashboard",
     "invoices" : "Facturen",

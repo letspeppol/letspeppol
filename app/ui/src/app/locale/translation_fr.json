@@ -231,6 +231,19 @@
       "error-alert" : "Impossible de creer la facture de sponsoring"
     }
   },
+  "sponsors-page" : {
+    "title" : "Sponsors",
+    "subtitle" : "Entreprises et personnes qui aident à faire vivre Let's Peppol.",
+    "table" : {
+      "date" : "Date",
+      "name" : "Nom",
+      "message" : "Message",
+      "amount" : "Montant"
+    },
+    "loading" : "Chargement des sponsors...",
+    "load-error" : "Impossible de charger les sponsors pour le moment.",
+    "empty" : "Pas encore de sponsors."
+  },
   "navigation" : {
     "dashboard" : "Tableau de bord",
     "invoices" : "Factures",

@@ -232,6 +232,19 @@
       "error-alert": "Sponsoring-Rechnung konnte nicht erstellt werden"
     }
   },
+  "sponsors-page": {
+    "title": "Sponsoren",
+    "subtitle": "Unternehmen und Menschen, die helfen, Let’s Peppol am Laufen zu halten.",
+    "table": {
+      "date": "Datum",
+      "name": "Name",
+      "message": "Nachricht",
+      "amount": "Betrag"
+    },
+    "loading": "Sponsoren werden geladen...",
+    "load-error": "Die Sponsoren konnten derzeit nicht geladen werden.",
+    "empty": "Noch keine Sponsoren."
+  },
   "navigation": {
     "dashboard": "Dashboard",
     "invoices": "Rechnungen",
