@@ -4,11 +4,13 @@ import {InvoiceComposer} from "../../../invoice-composer";
 import {resolve} from "@aurelia/kernel";
 import {CompanyService} from "../../../../services/app/company-service";
 import {AlertType} from "../../../../components/alert/alert";
+import {I18N} from "@aurelia/i18n";
 
 export class InvoicePaymentModal {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
     invoiceComposer = resolve(InvoiceComposer);
     companyService = resolve(CompanyService);
+    private readonly i18n = resolve(I18N);
     @bindable invoiceContext;
     paymentMeansCode;
     open = false;
@@ -48,9 +50,9 @@ export class InvoicePaymentModal {
         try {
             this.companyService.myCompany.iban = this.paymentMeans.PayeeFinancialAccount.ID.toUpperCase();
             await this.companyService.updateCompany(this.companyService.myCompany);
-            this.ea.publish('alert', {alertType: AlertType.Success, text: "IBAN saved"});
+            this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.iban.saved')});
         } catch {
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Company save failed"});
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.company.save-failed')});
         }
     }
 }

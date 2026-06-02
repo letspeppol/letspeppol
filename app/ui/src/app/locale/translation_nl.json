@@ -205,10 +205,115 @@
     "info" : "Info",
     "warning" : "Waarschuwing",
     "danger" : "Fout",
-    "neutral" : "Bericht"
+    "neutral" : "Bericht",
+    "account" : {
+      "load-failed" : "Account ophalen mislukt",
+      "updated" : "Account succesvol bijgewerkt",
+      "update-failed" : "Account bijwerken mislukt",
+      "reverted" : "Wijzigingen ongedaan gemaakt",
+      "peppol-activated" : "Bedrijf geactiveerd op Peppol",
+      "peppol-activation-request-failed" : "Activatieverzoek versturen mislukt",
+      "peppol-activation-failed" : "Bedrijf activeren op Peppol mislukt",
+      "peppol-removed" : "Bedrijf verwijderd van Peppol",
+      "peppol-remove-failed" : "Bedrijf verwijderen van Peppol mislukt",
+      "contract-download-failed" : "Ondertekend contract downloaden mislukt"
+    },
+    "password" : {
+      "changed" : "Wachtwoord gewijzigd"
+    },
+    "registration" : {
+      "token-invalid" : "Token ongeldig",
+      "contract-downloaded" : "Ondertekend contract gedownload!"
+    },
+    "partner" : {
+      "deleted" : "Partner verwijderd",
+      "delete-failed" : "Partner verwijderen mislukt",
+      "updated" : "Partner bijgewerkt",
+      "update-failed" : "Partner bijwerken mislukt",
+      "created" : "Partner aangemaakt",
+      "create-failed" : "Partner aanmaken mislukt"
+    },
+    "product" : {
+      "deleted" : "Product verwijderd",
+      "delete-failed" : "Product verwijderen mislukt",
+      "created" : "Product aangemaakt",
+      "updated" : "Product bijgewerkt",
+      "update-failed" : "Product bijwerken mislukt"
+    },
+    "peppol-search" : {
+      "failed" : "Zoeken in Peppol-directory mislukt",
+      "no-results" : "Geen resultaten gevonden"
+    },
+    "company" : {
+      "info-failed" : "Bedrijfsinformatie ophalen mislukt",
+      "save-failed" : "Bedrijf opslaan mislukt"
+    },
+    "invoice" : {
+      "load-failed" : "Factuur ophalen mislukt",
+      "sent" : {
+        "INVOICE" : "Factuur succesvol verzonden",
+        "CREDIT_NOTE" : "Creditnota succesvol verzonden"
+      },
+      "number-used" : {
+        "INVOICE" : "Factuurnummer al in gebruik",
+        "CREDIT_NOTE" : "Creditnotanummer al in gebruik"
+      },
+      "send-failed" : {
+        "INVOICE" : "Factuur verzenden mislukt",
+        "CREDIT_NOTE" : "Creditnota verzenden mislukt"
+      },
+      "draft-saved" : {
+        "INVOICE" : "Factuurconcept opgeslagen",
+        "CREDIT_NOTE" : "Creditnotaconcept opgeslagen"
+      },
+      "draft-save-failed" : {
+        "INVOICE" : "Factuur als concept opslaan mislukt",
+        "CREDIT_NOTE" : "Creditnota als concept opslaan mislukt"
+      },
+      "draft-removed" : {
+        "INVOICE" : "Factuurconcept verwijderd",
+        "CREDIT_NOTE" : "Creditnotaconcept verwijderd"
+      },
+      "draft-delete-failed" : {
+        "INVOICE" : "Factuurconcept verwijderen mislukt",
+        "CREDIT_NOTE" : "Creditnotaconcept verwijderen mislukt"
+      },
+      "draft-created" : {
+        "INVOICE" : "Factuurconcept succesvol aangemaakt",
+        "CREDIT_NOTE" : "Creditnotaconcept succesvol aangemaakt"
+      },
+      "draft-deleted" : "Concept verwijderd",
+      "draft-delete-overview-failed" : "Concept verwijderen mislukt",
+      "marked-paid" : "Factuur gemarkeerd als betaald",
+      "marked-unpaid" : "Factuur gemarkeerd als onbetaald",
+      "paid-status-failed" : "Wijzigen van betalingsstatus mislukt",
+      "no-ubl-data" : "Geen UBL-gegevens beschikbaar"
+    },
+    "iban" : {
+      "saved" : "IBAN opgeslagen"
+    },
+    "upload" : {
+      "size-too-large" : "Som van alle bestandsgroottes mag niet meer dan 10 MB zijn",
+      "type-unsupported" : "Bestandstype niet ondersteund",
+      "upload-error" : "Fout bij uploaden van bestand"
+    },
+    "attachment" : {
+      "size-too-large-3mb" : "Bestand mag niet groter zijn dan 3 MB",
+      "document-not-saved" : "Document niet opgeslagen. PDF-weergave niet beschikbaar.",
+      "downloaded" : "Bestand '{{filename}}' gedownload"
+    }
   },
   "overlay" : {
-    "saving-account" : "Account opslaan, een moment geduld"
+    "saving" : "Opslaan...",
+    "saving-account" : "Account opslaan, een moment geduld",
+    "sending" : {
+      "INVOICE" : "Factuur verzenden",
+      "CREDIT_NOTE" : "Creditnota verzenden"
+    },
+    "validating" : "Valideren",
+    "creating-draft" : "Concept aanmaken",
+    "searching-company" : "Bedrijf zoeken",
+    "confirming-registration" : "Registratieverzoek bevestigen"
   },
   "product" : {
     "categories" : "Categorieën",
