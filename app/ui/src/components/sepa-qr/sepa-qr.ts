@@ -6,6 +6,7 @@ type SepaQrInstance = {
 };
 
 type SepaQrOptions = {
+  version: '002';
   benefName: string;
   benefBIC: string;
   benefAccNr: string;
@@ -80,6 +81,7 @@ export class SepaQr {
       this.qrHost.id = id;
 
       const qr = new window.sepaQR({
+        version: '002',
         benefName: this.beneficiaryName,
         benefBIC: this.beneficiaryBic,
         benefAccNr: this.beneficiaryAccountNumber,

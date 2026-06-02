@@ -19,9 +19,9 @@
                         <dt t="invoice.paymentQr.iban">IBAN</dt>
                         <dd>${iban}</dd>
                     </div>
-                    <div>
+                    <div if.bind="bic">
                         <dt t="invoice.paymentQr.bic">BIC</dt>
-                        <dd>${bic || '/'}</dd>
+                        <dd>${bic}</dd>
                     </div>
                     <div>
                         <dt t="invoice.paymentQr.amount">Amount</dt>
