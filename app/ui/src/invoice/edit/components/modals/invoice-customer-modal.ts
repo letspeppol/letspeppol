@@ -147,7 +147,7 @@ export class InvoiceCustomerModal {
                 Country: { IdentificationCode: 'BE' }
             },
             PartyTaxScheme: { CompanyID: {value: c.vatNumber } , TaxScheme: { ID: 'VAT' } },
-            PartyLegalEntity: { RegistrationName: c.name, CompanyID: { value: c.vatNumber } },
+            PartyLegalEntity: { RegistrationName: c.name, CompanyID: { value: c.identifier } },
             Contact: { Name: c.paymentAccountName }
         } as Party;
         if (isIso6523Scheme(scheme)) {
@@ -192,6 +192,9 @@ export class InvoiceCustomerModal {
         if (!this.peppolId) {
             this.peppolId = kycCompanyResponse.peppolId;
             this.peppolIdChangedFunction(this.peppolId);
+        }
+        if (!this.customer.PartyLegalEntity.CompanyID.value) {
+            this.customer.PartyLegalEntity.CompanyID.value = kycCompanyResponse.identifier;
         }
         if (!this.customer.PartyName.Name) {
             this.customer.PartyName.Name = kycCompanyResponse.name;

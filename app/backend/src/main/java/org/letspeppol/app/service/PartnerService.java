@@ -41,6 +41,7 @@ public class PartnerService {
     public PartnerDto createPartner(String peppolId, PartnerDto partnerDto) {
         Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new NotFoundException("Company does not exist"));
         Partner partner = new Partner(
+                partnerDto.identifier(),
                 partnerDto.vatNumber(),
                 partnerDto.name(),
                 partnerDto.email(),
@@ -63,6 +64,7 @@ public class PartnerService {
 
     public PartnerDto updatePartner(Long id, PartnerDto partnerDto) {
         Partner partner = partnerRepository.findById(id).orElseThrow(() -> new NotFoundException("Partner does not exist"));
+        partner.setIdentifier(partnerDto.identifier());
         partner.setVatNumber(partnerDto.vatNumber());
         partner.setName(partnerDto.name());
         partner.setEmail(partnerDto.email());

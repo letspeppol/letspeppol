@@ -73,6 +73,7 @@ public class KboLookupService {
         CompanyResponse companyResponse = new CompanyResponse(
                 null,
                 peppolId,
+                normalizedVat,
                 "BE"+normalizedVat,
                 name,
                 address.get().getStreetAndHouseNumber(),

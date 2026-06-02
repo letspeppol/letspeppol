@@ -2,11 +2,10 @@ import {singleton} from "aurelia";
 import {resolve} from "@aurelia/kernel";
 import {Address} from "./company-service";
 import {AppApi} from "./app-api";
-import {KycCompanyResponse} from "../kyc/registration-service";
-import {CompanySearchParams} from "../kyc/company-search-service";
 
 export interface PartnerDto {
     id?: number,
+    identifier?: string,
     vatNumber?: string,
     name: string,
     email?: string,

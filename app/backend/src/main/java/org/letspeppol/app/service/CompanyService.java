@@ -37,6 +37,7 @@ public class CompanyService {
         companyCreateCounter.increment();
         Company account = new Company(
                 request.peppolId(),
+                request.identifier(),
                 request.vatNumber(),
                 request.companyName(),
                 request.directorName(),

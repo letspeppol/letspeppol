@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,34 +23,31 @@ public class Company {
 
     @Column(nullable = true, unique = true)
     private String peppolId;
-
+    private String identifier;
     private String vatNumber;
 
     @Column(nullable = false)
     private String name;
 
     private String city;
-
     private String postalCode;
-
     private String street;
 
     private String businessUnit;
-
     private String iban;
 
     private boolean hasKboAddress = true;
-
     private boolean registeredOnPeppol = false;
-
     private boolean suspended = false;
+
+    private LocalDate inactive;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Director> directors = new ArrayList<>();
 
-    public Company(String peppolId, String vatNumber, String name) {
+    public Company(String peppolId, String identifier, String name) {
         this.peppolId = peppolId;
-        this.vatNumber = vatNumber;
+        this.identifier = identifier;
         this.name = name;
         this.registeredOnPeppol = false;
         this.hasKboAddress = false;

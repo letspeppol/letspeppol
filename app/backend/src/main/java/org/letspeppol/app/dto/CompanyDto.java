@@ -4,6 +4,7 @@ import com.sun.jdi.StringReference;
 
 public record CompanyDto(
         String peppolId,
+        String identifier,
         String vatNumber,
         String name,
         String displayName,
