@@ -68,7 +68,7 @@
         </cac:Party>
     </cac:AccountingCustomerParty>
     <cac:PaymentMeans>
-        <cbc:PaymentMeansCode name="Credit Transfer">15</cbc:PaymentMeansCode>
+        <cbc:PaymentMeansCode name="Credit Transfer">30</cbc:PaymentMeansCode>
         <cbc:PaymentID>{invoiceId}</cbc:PaymentID>
         <cac:PayeeFinancialAccount>
             <cbc:ID>BE72731070697716</cbc:ID>
@@ -105,7 +105,7 @@
         <cbc:LineExtensionAmount currencyID="{currency}">{amount}</cbc:LineExtensionAmount>
         <cac:Item>
             <cbc:Description>{description}</cbc:Description>
-            <cbc:Name>Sponsor</cbc:Name>
+            <cbc:Name>Sponsoring Let’s Peppol</cbc:Name>
             <cac:ClassifiedTaxCategory>
                 <cbc:ID>{taxCategory}</cbc:ID>
                 <cbc:Percent>{taxPercent}</cbc:Percent>

@@ -242,7 +242,7 @@ public class SponsorInvoiceService {
         Map<String, String> values = Map.ofEntries(
                 Map.entry("invoiceId", sponsorInvoice.getInvoiceId()),
                 Map.entry("issueDate", issueDate.toString()),
-                Map.entry("dueDate", issueDate.plusDays(30).toString()),
+                Map.entry("dueDate", issueDate.plusDays(15).toString()),
                 Map.entry("currency", currency),
                 Map.entry("amount", amount.toPlainString()),
                 Map.entry("taxAmount", tax.toPlainString()),
