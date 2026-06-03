@@ -1140,22 +1140,122 @@ main.container .data-table tbody td {
     text-align: right;
 }
 
-.field.checkbox {
+.field.checkbox,
+.field.radio {
     display: flex;
     align-items: center;
     gap: var(--space-05);
 }
 
-.field.checkbox input {
+.field.checkbox input,
+.field.radio input {
     width: 1rem;
     height: 1rem;
     cursor: pointer;
 }
 
-.field.checkbox span {
+.field.checkbox span,
+.field.radio span {
     font-size: .9rem;
     color: var(--text);
     cursor: pointer;
+}
+
+/* Two-line column header: bold label on top, smaller subtitle below (e.g. "Total" / "incl. VAT"). */
+.th-stack {
+    display: inline-flex;
+    flex-direction: column;
+    line-height: 1.1;
+}
+
+.th-subline {
+    font-size: .7rem;
+    font-weight: 400;
+    color: var(--muted);
+    text-transform: lowercase;
+    letter-spacing: 0.02em;
+    margin-top: 2px;
+}
+
+/* Dashboard heading uses the same suffix inline, kept lightweight next to the title. */
+.vat-mode-tag {
+    margin-left: var(--space-05);
+    font-size: .75em;
+    font-weight: 400;
+    color: var(--muted);
+    text-transform: lowercase;
+    letter-spacing: 0.02em;
+}
+
+/* iOS-style toggle for the VAT-display setting on the Account page. */
+.vat-display-toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--space-08);
+    padding: var(--space-05) 0;
+}
+
+.vat-toggle-label {
+    font-size: .9rem;
+    color: var(--muted);
+    cursor: pointer;
+    user-select: none;
+    transition: color .15s, font-weight .15s;
+}
+
+.vat-toggle-label.active {
+    color: var(--text-strong);
+    font-weight: 600;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    flex: 0 0 auto;
+    cursor: pointer;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    margin: 0;
+}
+
+.switch .slider {
+    position: absolute;
+    inset: 0;
+    background: var(--border-soft);
+    border-radius: 24px;
+    transition: background-color .2s;
+}
+
+.switch .slider::before {
+    content: '';
+    position: absolute;
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    top: 3px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .25);
+    transition: transform .2s;
+}
+
+.switch input:checked + .slider {
+    background: var(--primary);
+}
+
+.switch input:checked + .slider::before {
+    transform: translateX(20px);
+}
+
+.switch input:focus-visible + .slider {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
 }
 
 .field input::placeholder {

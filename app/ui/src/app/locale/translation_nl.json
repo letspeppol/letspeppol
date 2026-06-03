@@ -244,6 +244,12 @@
     "load-error" : "De sponsors konden nu niet worden geladen.",
     "empty" : "Nog geen sponsors."
   },
+  "dashboard": {
+    "vat-suffix": {
+      "incl": "incl. btw",
+      "excl": "excl. btw"
+    }
+  },
   "navigation" : {
     "dashboard" : "Dashboard",
     "invoices" : "Facturen",
@@ -471,6 +477,10 @@
       "issue-date" : "Uitgiftedatum",
       "due-date" : "Vervaldatum",
       "total" : "Totaal",
+      "total-vat-suffix": {
+        "incl": "incl. btw",
+        "excl": "excl. btw"
+      },
       "status" : "Status",
       "actions" : "Acties"
     },
@@ -585,6 +595,12 @@
     "cancel" : "Annuleren",
     "save" : "Opslaan",
     "notifications": "Meldingen",
+    "vat-display": {
+      "title": "Bedragweergave",
+      "description": "Kies of totalen op het dashboard en in de factuurlijst inclusief of exclusief btw worden getoond.",
+      "incl": "Inclusief btw",
+      "excl": "Exclusief btw"
+    },
     "subscriber-info" : "Abonnee-info",
     "download-contract" : "Contract downloaden",
     "change-password" : "Wachtwoord wijzigen",

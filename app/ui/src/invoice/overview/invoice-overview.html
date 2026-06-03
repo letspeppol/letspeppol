@@ -1,6 +1,7 @@
 <import from="../../app/value-converters/date-format.ts"></import>
 <import from="../../app/value-converters/date-time-format.ts"></import>
 <import from="../../app/value-converters/price.ts"></import>
+<import from="../../app/value-converters/vat-amount.ts"></import>
 <import from="./components/upload-ubl-modal"></import>
 
 <upload-ubl-modal component.ref="uploadUblModal"></upload-ubl-modal>
@@ -126,7 +127,12 @@
                                 <span if.bind="invoiceContext.activeBox === 'INCOMING'" t="invoice.supplier">Supplier</span>
                                 <span if.bind="invoiceContext.activeBox === 'ALL'" t="invoice.partner">Partner</span>
                             </th>
-                            <th t="invoice.table.total">Total</th>
+                            <th>
+                                <span class="th-stack">
+                                    <span t="invoice.table.total">Total</span>
+                                    <span class="th-subline" t="invoice.table.total-vat-suffix.${vatMode}"></span>
+                                </span>
+                            </th>
                             <th t="invoice.table.status">Status</th>
                             <th class="actions-col" t="invoice.table.actions">Actions</th>
                         </tr>
@@ -140,7 +146,7 @@
                                 <td>${item.issueDate | dateFormat}</td>
                                 <td>${item.dueDate | dateFormat}</td>
                                 <td>${item.partnerName}</td>
-                                <td>${item.amount | price:item.currency}</td>
+                                <td>${item | vatAmount:vatMode | price:item.currency}</td>
                                 <td>
                                     <span class="pill" if.bind="item.draftedOn" t="invoice.status.draft" title="${item.draftedOn | dateTimeFormat}">Drafted</span>
                                     <span class="pill scheduled" if.bind="item.scheduledOn && !item.processedOn" t="invoice.status.scheduled" title="${item.scheduledOn | dateTimeFormat}">Scheduled</span>

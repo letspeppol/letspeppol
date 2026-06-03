@@ -103,6 +103,7 @@ class NotificationServiceEmailIT extends PostgresIntegrationTest {
                 DocumentType.INVOICE,
                 Currency.getInstance("EUR"),
                 new BigDecimal("1234.56"),
+                new BigDecimal("1020.30"),
                 Instant.now(),
                 Instant.now(),
                 null,

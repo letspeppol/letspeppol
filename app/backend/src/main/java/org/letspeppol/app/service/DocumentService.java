@@ -157,7 +157,8 @@ public class DocumentService {
                 ublDto.orderReference(),
                 ublDto.type(),
                 ublDto.currency(),
-                ublDto.amount(),
+                ublDto.amountInclVat(),
+                ublDto.amountExclVat(),
                 ublDto.issueDate(),
                 ublDto.dueDate(),
                 ublDto.paymentTerms(),
@@ -197,7 +198,8 @@ public class DocumentService {
                 ublDto.orderReference(),
                 ublDto.type(),
                 ublDto.currency(),
-                ublDto.amount(),
+                ublDto.amountInclVat(),
+                ublDto.amountExclVat(),
                 ublDto.issueDate(),
                 ublDto.dueDate(),
                 ublDto.paymentTerms(),
@@ -240,7 +242,8 @@ public class DocumentService {
         document.setOrderReference(ublDto.orderReference());
         document.setType(ublDto.type());
         document.setCurrency(ublDto.currency());
-        document.setAmount(ublDto.amount());
+        document.setAmountInclVat(ublDto.amountInclVat());
+        document.setAmountExclVat(ublDto.amountExclVat());
         document.setIssueDate(ublDto.issueDate());
         document.setDueDate(ublDto.dueDate());
         document.setPaymentTerms(ublDto.paymentTerms());

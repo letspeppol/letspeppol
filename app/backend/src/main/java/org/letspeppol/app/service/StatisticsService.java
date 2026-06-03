@@ -27,7 +27,7 @@ public class StatisticsService {
     private final WebClient proxyWebClient;
 
     public TotalsDto getTotals(String peppolId) {
-        return documentRepository.totalsByOwner(peppolId);
+        return documentRepository.totalsByOwner(peppolId).toDto();
     }
 
     public TotalProcessedDto totalsProcessed() {

@@ -245,6 +245,12 @@
     "load-error": "Die Sponsoren konnten derzeit nicht geladen werden.",
     "empty": "Noch keine Sponsoren."
   },
+  "dashboard": {
+    "vat-suffix": {
+      "incl": "inkl. MwSt.",
+      "excl": "exkl. MwSt."
+    }
+  },
   "navigation": {
     "dashboard": "Dashboard",
     "invoices": "Rechnungen",
@@ -472,6 +478,10 @@
       "issue-date": "Ausstellungsdatum",
       "due-date": "Fälligkeitsdatum",
       "total": "Gesamt",
+      "total-vat-suffix": {
+        "incl": "inkl. MwSt.",
+        "excl": "exkl. MwSt."
+      },
       "status": "Status",
       "actions": "Aktionen"
     },
@@ -587,6 +597,12 @@
     "cancel": "Abbrechen",
     "save": "Speichern",
     "notifications": "Benachrichtigungen",
+    "vat-display": {
+      "title": "Beträge anzeigen",
+      "description": "Wählen Sie, ob Summen im Dashboard und in der Rechnungsliste inklusive oder exklusive MwSt. angezeigt werden.",
+      "incl": "Inkl. MwSt.",
+      "excl": "Exkl. MwSt."
+    },
     "subscriber-info": "Teilnehmerinformationen",
     "download-contract": "Vertrag herunterladen",
     "change-password": "Passwort ändern",
