@@ -4,12 +4,14 @@ import {AlertType} from "../../../components/alert/alert";
 import {IEventAggregator} from "aurelia";
 import {toErrorResponse} from "../../../app/util/error-response-handler";
 import {InvoiceContext} from "../../invoice-context";
+import {I18N} from "@aurelia/i18n";
 
 
 export class UploadUblModal {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
     private invoiceService = resolve(InvoiceService);
     private invoiceContext = resolve(InvoiceContext);
+    private readonly i18n = resolve(I18N);
 
     open = false;
     isDraggingFile = false;
@@ -52,18 +54,18 @@ export class UploadUblModal {
 
         const file = e.dataTransfer.files[0];
         if (file.size > (10 * (1024 ** 2))) {
-            this.ea.publish('alert', {alertType: AlertType.Warning, text: "Sum of all file sizes can not be more than 10MB"});
+            this.ea.publish('alert', {alertType: AlertType.Warning, text: this.i18n.tr('alert.upload.size-too-large')});
             return;
         }
 
         const allowedTypes: string[] = ['application/xml', 'text/xml'];
         if (!allowedTypes.includes(file.type as string)) {
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "File type not supported"});
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.upload.type-unsupported')});
             return;
         }
         const xml: string = await this.readXmlAsString(file);
 
-        this.ea.publish('showOverlay', "Validating");
+        this.ea.publish('showOverlay', this.i18n.tr('overlay.validating'));
         try {
             const response = await this.invoiceService.validate(xml);
             if (!response.isValid) {
@@ -75,24 +77,23 @@ export class UploadUblModal {
         }
 
         try {
-            this.ea.publish('showOverlay', "Creating draft");
+            this.ea.publish('showOverlay', this.i18n.tr('overlay.creating-draft'));
             const documentDraftDto = await this.invoiceService.createDocument(xml, true, true);
             this.invoiceContext.draftPage.content.unshift(documentDraftDto);
             this.invoiceContext.draftPage.totalElements++;
             this.invoiceContext.selectInvoice(documentDraftDto);
-            const msg = `${this.invoiceContext.getCurrentDocumentTypeName()} draft created successfully`;
-            this.ea.publish('alert', {alertType: AlertType.Success, text: msg});
+            const type = this.invoiceContext.selectedDocumentType;
+            this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(`alert.invoice.draft-created.${type}`)});
             this.closeModal();
         } catch (e: unknown) {
+            const type = this.invoiceContext.selectedDocumentType;
             const errorResponse = await toErrorResponse(e);
             if (errorResponse?.errorCode === 'INVOICE_NUMBER_ALREADY_USED') {
-                const msg = `${this.invoiceContext.getCurrentDocumentTypeName()} number already used`;
-                this.ea.publish('alert', { alertType: AlertType.Danger, text: msg });
+                this.ea.publish('alert', { alertType: AlertType.Danger, text: this.i18n.tr(`alert.invoice.number-used.${type}`) });
             } else if (errorResponse?.message) {
                 this.ea.publish('alert', { alertType: AlertType.Danger, text: errorResponse.message });
             } else {
-                const msg = `Failed to send ${this.invoiceContext.getCurrentDocumentTypeName()}`;
-                this.ea.publish('alert', { alertType: AlertType.Danger, text: msg});
+                this.ea.publish('alert', { alertType: AlertType.Danger, text: this.i18n.tr(`alert.invoice.send-failed.${type}`)});
             }
         } finally {
             this.ea.publish('hideOverlay');
