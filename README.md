@@ -1,11 +1,11 @@
 # LetsPeppol
 
-![Let's Peppol](./docs/logo.png)
+![Let’s Peppol](./docs/logo.png)
 
 
 We improve the Peppol network, writing software and letting people sign up for free. We will never run analytics on data that our users generate.
 We are still in the launching phase.
-This repo will contain all the code involved in running the Let's Peppol project:
+This repo will contain all the code involved in running the Let’s Peppol project:
 * a [docs](./docs/) folder with the website that runs on GitHub Pages at https://letspeppol.org
 * a [proxy](./proxy/) folder that contains the proxy component
 * a [kyc](./kyc/) folder that contains the Know-Your-Customer component (initially only for Belgian VAT numbers)
@@ -26,7 +26,7 @@ The main challenge of giving free-of-charge access to the Peppol e-invoicing net
 # Dashboard application
 A public instance of this code will soon be available, please keep an eye on [LetsPeppol.org](https://letspeppol.org).
 
-[Here is a screencast](https://drive.google.com/file/d/1HHSM9V1_2ez59vlnkL0YO3190X1uOh1j/view?usp=drive_link) of how the application can be used to send and receive invoices via Let's Peppol.
+[Here is a screencast](https://drive.google.com/file/d/1HHSM9V1_2ez59vlnkL0YO3190X1uOh1j/view?usp=drive_link) of how the application can be used to send and receive invoices via Let’s Peppol.
 
 # Usage
 ## With Nix

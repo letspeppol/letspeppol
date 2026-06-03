@@ -9,6 +9,10 @@
     border-radius: inherit;
 }
 
+.rainbow-border-preserve-position {
+    position: revert;
+}
+
 .rainbow-border::before {
     content: '';
     position: absolute;

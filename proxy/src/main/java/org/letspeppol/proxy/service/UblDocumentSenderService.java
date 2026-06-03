@@ -27,8 +27,8 @@ import java.util.UUID;
 public class UblDocumentSenderService {
 
     private static final ZoneId ZONE = ZoneId.of("Europe/Brussels");
-    private static final int MAXIMUM_RATE_PER_DAY = 4;
-    private static final int MAXIMUM_RATE_BETWEEN_PARTIES = 2;
+    private static final int MAXIMUM_RATE_PER_DAY = 8;
+    private static final int MAXIMUM_RATE_BETWEEN_PARTIES = 4;
 
     private final UblDocumentRepository ublDocumentRepository;
     private final BackupService backupService;

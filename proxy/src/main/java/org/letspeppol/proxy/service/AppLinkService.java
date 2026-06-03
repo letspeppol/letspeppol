@@ -24,4 +24,8 @@ public class AppLinkService {
     public void remove(String peppolId, UUID uid) {
         appLinkRepository.deleteById(new AppLink.AppLinkId(peppolId, uid));
     }
+
+    public boolean isLinked(String peppolId, UUID uid) {
+        return appLinkRepository.existsById(new AppLink.AppLinkId(peppolId, uid));
+    }
 }

@@ -419,7 +419,12 @@ public class DocumentService {
                 create(ublDocumentDto);
                 ids.add(ublDocumentDto.id());
             } catch (Exception e) {
-                log.error("Could not save received document to database", e);
+                if (documentRepository.existsById(ublDocumentDto.id())) {
+                    ids.add(ublDocumentDto.id());
+                    log.warn("Received document was already in database", e);
+                } else {
+                    log.error("Could not save received document to database", e);
+                }
             }
         }
 
