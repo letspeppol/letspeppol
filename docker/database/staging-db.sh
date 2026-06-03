@@ -16,8 +16,8 @@ Usage:
   staging-db.sh list    [--backup-dir DIR]
 
 Examples:
-  ./staging-db.sh backup --env-file .env_staging --name pr-123
-  ./staging-db.sh restore --env-file .env_staging --name pr-123
+  ./staging-db.sh backup --env-file .env --name pr-123
+  ./staging-db.sh restore --env-file .env --name pr-123
 
 Notes:
   - Stop application containers before restore so they do not hold DB connections.
@@ -117,11 +117,8 @@ backup_database() {
       -U "$POSTGRES_USER" \
       -d "$db" \
       -F c \
-      -Z 6 \
-      -f "/tmp/$db.dump"
+      -Z 6 > "$tmp_file"
 
-  compose cp "db:/tmp/$db.dump" "$tmp_file"
-  compose exec -T db rm -f "/tmp/$db.dump"
   mv "$tmp_file" "$dump_file"
 }
 
@@ -144,6 +141,8 @@ restore_database() {
       -v ON_ERROR_STOP=1 \
       -U "$POSTGRES_USER" \
       -d postgres \
+      -c "ALTER DATABASE \"$db\" WITH ALLOW_CONNECTIONS false;" \
+      -c "REVOKE CONNECT ON DATABASE \"$db\" FROM PUBLIC;" \
       -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '$escaped_db' AND pid <> pg_backend_pid();"
 
   compose exec -T \
