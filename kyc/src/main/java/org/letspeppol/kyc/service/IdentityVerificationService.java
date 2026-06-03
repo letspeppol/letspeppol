@@ -129,7 +129,7 @@ public class IdentityVerificationService {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, false);
             helper.setTo("intervention@letspeppol.org");
-            helper.setFrom("kyc@letspeppol.org", "Let's Peppol");
+            helper.setFrom("kyc@letspeppol.org", "Let’s Peppol");
             helper.setReplyTo("support@letspeppol.org");
             helper.setSubject("Activation on hold for " + peppolId);
             helper.setText(String.format("User %s %s with account %s requested Peppol access for company %s with PeppolId %s and should be represented by %s.",

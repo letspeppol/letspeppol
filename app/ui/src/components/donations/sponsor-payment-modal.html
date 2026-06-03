@@ -1,0 +1,77 @@
+<div class="modal" role="dialog" aria-modal="true" show.bind="open">
+    <div class="modal-backdrop"></div>
+    <div class="modal-card sponsor-payment-modal">
+        <header class="modal-header">
+            <h2 t="donations.sponsor-payment.title">Donate to sponsor Let’s Peppol</h2>
+            <button class="icon-btn" click.trigger="closeModal()" aria-label="Close dialog" title="Close" t="[aria-label]common.close;[title]common.close">×</button>
+        </header>
+        <div class="modal-body">
+            <div if.bind="!sent" class="sponsor-payment-body">
+                <div class="sponsor-payment-info">
+                    <p t="donations.sponsor-payment.info-invoice">Your contribution will be invoiced by BARGE vzw (Business Application Research Group Europe), a VAT-registered Belgian non-profit association.</p>
+                    <p t.bind="infoVatKey">You will receive a Peppol e-invoice with 21% VAT, so your organization has the proper document for VAT processing and tax deductibility.</p>
+                </div>
+
+                <div class="sponsor-amounts">
+                    <button repeat.for="fixedAmount of fixedAmounts"
+                            type="button"
+                            class.bind="amount === fixedAmount ? 'btn primary' : 'btn'"
+                            click.trigger="selectAmount(fixedAmount)">
+                        ${fixedAmount} ${currency}
+                        <small t.bind="amountTotalKey" t-params.bind="{ total: totalFor(fixedAmount).toFixed(2) }">${totalFor(fixedAmount).toFixed(2)} incl. VAT</small>
+                    </button>
+                </div>
+
+                <div class="sponsor-fields">
+                    <label class="field">
+                        <span t="donations.sponsor-payment.amount-without-vat">Other amount without VAT</span>
+                        <input type="number" min="1" max="2500" step="0.01" value.bind="amount" input.trigger="amountChanged" blur.trigger="amountBlurred">
+                    </label>
+                    <div if.bind="overSelfServiceLimit" class="sponsor-package-note" t="donations.sponsor-payment.package-note">
+                        We value your contribution and will contact you to agree on a fitting sponsor package.
+                    </div>
+                    <label class="field full">
+                        <span t="donations.sponsor-payment.sponsor-name">Name on sponsor page</span>
+                        <input type="text" maxlength="64" value.bind="name">
+                    </label>
+                    <label class="field full">
+                        <span t="donations.sponsor-payment.message">Message</span>
+                        <textarea rows="3" maxlength="255" value.bind="message"></textarea>
+                    </label>
+                </div>
+
+                <div class="sponsor-vat-summary">
+                    <div><span t="donations.sponsor-payment.contribution">Contribution</span><strong>${validAmount.toFixed(2)} ${currency}</strong></div>
+                    <div><span t.bind="vatLabelKey">VAT 21%</span><strong>${vatAmount.toFixed(2)} ${currency}</strong></div>
+                    <div><span t.bind="totalLabelKey">Total charged, including VAT</span><strong>${totalAmount.toFixed(2)} ${currency}</strong></div>
+                </div>
+            </div>
+
+            <div if.bind="sent" class="sponsor-success">
+                <h3>${successTitle}</h3>
+                <p>${successText}</p>
+            </div>
+        </div>
+        <footer class="modal-footer">
+            <button if.bind="sent" type="button" class="btn" click.trigger="closeModal()" title="Close" t="[title]common.close;common.close">Close</button>
+            <button else type="button" class="btn" click.trigger="closeModal()" title="Cancel" t="[title]common.cancel;common.cancel">Cancel</button>
+            <button if.bind="!sent && sending"
+                    type="button"
+                    class="btn primary"
+                    disabled
+                    t="donations.sponsor-payment.sending">Sending...</button>
+            <button if.bind="!sent && !sending && overSelfServiceLimit"
+                    type="button"
+                    class="btn primary"
+                    click.trigger="sponsor()"
+                    disabled.bind="!validAmount"
+                    t="donations.sponsor-payment.request-package">Request sponsor package</button>
+            <button if.bind="!sent && !sending && !overSelfServiceLimit"
+                    type="button"
+                    class="btn primary"
+                    click.trigger="sponsor()"
+                    disabled.bind="!validAmount"
+                    t="donations.sponsor-payment.create-invoice">Agree and create invoice</button>
+        </footer>
+    </div>
+</div>

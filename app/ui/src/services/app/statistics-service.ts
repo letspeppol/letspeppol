@@ -1,6 +1,7 @@
 import {singleton} from "aurelia";
 import {resolve} from "@aurelia/kernel";
 import {AppApi} from "./app-api";
+import {CacheTtl} from "./cache-config";
 
 export interface DonationStatsDto {
     totalContributions: number;
@@ -8,7 +9,17 @@ export interface DonationStatsDto {
     processedToday: number;
     maxProcessedLastWeek: number;
     invoicesRemaining: number;
+    activeCompanies: number;
     transactions: Transaction[];
+    contributions: SponsorContributionDto[];
+}
+
+export interface SponsorContributionDto {
+    name: string;
+    message: string;
+    amount: number;
+    currency: string;
+    date: string;
 }
 
 export interface Transaction {
@@ -71,9 +82,33 @@ export type Totals = {
 @singleton()
 export class StatisticsService {
     private appApi = resolve(AppApi);
+    private donationStatsCache?: { value: DonationStatsDto, expiresAt: number };
+    private donationStatsRequest?: Promise<DonationStatsDto>;
 
     async getDonationStats() : Promise<DonationStatsDto> {
-        return await this.appApi.httpClient.get('/api/stats/donation').then(response => response.json());
+        if (this.donationStatsCache && this.donationStatsCache.expiresAt > Date.now()) {
+            return this.donationStatsCache.value;
+        }
+        if (this.donationStatsRequest) {
+            return this.donationStatsRequest;
+        }
+        this.donationStatsRequest = this.appApi.httpClient.get('/api/stats/donation')
+            .then(response => response.json())
+            .then((stats: DonationStatsDto) => {
+                this.donationStatsCache = {value: stats, expiresAt: Date.now() + CacheTtl.donationStats};
+                return stats;
+            })
+            .finally(() => this.donationStatsRequest = undefined);
+        return this.donationStatsRequest;
+    }
+
+    clearDonationStatsCache() {
+        this.donationStatsCache = undefined;
+        this.donationStatsRequest = undefined;
+    }
+
+    clearCache() {
+        this.clearDonationStatsCache();
     }
 
     async getTotals() : Promise<Totals> {

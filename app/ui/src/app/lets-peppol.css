@@ -112,6 +112,7 @@
     --space-16: 1.6rem;
     --space-2rem: 2rem;
     --space-4rem: 4rem;
+    --space-8rem: 8rem;
 
     /* Component sizing */
     --container-max: 1460px;
@@ -350,7 +351,7 @@ input[type=checkbox] {
 .container {
     max-width: var(--container-max);
     margin: var(--space-2rem) auto;
-    padding: 0 var(--space-1) var(--space-4rem);
+    padding: 0 var(--space-1) var(--space-8rem);
 }
 
 main.container {

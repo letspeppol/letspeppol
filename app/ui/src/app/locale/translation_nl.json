@@ -185,11 +185,64 @@
     "remove" : "Verwijderen",
     "logout" : "Uitloggen",
     "edit" : "Bewerken",
-    "close" : "Sluiten"
+    "close" : "Sluiten",
+    "view-more" : "meer bekijken…"
   },
   "new-feature" : {
     "label" : "Nieuw",
-    "click-to-dismiss" : "Klik om te sluiten"
+    "click-to-dismiss" : "Melding bevestigen"
+  },
+  "donations" : {
+    "sponsors" : "tiersponsors",
+    "sponsors-title" : "Bronzen, zilveren en gouden sponsors samen",
+    "donations-received" : "donaties",
+    "donations-received-title" : "Totaal aantal ontvangen donaties",
+    "active-companies" : "bedrijven",
+    "active-companies-title" : "Actieve bedrijven die Let’s Peppol gebruiken",
+    "invoices-processed" : "facturen",
+    "invoices-processed-title" : "Facturen verwerkt via Let’s Peppol",
+    "donate" : "doneer",
+    "follow" : "volgen",
+    "follow-linkedin" : "Volg ons op LinkedIn",
+    "sponsor-payment" : {
+      "title" : "Doneer om Let’s Peppol te sponsoren",
+      "info-invoice" : "Uw bijdrage zal worden gefactureerd door BARGE vzw (Business Application Research Group Europe), een btw-plichtige Belgische vereniging zonder winstoogmerk.",
+      "info-vat" : "U ontvangt een Peppol e-factuur met 21% btw, zodat uw organisatie over het juiste document beschikt voor btw-verwerking en fiscale aftrekbaarheid.",
+      "info-vat-reverse-charge" : "U ontvangt een Peppol e-factuur zonder btw volgens de intracommunautaire verleggingsregeling.",
+      "amount-including-vat" : "{{total}} incl. btw",
+      "amount-reverse-charge" : "{{total}} btw verlegd",
+      "amount-without-vat" : "Ander bedrag zonder btw",
+      "package-note" : "We waarderen uw bijdrage en nemen contact met u op om een passend sponsorpakket af te spreken.",
+      "sponsor-name" : "Naam op sponsorpagina",
+      "message" : "Bericht",
+      "contribution" : "Bijdrage",
+      "vat" : "Btw 21%",
+      "vat-reverse-charge" : "Btw verlegd",
+      "total-including-vat" : "Totaal aangerekend, inclusief btw",
+      "total-reverse-charge" : "Totaal aangerekend",
+      "sending" : "Verzenden…",
+      "request-package" : "Sponsorpakket aanvragen",
+      "create-invoice" : "Akkoord en factuur aanmaken",
+      "default-message" : "Bedankt voor Let’s Peppol",
+      "success-title" : "Bedankt om Let’s Peppol te steunen.",
+      "success-invoice-created" : "Uw sponsorfactuur is aangemaakt en komt via Peppol aan. Dit kan even duren, meestal binnen 1 uur.",
+      "duplicate-invoice" : "We hebben in de afgelopen 48 uur al een sponsorfactuur voor uw bedrijf aangemaakt. Die komt via Peppol aan, dus u hoeft nu geen nieuwe factuur aan te maken.",
+      "success-alert" : "Bedankt om ons te steunen",
+      "error-alert" : "Sponsorfactuur kon niet worden aangemaakt"
+    }
+  },
+  "sponsors-page" : {
+    "title" : "Sponsors",
+    "subtitle" : "Bedrijven en mensen die Let's Peppol mee draaiende houden.",
+    "table" : {
+      "date" : "Datum",
+      "name" : "Naam",
+      "message" : "Bericht",
+      "amount" : "Bedrag"
+    },
+    "loading" : "Sponsors laden...",
+    "load-error" : "De sponsors konden nu niet worden geladen.",
+    "empty" : "Nog geen sponsors."
   },
   "dashboard": {
     "vat-suffix": {
@@ -203,7 +256,7 @@
     "partners" : "Partners",
     "products" : "Producten",
     "account" : "Account",
-    "brand-alt" : "Let's Peppol",
+    "brand-alt" : "Let’s Peppol",
     "toggle-theme" : "Thema wisselen"
   },
   "alert" : {
@@ -469,6 +522,24 @@
       "iban" : "IBAN",
       "reference" : "Referentie",
       "store-iban": "IBAN opslaan in account"
+    },
+    "paymentQr" : {
+      "title" : "Factuurbetaling",
+      "show-and-mark-paid" : "Betalings-QR tonen<br /> en als betaald markeren",
+      "mark-paid-document" : {
+        "INVOICE" : "Factuur als betaald markeren",
+        "CREDIT_NOTE" : "Creditnota als betaald markeren"
+      },
+      "mark-unpaid-document" : {
+        "INVOICE" : "Factuur als onbetaald markeren",
+        "CREDIT_NOTE" : "Creditnota als onbetaald markeren"
+      },
+      "marked-done-on" : "Betaling als uitgevoerd gemarkeerd op",
+      "name" : "Naam",
+      "iban" : "IBAN",
+      "bic" : "BIC",
+      "amount" : "Bedrag",
+      "reference" : "Referentie"
     },
     "validationModal" : {
       "title" : "Validatie",

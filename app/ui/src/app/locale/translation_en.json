@@ -186,7 +186,8 @@
     "remove": "Remove",
     "logout": "Log out",
     "edit": "Edit",
-    "close": "Close"
+    "close": "Close",
+    "view-more": "view more…"
   },
   "new-feature": {
     "label": "New",
@@ -198,13 +199,65 @@
       "excl": "excl. VAT"
     }
   },
+  "donations": {
+    "sponsors": "tier sponsors",
+    "sponsors-title": "Bronze, Silver and Gold sponsors combined",
+    "donations-received": "donations",
+    "donations-received-title": "Total donations received",
+    "active-companies": "companies",
+    "active-companies-title": "Active companies using Let’s Peppol",
+    "invoices-processed": "invoices",
+    "invoices-processed-title": "Invoices processed through Let’s Peppol",
+    "donate": "donate",
+    "follow": "follow",
+    "follow-linkedin": "Follow us on LinkedIn",
+    "sponsor-payment": {
+      "title": "Donate to sponsor Let’s Peppol",
+      "info-invoice": "Your contribution will be invoiced by BARGE vzw (Business Application Research Group Europe), a VAT-registered Belgian non-profit association.",
+      "info-vat": "You will receive a Peppol e-invoice with 21% VAT, so your organization has the proper document for VAT processing and tax deductibility.",
+      "info-vat-reverse-charge": "You will receive a Peppol e-invoice without VAT under the intra-EU reverse charge rules.",
+      "amount-including-vat": "{{total}} incl. VAT",
+      "amount-reverse-charge": "{{total}} reverse charge",
+      "amount-without-vat": "Other amount without VAT",
+      "package-note": "We value your contribution and will contact you to agree on a fitting sponsor package.",
+      "sponsor-name": "Name on sponsor page",
+      "message": "Message",
+      "contribution": "Contribution",
+      "vat": "VAT 21%",
+      "vat-reverse-charge": "VAT reverse charge",
+      "total-including-vat": "Total charged, including VAT",
+      "total-reverse-charge": "Total charged",
+      "sending": "Sending…",
+      "request-package": "Request sponsor package",
+      "create-invoice": "Agree and create invoice",
+      "default-message": "Thank you for Let’s Peppol",
+      "success-title": "Thank you for supporting Let’s Peppol.",
+      "success-invoice-created": "Your sponsor invoice has been created and will arrive through Peppol. This can take a little while, usually within 1 hour.",
+      "duplicate-invoice": "We already created a sponsor invoice for your company within the last 48 hours. It will arrive through Peppol, so there is no need to create another one right now.",
+      "success-alert": "Thank you for supporting us",
+      "error-alert": "Could not create sponsor invoice"
+    }
+  },
+  "sponsors-page": {
+    "title": "Sponsors",
+    "subtitle": "Companies and people helping keep Let’s Peppol running.",
+    "table": {
+      "date": "Date",
+      "name": "Name",
+      "message": "Message",
+      "amount": "Amount"
+    },
+    "loading": "Loading sponsors...",
+    "load-error": "Could not load sponsors right now.",
+    "empty": "No sponsors yet."
+  },
   "navigation": {
     "dashboard": "Dashboard",
     "invoices": "Invoices",
     "partners": "Partners",
     "products": "Products",
     "account": "Account",
-    "brand-alt": "Let's Peppol",
+    "brand-alt": "Let’s Peppol",
     "toggle-theme": "Toggle theme"
   },
   "alert": {
@@ -470,6 +523,24 @@
       "iban": "IBAN",
       "reference": "Reference",
       "store-iban": "Save IBAN in account"
+    },
+    "paymentQr": {
+      "title": "Invoice payment",
+      "show-and-mark-paid": "Show payment QR<br /> and mark as paid",
+      "mark-paid-document": {
+        "INVOICE": "Mark invoice as paid",
+        "CREDIT_NOTE": "Mark credit note as paid"
+      },
+      "mark-unpaid-document": {
+        "INVOICE": "Mark invoice as unpaid",
+        "CREDIT_NOTE": "Mark credit note as unpaid"
+      },
+      "marked-done-on": "Payment marked done on",
+      "name": "Name",
+      "iban": "IBAN",
+      "bic": "BIC",
+      "amount": "Amount",
+      "reference": "Reference"
     },
     "validationModal": {
       "title": "Validation",

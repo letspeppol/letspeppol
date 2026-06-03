@@ -186,11 +186,64 @@
     "remove": "Entfernen",
     "logout": "Abmelden",
     "edit": "Bearbeiten",
-    "close": "Schließen"
+    "close": "Schließen",
+    "view-more": "mehr anzeigen…"
   },
   "new-feature": {
     "label": "Neu",
-    "click-to-dismiss": "Zum Schließen klicken"
+    "click-to-dismiss": "Hinweis bestätigen"
+  },
+  "donations": {
+    "sponsors": "Stufensponsoren",
+    "sponsors-title": "Bronze-, Silber- und Gold-Sponsoren zusammen",
+    "donations-received": "Spenden",
+    "donations-received-title": "Insgesamt erhaltene Spenden",
+    "active-companies": "Unternehmen",
+    "active-companies-title": "Aktive Unternehmen, die Let’s Peppol nutzen",
+    "invoices-processed": "Rechnungen",
+    "invoices-processed-title": "Über Let’s Peppol verarbeitete Rechnungen",
+    "donate": "spenden",
+    "follow": "folgen",
+    "follow-linkedin": "Folgen Sie uns auf LinkedIn",
+    "sponsor-payment": {
+      "title": "Spenden, um Let’s Peppol zu sponsern",
+      "info-invoice": "Ihr Beitrag wird von BARGE vzw (Business Application Research Group Europe), einem umsatzsteuerpflichtigen belgischen gemeinnutzigen Verein, in Rechnung gestellt.",
+      "info-vat": "Sie erhalten eine Peppol-E-Rechnung mit 21% MwSt., damit Ihre Organisation den richtigen Beleg fur die Umsatzsteuerverarbeitung und steuerliche Absetzbarkeit hat.",
+      "info-vat-reverse-charge": "Sie erhalten eine Peppol-E-Rechnung ohne MwSt. nach den innergemeinschaftlichen Reverse-Charge-Regeln.",
+      "amount-including-vat": "{{total}} inkl. MwSt.",
+      "amount-reverse-charge": "{{total}} Reverse Charge",
+      "amount-without-vat": "Anderer Betrag ohne MwSt.",
+      "package-note": "Wir schatzen Ihren Beitrag und kontaktieren Sie, um ein passendes Sponsoring-Paket zu vereinbaren.",
+      "sponsor-name": "Name auf der Sponsorenseite",
+      "message": "Nachricht",
+      "contribution": "Beitrag",
+      "vat": "MwSt. 21%",
+      "vat-reverse-charge": "MwSt. Reverse Charge",
+      "total-including-vat": "Gesamtbetrag, inklusive MwSt.",
+      "total-reverse-charge": "Gesamtbetrag",
+      "sending": "Wird gesendet…",
+      "request-package": "Sponsoring-Paket anfragen",
+      "create-invoice": "Zustimmen und Rechnung erstellen",
+      "default-message": "Danke fur Let’s Peppol",
+      "success-title": "Danke, dass Sie Let’s Peppol unterstutzen.",
+      "success-invoice-created": "Ihre Sponsoring-Rechnung wurde erstellt und wird uber Peppol zugestellt. Das kann etwas dauern, normalerweise innerhalb von 1 Stunde.",
+      "duplicate-invoice": "Wir haben in den letzten 48 Stunden bereits eine Sponsoring-Rechnung fur Ihr Unternehmen erstellt. Sie wird uber Peppol zugestellt, daher mussen Sie jetzt keine weitere erstellen.",
+      "success-alert": "Danke fur Ihre Unterstutzung",
+      "error-alert": "Sponsoring-Rechnung konnte nicht erstellt werden"
+    }
+  },
+  "sponsors-page": {
+    "title": "Sponsoren",
+    "subtitle": "Unternehmen und Menschen, die helfen, Let’s Peppol am Laufen zu halten.",
+    "table": {
+      "date": "Datum",
+      "name": "Name",
+      "message": "Nachricht",
+      "amount": "Betrag"
+    },
+    "loading": "Sponsoren werden geladen...",
+    "load-error": "Die Sponsoren konnten derzeit nicht geladen werden.",
+    "empty": "Noch keine Sponsoren."
   },
   "dashboard": {
     "vat-suffix": {
@@ -204,7 +257,7 @@
     "partners": "Partner",
     "products": "Produkte",
     "account": "Konto",
-    "brand-alt": "Let's Peppol",
+    "brand-alt": "Let’s Peppol",
     "toggle-theme": "Theme umschalten"
   },
   "alert": {
@@ -470,6 +523,24 @@
       "iban": "IBAN",
       "reference": "Referenz",
       "store-iban": "IBAN im Konto speichern"
+    },
+    "paymentQr": {
+      "title": "Rechnungszahlung",
+      "show-and-mark-paid": "Zahlungs-QR anzeigen<br /> und als bezahlt markieren",
+      "mark-paid-document": {
+        "INVOICE": "Rechnung als bezahlt markieren",
+        "CREDIT_NOTE": "Gutschrift als bezahlt markieren"
+      },
+      "mark-unpaid-document": {
+        "INVOICE": "Rechnung als unbezahlt markieren",
+        "CREDIT_NOTE": "Gutschrift als unbezahlt markieren"
+      },
+      "marked-done-on": "Zahlung als erledigt markiert am",
+      "name": "Name",
+      "iban": "IBAN",
+      "bic": "BIC",
+      "amount": "Betrag",
+      "reference": "Referenz"
     },
     "validationModal": {
       "title": "Validierung",

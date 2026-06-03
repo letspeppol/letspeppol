@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Invoice xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+         xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"
+         xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2">
+    <cbc:CustomizationID>urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0</cbc:CustomizationID>
+    <cbc:ProfileID>urn:fdc:peppol.eu:2017:poacc:billing:01:1.0</cbc:ProfileID>
+    <cbc:ID>{invoiceId}</cbc:ID>
+    <cbc:IssueDate>{issueDate}</cbc:IssueDate>
+    <cbc:DueDate>{dueDate}</cbc:DueDate>
+    <cbc:InvoiceTypeCode>380</cbc:InvoiceTypeCode>
+    <cbc:DocumentCurrencyCode>{currency}</cbc:DocumentCurrencyCode>
+    <cbc:BuyerReference>{customerScheme}:{customerEndpoint}</cbc:BuyerReference>
+    <cac:AccountingSupplierParty>
+        <cac:Party>
+            <cbc:EndpointID schemeID="0208">1029545627</cbc:EndpointID>
+            <cac:PartyIdentification>
+                <cbc:ID schemeID="0208">1029545627</cbc:ID>
+            </cac:PartyIdentification>
+            <cac:PartyName>
+                <cbc:Name>Business Application Research Group Europe</cbc:Name>
+            </cac:PartyName>
+            <cac:PostalAddress>
+                <cbc:StreetName>Koning Filipstraat 5</cbc:StreetName>
+                <cbc:CityName>Riemst</cbc:CityName>
+                <cbc:PostalZone>3770</cbc:PostalZone>
+                <cac:Country>
+                    <cbc:IdentificationCode>BE</cbc:IdentificationCode>
+                </cac:Country>
+            </cac:PostalAddress>
+            <cac:PartyTaxScheme>
+                <cbc:CompanyID>BE1029545627</cbc:CompanyID>
+                <cac:TaxScheme>
+                    <cbc:ID>VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:PartyTaxScheme>
+            <cac:PartyLegalEntity>
+                <cbc:RegistrationName>Business Application Research Group Europe</cbc:RegistrationName>
+            </cac:PartyLegalEntity>
+        </cac:Party>
+    </cac:AccountingSupplierParty>
+    <cac:AccountingCustomerParty>
+        <cac:Party>
+            <cbc:EndpointID schemeID="{customerScheme}">{customerEndpoint}</cbc:EndpointID>
+            <cac:PartyIdentification>
+                <cbc:ID schemeID="{customerScheme}">{customerEndpoint}</cbc:ID>
+            </cac:PartyIdentification>
+            <cac:PartyName>
+                <cbc:Name>{customerName}</cbc:Name>
+            </cac:PartyName>
+            <cac:PostalAddress>
+                <cbc:StreetName>{customerStreet}</cbc:StreetName>
+                <cbc:CityName>{customerCity}</cbc:CityName>
+                <cbc:PostalZone>{customerPostalCode}</cbc:PostalZone>
+                <cac:Country>
+                    <cbc:IdentificationCode>{customerCountryCode}</cbc:IdentificationCode>
+                </cac:Country>
+            </cac:PostalAddress>
+            <cac:PartyTaxScheme>
+                <cbc:CompanyID>{customerVatNumber}</cbc:CompanyID>
+                <cac:TaxScheme>
+                    <cbc:ID>VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:PartyTaxScheme>
+            <cac:PartyLegalEntity>
+                <cbc:RegistrationName>{customerName}</cbc:RegistrationName>
+                <cbc:CompanyID>{customerVatNumber}</cbc:CompanyID>
+            </cac:PartyLegalEntity>
+        </cac:Party>
+    </cac:AccountingCustomerParty>
+    <cac:PaymentMeans>
+        <cbc:PaymentMeansCode name="Credit Transfer">30</cbc:PaymentMeansCode>
+        <cbc:PaymentID>{invoiceId}</cbc:PaymentID>
+        <cac:PayeeFinancialAccount>
+            <cbc:ID>BE72731070697716</cbc:ID>
+            <cbc:Name>BARGE VZW</cbc:Name>
+        </cac:PayeeFinancialAccount>
+    </cac:PaymentMeans>
+    <cac:PaymentTerms>
+        <cbc:Note>15 days</cbc:Note>
+    </cac:PaymentTerms>
+    <cac:TaxTotal>
+        <cbc:TaxAmount currencyID="{currency}">{taxAmount}</cbc:TaxAmount>
+        <cac:TaxSubtotal>
+            <cbc:TaxableAmount currencyID="{currency}">{amount}</cbc:TaxableAmount>
+            <cbc:TaxAmount currencyID="{currency}">{taxAmount}</cbc:TaxAmount>
+            <cac:TaxCategory>
+                <cbc:ID>{taxCategory}</cbc:ID>
+                <cbc:Percent>{taxPercent}</cbc:Percent>
+                {taxExemptionReason}
+                <cac:TaxScheme>
+                    <cbc:ID>VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:TaxCategory>
+        </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:LegalMonetaryTotal>
+        <cbc:LineExtensionAmount currencyID="{currency}">{amount}</cbc:LineExtensionAmount>
+        <cbc:TaxExclusiveAmount currencyID="{currency}">{amount}</cbc:TaxExclusiveAmount>
+        <cbc:TaxInclusiveAmount currencyID="{currency}">{totalAmount}</cbc:TaxInclusiveAmount>
+        <cbc:PayableAmount currencyID="{currency}">{totalAmount}</cbc:PayableAmount>
+    </cac:LegalMonetaryTotal>
+    <cac:InvoiceLine>
+        <cbc:ID>1</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="C62">1</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="{currency}">{amount}</cbc:LineExtensionAmount>
+        <cac:Item>
+            <cbc:Description>{description}</cbc:Description>
+            <cbc:Name>Sponsoring Let’s Peppol</cbc:Name>
+            <cac:ClassifiedTaxCategory>
+                <cbc:ID>{taxCategory}</cbc:ID>
+                <cbc:Percent>{taxPercent}</cbc:Percent>
+                {taxExemptionReason}
+                <cac:TaxScheme>
+                    <cbc:ID>VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:ClassifiedTaxCategory>
+        </cac:Item>
+        <cac:Price>
+            <cbc:PriceAmount currencyID="{currency}">{amount}</cbc:PriceAmount>
+        </cac:Price>
+    </cac:InvoiceLine>
+</Invoice>

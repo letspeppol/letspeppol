@@ -33,6 +33,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new SimpleMessage(ex.getMessage()));
     }
 
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<SimpleMessage> handleConflictException(ConflictException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new SimpleMessage(ex.getMessage()));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException ex) {
         Map<String, Object> body = new HashMap<>();

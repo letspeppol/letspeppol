@@ -1,0 +1,54 @@
+<import from="../components/view/application-view"></import>
+<import from="../app/value-converters/date-format.ts"></import>
+<import from="../app/value-converters/price.ts"></import>
+
+<application-view>
+    <div class="sponsors-view">
+        <div class="section-header sponsors-header">
+            <div>
+                <h1 t="sponsors-page.title">Sponsors</h1>
+                <p t="sponsors-page.subtitle">Companies and people helping keep Let’s Peppol running.</p>
+            </div>
+        </div>
+
+    <div class="card table-card sponsors-table-card">
+        <div class="table-wrapper">
+            <table class="data-table sponsors-table" aria-describedby="sponsors-title">
+                    <thead>
+                    <tr>
+                        <th t="sponsors-page.table.date">Date</th>
+                        <th t="sponsors-page.table.name">Name</th>
+                        <th t="sponsors-page.table.message">Message</th>
+                        <th class="num" t="sponsors-page.table.amount">Amount</th>
+                    </tr>
+                    </thead>
+                <tbody>
+                <tr repeat.for="item of contributions">
+                    <td>${item.date | dateFormat}</td>
+                    <td><strong>${item.name}</strong></td>
+                    <td class="sponsor-message">${item.message}</td>
+                    <td class="num"><strong>${item.amount | price:item.currency}</strong></td>
+                </tr>
+                </tbody>
+            </table>
+            </div>
+            <div if.bind="isLoading" class="empty-state">
+                <p t="sponsors-page.loading">Loading sponsors...</p>
+            </div>
+            <div if.bind="!isLoading && loadError" class="empty-state">
+                <p t="sponsors-page.load-error">Could not load sponsors right now.</p>
+            </div>
+            <div if.bind="!isLoading && !loadError && contributions.length === 0" class="empty-state">
+            <div class="empty-icon" aria-hidden="true">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 14h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 16"/>
+                    <path d="m7 20 1.6-1.4c.4-.4.9-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.8-2.8l-4.2 3.9"/>
+                    <path d="m2 15 6 6"/>
+                    <path d="M19.5 8.5c.7-.7 1.5-1.6 1.5-3A3.5 3.5 0 0 0 17.5 2c-1.1 0-2.1.5-2.8 1.2A3.8 3.8 0 0 0 12 2a3.5 3.5 0 0 0-3.5 3.5c0 1.4.8 2.3 1.5 3l4.7 4.7Z"/>
+                </svg>
+                </div>
+                <p t="sponsors-page.empty">No sponsors yet.</p>
+            </div>
+        </div>
+    </div>
+</application-view>
