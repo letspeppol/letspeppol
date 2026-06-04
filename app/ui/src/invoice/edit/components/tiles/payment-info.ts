@@ -64,10 +64,10 @@ export class PaymentInfo {
             await this.invoiceService.togglePaidDocument(document.id);
             if (document.paidOn) {
                 document.paidOn = undefined;
-                this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.invoice.marked-unpaid')});
+                this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(`alert.invoice.marked-unpaid.${document.type}`)});
             } else {
                 document.paidOn = datePaid;
-                this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.invoice.marked-paid')});
+                this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(`alert.invoice.marked-paid.${document.type}`)});
             }
         } catch {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.invoice.paid-status-failed')});

@@ -343,8 +343,14 @@
       },
       "draft-deleted" : "Concept verwijderd",
       "draft-delete-overview-failed" : "Concept verwijderen mislukt",
-      "marked-paid" : "Factuur gemarkeerd als betaald",
-      "marked-unpaid" : "Factuur gemarkeerd als onbetaald",
+      "marked-paid" : {
+        "INVOICE" : "Factuur gemarkeerd als betaald",
+        "CREDIT_NOTE" : "Creditnota gemarkeerd als betaald"
+      },
+      "marked-unpaid" : {
+        "INVOICE" : "Factuur gemarkeerd als onbetaald",
+        "CREDIT_NOTE" : "Creditnota gemarkeerd als onbetaald"
+      },
       "paid-status-failed" : "Wijzigen van betalingsstatus mislukt",
       "no-ubl-data" : "Geen UBL-gegevens beschikbaar"
     },
@@ -468,7 +474,19 @@
       "draft" : "Concept",
       "scheduled" : "Gepland",
       "processed" : "Verwerkt",
-      "error" : "Fout"
+      "error" : "Fout",
+      "paid" : "Betaald",
+      "overdue" : "Vervallen"
+    },
+    "action" : {
+      "mark-paid" : {
+        "INVOICE" : "Factuur markeren als betaald",
+        "CREDIT_NOTE" : "Creditnota markeren als betaald"
+      },
+      "mark-unpaid" : {
+        "INVOICE" : "Factuur markeren als niet betaald",
+        "CREDIT_NOTE" : "Creditnota markeren als niet betaald"
+      }
     },
     "table" : {
       "direction" : "Richting",

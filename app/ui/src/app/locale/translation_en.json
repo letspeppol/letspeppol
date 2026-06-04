@@ -344,8 +344,14 @@
       },
       "draft-deleted": "Draft deleted",
       "draft-delete-overview-failed": "Failed to delete draft",
-      "marked-paid": "Invoice marked as paid",
-      "marked-unpaid": "Invoice marked as unpaid",
+      "marked-paid": {
+        "INVOICE": "Invoice marked as paid",
+        "CREDIT_NOTE": "Credit note marked as paid"
+      },
+      "marked-unpaid": {
+        "INVOICE": "Invoice marked as unpaid",
+        "CREDIT_NOTE": "Credit note marked as unpaid"
+      },
       "paid-status-failed": "Failed to change invoice paid status",
       "no-ubl-data": "No UBL data available"
     },
@@ -469,7 +475,19 @@
       "draft": "Draft",
       "scheduled": "Scheduled",
       "processed": "Processed",
-      "error": "Error"
+      "error": "Error",
+      "paid": "Paid",
+      "overdue": "Overdue"
+    },
+    "action": {
+      "mark-paid": {
+        "INVOICE": "Mark invoice as paid",
+        "CREDIT_NOTE": "Mark credit note as paid"
+      },
+      "mark-unpaid": {
+        "INVOICE": "Mark invoice as unpaid",
+        "CREDIT_NOTE": "Mark credit note as unpaid"
+      }
     },
     "table": {
       "direction": "Direction",

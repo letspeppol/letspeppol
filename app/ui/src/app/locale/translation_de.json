@@ -344,8 +344,14 @@
       },
       "draft-deleted": "Entwurf gelöscht",
       "draft-delete-overview-failed": "Entwurf konnte nicht gelöscht werden",
-      "marked-paid": "Rechnung als bezahlt markiert",
-      "marked-unpaid": "Rechnung als unbezahlt markiert",
+      "marked-paid": {
+        "INVOICE": "Rechnung als bezahlt markiert",
+        "CREDIT_NOTE": "Gutschrift als bezahlt markiert"
+      },
+      "marked-unpaid": {
+        "INVOICE": "Rechnung als unbezahlt markiert",
+        "CREDIT_NOTE": "Gutschrift als unbezahlt markiert"
+      },
       "paid-status-failed": "Zahlungsstatus konnte nicht geändert werden",
       "no-ubl-data": "Keine UBL-Daten verfügbar"
     },
@@ -469,7 +475,19 @@
       "draft": "Entwurf",
       "scheduled": "Geplant",
       "processed": "Verarbeitet",
-      "error": "Fehler"
+      "error": "Fehler",
+      "paid": "Bezahlt",
+      "overdue": "Überfällig"
+    },
+    "action": {
+      "mark-paid": {
+        "INVOICE": "Rechnung als bezahlt markieren",
+        "CREDIT_NOTE": "Gutschrift als bezahlt markieren"
+      },
+      "mark-unpaid": {
+        "INVOICE": "Rechnung als unbezahlt markieren",
+        "CREDIT_NOTE": "Gutschrift als unbezahlt markieren"
+      }
     },
     "table": {
       "direction": "Richtung",
