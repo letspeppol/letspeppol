@@ -343,8 +343,14 @@
       },
       "draft-deleted" : "Brouillon supprimé",
       "draft-delete-overview-failed" : "Échec de la suppression du brouillon",
-      "marked-paid" : "Facture marquée comme payée",
-      "marked-unpaid" : "Facture marquée comme impayée",
+      "marked-paid" : {
+        "INVOICE" : "Facture marquée comme payée",
+        "CREDIT_NOTE" : "Note de crédit marquée comme payée"
+      },
+      "marked-unpaid" : {
+        "INVOICE" : "Facture marquée comme impayée",
+        "CREDIT_NOTE" : "Note de crédit marquée comme impayée"
+      },
       "paid-status-failed" : "Échec du changement de statut de paiement",
       "no-ubl-data" : "Aucune donnée UBL disponible"
     },
@@ -473,8 +479,14 @@
       "overdue" : "En retard"
     },
     "action" : {
-      "mark-paid" : "Marquer comme payée",
-      "mark-unpaid" : "Marquer comme non payée"
+      "mark-paid" : {
+        "INVOICE" : "Marquer la facture comme payée",
+        "CREDIT_NOTE" : "Marquer la note de crédit comme payée"
+      },
+      "mark-unpaid" : {
+        "INVOICE" : "Marquer la facture comme impayée",
+        "CREDIT_NOTE" : "Marquer la note de crédit comme impayée"
+      }
     },
     "table" : {
       "direction" : "Direction",

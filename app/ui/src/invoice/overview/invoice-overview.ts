@@ -135,10 +135,10 @@ export class InvoiceOverview {
             await this.invoiceService.togglePaidDocument(item.id);
             if (item.paidOn) {
                 item.paidOn = undefined;
-                this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.invoice.marked-unpaid')});
+                this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(`alert.invoice.marked-unpaid.${item.type}`)});
             } else {
                 item.paidOn = datePaid;
-                this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.invoice.marked-paid')});
+                this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(`alert.invoice.marked-paid.${item.type}`)});
             }
         } catch (e) {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.invoice.paid-status-failed')});
