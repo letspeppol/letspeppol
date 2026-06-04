@@ -188,11 +188,70 @@
     "remove" : "Retirer",
     "logout" : "Se déconnecter",
     "edit" : "Éditer",
-    "close" : "Fermer"
+    "close" : "Fermer",
+    "view-more" : "voir plus…"
   },
   "new-feature" : {
     "label" : "Nouveau",
-    "click-to-dismiss" : "Cliquer pour fermer"
+    "click-to-dismiss" : "Valider le message"
+  },
+  "donations" : {
+    "sponsors" : "sponsors tiers",
+    "sponsors-title" : "Sponsors Bronze, Argent et Or réunis",
+    "donations-received" : "dons",
+    "donations-received-title" : "Nombre total de dons reçus",
+    "active-companies" : "entreprises",
+    "active-companies-title" : "Entreprises actives utilisant Let’s Peppol",
+    "invoices-processed" : "factures",
+    "invoices-processed-title" : "Factures traitées via Let’s Peppol",
+    "donate" : "donner",
+    "follow" : "suivre",
+    "follow-linkedin" : "Suivez-nous sur LinkedIn",
+    "sponsor-payment" : {
+      "title" : "Faire un don pour sponsoriser Let’s Peppol",
+      "info-invoice" : "Votre contribution sera facturee par BARGE vzw (Business Application Research Group Europe), une association belge sans but lucratif assujettie a la TVA.",
+      "info-vat" : "Vous recevrez une facture electronique Peppol avec 21% de TVA, afin que votre organisation dispose du document approprie pour le traitement TVA et la deductibilite fiscale.",
+      "info-vat-reverse-charge" : "Vous recevrez une facture electronique Peppol sans TVA selon les regles intracommunautaires d'autoliquidation.",
+      "amount-including-vat" : "{{total}} TVA incl.",
+      "amount-reverse-charge" : "{{total}} autoliquidation",
+      "amount-without-vat" : "Autre montant hors TVA",
+      "package-note" : "Nous apprecions votre contribution et vous contacterons pour convenir d'une formule de sponsoring adaptee.",
+      "sponsor-name" : "Nom sur la page des sponsors",
+      "message" : "Message",
+      "contribution" : "Contribution",
+      "vat" : "TVA 21%",
+      "vat-reverse-charge" : "TVA autoliquidation",
+      "total-including-vat" : "Total facture, TVA incluse",
+      "total-reverse-charge" : "Total facture",
+      "sending" : "Envoi…",
+      "request-package" : "Demander une formule de sponsoring",
+      "create-invoice" : "Accepter et creer la facture",
+      "default-message" : "Merci pour Let’s Peppol",
+      "success-title" : "Merci de soutenir Let’s Peppol.",
+      "success-invoice-created" : "Votre facture de sponsoring a ete creee et arrivera via Peppol. Cela peut prendre un peu de temps, generalement dans l'heure.",
+      "duplicate-invoice" : "Nous avons deja cree une facture de sponsoring pour votre entreprise au cours des 48 dernieres heures. Elle arrivera via Peppol; il n'est donc pas necessaire d'en creer une autre maintenant.",
+      "success-alert" : "Merci de nous soutenir",
+      "error-alert" : "Impossible de creer la facture de sponsoring"
+    }
+  },
+  "sponsors-page" : {
+    "title" : "Sponsors",
+    "subtitle" : "Entreprises et personnes qui aident à faire vivre Let's Peppol.",
+    "table" : {
+      "date" : "Date",
+      "name" : "Nom",
+      "message" : "Message",
+      "amount" : "Montant"
+    },
+    "loading" : "Chargement des sponsors...",
+    "load-error" : "Impossible de charger les sponsors pour le moment.",
+    "empty" : "Pas encore de sponsors."
+  },
+  "dashboard": {
+    "vat-suffix": {
+      "incl": "TVA inc.",
+      "excl": "HT"
+    }
   },
   "navigation" : {
     "dashboard" : "Tableau de bord",
@@ -200,7 +259,7 @@
     "partners" : "Partenaires",
     "products" : "Produits",
     "account" : "Compte",
-    "brand-alt" : "Let's Peppol",
+    "brand-alt" : "Let’s Peppol",
     "toggle-theme" : "Changer de thème"
   },
   "alert" : {
@@ -208,10 +267,121 @@
     "info" : "Info",
     "warning" : "Avertissement",
     "danger" : "Erreur",
-    "neutral" : "Message"
+    "neutral" : "Message",
+    "account" : {
+      "load-failed" : "Échec de la récupération du compte",
+      "updated" : "Compte mis à jour avec succès",
+      "update-failed" : "Échec de la mise à jour du compte",
+      "reverted" : "Modifications du compte annulées",
+      "peppol-activated" : "Entreprise activée sur Peppol",
+      "peppol-activation-request-failed" : "Échec de l'envoi de la demande d'activation",
+      "peppol-activation-failed" : "Échec de l'activation de l'entreprise sur Peppol",
+      "peppol-removed" : "Entreprise retirée de Peppol",
+      "peppol-remove-failed" : "Échec du retrait de l'entreprise de Peppol",
+      "contract-download-failed" : "Échec du téléchargement du contrat signé"
+    },
+    "password" : {
+      "changed" : "Mot de passe modifié"
+    },
+    "registration" : {
+      "token-invalid" : "Jeton invalide",
+      "contract-downloaded" : "Contrat signé téléchargé !"
+    },
+    "partner" : {
+      "deleted" : "Partenaire supprimé",
+      "delete-failed" : "Échec de la suppression du partenaire",
+      "updated" : "Partenaire mis à jour",
+      "update-failed" : "Échec de la mise à jour du partenaire",
+      "created" : "Partenaire créé",
+      "create-failed" : "Échec de la création du partenaire"
+    },
+    "product" : {
+      "deleted" : "Produit supprimé",
+      "delete-failed" : "Échec de la suppression du produit",
+      "created" : "Produit créé",
+      "updated" : "Produit mis à jour",
+      "update-failed" : "Échec de la mise à jour du produit"
+    },
+    "peppol-search" : {
+      "failed" : "Échec de la recherche dans l'annuaire Peppol",
+      "no-results" : "Aucun résultat trouvé"
+    },
+    "company" : {
+      "info-failed" : "Échec de la récupération des informations de l'entreprise",
+      "save-failed" : "Échec de l'enregistrement de l'entreprise"
+    },
+    "invoice" : {
+      "load-failed" : "Échec de la récupération de la facture",
+      "sent" : {
+        "INVOICE" : "Facture envoyée avec succès",
+        "CREDIT_NOTE" : "Note de crédit envoyée avec succès"
+      },
+      "number-used" : {
+        "INVOICE" : "Numéro de facture déjà utilisé",
+        "CREDIT_NOTE" : "Numéro de note de crédit déjà utilisé"
+      },
+      "send-failed" : {
+        "INVOICE" : "Échec de l'envoi de la facture",
+        "CREDIT_NOTE" : "Échec de l'envoi de la note de crédit"
+      },
+      "draft-saved" : {
+        "INVOICE" : "Brouillon de facture enregistré",
+        "CREDIT_NOTE" : "Brouillon de note de crédit enregistré"
+      },
+      "draft-save-failed" : {
+        "INVOICE" : "Échec de l'enregistrement de la facture comme brouillon",
+        "CREDIT_NOTE" : "Échec de l'enregistrement de la note de crédit comme brouillon"
+      },
+      "draft-removed" : {
+        "INVOICE" : "Brouillon de facture supprimé",
+        "CREDIT_NOTE" : "Brouillon de note de crédit supprimé"
+      },
+      "draft-delete-failed" : {
+        "INVOICE" : "Échec de la suppression du brouillon de facture",
+        "CREDIT_NOTE" : "Échec de la suppression du brouillon de note de crédit"
+      },
+      "draft-created" : {
+        "INVOICE" : "Brouillon de facture créé avec succès",
+        "CREDIT_NOTE" : "Brouillon de note de crédit créé avec succès"
+      },
+      "draft-deleted" : "Brouillon supprimé",
+      "draft-delete-overview-failed" : "Échec de la suppression du brouillon",
+      "marked-paid" : {
+        "INVOICE" : "Facture marquée comme payée",
+        "CREDIT_NOTE" : "Note de crédit marquée comme payée"
+      },
+      "marked-unpaid" : {
+        "INVOICE" : "Facture marquée comme impayée",
+        "CREDIT_NOTE" : "Note de crédit marquée comme impayée"
+      },
+      "paid-status-failed" : "Échec du changement de statut de paiement",
+      "no-ubl-data" : "Aucune donnée UBL disponible"
+    },
+    "iban" : {
+      "saved" : "IBAN enregistré"
+    },
+    "upload" : {
+      "size-too-large" : "La taille totale des fichiers ne peut pas dépasser 10 Mo",
+      "type-unsupported" : "Type de fichier non pris en charge",
+      "upload-error" : "Erreur lors du téléversement du fichier"
+    },
+    "attachment" : {
+      "size-too-large-3mb" : "Le fichier ne peut pas dépasser 3 Mo",
+      "document-not-saved" : "Document non enregistré. Rendu PDF non disponible.",
+      "downloaded" : "Fichier '{{filename}}' téléchargé"
+    }
   },
   "overlay" : {
-    "saving-account" : "Sauvegarde du compte, veuillez patienter"
+    "saving" : "Enregistrement...",
+    "saving-account" : "Sauvegarde du compte, veuillez patienter",
+    "sending" : {
+      "INVOICE" : "Envoi de la facture",
+      "CREDIT_NOTE" : "Envoi de la note de crédit"
+    },
+    "validating" : "Validation",
+    "creating-draft" : "Création du brouillon",
+    "searching-company" : "Recherche de l'entreprise",
+    "confirming-registration" : "Confirmation de la demande d'inscription"
   },
   "product" : {
     "categories" : "Catégories",
@@ -307,7 +477,19 @@
       "draft" : "Brouillon",
       "scheduled" : "Planifié",
       "processed" : "Traité",
-      "error" : "Erreur"
+      "error" : "Erreur",
+      "paid" : "Payée",
+      "overdue" : "En retard"
+    },
+    "action" : {
+      "mark-paid" : {
+        "INVOICE" : "Marquer la facture comme payée",
+        "CREDIT_NOTE" : "Marquer la note de crédit comme payée"
+      },
+      "mark-unpaid" : {
+        "INVOICE" : "Marquer la facture comme impayée",
+        "CREDIT_NOTE" : "Marquer la note de crédit comme impayée"
+      }
     },
     "table" : {
       "direction" : "Direction",
@@ -316,6 +498,10 @@
       "issue-date" : "Date d'émission",
       "due-date" : "Date d'échéance",
       "total" : "Total",
+      "total-vat-suffix": {
+        "incl": "TVA inc.",
+        "excl": "HT"
+      },
       "status" : "Statut",
       "actions" : "Actions"
     },
@@ -357,6 +543,24 @@
       "iban" : "IBAN",
       "reference" : "Référence",
       "store-iban": "Enregistrer l’IBAN dans le compte"
+    },
+    "paymentQr" : {
+      "title" : "Paiement de la facture",
+      "show-and-mark-paid" : "Afficher le QR de paiement<br /> et marquer comme payée",
+      "mark-paid-document" : {
+        "INVOICE" : "Marquer la facture comme payée",
+        "CREDIT_NOTE" : "Marquer la note de crédit comme payée"
+      },
+      "mark-unpaid-document" : {
+        "INVOICE" : "Marquer la facture comme impayée",
+        "CREDIT_NOTE" : "Marquer la note de crédit comme impayée"
+      },
+      "marked-done-on" : "Paiement marqué comme effectué le",
+      "name" : "Nom",
+      "iban" : "IBAN",
+      "bic" : "BIC",
+      "amount" : "Montant",
+      "reference" : "Référence"
     },
     "validationModal" : {
       "title" : "Validation",
@@ -412,6 +616,12 @@
     "cancel" : "Annuler",
     "save" : "Enregistrer",
     "notifications": "Notifications",
+    "vat-display": {
+      "title": "Affichage des montants",
+      "description": "Choisissez si les totaux du tableau de bord et de la liste des factures sont affichés TVA comprise ou hors TVA.",
+      "incl": "TVA comprise",
+      "excl": "Hors TVA"
+    },
     "subscriber-info" : "Info abonné",
     "download-contract" : "Télécharger le contrat",
     "change-password" : "Changer le mot de passe",

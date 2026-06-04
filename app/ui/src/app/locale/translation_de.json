@@ -189,11 +189,70 @@
     "remove": "Entfernen",
     "logout": "Abmelden",
     "edit": "Bearbeiten",
-    "close": "Schließen"
+    "close": "Schließen",
+    "view-more": "mehr anzeigen…"
   },
   "new-feature": {
     "label": "Neu",
-    "click-to-dismiss": "Zum Schließen klicken"
+    "click-to-dismiss": "Hinweis bestätigen"
+  },
+  "donations": {
+    "sponsors": "Stufensponsoren",
+    "sponsors-title": "Bronze-, Silber- und Gold-Sponsoren zusammen",
+    "donations-received": "Spenden",
+    "donations-received-title": "Insgesamt erhaltene Spenden",
+    "active-companies": "Unternehmen",
+    "active-companies-title": "Aktive Unternehmen, die Let’s Peppol nutzen",
+    "invoices-processed": "Rechnungen",
+    "invoices-processed-title": "Über Let’s Peppol verarbeitete Rechnungen",
+    "donate": "spenden",
+    "follow": "folgen",
+    "follow-linkedin": "Folgen Sie uns auf LinkedIn",
+    "sponsor-payment": {
+      "title": "Spenden, um Let’s Peppol zu sponsern",
+      "info-invoice": "Ihr Beitrag wird von BARGE vzw (Business Application Research Group Europe), einem umsatzsteuerpflichtigen belgischen gemeinnutzigen Verein, in Rechnung gestellt.",
+      "info-vat": "Sie erhalten eine Peppol-E-Rechnung mit 21% MwSt., damit Ihre Organisation den richtigen Beleg fur die Umsatzsteuerverarbeitung und steuerliche Absetzbarkeit hat.",
+      "info-vat-reverse-charge": "Sie erhalten eine Peppol-E-Rechnung ohne MwSt. nach den innergemeinschaftlichen Reverse-Charge-Regeln.",
+      "amount-including-vat": "{{total}} inkl. MwSt.",
+      "amount-reverse-charge": "{{total}} Reverse Charge",
+      "amount-without-vat": "Anderer Betrag ohne MwSt.",
+      "package-note": "Wir schatzen Ihren Beitrag und kontaktieren Sie, um ein passendes Sponsoring-Paket zu vereinbaren.",
+      "sponsor-name": "Name auf der Sponsorenseite",
+      "message": "Nachricht",
+      "contribution": "Beitrag",
+      "vat": "MwSt. 21%",
+      "vat-reverse-charge": "MwSt. Reverse Charge",
+      "total-including-vat": "Gesamtbetrag, inklusive MwSt.",
+      "total-reverse-charge": "Gesamtbetrag",
+      "sending": "Wird gesendet…",
+      "request-package": "Sponsoring-Paket anfragen",
+      "create-invoice": "Zustimmen und Rechnung erstellen",
+      "default-message": "Danke fur Let’s Peppol",
+      "success-title": "Danke, dass Sie Let’s Peppol unterstutzen.",
+      "success-invoice-created": "Ihre Sponsoring-Rechnung wurde erstellt und wird uber Peppol zugestellt. Das kann etwas dauern, normalerweise innerhalb von 1 Stunde.",
+      "duplicate-invoice": "Wir haben in den letzten 48 Stunden bereits eine Sponsoring-Rechnung fur Ihr Unternehmen erstellt. Sie wird uber Peppol zugestellt, daher mussen Sie jetzt keine weitere erstellen.",
+      "success-alert": "Danke fur Ihre Unterstutzung",
+      "error-alert": "Sponsoring-Rechnung konnte nicht erstellt werden"
+    }
+  },
+  "sponsors-page": {
+    "title": "Sponsoren",
+    "subtitle": "Unternehmen und Menschen, die helfen, Let’s Peppol am Laufen zu halten.",
+    "table": {
+      "date": "Datum",
+      "name": "Name",
+      "message": "Nachricht",
+      "amount": "Betrag"
+    },
+    "loading": "Sponsoren werden geladen...",
+    "load-error": "Die Sponsoren konnten derzeit nicht geladen werden.",
+    "empty": "Noch keine Sponsoren."
+  },
+  "dashboard": {
+    "vat-suffix": {
+      "incl": "inkl. MwSt.",
+      "excl": "exkl. MwSt."
+    }
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -201,7 +260,7 @@
     "partners": "Partner",
     "products": "Produkte",
     "account": "Konto",
-    "brand-alt": "Let's Peppol",
+    "brand-alt": "Let’s Peppol",
     "toggle-theme": "Theme umschalten"
   },
   "alert": {
@@ -209,10 +268,121 @@
     "info": "Info",
     "warning": "Warnung",
     "danger": "Fehler",
-    "neutral": "Nachricht"
+    "neutral": "Nachricht",
+    "account": {
+      "load-failed": "Konto konnte nicht geladen werden",
+      "updated": "Konto erfolgreich aktualisiert",
+      "update-failed": "Konto konnte nicht aktualisiert werden",
+      "reverted": "Kontoänderungen rückgängig gemacht",
+      "peppol-activated": "Unternehmen auf Peppol aktiviert",
+      "peppol-activation-request-failed": "Aktivierungsanfrage konnte nicht gesendet werden",
+      "peppol-activation-failed": "Unternehmen konnte nicht auf Peppol aktiviert werden",
+      "peppol-removed": "Unternehmen aus Peppol entfernt",
+      "peppol-remove-failed": "Unternehmen konnte nicht aus Peppol entfernt werden",
+      "contract-download-failed": "Unterschriebener Vertrag konnte nicht heruntergeladen werden"
+    },
+    "password": {
+      "changed": "Passwort geändert"
+    },
+    "registration": {
+      "token-invalid": "Token ungültig",
+      "contract-downloaded": "Unterschriebener Vertrag heruntergeladen!"
+    },
+    "partner": {
+      "deleted": "Partner gelöscht",
+      "delete-failed": "Partner konnte nicht gelöscht werden",
+      "updated": "Partner aktualisiert",
+      "update-failed": "Partner konnte nicht aktualisiert werden",
+      "created": "Partner angelegt",
+      "create-failed": "Partner konnte nicht angelegt werden"
+    },
+    "product": {
+      "deleted": "Produkt gelöscht",
+      "delete-failed": "Produkt konnte nicht gelöscht werden",
+      "created": "Produkt angelegt",
+      "updated": "Produkt aktualisiert",
+      "update-failed": "Produkt konnte nicht aktualisiert werden"
+    },
+    "peppol-search": {
+      "failed": "Suche im Peppol-Verzeichnis fehlgeschlagen",
+      "no-results": "Keine Ergebnisse gefunden"
+    },
+    "company": {
+      "info-failed": "Unternehmensinformationen konnten nicht geladen werden",
+      "save-failed": "Unternehmen konnte nicht gespeichert werden"
+    },
+    "invoice": {
+      "load-failed": "Rechnung konnte nicht geladen werden",
+      "sent": {
+        "INVOICE": "Rechnung erfolgreich gesendet",
+        "CREDIT_NOTE": "Gutschrift erfolgreich gesendet"
+      },
+      "number-used": {
+        "INVOICE": "Rechnungsnummer bereits verwendet",
+        "CREDIT_NOTE": "Gutschriftsnummer bereits verwendet"
+      },
+      "send-failed": {
+        "INVOICE": "Senden der Rechnung fehlgeschlagen",
+        "CREDIT_NOTE": "Senden der Gutschrift fehlgeschlagen"
+      },
+      "draft-saved": {
+        "INVOICE": "Rechnungsentwurf gespeichert",
+        "CREDIT_NOTE": "Gutschriftsentwurf gespeichert"
+      },
+      "draft-save-failed": {
+        "INVOICE": "Rechnungsentwurf konnte nicht gespeichert werden",
+        "CREDIT_NOTE": "Gutschriftsentwurf konnte nicht gespeichert werden"
+      },
+      "draft-removed": {
+        "INVOICE": "Rechnungsentwurf entfernt",
+        "CREDIT_NOTE": "Gutschriftsentwurf entfernt"
+      },
+      "draft-delete-failed": {
+        "INVOICE": "Rechnungsentwurf konnte nicht gelöscht werden",
+        "CREDIT_NOTE": "Gutschriftsentwurf konnte nicht gelöscht werden"
+      },
+      "draft-created": {
+        "INVOICE": "Rechnungsentwurf erfolgreich erstellt",
+        "CREDIT_NOTE": "Gutschriftsentwurf erfolgreich erstellt"
+      },
+      "draft-deleted": "Entwurf gelöscht",
+      "draft-delete-overview-failed": "Entwurf konnte nicht gelöscht werden",
+      "marked-paid": {
+        "INVOICE": "Rechnung als bezahlt markiert",
+        "CREDIT_NOTE": "Gutschrift als bezahlt markiert"
+      },
+      "marked-unpaid": {
+        "INVOICE": "Rechnung als unbezahlt markiert",
+        "CREDIT_NOTE": "Gutschrift als unbezahlt markiert"
+      },
+      "paid-status-failed": "Zahlungsstatus konnte nicht geändert werden",
+      "no-ubl-data": "Keine UBL-Daten verfügbar"
+    },
+    "iban": {
+      "saved": "IBAN gespeichert"
+    },
+    "upload": {
+      "size-too-large": "Die Gesamtgröße aller Dateien darf 10 MB nicht überschreiten",
+      "type-unsupported": "Dateityp nicht unterstützt",
+      "upload-error": "Fehler beim Hochladen der Datei"
+    },
+    "attachment": {
+      "size-too-large-3mb": "Datei darf nicht größer als 3 MB sein",
+      "document-not-saved": "Dokument nicht gespeichert. PDF-Vorschau nicht verfügbar.",
+      "downloaded": "Datei '{{filename}}' heruntergeladen"
+    }
   },
   "overlay": {
-    "saving-account": "Konto wird gespeichert, bitte warten"
+    "saving": "Wird gespeichert...",
+    "saving-account": "Konto wird gespeichert, bitte warten",
+    "sending": {
+      "INVOICE": "Rechnung wird gesendet",
+      "CREDIT_NOTE": "Gutschrift wird gesendet"
+    },
+    "validating": "Validierung",
+    "creating-draft": "Entwurf wird erstellt",
+    "searching-company": "Unternehmen wird gesucht",
+    "confirming-registration": "Registrierungsanfrage wird bestätigt"
   },
   "product": {
     "categories": "Kategorien",
@@ -308,7 +478,19 @@
       "draft": "Entwurf",
       "scheduled": "Geplant",
       "processed": "Verarbeitet",
-      "error": "Fehler"
+      "error": "Fehler",
+      "paid": "Bezahlt",
+      "overdue": "Überfällig"
+    },
+    "action": {
+      "mark-paid": {
+        "INVOICE": "Rechnung als bezahlt markieren",
+        "CREDIT_NOTE": "Gutschrift als bezahlt markieren"
+      },
+      "mark-unpaid": {
+        "INVOICE": "Rechnung als unbezahlt markieren",
+        "CREDIT_NOTE": "Gutschrift als unbezahlt markieren"
+      }
     },
     "table": {
       "direction": "Richtung",
@@ -317,6 +499,10 @@
       "issue-date": "Ausstellungsdatum",
       "due-date": "Fälligkeitsdatum",
       "total": "Gesamt",
+      "total-vat-suffix": {
+        "incl": "inkl. MwSt.",
+        "excl": "exkl. MwSt."
+      },
       "status": "Status",
       "actions": "Aktionen"
     },
@@ -358,6 +544,24 @@
       "iban": "IBAN",
       "reference": "Referenz",
       "store-iban": "IBAN im Konto speichern"
+    },
+    "paymentQr": {
+      "title": "Rechnungszahlung",
+      "show-and-mark-paid": "Zahlungs-QR anzeigen<br /> und als bezahlt markieren",
+      "mark-paid-document": {
+        "INVOICE": "Rechnung als bezahlt markieren",
+        "CREDIT_NOTE": "Gutschrift als bezahlt markieren"
+      },
+      "mark-unpaid-document": {
+        "INVOICE": "Rechnung als unbezahlt markieren",
+        "CREDIT_NOTE": "Gutschrift als unbezahlt markieren"
+      },
+      "marked-done-on": "Zahlung als erledigt markiert am",
+      "name": "Name",
+      "iban": "IBAN",
+      "bic": "BIC",
+      "amount": "Betrag",
+      "reference": "Referenz"
     },
     "validationModal": {
       "title": "Validierung",
@@ -414,6 +618,12 @@
     "cancel": "Abbrechen",
     "save": "Speichern",
     "notifications": "Benachrichtigungen",
+    "vat-display": {
+      "title": "Beträge anzeigen",
+      "description": "Wählen Sie, ob Summen im Dashboard und in der Rechnungsliste inklusive oder exklusive MwSt. angezeigt werden.",
+      "incl": "Inkl. MwSt.",
+      "excl": "Exkl. MwSt."
+    },
     "subscriber-info": "Teilnehmerinformationen",
     "download-contract": "Vertrag herunterladen",
     "change-password": "Passwort ändern",

@@ -4,6 +4,8 @@ import com.helger.ubl21.UBL21Marshaller;
 import lombok.SneakyThrows;
 import oasis.names.specification.ubl.schema.xsd.creditnote_21.CreditNoteType;
 import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.Test;
 import org.letspeppol.app.util.CreditNoteUBLBuilder;
 import org.letspeppol.app.util.InvoiceUBLBuilder;
@@ -65,7 +67,11 @@ class UblCreditnotePdfServiceTest {
         UblInvoicePdfService sut = new UblInvoicePdfService(null);
         byte[] pdf = sut.toPdf(xml, UblInvoicePdfService.RenderMode.DRAFT);
 
-        String pdfText = new String(pdf, StandardCharsets.ISO_8859_1);
+        // Raw byte scanning misses the watermark because PDF text streams use FlateDecode.
+        String pdfText;
+        try (PDDocument doc = PDDocument.load(pdf)) {
+            pdfText = new PDFTextStripper().getText(doc);
+        }
         assertTrue(pdfText.contains("DRAFT"));
         assertFalse(pdfText.contains("CN-SECRET"));
     }

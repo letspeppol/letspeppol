@@ -4,6 +4,9 @@ import {jwtDecode} from "jwt-decode";
 import {KYCApi} from "../kyc/kyc-api";
 import {AppApi} from "./app-api";
 import {generateCodeVerifier, generateCodeChallenge, generateState, storePkce, retrievePkce} from "./pkce";
+import {PartnerService} from "./partner-service";
+import {SponsorService} from "./sponsor-service";
+import {StatisticsService} from "./statistics-service";
 
 const KYC_BASE = '/kyc';
 const CLIENT_ID = 'letspeppol-ui';
@@ -17,6 +20,9 @@ const PEPPOL_ACTIVE_KEY = 'peppolActive';
 export class LoginService {
     public kycApi = resolve(KYCApi);
     public appApi = resolve(AppApi);
+    private partnerService = resolve(PartnerService);
+    private sponsorService = resolve(SponsorService);
+    private statisticsService = resolve(StatisticsService);
     public authenticated = false;
 
     constructor() {
@@ -68,6 +74,7 @@ export class LoginService {
         });
 
         window.location.href = `${KYC_BASE}/oauth2/authorize?${params.toString()}`;
+        this.clearCachedData();
     }
 
     async handleCallback(code: string, state: string): Promise<void> {
@@ -126,6 +133,7 @@ export class LoginService {
     }
 
     updateToken(token: string) {
+        this.clearCachedData();
         localStorage.setItem(TOKEN_KEY, token);
         this.setAuthHeader(token);
         this.authenticated = true;
@@ -149,6 +157,7 @@ export class LoginService {
     }
 
     logout(redirectToAuthServer = true) {
+        this.clearCachedData();
         this.kycApi.httpClient.configure(config => config.withDefaults({ headers: {'Authorization': ''} }));
         this.appApi.httpClient.configure(config => config.withDefaults({ headers: {'Authorization': ''} }));
         const idToken = localStorage.getItem(ID_TOKEN_KEY);
@@ -162,5 +171,11 @@ export class LoginService {
             const postLogoutRedirect = encodeURIComponent(window.location.origin + '/login');
             window.location.href = `${KYC_BASE}/connect/logout?id_token_hint=${encodeURIComponent(idToken)}&post_logout_redirect_uri=${postLogoutRedirect}&client_id=${CLIENT_ID}`;
         }
+    }
+
+    private clearCachedData() {
+        this.partnerService.clearCache();
+        this.sponsorService.clearCache();
+        this.statisticsService.clearCache();
     }
 }

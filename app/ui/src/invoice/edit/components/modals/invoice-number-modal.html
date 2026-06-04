@@ -2,14 +2,14 @@
     <div class="modal-backdrop"></div>
     <div class="modal-card">
         <header class="modal-header">
-            <h2 t="invoice.modal.invoice-number">Invoice Number</h2>
+            <h2 t="${isCreditNote ? 'invoice.modal.credit-note-number' : 'invoice.modal.invoice-number'}">Invoice Number</h2>
             <button class="icon-btn" click.trigger="closeModal()" aria-label="Close dialog" t="[aria-label]common.close" title="Close" t="[title]common.close">×</button>
         </header>
         <div class="modal-body">
             <p if.bind="invoiceContext.lastReference" style="color: var(--muted)">Last number: <strong>${invoiceContext.lastReference}</strong></p>
             <div style="display: inline-grid; gap: var(--space-1)">
                 <label class="field required">
-                    <span t="label.invoice-number">Name</span>
+                    <span t="${isCreditNote ? 'invoice.modal.credit-note-number' : 'invoice.modal.invoice-number'}">Invoice number</span>
                     <input type="text" name="invoice-number" placeholder.bind="invoiceNumber" t="[placeholder]label.account-name" value.bind="invoiceNumber" required />
                 </label>
             </div>

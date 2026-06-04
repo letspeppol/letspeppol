@@ -36,7 +36,7 @@ public class UblDocumentReceiverService {
 
     public List<UblDocumentDto> findAllNew(String ownerPeppolId, int limit) {
         var pageable = PageRequest.of(0, limit, Sort.by("createdOn").ascending());
-        return ublDocumentRepository.findAllByOwnerPeppolIdAndDownloadCountAndDirection(ownerPeppolId, 0, DocumentDirection.INCOMING, pageable)
+        return ublDocumentRepository.findAllNewByOwnerPeppolId(ownerPeppolId, 0, List.of(DocumentDirection.INCOMING, DocumentDirection.OUTGOING), pageable)
                 .stream()
                 .map(UblDocumentMapper::toDto)
                 .toList();
@@ -44,7 +44,7 @@ public class UblDocumentReceiverService {
 
     public List<UblDocumentDto> findAllNewByAppLink(UUID uid, int limit) {
         var pageable = PageRequest.of(0, limit, Sort.by("createdOn").descending());
-        return ublDocumentRepository.findAllNewByLinkedUid(uid, 0, DocumentDirection.INCOMING, pageable)
+        return ublDocumentRepository.findAllNewByLinkedUid(uid, 0, List.of(DocumentDirection.INCOMING, DocumentDirection.OUTGOING), pageable)
                 .stream()
                 .map(UblDocumentMapper::toDto)
                 .toList();

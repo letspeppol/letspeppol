@@ -4,10 +4,12 @@ import {resolve} from "@aurelia/kernel";
 import {AlertType} from "../../../../components/alert/alert";
 import moment from "moment";
 import {InvoiceComposer} from "../../../invoice-composer";
+import {I18N} from "@aurelia/i18n";
 
 export class InvoiceAttachmentModal {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
     private readonly invoiceComposer = resolve(InvoiceComposer);
+    private readonly i18n = resolve(I18N);
     @bindable invoiceContext;
     additionalDocumentReference: AdditionalDocumentReference[] = [];
     open = false;
@@ -89,7 +91,7 @@ export class InvoiceAttachmentModal {
         const file = e.dataTransfer.files[0];
         if (!file) return;
         if (file.size > (3 * (1024 ** 2))) {
-            this.ea.publish('alert', {alertType: AlertType.Warning, text: "File can not be more than 3MB"});
+            this.ea.publish('alert', {alertType: AlertType.Warning, text: this.i18n.tr('alert.attachment.size-too-large-3mb')});
             return;
         }
         const totalSize = this.additionalDocumentReference.filter(item => item.Attachment?.EmbeddedDocumentBinaryObject)
@@ -97,7 +99,7 @@ export class InvoiceAttachmentModal {
             .reduce((sum, value) => sum + value, 0)
             + ((file.size * 4) / 3);
         if (totalSize > (10 * (1024 ** 2))) {
-            this.ea.publish('alert', {alertType: AlertType.Warning, text: "Sum of all file sizes can not be more than 10MB"});
+            this.ea.publish('alert', {alertType: AlertType.Warning, text: this.i18n.tr('alert.upload.size-too-large')});
             return;
         }
         // BR-CL-24
@@ -110,7 +112,7 @@ export class InvoiceAttachmentModal {
             'application/vnd.oasis.opendocument.spreadsheet'
         ];
         if (!allowedTypes.includes(file.type as string)) {
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "File type not supported"});
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.upload.type-unsupported')});
             return;
         }
         try {
@@ -129,7 +131,7 @@ export class InvoiceAttachmentModal {
             } as AdditionalDocumentReference);
         } catch(error) {
             console.log(error);
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Error uploading file"});
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.upload.upload-error')});
             return false;
         }
         return true;

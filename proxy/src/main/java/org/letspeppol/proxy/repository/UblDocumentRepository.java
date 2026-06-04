@@ -22,8 +22,6 @@ public interface UblDocumentRepository extends JpaRepository<UblDocument, UUID> 
 
     List<UblDocument> findByIdInAndOwnerPeppolId(Collection<UUID> ids, String ownerPeppolId);
 
-    Slice<UblDocument> findAllByOwnerPeppolIdAndDownloadCountAndDirection(String ownerPeppolId, Integer downloadCount, DocumentDirection direction, Pageable pageable);
-
     List<UblDocument> findAllByDirectionAndScheduledOnBeforeAndAccessPointIsNull(DocumentDirection direction, Instant before, Pageable pageable);
 
     List<UblDocument> findAllByDirectionAndProcessedOnIsNullAndAccessPointIsNotNull(DocumentDirection documentDirection, Pageable updatedOn);
@@ -47,17 +45,32 @@ public interface UblDocumentRepository extends JpaRepository<UblDocument, UUID> 
 
     @Query("""
         select d
+        from UblDocument d
+        where d.ownerPeppolId = :ownerPeppolId
+          and d.downloadCount = :downloadCount
+          and d.direction in :directions
+        order by d.createdOn asc
+    """)
+    List<UblDocument> findAllNewByOwnerPeppolId(
+            @Param("ownerPeppolId") String ownerPeppolId,
+            @Param("downloadCount") int downloadCount,
+            @Param("directions") Collection<DocumentDirection> directions,
+            Pageable pageable
+    );
+
+    @Query("""
+        select d
         from UblDocument d, AppLink l
         where l.id.linkedUid = :uid
           and l.id.peppolId = d.ownerPeppolId
           and d.downloadCount = :downloadCount
-          and d.direction = :direction
+          and d.direction in :directions
         order by d.createdOn desc
     """)
     List<UblDocument> findAllNewByLinkedUid(
             @Param("uid") UUID uid,
             @Param("downloadCount") int downloadCount,
-            @Param("direction") DocumentDirection direction,
+            @Param("directions") Collection<DocumentDirection> directions,
             Pageable pageable
     );
 }

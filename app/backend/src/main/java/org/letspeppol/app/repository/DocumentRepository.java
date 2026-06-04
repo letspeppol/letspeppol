@@ -1,6 +1,6 @@
 package org.letspeppol.app.repository;
 
-import org.letspeppol.app.dto.TotalsDto;
+import org.letspeppol.app.dto.TotalsRow;
 import org.letspeppol.app.model.Document;
 import org.letspeppol.app.model.DocumentType;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,30 +23,37 @@ public interface DocumentRepository extends JpaRepository<Document, UUID>, JpaSp
     @Query("""
         SELECT COUNT(document) > 0 FROM Document document
         WHERE document.invoiceReference = :invoiceReference AND document.company.peppolId = :ownerPeppolId and document.type = :type
-        AND document.draftedOn IS NULL AND document.proxyOn IS NOT NULL AND document.direction = 'OUTGOING'
+        AND document.draftedOn IS NULL AND document.proxyOn IS NOT NULL AND document.direction = 'OUTGOING' AND document.processedStatus IS NULL
         """)
     boolean existsByInvoiceReferenceAndTypeAndOwnerPeppolId(String invoiceReference, DocumentType type, String ownerPeppolId);
 
     @Query(value = """
     SELECT
-      COALESCE(SUM(CASE WHEN direction = 'INCOMING' AND paid_on IS NULL THEN signed_amount END), 0) AS totalPayableOpen,
-      COALESCE(SUM(CASE WHEN direction = 'INCOMING' AND paid_on IS NULL AND due_date < NOW() THEN signed_amount END), 0) AS totalPayableOverdue,
-      COALESCE(SUM(CASE WHEN direction = 'INCOMING' AND issue_date >= date_trunc('year', NOW()) AND issue_date < date_trunc('year', NOW()) + INTERVAL '1 year' THEN signed_amount END), 0) AS totalPayableThisYear,
-      COALESCE(SUM(CASE WHEN direction = 'OUTGOING' AND paid_on IS NULL THEN signed_amount END), 0) AS totalReceivableOpen,
-      COALESCE(SUM(CASE WHEN direction = 'OUTGOING' AND paid_on IS NULL AND due_date < NOW() THEN signed_amount END), 0) AS totalReceivableOverdue,
-      COALESCE(SUM(CASE WHEN direction = 'OUTGOING' AND issue_date >= date_trunc('year', NOW()) AND issue_date < date_trunc('year', NOW()) + INTERVAL '1 year' THEN signed_amount END), 0) AS totalReceivableThisYear
+      COALESCE(SUM(CASE WHEN direction = 'INCOMING' AND paid_on IS NULL THEN signed_incl END), 0) AS totalPayableOpenInclVat,
+      COALESCE(SUM(CASE WHEN direction = 'INCOMING' AND paid_on IS NULL AND due_date < NOW() THEN signed_incl END), 0) AS totalPayableOverdueInclVat,
+      COALESCE(SUM(CASE WHEN direction = 'INCOMING' AND issue_date >= date_trunc('year', NOW()) AND issue_date < date_trunc('year', NOW()) + INTERVAL '1 year' THEN signed_incl END), 0) AS totalPayableThisYearInclVat,
+      COALESCE(SUM(CASE WHEN direction = 'OUTGOING' AND paid_on IS NULL THEN signed_incl END), 0) AS totalReceivableOpenInclVat,
+      COALESCE(SUM(CASE WHEN direction = 'OUTGOING' AND paid_on IS NULL AND due_date < NOW() THEN signed_incl END), 0) AS totalReceivableOverdueInclVat,
+      COALESCE(SUM(CASE WHEN direction = 'OUTGOING' AND issue_date >= date_trunc('year', NOW()) AND issue_date < date_trunc('year', NOW()) + INTERVAL '1 year' THEN signed_incl END), 0) AS totalReceivableThisYearInclVat,
+      COALESCE(SUM(CASE WHEN direction = 'INCOMING' AND paid_on IS NULL THEN signed_excl END), 0) AS totalPayableOpenExclVat,
+      COALESCE(SUM(CASE WHEN direction = 'INCOMING' AND paid_on IS NULL AND due_date < NOW() THEN signed_excl END), 0) AS totalPayableOverdueExclVat,
+      COALESCE(SUM(CASE WHEN direction = 'INCOMING' AND issue_date >= date_trunc('year', NOW()) AND issue_date < date_trunc('year', NOW()) + INTERVAL '1 year' THEN signed_excl END), 0) AS totalPayableThisYearExclVat,
+      COALESCE(SUM(CASE WHEN direction = 'OUTGOING' AND paid_on IS NULL THEN signed_excl END), 0) AS totalReceivableOpenExclVat,
+      COALESCE(SUM(CASE WHEN direction = 'OUTGOING' AND paid_on IS NULL AND due_date < NOW() THEN signed_excl END), 0) AS totalReceivableOverdueExclVat,
+      COALESCE(SUM(CASE WHEN direction = 'OUTGOING' AND issue_date >= date_trunc('year', NOW()) AND issue_date < date_trunc('year', NOW()) + INTERVAL '1 year' THEN signed_excl END), 0) AS totalReceivableThisYearExclVat
     FROM (
       SELECT
         direction,
         paid_on,
         due_date,
         issue_date,
-        CASE WHEN type = 'CREDIT_NOTE' THEN -amount ELSE amount END AS signed_amount
+        CASE WHEN type = 'CREDIT_NOTE' THEN -amount_incl_vat ELSE amount_incl_vat END AS signed_incl,
+        CASE WHEN type = 'CREDIT_NOTE' THEN -amount_excl_vat ELSE amount_excl_vat END AS signed_excl
       FROM app.document
       WHERE owner_peppol_id = :ownerPeppolId AND drafted_on IS NULL
     ) d
     """, nativeQuery = true)
-    TotalsDto totalsByOwner(@Param("ownerPeppolId") String ownerPeppolId);
+    TotalsRow totalsByOwner(@Param("ownerPeppolId") String ownerPeppolId);
 
 //    @Query("SELECT count(document) FROM Document document WHERE document.processedOn IS NOT NULL")
     long countByProcessedOnIsNotNull();

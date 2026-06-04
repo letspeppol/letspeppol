@@ -7,6 +7,8 @@ import {PeppolDirService} from "../services/peppol/peppol-dir-service";
 import {ChangePasswordModal} from "./change-password-modal";
 import {ConfirmationModalContext} from "../components/confirmation/confirmation-modal-context";
 import {validateEmail} from "../app/util/email-validation";
+import {I18N} from "@aurelia/i18n";
+import {IVatDisplay, VatDisplayMode} from "../services/app/vat-display-service";
 
 export class Account {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -15,7 +17,19 @@ export class Account {
     private readonly registrationService = resolve(RegistrationService);
     private readonly confirmationModalContext = resolve(ConfirmationModalContext);
     private readonly peppolDirService = resolve(PeppolDirService);
+    private readonly i18n = resolve(I18N);
+    private readonly vatDisplay = resolve(IVatDisplay);
+    private _vatMode: VatDisplayMode = this.vatDisplay.mode;
+    private vatUnsubscribe: () => void;
     private company: CompanyDto;
+
+    // Setter routes through the service so localStorage + subscribers stay in sync.
+    get vatMode(): VatDisplayMode { return this._vatMode; }
+    set vatMode(value: VatDisplayMode) {
+        if (this._vatMode === value) return;
+        this._vatMode = value;
+        this.vatDisplay.setMode(value);
+    }
     public static PAYMENT_TERMS = ['15_DAYS', '30_DAYS', '60_DAYS', 'END_OF_NEXT_MONTH'];
     private alreadyPeppolActivated = false;
     changePasswordModal: ChangePasswordModal;
@@ -24,11 +38,12 @@ export class Account {
 
     attaching() {
         this.getCompany().catch(() => {
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to get account"});
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.account.load-failed')});
         });
         this.sub = this.ea.subscribe('account:register', () => {
             this.register();
         });
+        this.vatUnsubscribe = this.vatDisplay.subscribe(mode => { this._vatMode = mode; });
         const st = (history.state ?? {}) as any;
         if (st.runRegister) {
             history.replaceState({ ...st, runRegister: false }, '');// consume it so refresh doesn't re-run
@@ -38,6 +53,7 @@ export class Account {
 
     unbinding() {
         this.sub?.dispose();
+        this.vatUnsubscribe?.();
     }
 
     async getCompany() {
@@ -57,12 +73,12 @@ export class Account {
 
     async saveAccount() {
         try {
-            this.ea.publish('showOverlay', "Saving...");
+            this.ea.publish('showOverlay', this.i18n.tr('overlay.saving'));
             await this.companyService.updateCompany(this.company);
-            this.ea.publish('alert', {alertType: AlertType.Success, text: "Account updated successfully"});
+            this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.account.updated')});
         } catch(e) {
             console.error(e);
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to update account"});
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.account.update-failed')});
         } finally {
             this.ea.publish('hideOverlay');
         }
@@ -70,7 +86,7 @@ export class Account {
 
     cancelChanges() {
         this.company = JSON.parse(JSON.stringify(this.companyService.myCompany));
-        this.ea.publish('alert', {alertType: AlertType.Info, text: "Account changes reverted"});
+        this.ea.publish('alert', {alertType: AlertType.Info, text: this.i18n.tr('alert.account.reverted')});
     }
 
     async register() {
@@ -79,7 +95,7 @@ export class Account {
             this.confirmationModalContext.showConfirmationModal(
                 "Activate on Peppol",
                 "It looks like you are currently registered to the Peppol network via another Access Point.\n" +
-                "Are you sure you wish to subscribe yourself to the Peppol network via Let's Peppol?\n" +
+                "Are you sure you wish to subscribe yourself to the Peppol network via Let’s Peppol?\n" +
                 "It might fail if you are still registered at the other Access Point provider.",
                 () => this.registerOnPeppol(),
                 undefined
@@ -87,7 +103,7 @@ export class Account {
         } else {
             this.confirmationModalContext.showConfirmationModal(
                 "Activate on Peppol",
-                "Are you sure you wish to subscribe yourself to the Peppol network via Let's Peppol?\n" +
+                "Are you sure you wish to subscribe yourself to the Peppol network via Let’s Peppol?\n" +
                 "Make sure you are not subscribed via another service.",
                 () => this.registerOnPeppol(),
                 undefined
@@ -99,11 +115,11 @@ export class Account {
         try {
             this.company.peppolActive = await this.registrationService.registerCompany();
             localStorage.setItem('peppolActive', this.company.peppolActive);
-            this.ea.publish('alert', {alertType: AlertType.Success, text: "Activated company on Peppol"});
+            this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.account.peppol-activated')});
             window.location.reload();
         } catch (response: Response) {
             if (!response) {
-                this.ea.publish('alert', { alertType: AlertType.Danger, text: "Failed to send activation request" });
+                this.ea.publish('alert', { alertType: AlertType.Danger, text: this.i18n.tr('alert.account.peppol-activation-request-failed') });
                 return;
             }
             const status = response.status;
@@ -129,7 +145,7 @@ export class Account {
                     this.warningKey = 'account.registration-failed.try-again-one-day';
                     break;
             }
-            this.ea.publish('alert', { alertType: AlertType.Danger, text: "Failed to activate company on Peppol" });
+            this.ea.publish('alert', { alertType: AlertType.Danger, text: this.i18n.tr('alert.account.peppol-activation-failed') });
         }
     }
 
@@ -147,10 +163,10 @@ export class Account {
         try {
             this.company.peppolActive = await this.registrationService.unregisterCompany()
             localStorage.setItem('peppolActive', this.company.peppolActive);
-            this.ea.publish('alert', {alertType: AlertType.Success, text: "Removed company from Peppol"});
+            this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.account.peppol-removed')});
             window.location.reload();
         } catch {
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to remove company from Peppol"});
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.account.peppol-remove-failed')});
         }
     }
 
@@ -173,7 +189,7 @@ export class Account {
             a.click();
             a.remove();
         } catch {
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to download signed contract"});
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.account.contract-download-failed')});
         }
     }
 

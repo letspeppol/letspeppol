@@ -189,11 +189,70 @@
     "remove": "Remove",
     "logout": "Log out",
     "edit": "Edit",
-    "close": "Close"
+    "close": "Close",
+    "view-more": "view more…"
   },
   "new-feature": {
     "label": "New",
     "click-to-dismiss": "Click to dismiss"
+  },
+  "dashboard": {
+    "vat-suffix": {
+      "incl": "incl. VAT",
+      "excl": "excl. VAT"
+    }
+  },
+  "donations": {
+    "sponsors": "tier sponsors",
+    "sponsors-title": "Bronze, Silver and Gold sponsors combined",
+    "donations-received": "donations",
+    "donations-received-title": "Total donations received",
+    "active-companies": "companies",
+    "active-companies-title": "Active companies using Let’s Peppol",
+    "invoices-processed": "invoices",
+    "invoices-processed-title": "Invoices processed through Let’s Peppol",
+    "donate": "donate",
+    "follow": "follow",
+    "follow-linkedin": "Follow us on LinkedIn",
+    "sponsor-payment": {
+      "title": "Donate to sponsor Let’s Peppol",
+      "info-invoice": "Your contribution will be invoiced by BARGE vzw (Business Application Research Group Europe), a VAT-registered Belgian non-profit association.",
+      "info-vat": "You will receive a Peppol e-invoice with 21% VAT, so your organization has the proper document for VAT processing and tax deductibility.",
+      "info-vat-reverse-charge": "You will receive a Peppol e-invoice without VAT under the intra-EU reverse charge rules.",
+      "amount-including-vat": "{{total}} incl. VAT",
+      "amount-reverse-charge": "{{total}} reverse charge",
+      "amount-without-vat": "Other amount without VAT",
+      "package-note": "We value your contribution and will contact you to agree on a fitting sponsor package.",
+      "sponsor-name": "Name on sponsor page",
+      "message": "Message",
+      "contribution": "Contribution",
+      "vat": "VAT 21%",
+      "vat-reverse-charge": "VAT reverse charge",
+      "total-including-vat": "Total charged, including VAT",
+      "total-reverse-charge": "Total charged",
+      "sending": "Sending…",
+      "request-package": "Request sponsor package",
+      "create-invoice": "Agree and create invoice",
+      "default-message": "Thank you for Let’s Peppol",
+      "success-title": "Thank you for supporting Let’s Peppol.",
+      "success-invoice-created": "Your sponsor invoice has been created and will arrive through Peppol. This can take a little while, usually within 1 hour.",
+      "duplicate-invoice": "We already created a sponsor invoice for your company within the last 48 hours. It will arrive through Peppol, so there is no need to create another one right now.",
+      "success-alert": "Thank you for supporting us",
+      "error-alert": "Could not create sponsor invoice"
+    }
+  },
+  "sponsors-page": {
+    "title": "Sponsors",
+    "subtitle": "Companies and people helping keep Let’s Peppol running.",
+    "table": {
+      "date": "Date",
+      "name": "Name",
+      "message": "Message",
+      "amount": "Amount"
+    },
+    "loading": "Loading sponsors...",
+    "load-error": "Could not load sponsors right now.",
+    "empty": "No sponsors yet."
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -201,7 +260,7 @@
     "partners": "Partners",
     "products": "Products",
     "account": "Account",
-    "brand-alt": "Let's Peppol",
+    "brand-alt": "Let’s Peppol",
     "toggle-theme": "Toggle theme"
   },
   "alert": {
@@ -209,10 +268,121 @@
     "info": "Info",
     "warning": "Warning",
     "danger": "Error",
-    "neutral": "Message"
+    "neutral": "Message",
+    "account": {
+      "load-failed": "Failed to get account",
+      "updated": "Account updated successfully",
+      "update-failed": "Failed to update account",
+      "reverted": "Account changes reverted",
+      "peppol-activated": "Activated company on Peppol",
+      "peppol-activation-request-failed": "Failed to send activation request",
+      "peppol-activation-failed": "Failed to activate company on Peppol",
+      "peppol-removed": "Removed company from Peppol",
+      "peppol-remove-failed": "Failed to remove company from Peppol",
+      "contract-download-failed": "Failed to download signed contract"
+    },
+    "password": {
+      "changed": "Password changed"
+    },
+    "registration": {
+      "token-invalid": "Token invalid",
+      "contract-downloaded": "Signed contract downloaded!"
+    },
+    "partner": {
+      "deleted": "Partner deleted",
+      "delete-failed": "Failed to delete partner",
+      "updated": "Partner updated",
+      "update-failed": "Failed to update partner",
+      "created": "Partner created",
+      "create-failed": "Partner creation failed"
+    },
+    "product": {
+      "deleted": "Product deleted",
+      "delete-failed": "Failed to delete product",
+      "created": "Product created",
+      "updated": "Product updated",
+      "update-failed": "Failed to update product"
+    },
+    "peppol-search": {
+      "failed": "Searching Peppol directory failed",
+      "no-results": "No results found"
+    },
+    "company": {
+      "info-failed": "Failed to get company info",
+      "save-failed": "Company save failed"
+    },
+    "invoice": {
+      "load-failed": "Failed to get invoice",
+      "sent": {
+        "INVOICE": "Invoice sent successfully",
+        "CREDIT_NOTE": "Credit note sent successfully"
+      },
+      "number-used": {
+        "INVOICE": "Invoice number already used",
+        "CREDIT_NOTE": "Credit note number already used"
+      },
+      "send-failed": {
+        "INVOICE": "Failed to send invoice",
+        "CREDIT_NOTE": "Failed to send credit note"
+      },
+      "draft-saved": {
+        "INVOICE": "Invoice draft saved",
+        "CREDIT_NOTE": "Credit note draft saved"
+      },
+      "draft-save-failed": {
+        "INVOICE": "Failed to save invoice as draft",
+        "CREDIT_NOTE": "Failed to save credit note as draft"
+      },
+      "draft-removed": {
+        "INVOICE": "Invoice draft removed",
+        "CREDIT_NOTE": "Credit note draft removed"
+      },
+      "draft-delete-failed": {
+        "INVOICE": "Failed to delete invoice draft",
+        "CREDIT_NOTE": "Failed to delete credit note draft"
+      },
+      "draft-created": {
+        "INVOICE": "Invoice draft created successfully",
+        "CREDIT_NOTE": "Credit note draft created successfully"
+      },
+      "draft-deleted": "Draft deleted",
+      "draft-delete-overview-failed": "Failed to delete draft",
+      "marked-paid": {
+        "INVOICE": "Invoice marked as paid",
+        "CREDIT_NOTE": "Credit note marked as paid"
+      },
+      "marked-unpaid": {
+        "INVOICE": "Invoice marked as unpaid",
+        "CREDIT_NOTE": "Credit note marked as unpaid"
+      },
+      "paid-status-failed": "Failed to change invoice paid status",
+      "no-ubl-data": "No UBL data available"
+    },
+    "iban": {
+      "saved": "IBAN saved"
+    },
+    "upload": {
+      "size-too-large": "Sum of all file sizes can not be more than 10MB",
+      "type-unsupported": "File type not supported",
+      "upload-error": "Error uploading file"
+    },
+    "attachment": {
+      "size-too-large-3mb": "File can not be more than 3MB",
+      "document-not-saved": "Document not saved. PDF render not available.",
+      "downloaded": "File '{{filename}}' downloaded"
+    }
   },
   "overlay": {
-    "saving-account": "Saving account, please wait"
+    "saving": "Saving...",
+    "saving-account": "Saving account, please wait",
+    "sending": {
+      "INVOICE": "Sending invoice",
+      "CREDIT_NOTE": "Sending credit note"
+    },
+    "validating": "Validating",
+    "creating-draft": "Creating draft",
+    "searching-company": "Searching company",
+    "confirming-registration": "Confirming registration request"
   },
   "product": {
     "categories": "Categories",
@@ -308,7 +478,19 @@
       "draft": "Draft",
       "scheduled": "Scheduled",
       "processed": "Processed",
-      "error": "Error"
+      "error": "Error",
+      "paid": "Paid",
+      "overdue": "Overdue"
+    },
+    "action": {
+      "mark-paid": {
+        "INVOICE": "Mark invoice as paid",
+        "CREDIT_NOTE": "Mark credit note as paid"
+      },
+      "mark-unpaid": {
+        "INVOICE": "Mark invoice as unpaid",
+        "CREDIT_NOTE": "Mark credit note as unpaid"
+      }
     },
     "table": {
       "direction": "Direction",
@@ -317,6 +499,10 @@
       "issue-date": "Issue Date",
       "due-date": "Due Date",
       "total": "Total",
+      "total-vat-suffix": {
+        "incl": "incl. VAT",
+        "excl": "excl. VAT"
+      },
       "status": "Status",
       "actions": "Actions"
     },
@@ -358,6 +544,24 @@
       "iban": "IBAN",
       "reference": "Reference",
       "store-iban": "Save IBAN in account"
+    },
+    "paymentQr": {
+      "title": "Invoice payment",
+      "show-and-mark-paid": "Show payment QR<br /> and mark as paid",
+      "mark-paid-document": {
+        "INVOICE": "Mark invoice as paid",
+        "CREDIT_NOTE": "Mark credit note as paid"
+      },
+      "mark-unpaid-document": {
+        "INVOICE": "Mark invoice as unpaid",
+        "CREDIT_NOTE": "Mark credit note as unpaid"
+      },
+      "marked-done-on": "Payment marked done on",
+      "name": "Name",
+      "iban": "IBAN",
+      "bic": "BIC",
+      "amount": "Amount",
+      "reference": "Reference"
     },
     "validationModal": {
       "title": "Validation",
@@ -414,6 +618,12 @@
     "cancel": "Cancel",
     "save": "Save",
     "notifications": "Notifications",
+    "vat-display": {
+      "title": "Amount Display",
+      "description": "Choose whether totals in the dashboard and invoice list are shown including or excluding VAT.",
+      "incl": "Include VAT",
+      "excl": "Exclude VAT"
+    },
     "subscriber-info": "Subscriber Info",
     "download-contract": "Download Contract",
     "change-password": "Change Password",

@@ -124,7 +124,7 @@ public class ActivationService {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, false);
             helper.setTo(to);
-            helper.setFrom(fromAddress, "Let's Peppol");
+            helper.setFrom(fromAddress, "Let’s Peppol");
             helper.setBcc("kyc@letspeppol.org");
             helper.setReplyTo("support@letspeppol.org");
             helper.setSubject(tpl.subject());
