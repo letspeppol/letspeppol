@@ -15,7 +15,6 @@ export class Heading {
 
     logout() {
         this.loginService.logout();
-        this.router.load('login');
     }
 
     clearInvoice() {
