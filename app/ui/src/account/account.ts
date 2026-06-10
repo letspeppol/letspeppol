@@ -9,6 +9,7 @@ import {ConfirmationModalContext} from "../components/confirmation/confirmation-
 import {validateEmail} from "../app/util/email-validation";
 import {I18N} from "@aurelia/i18n";
 import {IVatDisplay, VatDisplayMode} from "../services/app/vat-display-service";
+import {getVatRulesetLabelKey, VAT_RULESET_OPTIONS, VatRuleset} from "../services/app/vat-rules";
 
 export class Account {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -35,6 +36,10 @@ export class Account {
     changePasswordModal: ChangePasswordModal;
     private warningKey;
     private alreadyRegisteredProvider = '';
+    vatRulesetOptions = VAT_RULESET_OPTIONS;
+    getVatRulesetLabelKey(vatRuleset: VatRuleset) {
+        return getVatRulesetLabelKey(vatRuleset);
+    }
 
     attaching() {
         this.getCompany().catch(() => {

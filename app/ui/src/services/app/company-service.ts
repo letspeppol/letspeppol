@@ -1,6 +1,7 @@
 import {resolve} from '@aurelia/kernel';
 import {singleton} from "aurelia";
 import {AppApi} from "./app-api";
+import {VatRuleset} from "./vat-rules";
 
 export interface CompanyDto {
     peppolId: string,
@@ -13,6 +14,7 @@ export interface CompanyDto {
     paymentTerms: string,
     iban: string,
     paymentAccountName: string,
+    vatRuleset: VatRuleset,
     lastInvoiceReference: string,
     lastCreditNoteReference: string,
     peppolActive: boolean,
