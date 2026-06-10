@@ -11,7 +11,12 @@ export class InvoiceCalculator {
         let totalWithoutTax = 0;
         const taxSubtotals: TaxSubtotal[] = [];
         for (const line of lines) {
-            let taxSubtotal = taxSubtotals.find(item => item.TaxCategory.Percent === line.Item.ClassifiedTaxCategory.Percent);
+            let taxSubtotal = taxSubtotals.find(item =>
+                item.TaxCategory.Percent === line.Item.ClassifiedTaxCategory.Percent
+                && item.TaxCategory.ID === line.Item.ClassifiedTaxCategory.ID
+                && item.TaxCategory.TaxExemptionReasonCode === line.Item.ClassifiedTaxCategory.TaxExemptionReasonCode
+                && item.TaxCategory.TaxExemptionReason === line.Item.ClassifiedTaxCategory.TaxExemptionReason
+            );
             if (!taxSubtotal) {
                 taxSubtotal = {
                     TaxableAmount: {
@@ -25,6 +30,8 @@ export class InvoiceCalculator {
                     TaxCategory: {
                         ID: line.Item.ClassifiedTaxCategory.ID,
                         Percent: line.Item.ClassifiedTaxCategory.Percent,
+                        TaxExemptionReasonCode: line.Item.ClassifiedTaxCategory.TaxExemptionReasonCode,
+                        TaxExemptionReason: line.Item.ClassifiedTaxCategory.TaxExemptionReason,
                         TaxScheme: {
                             ID: line.Item.ClassifiedTaxCategory.TaxScheme.ID
                         }

@@ -1,73 +1,82 @@
 {
-  "label" : {
-    "email" : "E-mail",
-    "password" : "Mot de passe",
-    "confirm-password" : "Confirmer le mot de passe",
-    "vat-number" : "Numéro de TVA",
-    "name" : "Nom",
-    "city" : "Ville",
-    "postal-code" : "Code postal",
-    "street" : "Rue",
-    "house-number" : "Numéro",
-    "company-name" : "Nom de l'entreprise",
-    "description" : "Description",
-    "reference" : "Référence",
-    "barcode" : "Code-barres",
-    "cost-price" : "Prix de revient",
-    "sale-price" : "Prix de vente",
-    "tax-percentage" : "Pourcentage TVA",
-    "stock-quantity" : "Stock",
-    "product-category" : "Catégorie de produit",
-    "account-name" : "Nom du compte",
-    "payment-terms" : "Conditions de paiement",
-    "address" : "Adresse",
-    "subscriber-info" : "Info abonné",
-    "download-contract" : "Télécharger le contrat",
-    "change-password" : "Changer le mot de passe",
-    "company-info" : "Informations société",
-    "peppol-registration" : "Enregistrement Peppol",
-    "remove-from-peppol" : "Retirer de Peppol",
-    "activate-on-peppol" : "Activer sur Peppol",
-    "iban" : "IBAN",
-    "country" : "Pays",
-    "customer" : "Client",
-    "supplier" : "Fournisseur",
-    "invoice-number" : "Numéro de facture",
-    "note-optional" : "Note (optionnel)",
-    "issue-date" : "Date d'émission",
-    "due-date" : "Date d'échéance",
-    "type" : "Type",
-    "number" : "Numéro",
-    "house-number-short" : "N°",
-    "peppolId" : "ID Peppol"
+  "label": {
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "confirm-password": "Confirmer le mot de passe",
+    "vat-number": "Numéro de TVA",
+    "name": "Nom",
+    "city": "Ville",
+    "postal-code": "Code postal",
+    "street": "Rue",
+    "house-number": "Numéro",
+    "company-name": "Nom de l'entreprise",
+    "description": "Description",
+    "reference": "Référence",
+    "barcode": "Code-barres",
+    "cost-price": "Prix de revient",
+    "sale-price": "Prix de vente",
+    "tax-percentage": "Pourcentage TVA",
+    "stock-quantity": "Stock",
+    "product-category": "Catégorie de produit",
+    "account-name": "Nom du compte",
+    "payment-terms": "Conditions de paiement",
+    "address": "Adresse",
+    "subscriber-info": "Info abonné",
+    "download-contract": "Télécharger le contrat",
+    "change-password": "Changer le mot de passe",
+    "company-info": "Informations société",
+    "peppol-registration": "Enregistrement Peppol",
+    "remove-from-peppol": "Retirer de Peppol",
+    "activate-on-peppol": "Activer sur Peppol",
+    "iban": "IBAN",
+    "country": "Pays",
+    "customer": "Client",
+    "supplier": "Fournisseur",
+    "invoice-number": "Numéro de facture",
+    "note-optional": "Note (optionnel)",
+    "issue-date": "Date d'émission",
+    "due-date": "Date d'échéance",
+    "type": "Type",
+    "number": "Numéro",
+    "house-number-short": "N°",
+    "peppolId": "ID Peppol"
   },
-  "placeholder" : {
-    "email" : "vous@entreprise.com",
-    "vat-number" : "BE0123456789",
-    "password" : "••••••••",
-    "product-search" : "Rechercher produit",
-    "partner-search" : "Rechercher partenaire",
-    "invoice-search" : {
-      "doc" : "Rechercher doc",
-      "customer" : "Rechercher client"
+  "placeholder": {
+    "email": "vous@entreprise.com",
+    "vat-number": "BE0123456789",
+    "password": "••••••••",
+    "product-search": "Rechercher produit",
+    "partner-search": "Rechercher partenaire",
+    "invoice-search": {
+      "doc": "Rechercher doc",
+      "customer": "Rechercher client"
     },
-    "customer-search" : "Recherche par nom ou TVA",
-    "name" : "Nom"
+    "customer-search": "Recherche par nom ou TVA",
+    "name": "Nom"
   },
-  "login" : {
-    "action" : "Se connecter",
-    "title" : "Se connecter à votre compte",
-    "new" : "Nouveau ici ?",
-    "register" : "Enregistrez votre entreprise",
-    "continue" : "Se connecter",
-    "forgot" : "Mot de passe oublié",
-    "remember" : "Se souvenir de moi"
+  "login": {
+    "action": "Se connecter",
+    "title": "Se connecter à votre compte",
+    "new": "Nouveau ici ?",
+    "register": "Enregistrez votre entreprise",
+    "continue": "Se connecter",
+    "forgot": "Mot de passe oublié",
+    "remember": "Se souvenir de moi"
   },
   "onboarding": {
     "title": "Étapes d’onboarding",
     "or": "ou",
-    "os": { "windows": "Windows", "macos": "macOS", "linux": "Linux" },
-    "browser": { "chrome": "Chrome", "firefox": "Firefox", "safari": "Safari", "edge": "Microsoft Edge" },
+    "os": {
+      "windows": "Windows",
+      "macos": "macOS",
+      "linux": "Linux"
+    },
+    "browser": {
+      "chrome": "Chrome",
+      "firefox": "Firefox",
+      "safari": "Safari",
+      "edge": "Microsoft Edge"
+    },
     "step": {
       "register-company": "Enregistrez votre entreprise",
       "prepare-eid": {
@@ -99,150 +108,150 @@
       "login": "Connectez-vous à votre compte."
     },
     "check-title": "Vérifiez votre installation Web eID",
-    "check" : "Vérifier Web eID",
+    "check": "Vérifier Web eID",
     "anim-caption-sign": "Insérez votre carte eID et appuyez sur Confirmer pour vérifier l’installation.",
     "anim-reader-label": "LECTEUR"
   },
-  "registration" : {
-    "title-step0" : "Enregistrez votre entreprise",
-    "create-account" : "Créer un compte",
-    "already-registered" : "Déjà enregistré ?",
-    "title-step1" : "Confirmez votre entreprise",
-    "confirm-company" : "Confirmer",
-    "wrong-company" : "Mauvaise entreprise ?",
-    "back" : "Retour",
-    "title-step2" : "Vérification du compte",
+  "registration": {
+    "title-step0": "Enregistrez votre entreprise",
+    "create-account": "Créer un compte",
+    "already-registered": "Déjà enregistré ?",
+    "title-step1": "Confirmez votre entreprise",
+    "confirm-company": "Confirmer",
+    "wrong-company": "Mauvaise entreprise ?",
+    "back": "Retour",
+    "title-step2": "Vérification du compte",
     "instructions-intro": "Nous vous avons envoyé un e-mail de confirmation depuis kyc@letspeppol.org. Veuillez également vérifier votre dossier spam.",
     "instructions-onboarding": "Avant de continuer, complétez la checklist d’onboarding pour configurer Web eID.",
     "instructions-go-checklist": "Aller à la checklist",
     "instructions-finally": "<b>Enfin</b>, ouvrez l’e-mail de confirmation et cliquez sur le lien de vérification."
   },
-  "error" : {
-    "login-failed" : "Échec de la connexion",
-    "registration-company-not-found" : "Entreprise introuvable",
-    "registration-company-already-registered" : "Entreprise déjà enregistrée",
-    "registration-company-already-registered-on-peppol" : "Il semble que cet identifiant Peppol soit déjà enregistré auprès d’un autre fournisseur. L’activation ici nécessite que vous vous désinscriviez d’abord là-bas. Vous pouvez tout de même finaliser le processus de signature et vous en occuper ensuite.",
-    "not-peppol-active" : "Vous n'êtes actuellement pas enregistré sur Peppol",
-    "not-peppol-active-action" : "Résoudre cela maintenant"
+  "error": {
+    "login-failed": "Échec de la connexion",
+    "registration-company-not-found": "Entreprise introuvable",
+    "registration-company-already-registered": "Entreprise déjà enregistrée",
+    "registration-company-already-registered-on-peppol": "Il semble que cet identifiant Peppol soit déjà enregistré auprès d’un autre fournisseur. L’activation ici nécessite que vous vous désinscriviez d’abord là-bas. Vous pouvez tout de même finaliser le processus de signature et vous en occuper ensuite.",
+    "not-peppol-active": "Vous n'êtes actuellement pas enregistré sur Peppol",
+    "not-peppol-active-action": "Résoudre cela maintenant"
   },
-  "paymentTerms" : {
-    "15_DAYS" : "15 jours",
-    "30_DAYS" : "30 jours",
-    "60_DAYS" : "60 jours",
-    "END_OF_NEXT_MONTH" : "Fin du mois"
+  "paymentTerms": {
+    "15_DAYS": "15 jours",
+    "30_DAYS": "30 jours",
+    "60_DAYS": "60 jours",
+    "END_OF_NEXT_MONTH": "Fin du mois"
   },
-  "documentDirection" : {
-    "OUTGOING" : "Sortant",
-    "INCOMING" : "Entrant"
+  "documentDirection": {
+    "OUTGOING": "Sortant",
+    "INCOMING": "Entrant"
   },
-  "documentType" : {
-    "INVOICE" : "Facture",
-    "CREDIT_NOTE" : "Note de crédit"
+  "documentType": {
+    "INVOICE": "Facture",
+    "CREDIT_NOTE": "Note de crédit"
   },
-  "confirmation" : {
-    "header" : "Confirmer l'identité",
-    "header-sign" : "Signer le contrat",
-    "belgian-only" : "Pour l’instant, nous n’activons que des entreprises belges. <br /> Vous voulez votre pays pris en charge ? <a href=\"mailto:country@letspeppol.org\">Aidez-nous</a>",
-    "manual-confirmation-needed" : "Votre contrat nécessite une vérification manuelle, ce qui peut prendre jusqu’à 10 jours ouvrables. <br /> Veuillez surveiller votre e-mail pour d’éventuelles actions supplémentaires. <br /> Raison : l’eID ne correspond pas entièrement à l’administrateur sélectionné.",
-    "loading" : "Chargement des détails de l'entreprise…",
-    "company" : "Entreprise",
-    "directors" : "Directeurs",
-    "table.name" : "Nom",
-    "table.action" : "Action",
-    "director-confirm" : "Confirmer",
-    "director-confirmed" : "Confirmé",
-    "no-directors" : "Aucun directeur trouvé.",
-    "read-contract-title" : "1. Lire le contrat",
-    "read-contract-info" : "Vous recevrez une copie signée lorsque l'inscription sera terminée.",
-    "read-contract-agree" : "J'ai lu le contrat et j'accepte les conditions",
-    "choose-credentials-title" : "2. Choisir les identifiants",
-    "sign-eid-title" : "3. Signer avec eID",
+  "confirmation": {
+    "header": "Confirmer l'identité",
+    "header-sign": "Signer le contrat",
+    "belgian-only": "Pour l’instant, nous n’activons que des entreprises belges. <br /> Vous voulez votre pays pris en charge ? <a href=\"mailto:country@letspeppol.org\">Aidez-nous</a>",
+    "manual-confirmation-needed": "Votre contrat nécessite une vérification manuelle, ce qui peut prendre jusqu’à 10 jours ouvrables. <br /> Veuillez surveiller votre e-mail pour d’éventuelles actions supplémentaires. <br /> Raison : l’eID ne correspond pas entièrement à l’administrateur sélectionné.",
+    "loading": "Chargement des détails de l'entreprise…",
+    "company": "Entreprise",
+    "directors": "Directeurs",
+    "table.name": "Nom",
+    "table.action": "Action",
+    "director-confirm": "Confirmer",
+    "director-confirmed": "Confirmé",
+    "no-directors": "Aucun directeur trouvé.",
+    "read-contract-title": "1. Lire le contrat",
+    "read-contract-info": "Vous recevrez une copie signée lorsque l'inscription sera terminée.",
+    "read-contract-agree": "J'ai lu le contrat et j'accepte les conditions",
+    "choose-credentials-title": "2. Choisir les identifiants",
+    "sign-eid-title": "3. Signer avec eID",
     "anim-caption-validate": "Insérez votre carte eID et appuyez sur Confirmer pour valider votre identité.",
     "anim-caption-sign": "Insérez votre carte eID et appuyez sur Confirmer pour signer le contrat.",
-    "anim-reader-label" : "LECTEUR",
-    "anim-reader-sr" : "Insérer la carte eID dans le lecteur",
-    "expand-button" : "Agrandir",
-    "minimize-button" : "Réduire",
-    "sign-button" : "Signer",
-    "success-title" : "Succès !",
-    "success-contract" : "Le contrat signé se trouve dans votre dossier de téléchargements",
-    "success-login-prefix" : "Vous pouvez maintenant"
+    "anim-reader-label": "LECTEUR",
+    "anim-reader-sr": "Insérer la carte eID dans le lecteur",
+    "expand-button": "Agrandir",
+    "minimize-button": "Réduire",
+    "sign-button": "Signer",
+    "success-title": "Succès !",
+    "success-contract": "Le contrat signé se trouve dans votre dossier de téléchargements",
+    "success-login-prefix": "Vous pouvez maintenant"
   },
-  "common" : {
-    "confirm" : "Confirmer",
-    "cancel" : "Annuler",
-    "delete" : "Supprimer",
-    "save" : "Enregistrer",
-    "clear" : "Effacer",
-    "apply" : "Appliquer",
-    "previous" : "Précédent",
-    "next" : "Suivant",
-    "search" : "Rechercher",
-    "new" : "Nouveau",
-    "none" : "Aucun",
-    "yes" : "Oui",
-    "no" : "Non",
-    "remove" : "Retirer",
-    "logout" : "Se déconnecter",
-    "edit" : "Éditer",
-    "close" : "Fermer",
-    "view-more" : "voir plus…"
+  "common": {
+    "confirm": "Confirmer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "save": "Enregistrer",
+    "clear": "Effacer",
+    "apply": "Appliquer",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "search": "Rechercher",
+    "new": "Nouveau",
+    "none": "Aucun",
+    "yes": "Oui",
+    "no": "Non",
+    "remove": "Retirer",
+    "logout": "Se déconnecter",
+    "edit": "Éditer",
+    "close": "Fermer",
+    "view-more": "voir plus…"
   },
-  "new-feature" : {
-    "label" : "Nouveau",
-    "click-to-dismiss" : "Valider le message"
+  "new-feature": {
+    "label": "Nouveau",
+    "click-to-dismiss": "Valider le message"
   },
-  "donations" : {
-    "sponsors" : "sponsors tiers",
-    "sponsors-title" : "Sponsors Bronze, Argent et Or réunis",
-    "donations-received" : "dons",
-    "donations-received-title" : "Nombre total de dons reçus",
-    "active-companies" : "entreprises",
-    "active-companies-title" : "Entreprises actives utilisant Let’s Peppol",
-    "invoices-processed" : "factures",
-    "invoices-processed-title" : "Factures traitées via Let’s Peppol",
-    "donate" : "donner",
-    "follow" : "suivre",
-    "follow-linkedin" : "Suivez-nous sur LinkedIn",
-    "sponsor-payment" : {
-      "title" : "Faire un don pour sponsoriser Let’s Peppol",
-      "info-invoice" : "Votre contribution sera facturee par BARGE vzw (Business Application Research Group Europe), une association belge sans but lucratif assujettie a la TVA.",
-      "info-vat" : "Vous recevrez une facture electronique Peppol avec 21% de TVA, afin que votre organisation dispose du document approprie pour le traitement TVA et la deductibilite fiscale.",
-      "info-vat-reverse-charge" : "Vous recevrez une facture electronique Peppol sans TVA selon les regles intracommunautaires d'autoliquidation.",
-      "amount-including-vat" : "{{total}} TVA incl.",
-      "amount-reverse-charge" : "{{total}} autoliquidation",
-      "amount-without-vat" : "Autre montant hors TVA",
-      "package-note" : "Nous apprecions votre contribution et vous contacterons pour convenir d'une formule de sponsoring adaptee.",
-      "sponsor-name" : "Nom sur la page des sponsors",
-      "message" : "Message",
-      "contribution" : "Contribution",
-      "vat" : "TVA 21%",
-      "vat-reverse-charge" : "TVA autoliquidation",
-      "total-including-vat" : "Total facture, TVA incluse",
-      "total-reverse-charge" : "Total facture",
-      "sending" : "Envoi…",
-      "request-package" : "Demander une formule de sponsoring",
-      "create-invoice" : "Accepter et creer la facture",
-      "default-message" : "Merci pour Let’s Peppol",
-      "success-title" : "Merci de soutenir Let’s Peppol.",
-      "success-invoice-created" : "Votre facture de sponsoring a ete creee et arrivera via Peppol. Cela peut prendre un peu de temps, generalement dans l'heure.",
-      "duplicate-invoice" : "Nous avons deja cree une facture de sponsoring pour votre entreprise au cours des 48 dernieres heures. Elle arrivera via Peppol; il n'est donc pas necessaire d'en creer une autre maintenant.",
-      "success-alert" : "Merci de nous soutenir",
-      "error-alert" : "Impossible de creer la facture de sponsoring"
+  "donations": {
+    "sponsors": "sponsors tiers",
+    "sponsors-title": "Sponsors Bronze, Argent et Or réunis",
+    "donations-received": "dons",
+    "donations-received-title": "Nombre total de dons reçus",
+    "active-companies": "entreprises",
+    "active-companies-title": "Entreprises actives utilisant Let’s Peppol",
+    "invoices-processed": "factures",
+    "invoices-processed-title": "Factures traitées via Let’s Peppol",
+    "donate": "donner",
+    "follow": "suivre",
+    "follow-linkedin": "Suivez-nous sur LinkedIn",
+    "sponsor-payment": {
+      "title": "Faire un don pour sponsoriser Let’s Peppol",
+      "info-invoice": "Votre contribution sera facturee par BARGE vzw (Business Application Research Group Europe), une association belge sans but lucratif assujettie a la TVA.",
+      "info-vat": "Vous recevrez une facture electronique Peppol avec 21% de TVA, afin que votre organisation dispose du document approprie pour le traitement TVA et la deductibilite fiscale.",
+      "info-vat-reverse-charge": "Vous recevrez une facture electronique Peppol sans TVA selon les regles intracommunautaires d'autoliquidation.",
+      "amount-including-vat": "{{total}} TVA incl.",
+      "amount-reverse-charge": "{{total}} autoliquidation",
+      "amount-without-vat": "Autre montant hors TVA",
+      "package-note": "Nous apprecions votre contribution et vous contacterons pour convenir d'une formule de sponsoring adaptee.",
+      "sponsor-name": "Nom sur la page des sponsors",
+      "message": "Message",
+      "contribution": "Contribution",
+      "vat": "TVA 21%",
+      "vat-reverse-charge": "TVA autoliquidation",
+      "total-including-vat": "Total facture, TVA incluse",
+      "total-reverse-charge": "Total facture",
+      "sending": "Envoi…",
+      "request-package": "Demander une formule de sponsoring",
+      "create-invoice": "Accepter et creer la facture",
+      "default-message": "Merci pour Let’s Peppol",
+      "success-title": "Merci de soutenir Let’s Peppol.",
+      "success-invoice-created": "Votre facture de sponsoring a ete creee et arrivera via Peppol. Cela peut prendre un peu de temps, generalement dans l'heure.",
+      "duplicate-invoice": "Nous avons deja cree une facture de sponsoring pour votre entreprise au cours des 48 dernieres heures. Elle arrivera via Peppol; il n'est donc pas necessaire d'en creer une autre maintenant.",
+      "success-alert": "Merci de nous soutenir",
+      "error-alert": "Impossible de creer la facture de sponsoring"
     }
   },
-  "sponsors-page" : {
-    "title" : "Sponsors",
-    "subtitle" : "Entreprises et personnes qui aident à faire vivre Let's Peppol.",
-    "table" : {
-      "date" : "Date",
-      "name" : "Nom",
-      "message" : "Message",
-      "amount" : "Montant"
+  "sponsors-page": {
+    "title": "Sponsors",
+    "subtitle": "Entreprises et personnes qui aident à faire vivre Let's Peppol.",
+    "table": {
+      "date": "Date",
+      "name": "Nom",
+      "message": "Message",
+      "amount": "Montant"
     },
-    "loading" : "Chargement des sponsors...",
-    "load-error" : "Impossible de charger les sponsors pour le moment.",
-    "empty" : "Pas encore de sponsors."
+    "loading": "Chargement des sponsors...",
+    "load-error": "Impossible de charger les sponsors pour le moment.",
+    "empty": "Pas encore de sponsors."
   },
   "dashboard": {
     "vat-suffix": {
@@ -250,350 +259,371 @@
       "excl": "HT"
     }
   },
-  "navigation" : {
-    "dashboard" : "Tableau de bord",
-    "invoices" : "Factures",
-    "partners" : "Partenaires",
-    "products" : "Produits",
-    "account" : "Compte",
-    "brand-alt" : "Let’s Peppol",
-    "toggle-theme" : "Changer de thème"
+  "navigation": {
+    "dashboard": "Tableau de bord",
+    "invoices": "Factures",
+    "partners": "Partenaires",
+    "products": "Produits",
+    "account": "Compte",
+    "brand-alt": "Let’s Peppol",
+    "toggle-theme": "Changer de thème"
   },
-  "alert" : {
-    "success" : "Succès",
-    "info" : "Info",
-    "warning" : "Avertissement",
-    "danger" : "Erreur",
-    "neutral" : "Message",
-    "account" : {
-      "load-failed" : "Échec de la récupération du compte",
-      "updated" : "Compte mis à jour avec succès",
-      "update-failed" : "Échec de la mise à jour du compte",
-      "reverted" : "Modifications du compte annulées",
-      "peppol-activated" : "Entreprise activée sur Peppol",
-      "peppol-activation-request-failed" : "Échec de l'envoi de la demande d'activation",
-      "peppol-activation-failed" : "Échec de l'activation de l'entreprise sur Peppol",
-      "peppol-removed" : "Entreprise retirée de Peppol",
-      "peppol-remove-failed" : "Échec du retrait de l'entreprise de Peppol",
-      "contract-download-failed" : "Échec du téléchargement du contrat signé"
+  "alert": {
+    "success": "Succès",
+    "info": "Info",
+    "warning": "Avertissement",
+    "danger": "Erreur",
+    "neutral": "Message",
+    "account": {
+      "load-failed": "Échec de la récupération du compte",
+      "updated": "Compte mis à jour avec succès",
+      "update-failed": "Échec de la mise à jour du compte",
+      "reverted": "Modifications du compte annulées",
+      "peppol-activated": "Entreprise activée sur Peppol",
+      "peppol-activation-request-failed": "Échec de l'envoi de la demande d'activation",
+      "peppol-activation-failed": "Échec de l'activation de l'entreprise sur Peppol",
+      "peppol-removed": "Entreprise retirée de Peppol",
+      "peppol-remove-failed": "Échec du retrait de l'entreprise de Peppol",
+      "contract-download-failed": "Échec du téléchargement du contrat signé"
     },
-    "password" : {
-      "changed" : "Mot de passe modifié"
+    "password": {
+      "changed": "Mot de passe modifié"
     },
-    "registration" : {
-      "token-invalid" : "Jeton invalide",
-      "contract-downloaded" : "Contrat signé téléchargé !"
+    "registration": {
+      "token-invalid": "Jeton invalide",
+      "contract-downloaded": "Contrat signé téléchargé !"
     },
-    "partner" : {
-      "deleted" : "Partenaire supprimé",
-      "delete-failed" : "Échec de la suppression du partenaire",
-      "updated" : "Partenaire mis à jour",
-      "update-failed" : "Échec de la mise à jour du partenaire",
-      "created" : "Partenaire créé",
-      "create-failed" : "Échec de la création du partenaire"
+    "partner": {
+      "deleted": "Partenaire supprimé",
+      "delete-failed": "Échec de la suppression du partenaire",
+      "updated": "Partenaire mis à jour",
+      "update-failed": "Échec de la mise à jour du partenaire",
+      "created": "Partenaire créé",
+      "create-failed": "Échec de la création du partenaire"
     },
-    "product" : {
-      "deleted" : "Produit supprimé",
-      "delete-failed" : "Échec de la suppression du produit",
-      "created" : "Produit créé",
-      "updated" : "Produit mis à jour",
-      "update-failed" : "Échec de la mise à jour du produit"
+    "product": {
+      "deleted": "Produit supprimé",
+      "delete-failed": "Échec de la suppression du produit",
+      "created": "Produit créé",
+      "updated": "Produit mis à jour",
+      "update-failed": "Échec de la mise à jour du produit"
     },
-    "peppol-search" : {
-      "failed" : "Échec de la recherche dans l'annuaire Peppol",
-      "no-results" : "Aucun résultat trouvé"
+    "peppol-search": {
+      "failed": "Échec de la recherche dans l'annuaire Peppol",
+      "no-results": "Aucun résultat trouvé"
     },
-    "company" : {
-      "info-failed" : "Échec de la récupération des informations de l'entreprise",
-      "save-failed" : "Échec de l'enregistrement de l'entreprise"
+    "company": {
+      "info-failed": "Échec de la récupération des informations de l'entreprise",
+      "save-failed": "Échec de l'enregistrement de l'entreprise"
     },
-    "invoice" : {
-      "load-failed" : "Échec de la récupération de la facture",
-      "sent" : {
-        "INVOICE" : "Facture envoyée avec succès",
-        "CREDIT_NOTE" : "Note de crédit envoyée avec succès"
+    "invoice": {
+      "load-failed": "Échec de la récupération de la facture",
+      "sent": {
+        "INVOICE": "Facture envoyée avec succès",
+        "CREDIT_NOTE": "Note de crédit envoyée avec succès"
       },
-      "number-used" : {
-        "INVOICE" : "Numéro de facture déjà utilisé",
-        "CREDIT_NOTE" : "Numéro de note de crédit déjà utilisé"
+      "number-used": {
+        "INVOICE": "Numéro de facture déjà utilisé",
+        "CREDIT_NOTE": "Numéro de note de crédit déjà utilisé"
       },
-      "send-failed" : {
-        "INVOICE" : "Échec de l'envoi de la facture",
-        "CREDIT_NOTE" : "Échec de l'envoi de la note de crédit"
+      "send-failed": {
+        "INVOICE": "Échec de l'envoi de la facture",
+        "CREDIT_NOTE": "Échec de l'envoi de la note de crédit"
       },
-      "draft-saved" : {
-        "INVOICE" : "Brouillon de facture enregistré",
-        "CREDIT_NOTE" : "Brouillon de note de crédit enregistré"
+      "draft-saved": {
+        "INVOICE": "Brouillon de facture enregistré",
+        "CREDIT_NOTE": "Brouillon de note de crédit enregistré"
       },
-      "draft-save-failed" : {
-        "INVOICE" : "Échec de l'enregistrement de la facture comme brouillon",
-        "CREDIT_NOTE" : "Échec de l'enregistrement de la note de crédit comme brouillon"
+      "draft-save-failed": {
+        "INVOICE": "Échec de l'enregistrement de la facture comme brouillon",
+        "CREDIT_NOTE": "Échec de l'enregistrement de la note de crédit comme brouillon"
       },
-      "draft-removed" : {
-        "INVOICE" : "Brouillon de facture supprimé",
-        "CREDIT_NOTE" : "Brouillon de note de crédit supprimé"
+      "draft-removed": {
+        "INVOICE": "Brouillon de facture supprimé",
+        "CREDIT_NOTE": "Brouillon de note de crédit supprimé"
       },
-      "draft-delete-failed" : {
-        "INVOICE" : "Échec de la suppression du brouillon de facture",
-        "CREDIT_NOTE" : "Échec de la suppression du brouillon de note de crédit"
+      "draft-delete-failed": {
+        "INVOICE": "Échec de la suppression du brouillon de facture",
+        "CREDIT_NOTE": "Échec de la suppression du brouillon de note de crédit"
       },
-      "draft-created" : {
-        "INVOICE" : "Brouillon de facture créé avec succès",
-        "CREDIT_NOTE" : "Brouillon de note de crédit créé avec succès"
+      "draft-created": {
+        "INVOICE": "Brouillon de facture créé avec succès",
+        "CREDIT_NOTE": "Brouillon de note de crédit créé avec succès"
       },
-      "draft-deleted" : "Brouillon supprimé",
-      "draft-delete-overview-failed" : "Échec de la suppression du brouillon",
-      "marked-paid" : "Facture marquée comme payée",
-      "marked-unpaid" : "Facture marquée comme impayée",
-      "paid-status-failed" : "Échec du changement de statut de paiement",
-      "no-ubl-data" : "Aucune donnée UBL disponible"
+      "draft-deleted": "Brouillon supprimé",
+      "draft-delete-overview-failed": "Échec de la suppression du brouillon",
+      "marked-paid": "Facture marquée comme payée",
+      "marked-unpaid": "Facture marquée comme impayée",
+      "paid-status-failed": "Échec du changement de statut de paiement",
+      "no-ubl-data": "Aucune donnée UBL disponible"
     },
-    "iban" : {
-      "saved" : "IBAN enregistré"
+    "iban": {
+      "saved": "IBAN enregistré"
     },
-    "upload" : {
-      "size-too-large" : "La taille totale des fichiers ne peut pas dépasser 10 Mo",
-      "type-unsupported" : "Type de fichier non pris en charge",
-      "upload-error" : "Erreur lors du téléversement du fichier"
+    "upload": {
+      "size-too-large": "La taille totale des fichiers ne peut pas dépasser 10 Mo",
+      "type-unsupported": "Type de fichier non pris en charge",
+      "upload-error": "Erreur lors du téléversement du fichier"
     },
-    "attachment" : {
-      "size-too-large-3mb" : "Le fichier ne peut pas dépasser 3 Mo",
-      "document-not-saved" : "Document non enregistré. Rendu PDF non disponible.",
-      "downloaded" : "Fichier '{{filename}}' téléchargé"
+    "attachment": {
+      "size-too-large-3mb": "Le fichier ne peut pas dépasser 3 Mo",
+      "document-not-saved": "Document non enregistré. Rendu PDF non disponible.",
+      "downloaded": "Fichier '{{filename}}' téléchargé"
     }
   },
-  "overlay" : {
-    "saving" : "Enregistrement...",
-    "saving-account" : "Sauvegarde du compte, veuillez patienter",
-    "sending" : {
-      "INVOICE" : "Envoi de la facture",
-      "CREDIT_NOTE" : "Envoi de la note de crédit"
+  "overlay": {
+    "saving": "Enregistrement...",
+    "saving-account": "Sauvegarde du compte, veuillez patienter",
+    "sending": {
+      "INVOICE": "Envoi de la facture",
+      "CREDIT_NOTE": "Envoi de la note de crédit"
     },
-    "validating" : "Validation",
-    "creating-draft" : "Création du brouillon",
-    "searching-company" : "Recherche de l'entreprise",
-    "confirming-registration" : "Confirmation de la demande d'inscription"
+    "validating": "Validation",
+    "creating-draft": "Création du brouillon",
+    "searching-company": "Recherche de l'entreprise",
+    "confirming-registration": "Confirmation de la demande d'inscription"
   },
-  "product" : {
-    "categories" : "Catégories",
-    "category" : "Catégorie",
-    "title" : "Produits",
-    "all" : "Tous",
-    "search" : "Rechercher produit",
-    "new" : "Nouveau produit",
-    "table" : {
-      "name" : "Nom",
-      "description" : "Description",
-      "category" : "Catégorie",
-      "reference" : "Référence",
-      "barcode" : "Code-barres",
-      "cost-price" : "Prix de revient",
-      "sale-price" : "Prix de vente",
-      "tax-percentage" : "Pourcentage TVA",
-      "stock-quantity" : "Stock",
-      "actions" : "Actions"
+  "product": {
+    "categories": "Catégories",
+    "category": "Catégorie",
+    "title": "Produits",
+    "all": "Tous",
+    "search": "Rechercher produit",
+    "new": "Nouveau produit",
+    "table": {
+      "name": "Nom",
+      "description": "Description",
+      "category": "Catégorie",
+      "reference": "Référence",
+      "barcode": "Code-barres",
+      "cost-price": "Prix de revient",
+      "sale-price": "Prix de vente",
+      "tax-percentage": "Pourcentage TVA",
+      "stock-quantity": "Stock",
+      "actions": "Actions"
     },
-    "empty" : "Aucun produit ne correspond à vos filtres.",
-    "edit" : {
-      "new" : "Nouveau produit",
-      "info" : "Infos produit",
-      "pricing" : "Tarification",
-      "stock" : "Stock",
-      "stock-quantity" : "Stock",
-      "product-category" : "Catégorie de produit",
-      "none" : "Aucun",
-      "save" : "Enregistrer le produit",
-      "cancel" : "Annuler"
+    "empty": "Aucun produit ne correspond à vos filtres.",
+    "edit": {
+      "new": "Nouveau produit",
+      "info": "Infos produit",
+      "pricing": "Tarification",
+      "stock": "Stock",
+      "stock-quantity": "Stock",
+      "product-category": "Catégorie de produit",
+      "none": "Aucun",
+      "save": "Enregistrer le produit",
+      "cancel": "Annuler"
     },
-    "categoryModal" : {
-      "title" : "Catégorie de produit",
-      "name" : "Nom",
-      "color" : "Couleur"
+    "categoryModal": {
+      "title": "Catégorie de produit",
+      "name": "Nom",
+      "color": "Couleur"
     }
   },
-  "partner" : {
-    "title" : "Partenaires",
-    "customersSuppliers" : "Clients & Fournisseurs",
-    "customers" : "Clients",
-    "suppliers" : "Fournisseurs",
-    "search" : "Rechercher partenaire",
-    "new" : "Nouveau partenaire",
-    "all" : "Tous",
-    "table" : {
-      "type" : "Type",
-      "name" : "Nom",
-      "address" : "Adresse",
-      "postal-code" : "Code postal",
-      "city" : "Ville",
-      "country" : "Pays",
-      "vat" : "TVA",
-      "actions" : "Actions"
+  "partner": {
+    "title": "Partenaires",
+    "customersSuppliers": "Clients & Fournisseurs",
+    "customers": "Clients",
+    "suppliers": "Fournisseurs",
+    "search": "Rechercher partenaire",
+    "new": "Nouveau partenaire",
+    "all": "Tous",
+    "table": {
+      "type": "Type",
+      "name": "Nom",
+      "address": "Adresse",
+      "postal-code": "Code postal",
+      "city": "Ville",
+      "country": "Pays",
+      "vat": "TVA",
+      "actions": "Actions"
     },
-    "empty" : "Aucun partenaire ne correspond à vos filtres.",
-    "edit" : {
-      "new" : "Nouveau partenaire",
-      "company-info" : "Informations société",
-      "peppol" : "Peppol",
-      "address" : "Adresse",
-      "payment-info" : "Infos paiement",
-      "customer" : "Client",
-      "supplier" : "Fournisseur",
-      "account-name" : "Nom du compte",
-      "payment-terms" : "Conditions de paiement",
-      "iban" : "IBAN",
-      "save" : "Enregistrer partenaire",
-      "cancel" : "Annuler"
+    "empty": "Aucun partenaire ne correspond à vos filtres.",
+    "edit": {
+      "new": "Nouveau partenaire",
+      "company-info": "Informations société",
+      "peppol": "Peppol",
+      "address": "Adresse",
+      "payment-info": "Infos paiement",
+      "customer": "Client",
+      "supplier": "Fournisseur",
+      "account-name": "Nom du compte",
+      "payment-terms": "Conditions de paiement",
+      "iban": "IBAN",
+      "save": "Enregistrer partenaire",
+      "cancel": "Annuler"
     }
   },
-  "invoice" : {
-    "direction" : "Direction",
-    "all" : "Tous",
-    "outgoing" : "Sortant",
-    "incoming" : "Entrant",
-    "drafts" : "Brouillons",
-    "title" : "Factures",
-    "search" : "Rechercher client ou référence",
-    "customer" : "Client",
-    "supplier" : "Fournisseur",
-    "partner" : "Partenaire",
-    "buyer-reference" : "Référence acheteur",
-    "order-reference" : "Référence de commande",
-    "invoice-reference" : "Référence de facture",
-    "invoice-reference-date" : "Date de facture",
-    "new" : {
-      "INVOICE" : "Nouvelle facture",
-      "CREDIT_NOTE" : "Nouvelle note de crédit"
+  "invoice": {
+    "direction": "Direction",
+    "all": "Tous",
+    "outgoing": "Sortant",
+    "incoming": "Entrant",
+    "drafts": "Brouillons",
+    "title": "Factures",
+    "search": "Rechercher client ou référence",
+    "customer": "Client",
+    "supplier": "Fournisseur",
+    "partner": "Partenaire",
+    "buyer-reference": "Référence acheteur",
+    "order-reference": "Référence de commande",
+    "invoice-reference": "Référence de facture",
+    "invoice-reference-date": "Date de facture",
+    "new": {
+      "INVOICE": "Nouvelle facture",
+      "CREDIT_NOTE": "Nouvelle note de crédit"
     },
-    "status" : {
-      "draft" : "Brouillon",
-      "scheduled" : "Planifié",
-      "processed" : "Traité",
-      "error" : "Erreur"
+    "status": {
+      "draft": "Brouillon",
+      "scheduled": "Planifié",
+      "processed": "Traité",
+      "error": "Erreur"
     },
-    "table" : {
-      "direction" : "Direction",
-      "type" : "Type",
-      "doc" : "Doc",
-      "issue-date" : "Date d'émission",
-      "due-date" : "Date d'échéance",
-      "total" : "Total",
+    "table": {
+      "direction": "Direction",
+      "type": "Type",
+      "doc": "Doc",
+      "issue-date": "Date d'émission",
+      "due-date": "Date d'échéance",
+      "total": "Total",
       "total-vat-suffix": {
         "incl": "TVA inc.",
         "excl": "HT"
       },
-      "status" : "Statut",
-      "actions" : "Actions"
+      "status": "Statut",
+      "actions": "Actions"
     },
-    "filter" : {
-      "from" : "De",
-      "to" : "À",
-      "clear" : "Effacer",
-      "apply" : "Appliquer"
+    "filter": {
+      "from": "De",
+      "to": "À",
+      "clear": "Effacer",
+      "apply": "Appliquer"
     },
-    "empty" : "Aucune facture ne correspond à vos filtres.",
-    "pager" : {
-      "previous" : "Précédent",
-      "next" : "Suivant"
+    "empty": "Aucune facture ne correspond à vos filtres.",
+    "pager": {
+      "previous": "Précédent",
+      "next": "Suivant"
     },
-    "modal" : {
-      "title" : "Facture",
-      "title-credit-note" : "Note de crédit",
-      "document" : "Document",
-      "invoice-number" : "Numéro de facture",
-      "credit-note-number" : "Numéro de note de crédit",
-      "invoice-reference" : "Sélectionner la référence de facture",
-      "invoice-reference-none" : "Aucune",
-      "note-optional" : "Note (optionnel)",
-      "note-placeholder" : "Notes supplémentaires pour cette facture",
-      "credit-note-note-placeholder" : "Notes supplémentaires pour cette note de crédit",
-      "credit-note-vat-note" : "TVA à reverser à l'État dans la mesure où elle a été initialement déduite",
-      "reference-required" : "La référence acheteur OU la référence de commande est obligatoire"
+    "modal": {
+      "title": "Facture",
+      "title-credit-note": "Note de crédit",
+      "document": "Document",
+      "invoice-number": "Numéro de facture",
+      "credit-note-number": "Numéro de note de crédit",
+      "invoice-reference": "Sélectionner la référence de facture",
+      "invoice-reference-none": "Aucune",
+      "note-optional": "Note (optionnel)",
+      "note-placeholder": "Notes supplémentaires pour cette facture",
+      "credit-note-note-placeholder": "Notes supplémentaires pour cette note de crédit",
+      "credit-note-vat-note": "TVA à reverser à l'État dans la mesure où elle a été initialement déduite",
+      "reference-required": "La référence acheteur OU la référence de commande est obligatoire"
     },
-    "dateModal" : {
-      "title" : "Date",
-      "issue-date" : "Date d'émission",
-      "payment-terms" : "Conditions de paiement",
-      "due-date" : "Date d'échéance"
+    "dateModal": {
+      "title": "Date",
+      "issue-date": "Date d'émission",
+      "payment-terms": "Conditions de paiement",
+      "due-date": "Date d'échéance"
     },
-    "paymentModal" : {
-      "title" : "Paiement",
-      "type" : "Type",
-      "name" : "Nom",
-      "iban" : "IBAN",
-      "reference" : "Référence",
+    "paymentModal": {
+      "title": "Paiement",
+      "type": "Type",
+      "name": "Nom",
+      "iban": "IBAN",
+      "reference": "Référence",
       "store-iban": "Enregistrer l’IBAN dans le compte"
     },
-    "paymentQr" : {
-      "title" : "Paiement de la facture",
-      "show-and-mark-paid" : "Afficher le QR de paiement<br /> et marquer comme payée",
-      "mark-paid-document" : {
-        "INVOICE" : "Marquer la facture comme payée",
-        "CREDIT_NOTE" : "Marquer la note de crédit comme payée"
+    "paymentQr": {
+      "title": "Paiement de la facture",
+      "show-and-mark-paid": "Afficher le QR de paiement<br /> et marquer comme payée",
+      "mark-paid-document": {
+        "INVOICE": "Marquer la facture comme payée",
+        "CREDIT_NOTE": "Marquer la note de crédit comme payée"
       },
-      "mark-unpaid-document" : {
-        "INVOICE" : "Marquer la facture comme impayée",
-        "CREDIT_NOTE" : "Marquer la note de crédit comme impayée"
+      "mark-unpaid-document": {
+        "INVOICE": "Marquer la facture comme impayée",
+        "CREDIT_NOTE": "Marquer la note de crédit comme impayée"
       },
-      "marked-done-on" : "Paiement marqué comme effectué le",
-      "name" : "Nom",
-      "iban" : "IBAN",
-      "bic" : "BIC",
-      "amount" : "Montant",
-      "reference" : "Référence"
+      "marked-done-on": "Paiement marqué comme effectué le",
+      "name": "Nom",
+      "iban": "IBAN",
+      "bic": "BIC",
+      "amount": "Montant",
+      "reference": "Référence"
     },
-    "validationModal" : {
-      "title" : "Validation",
-      "error-count" : "Nombre d'erreurs"
+    "validationModal": {
+      "title": "Validation",
+      "error-count": "Nombre d'erreurs"
     },
-    "customerModal" : {
-      "title" : "Client",
-      "search-title" : "Sélectionner un partenaire",
-      "create-new" : "Créer nouveau",
-      "country" : "Pays",
-      "house-number" : "Numéro",
-      "country-value" : "Belgique",
-      "search-name-vat" : "Nom ou numéro TVA",
-      "search-partner-placeholder" : "Rechercher un partenaire par nom ou numéro TVA",
-      "no-matches" : "Aucun résultat"
+    "customerModal": {
+      "title": "Client",
+      "search-title": "Sélectionner un partenaire",
+      "create-new": "Créer nouveau",
+      "country": "Pays",
+      "house-number": "Numéro",
+      "country-value": "Belgique",
+      "search-name-vat": "Nom ou numéro TVA",
+      "search-partner-placeholder": "Rechercher un partenaire par nom ou numéro TVA",
+      "no-matches": "Aucun résultat"
     },
-    "productSearch" : {
-      "placeholder" : "nom",
-      "no-matches" : "Aucun résultat"
+    "productSearch": {
+      "placeholder": "nom",
+      "no-matches": "Aucun résultat"
     },
-    "edit" : {
-      "download-ubl" : "UBL",
-      "download-pdf" : "PDF",
-      "validate" : "Valider",
-      "delete-draft" : "Supprimer brouillon",
-      "update-draft" : "Mettre à jour le brouillon",
-      "save-draft" : "Enregistrer brouillon",
-      "cancel" : "Annuler",
-      "send" : {
-        "INVOICE" : "Envoyer la facture",
-        "CREDIT_NOTE" : "Envoyer la note de crédit"
+    "edit": {
+      "download-ubl": "UBL",
+      "download-pdf": "PDF",
+      "validate": "Valider",
+      "delete-draft": "Supprimer brouillon",
+      "update-draft": "Mettre à jour le brouillon",
+      "save-draft": "Enregistrer brouillon",
+      "cancel": "Annuler",
+      "send": {
+        "INVOICE": "Envoyer la facture",
+        "CREDIT_NOTE": "Envoyer la note de crédit"
       },
-      "number" : "Numéro",
-      "buyer-reference" : "Référence acheteur",
-      "payment" : "Paiement",
-      "method" : "Méthode",
-      "subtotal" : "Sous-total",
-      "tax" : "Taxe",
-      "total" : "Total",
-      "invoice-lines" : "Lignes de facture",
-      "pos" : "Pos",
-      "amount" : "Quantité",
-      "unit-price" : "Prix unitaire",
-      "actions" : "Actions",
-      "add-line" : "Ajouter ligne",
-      "note" : "Note",
-      "recreate-positions" : "Recréer les positions de lignes",
-      "attachments" : "Pièces jointes"
+      "number": "Numéro",
+      "buyer-reference": "Référence acheteur",
+      "payment": "Paiement",
+      "method": "Méthode",
+      "subtotal": "Sous-total",
+      "tax": "Taxe",
+      "total": "Total",
+      "invoice-lines": "Lignes de facture",
+      "pos": "Pos",
+      "amount": "Quantité",
+      "unit-price": "Prix unitaire",
+      "actions": "Actions",
+      "add-line": "Ajouter ligne",
+      "note": "Note",
+      "recreate-positions": "Recréer les positions de lignes",
+      "attachments": "Pièces jointes"
+    },
+    "zero-vat-reason": {
+      "options": {
+        "E": "Exon?r? de TVA",
+        "K": "Exon?r? de TVA pour les livraisons intracommunautaires de biens et services dans l?EEE",
+        "G": "Article d?exportation exon?r?, TVA non factur?e",
+        "AE": "Autoliquidation",
+        "Z": "Biens ? taux z?ro",
+        "O": "Autres cas hors TVA"
+      },
+      "modal": {
+        "title": "Raison du taux de TVA de 0 %",
+        "reason-type": "Type de raison",
+        "reason-text": "Explication",
+        "reason-text-placeholder": "Pourquoi cette ligne est-elle ? 0 % de TVA ?",
+        "account-ruleset": "R?gime TVA du compte",
+        "update-account": "Utiliser ceci comme r?gime TVA par d?faut pour ce compte",
+        "edit-button": "Modifier la raison de la TVA ? 0 %",
+        "account-box-title": "Avez-vous un compte exon?r? de TVA ?",
+        "account-box-text": "Modifiez ici le param?tre de votre compte :"
+      }
     }
   },
-  "account" : {
-    "title" : "Compte",
-    "cancel" : "Annuler",
-    "save" : "Enregistrer",
+  "account": {
+    "title": "Compte",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
     "notifications": "Notifications",
     "vat-display": {
       "title": "Affichage des montants",
@@ -601,27 +631,34 @@
       "incl": "TVA comprise",
       "excl": "Hors TVA"
     },
-    "subscriber-info" : "Info abonné",
-    "download-contract" : "Télécharger le contrat",
-    "change-password" : "Changer le mot de passe",
-    "company-info" : "Informations société",
-    "company-name" : "Nom de l'entreprise",
+    "subscriber-info": "Info abonné",
+    "download-contract": "Télécharger le contrat",
+    "change-password": "Changer le mot de passe",
+    "company-info": "Informations société",
+    "company-name": "Nom de l'entreprise",
     "company-legal-name": "Dénomination sociale",
     "company-display-name": "Nom commercial",
-    "peppol-registration" : "Enregistrement Peppol",
-    "remove-from-peppol" : "Retirer de Peppol",
-    "activate-on-peppol" : "Activer sur Peppol",
-    "address" : "Adresse",
-    "number" : "Numéro",
-    "payment-info" : "Infos paiement",
-    "iban" : "IBAN",
-    "account-name" : "Nom du compte",
-    "payment-terms" : "Conditions de paiement",
+    "peppol-registration": "Enregistrement Peppol",
+    "remove-from-peppol": "Retirer de Peppol",
+    "activate-on-peppol": "Activer sur Peppol",
+    "address": "Adresse",
+    "number": "Numéro",
+    "payment-info": "Infos paiement",
+    "iban": "IBAN",
+    "account-name": "Nom du compte",
+    "payment-terms": "Conditions de paiement",
     "enable-email-notification": "Activer les notifications par e-mail",
     "add-attachment-to-notification": "Ajouter une pièce jointe à la notification",
     "email-notification-cc-list": "Liste des destinataires en copie (CC) des notifications par e-mail",
     "add-pdf-to-sending-invoice": "Ajouter un PDF à la facture",
     "invoice-settings": "Paramètres de facturation",
+    "vat-ruleset": {
+      "options": {
+        "VAT_REGISTERED": "Assujetti à la TVA",
+        "VAT_EXEMPT_ART_56BIS": "Exonéré de TVA selon l'art. 56bis - Petites entreprises < €25.000",
+        "VAT_EXEMPT_ART_44": "Exonéré de TVA selon l'art. 44 - Entreprises sans TVA"
+      }
+    },
     "registration-failed": {
       "contact-us": "L'inscription n'a pas été finalisée. Veuillez contacter le support à l’adresse support@letspeppol.org pour la suite.",
       "contact-provider": "Votre identifiant Peppol est actuellement enregistré auprès de {{provider}}. Veuillez les contacter pour le désinscrire, puis connectez-vous et réessayez l’activation.",
@@ -629,20 +666,20 @@
       "try-again-one-hour": "L'inscription n'a pas été finalisée. Veuillez réessayer dans environ une heure. Le réseau Peppol est peut-être temporairement surchargé."
     }
   },
-  "forgot" : {
-    "title" : "Mot de passe oublié",
-    "info-sent" : "Un lien de réinitialisation a été envoyé si l'adresse est connue.",
-    "enter-email" : "Entrez votre adresse e-mail pour réinitialiser votre mot de passe.",
-    "reset-failed" : "Échec de réinitialisation",
-    "request-link" : "Demander lien de réinitialisation"
+  "forgot": {
+    "title": "Mot de passe oublié",
+    "info-sent": "Un lien de réinitialisation a été envoyé si l'adresse est connue.",
+    "enter-email": "Entrez votre adresse e-mail pour réinitialiser votre mot de passe.",
+    "reset-failed": "Échec de réinitialisation",
+    "request-link": "Demander lien de réinitialisation"
   },
-  "reset" : {
-    "title" : "Réinitialiser le mot de passe",
-    "enter-email" : "Entrez votre adresse e-mail pour réinitialiser votre mot de passe.",
-    "reset-failed" : "Échec de réinitialisation",
-    "action" : "Réinitialiser le mot de passe"
+  "reset": {
+    "title": "Réinitialiser le mot de passe",
+    "enter-email": "Entrez votre adresse e-mail pour réinitialiser votre mot de passe.",
+    "reset-failed": "Échec de réinitialisation",
+    "action": "Réinitialiser le mot de passe"
   },
-  "session" : {
-    "continue-title" : "Continuer la session"
+  "session": {
+    "continue-title": "Continuer la session"
   }
 }

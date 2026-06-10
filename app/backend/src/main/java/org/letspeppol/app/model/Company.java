@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 @Entity
 @Table(name = "company", indexes = {
@@ -31,6 +33,10 @@ public class Company extends GenericEntity{
     private String paymentAccountName;
     private String lastInvoiceReference;
     private String lastCreditNoteReference;
+    @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(nullable = false)
+    private VatRuleset vatRuleset = VatRuleset.VAT_REGISTERED;
 
     private boolean enableEmailNotification;
     private boolean addAttachmentToNotification;
@@ -58,6 +64,7 @@ public class Company extends GenericEntity{
         this.name = name;
         this.subscriber = subscriber;
         this.subscriberEmail = subscriberEmail;
+        this.vatRuleset = VatRuleset.VAT_REGISTERED;
 // TODO        this.noArchive = false;
         this.registeredOffice = new Address(city, postalCode, street, countryCode);
     }

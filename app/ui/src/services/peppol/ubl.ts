@@ -167,6 +167,8 @@ export interface AccountingParty {
 export interface TaxCategory {
     ID?: string;
     Percent?: number;
+    TaxExemptionReasonCode?: string;
+    TaxExemptionReason?: string;
     TaxScheme?: { ID: string };
 }
 
@@ -211,6 +213,8 @@ export interface CommodityClassification {
 export interface ClassifiedTaxCategory {
     ID: string;
     Percent: number;
+    TaxExemptionReasonCode?: string;
+    TaxExemptionReason?: string;
     TaxScheme: { ID: string };
 }
 

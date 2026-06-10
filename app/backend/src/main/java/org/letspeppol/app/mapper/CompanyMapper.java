@@ -18,6 +18,7 @@ public class CompanyMapper {
                 company.getPaymentTerms(),
                 company.getIban(),
                 company.getPaymentAccountName(),
+                company.getVatRuleset(),
                 company.getLastInvoiceReference(),
                 company.getLastCreditNoteReference(),
                 // TODO company.isNoArchive(),

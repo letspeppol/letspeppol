@@ -237,6 +237,8 @@ function buildTaxCategory(tc?: TaxCategory): string {
         '<cac:TaxCategory>',
         textElement('cbc:ID', tc.ID),
         textElement('cbc:Percent', tc.Percent),
+        textElement('cbc:TaxExemptionReasonCode', tc.TaxExemptionReasonCode),
+        textElement('cbc:TaxExemptionReason', tc.TaxExemptionReason),
         tc.TaxScheme
             ? joinNonEmpty([
                   '<cac:TaxScheme>',
@@ -315,6 +317,8 @@ function buildClassifiedTaxCategory(ctc?: ClassifiedTaxCategory): string {
         '<cac:ClassifiedTaxCategory>',
         textElement('cbc:ID', ctc.ID),
         textElement('cbc:Percent', ctc.Percent),
+        textElement('cbc:TaxExemptionReasonCode', ctc.TaxExemptionReasonCode),
+        textElement('cbc:TaxExemptionReason', ctc.TaxExemptionReason),
         '<cac:TaxScheme>',
         textElement('cbc:ID', ctc.TaxScheme.ID),
         '</cac:TaxScheme>',

@@ -12,6 +12,7 @@ import org.letspeppol.app.exception.AppException;
 import org.letspeppol.app.exception.NotFoundException;
 import org.letspeppol.app.mapper.CompanyMapper;
 import org.letspeppol.app.model.Company;
+import org.letspeppol.app.model.VatRuleset;
 import org.letspeppol.app.repository.CompanyRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -101,6 +102,7 @@ public class CompanyService {
         company.setPaymentAccountName(companyDto.paymentAccountName());
         company.setPaymentTerms(companyDto.paymentTerms());
         company.setIban(companyDto.iban());
+        company.setVatRuleset(companyDto.vatRuleset() == null ? VatRuleset.VAT_REGISTERED : companyDto.vatRuleset());
         company.setEnableEmailNotification(companyDto.enableEmailNotification());
         company.setAddAttachmentToNotification(companyDto.addAttachmentToNotification());
         company.setEmailNotificationCcList(companyDto.emailNotificationCCList());

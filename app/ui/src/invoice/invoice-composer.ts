@@ -15,6 +15,7 @@ import {resolve} from "@aurelia/kernel";
 import {CompanyService} from "../services/app/company-service";
 import {DocumentType} from "../services/app/invoice-service";
 import {I18N} from "@aurelia/i18n";
+import {getVatRulesetExemptionReason, isVatExemptRuleset} from "../services/app/vat-rules";
 
 const GENERATED_INVOICE = 'generated_invoice';
 
@@ -264,6 +265,8 @@ export class InvoiceComposer {
     }
 
     private getLine(): UBLBaseLine {
+        const vatRuleset = this.companyService.myCompany.vatRuleset;
+        const isExempt = isVatExemptRuleset(vatRuleset);
         return {
             LineExtensionAmount: {
                 __currencyID: "EUR",
@@ -272,13 +275,22 @@ export class InvoiceComposer {
             Item: {
                 Description: undefined,
                 Name: undefined,
-                ClassifiedTaxCategory: {
-                    ID: "S",
-                    Percent: 21,
-                    TaxScheme: {
-                        ID: 'VAT'
+                ClassifiedTaxCategory: isExempt
+                    ? {
+                        ID: "E",
+                        Percent: 0,
+                        TaxExemptionReason: getVatRulesetExemptionReason(vatRuleset, key => this.i18n.tr(key)),
+                        TaxScheme: {
+                            ID: 'VAT'
+                        }
                     }
-                }
+                    : {
+                        ID: "S",
+                        Percent: 21,
+                        TaxScheme: {
+                            ID: 'VAT'
+                        }
+                    }
             },
             Price: {
                 PriceAmount: {
@@ -381,3 +393,4 @@ export class InvoiceComposer {
         } as AdditionalDocumentReference];
     }
 }
+
