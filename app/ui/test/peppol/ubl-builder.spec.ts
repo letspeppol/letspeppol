@@ -47,6 +47,38 @@ describe('UBL string builder - OrderReference omission', () => {
     });
 });
 
+describe('UBL string builder - "NA" OrderReference placeholder', () => {
+    test('keeps OrderReference "NA" when BuyerReference is empty', () => {
+        const invoiceObj = parseInvoice(sampleInvoiceXml);
+        invoiceObj.BuyerReference = undefined;
+        invoiceObj.OrderReference = { ID: 'NA' };
+
+        const rebuilt = buildInvoiceXml(invoiceObj);
+        expect(rebuilt).toContain('<cac:OrderReference><cbc:ID>NA</cbc:ID></cac:OrderReference>');
+        expect(rebuilt).not.toContain('<cbc:BuyerReference>');
+    });
+
+    test('drops OrderReference "NA" when BuyerReference is filled', () => {
+        const invoiceObj = parseInvoice(sampleInvoiceXml);
+        invoiceObj.BuyerReference = 'PO-REF-1';
+        invoiceObj.OrderReference = { ID: 'NA' };
+
+        const rebuilt = buildInvoiceXml(invoiceObj);
+        expect(rebuilt).toContain('<cbc:BuyerReference>PO-REF-1</cbc:BuyerReference>');
+        expect(rebuilt).not.toContain('<cac:OrderReference>');
+    });
+
+    test('emits both when OrderReference holds a real value alongside BuyerReference', () => {
+        const invoiceObj = parseInvoice(sampleInvoiceXml);
+        invoiceObj.BuyerReference = 'PO-REF-1';
+        invoiceObj.OrderReference = { ID: '123123123' };
+
+        const rebuilt = buildInvoiceXml(invoiceObj);
+        expect(rebuilt).toContain('<cbc:BuyerReference>PO-REF-1</cbc:BuyerReference>');
+        expect(rebuilt).toContain('<cac:OrderReference><cbc:ID>123123123</cbc:ID></cac:OrderReference>');
+    });
+});
+
 describe('UBL string builder - BillingReference (credit notes)', () => {
     test('buildCreditNoteXml emits cac:BillingReference with InvoiceDocumentReference ID and IssueDate', () => {
         const creditNoteObj = parseCreditNote(sampleCreditNoteXml);

@@ -99,6 +99,16 @@ function buildOrderReference(or?: OrderReference): string {
     ]);
 }
 
+function buildReferences(buyerReference: string | undefined, orderReference?: OrderReference): string {
+    const buyerRef = typeof buyerReference === 'string' ? buyerReference.trim() : '';
+    const orderId = typeof orderReference?.ID === 'string' ? orderReference.ID.trim() : '';
+    const suppressOrderReference = orderId === 'NA' && buyerRef !== '';
+    return joinNonEmpty([
+        textElement('cbc:BuyerReference', buyerReference),
+        suppressOrderReference ? '' : buildOrderReference(orderReference),
+    ]);
+}
+
 function buildBillingReference(list?: BillingReference[]): string {
     if (!list || list.length === 0) return '';
     return joinNonEmpty(
@@ -560,8 +570,7 @@ export function buildInvoiceXml(invoice: Invoice): string {
         textElement('cbc:Note', invoice.Note),
         textElement('cbc:DocumentCurrencyCode', invoice.DocumentCurrencyCode),
         textElement('cbc:AccountingCost', invoice.AccountingCost),
-        textElement('cbc:BuyerReference', invoice.BuyerReference),
-        buildOrderReference(invoice.OrderReference),
+        buildReferences(invoice.BuyerReference, invoice.OrderReference),
         buildAdditionalDocumentReference(invoice.AdditionalDocumentReference),
         buildAccountingParty('cac:AccountingSupplierParty', invoice.AccountingSupplierParty),
         buildAccountingParty('cac:AccountingCustomerParty', invoice.AccountingCustomerParty),
@@ -586,8 +595,7 @@ export function buildCreditNoteXml(creditNote: CreditNote): string {
         textElement('cbc:Note', creditNote.Note),
         textElement('cbc:DocumentCurrencyCode', creditNote.DocumentCurrencyCode),
         textElement('cbc:AccountingCost', creditNote.AccountingCost),
-        textElement('cbc:BuyerReference', creditNote.BuyerReference),
-        buildOrderReference(creditNote.OrderReference),
+        buildReferences(creditNote.BuyerReference, creditNote.OrderReference),
         buildBillingReference(creditNote.BillingReference),
         buildAdditionalDocumentReference(creditNote.AdditionalDocumentReference),
         buildAccountingParty('cac:AccountingSupplierParty', creditNote.AccountingSupplierParty),
