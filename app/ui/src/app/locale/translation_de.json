@@ -459,22 +459,18 @@
     "zero-vat-reason": {
       "options": {
         "E": "Von der MwSt. befreit",
-        "K": "Von der MwSt. befreit f?r innergemeinschaftliche Lieferungen von Waren und Dienstleistungen im EWR",
+        "K": "Von der MwSt. befreit für innergemeinschaftliche Lieferungen von Waren und Dienstleistungen im EWR",
         "G": "Steuerfreier Exportartikel, keine MwSt. berechnet",
         "AE": "Reverse Charge",
-        "Z": "Nullsteuersatz-Waren",
-        "O": "Sonstige Nicht-MwSt.-F?lle"
+        "Z": "Nullsteuersatz-Waren"
       },
       "modal": {
-        "title": "Grund f?r 0 % MwSt.",
+        "title": "Grund für 0 % MwSt.",
         "reason-type": "Grundtyp",
-        "reason-text": "Erl?uterung",
-        "reason-text-placeholder": "Warum gilt f?r diese Zeile 0 % MwSt.?",
-        "account-ruleset": "MwSt.-Regelwerk des Kontos",
-        "update-account": "Dies als Standard-MwSt.-Regelwerk f?r dieses Konto verwenden",
-        "edit-button": "Grund f?r 0 % MwSt. bearbeiten",
-        "account-box-title": "Haben Sie ein von der MwSt. befreites Konto?",
-        "account-box-text": "?ndern Sie hier die Einstellung Ihres Kontos:"
+        "reason-text": "Erläuterung",
+        "reason-text-placeholder": "Warum gilt für diese Zeile 0 % MwSt.?",
+        "update-account": "Dies als Standard-MwSt.-Regelwerk für dieses Konto verwenden",
+        "edit-button": "Grund für 0 % MwSt. bearbeiten"
       }
     },
     "direction": "Richtung",
@@ -544,7 +540,9 @@
       "title": "Datum",
       "issue-date": "Ausstellungsdatum",
       "payment-terms": "Zahlungsbedingungen",
-      "due-date": "Fälligkeitsdatum"
+      "due-date": "Fälligkeitsdatum",
+      "actual-delivery-date": "Tatsächliches Lieferdatum",
+      "delivery-country": "Lieferland"
     },
     "paymentModal": {
       "title": "Zahlung",
@@ -627,12 +625,6 @@
     "cancel": "Abbrechen",
     "save": "Speichern",
     "notifications": "Benachrichtigungen",
-    "vat-display": {
-      "title": "Beträge anzeigen",
-      "description": "Wählen Sie, ob Summen im Dashboard und in der Rechnungsliste inklusive oder exklusive MwSt. angezeigt werden.",
-      "incl": "Inkl. MwSt.",
-      "excl": "Exkl. MwSt."
-    },
     "subscriber-info": "Teilnehmerinformationen",
     "download-contract": "Vertrag herunterladen",
     "change-password": "Passwort ändern",
@@ -653,11 +645,17 @@
     "email-notification-cc-list": "CC-Liste für E-Mail-Benachrichtigungen",
     "add-pdf-to-sending-invoice": "PDF zur Rechnung hinzufügen",
     "invoice-settings": "Rechnungseinstellungen",
+    "vat-display": {
+      "title": "Beträge anzeigen",
+      "description": "Wählen Sie, ob Summen im Dashboard und in der Rechnungsliste inklusive oder exklusive MwSt. angezeigt werden.",
+      "incl": "Inkl. MwSt.",
+      "excl": "Exkl. MwSt."
+    },
     "vat-ruleset": {
+      "title": "MwSt.-Einstellungen",
       "options": {
         "VAT_REGISTERED": "MwSt.-registriert",
-        "VAT_EXEMPT_ART_56BIS": "Von der MwSt. befreit nach Art. 56bis - Kleinunternehmen < €25.000",
-        "VAT_EXEMPT_ART_44": "Von der MwSt. befreit nach Art. 44 - Unternehmen ohne MwSt."
+        "VAT_EXEMPT_ART_56BIS": "Von der MwSt. befreit nach Art. 56bis - Kleinunternehmen < €25.000"
       }
     },
     "registration-failed": {

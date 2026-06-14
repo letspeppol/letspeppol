@@ -522,7 +522,9 @@
       "title": "Datum",
       "issue-date": "Uitgiftedatum",
       "payment-terms": "Betalingsvoorwaarden",
-      "due-date": "Vervaldatum"
+      "due-date": "Vervaldatum",
+      "actual-delivery-date": "Werkelijke leveringsdatum",
+      "delivery-country": "Land van levering"
     },
     "paymentModal": {
       "title": "Betaling",
@@ -604,19 +606,15 @@
         "K": "Vrijgesteld van btw voor intracommunautaire leveringen van goederen en diensten binnen de EER",
         "G": "Vrijgesteld exportartikel, geen btw aangerekend",
         "AE": "Verleggingsregeling",
-        "Z": "Goederen met nultarief",
-        "O": "Overige niet-btw-gevallen"
+        "Z": "Goederen met nultarief"
       },
       "modal": {
         "title": "Reden voor 0% btw",
         "reason-type": "Type reden",
         "reason-text": "Toelichting",
         "reason-text-placeholder": "Waarom geldt voor deze lijn 0% btw?",
-        "account-ruleset": "Btw-regelset van account",
         "update-account": "Gebruik dit als standaard btw-regelset voor dit account",
-        "edit-button": "Reden voor 0% btw bewerken",
-        "account-box-title": "Heb je een van btw vrijgestelde account?",
-        "account-box-text": "Wijzig hier de instelling van je account:"
+        "edit-button": "Reden voor 0% btw bewerken"
       }
     }
   },
@@ -625,12 +623,6 @@
     "cancel": "Annuleren",
     "save": "Opslaan",
     "notifications": "Meldingen",
-    "vat-display": {
-      "title": "Bedragweergave",
-      "description": "Kies of totalen op het dashboard en in de factuurlijst inclusief of exclusief btw worden getoond.",
-      "incl": "Inclusief btw",
-      "excl": "Exclusief btw"
-    },
     "subscriber-info": "Abonnee-info",
     "download-contract": "Contract downloaden",
     "change-password": "Wachtwoord wijzigen",
@@ -651,11 +643,17 @@
     "email-notification-cc-list": "CC-lijst voor e-mailmeldingen",
     "add-pdf-to-sending-invoice": "PDF toevoegen aan factuur",
     "invoice-settings": "Factuurinstellingen",
+    "vat-display": {
+      "title": "Bedragweergave",
+      "description": "Kies of totalen op het dashboard en in de factuurlijst inclusief of exclusief btw worden getoond.",
+      "incl": "Inclusief btw",
+      "excl": "Exclusief btw"
+    },
     "vat-ruleset": {
+      "title": "Btw-instellingen",
       "options": {
         "VAT_REGISTERED": "Btw-geregistreerd",
-        "VAT_EXEMPT_ART_56BIS": "Vrijgesteld van btw volgens art. 56bis - Kleine ondernemingen < €25.000",
-        "VAT_EXEMPT_ART_44": "Vrijgesteld van btw volgens art. 44 - Ondernemingen zonder btw"
+        "VAT_EXEMPT_ART_56BIS": "Vrijgesteld van btw volgens art. 56bis - Kleine ondernemingen < €25.000"
       }
     },
     "registration-failed": {

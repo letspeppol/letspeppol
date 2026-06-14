@@ -53,4 +53,92 @@ describe('UBL VAT exemption reasons', () => {
         expect(parsed.InvoiceLine[0].Item.ClassifiedTaxCategory?.TaxExemptionReasonCode).toBe('VATEX-EU-AE');
         expect(parsed.InvoiceLine[0].Item.ClassifiedTaxCategory?.TaxExemptionReason).toBe('Reverse charge');
     });
+
+    test('omits exemption reason fields for zero-rated Z categories', () => {
+        const invoice: Invoice = {
+            CustomizationID: 'c',
+            ProfileID: 'p',
+            ID: 'INV-Z',
+            IssueDate: '2026-06-05',
+            InvoiceTypeCode: 380,
+            BuyerReference: 'BR',
+            DocumentCurrencyCode: 'EUR',
+            BillingReference: [],
+            AccountingSupplierParty: { Party: { EndpointID: { __schemeID: '0208', value: '123' }, PartyIdentification: [{ ID: { __schemeID: '0208', value: '123' } }], PartyName: { Name: 'Supplier' }, PartyTaxScheme: { CompanyID: { value: 'BE123' }, TaxScheme: { ID: 'VAT' } } } },
+            AccountingCustomerParty: { Party: { EndpointID: { __schemeID: '0208', value: '456' }, PartyIdentification: [{ ID: { __schemeID: '0208', value: '456' } }], PartyName: { Name: 'Customer' }, PartyTaxScheme: { CompanyID: { value: 'BE456' }, TaxScheme: { ID: 'VAT' } } } },
+            LegalMonetaryTotal: {
+                LineExtensionAmount: { __currencyID: 'EUR', value: 100 },
+                TaxExclusiveAmount: { __currencyID: 'EUR', value: 100 },
+                TaxInclusiveAmount: { __currencyID: 'EUR', value: 100 },
+                PayableAmount: { __currencyID: 'EUR', value: 100 }
+            },
+            TaxTotal: [{
+                TaxAmount: { __currencyID: 'EUR', value: 0 },
+                TaxSubtotal: [{
+                    TaxableAmount: { __currencyID: 'EUR', value: 100 },
+                    TaxAmount: { __currencyID: 'EUR', value: 0 },
+                    TaxCategory: { ID: 'Z', Percent: 0, TaxExemptionReason: 'UI only', TaxScheme: { ID: 'VAT' } }
+                }]
+            }],
+            InvoiceLine: [{
+                ID: '1',
+                InvoicedQuantity: { __unitCode: 'C62', value: 1 },
+                LineExtensionAmount: { __currencyID: 'EUR', value: 100 },
+                Item: {
+                    Name: 'Line',
+                    ClassifiedTaxCategory: { ID: 'Z', Percent: 0, TaxExemptionReason: 'UI only', TaxScheme: { ID: 'VAT' } }
+                },
+                Price: { PriceAmount: { __currencyID: 'EUR', value: 100 } }
+            }],
+            AdditionalDocumentReference: []
+        };
+
+        const xml = buildInvoiceXml(invoice);
+        expect(xml).not.toContain('TaxExemptionReason');
+        expect(xml).not.toContain('TaxExemptionReasonCode');
+    });
+
+    test('omits percent and party tax ids for not-subject-to-vat invoices', () => {
+        const invoice: Invoice = {
+            CustomizationID: 'c',
+            ProfileID: 'p',
+            ID: 'INV-O',
+            IssueDate: '2026-06-05',
+            InvoiceTypeCode: 380,
+            BuyerReference: 'BR',
+            DocumentCurrencyCode: 'EUR',
+            BillingReference: [],
+            AccountingSupplierParty: { Party: { EndpointID: { __schemeID: '0208', value: '123' }, PartyIdentification: [{ ID: { __schemeID: '0208', value: '123' } }], PartyName: { Name: 'Supplier' } } },
+            AccountingCustomerParty: { Party: { EndpointID: { __schemeID: '0208', value: '456' }, PartyIdentification: [{ ID: { __schemeID: '0208', value: '456' } }], PartyName: { Name: 'Customer' } } },
+            LegalMonetaryTotal: {
+                LineExtensionAmount: { __currencyID: 'EUR', value: 100 },
+                TaxExclusiveAmount: { __currencyID: 'EUR', value: 100 },
+                TaxInclusiveAmount: { __currencyID: 'EUR', value: 100 },
+                PayableAmount: { __currencyID: 'EUR', value: 100 }
+            },
+            TaxTotal: [{
+                TaxAmount: { __currencyID: 'EUR', value: 0 },
+                TaxSubtotal: [{
+                    TaxableAmount: { __currencyID: 'EUR', value: 100 },
+                    TaxAmount: { __currencyID: 'EUR', value: 0 },
+                    TaxCategory: { ID: 'O', TaxScheme: { ID: 'VAT' } }
+                }]
+            }],
+            InvoiceLine: [{
+                ID: '1',
+                InvoicedQuantity: { __unitCode: 'C62', value: 1 },
+                LineExtensionAmount: { __currencyID: 'EUR', value: 100 },
+                Item: {
+                    Name: 'Line',
+                    ClassifiedTaxCategory: { ID: 'O', TaxScheme: { ID: 'VAT' } }
+                },
+                Price: { PriceAmount: { __currencyID: 'EUR', value: 100 } }
+            }],
+            AdditionalDocumentReference: []
+        };
+
+        const xml = buildInvoiceXml(invoice);
+        expect(xml).not.toContain('<cbc:Percent>');
+        expect(xml).not.toContain('<cac:PartyTaxScheme>');
+    });
 });

@@ -23,7 +23,7 @@
                 <th t="product.table.description">Description</th>
                 <th class="num" style="width:120px" t="invoice.edit.amount">Amount</th>
                 <th class="num" style="width:140px" t="invoice.edit.unit-price">Unit price</th>
-                <th class="num" style="width:140px" t="invoice.edit.tax">Tax</th>
+                <th if.bind="!isFixedVatMode()" class="num" style="width:140px" t="invoice.edit.tax">Tax</th>
                 <th class="num" style="width:140px" t="invoice.edit.total">Total</th>
                 <th if.bind="!readOnly" class="actions-col" style="width:1%" t="invoice.edit.actions">Actions</th>
             </tr>
@@ -61,29 +61,24 @@
                         <input class="unitPrice" type="number" min="0" step="0.01" value.bind="line.Price.PriceAmount.value" change.trigger="calcLineTotal(line)" readonly.bind="readOnly" />
                     </div>
                 </td>
-                <td class="num">
-                    <template if.bind="isAccountVatExempt()">
-                        <input type="text" value="0%" title.bind="getVatReadonlyTitle()" readonly />
-                    </template>
-                    <template else>
-                        <div style="display:flex;gap:.35rem;align-items:center">
-                            <select style="flex:1" value.bind="line.Item.ClassifiedTaxCategory.Percent" change.trigger="vatRateChanged(line, line.Item.ClassifiedTaxCategory.Percent)" disabled.bind="readOnly">
-                                <option repeat.for="taxRate of vatRateOptions" model.bind="taxRate">${taxRate}%</option>
-                            </select>
-                            <button
-                                if.bind="!isAccountVatExempt() && line.Item.ClassifiedTaxCategory && line.Item.ClassifiedTaxCategory.Percent === 0"
-                                type="button"
-                                class="icon-btn"
-                                click.trigger="zeroVatReasonModal.showModal(line, line.Item.ClassifiedTaxCategory)"
-                                disabled.bind="readOnly"
-                                title="Edit 0% VAT reason"
-                                t="[title]invoice.zero-vat-reason.modal.edit-button"
-                                aria-label="Edit 0% VAT reason"
-                                t="[aria-label]invoice.zero-vat-reason.modal.edit-button">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-badge-percent-icon lucide-badge-percent"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m15 9-6 6"/><path d="M9 9h.01"/><path d="M15 15h.01"/></svg>
-                            </button>
-                        </div>
-                    </template>
+                <td if.bind="!isFixedVatMode()" class="num">
+                    <div style="display:flex;gap:.35rem;align-items:center">
+                        <select style="flex:1" value.bind="line.Item.ClassifiedTaxCategory.Percent" change.trigger="vatRateChanged(line, line.Item.ClassifiedTaxCategory.Percent)" disabled.bind="readOnly">
+                            <option repeat.for="taxRate of vatRateOptions" model.bind="taxRate">${taxRate}%</option>
+                        </select>
+                        <button
+                            if.bind="line.Item.ClassifiedTaxCategory && line.Item.ClassifiedTaxCategory.Percent === 0"
+                            type="button"
+                            class="icon-btn"
+                            click.trigger="zeroVatReasonModal.showModal(line, line.Item.ClassifiedTaxCategory)"
+                            disabled.bind="readOnly"
+                            title="Edit 0% VAT reason"
+                            t="[title]invoice.zero-vat-reason.modal.edit-button"
+                            aria-label="Edit 0% VAT reason"
+                            t="[aria-label]invoice.zero-vat-reason.modal.edit-button">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-badge-percent-icon lucide-badge-percent"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m15 9-6 6"/><path d="M9 9h.01"/><path d="M15 15h.01"/></svg>
+                        </button>
+                    </div>
                 </td>
                 <td class="num"><span class="line-total">${line.LineExtensionAmount.value | price:item.currency}</span></td>
                 <td if.bind="!readOnly" class="actions-col">

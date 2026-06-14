@@ -1,5 +1,5 @@
 import {singleton} from "aurelia";
-import {getLines, TaxSubtotal, UBLDoc,} from "../services/peppol/ubl";
+import {ClassifiedTaxCategory, getLines, TaxSubtotal, UBLDoc,} from "../services/peppol/ubl";
 
 @singleton
 export class InvoiceCalculator {
@@ -11,11 +11,12 @@ export class InvoiceCalculator {
         let totalWithoutTax = 0;
         const taxSubtotals: TaxSubtotal[] = [];
         for (const line of lines) {
+            const normalizedTaxCategory = normalizeTaxCategory(line.Item.ClassifiedTaxCategory);
             let taxSubtotal = taxSubtotals.find(item =>
-                item.TaxCategory.Percent === line.Item.ClassifiedTaxCategory.Percent
-                && item.TaxCategory.ID === line.Item.ClassifiedTaxCategory.ID
-                && item.TaxCategory.TaxExemptionReasonCode === line.Item.ClassifiedTaxCategory.TaxExemptionReasonCode
-                && item.TaxCategory.TaxExemptionReason === line.Item.ClassifiedTaxCategory.TaxExemptionReason
+                item.TaxCategory.Percent === normalizedTaxCategory.Percent
+                && item.TaxCategory.ID === normalizedTaxCategory.ID
+                && item.TaxCategory.TaxExemptionReasonCode === normalizedTaxCategory.TaxExemptionReasonCode
+                && item.TaxCategory.TaxExemptionReason === normalizedTaxCategory.TaxExemptionReason
             );
             if (!taxSubtotal) {
                 taxSubtotal = {
@@ -27,21 +28,13 @@ export class InvoiceCalculator {
                         value: 0,
                         __currencyID: "EUR"
                     },
-                    TaxCategory: {
-                        ID: line.Item.ClassifiedTaxCategory.ID,
-                        Percent: line.Item.ClassifiedTaxCategory.Percent,
-                        TaxExemptionReasonCode: line.Item.ClassifiedTaxCategory.TaxExemptionReasonCode,
-                        TaxExemptionReason: line.Item.ClassifiedTaxCategory.TaxExemptionReason,
-                        TaxScheme: {
-                            ID: line.Item.ClassifiedTaxCategory.TaxScheme.ID
-                        }
-                    }
+                    TaxCategory: normalizedTaxCategory
                 }
                 taxSubtotals.push(taxSubtotal);
             }
             taxSubtotal.TaxableAmount.value += line.LineExtensionAmount.value;
             totalWithoutTax += line.LineExtensionAmount.value;
-            const tax = roundTwoDecimals(line.LineExtensionAmount.value * (line.Item.ClassifiedTaxCategory.Percent / 100.0));
+            const tax = roundTwoDecimals(line.LineExtensionAmount.value * ((normalizedTaxCategory.Percent ?? 0) / 100.0));
             taxSubtotal.TaxAmount.value += tax;
             taxTotal += tax;
         }
@@ -84,4 +77,26 @@ export class InvoiceCalculator {
 
 export function roundTwoDecimals(value: number): number {
     return Math.round((value + Number.EPSILON) * 100) / 100;
+}
+
+function normalizeTaxCategory(category: ClassifiedTaxCategory | undefined): ClassifiedTaxCategory | undefined {
+    if (!category) {
+        return undefined;
+    }
+    if (category.ID === 'Z') {
+        return {
+            ...category,
+            TaxExemptionReasonCode: undefined,
+            TaxExemptionReason: undefined
+        };
+    }
+    if (category.ID === 'O') {
+        return {
+            ...category,
+            Percent: undefined,
+            TaxExemptionReasonCode: undefined,
+            TaxExemptionReason: undefined
+        };
+    }
+    return category;
 }

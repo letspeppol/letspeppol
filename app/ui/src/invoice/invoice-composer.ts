@@ -15,7 +15,7 @@ import {resolve} from "@aurelia/kernel";
 import {CompanyService} from "../services/app/company-service";
 import {DocumentType} from "../services/app/invoice-service";
 import {I18N} from "@aurelia/i18n";
-import {getVatRulesetExemptionReason, isVatExemptRuleset} from "../services/app/vat-rules";
+import {createNotSubjectToVatCategory, createVatExemptCategory, isVatExemptRuleset} from "../services/app/vat-rules";
 
 const GENERATED_INVOICE = 'generated_invoice';
 
@@ -206,6 +206,10 @@ export class InvoiceComposer {
         return this.companyService.myCompany.vatNumber;
     }
 
+    hasNoVatNumber(): boolean {
+        return !this.companyService.myCompany?.vatNumber?.trim();
+    }
+
     getAccountingSupplierParty(): AccountingParty {
         return {
             Party :  {
@@ -267,6 +271,7 @@ export class InvoiceComposer {
     private getLine(): UBLBaseLine {
         const vatRuleset = this.companyService.myCompany.vatRuleset;
         const isExempt = isVatExemptRuleset(vatRuleset);
+        const hasNoVatNumber = this.hasNoVatNumber();
         return {
             LineExtensionAmount: {
                 __currencyID: "EUR",
@@ -275,15 +280,10 @@ export class InvoiceComposer {
             Item: {
                 Description: undefined,
                 Name: undefined,
-                ClassifiedTaxCategory: isExempt
-                    ? {
-                        ID: "E",
-                        Percent: 0,
-                        TaxExemptionReason: getVatRulesetExemptionReason(vatRuleset, key => this.i18n.tr(key)),
-                        TaxScheme: {
-                            ID: 'VAT'
-                        }
-                    }
+                ClassifiedTaxCategory: hasNoVatNumber
+                    ? createNotSubjectToVatCategory()
+                    : isExempt
+                    ? createVatExemptCategory(this.i18n.tr('account.vat-ruleset.options.VAT_EXEMPT_ART_56BIS'))
                     : {
                         ID: "S",
                         Percent: 21,

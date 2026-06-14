@@ -1,7 +1,7 @@
 <import from="../../../../app/value-converters/price.ts"></import>
 
 <div class="head-right">
-    <div class="total-display">
+    <div if.bind="!isFixedVatMode()" class="total-display">
         <span t="invoice.edit.subtotal">Subtotal</span>
         <b>${invoiceContext.selectedInvoice.LegalMonetaryTotal.TaxExclusiveAmount.value.toFixed(2) | price:item.currency}</b>
         <span t="invoice.edit.tax">Tax</span>
