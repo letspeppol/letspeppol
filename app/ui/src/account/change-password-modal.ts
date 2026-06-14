@@ -3,6 +3,7 @@ import {ChangePasswordRequest, PasswordService} from "../services/kyc/password-s
 import {AlertType} from "../components/alert/alert";
 import {computed, IEventAggregator} from "aurelia";
 import {I18N} from "@aurelia/i18n";
+import {ChoosePassword} from "../components/choose-password/choose-password";
 
 export class ChangePasswordModal {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -12,6 +13,7 @@ export class ChangePasswordModal {
     error: boolean = false;
     password: string;
     confirmPassword: string;
+    choosePassword: ChoosePassword;
 
     public showChangePasswordModal() {
         this.password = '';
@@ -54,7 +56,7 @@ export class ChangePasswordModal {
     }
 
     private canConfirm() {
-        return !!this.password && this.password === this.confirmPassword && this.password.length >= 8 && !this.isRequesting;
+        return !!this.password && !!this.choosePassword?.rules.matchOk && !!this.choosePassword?.rules.pwStrong && !this.isRequesting;
     }
 
     private shouldIgnoreEnter(target: EventTarget | null) {
