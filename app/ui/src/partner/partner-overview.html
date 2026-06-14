@@ -4,15 +4,15 @@
         <nav>
             <button active.class="category === 'all'" class="mail-item" click.trigger="filterItems('all')">
                 <span class="label" t="partner.all">All</span>
-                <span class="badge">0</span>
+                <span class="badge">${allCount}</span>
             </button>
             <button active.class="category === 'customers'" class="mail-item" click.trigger="filterItems('customers')">
                 <span class="label" t="partner.customers">Customers</span>
-                <span class="badge">0</span>
+                <span class="badge">${customerCount}</span>
             </button>
             <button active.class="category === 'suppliers'" class="mail-item" click.trigger="filterItems('suppliers')">
                 <span class="label" t="partner.suppliers">Suppliers</span>
-                <span class="badge">0</span>
+                <span class="badge">${supplierCount}</span>
             </button>
         </nav>
     </aside>

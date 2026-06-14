@@ -18,6 +18,9 @@ export class PartnerOverview {
     activeSortDirection: SortDirection = 'asc';
     pageSize = 20;
     currentPage = 0;
+    allCount = 0;
+    customerCount = 0;
+    supplierCount = 0;
 
     attached() {
         this.loadPartners();
@@ -25,6 +28,7 @@ export class PartnerOverview {
 
     @watch((vm) => vm.partnerContext.partners.length)
     partnersChange() {
+        this.updateCounts();
         this.filterItems(this.category);
     }
 
@@ -34,6 +38,7 @@ export class PartnerOverview {
 
     async loadPartners() {
         this.partnerContext.partners = await this.partnerService.getPartners();
+        this.updateCounts();
     }
 
     filterItems(category) {
@@ -117,6 +122,7 @@ export class PartnerOverview {
         try {
             await this.partnerService.deletePartner(partner.id)
             this.partnerContext.deletePartner(partner);
+            this.updateCounts();
             this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.partner.deleted')});
         } catch (e) {
             console.log(e);
@@ -154,5 +160,12 @@ export class PartnerOverview {
             default:
                 return '';
         }
+    }
+
+    private updateCounts() {
+        const partners = this.partnerContext.partners ?? [];
+        this.allCount = partners.length;
+        this.customerCount = partners.filter(partner => partner.customer).length;
+        this.supplierCount = partners.filter(partner => partner.supplier).length;
     }
 }
