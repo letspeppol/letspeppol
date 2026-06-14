@@ -119,8 +119,7 @@ export class InvoiceEdit {
             this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(`alert.invoice.sent.${type}`)});
             this.invoiceContext.invoicePage.content.unshift(doc);
             if (this.invoiceContext.selectedDocument.draftedOn) {
-                this.invoiceContext.deleteDraft(this.invoiceContext.selectedDocument);
-                this.returnToOverview();
+                await this.deleteDraft();
             } else {
                 this.returnToOverview();
             }

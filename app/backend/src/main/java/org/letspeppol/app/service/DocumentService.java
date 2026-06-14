@@ -372,7 +372,7 @@ public class DocumentService {
 
     private Document rescheduleAtProxy(Document document, String tokenValue) { //TODO : use boolean noArchive from Company
         UblDocumentDto ublDocumentDto = proxyWebClient.put()
-                .uri("/sapi/document/" + document.getId() + "/send")
+                .uri("/sapi/document/" + document.getId() + "/reschedule")
                 .headers(headers -> headers.setBearerAuth(tokenValue))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UblDocumentDto(
