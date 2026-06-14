@@ -1,6 +1,6 @@
 import {resolve} from "@aurelia/kernel";
 import {InvoiceContext} from "../invoice-context";
-import {bindable, computed, IDisposable, IEventAggregator} from "aurelia";
+import {bindable, IDisposable, IEventAggregator} from "aurelia";
 import {
     CreditNote,
     Invoice,
@@ -22,6 +22,7 @@ import {PaymentInfo} from "./components/tiles/payment-info";
 import moment, {Moment} from "moment";
 import {IRouter} from "@aurelia/router";
 import {I18N} from "@aurelia/i18n";
+import {requiresDeliveryDetails} from "../../services/app/vat-rules";
 
 export class InvoiceEdit {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -299,20 +300,18 @@ export class InvoiceEdit {
         this.invoiceAttachmentModal.showModal();
     }
 
-    @computed({
-        deps: [
-            'invoiceContext.selectedInvoice.BuyerReference',
-            'invoiceContext.selectedInvoice.OrderReference.ID',
-            'invoiceContext.selectedInvoice.IssueDate',
-            'invoiceContext.selectedInvoice.DueDate',
-            'invoiceContext.selectedInvoice.PaymentTerms',
-            'invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PartyIdentification[0].ID.value',
-            'invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PartyName.Name',
-            'invoiceContext.selectedInvoice.AccountingCustomerParty.PartyTaxScheme.TaxScheme.ID',
-            'invoiceContext.selectedInvoice.LegalMonetaryTotal.LineExtensionAmount.value',
-            'invoiceContext.selectedInvoice.PaymentMeans.PaymentMeansCode.value',
-            'invoiceContext.selectedInvoice.PaymentMeans.PayeeFinancialAccount.ID'
-        ] })
+    private invoiceRequiresDeliveryDetails(): boolean {
+        return this.invoiceContext.lines?.some(line => requiresDeliveryDetails(line.Item?.ClassifiedTaxCategory?.ID)) ?? false;
+    }
+
+    private hasRequiredDeliveryDetails(): boolean {
+        if (!this.invoiceRequiresDeliveryDetails()) {
+            return true;
+        }
+        const delivery = this.invoiceContext.selectedInvoice?.Delivery;
+        return !!delivery?.ActualDeliveryDate && !!delivery?.DeliveryLocation?.Address?.Country?.IdentificationCode;
+    }
+
     get isValid() {
         const inv = this.invoiceContext.selectedInvoice;
         const hasParty = inv && inv.AccountingCustomerParty && inv.AccountingCustomerParty.Party;
@@ -328,8 +327,8 @@ export class InvoiceEdit {
             && hasParty
             && hasPartyIdentificationId
             && inv.AccountingCustomerParty.Party.PartyName.Name
-            && inv.AccountingCustomerParty.Party.PartyTaxScheme.TaxScheme.ID
             && inv.LegalMonetaryTotal.LineExtensionAmount.value > 0
+            && this.hasRequiredDeliveryDetails()
             && this.paymentInfo.isPaymentInfoComplete;
     }
 

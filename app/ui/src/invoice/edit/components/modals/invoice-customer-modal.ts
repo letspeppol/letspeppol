@@ -12,6 +12,7 @@ import {AlertType} from "../../../../components/alert/alert";
 import {InvoiceContext} from "../../../invoice-context";
 import {InvoiceComposer} from "../../../invoice-composer";
 import {I18N} from "@aurelia/i18n";
+import {CompanyService} from "../../../../services/app/company-service";
 
 export class InvoiceCustomerModal {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -19,6 +20,7 @@ export class InvoiceCustomerModal {
     private readonly partnerService = resolve(PartnerService);
     private invoiceComposer = resolve(InvoiceComposer);
     private readonly i18n = resolve(I18N);
+    private readonly companyService = resolve(CompanyService);
     private countryList = countryListAlpha2;
     @bindable invoiceContext: InvoiceContext;
     customerSearch: CustomerSearch;
@@ -30,9 +32,13 @@ export class InvoiceCustomerModal {
 
     vatChanged() {
         if (!this.customer) return;
-        if (this.customer.PartyTaxScheme.CompanyID?.value) {
+        if (this.customer.PartyTaxScheme?.CompanyID?.value) {
             this.customer.PartyTaxScheme.CompanyID.value = this.customer.PartyTaxScheme.CompanyID.value.toUpperCase();
         }
+    }
+
+    hasNoVatNumber(): boolean {
+        return !this.companyService.myCompany?.vatNumber?.trim();
     }
 
     nameChanged() {
@@ -41,6 +47,8 @@ export class InvoiceCustomerModal {
 
     showModal(customerSavedFunction: () => void) {
         this.customer = structuredClone(this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party);
+        this.customer.PartyTaxScheme ??= {CompanyID: {value: undefined}, TaxScheme: {ID: 'VAT'}};
+        this.customer.PartyTaxScheme.CompanyID ??= {value: undefined};
         if (this.customer && this.customer.EndpointID.__schemeID && this.customer.EndpointID.value) {
             this.peppolId = `${this.customer.EndpointID.__schemeID}:${this.customer.EndpointID.value}`;
         } else {
@@ -63,6 +71,11 @@ export class InvoiceCustomerModal {
         this.open = false;
         const previousPeppolId = this.toPeppolIdString(this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party?.EndpointID);
         const newPeppolId = this.toPeppolIdString(this.customer?.EndpointID);
+        if (this.hasNoVatNumber()) {
+            if (this.customer?.PartyTaxScheme?.CompanyID) {
+                this.customer.PartyTaxScheme.CompanyID.value = undefined;
+            }
+        }
         this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party = this.customer;
         if (previousPeppolId !== newPeppolId) {
             this.invoiceContext.selectedInvoice.BillingReference = undefined;

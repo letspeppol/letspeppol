@@ -212,7 +212,7 @@ export interface CommodityClassification {
 
 export interface ClassifiedTaxCategory {
     ID: string;
-    Percent: number;
+    Percent?: number;
     TaxExemptionReasonCode?: string;
     TaxExemptionReason?: string;
     TaxScheme: { ID: string };

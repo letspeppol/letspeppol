@@ -3,27 +3,22 @@ import {InvoiceContext} from "../../invoice-context";
 import {ClassifiedTaxCategory, CreditNoteLine, getAmount, InvoiceLine, UBLLine} from "../../../services/peppol/ubl";
 import {InvoiceCalculator, roundTwoDecimals} from "../../invoice-calculator";
 import {DocumentType} from "../../../services/app/invoice-service";
-import {bindable, IEventAggregator} from "aurelia";
+import {bindable} from "aurelia";
 import {ProductDto} from "../../../services/app/product-service";
 import {CompanyService} from "../../../services/app/company-service";
 import {
-    createZeroVatCategory,
-    getVatRulesetExemptionReason,
-    getVatRulesetLabelKey,
-    getVatRulesetLabel,
+    createNotSubjectToVatCategory,
+    createVatExemptCategory,
     isVatExemptRuleset,
-    VatRuleset,
 } from "../../../services/app/vat-rules";
-import {AlertType} from "../../../components/alert/alert";
-import {I18N} from "@aurelia/i18n";
 import {InvoiceZeroVatReasonModal} from "./modals/invoice-zero-vat-reason-modal";
+import {I18N} from "@aurelia/i18n";
 
 export class InvoiceEditItems {
     private invoiceContext = resolve(InvoiceContext);
     private invoiceCalculator = resolve(InvoiceCalculator);
     private companyService = resolve(CompanyService);
-    private ea: IEventAggregator = resolve(IEventAggregator);
-    private readonly i18n = resolve(I18N);
+    private i18n = resolve(I18N);
 
     @bindable readOnly;
     @bindable autoSave;
@@ -37,8 +32,12 @@ export class InvoiceEditItems {
     vatRateOptions = [21, 12, 6, 0];
     zeroVatReasonModal: InvoiceZeroVatReasonModal;
 
-    getVatRulesetLabelKey(vatRuleset: VatRuleset) {
-        return getVatRulesetLabelKey(vatRuleset);
+    private hasNoVatNumber(): boolean {
+        return !this.companyService.myCompany?.vatNumber?.trim();
+    }
+
+    isFixedVatMode(): boolean {
+        return this.hasNoVatNumber() || this.isAccountVatExempt();
     }
 
     recalculateLinePositions() {
@@ -72,9 +71,22 @@ export class InvoiceEditItems {
             line.Item.Description = p.description;
         }
         if (p.taxPercentage != null) {
+            if (this.hasNoVatNumber()) {
+                line.Item.ClassifiedTaxCategory = createNotSubjectToVatCategory();
+                this.calcLineTotal(line);
+                return;
+            }
+            if (this.isAccountVatExempt()) {
+                line.Item.ClassifiedTaxCategory = createVatExemptCategory(this.i18n.tr('account.vat-ruleset.options.VAT_EXEMPT_ART_56BIS'));
+                this.calcLineTotal(line);
+                return;
+            }
             const taxCategory = this.taxCategories.find(item => item.Percent === p.taxPercentage);
             if (taxCategory) {
-                line.Item.ClassifiedTaxCategory = taxCategory;
+                line.Item.ClassifiedTaxCategory = taxCategory.Percent === 0
+                    ? { ID: '', Percent: 0, TaxScheme: { ID: 'VAT' } }
+                    : taxCategory;
+                this.calcLineTotal(line);
             }
         }
     }
@@ -84,13 +96,13 @@ export class InvoiceEditItems {
     }
 
     vatRateChanged(line: UBLLine, percent: number) {
+        if (this.hasNoVatNumber()) {
+            line.Item.ClassifiedTaxCategory = createNotSubjectToVatCategory();
+            this.calcLineTotal(line);
+            return;
+        }
         if (this.isAccountVatExempt()) {
-            line.Item.ClassifiedTaxCategory = {
-                ID: 'E',
-                Percent: 0,
-                TaxExemptionReason: getVatRulesetExemptionReason(this.companyService.myCompany?.vatRuleset, key => this.i18n.tr(key)),
-                TaxScheme: { ID: 'VAT' }
-            };
+            line.Item.ClassifiedTaxCategory = createVatExemptCategory(this.i18n.tr('account.vat-ruleset.options.VAT_EXEMPT_ART_56BIS'));
             this.calcLineTotal(line);
             return;
         }
@@ -113,11 +125,6 @@ export class InvoiceEditItems {
             };
         }
         this.calcLineTotal(line);
-    }
-
-    getVatReadonlyTitle(): string {
-        const reason = getVatRulesetLabel(this.companyService.myCompany?.vatRuleset, key => this.i18n.tr(key));
-        return `${reason} - changeable in Account info`;
     }
 
     checkLineAutoSave(line: InvoiceLine | CreditNoteLine) {

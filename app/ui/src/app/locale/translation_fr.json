@@ -540,7 +540,9 @@
       "title": "Date",
       "issue-date": "Date d'émission",
       "payment-terms": "Conditions de paiement",
-      "due-date": "Date d'échéance"
+      "due-date": "Date d'échéance",
+      "actual-delivery-date": "Date de livraison effective",
+      "delivery-country": "Pays de livraison"
     },
     "paymentModal": {
       "title": "Paiement",
@@ -618,23 +620,19 @@
     },
     "zero-vat-reason": {
       "options": {
-        "E": "Exon?r? de TVA",
-        "K": "Exon?r? de TVA pour les livraisons intracommunautaires de biens et services dans l?EEE",
-        "G": "Article d?exportation exon?r?, TVA non factur?e",
+        "E": "Exonéré de TVA",
+        "K": "Exonéré de TVA pour les livraisons intracommunautaires de biens et services dans l’EEE",
+        "G": "Article d’exportation exonéré, TVA non facturée",
         "AE": "Autoliquidation",
-        "Z": "Biens ? taux z?ro",
-        "O": "Autres cas hors TVA"
+        "Z": "Biens à taux zéro"
       },
       "modal": {
         "title": "Raison du taux de TVA de 0 %",
         "reason-type": "Type de raison",
         "reason-text": "Explication",
-        "reason-text-placeholder": "Pourquoi cette ligne est-elle ? 0 % de TVA ?",
-        "account-ruleset": "R?gime TVA du compte",
-        "update-account": "Utiliser ceci comme r?gime TVA par d?faut pour ce compte",
-        "edit-button": "Modifier la raison de la TVA ? 0 %",
-        "account-box-title": "Avez-vous un compte exon?r? de TVA ?",
-        "account-box-text": "Modifiez ici le param?tre de votre compte :"
+        "reason-text-placeholder": "Pourquoi cette ligne est-elle à 0 % de TVA ?",
+        "update-account": "Utiliser ceci comme régime TVA par défaut pour ce compte",
+        "edit-button": "Modifier la raison de la TVA à 0 %"
       }
     }
   },
@@ -643,12 +641,6 @@
     "cancel": "Annuler",
     "save": "Enregistrer",
     "notifications": "Notifications",
-    "vat-display": {
-      "title": "Affichage des montants",
-      "description": "Choisissez si les totaux du tableau de bord et de la liste des factures sont affichés TVA comprise ou hors TVA.",
-      "incl": "TVA comprise",
-      "excl": "Hors TVA"
-    },
     "subscriber-info": "Info abonné",
     "download-contract": "Télécharger le contrat",
     "change-password": "Changer le mot de passe",
@@ -670,11 +662,17 @@
     "email-notification-cc-list": "Liste des destinataires en copie (CC) des notifications par e-mail",
     "add-pdf-to-sending-invoice": "Ajouter un PDF à la facture",
     "invoice-settings": "Paramètres de facturation",
+    "vat-display": {
+      "title": "Affichage des montants",
+      "description": "Choisissez si les totaux du tableau de bord et de la liste des factures sont affichés TVA comprise ou hors TVA.",
+      "incl": "TVA comprise",
+      "excl": "Hors TVA"
+    },
     "vat-ruleset": {
+      "title": "Paramètres TVA",
       "options": {
         "VAT_REGISTERED": "Assujetti à la TVA",
-        "VAT_EXEMPT_ART_56BIS": "Exonéré de TVA selon l'art. 56bis - Petites entreprises < €25.000",
-        "VAT_EXEMPT_ART_44": "Exonéré de TVA selon l'art. 44 - Entreprises sans TVA"
+        "VAT_EXEMPT_ART_56BIS": "Exonéré de TVA selon l'art. 56bis - Petites entreprises < €25.000"
       }
     },
     "registration-failed": {

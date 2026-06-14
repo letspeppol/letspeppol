@@ -6,7 +6,7 @@ import {VatRuleset} from "./vat-rules";
 export interface CompanyDto {
     peppolId: string,
     identifier: string,
-    vatNumber: string,
+    vatNumber?: string,
     name: string,
     displayName: string,
     subscriber: string,

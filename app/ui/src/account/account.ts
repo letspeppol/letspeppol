@@ -9,7 +9,6 @@ import {ConfirmationModalContext} from "../components/confirmation/confirmation-
 import {validateEmail} from "../app/util/email-validation";
 import {I18N} from "@aurelia/i18n";
 import {IVatDisplay, VatDisplayMode} from "../services/app/vat-display-service";
-import {getVatRulesetLabelKey, VAT_RULESET_OPTIONS, VatRuleset} from "../services/app/vat-rules";
 
 export class Account {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -23,8 +22,6 @@ export class Account {
     private _vatMode: VatDisplayMode = this.vatDisplay.mode;
     private vatUnsubscribe: () => void;
     private company: CompanyDto;
-
-    // Setter routes through the service so localStorage + subscribers stay in sync.
     get vatMode(): VatDisplayMode { return this._vatMode; }
     set vatMode(value: VatDisplayMode) {
         if (this._vatMode === value) return;
@@ -36,9 +33,13 @@ export class Account {
     changePasswordModal: ChangePasswordModal;
     private warningKey;
     private alreadyRegisteredProvider = '';
-    vatRulesetOptions = VAT_RULESET_OPTIONS;
-    getVatRulesetLabelKey(vatRuleset: VatRuleset) {
-        return getVatRulesetLabelKey(vatRuleset);
+
+    get isVatExempt(): boolean {
+        return this.company?.vatRuleset === 'VAT_EXEMPT_ART_56BIS';
+    }
+
+    setVatRuleset(isExempt: boolean) {
+        this.company.vatRuleset = isExempt ? 'VAT_EXEMPT_ART_56BIS' : 'VAT_REGISTERED';
     }
 
     attaching() {
@@ -49,7 +50,7 @@ export class Account {
             this.register();
         });
         this.vatUnsubscribe = this.vatDisplay.subscribe(mode => { this._vatMode = mode; });
-        const st = (history.state ?? {}) as any;
+        const st = (history.state ?? {}) as { runRegister?: boolean };
         if (st.runRegister) {
             history.replaceState({ ...st, runRegister: false }, '');// consume it so refresh doesn't re-run
             this.register();
@@ -119,11 +120,11 @@ export class Account {
     async registerOnPeppol() {
         try {
             this.company.peppolActive = await this.registrationService.registerCompany();
-            localStorage.setItem('peppolActive', this.company.peppolActive);
+            localStorage.setItem('peppolActive', String(this.company.peppolActive));
             this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.account.peppol-activated')});
             window.location.reload();
-        } catch (response: Response) {
-            if (!response) {
+        } catch (response: unknown) {
+            if (!(response instanceof Response)) {
                 this.ea.publish('alert', { alertType: AlertType.Danger, text: this.i18n.tr('alert.account.peppol-activation-request-failed') });
                 return;
             }
@@ -167,7 +168,7 @@ export class Account {
     async unregisterFromPeppol() {
         try {
             this.company.peppolActive = await this.registrationService.unregisterCompany()
-            localStorage.setItem('peppolActive', this.company.peppolActive);
+            localStorage.setItem('peppolActive', String(this.company.peppolActive));
             this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.account.peppol-removed')});
             window.location.reload();
         } catch {
