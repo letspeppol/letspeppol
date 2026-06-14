@@ -47,6 +47,9 @@ export class InvoiceAttachmentModal {
     }
 
     saveAttachments() {
+        if (!this.validated) {
+            return;
+        }
         this.invoiceContext.selectedInvoice.AdditionalDocumentReference = this.additionalDocumentReference;
         this.closeModal();
     }
@@ -143,4 +146,20 @@ export class InvoiceAttachmentModal {
         reader.onload = () => resolve(reader.result);
         reader.onerror = reject;
     });
+
+    onKeyDown(event: KeyboardEvent) {
+        if (event.key !== 'Enter' || this.shouldIgnoreEnter(event.target)) {
+            return;
+        }
+        event.preventDefault();
+        this.saveAttachments();
+    }
+
+    private shouldIgnoreEnter(target: EventTarget | null) {
+        const element = target as HTMLElement | null;
+        if (!element) {
+            return false;
+        }
+        return ['BUTTON', 'A', 'TEXTAREA'].includes(element.tagName);
+    }
 }

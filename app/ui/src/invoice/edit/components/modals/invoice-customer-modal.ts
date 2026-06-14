@@ -60,6 +60,9 @@ export class InvoiceCustomerModal {
     }
 
     saveCustomer() {
+        if (!this.canConfirm()) {
+            return;
+        }
         this.open = false;
         const previousPeppolId = this.toPeppolIdString(this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party?.EndpointID);
         const newPeppolId = this.toPeppolIdString(this.customer?.EndpointID);
@@ -206,5 +209,29 @@ export class InvoiceCustomerModal {
         if (!this.customer.PostalAddress.StreetName) {
             this.customer.PostalAddress.StreetName = kycCompanyResponse.street;
         }
+    }
+
+    onKeyDown(event: KeyboardEvent) {
+        if (event.key !== 'Enter' || this.shouldIgnoreEnter(event.target)) {
+            return;
+        }
+        event.preventDefault();
+        this.saveCustomer();
+    }
+
+    private canConfirm() {
+        return !!this.customer?.PartyName?.Name
+            && !!this.customer?.PartyLegalEntity?.RegistrationName
+            && !!this.customer?.PartyTaxScheme?.CompanyID
+            && !!this.peppolId
+            && this.peppolId.includes(':');
+    }
+
+    private shouldIgnoreEnter(target: EventTarget | null) {
+        const element = target as HTMLElement | null;
+        if (!element) {
+            return false;
+        }
+        return ['BUTTON', 'A', 'TEXTAREA'].includes(element.tagName);
     }
 }

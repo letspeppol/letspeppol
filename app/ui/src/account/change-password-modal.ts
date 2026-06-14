@@ -20,6 +20,9 @@ export class ChangePasswordModal {
     }
 
     async changePassword() {
+        if (!this.canConfirm()) {
+            return;
+        }
         const request = {
             password: this.password,
         } as ChangePasswordRequest;
@@ -40,5 +43,25 @@ export class ChangePasswordModal {
 
     closeModal() {
         this.open = false;
+    }
+
+    onKeyDown(event: KeyboardEvent) {
+        if (event.key !== 'Enter' || this.shouldIgnoreEnter(event.target)) {
+            return;
+        }
+        event.preventDefault();
+        this.changePassword();
+    }
+
+    private canConfirm() {
+        return !!this.password && this.password === this.confirmPassword && this.password.length >= 8 && !this.isRequesting;
+    }
+
+    private shouldIgnoreEnter(target: EventTarget | null) {
+        const element = target as HTMLElement | null;
+        if (!element) {
+            return false;
+        }
+        return ['BUTTON', 'A', 'TEXTAREA'].includes(element.tagName);
     }
 }

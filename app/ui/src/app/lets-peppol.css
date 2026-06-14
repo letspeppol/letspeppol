@@ -959,6 +959,9 @@ main.container .data-table tbody td {
 .modal-card {
     position: relative;
     width: min(var(--modal-max-w), calc(100% - var(--space-2rem)));
+    max-height: calc(100vh - var(--space-2rem));
+    display: flex;
+    flex-direction: column;
     background: var(--panel);
     border: 1px solid var(--border-soft);
     border-radius: var(--radius-md);
@@ -979,7 +982,9 @@ main.container .data-table tbody td {
 }
 
 .modal-body {
+    min-height: 0;
     padding: 0 var(--space-1) var(--space-1);
+    overflow: auto;
 }
 
 .modal-footer {

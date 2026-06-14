@@ -27,6 +27,9 @@ export class ProductCategoryModal {
     }
 
     async saveProductCategory() {
+        if (!this.category?.name?.trim()) {
+            return;
+        }
         if (this.productCategoryToUpdate) {
             const productCategory = await this.productCategoryService.updateProductCategory(this.category.id, this.category);
             this.productCategoryToUpdate.name = productCategory.name;
@@ -44,5 +47,21 @@ export class ProductCategoryModal {
         this.productContext.deleteProductCategory(this.category);
         this.open = false;
         this.signaler.dispatchSignal('productUpdate');
+    }
+
+    onKeyDown(event: KeyboardEvent) {
+        if (event.key !== 'Enter' || this.shouldIgnoreEnter(event.target)) {
+            return;
+        }
+        event.preventDefault();
+        this.saveProductCategory();
+    }
+
+    private shouldIgnoreEnter(target: EventTarget | null) {
+        const element = target as HTMLElement | null;
+        if (!element) {
+            return false;
+        }
+        return ['BUTTON', 'A', 'TEXTAREA'].includes(element.tagName);
     }
 }

@@ -123,7 +123,7 @@ export class SponsorPaymentModal {
     }
 
     async sponsor() {
-        if (!this.validAmount || this.sending) {
+        if (!this.canConfirm()) {
             return;
         }
         this.sending = true;
@@ -181,5 +181,30 @@ export class SponsorPaymentModal {
 
     private truncate(value: string, maxLength: number) {
         return value.length > maxLength ? value.slice(0, maxLength) : value;
+    }
+
+    onKeyDown(event: KeyboardEvent) {
+        if (event.key !== 'Enter' || this.shouldIgnoreEnter(event.target)) {
+            return;
+        }
+        if (this.sent) {
+            event.preventDefault();
+            this.closeModal();
+            return;
+        }
+        event.preventDefault();
+        this.sponsor();
+    }
+
+    private canConfirm() {
+        return !!this.validAmount && !this.sending;
+    }
+
+    private shouldIgnoreEnter(target: EventTarget | null) {
+        const element = target as HTMLElement | null;
+        if (!element) {
+            return false;
+        }
+        return ['BUTTON', 'A', 'TEXTAREA'].includes(element.tagName);
     }
 }

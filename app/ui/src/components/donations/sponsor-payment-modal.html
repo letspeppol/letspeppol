@@ -1,6 +1,6 @@
 <div class="modal" role="dialog" aria-modal="true" show.bind="open">
     <div class="modal-backdrop"></div>
-    <div class="modal-card sponsor-payment-modal">
+    <div class="modal-card sponsor-payment-modal" keydown.trigger="onKeyDown($event)">
         <header class="modal-header">
             <h2 t="donations.sponsor-payment.title">Donate to sponsor Let’s Peppol</h2>
             <button class="icon-btn" click.trigger="closeModal()" aria-label="Close dialog" title="Close" t="[aria-label]common.close;[title]common.close">×</button>
