@@ -54,20 +54,65 @@
                     <table class="data-table" aria-describedby="invoices-title">
                         <thead>
                         <tr>
-                            <th t="product.table.name">Name</th>
-                            <th t="product.table.description">Description</th>
-                            <th t="product.table.category">Category</th>
-                            <th t="product.table.reference">Reference</th>
-                            <th t="product.table.barcode">Barcode</th>
-                            <th t="product.table.cost-price">Cost Price</th>
-                            <th t="product.table.sale-price">Sale Price</th>
-                            <th t="product.table.tax-percentage">Tax Percentage</th>
-                            <th t="product.table.stock-quantity">Stock Quantity</th>
+                            <th>
+                                <button type="button" class="sort-button" click.trigger="toggleSort('name')">
+                                    <span t="product.table.name">Name</span>
+                                    <span class="sort-indicator ${activeSortProperty!=='name'?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
+                                </button>
+                            </th>
+                            <th>
+                                <button type="button" class="sort-button" click.trigger="toggleSort('description')">
+                                    <span t="product.table.description">Description</span>
+                                    <span class="sort-indicator ${activeSortProperty!=='description'?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
+                                </button>
+                            </th>
+                            <th>
+                                <button type="button" class="sort-button" click.trigger="toggleSort('category')">
+                                    <span t="product.table.category">Category</span>
+                                    <span class="sort-indicator ${activeSortProperty!=='category'?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
+                                </button>
+                            </th>
+                            <th>
+                                <button type="button" class="sort-button" click.trigger="toggleSort('reference')">
+                                    <span t="product.table.reference">Reference</span>
+                                    <span class="sort-indicator ${activeSortProperty!=='reference'?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
+                                </button>
+                            </th>
+                            <th>
+                                <button type="button" class="sort-button" click.trigger="toggleSort('barcode')">
+                                    <span t="product.table.barcode">Barcode</span>
+                                    <span class="sort-indicator ${activeSortProperty!=='barcode'?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
+                                </button>
+                            </th>
+                            <th>
+                                <button type="button" class="sort-button" click.trigger="toggleSort('costPrice')">
+                                    <span t="product.table.cost-price">Cost Price</span>
+                                    <span class="sort-indicator ${activeSortProperty!=='costPrice'?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
+                                </button>
+                            </th>
+                            <th>
+                                <button type="button" class="sort-button" click.trigger="toggleSort('salePrice')">
+                                    <span t="product.table.sale-price">Sale Price</span>
+                                    <span class="sort-indicator ${activeSortProperty!=='salePrice'?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
+                                </button>
+                            </th>
+                            <th>
+                                <button type="button" class="sort-button" click.trigger="toggleSort('taxPercentage')">
+                                    <span t="product.table.tax-percentage">Tax Percentage</span>
+                                    <span class="sort-indicator ${activeSortProperty!=='taxPercentage'?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
+                                </button>
+                            </th>
+                            <th>
+                                <button type="button" class="sort-button" click.trigger="toggleSort('stockQuantity')">
+                                    <span t="product.table.stock-quantity">Stock Quantity</span>
+                                    <span class="sort-indicator ${activeSortProperty!=='stockQuantity'?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
+                                </button>
+                            </th>
                             <th class="actions-col" t="product.table.actions">Actions</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr repeat.for="item of productContext.products.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()) && (productContext.selectedProductCategory === undefined || productContext.selectedProductCategory.id === p.categoryId))" click.trigger="selectItem(item)">
+                        <tr repeat.for="item of visibleProducts" click.trigger="selectItem(item)">
                             <td>${item.name}</td>
                             <td>${item.description}</td>
                             <td><span color.style="productContext.productCategoryMap.get(asNum(item.categoryId)).color">${productContext.productCategoryMap.get(asNum(item.categoryId)).name & signal:'productUpdate'}</span></td>

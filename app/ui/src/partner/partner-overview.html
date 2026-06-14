@@ -53,17 +53,47 @@
                         <thead>
                         <tr>
                             <th t="partner.table.type">Type</th>
-                            <th t="partner.table.name">Name</th>
-                            <th t="partner.table.address">Address</th>
-                            <th t="partner.table.postal-code">Postal code</th>
-                            <th t="partner.table.city">City</th>
-                            <th t="partner.table.country">Country</th>
-                            <th t="partner.table.vat">VAT</th>
+                            <th>
+                                <button type="button" class="sort-button" click.trigger="toggleSort('name')">
+                                    <span t="partner.table.name">Name</span>
+                                    <span class="sort-indicator ${activeSortProperty!=='name'?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
+                                </button>
+                            </th>
+                            <th>
+                                <button type="button" class="sort-button" click.trigger="toggleSort('address')">
+                                    <span t="partner.table.address">Address</span>
+                                    <span class="sort-indicator ${activeSortProperty!=='address'?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
+                                </button>
+                            </th>
+                            <th>
+                                <button type="button" class="sort-button" click.trigger="toggleSort('postalCode')">
+                                    <span t="partner.table.postal-code">Postal code</span>
+                                    <span class="sort-indicator ${activeSortProperty!=='postalCode'?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
+                                </button>
+                            </th>
+                            <th>
+                                <button type="button" class="sort-button" click.trigger="toggleSort('city')">
+                                    <span t="partner.table.city">City</span>
+                                    <span class="sort-indicator ${activeSortProperty!=='city'?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
+                                </button>
+                            </th>
+                            <th>
+                                <button type="button" class="sort-button" click.trigger="toggleSort('countryCode')">
+                                    <span t="partner.table.country">Country</span>
+                                    <span class="sort-indicator ${activeSortProperty!=='countryCode'?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
+                                </button>
+                            </th>
+                            <th>
+                                <button type="button" class="sort-button" click.trigger="toggleSort('vatNumber')">
+                                    <span t="partner.table.vat">VAT</span>
+                                    <span class="sort-indicator ${activeSortProperty!=='vatNumber'?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
+                                </button>
+                            </th>
                             <th class="actions-col" t="partner.table.actions">Actions</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr repeat.for="item of partnerContext.filteredPartners.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()))" click.trigger="selectItem(item)">
+                        <tr repeat.for="item of visiblePartners" click.trigger="selectItem(item)">
                             <td>
                                 <span if.bind="item.customer" class="pill sent" t="partner.edit.customer">C</span>
                                 <span if.bind="item.supplier" class="pill incoming" t="partner.edit.supplier">S</span>

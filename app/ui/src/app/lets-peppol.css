@@ -716,6 +716,65 @@ main.container {
     gap: .25rem;
 }
 
+.sort-button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-035);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-weight: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.sort-indicator {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 10px;
+    height: 14px;
+    flex: 0 0 auto;
+}
+
+.sort-indicator::before,
+.sort-indicator::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    opacity: 0.35;
+}
+
+.sort-indicator::before {
+    top: 0;
+    border-bottom: 5px solid var(--muted);
+}
+
+.sort-indicator::after {
+    bottom: 0;
+    border-top: 5px solid var(--muted);
+}
+
+.sort-indicator.is-asc::before,
+.sort-indicator.is-desc::after {
+    opacity: 1;
+    border-bottom-color: var(--text);
+    border-top-color: var(--text);
+}
+
+.sort-indicator.is-idle::before,
+.sort-indicator.is-idle::after {
+    opacity: 0.35;
+}
+
 .filter-toggle {
     font-size: .95rem;
     color: var(--muted);
