@@ -198,7 +198,7 @@
                 </div>
                 <div class="table-footer pager">
                     <button type="button" class="btn ghost" click.trigger="previousPage()" disabled.bind="query.pageable.page <= 0" t="invoice.pager.previous">← Previous</button>
-                    <span class="pager-range"></span>
+                    <span class="pager-range">${pageStart} - ${pageEnd} / ${invoiceContext.invoicePage?.totalElements ?? 0}</span>
                     <button type="button" class="btn ghost" click.trigger="nextPage()" disabled.bind="invoiceContext.invoicePage.last" t="invoice.pager.next">Next →</button>
                 </div>
             </div>

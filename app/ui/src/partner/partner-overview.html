@@ -1,5 +1,3 @@
-<import from="../app/value-converters/date-format.ts"></import>
-
 <div class="invoices-layout">
     <aside class="mailbox">
         <div class="mailbox-title" t="partner.title">Partners</div>
@@ -113,7 +111,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div if.bind="!partnerContext.filteredPartners || partnerContext.filteredPartners.length === 0" class="empty-state" >
+                <div if.bind="visiblePartnerCount === 0" class="empty-state" >
                     <div class="empty-icon" aria-hidden="true">
                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                             <path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
@@ -122,10 +120,10 @@
                     </div>
                     <p t="partner.empty">No partners match your filters.</p>
                 </div>
-                <div class="table-footer pager" hidden>
-                    <button type="button" class="btn ghost" t="common.previous">← Previous</button>
-                    <span class="pager-range"></span>
-                    <button type="button" class="btn ghost" t="common.next">Next →</button>
+                <div class="table-footer pager" if.bind="visiblePartnerCount > 0">
+                    <button type="button" class="btn ghost" click.trigger="previousPage()" disabled.bind="currentPage <= 0" t="common.previous">Previous</button>
+                    <span class="pager-range">${pageStart} - ${pageEnd} / ${visiblePartnerCount}</span>
+                    <button type="button" class="btn ghost" click.trigger="nextPage()" disabled.bind="currentPage >= totalPages - 1" t="common.next">Next</button>
                 </div>
             </div>
         </div>

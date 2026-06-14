@@ -117,6 +117,22 @@ export class InvoiceOverview {
         this.reloadCurrentView();
     }
 
+    get pageStart() {
+        const total = this.invoiceContext.invoicePage?.totalElements ?? 0;
+        if (!total) {
+            return 0;
+        }
+        return (this.invoiceContext.invoicePage.page * this.invoiceContext.invoicePage.size) + 1;
+    }
+
+    get pageEnd() {
+        const total = this.invoiceContext.invoicePage?.totalElements ?? 0;
+        if (!total) {
+            return 0;
+        }
+        return Math.min((this.invoiceContext.invoicePage.page + 1) * this.invoiceContext.invoicePage.size, total);
+    }
+
     toggleSort(property: string) {
         const currentDirection = this.sortDirection(property);
         const direction: SortDirection = currentDirection === 'asc' ? 'desc' : 'asc';

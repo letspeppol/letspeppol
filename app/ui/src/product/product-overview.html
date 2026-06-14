@@ -118,8 +118,8 @@
                             <td><span color.style="productContext.productCategoryMap.get(asNum(item.categoryId)).color">${productContext.productCategoryMap.get(asNum(item.categoryId)).name & signal:'productUpdate'}</span></td>
                             <td>${item.reference}</td>
                             <td>${item.barcode}</td>
-                            <td>${item.costPrice}</td>
-                            <td>${item.salePrice}</td>
+                            <td>${item.costPrice | price:'EUR'}</td>
+                            <td>${item.salePrice | price:'EUR'}</td>
                             <td>${item.taxPercentage}</td>
                             <td>${item.stockQuantity}</td>
                             <td class="actions-col">
@@ -131,7 +131,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div if.bind="!productContext.products || productContext.products.length === 0" class="empty-state" >
+                <div if.bind="visibleProductCount === 0" class="empty-state" >
                     <div class="empty-icon" aria-hidden="true">
                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                             <path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
@@ -139,6 +139,11 @@
                         </svg>
                     </div>
                     <p t="product.empty">No products match your filters.</p>
+                </div>
+                <div class="table-footer pager" if.bind="visibleProductCount > 0">
+                    <button type="button" class="btn ghost" click.trigger="previousPage()" disabled.bind="currentPage <= 0" t="common.previous">Previous</button>
+                    <span class="pager-range">${pageStart} - ${pageEnd} / ${visibleProductCount}</span>
+                    <button type="button" class="btn ghost" click.trigger="nextPage()" disabled.bind="currentPage >= totalPages - 1" t="common.next">Next</button>
                 </div>
             </div>
         </div>

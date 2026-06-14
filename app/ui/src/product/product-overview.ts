@@ -19,6 +19,8 @@ export class ProductOverview {
     searchQuery = '';
     activeSortProperty = 'name';
     activeSortDirection: SortDirection = 'asc';
+    pageSize = 20;
+    currentPage = 0;
 
     attached() {
         this.loadProductsAndCategories();
@@ -33,8 +35,32 @@ export class ProductOverview {
     }
 
     get visibleProducts() {
+        const start = this.currentPage * this.pageSize;
+        return this.sortedFilteredProducts.slice(start, start + this.pageSize);
+    }
+
+    get visibleProductCount() {
+        return this.sortedFilteredProducts.length;
+    }
+
+    get totalPages() {
+        return Math.max(1, Math.ceil(this.visibleProductCount / this.pageSize));
+    }
+
+    get pageStart() {
+        if (!this.visibleProductCount) {
+            return 0;
+        }
+        return (this.currentPage * this.pageSize) + 1;
+    }
+
+    get pageEnd() {
+        return Math.min((this.currentPage + 1) * this.pageSize, this.visibleProductCount);
+    }
+
+    get sortedFilteredProducts() {
         const query = this.searchQuery.toLowerCase();
-        const filtered = this.productContext.products.filter(p =>
+        const filtered = (this.productContext.products ?? []).filter(p =>
             p.name.toLowerCase().includes(query)
             && (this.productContext.selectedProductCategory === undefined || this.productContext.selectedProductCategory.id === p.categoryId)
         );
@@ -61,6 +87,7 @@ export class ProductOverview {
 
     filterItems(category: ProductCategoryDto | undefined) {
         this.productContext.selectedProductCategory = category;
+        this.currentPage = 0;
     }
 
     toggleSort(property: string) {
@@ -70,6 +97,25 @@ export class ProductOverview {
             this.activeSortProperty = property;
             this.activeSortDirection = 'asc';
         }
+        this.currentPage = 0;
+    }
+
+    searchQueryChanged() {
+        this.currentPage = 0;
+    }
+
+    nextPage() {
+        if (this.currentPage >= this.totalPages - 1) {
+            return;
+        }
+        this.currentPage++;
+    }
+
+    previousPage() {
+        if (this.currentPage <= 0) {
+            return;
+        }
+        this.currentPage--;
     }
 
     newProductCategory() {

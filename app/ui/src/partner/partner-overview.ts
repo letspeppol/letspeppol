@@ -16,6 +16,8 @@ export class PartnerOverview {
     category = 'all';
     activeSortProperty = 'name';
     activeSortDirection: SortDirection = 'asc';
+    pageSize = 20;
+    currentPage = 0;
 
     attached() {
         this.loadPartners();
@@ -26,12 +28,17 @@ export class PartnerOverview {
         this.filterItems(this.category);
     }
 
+    searchQueryChanged() {
+        this.currentPage = 0;
+    }
+
     async loadPartners() {
         this.partnerContext.partners = await this.partnerService.getPartners();
     }
 
     filterItems(category) {
         this.category = category;
+        this.currentPage = 0;
         switch (category) {
             case 'all':
                 this.partnerContext.filteredPartners = this.partnerContext.partners;
@@ -46,6 +53,30 @@ export class PartnerOverview {
     }
 
     get visiblePartners() {
+        const start = this.currentPage * this.pageSize;
+        return this.sortedFilteredPartners.slice(start, start + this.pageSize);
+    }
+
+    get visiblePartnerCount() {
+        return this.sortedFilteredPartners.length;
+    }
+
+    get totalPages() {
+        return Math.max(1, Math.ceil(this.visiblePartnerCount / this.pageSize));
+    }
+
+    get pageStart() {
+        if (!this.visiblePartnerCount) {
+            return 0;
+        }
+        return (this.currentPage * this.pageSize) + 1;
+    }
+
+    get pageEnd() {
+        return Math.min((this.currentPage + 1) * this.pageSize, this.visiblePartnerCount);
+    }
+
+    get sortedFilteredPartners() {
         const query = this.searchQuery.toLowerCase();
         const filtered = (this.partnerContext.filteredPartners ?? [])
             .filter(partner => partner.name.toLowerCase().includes(query));
@@ -60,6 +91,21 @@ export class PartnerOverview {
             this.activeSortProperty = property;
             this.activeSortDirection = 'asc';
         }
+        this.currentPage = 0;
+    }
+
+    nextPage() {
+        if (this.currentPage >= this.totalPages - 1) {
+            return;
+        }
+        this.currentPage++;
+    }
+
+    previousPage() {
+        if (this.currentPage <= 0) {
+            return;
+        }
+        this.currentPage--;
     }
 
     selectItem(partner: PartnerDto) {
