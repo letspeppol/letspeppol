@@ -82,6 +82,7 @@ public class DataInitializer implements CommandLineRunner {
                     new BigDecimal("6.99"),
                     new BigDecimal("14.99"),
                     new BigDecimal("21"),
+                    new BigDecimal("10"),
                     productCategory.id()
             );
             productService.createProduct(peppolId, product);

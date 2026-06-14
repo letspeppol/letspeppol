@@ -28,6 +28,9 @@ export class InvoicePaymentModal {
     }
 
     savePaymentMeans() {
+        if (this.paymentMeansCode === 30 && !this.paymentMeans?.PayeeFinancialAccount?.ID) {
+            return;
+        }
         this.open = false;
         this.invoiceContext.selectedInvoice.PaymentMeans = this.paymentMeans;
     }
@@ -54,5 +57,21 @@ export class InvoicePaymentModal {
         } catch {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.company.save-failed')});
         }
+    }
+
+    onKeyDown(event: KeyboardEvent) {
+        if (event.key !== 'Enter' || this.shouldIgnoreEnter(event.target)) {
+            return;
+        }
+        event.preventDefault();
+        this.savePaymentMeans();
+    }
+
+    private shouldIgnoreEnter(target: EventTarget | null) {
+        const element = target as HTMLElement | null;
+        if (!element) {
+            return false;
+        }
+        return ['BUTTON', 'A', 'TEXTAREA'].includes(element.tagName);
     }
 }

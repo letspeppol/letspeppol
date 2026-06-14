@@ -99,7 +99,7 @@ public class AppController {
         return ResponseEntity.status(HttpStatus.OK).body(ublDocumentSenderService.update(id, ublDocumentDto, noArchive));
     }
 
-    @PutMapping("{id}/send")
+    @PutMapping("{id}/reschedule")
     public ResponseEntity<UblDocumentDto> reschedule(@AuthenticationPrincipal Jwt jwt,
                                                      @PathVariable UUID id,
                                                      @RequestBody UblDocumentDto ublDocumentDto,

@@ -56,6 +56,9 @@ export class InvoiceDateModal {
     }
 
     private saveDate() {
+        if (!this.issueDate) {
+            return;
+        }
         this.open = false;
         this.invoiceContext.selectedInvoice.IssueDate = this.issueDate;
         this.invoiceContext.selectedInvoice.DueDate = this.dueDate;
@@ -79,5 +82,21 @@ export class InvoiceDateModal {
         if (selectedPaymentTerm) {
             setTimeout(() => this.selectedPaymentTerm = selectedPaymentTerm, 100);
         }
+    }
+
+    onKeyDown(event: KeyboardEvent) {
+        if (event.key !== 'Enter' || this.shouldIgnoreEnter(event.target)) {
+            return;
+        }
+        event.preventDefault();
+        this.saveDate();
+    }
+
+    private shouldIgnoreEnter(target: EventTarget | null) {
+        const element = target as HTMLElement | null;
+        if (!element) {
+            return false;
+        }
+        return ['BUTTON', 'A', 'TEXTAREA'].includes(element.tagName);
     }
 }
