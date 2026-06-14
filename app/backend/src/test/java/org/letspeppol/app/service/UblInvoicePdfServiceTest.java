@@ -3,6 +3,8 @@ package org.letspeppol.app.service;
 import com.helger.ubl21.UBL21Marshaller;
 import lombok.SneakyThrows;
 import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.Test;
 import org.letspeppol.app.util.InvoiceUBLBuilder;
 
@@ -43,7 +45,7 @@ class UblInvoicePdfServiceTest {
         Files.createDirectories(Paths.get("build", "debug"));
         Files.write(Paths.get("build", "debug", "invoice-draft.pdf"), pdf);
 
-        String pdfText = new String(pdf, StandardCharsets.ISO_8859_1);
+        String pdfText = extractText(pdf);
         assertTrue(pdfText.contains("DRAFT"), "PDF should contain watermark text 'DRAFT'");
         assertFalse(pdfText.contains("INV-SECRET"), "Invoice number must not be present in draft PDFs");
     }
@@ -60,9 +62,16 @@ class UblInvoicePdfServiceTest {
         Files.createDirectories(Paths.get("build", "debug"));
         Files.write(Paths.get("build", "debug", "invoice-proforma.pdf"), pdf);
 
-        String pdfText = new String(pdf, StandardCharsets.ISO_8859_1);
+        String pdfText = extractText(pdf);
         assertTrue(pdfText.contains("PROFORMA"), "PDF should contain watermark text 'PROFORMA'");
         assertFalse(pdfText.contains("INV-SECRET"), "Invoice number must not be present in proforma PDFs");
+    }
+
+    private static String extractText(byte[] pdf) throws java.io.IOException {
+        // Raw byte scanning misses the watermark because PDF text streams use FlateDecode.
+        try (PDDocument doc = PDDocument.load(pdf)) {
+            return new PDFTextStripper().getText(doc);
+        }
     }
 
     // Minimal invoice-like XML with the UBL elements we use in the XSLT (namespace-agnostic via local-name()).

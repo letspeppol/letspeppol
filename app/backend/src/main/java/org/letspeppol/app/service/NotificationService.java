@@ -59,10 +59,11 @@ public class NotificationService {
         try {
             SponsorProperties.Sponsor sponsor = nextSponsor();
 
+            String totalAmount = document.getAmountInclVat() != null ? document.getAmountInclVat().toString() : "";
             String text = getTemplateContents("en-txt", emailNotificationTemplate)
                     .replace("{{supplier}}", document.getPartnerName())
                     .replace("{{reference}}", document.getInvoiceReference())
-                    .replace("{{totalAmount}}", document.getAmount().toString())
+                    .replace("{{totalAmount}}", totalAmount)
                     .replace("{{uuid}}", document.getId().toString());
 
             String html = null;
@@ -76,7 +77,7 @@ public class NotificationService {
                 html = getTemplateContents("en-html", emailNotificationHtmlTemplate)
                         .replace("{{supplier}}", document.getPartnerName())
                         .replace("{{reference}}", document.getInvoiceReference())
-                        .replace("{{totalAmount}}", document.getAmount().toString())
+                        .replace("{{totalAmount}}", totalAmount)
                         .replace("{{uuid}}", document.getId().toString())
                         .replace("{{supportedByText}}", sponsorProperties.getEmailText())
                         .replace("{{sponsorName}}", sponsor.getName())

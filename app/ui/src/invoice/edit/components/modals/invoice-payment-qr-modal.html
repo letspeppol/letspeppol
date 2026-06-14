@@ -1,0 +1,50 @@
+<import from="../../../../components/sepa-qr/sepa-qr"></import>
+<import from="./invoice-payment-qr-modal.css"></import>
+
+<div class="modal" role="dialog" aria-modal="true" show.bind="open">
+    <div class="modal-backdrop"></div>
+    <div class="modal-card payment-qr-modal">
+        <header class="modal-header">
+            <h2 t="invoice.paymentQr.title">Invoice payment</h2>
+            <button class="icon-btn" type="button" click.trigger="closeModal()" aria-label="Close dialog" title="Close" t="[aria-label]common.close" t="[title]common.close">&times;</button>
+        </header>
+        <div class="modal-body">
+            <div class="payment-qr-layout">
+                <dl class="payment-qr-details">
+                    <div>
+                        <dt t="invoice.paymentQr.name">Name</dt>
+                        <dd>${name}</dd>
+                    </div>
+                    <div>
+                        <dt t="invoice.paymentQr.iban">IBAN</dt>
+                        <dd>${iban}</dd>
+                    </div>
+                    <div if.bind="bic">
+                        <dt t="invoice.paymentQr.bic">BIC</dt>
+                        <dd>${bic}</dd>
+                    </div>
+                    <div>
+                        <dt t="invoice.paymentQr.amount">Amount</dt>
+                        <dd>${amountLabel}</dd>
+                    </div>
+                    <div>
+                        <dt t="invoice.paymentQr.reference">Reference</dt>
+                        <dd>${reference || '/'}</dd>
+                    </div>
+                </dl>
+                <sepa-qr
+                    beneficiary-name.bind="name"
+                    beneficiary-bic.bind="bic"
+                    beneficiary-account-number.bind="iban"
+                    amount-euro.bind="amount"
+                    remittance-information.bind="reference"
+                    size.bind="256">
+                </sepa-qr>
+            </div>
+        </div>
+        <footer class="modal-footer">
+            <button type="button" class="btn" click.trigger="closeModal()" title="Cancel" t="[title]common.cancel" t="common.cancel">Cancel</button>
+            <button type="button" class="btn primary" click.trigger="markPaidAndClose()" t="invoice.paymentQr.mark-paid-document.${currentDocumentType}">Mark invoice as paid</button>
+        </footer>
+    </div>
+</div>

@@ -119,7 +119,7 @@ public class SigningService {
                 var info = doc.getDocumentInformation();
                 if (info == null)
                     info = new PDDocumentInformation();
-                info.setTitle("Let's Peppol Contract – " + director.getCompany().getName());
+                info.setTitle("Let’s Peppol Contract – " + director.getCompany().getName());
                 info.setAuthor("Business Application Research Group Europe");
                 info.setSubject("Let’s Peppol Service Agreement");
                 doc.setDocumentInformation(info);

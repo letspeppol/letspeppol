@@ -3,7 +3,10 @@
 
 <application-view>
     <div class="section-header">
-        <h1>Invoice Totals</h1>
+        <h1>
+            <span>Invoice Totals</span>
+            <span class="vat-mode-tag" t="dashboard.vat-suffix.${vatMode}"></span>
+        </h1>
     </div>
     <div class="dashboard-grid">
         <div class="card kpi-card">
@@ -11,7 +14,7 @@
             <div class="card kpi-card kpi-header">
                 <div class="kpi-line">
                     <span class="label">Total ${new Date().getFullYear()}</span>
-                    <strong>${totals.totalReceivableThisYear | price}</strong>
+                    <strong>${activeTotals.receivableThisYear | price}</strong>
                 </div>
             </div>
 
@@ -19,11 +22,11 @@
                 <h2>Still Open</h2>
                 <div class="kpi-line">
                     <span class="label">Total</span>
-                    <strong>${totals.totalReceivableOpen | price}</strong>
+                    <strong>${activeTotals.receivableOpen | price}</strong>
                 </div>
                 <div class="kpi-line">
                     <span class="label">Overdue</span>
-                    <strong class.bind="totals.totalReceivableOverdue > 0 ? 'kpi-overdue' : ''">${totals.totalReceivableOverdue | price}</strong>
+                    <strong class.bind="activeTotals.receivableOverdue > 0 ? 'kpi-overdue' : ''">${activeTotals.receivableOverdue | price}</strong>
                 </div>
             </div>
         </div>
@@ -33,7 +36,7 @@
             <div class="card kpi-card kpi-header">
                 <div class="kpi-line">
                     <span class="label">Total ${new Date().getFullYear()}</span>
-                    <strong>${totals.totalPayableThisYear | price}</strong>
+                    <strong>${activeTotals.payableThisYear | price}</strong>
                 </div>
             </div>
 
@@ -41,11 +44,11 @@
                 <h2>Still Open</h2>
                 <div class="kpi-line">
                     <span class="label">Total</span>
-                    <strong>${totals.totalPayableOpen | price}</strong>
+                    <strong>${activeTotals.payableOpen | price}</strong>
                 </div>
                 <div class="kpi-line">
                     <span class="label">Overdue</span>
-                    <strong class.bind="totals.totalPayableOverdue > 0 ? 'kpi-overdue' : ''">${totals.totalPayableOverdue | price}</strong>
+                    <strong class.bind="activeTotals.payableOverdue > 0 ? 'kpi-overdue' : ''">${activeTotals.payableOverdue | price}</strong>
                 </div>
             </div>
         </div>

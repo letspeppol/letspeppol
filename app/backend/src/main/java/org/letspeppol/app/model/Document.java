@@ -82,7 +82,9 @@ public class Document implements Persistable<UUID> {
     @JdbcTypeCode(VARCHAR)
     private Currency currency; //Currency can be foreign, used for overview
 
-    private BigDecimal amount; //Total payable amount, used for overview
+    private BigDecimal amountInclVat;
+
+    private BigDecimal amountExclVat;
 
     private Instant issueDate; //Issue date on document, used for overview
 
@@ -119,7 +121,8 @@ public class Document implements Persistable<UUID> {
             String orderReference,
             DocumentType type,
             Currency currency,
-            BigDecimal amount,
+            BigDecimal amountInclVat,
+            BigDecimal amountExclVat,
             Instant issueDate,
             Instant dueDate,
             String paymentTerms,
@@ -144,7 +147,8 @@ public class Document implements Persistable<UUID> {
         this.orderReference     = orderReference;
         this.type               = type;
         this.currency           = currency;
-        this.amount             = amount;
+        this.amountInclVat      = amountInclVat;
+        this.amountExclVat      = amountExclVat;
         this.issueDate          = issueDate;
         this.dueDate            = dueDate;
         this.paymentTerms       = paymentTerms;

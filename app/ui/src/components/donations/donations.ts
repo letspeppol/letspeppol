@@ -1,16 +1,39 @@
-import {StatisticsService, DonationStatsDto} from "../../services/app/statistics-service";
+import {StatisticsService, DonationStatsDto, SponsorContributionDto} from "../../services/app/statistics-service";
 import {resolve} from "@aurelia/kernel";
-import {SponsorDto, SponsorsDto, SponsorService} from "../../services/app/sponsor-service";
+import {SponsorDto, SponsorService} from "../../services/app/sponsor-service";
+import {SponsorPaymentModal} from "./sponsor-payment-modal";
+import {IRouter} from "@aurelia/router";
 
 export class Donations {
     private statisticsService = resolve(StatisticsService);
     private sponsorService = resolve(SponsorService);
+    private router = resolve(IRouter);
     private accountInfo: DonationStatsDto;
-    private sponsors: SponsorDto[];
+    private sponsors: SponsorDto[] = [];
     private activeSponsor: SponsorDto;
     private activeSponsorIndex: number = 0;
     private sponsorInterval: ReturnType<typeof setInterval> | null = null;
+    private sponsorPaymentModal: SponsorPaymentModal;
 
+    get recentTransactions() {
+        const contributions = this.accountInfo?.contributions;
+        if (contributions?.length) {
+            return contributions.slice(0, 3);
+        }
+        return this.openCollectiveContributions.slice(0, 3);
+    }
+
+    private get openCollectiveContributions(): SponsorContributionDto[] {
+        return this.accountInfo?.transactions
+            ?.filter(transaction => transaction.amount?.value !== undefined)
+            .map(transaction => ({
+                name: transaction.fromAccount?.name || "OpenCollective supporter",
+                message: "OpenCollective contribution",
+                amount: transaction.amount.value,
+                currency: transaction.amount.currency,
+                date: transaction.createdAt
+            })) ?? [];
+    }
 
     attached() {
         this.loadLatestDonationInfo();
@@ -37,5 +60,17 @@ export class Donations {
         if (!this.sponsors?.length) return;
         this.activeSponsorIndex = (this.activeSponsorIndex + 1) % this.sponsors.length;
         this.activeSponsor = this.sponsors[this.activeSponsorIndex];
+    }
+
+    showSponsorPaymentModal() {
+        this.sponsorPaymentModal.showModal();
+    }
+
+    showSponsors() {
+        this.router.load('/sponsors');
+    }
+
+    get totalSponsorTransactions() {
+        return this.accountInfo?.totalContributions ?? 0;
     }
 }

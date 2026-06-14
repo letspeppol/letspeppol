@@ -67,7 +67,8 @@ export interface DocumentDto {
     invoiceReference?: string;
     type?: DocumentType;
     currency?: CurrencyCode;
-    amount?: number;                // BigDecimal → number (or string if you need precision)
+    amountInclVat?: number;
+    amountExclVat?: number;
     issueDate?: string;             // ISO datetime (Instant)
     dueDate?: string;               // ISO datetime (Instant)
     paymentTerms?: string;

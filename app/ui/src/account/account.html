@@ -132,6 +132,24 @@
                 </div>
             </div>
 
+            <div class="card" new-feature="vat-display">
+                <div class="card-header">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-percent-icon lucide-percent"><line x1="19" x2="5" y1="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
+                    <h2 t="account.vat-display.title">Amount Display</h2>
+                </div>
+                <div style="display: grid; gap: var(--space-1)">
+                    <p class="muted" t="account.vat-display.description">Choose whether totals in the dashboard and invoice list are shown including or excluding VAT.</p>
+                    <div class="vat-display-toggle">
+                        <span class="vat-toggle-label" class.bind="vatMode === 'excl' ? 'active' : ''" click.trigger="vatMode = 'excl'" t="account.vat-display.excl">Exclude VAT</span>
+                        <label class="switch" aria-label="Toggle VAT inclusion">
+                            <input type="checkbox" checked.to-view="vatMode === 'incl'" change.trigger="vatMode = $event.target.checked ? 'incl' : 'excl'" />
+                            <span class="slider"></span>
+                        </label>
+                        <span class="vat-toggle-label" class.bind="vatMode === 'incl' ? 'active' : ''" click.trigger="vatMode = 'incl'" t="account.vat-display.incl">Include VAT</span>
+                    </div>
+                </div>
+            </div>
+
             <div class="card" new-feature="account-notifications">
                 <div class="card-header">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bell-ring-icon lucide-bell-ring"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M22 8c0-2.3-.8-4.3-2-6"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/><path d="M4 2C2.8 3.7 2 5.7 2 8"/></svg>

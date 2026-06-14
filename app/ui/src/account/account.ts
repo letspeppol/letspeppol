@@ -8,6 +8,7 @@ import {ChangePasswordModal} from "./change-password-modal";
 import {ConfirmationModalContext} from "../components/confirmation/confirmation-modal-context";
 import {validateEmail} from "../app/util/email-validation";
 import {I18N} from "@aurelia/i18n";
+import {IVatDisplay, VatDisplayMode} from "../services/app/vat-display-service";
 
 export class Account {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -17,7 +18,18 @@ export class Account {
     private readonly confirmationModalContext = resolve(ConfirmationModalContext);
     private readonly peppolDirService = resolve(PeppolDirService);
     private readonly i18n = resolve(I18N);
+    private readonly vatDisplay = resolve(IVatDisplay);
+    private _vatMode: VatDisplayMode = this.vatDisplay.mode;
+    private vatUnsubscribe: () => void;
     private company: CompanyDto;
+
+    // Setter routes through the service so localStorage + subscribers stay in sync.
+    get vatMode(): VatDisplayMode { return this._vatMode; }
+    set vatMode(value: VatDisplayMode) {
+        if (this._vatMode === value) return;
+        this._vatMode = value;
+        this.vatDisplay.setMode(value);
+    }
     public static PAYMENT_TERMS = ['15_DAYS', '30_DAYS', '60_DAYS', 'END_OF_NEXT_MONTH'];
     private alreadyPeppolActivated = false;
     changePasswordModal: ChangePasswordModal;
@@ -31,6 +43,7 @@ export class Account {
         this.sub = this.ea.subscribe('account:register', () => {
             this.register();
         });
+        this.vatUnsubscribe = this.vatDisplay.subscribe(mode => { this._vatMode = mode; });
         const st = (history.state ?? {}) as any;
         if (st.runRegister) {
             history.replaceState({ ...st, runRegister: false }, '');// consume it so refresh doesn't re-run
@@ -40,6 +53,7 @@ export class Account {
 
     unbinding() {
         this.sub?.dispose();
+        this.vatUnsubscribe?.();
     }
 
     async getCompany() {
@@ -81,7 +95,7 @@ export class Account {
             this.confirmationModalContext.showConfirmationModal(
                 "Activate on Peppol",
                 "It looks like you are currently registered to the Peppol network via another Access Point.\n" +
-                "Are you sure you wish to subscribe yourself to the Peppol network via Let's Peppol?\n" +
+                "Are you sure you wish to subscribe yourself to the Peppol network via Let’s Peppol?\n" +
                 "It might fail if you are still registered at the other Access Point provider.",
                 () => this.registerOnPeppol(),
                 undefined
@@ -89,7 +103,7 @@ export class Account {
         } else {
             this.confirmationModalContext.showConfirmationModal(
                 "Activate on Peppol",
-                "Are you sure you wish to subscribe yourself to the Peppol network via Let's Peppol?\n" +
+                "Are you sure you wish to subscribe yourself to the Peppol network via Let’s Peppol?\n" +
                 "Make sure you are not subscribed via another service.",
                 () => this.registerOnPeppol(),
                 undefined
