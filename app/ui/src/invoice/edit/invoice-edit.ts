@@ -102,19 +102,23 @@ export class InvoiceEdit {
         const type = this.selectedDocumentType;
         try {
             this.ea.publish('showOverlay', this.i18n.tr(`overlay.sending.${type}`));
-            const xml = this.buildXml();
-
-            const response = await this.invoiceService.validate(xml);
-            if (!response.isValid) {
-                this.validationResultModal.showModal(response);
-                return;
+            let doc;
+            if (this.invoiceContext.selectedDocument?.createdExternally && this.invoiceContext.selectedDocument?.id) {
+                doc = await this.invoiceService.sendDocument(this.invoiceContext.selectedDocument.id);
+            } else {
+                const xml = this.buildXml();
+                const response = await this.invoiceService.validate(xml);
+                if (!response.isValid) {
+                    this.validationResultModal.showModal(response);
+                    return;
+                }
+                doc = await this.invoiceService.createDocument(xml);
             }
-
-            const doc = await this.invoiceService.createDocument(xml);
             this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(`alert.invoice.sent.${type}`)});
             this.invoiceContext.invoicePage.content.unshift(doc);
             if (this.invoiceContext.selectedDocument.draftedOn) {
-                await this.deleteDraft();
+                this.invoiceContext.deleteDraft(this.invoiceContext.selectedDocument);
+                this.returnToOverview();
             } else {
                 this.returnToOverview();
             }
