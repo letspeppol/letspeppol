@@ -4,6 +4,8 @@ import {bindable, computed, IDisposable, IEventAggregator} from "aurelia";
 import {
     CreditNote,
     Invoice,
+    CreditNoteLine,
+    InvoiceLine,
     UBLLine
 } from "../../services/peppol/ubl";
 import {AlertType} from "../../components/alert/alert";
@@ -142,6 +144,7 @@ export class InvoiceEdit {
     // }
 
     buildXml(): string {
+        this.normalizeUnitPrices();
         if  (this.selectedDocumentType === DocumentType.INVOICE)  {
             return buildInvoiceXml(this.invoiceContext.selectedInvoice as Invoice)
         } else {
@@ -247,6 +250,23 @@ export class InvoiceEdit {
         const response = await this.invoiceService.validate(xml);
         this.validationResultModal.showModal(response);
         console.log(response);
+    }
+
+    private normalizeUnitPrices() {
+        const lines = this.invoiceContext.lines as Array<InvoiceLine | CreditNoteLine> | undefined;
+        if (!lines?.length) {
+            return;
+        }
+        for (const line of lines) {
+            if (!line.Price) {
+                line.Price = { PriceAmount: { value: 0 } } as UBLLine["Price"];
+            }
+            if (!line.Price.PriceAmount) {
+                line.Price.PriceAmount = { value: 0 };
+            }
+            const rawUnitPrice = Number(line.Price.PriceAmount.value);
+            line.Price.PriceAmount.value = Number.isFinite(rawUnitPrice) && rawUnitPrice >= 0 ? rawUnitPrice : 0;
+        }
     }
 
     savePartner() {
