@@ -1,13 +1,28 @@
 #!/bin/sh
 set -eu
 
+shell_quote() {
+  printf "'%s'" "$(printf '%s' "$1" | sed "s/'/'\\\\''/g")"
+}
+
 mkdir -p "$DATA_DIR"
+{
+  printf 'export PGHOST=%s\n' "$(shell_quote "$PGHOST")"
+  printf 'export PGUSER=%s\n' "$(shell_quote "$PGUSER")"
+  printf 'export PGPASSWORD=%s\n' "$(shell_quote "$PGPASSWORD")"
+  printf 'export DB_LIST=%s\n' "$(shell_quote "$DB_LIST")"
+  printf 'export DATA_DIR=%s\n' "$(shell_quote "$DATA_DIR")"
+  printf 'export PATH=%s\n' "$(shell_quote "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin")"
+  printf 'export TZ=%s\n' "$(shell_quote "$TZ")"
+} > /etc/backup.env
+
+touch "$DATA_DIR/.sync-db-dumps.trigger"
 
 cat > /etc/crontabs/root <<'EOF'
 SHELL=/bin/sh
 TZ=Europe/Brussels
 
-0 0,12 * * * /bin/sh -eu -c 'ts=$(date "+%Y-%m-%dT%H-%M-%S%z"); for d in $DB_LIST; do echo "[backup] preparing $d at $ts"; ls -1t "$DATA_DIR"/$d-*.dump 2>/dev/null | tail -n +2 | xargs -r rm -f --; tmp="$DATA_DIR/.$d-$ts.dump.tmp"; final="$DATA_DIR/$d-$ts.dump"; echo "[backup] dumping $d to temp file $tmp"; if pg_dump -h "$PGHOST" -U "$PGUSER" -d "$d" -F c -Z 6 -f "$tmp"; then mv "$tmp" "$final"; echo "[backup] completed $d -> $final"; else echo "[backup] FAILED $d"; rm -f "$tmp"; exit 1; fi; done'
+0 0,12 * * * /bin/sh /usr/local/bin/backup-run.sh
 EOF
 
 echo "[backup] scheduled for 00:00 and 12:00 Europe/Brussels"
