@@ -97,7 +97,7 @@ export class InvoiceOverview {
     }
 
     previousPage() {
-        if (this.query.pageable.page === 1) {
+        if (this.query.pageable.page <= 0) {
             return;
         }
         this.query.pageable.page--;
