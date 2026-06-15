@@ -139,6 +139,15 @@
     "INVOICE" : "Facture",
     "CREDIT_NOTE" : "Note de crédit"
   },
+  "password-rules" : {
+    "length" : "Au moins 12 caractères",
+    "lower" : "Au moins 1 minuscule",
+    "upper" : "Au moins 1 majuscule",
+    "number" : "Au moins 1 chiffre",
+    "symbol" : "Au moins 1 symbole",
+    "match" : "Les mots de passe correspondent",
+    "strength" : "Robustesse du mot de passe"
+  },
   "confirmation" : {
     "header" : "Confirmer l'identité",
     "header-sign" : "Signer le contrat",

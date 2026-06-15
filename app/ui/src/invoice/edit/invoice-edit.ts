@@ -6,6 +6,7 @@ import {
     Invoice,
     CreditNoteLine,
     InvoiceLine,
+    normalizeLinePrice,
     UBLLine
 } from "../../services/peppol/ubl";
 import {AlertType} from "../../components/alert/alert";
@@ -257,14 +258,7 @@ export class InvoiceEdit {
             return;
         }
         for (const line of lines) {
-            if (!line.Price) {
-                line.Price = { PriceAmount: { value: 0 } } as UBLLine["Price"];
-            }
-            if (!line.Price.PriceAmount) {
-                line.Price.PriceAmount = { value: 0 };
-            }
-            const rawUnitPrice = Number(line.Price.PriceAmount.value);
-            line.Price.PriceAmount.value = Number.isFinite(rawUnitPrice) && rawUnitPrice >= 0 ? rawUnitPrice : 0;
+            normalizeLinePrice(line);
         }
     }
 

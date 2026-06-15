@@ -1,6 +1,6 @@
 import {resolve} from "@aurelia/kernel";
 import {InvoiceContext} from "../../invoice-context";
-import {ClassifiedTaxCategory, CreditNoteLine, getAmount, InvoiceLine, UBLLine} from "../../../services/peppol/ubl";
+import {ClassifiedTaxCategory, CreditNoteLine, getAmount, InvoiceLine, normalizeLinePrice, UBLLine} from "../../../services/peppol/ubl";
 import {InvoiceCalculator, roundTwoDecimals} from "../../invoice-calculator";
 import {DocumentType} from "../../../services/app/invoice-service";
 import {bindable} from "aurelia";
@@ -32,15 +32,7 @@ export class InvoiceEditItems {
 
     calcLineTotal(line: UBLLine) {
         const quantity = getAmount(line);
-        if (!line.Price) {
-            line.Price = { PriceAmount: { value: 0 } } as UBLLine["Price"];
-        }
-        if (!line.Price.PriceAmount) {
-            line.Price.PriceAmount = { value: 0 };
-        }
-        const rawUnitPrice = Number(line.Price.PriceAmount.value);
-        const unitPrice = Number.isFinite(rawUnitPrice) && rawUnitPrice >= 0 ? rawUnitPrice : 0;
-        line.Price.PriceAmount.value = unitPrice;
+        const unitPrice = normalizeLinePrice(line);
         line.LineExtensionAmount.value = roundTwoDecimals(unitPrice * quantity.value);
         this.invoiceCalculator.calculateTaxAndTotals(this.invoiceContext.selectedInvoice);
         this.checkLineAutoSave(line);
