@@ -4,6 +4,7 @@ import {AlertType} from "../components/alert/alert";
 import {computed, IEventAggregator} from "aurelia";
 import {I18N} from "@aurelia/i18n";
 import {ChoosePassword} from "../components/choose-password/choose-password";
+import {onModalEnter} from "../components/util/modal-keyboard";
 
 export class ChangePasswordModal {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -48,22 +49,10 @@ export class ChangePasswordModal {
     }
 
     onKeyDown(event: KeyboardEvent) {
-        if (event.key !== 'Enter' || this.shouldIgnoreEnter(event.target)) {
-            return;
-        }
-        event.preventDefault();
-        this.changePassword();
+        onModalEnter(event, () => this.changePassword());
     }
 
     private canConfirm() {
         return !!this.password && !!this.choosePassword?.rules.matchOk && !!this.choosePassword?.rules.pwStrong && !this.isRequesting;
-    }
-
-    private shouldIgnoreEnter(target: EventTarget | null) {
-        const element = target as HTMLElement | null;
-        if (!element) {
-            return false;
-        }
-        return ['BUTTON', 'A', 'TEXTAREA'].includes(element.tagName);
     }
 }

@@ -2,6 +2,7 @@ import {ProductCategoryDto, ProductCategoryService} from "../services/app/produc
 import {resolve} from "@aurelia/kernel";
 import {ProductContext} from "./product-context";
 import {ISignaler} from "aurelia";
+import {onModalEnter} from "../components/util/modal-keyboard";
 
 export class ProductCategoryModal {
     private readonly signaler = resolve(ISignaler);
@@ -50,18 +51,6 @@ export class ProductCategoryModal {
     }
 
     onKeyDown(event: KeyboardEvent) {
-        if (event.key !== 'Enter' || this.shouldIgnoreEnter(event.target)) {
-            return;
-        }
-        event.preventDefault();
-        this.saveProductCategory();
-    }
-
-    private shouldIgnoreEnter(target: EventTarget | null) {
-        const element = target as HTMLElement | null;
-        if (!element) {
-            return false;
-        }
-        return ['BUTTON', 'A', 'TEXTAREA'].includes(element.tagName);
+        onModalEnter(event, () => this.saveProductCategory());
     }
 }

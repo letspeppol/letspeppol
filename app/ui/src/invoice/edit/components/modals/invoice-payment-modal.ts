@@ -1,4 +1,5 @@
 import {bindable, IEventAggregator} from "aurelia";
+import {onModalEnter} from "../../../../components/util/modal-keyboard";
 import {PaymentMeans} from "../../../../services/peppol/ubl";
 import {InvoiceComposer} from "../../../invoice-composer";
 import {resolve} from "@aurelia/kernel";
@@ -60,18 +61,6 @@ export class InvoicePaymentModal {
     }
 
     onKeyDown(event: KeyboardEvent) {
-        if (event.key !== 'Enter' || this.shouldIgnoreEnter(event.target)) {
-            return;
-        }
-        event.preventDefault();
-        this.savePaymentMeans();
-    }
-
-    private shouldIgnoreEnter(target: EventTarget | null) {
-        const element = target as HTMLElement | null;
-        if (!element) {
-            return false;
-        }
-        return ['BUTTON', 'A', 'TEXTAREA'].includes(element.tagName);
+        onModalEnter(event, () => this.savePaymentMeans());
     }
 }

@@ -1,4 +1,5 @@
 import {bindable, IEventAggregator, watch} from "aurelia";
+import {onModalEnter} from "../../../../components/util/modal-keyboard";
 import {AdditionalDocumentReference} from "../../../../services/peppol/ubl";
 import {resolve} from "@aurelia/kernel";
 import {AlertType} from "../../../../components/alert/alert";
@@ -148,18 +149,6 @@ export class InvoiceAttachmentModal {
     });
 
     onKeyDown(event: KeyboardEvent) {
-        if (event.key !== 'Enter' || this.shouldIgnoreEnter(event.target)) {
-            return;
-        }
-        event.preventDefault();
-        this.saveAttachments();
-    }
-
-    private shouldIgnoreEnter(target: EventTarget | null) {
-        const element = target as HTMLElement | null;
-        if (!element) {
-            return false;
-        }
-        return ['BUTTON', 'A', 'TEXTAREA'].includes(element.tagName);
+        onModalEnter(event, () => this.saveAttachments());
     }
 }

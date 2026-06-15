@@ -1,4 +1,5 @@
 import {bindable, IEventAggregator} from "aurelia";
+import {onModalEnter} from "../../../../components/util/modal-keyboard";
 import {Identifier, Party} from "../../../../services/peppol/ubl";
 import {PartnerDto, PartnerService} from "../../../../services/app/partner-service";
 import {CustomerSearch} from "../customer-search";
@@ -212,11 +213,7 @@ export class InvoiceCustomerModal {
     }
 
     onKeyDown(event: KeyboardEvent) {
-        if (event.key !== 'Enter' || this.shouldIgnoreEnter(event.target)) {
-            return;
-        }
-        event.preventDefault();
-        this.saveCustomer();
+        onModalEnter(event, () => this.saveCustomer());
     }
 
     private canConfirm() {
@@ -225,13 +222,5 @@ export class InvoiceCustomerModal {
             && !!this.customer?.PartyTaxScheme?.CompanyID
             && !!this.peppolId
             && this.peppolId.includes(':');
-    }
-
-    private shouldIgnoreEnter(target: EventTarget | null) {
-        const element = target as HTMLElement | null;
-        if (!element) {
-            return false;
-        }
-        return ['BUTTON', 'A', 'TEXTAREA'].includes(element.tagName);
     }
 }

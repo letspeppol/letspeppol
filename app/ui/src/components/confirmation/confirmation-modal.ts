@@ -1,5 +1,6 @@
 import {resolve} from "@aurelia/kernel";
 import {ConfirmationModalContext} from "./confirmation-modal-context";
+import {onModalEnter} from "../util/modal-keyboard";
 
 export class ConfirmationModal {
     private readonly confirmationContext = resolve(ConfirmationModalContext);
@@ -19,18 +20,6 @@ export class ConfirmationModal {
     }
 
     onKeyDown(event: KeyboardEvent) {
-        if (event.key !== 'Enter' || this.shouldIgnoreEnter(event.target)) {
-            return;
-        }
-        event.preventDefault();
-        this.yes();
-    }
-
-    private shouldIgnoreEnter(target: EventTarget | null) {
-        const element = target as HTMLElement | null;
-        if (!element) {
-            return false;
-        }
-        return ['BUTTON', 'A', 'TEXTAREA'].includes(element.tagName);
+        onModalEnter(event, () => this.yes());
     }
 }

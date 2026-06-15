@@ -1,4 +1,5 @@
 import {bindable} from "aurelia";
+import {onModalEnter} from "../../../../components/util/modal-keyboard";
 import {DocumentType} from "../../../../services/app/invoice-service";
 
 export class InvoiceNumberModal {
@@ -33,18 +34,6 @@ export class InvoiceNumberModal {
     }
 
     onKeyDown(event: KeyboardEvent) {
-        if (event.key !== 'Enter' || this.shouldIgnoreEnter(event.target)) {
-            return;
-        }
-        event.preventDefault();
-        this.sendInvoice();
-    }
-
-    private shouldIgnoreEnter(target: EventTarget | null) {
-        const element = target as HTMLElement | null;
-        if (!element) {
-            return false;
-        }
-        return ['BUTTON', 'A', 'TEXTAREA'].includes(element.tagName);
+        onModalEnter(event, () => this.sendInvoice());
     }
 }

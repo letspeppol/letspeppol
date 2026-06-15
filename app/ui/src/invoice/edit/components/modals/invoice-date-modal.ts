@@ -1,4 +1,5 @@
 import {bindable, observable} from "aurelia";
+import {onModalEnter} from "../../../../components/util/modal-keyboard";
 import {resolve} from "@aurelia/kernel";
 import {Account} from "../../../../account/account";
 import {InvoiceComposer} from "../../../invoice-composer";
@@ -85,18 +86,6 @@ export class InvoiceDateModal {
     }
 
     onKeyDown(event: KeyboardEvent) {
-        if (event.key !== 'Enter' || this.shouldIgnoreEnter(event.target)) {
-            return;
-        }
-        event.preventDefault();
-        this.saveDate();
-    }
-
-    private shouldIgnoreEnter(target: EventTarget | null) {
-        const element = target as HTMLElement | null;
-        if (!element) {
-            return false;
-        }
-        return ['BUTTON', 'A', 'TEXTAREA'].includes(element.tagName);
+        onModalEnter(event, () => this.saveDate());
     }
 }

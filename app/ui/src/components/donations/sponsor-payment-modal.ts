@@ -1,4 +1,5 @@
 import {IEventAggregator} from "aurelia";
+import {onModalEnter} from "../util/modal-keyboard";
 import {resolve} from "@aurelia/kernel";
 import {I18N} from "@aurelia/i18n";
 import {CompanyService} from "../../services/app/company-service";
@@ -184,27 +185,10 @@ export class SponsorPaymentModal {
     }
 
     onKeyDown(event: KeyboardEvent) {
-        if (event.key !== 'Enter' || this.shouldIgnoreEnter(event.target)) {
-            return;
-        }
-        if (this.sent) {
-            event.preventDefault();
-            this.closeModal();
-            return;
-        }
-        event.preventDefault();
-        this.sponsor();
+        onModalEnter(event, () => this.sent ? this.closeModal() : this.sponsor());
     }
 
     private canConfirm() {
         return !!this.validAmount && !this.sending;
-    }
-
-    private shouldIgnoreEnter(target: EventTarget | null) {
-        const element = target as HTMLElement | null;
-        if (!element) {
-            return false;
-        }
-        return ['BUTTON', 'A', 'TEXTAREA'].includes(element.tagName);
     }
 }
