@@ -117,6 +117,15 @@ public class DocumentController {
         return documentService.send(peppolId, id, schedule, jwt.getTokenValue());
     }
 
+    @PutMapping("{id}/reschedule")
+    public DocumentDto reschedule(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestParam(required = false) Instant schedule) {
+        if (!JwtUtil.isPeppolActive(jwt)) {
+            throw new PeppolException("Peppol ID is not active");
+        }
+        String peppolId = JwtUtil.getPeppolId(jwt);
+        return documentService.reschedule(peppolId, id, schedule, jwt.getTokenValue());
+    }
+
     @PutMapping("{id}/read")
     public DocumentDto read(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
         String peppolId = JwtUtil.getPeppolId(jwt);

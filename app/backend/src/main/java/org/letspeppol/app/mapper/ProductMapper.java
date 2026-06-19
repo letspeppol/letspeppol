@@ -15,6 +15,7 @@ public class ProductMapper {
             product.getCostPrice(),
             product.getSalePrice(),
             product.getTaxPercentage(),
+            product.getStockQuantity(),
             product.getCategory() != null ? product.getCategory().getId() : null
         );
     }

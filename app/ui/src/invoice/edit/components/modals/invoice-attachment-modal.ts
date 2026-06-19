@@ -1,4 +1,5 @@
 import {bindable, IEventAggregator, watch} from "aurelia";
+import {onModalEnter} from "../../../../components/util/modal-keyboard";
 import {AdditionalDocumentReference} from "../../../../services/peppol/ubl";
 import {resolve} from "@aurelia/kernel";
 import {AlertType} from "../../../../components/alert/alert";
@@ -47,6 +48,9 @@ export class InvoiceAttachmentModal {
     }
 
     saveAttachments() {
+        if (!this.validated) {
+            return;
+        }
         this.invoiceContext.selectedInvoice.AdditionalDocumentReference = this.additionalDocumentReference;
         this.closeModal();
     }
@@ -137,10 +141,14 @@ export class InvoiceAttachmentModal {
         return true;
     }
 
-    toBase64 = file => new Promise((resolve, reject) => {
+    toBase64 = (file: File): Promise<string> => new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
+        reader.onload = () => resolve(reader.result as string);
         reader.onerror = reject;
     });
+
+    onKeyDown(event: KeyboardEvent) {
+        onModalEnter(event, () => this.saveAttachments());
+    }
 }

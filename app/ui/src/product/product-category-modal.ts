@@ -2,6 +2,7 @@ import {ProductCategoryDto, ProductCategoryService} from "../services/app/produc
 import {resolve} from "@aurelia/kernel";
 import {ProductContext} from "./product-context";
 import {ISignaler} from "aurelia";
+import {onModalEnter} from "../components/util/modal-keyboard";
 
 export class ProductCategoryModal {
     private readonly signaler = resolve(ISignaler);
@@ -27,6 +28,9 @@ export class ProductCategoryModal {
     }
 
     async saveProductCategory() {
+        if (!this.category?.name?.trim()) {
+            return;
+        }
         if (this.productCategoryToUpdate) {
             const productCategory = await this.productCategoryService.updateProductCategory(this.category.id, this.category);
             this.productCategoryToUpdate.name = productCategory.name;
@@ -44,5 +48,9 @@ export class ProductCategoryModal {
         this.productContext.deleteProductCategory(this.category);
         this.open = false;
         this.signaler.dispatchSignal('productUpdate');
+    }
+
+    onKeyDown(event: KeyboardEvent) {
+        onModalEnter(event, () => this.saveProductCategory());
     }
 }

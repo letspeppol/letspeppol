@@ -1,4 +1,5 @@
 import {bindable, IEventAggregator} from "aurelia";
+import {onModalEnter} from "../../../../components/util/modal-keyboard";
 import {Identifier, Party} from "../../../../services/peppol/ubl";
 import {PartnerDto, PartnerService} from "../../../../services/app/partner-service";
 import {CustomerSearch} from "../customer-search";
@@ -60,6 +61,9 @@ export class InvoiceCustomerModal {
     }
 
     saveCustomer() {
+        if (!this.canConfirm()) {
+            return;
+        }
         this.open = false;
         const previousPeppolId = this.toPeppolIdString(this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party?.EndpointID);
         const newPeppolId = this.toPeppolIdString(this.customer?.EndpointID);
@@ -206,5 +210,17 @@ export class InvoiceCustomerModal {
         if (!this.customer.PostalAddress.StreetName) {
             this.customer.PostalAddress.StreetName = kycCompanyResponse.street;
         }
+    }
+
+    onKeyDown(event: KeyboardEvent) {
+        onModalEnter(event, () => this.saveCustomer());
+    }
+
+    private canConfirm() {
+        return !!this.customer?.PartyName?.Name
+            && !!this.customer?.PartyLegalEntity?.RegistrationName
+            && !!this.customer?.PartyTaxScheme?.CompanyID
+            && !!this.peppolId
+            && this.peppolId.includes(':');
     }
 }

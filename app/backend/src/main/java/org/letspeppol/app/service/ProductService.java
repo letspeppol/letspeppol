@@ -45,6 +45,7 @@ public class ProductService {
         product.setCostPrice(productDto.costPrice());
         product.setSalePrice(productDto.salePrice());
         product.setTaxPercentage(productDto.taxPercentage());
+        product.setStockQuantity(productDto.stockQuantity());
         product.setCompany(company);
 
         if (productDto.categoryId() != null) {
@@ -71,6 +72,7 @@ public class ProductService {
         product.setCostPrice(productDto.costPrice());
         product.setSalePrice(productDto.salePrice());
         product.setTaxPercentage(productDto.taxPercentage());
+        product.setStockQuantity(productDto.stockQuantity());
 
         if (productDto.categoryId() != null) {
             ProductCategory category = productCategoryRepository.findById(productDto.categoryId())

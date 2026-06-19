@@ -8,7 +8,7 @@
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    z-index: 60;
+    z-index: 40;
     padding: 0
 }
 

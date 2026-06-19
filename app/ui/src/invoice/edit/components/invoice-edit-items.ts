@@ -1,6 +1,6 @@
 import {resolve} from "@aurelia/kernel";
 import {InvoiceContext} from "../../invoice-context";
-import {ClassifiedTaxCategory, CreditNoteLine, getAmount, InvoiceLine, UBLLine} from "../../../services/peppol/ubl";
+import {ClassifiedTaxCategory, CreditNoteLine, getAmount, InvoiceLine, normalizeLinePrice, UBLLine} from "../../../services/peppol/ubl";
 import {InvoiceCalculator, roundTwoDecimals} from "../../invoice-calculator";
 import {DocumentType} from "../../../services/app/invoice-service";
 import {bindable} from "aurelia";
@@ -32,7 +32,8 @@ export class InvoiceEditItems {
 
     calcLineTotal(line: UBLLine) {
         const quantity = getAmount(line);
-        line.LineExtensionAmount.value = roundTwoDecimals(line.Price.PriceAmount.value * quantity.value);
+        const unitPrice = normalizeLinePrice(line);
+        line.LineExtensionAmount.value = roundTwoDecimals(unitPrice * quantity.value);
         this.invoiceCalculator.calculateTaxAndTotals(this.invoiceContext.selectedInvoice);
         this.checkLineAutoSave(line);
     }
@@ -64,7 +65,7 @@ export class InvoiceEditItems {
 
     checkLineAutoSave(line: InvoiceLine | CreditNoteLine) {
         let autosave = false;
-        if (line?.Item?.Name && line?.Price?.PriceAmount?.value) {
+        if (line?.Item?.Name && line?.Price?.PriceAmount?.value != null) {
             if (this.invoiceContext.selectedDocumentType === DocumentType.INVOICE && (line as InvoiceLine).InvoicedQuantity?.value
                 || this.invoiceContext.selectedDocumentType === DocumentType.CREDIT_NOTE && (line as CreditNoteLine).CreditedQuantity?.value) {
                 autosave = true;

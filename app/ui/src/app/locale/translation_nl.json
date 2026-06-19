@@ -139,6 +139,15 @@
     "INVOICE" : "Factuur",
     "CREDIT_NOTE" : "Creditnota"
   },
+  "password-rules" : {
+    "length" : "Minstens 12 tekens",
+    "lower" : "Minstens 1 kleine letter",
+    "upper" : "Minstens 1 hoofdletter",
+    "number" : "Minstens 1 cijfer",
+    "symbol" : "Minstens 1 symbool",
+    "match" : "Wachtwoorden komen overeen",
+    "strength" : "Wachtwoordsterkte"
+  },
   "confirmation" : {
     "header" : "Identiteit bevestigen",
     "header-sign" : "Contract ondertekenen",

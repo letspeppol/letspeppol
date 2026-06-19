@@ -14,6 +14,7 @@ import {PeppolDirectoryResponse, PeppolDirService} from "../services/peppol/pepp
 import {SignatureAlgorithm} from "@web-eid/web-eid-library/models/SignatureAlgorithm";
 import {LibrarySignResponse} from "@web-eid/web-eid-library/models/message/LibraryResponse";
 import {I18N} from "@aurelia/i18n";
+import {ChoosePassword} from "../components/choose-password/choose-password";
 
 export class EmailConfirmation {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -36,6 +37,7 @@ export class EmailConfirmation {
     private confirmInProgress = false;
     private warningKey;
     private alreadyRegisteredProvider = '';
+    private choosePassword: ChoosePassword;
 
     public loading(params: Params, next: RouteNode) {
         this.emailToken = next.queryParams.get('token');
@@ -55,36 +57,6 @@ export class EmailConfirmation {
     getContractUrl() {
         const contractUrl = this.registrationService.getContractUrl(this.confirmedDirector.id, this.emailToken);
         return `${contractUrl}#page=1&view=FitH,300`;
-    }
-
-    get lengthOk(): boolean { return this.password.length >= 12; }
-
-    get lowerOk(): boolean {
-        return (/[a-z]/.test(this.password));
-    }
-
-    get upperOk(): boolean {
-        return (/[A-Z]/.test(this.password));
-    }
-
-    get numberOk(): boolean {
-        return (/\d/.test(this.password));
-    }
-
-    get symbolOk(): boolean {
-        return (/[^A-Za-z0-9]/.test(this.password));
-    }
-
-    get matchOk(): boolean {
-        return !!this.password && this.password === this.passwordDuplicate;
-    }
-
-    get pwScore(): number {
-        return this.password ? Math.min(4, Math.floor(this.password.length / 4)) + (this.lowerOk ? 1 : 0) + (this.upperOk ? 1 : 0) + (this.numberOk ? 1 : 0) + (this.symbolOk ? 1 : 0) : 0;
-    }
-
-    get pwStrong() {
-        return this.lengthOk && this.lowerOk && this.upperOk && this.numberOk && this.symbolOk;
     }
 
     public async checkPeppolDirectory(peppolId: string) {
