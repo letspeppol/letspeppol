@@ -39,6 +39,7 @@ public class KboLookupService {
 
     public final static String EAS_ONDERNEMINGSNUMMER = "0208";
     private static final Duration TIMEOUT = Duration.ofSeconds(15);
+    private static final String VAT_QUALIFICATION_TEXT = "Onderworpen aan btw";
 
     public Optional<CompanyResponse> findCompany(String peppolId) {
         kboLookupCounter.increment();
@@ -46,10 +47,10 @@ public class KboLookupService {
         if (!EAS_ONDERNEMINGSNUMMER.equals(peppolIdDto.scheme())) { //TODO : split for other countries
             throw new IllegalArgumentException("Only Belgian (0208) companies are implemented");
         }
-        String normalizedVat = CompanyNumberUtil.normalizeVat(peppolIdDto.value());
+        String normalizedEnterpriseNumber = CompanyNumberUtil.normalizeEnterpriseNumber(peppolIdDto.value());
         String html;
         try {
-            html = fetchEnterpriseHtml(normalizedVat);
+            html = fetchEnterpriseHtml(normalizedEnterpriseNumber);
         } catch (Exception e) {
             log.error(e.getMessage());
             return Optional.empty();
@@ -61,20 +62,20 @@ public class KboLookupService {
         }
         Optional<Address> address = parseAddressFromHtml(html);
         if (address.isEmpty()) {
-            log.error("Could not parse address from html for company {} {}", normalizedVat, name);
+            log.error("Could not parse address from html for company {} {}", normalizedEnterpriseNumber, name);
             throw new KycException(KycErrorCodes.KBO_PARSE_ADDRESS_FAILED);
         }
         List<DirectorDto> directors = parseDirectorsFromHtml(html);
         if (directors.isEmpty()) {
-            log.error("Could not parse functions from html for company {} {}", normalizedVat, name);
+            log.error("Could not parse functions from html for company {} {}", normalizedEnterpriseNumber, name);
             throw new KycException(KycErrorCodes.KBO_PARSE_DIRECTORS_FAILED);
         }
 
         CompanyResponse companyResponse = new CompanyResponse(
                 null,
                 peppolId,
-                normalizedVat,
-                "BE"+normalizedVat,
+                normalizedEnterpriseNumber,
+                getVatNumberFromHtml(html, normalizedEnterpriseNumber),
                 name,
                 address.get().getStreetAndHouseNumber(),
                 address.get().city,
@@ -86,10 +87,10 @@ public class KboLookupService {
         return Optional.of(companyResponse);
     }
 
-    private String fetchEnterpriseHtml(String vat) {
+    private String fetchEnterpriseHtml(String enterpriseNumber) {
         try {
             return kboWebClient.get()
-                    .uri("/{vat}?s=ent&lang=nl", vat)
+                    .uri("/{enterpriseNumber}?s=ent&lang=nl", enterpriseNumber)
                     .retrieve()
                     .onStatus(HttpStatusCode::is4xxClientError, resp -> Mono.error(new KycException(KycErrorCodes.KBO_NOT_FOUND)))
                     .onStatus(HttpStatusCode::is5xxServerError, resp -> Mono.error(new KycException(KycErrorCodes.KBO_SERVICE_ERROR)))
@@ -113,6 +114,20 @@ public class KboLookupService {
         }
         Element strong = kader.selectFirst("strong");
         return strong != null ? strong.text().trim() : null;
+    }
+
+    String getVatNumberFromHtml(String html, String normalizedEnterpriseNumber) {
+        if (html == null || html.isEmpty()) {
+            return null;
+        }
+        Document doc = Jsoup.parse(html);
+        Element qualificationKader = doc.getElementById("qualificationKader");
+        if (qualificationKader == null) {
+            return null;
+        }
+        return qualificationKader.getElementsContainingOwnText(VAT_QUALIFICATION_TEXT).isEmpty()
+                ? null
+                : "BE" + normalizedEnterpriseNumber;
     }
 
     List<DirectorDto> parseDirectorsFromHtml(String html) {

@@ -59,7 +59,7 @@ public class CompanyService {
     }
 
     private Company storeCompanyAndDirectors(String peppolId, CompanyResponse companyResponse) {
-        Company company = new Company(peppolId, companyResponse.vatNumber(), companyResponse.name());
+        Company company = new Company(peppolId, companyResponse.identifier(), companyResponse.vatNumber(), companyResponse.name());
         company.setAddress(companyResponse.city(),companyResponse.postalCode(), companyResponse.street());
         companyRepository.save(company);
         for (DirectorDto director : companyResponse.directors()) {

@@ -45,9 +45,10 @@ public class Company {
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Director> directors = new ArrayList<>();
 
-    public Company(String peppolId, String identifier, String name) {
+    public Company(String peppolId, String identifier, String vatNumber, String name) {
         this.peppolId = peppolId;
         this.identifier = identifier;
+        this.vatNumber = vatNumber;
         this.name = name;
         this.registeredOnPeppol = false;
         this.hasKboAddress = false;

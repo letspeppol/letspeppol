@@ -91,19 +91,19 @@ public class DataInitializer implements CommandLineRunner {
 
         }
         peppolId = "0208:1023290711";
-        if (companyRepository.findByPeppolId(peppolId).isEmpty()) {
-            AccountInfo accountInfo = new AccountInfo(
-                    peppolId,
-                    "1023290711",
-                    "BE1023290711",
-                    "SoftwareOplossing bv.",
-                    "Demerstraat 2",
-                    "Hasselt",
-                    "3500",
-                    "Bart In stukken",
-                    "bart@softwareoplossing.be"
-            );
-            companyService.add(accountInfo);
-        }
+//        if (companyRepository.findByPeppolId(peppolId).isEmpty()) {
+//            AccountInfo accountInfo = new AccountInfo(
+//                    peppolId,
+//                    "1023290711",
+//                    "BE1023290711",
+//                    "SoftwareOplossing bv.",
+//                    "Demerstraat 2",
+//                    "Hasselt",
+//                    "3500",
+//                    "Bart In stukken",
+//                    "bart@softwareoplossing.be"
+//            );
+//            companyService.add(accountInfo);
+//        }
     }
 }

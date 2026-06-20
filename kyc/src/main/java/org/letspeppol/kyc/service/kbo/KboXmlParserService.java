@@ -201,16 +201,16 @@ public class KboXmlParserService {
     }
 
     private Company createCompany(String peppolId, String enterpriseNumber, EnterpriseData enterprise) {
-        Company newCompany = new Company(peppolId, enterpriseNumber, enterprise.name);
+        String vatNumber = null;
+        if (enterprise.subjectToVat) {
+            vatNumber = buildVatNumberFromNbr(enterprise.nbr);
+        }
+        Company newCompany = new Company(peppolId, enterpriseNumber,vatNumber, enterprise.name);
+        newCompany.setIban(enterprise.iban);
+        newCompany.setBusinessUnit(enterprise.businessUnit);
         if (enterprise.address != null) {
             newCompany.setAddress(enterprise.address.city, enterprise.address.postalCode, enterprise.address.street);
             newCompany.setHasKboAddress(true);
-        }
-        newCompany.setIban(enterprise.iban);
-        newCompany.setBusinessUnit(enterprise.businessUnit);
-        if (enterprise.subjectToVat) {
-            String vatNumber = buildVatNumberFromNbr(enterprise.nbr);
-            newCompany.setVatNumber(vatNumber);
         }
         return newCompany;
     }
