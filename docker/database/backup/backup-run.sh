@@ -1,10 +1,6 @@
 #!/bin/sh
 set -eu
 
-. /etc/backup.env
-
-mkdir -p "$DATA_DIR"
-
 status=0
 ts=$(date "+%Y-%m-%dT%H-%M-%S%z")
 
@@ -15,10 +11,10 @@ for d in $DB_LIST; do
     continue
   fi
 
-  if ls "$DATA_DIR"/"$d"-*.dump >/dev/null 2>&1; then
-    echo "[backup] refusing $d: unsynced .dump exists"
-    status=1
-    continue
+  old_dumps=$(ls -1 "$DATA_DIR"/"$d"-*.dump 2>/dev/null || true)
+  if [ -n "$old_dumps" ]; then
+    echo "[backup] removing previous local dump(s) for $d"
+    rm -f -- "$DATA_DIR"/"$d"-*.dump
   fi
 
   tmp="$DATA_DIR/$d-$ts.dump.tmp"
