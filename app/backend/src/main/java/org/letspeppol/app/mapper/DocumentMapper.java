@@ -22,6 +22,7 @@ public class DocumentMapper {
                 document.getDraftedOn(),
                 document.getReadOn(),
                 document.getPaidOn(),
+                document.getErrorSeenOn(),
                 document.getPartnerName(),
                 document.getInvoiceReference(),
                 document.getType(),

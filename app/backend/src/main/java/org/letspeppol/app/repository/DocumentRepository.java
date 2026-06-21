@@ -27,26 +27,30 @@ public interface DocumentRepository extends JpaRepository<Document, UUID>, JpaSp
         """)
     boolean existsByInvoiceReferenceAndTypeAndOwnerPeppolId(String invoiceReference, DocumentType type, String ownerPeppolId);
 
+    // Errored documents (processed_status IS NOT NULL) are excluded from the money totals and counted separately as erroredUnseenCount.
     @Query(value = """
     SELECT
-      COALESCE(SUM(CASE WHEN direction = 'INCOMING' AND paid_on IS NULL THEN signed_incl END), 0) AS totalPayableOpenInclVat,
-      COALESCE(SUM(CASE WHEN direction = 'INCOMING' AND paid_on IS NULL AND due_date < NOW() THEN signed_incl END), 0) AS totalPayableOverdueInclVat,
-      COALESCE(SUM(CASE WHEN direction = 'INCOMING' AND issue_date >= date_trunc('year', NOW()) AND issue_date < date_trunc('year', NOW()) + INTERVAL '1 year' THEN signed_incl END), 0) AS totalPayableThisYearInclVat,
-      COALESCE(SUM(CASE WHEN direction = 'OUTGOING' AND paid_on IS NULL THEN signed_incl END), 0) AS totalReceivableOpenInclVat,
-      COALESCE(SUM(CASE WHEN direction = 'OUTGOING' AND paid_on IS NULL AND due_date < NOW() THEN signed_incl END), 0) AS totalReceivableOverdueInclVat,
-      COALESCE(SUM(CASE WHEN direction = 'OUTGOING' AND issue_date >= date_trunc('year', NOW()) AND issue_date < date_trunc('year', NOW()) + INTERVAL '1 year' THEN signed_incl END), 0) AS totalReceivableThisYearInclVat,
-      COALESCE(SUM(CASE WHEN direction = 'INCOMING' AND paid_on IS NULL THEN signed_excl END), 0) AS totalPayableOpenExclVat,
-      COALESCE(SUM(CASE WHEN direction = 'INCOMING' AND paid_on IS NULL AND due_date < NOW() THEN signed_excl END), 0) AS totalPayableOverdueExclVat,
-      COALESCE(SUM(CASE WHEN direction = 'INCOMING' AND issue_date >= date_trunc('year', NOW()) AND issue_date < date_trunc('year', NOW()) + INTERVAL '1 year' THEN signed_excl END), 0) AS totalPayableThisYearExclVat,
-      COALESCE(SUM(CASE WHEN direction = 'OUTGOING' AND paid_on IS NULL THEN signed_excl END), 0) AS totalReceivableOpenExclVat,
-      COALESCE(SUM(CASE WHEN direction = 'OUTGOING' AND paid_on IS NULL AND due_date < NOW() THEN signed_excl END), 0) AS totalReceivableOverdueExclVat,
-      COALESCE(SUM(CASE WHEN direction = 'OUTGOING' AND issue_date >= date_trunc('year', NOW()) AND issue_date < date_trunc('year', NOW()) + INTERVAL '1 year' THEN signed_excl END), 0) AS totalReceivableThisYearExclVat
+      COALESCE(SUM(CASE WHEN direction = 'INCOMING' AND processed_status IS NULL AND paid_on IS NULL THEN signed_incl END), 0) AS totalPayableOpenInclVat,
+      COALESCE(SUM(CASE WHEN direction = 'INCOMING' AND processed_status IS NULL AND paid_on IS NULL AND due_date < NOW() THEN signed_incl END), 0) AS totalPayableOverdueInclVat,
+      COALESCE(SUM(CASE WHEN direction = 'INCOMING' AND processed_status IS NULL AND issue_date >= date_trunc('year', NOW()) AND issue_date < date_trunc('year', NOW()) + INTERVAL '1 year' THEN signed_incl END), 0) AS totalPayableThisYearInclVat,
+      COALESCE(SUM(CASE WHEN direction = 'OUTGOING' AND processed_status IS NULL AND paid_on IS NULL THEN signed_incl END), 0) AS totalReceivableOpenInclVat,
+      COALESCE(SUM(CASE WHEN direction = 'OUTGOING' AND processed_status IS NULL AND paid_on IS NULL AND due_date < NOW() THEN signed_incl END), 0) AS totalReceivableOverdueInclVat,
+      COALESCE(SUM(CASE WHEN direction = 'OUTGOING' AND processed_status IS NULL AND issue_date >= date_trunc('year', NOW()) AND issue_date < date_trunc('year', NOW()) + INTERVAL '1 year' THEN signed_incl END), 0) AS totalReceivableThisYearInclVat,
+      COALESCE(SUM(CASE WHEN direction = 'INCOMING' AND processed_status IS NULL AND paid_on IS NULL THEN signed_excl END), 0) AS totalPayableOpenExclVat,
+      COALESCE(SUM(CASE WHEN direction = 'INCOMING' AND processed_status IS NULL AND paid_on IS NULL AND due_date < NOW() THEN signed_excl END), 0) AS totalPayableOverdueExclVat,
+      COALESCE(SUM(CASE WHEN direction = 'INCOMING' AND processed_status IS NULL AND issue_date >= date_trunc('year', NOW()) AND issue_date < date_trunc('year', NOW()) + INTERVAL '1 year' THEN signed_excl END), 0) AS totalPayableThisYearExclVat,
+      COALESCE(SUM(CASE WHEN direction = 'OUTGOING' AND processed_status IS NULL AND paid_on IS NULL THEN signed_excl END), 0) AS totalReceivableOpenExclVat,
+      COALESCE(SUM(CASE WHEN direction = 'OUTGOING' AND processed_status IS NULL AND paid_on IS NULL AND due_date < NOW() THEN signed_excl END), 0) AS totalReceivableOverdueExclVat,
+      COALESCE(SUM(CASE WHEN direction = 'OUTGOING' AND processed_status IS NULL AND issue_date >= date_trunc('year', NOW()) AND issue_date < date_trunc('year', NOW()) + INTERVAL '1 year' THEN signed_excl END), 0) AS totalReceivableThisYearExclVat,
+      COALESCE(SUM(CASE WHEN processed_status IS NOT NULL AND error_seen_on IS NULL THEN 1 ELSE 0 END), 0) AS erroredUnseenCount
     FROM (
       SELECT
         direction,
         paid_on,
         due_date,
         issue_date,
+        processed_status,
+        error_seen_on,
         CASE WHEN type = 'CREDIT_NOTE' THEN -amount_incl_vat ELSE amount_incl_vat END AS signed_incl,
         CASE WHEN type = 'CREDIT_NOTE' THEN -amount_excl_vat ELSE amount_excl_vat END AS signed_excl
       FROM app.document

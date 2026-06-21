@@ -258,7 +258,8 @@
     "vat-suffix": {
       "incl": "inkl. MwSt.",
       "excl": "exkl. MwSt."
-    }
+    },
+    "errored": "Fehlerhafte Rechnungen"
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -362,6 +363,12 @@
         "CREDIT_NOTE": "Gutschrift als unbezahlt markiert"
       },
       "paid-status-failed": "Zahlungsstatus konnte nicht geändert werden",
+      "marked-seen": "Rechnung als gesehen markiert",
+      "mark-seen-failed": "Rechnung konnte nicht als gesehen markiert werden",
+      "resend-failed": {
+        "INVOICE": "Wiederverwenden der Rechnung fehlgeschlagen",
+        "CREDIT_NOTE": "Wiederverwenden der Gutschrift fehlgeschlagen"
+      },
       "no-ubl-data": "Keine UBL-Daten verfügbar"
     },
     "iban": {
@@ -496,6 +503,11 @@
       "mark-unpaid": {
         "INVOICE": "Rechnung als unbezahlt markieren",
         "CREDIT_NOTE": "Gutschrift als unbezahlt markieren"
+      },
+      "mark-seen": "Als gesehen markieren",
+      "resend": {
+        "INVOICE": "Rechnung wiederverwenden und erneut senden",
+        "CREDIT_NOTE": "Gutschrift wiederverwenden und erneut senden"
       }
     },
     "table": {

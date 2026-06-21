@@ -257,7 +257,8 @@
     "vat-suffix": {
       "incl": "TVA inc.",
       "excl": "HT"
-    }
+    },
+    "errored": "Factures en erreur"
   },
   "navigation" : {
     "dashboard" : "Tableau de bord",
@@ -361,6 +362,12 @@
         "CREDIT_NOTE" : "Note de crédit marquée comme impayée"
       },
       "paid-status-failed" : "Échec du changement de statut de paiement",
+      "marked-seen" : "Facture marquée comme vue",
+      "mark-seen-failed" : "Échec du marquage de la facture comme vue",
+      "resend-failed" : {
+        "INVOICE" : "Échec de la réutilisation de la facture",
+        "CREDIT_NOTE" : "Échec de la réutilisation de la note de crédit"
+      },
       "no-ubl-data" : "Aucune donnée UBL disponible"
     },
     "iban" : {
@@ -495,6 +502,11 @@
       "mark-unpaid" : {
         "INVOICE" : "Marquer la facture comme impayée",
         "CREDIT_NOTE" : "Marquer la note de crédit comme impayée"
+      },
+      "mark-seen" : "Marquer comme vue",
+      "resend" : {
+        "INVOICE" : "Réutiliser et renvoyer la facture",
+        "CREDIT_NOTE" : "Réutiliser et renvoyer la note de crédit"
       }
     },
     "table" : {

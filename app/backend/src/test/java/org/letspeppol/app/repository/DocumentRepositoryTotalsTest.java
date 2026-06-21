@@ -593,4 +593,73 @@ class DocumentRepositoryTotalsTest extends PostgresIntegrationTest {
         // 500 + 123.45 + 200 - 45 - 10 = 768.45  (drafted + last-year excluded)
         assertThat(totals.totalReceivableThisYearInclVat()).isEqualByComparingTo("768.45");
     }
+
+    @Test
+    void erroredInvoicesAreExcludedFromAllMoneyTotals() {
+        // Issue #269: a valid pending outgoing invoice still counts in open/overdue/this-year
+        persist(d -> {
+            d.setDirection(DocumentDirection.OUTGOING);
+            d.setAmountInclVat(new BigDecimal("50.00"));
+            d.setDueDate(daysAgo(5));
+        });
+        // Errored outgoing invoice (processedStatus set): excluded everywhere even though unpaid, non-draft, overdue, this year
+        persist(d -> {
+            d.setDirection(DocumentDirection.OUTGOING);
+            d.setAmountInclVat(new BigDecimal("65.00"));
+            d.setDueDate(daysAgo(5));
+            d.setProcessedStatus("BUSINESS_ERROR: rejected by recipient AP");
+        });
+        // Errored incoming invoice: excluded from payable totals too
+        persist(d -> {
+            d.setDirection(DocumentDirection.INCOMING);
+            d.setAmountInclVat(new BigDecimal("77.00"));
+            d.setDueDate(daysAgo(5));
+            d.setProcessedStatus("BUSINESS_ERROR");
+        });
+        flush();
+
+        TotalsRow totals = documentRepository.totalsByOwner(OWNER);
+
+        assertThat(totals.totalReceivableOpenInclVat()).isEqualByComparingTo("50.00");
+        assertThat(totals.totalReceivableOverdueInclVat()).isEqualByComparingTo("50.00");
+        assertThat(totals.totalReceivableThisYearInclVat()).isEqualByComparingTo("50.00");
+        assertThat(totals.totalPayableOpenInclVat()).isEqualByComparingTo("0");
+        assertThat(totals.totalPayableOverdueInclVat()).isEqualByComparingTo("0");
+    }
+
+    @Test
+    void erroredUnseenCountCountsOnlyUnacknowledgedErroredDocuments() {
+        // Errored, not yet acknowledged -> counted
+        persist(d -> {
+            d.setDirection(DocumentDirection.OUTGOING);
+            d.setProcessedStatus("ERR-A");
+        });
+        persist(d -> {
+            d.setDirection(DocumentDirection.OUTGOING);
+            d.setProcessedStatus("ERR-B");
+        });
+        // Errored but acknowledged (errorSeenOn set) -> NOT counted
+        persist(d -> {
+            d.setDirection(DocumentDirection.OUTGOING);
+            d.setProcessedStatus("ERR-C");
+            d.setErrorSeenOn(Instant.now());
+        });
+        // Valid document (no processedStatus) -> NOT counted
+        persist(d -> d.setDirection(DocumentDirection.OUTGOING));
+        // Drafted errored document -> excluded by the drafted_on IS NULL subquery filter
+        persist(d -> {
+            d.setDirection(DocumentDirection.OUTGOING);
+            d.setProcessedStatus("ERR-D");
+            d.setDraftedOn(Instant.now());
+        });
+        // Other owner's errored document -> isolated
+        persistOther(d -> {
+            d.setDirection(DocumentDirection.OUTGOING);
+            d.setProcessedStatus("ERR-OTHER");
+        });
+        flush();
+
+        assertThat(documentRepository.totalsByOwner(OWNER).erroredUnseenCount()).isEqualTo(2L);
+        assertThat(documentRepository.totalsByOwner(OTHER_OWNER).erroredUnseenCount()).isEqualTo(1L);
+    }
 }

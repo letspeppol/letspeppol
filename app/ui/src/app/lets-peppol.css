@@ -935,6 +935,31 @@ main.container .data-table tbody td {
     color: var(--status-overdue)
 }
 
+/* Dashboard errored-invoices indicator */
+.kpi-error-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-04);
+    margin-bottom: var(--space-04);
+    border-color: var(--pill-error-border);
+    background: var(--pill-error-bg);
+    color: var(--pill-error-fg);
+}
+
+.kpi-error-count {
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+/* Acknowledged ("seen") errored invoice, greyed out */
+.data-table tbody tr.row-seen {
+    opacity: .55;
+}
+
+.data-table tbody tr.row-seen .pill.error {
+    filter: grayscale(1);
+}
+
 /* ============================================================================
    10. Row Actions & Empty States
    ============================================================================ */

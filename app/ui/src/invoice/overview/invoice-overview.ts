@@ -184,6 +184,39 @@ export class InvoiceOverview {
         }
     }
 
+    // Acknowledge an errored invoice: it stays visible (greyed out) but leaves the errored counter and offers no further action.
+    async markErrorSeen(event: Event, item: DocumentDto) {
+        event.stopPropagation();
+        try {
+            const updated = await this.invoiceService.markErrorSeenDocument(item.id);
+            item.errorSeenOn = updated.errorSeenOn;
+            this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.invoice.marked-seen')});
+        } catch (e) {
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.invoice.mark-seen-failed')});
+        }
+    }
+
+    // Reuse the errored invoice's content as a new editable draft so the user can correct it and resend with the same number
+    // (the uniqueness check ignores errored documents, so the number is free to reuse).
+    async resendErrored(event: Event, item: DocumentDto) {
+        event.stopPropagation();
+        try {
+            const errored = await this.invoiceService.getDocument(item.id);
+            if (!errored.ubl) {
+                this.ea.publish('alert', {alertType: AlertType.Warning, text: this.i18n.tr('alert.invoice.no-ubl-data')});
+                return;
+            }
+            const draft = await this.invoiceService.createDocument(errored.ubl, true, false);
+            this.invoiceContext.draftPage?.content.unshift(draft);
+            if (this.invoiceContext.draftPage) {
+                this.invoiceContext.draftPage.totalElements++;
+            }
+            this.router.load(`/invoices/${draft.id}`);
+        } catch (e) {
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr(`alert.invoice.resend-failed.${item.type}`)});
+        }
+    }
+
     showUploadUblModal() {
         this.uploadUblModal.showModal();
     }

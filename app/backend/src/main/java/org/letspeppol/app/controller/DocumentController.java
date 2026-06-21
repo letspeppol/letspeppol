@@ -138,6 +138,12 @@ public class DocumentController {
         return documentService.paid(peppolId, id);
     }
 
+    @PutMapping("{id}/error-seen")
+    public DocumentDto markErrorSeen(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
+        String peppolId = JwtUtil.getPeppolId(jwt);
+        return documentService.markErrorSeen(peppolId, id);
+    }
+
     @DeleteMapping("{id}")
     public void delete(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
         String peppolId = JwtUtil.getPeppolId(jwt);
