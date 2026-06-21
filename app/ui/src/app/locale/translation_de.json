@@ -585,6 +585,14 @@
       "no-matches": "Keine Treffer",
       "save-as-partner": "Als Partner speichern"
     },
+    "attachmentModal": {
+      "upload-file": "Datei hochladen",
+      "upload-hint": "Datei hierher ziehen oder zum Durchsuchen klicken",
+      "upload-aria": "Anhang hinzufügen: Datei hierher ziehen oder zum Durchsuchen klicken",
+      "auto-pdf": "Automatisch generiertes Rechnungs-PDF einschließen",
+      "auto-pdf-disabled": "Aktivieren Sie das automatisch generierte PDF in Ihren Kontoeinstellungen.",
+      "auto-pdf-replace": "Ein Rechnungs-PDF wird automatisch generiert. Schalten Sie es oben aus, wenn Ihre hochgeladene Datei es ersetzt."
+    },
     "productSearch": {
       "placeholder": "Name",
       "no-matches": "Keine Treffer"

@@ -583,6 +583,14 @@
       "search-partner-placeholder" : "Rechercher un partenaire par nom ou numéro TVA",
       "no-matches" : "Aucun résultat"
     },
+    "attachmentModal" : {
+      "upload-file" : "Importer un fichier",
+      "upload-hint" : "Glissez-déposez ou cliquez pour parcourir",
+      "upload-aria" : "Ajouter une pièce jointe : glissez-déposez un fichier ou cliquez pour parcourir",
+      "auto-pdf" : "Inclure le PDF de facture généré automatiquement",
+      "auto-pdf-disabled" : "Activez le PDF généré automatiquement dans les paramètres de votre compte.",
+      "auto-pdf-replace" : "Un PDF de facture est généré automatiquement. Désactivez-le ci-dessus si votre fichier importé le remplace."
+    },
     "productSearch" : {
       "placeholder" : "nom",
       "no-matches" : "Aucun résultat"

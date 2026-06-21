@@ -583,6 +583,14 @@
       "search-partner-placeholder" : "Zoek partner op naam of BTW-nummer",
       "no-matches" : "Geen resultaten"
     },
+    "attachmentModal" : {
+      "upload-file" : "Bestand uploaden",
+      "upload-hint" : "Sleep een bestand hierheen of klik om te bladeren",
+      "upload-aria" : "Een bijlage toevoegen: sleep een bestand hierheen of klik om te bladeren",
+      "auto-pdf" : "Voeg de automatisch gegenereerde factuur-PDF toe",
+      "auto-pdf-disabled" : "Schakel de automatisch gegenereerde PDF in via uw accountinstellingen.",
+      "auto-pdf-replace" : "Er wordt automatisch een factuur-PDF gegenereerd. Schakel deze hierboven uit als uw geüploade bestand deze vervangt."
+    },
     "productSearch" : {
       "placeholder" : "naam",
       "no-matches" : "Geen resultaten"

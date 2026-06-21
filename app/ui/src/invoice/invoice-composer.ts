@@ -16,7 +16,7 @@ import {CompanyService} from "../services/app/company-service";
 import {DocumentType} from "../services/app/invoice-service";
 import {I18N} from "@aurelia/i18n";
 
-const GENERATED_INVOICE = 'generated_invoice';
+export const GENERATED_INVOICE = 'generated_invoice';
 
 @singleton()
 export class InvoiceComposer {
@@ -327,6 +327,7 @@ export class InvoiceComposer {
             BuyerReference: invoice.BuyerReference,
             OrderReference: invoice.OrderReference,
             BillingReference: billingReference,
+            AdditionalDocumentReference: invoice.AdditionalDocumentReference,
             AccountingSupplierParty: invoice.AccountingSupplierParty,
             AccountingCustomerParty: invoice.AccountingCustomerParty,
             PaymentMeans: invoice.PaymentMeans,
@@ -355,6 +356,7 @@ export class InvoiceComposer {
             DocumentCurrencyCode: "EUR",
             BuyerReference: creditNote.BuyerReference,
             OrderReference: creditNote.OrderReference,
+            AdditionalDocumentReference: creditNote.AdditionalDocumentReference,
             AccountingSupplierParty: creditNote.AccountingSupplierParty,
             AccountingCustomerParty: creditNote.AccountingCustomerParty,
             PaymentMeans: creditNote.PaymentMeans,
@@ -372,6 +374,12 @@ export class InvoiceComposer {
     }
 
     public getAdditionalDocumentReference() {
+        // Only seed the generated-PDF marker when the company opted in. The backend
+        // renders the real PDF over this marker at send time; without the opt-in it
+        // would otherwise travel as an empty placeholder.
+        if (!this.companyService.myCompany?.addPdfToSendingInvoice) {
+            return [];
+        }
         return [{
             ID: GENERATED_INVOICE,
             DocumentDescription: 'Generated Invoice PDF',
