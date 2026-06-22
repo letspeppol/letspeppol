@@ -148,14 +148,14 @@
     "INVOICE": "Factuur",
     "CREDIT_NOTE": "Creditnota"
   },
-  "password-rules" : {
-    "length" : "Minstens 12 tekens",
-    "lower" : "Minstens 1 kleine letter",
-    "upper" : "Minstens 1 hoofdletter",
-    "number" : "Minstens 1 cijfer",
-    "symbol" : "Minstens 1 symbool",
-    "match" : "Wachtwoorden komen overeen",
-    "strength" : "Wachtwoordsterkte"
+  "password-rules": {
+    "length": "Minstens 12 tekens",
+    "lower": "Minstens 1 kleine letter",
+    "upper": "Minstens 1 hoofdletter",
+    "number": "Minstens 1 cijfer",
+    "symbol": "Minstens 1 symbool",
+    "match": "Wachtwoorden komen overeen",
+    "strength": "Wachtwoordsterkte"
   },
   "confirmation": {
     "header": "Identiteit bevestigen",
@@ -359,18 +359,18 @@
         "INVOICE": "Factuurconcept succesvol aangemaakt",
         "CREDIT_NOTE": "Creditnotaconcept succesvol aangemaakt"
       },
-      "draft-deleted" : "Concept verwijderd",
-      "draft-delete-overview-failed" : "Concept verwijderen mislukt",
-      "marked-paid" : {
-        "INVOICE" : "Factuur gemarkeerd als betaald",
-        "CREDIT_NOTE" : "Creditnota gemarkeerd als betaald"
+      "draft-deleted": "Concept verwijderd",
+      "draft-delete-overview-failed": "Concept verwijderen mislukt",
+      "marked-paid": {
+        "INVOICE": "Factuur gemarkeerd als betaald",
+        "CREDIT_NOTE": "Creditnota gemarkeerd als betaald"
       },
-      "marked-unpaid" : {
-        "INVOICE" : "Factuur gemarkeerd als onbetaald",
-        "CREDIT_NOTE" : "Creditnota gemarkeerd als onbetaald"
+      "marked-unpaid": {
+        "INVOICE": "Factuur gemarkeerd als onbetaald",
+        "CREDIT_NOTE": "Creditnota gemarkeerd als onbetaald"
       },
-      "paid-status-failed" : "Wijzigen van betalingsstatus mislukt",
-      "no-ubl-data" : "Geen UBL-gegevens beschikbaar"
+      "paid-status-failed": "Wijzigen van betalingsstatus mislukt",
+      "no-ubl-data": "Geen UBL-gegevens beschikbaar"
     },
     "iban": {
       "saved": "IBAN opgeslagen"
@@ -488,22 +488,22 @@
       "INVOICE": "Nieuwe factuur",
       "CREDIT_NOTE": "Nieuwe creditnota"
     },
-    "status" : {
-      "draft" : "Concept",
-      "scheduled" : "Gepland",
-      "processed" : "Verwerkt",
-      "error" : "Fout",
-      "paid" : "Betaald",
-      "overdue" : "Vervallen"
+    "status": {
+      "draft": "Concept",
+      "scheduled": "Gepland",
+      "processed": "Verwerkt",
+      "error": "Fout",
+      "paid": "Betaald",
+      "overdue": "Vervallen"
     },
-    "action" : {
-      "mark-paid" : {
-        "INVOICE" : "Factuur markeren als betaald",
-        "CREDIT_NOTE" : "Creditnota markeren als betaald"
+    "action": {
+      "mark-paid": {
+        "INVOICE": "Factuur markeren als betaald",
+        "CREDIT_NOTE": "Creditnota markeren als betaald"
       },
-      "mark-unpaid" : {
-        "INVOICE" : "Factuur markeren als niet betaald",
-        "CREDIT_NOTE" : "Creditnota markeren als niet betaald"
+      "mark-unpaid": {
+        "INVOICE": "Factuur markeren als niet betaald",
+        "CREDIT_NOTE": "Creditnota markeren als niet betaald"
       }
     },
     "table": {

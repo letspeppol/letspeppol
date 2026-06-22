@@ -43,10 +43,10 @@
     "peppolId": "Peppol ID",
     "enterprise-number": "Enterprise nr."
   },
-  "placeholder" : {
-    "email" : "you@company.com",
-    "enterprise-number" : "0123456789",
-    "vat-number" : "BE0123456789",
+  "placeholder": {
+    "email": "you@company.com",
+    "enterprise-number": "0123456789",
+    "vat-number": "BE0123456789",
     "password": "••••••••",
     "product-search": "Search product",
     "partner-search": "Search partner",
