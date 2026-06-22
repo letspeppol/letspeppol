@@ -4,6 +4,9 @@ import {bindable, IDisposable, IEventAggregator} from "aurelia";
 import {
     CreditNote,
     Invoice,
+    CreditNoteLine,
+    InvoiceLine,
+    normalizeLinePrice,
     UBLLine
 } from "../../services/peppol/ubl";
 import {AlertType} from "../../components/alert/alert";
@@ -103,15 +106,18 @@ export class InvoiceEdit {
         const type = this.selectedDocumentType;
         try {
             this.ea.publish('showOverlay', this.i18n.tr(`overlay.sending.${type}`));
-            const xml = this.buildXml();
-
-            const response = await this.invoiceService.validate(xml);
-            if (!response.isValid) {
-                this.validationResultModal.showModal(response);
-                return;
+            let doc;
+            if (this.invoiceContext.selectedDocument?.createdExternally && this.invoiceContext.selectedDocument?.id) {
+                doc = await this.invoiceService.sendDocument(this.invoiceContext.selectedDocument.id);
+            } else {
+                const xml = this.buildXml();
+                const response = await this.invoiceService.validate(xml);
+                if (!response.isValid) {
+                    this.validationResultModal.showModal(response);
+                    return;
+                }
+                doc = await this.invoiceService.createDocument(xml);
             }
-
-            const doc = await this.invoiceService.createDocument(xml);
             this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(`alert.invoice.sent.${type}`)});
             this.invoiceContext.invoicePage.content.unshift(doc);
             if (this.invoiceContext.selectedDocument.draftedOn) {
@@ -139,6 +145,7 @@ export class InvoiceEdit {
     // }
 
     buildXml(): string {
+        this.normalizeUnitPrices();
         if  (this.selectedDocumentType === DocumentType.INVOICE)  {
             return buildInvoiceXml(this.invoiceContext.selectedInvoice as Invoice)
         } else {
@@ -244,6 +251,16 @@ export class InvoiceEdit {
         const response = await this.invoiceService.validate(xml);
         this.validationResultModal.showModal(response);
         console.log(response);
+    }
+
+    private normalizeUnitPrices() {
+        const lines = this.invoiceContext.lines as Array<InvoiceLine | CreditNoteLine> | undefined;
+        if (!lines?.length) {
+            return;
+        }
+        for (const line of lines) {
+            normalizeLinePrice(line);
+        }
     }
 
     savePartner() {

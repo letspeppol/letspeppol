@@ -11,5 +11,6 @@ public record ProductDto(
         BigDecimal costPrice,
         BigDecimal salePrice,
         BigDecimal taxPercentage,
+        BigDecimal stockQuantity,
         Long categoryId
 ) {}

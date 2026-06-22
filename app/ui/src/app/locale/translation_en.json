@@ -151,6 +151,15 @@
     "INVOICE": "Invoice",
     "CREDIT_NOTE": "Credit Note"
   },
+  "password-rules": {
+    "length": "At least 12 characters",
+    "lower": "At least 1 lowercase letter",
+    "upper": "At least 1 uppercase letter",
+    "number": "At least 1 number",
+    "symbol": "At least 1 symbol",
+    "match": "Passwords match",
+    "strength": "Password strength"
+  },
   "confirmation": {
     "header": "Confirm Identity",
     "header-sign": "Sign Contract",

@@ -60,7 +60,7 @@ export class LoginService {
 
     async getJwtToken(username: string, password: string) {
         const authHeaders: Headers = new Headers;
-        authHeaders.append('Authorization', `Basic ${btoa(`${username}:${password}`)}` );
+        authHeaders.append('Authorization', `Basic ${this.toBase64Utf8(`${username}:${password}`)}` );
         const requestInit: RequestInit = { headers: authHeaders }
         const response = await this.kycApi.httpClient.post(`/api/jwt/auth`, undefined, requestInit);
         return await response.text();
@@ -84,5 +84,14 @@ export class LoginService {
         this.partnerService.clearCache();
         this.sponsorService.clearCache();
         this.statisticsService.clearCache();
+    }
+
+    private toBase64Utf8(value: string) {
+        const bytes = new TextEncoder().encode(value);
+        let binary = '';
+        for (const byte of bytes) {
+            binary += String.fromCharCode(byte);
+        }
+        return btoa(binary);
     }
 }
