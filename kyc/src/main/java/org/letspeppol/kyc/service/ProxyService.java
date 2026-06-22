@@ -1,5 +1,6 @@
 package org.letspeppol.kyc.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.kyc.dto.RegistrationRequest;
 import org.letspeppol.kyc.dto.RegistrationResponse;
@@ -7,7 +8,7 @@ import org.letspeppol.kyc.dto.RegistryDto;
 import org.letspeppol.kyc.dto.ServiceRequest;
 import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.KycException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.letspeppol.kyc.service.jwt.JwtClaimExtractor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -16,15 +17,22 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class ProxyService {
 
     @Qualifier("ProxyWebClient")
-    @Autowired
-    private WebClient webClient;
+    private final WebClient webClient;
+    private final JwtClaimExtractor jwtClaimExtractor;
+
+    /** peppolId of the acting user (already validated/gated by KYC), asserted to the service-only registry endpoints. */
+    private String actingPeppolId() {
+        return jwtClaimExtractor.extract().peppolId();
+    }
 
     public boolean isCompanyPeppolActive() {
+        String peppolId = actingPeppolId();
         RegistryDto registryDto = webClient.get()
-                .uri("/sapi/registry")
+                .uri(uriBuilder -> uriBuilder.path("/sapi/registry").queryParam("peppolId", peppolId).build())
                 .retrieve()
                 .bodyToMono(RegistryDto.class)
                 .blockOptional()
@@ -34,9 +42,10 @@ public class ProxyService {
     }
 
     public RegistrationResponse registerCompany(String companyName) {
+        String peppolId = actingPeppolId();
         try {
             RegistryDto registryDto = webClient.post()
-                    .uri("/sapi/registry")
+                    .uri(uriBuilder -> uriBuilder.path("/sapi/registry").queryParam("peppolId", peppolId).build())
                     .body(Mono.just(new RegistrationRequest(companyName, "NL", "BE")), RegistrationRequest.class)
                     .retrieve()
                     .bodyToMono(RegistryDto.class)
@@ -61,9 +70,10 @@ public class ProxyService {
     }
 
     public boolean unregisterCompany() {
+        String peppolId = actingPeppolId();
         try {
             RegistryDto registryDto = webClient.put()
-                    .uri("/sapi/registry/unregister")
+                    .uri(uriBuilder -> uriBuilder.path("/sapi/registry/unregister").queryParam("peppolId", peppolId).build())
                     .retrieve()
                     .bodyToMono(RegistryDto.class)
                     .blockOptional()
@@ -77,9 +87,10 @@ public class ProxyService {
     }
 
     public void allowService(ServiceRequest request) {
+        String peppolId = actingPeppolId();
         try {
             webClient.put()
-                    .uri("/sapi/registry/allow")
+                    .uri(uriBuilder -> uriBuilder.path("/sapi/registry/allow").queryParam("peppolId", peppolId).build())
                     .body(Mono.just(request), ServiceRequest.class)
                     .retrieve()
                     .toBodilessEntity()
@@ -92,9 +103,10 @@ public class ProxyService {
     }
 
     public void rejectService(ServiceRequest request) {
+        String peppolId = actingPeppolId();
         try {
             webClient.put()
-                    .uri("/sapi/registry/reject")
+                    .uri(uriBuilder -> uriBuilder.path("/sapi/registry/reject").queryParam("peppolId", peppolId).build())
                     .body(Mono.just(request), ServiceRequest.class)
                     .retrieve()
                     .toBodilessEntity()

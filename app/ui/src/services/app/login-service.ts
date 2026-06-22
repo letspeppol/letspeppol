@@ -11,10 +11,16 @@ import {StatisticsService} from "./statistics-service";
 const KYC_BASE = '/kyc';
 const CLIENT_ID = 'letspeppol-ui';
 const CALLBACK_PATH = '/callback';
-const TOKEN_KEY = 'token';
-const REFRESH_TOKEN_KEY = 'refresh_token';
-const ID_TOKEN_KEY = 'id_token';
+const LOGIN_PATH = '/login';
 const PEPPOL_ACTIVE_KEY = 'peppolActive';
+// Non-sensitive marker (not a token) that this browser has had a session, so eager silent re-auth
+// only runs when there's plausibly a KYC session to ride.
+const SESSION_HINT_KEY = 'session_hint';
+
+interface TokenResponse {
+    access_token: string;
+    id_token?: string;
+}
 
 @singleton()
 export class LoginService {
@@ -25,20 +31,28 @@ export class LoginService {
     private statisticsService = resolve(StatisticsService);
     public authenticated = false;
 
+    // Tokens live in memory only (never localStorage) so an XSS foothold can't read them at rest;
+    // session continuity rides the HttpOnly KYC cookie via silent re-authorization (see silentLogin()).
+    private accessToken: string | null = null;
+    private idToken: string | null = null;
+    private silentLoginInFlight: Promise<boolean> | null = null;
+
     constructor() {
-        this.verifyAuthenticated();
+        // Fresh page load: in-memory tokens are gone, so restore silently — but skip the callback (it
+        // runs its own exchange), the login page, and anonymous visitors (no session hint). Protected
+        // routes still restore via ensureAuthenticated() in the router hook.
+        const path = window.location.pathname;
+        if (path !== CALLBACK_PATH && path !== LOGIN_PATH && localStorage.getItem(SESSION_HINT_KEY)) {
+            void this.silentLogin();
+        }
     }
 
     private get redirectUri(): string {
         return `${window.location.origin}${CALLBACK_PATH}`;
     }
 
-    verifyAuthenticated() {
-        const token = localStorage.getItem(TOKEN_KEY);
-        if (token && !this.isExpired(token)) {
-            this.setAuthHeader(token);
-            this.authenticated = true;
-        }
+    get token(): string | null {
+        return this.accessToken;
     }
 
     getTokenExpiryDateInSeconds(token: string): number {
@@ -57,6 +71,12 @@ export class LoginService {
         return Math.floor(Date.now() / 1000);
     }
 
+    /** True if a usable access token is available (restoring it via silent login if needed). */
+    async ensureAuthenticated(): Promise<boolean> {
+        if (this.accessToken && !this.isExpired(this.accessToken)) return true;
+        return this.silentLogin();
+    }
+
     async initiateLogin(): Promise<void> {
         const verifier = generateCodeVerifier();
         const challenge = await generateCodeChallenge(verifier);
@@ -73,8 +93,8 @@ export class LoginService {
             scope: 'openid',
         });
 
-        window.location.href = `${KYC_BASE}/oauth2/authorize?${params.toString()}`;
         this.clearCachedData();
+        window.location.href = `${KYC_BASE}/oauth2/authorize?${params.toString()}`;
     }
 
     async handleCallback(code: string, state: string): Promise<void> {
@@ -82,13 +102,74 @@ export class LoginService {
         if (!pkce || pkce.state !== state) {
             throw new Error('Invalid state parameter');
         }
+        await this.exchangeCode(code, pkce.verifier);
+    }
 
+    /**
+     * Silent re-authorization: ride the HttpOnly KYC session to mint a fresh code with no UI
+     * (prompt=none). We follow the same-origin redirect and read the code off the final URL; with no
+     * valid session there's no code, so we report failure and the caller falls back to interactive login.
+     */
+    async silentLogin(): Promise<boolean> {
+        if (this.silentLoginInFlight) return this.silentLoginInFlight;
+        this.silentLoginInFlight = this.doSilentLogin().finally(() => {
+            this.silentLoginInFlight = null;
+        });
+        return this.silentLoginInFlight;
+    }
+
+    private async doSilentLogin(): Promise<boolean> {
+        try {
+            const verifier = generateCodeVerifier();
+            const challenge = await generateCodeChallenge(verifier);
+            const state = generateState();
+
+            const params = new URLSearchParams({
+                response_type: 'code',
+                client_id: CLIENT_ID,
+                redirect_uri: this.redirectUri,
+                code_challenge: challenge,
+                code_challenge_method: 'S256',
+                state: state,
+                scope: 'openid',
+                prompt: 'none',
+            });
+
+            const response = await fetch(`${KYC_BASE}/oauth2/authorize?${params.toString()}`, {
+                method: 'GET',
+                credentials: 'same-origin',
+                redirect: 'follow',
+            });
+
+            const finalUrl = new URL(response.url, window.location.origin);
+            // Only trust a code from a same-origin final URL (redirect_uri is same-origin by construction).
+            if (finalUrl.origin !== window.location.origin) {
+                return false;
+            }
+            const code = finalUrl.searchParams.get('code');
+            const returnedState = finalUrl.searchParams.get('state');
+            if (!code || returnedState !== state) {
+                return false;
+            }
+            await this.exchangeCode(code, verifier);
+            return true;
+        } catch {
+            return false;
+        }
+    }
+
+    async refreshToken(): Promise<boolean> {
+        // Renewal now rides the KYC session instead of a stored refresh token.
+        return this.silentLogin();
+    }
+
+    private async exchangeCode(code: string, verifier: string): Promise<void> {
         const body = new URLSearchParams({
             grant_type: 'authorization_code',
             client_id: CLIENT_ID,
             code: code,
             redirect_uri: this.redirectUri,
-            code_verifier: pkce.verifier,
+            code_verifier: verifier,
         });
 
         const response = await fetch(`${KYC_BASE}/oauth2/token`, {
@@ -101,54 +182,29 @@ export class LoginService {
             throw new Error('Token exchange failed');
         }
 
-        const data = await response.json();
+        const data: TokenResponse = await response.json();
         this.storeTokenResponse(data);
-    }
-
-    async refreshToken(): Promise<boolean> {
-        const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
-        if (!refreshToken) return false;
-
-        const body = new URLSearchParams({
-            grant_type: 'refresh_token',
-            client_id: CLIENT_ID,
-            refresh_token: refreshToken,
-        });
-
-        try {
-            const response = await fetch(`${KYC_BASE}/oauth2/token`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                body: body.toString(),
-            });
-
-            if (!response.ok) return false;
-
-            const data = await response.json();
-            this.storeTokenResponse(data);
-            return true;
-        } catch {
-            return false;
-        }
     }
 
     updateToken(token: string) {
         this.clearCachedData();
-        localStorage.setItem(TOKEN_KEY, token);
-        this.setAuthHeader(token);
-        this.authenticated = true;
+        this.applyAccessToken(token);
     }
 
-    private storeTokenResponse(data: any) {
-        localStorage.setItem(TOKEN_KEY, data.access_token);
-        if (data.refresh_token) {
-            localStorage.setItem(REFRESH_TOKEN_KEY, data.refresh_token);
-        }
+    private storeTokenResponse(data: TokenResponse) {
+        // id_token is kept (in memory) as the logout id_token_hint; any refresh token is ignored —
+        // silent re-authorization replaces it, so no long-lived secret is stored in the browser.
         if (data.id_token) {
-            localStorage.setItem(ID_TOKEN_KEY, data.id_token);
+            this.idToken = data.id_token;
         }
-        this.setAuthHeader(data.access_token);
+        this.applyAccessToken(data.access_token);
+    }
+
+    private applyAccessToken(token: string) {
+        this.accessToken = token;
+        this.setAuthHeader(token);
         this.authenticated = true;
+        localStorage.setItem(SESSION_HINT_KEY, '1');
     }
 
     setAuthHeader(token: string) {
@@ -160,11 +216,11 @@ export class LoginService {
         this.clearCachedData();
         this.kycApi.httpClient.configure(config => config.withDefaults({ headers: {'Authorization': ''} }));
         this.appApi.httpClient.configure(config => config.withDefaults({ headers: {'Authorization': ''} }));
-        const idToken = localStorage.getItem(ID_TOKEN_KEY);
-        localStorage.removeItem(TOKEN_KEY);
-        localStorage.removeItem(REFRESH_TOKEN_KEY);
-        localStorage.removeItem(ID_TOKEN_KEY);
+        const idToken = this.idToken;
+        this.accessToken = null;
+        this.idToken = null;
         localStorage.removeItem(PEPPOL_ACTIVE_KEY);
+        localStorage.removeItem(SESSION_HINT_KEY);
         this.authenticated = false;
 
         if (redirectToAuthServer && idToken) {
@@ -177,14 +233,5 @@ export class LoginService {
         this.partnerService.clearCache();
         this.sponsorService.clearCache();
         this.statisticsService.clearCache();
-    }
-
-    private toBase64Utf8(value: string) {
-        const bytes = new TextEncoder().encode(value);
-        let binary = '';
-        for (const byte of bytes) {
-            binary += String.fromCharCode(byte);
-        }
-        return btoa(binary);
     }
 }

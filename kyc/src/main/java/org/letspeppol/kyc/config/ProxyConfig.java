@@ -39,6 +39,7 @@ public class ProxyConfig {
         return new InMemoryReactiveClientRegistrationRepository(registration);
     }
 
+    /** Authenticates as the {@code kyc-service} client (Client Credentials) for the service-only proxy registry endpoints. */
     @Bean(name = "ProxyWebClient")
     public WebClient webClient(
             @Value("${proxy.api.url}") String apiUrl,

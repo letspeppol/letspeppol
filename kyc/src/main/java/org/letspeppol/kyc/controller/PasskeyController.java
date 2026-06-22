@@ -33,9 +33,9 @@ public class PasskeyController {
     }
 
     @PostMapping("/sapi/passkeys/register/options")
-    public ResponseEntity<Map<String, Object>> registrationOptions(@RequestBody PasskeyRegistrationOptionsRequest request) {
+    public ResponseEntity<Map<String, Object>> registrationOptions() {
         UUID uid = jwtClaimExtractor.extract().uid();
-        Map<String, Object> options = passkeyService.generateRegistrationOptions(uid, request.displayName());
+        Map<String, Object> options = passkeyService.generateRegistrationOptions(uid);
         return ResponseEntity.ok(options);
     }
 
@@ -67,12 +67,8 @@ public class PasskeyController {
     }
 
     @PostMapping("/api/passkeys/authenticate/options")
-    public ResponseEntity<Map<String, Object>> authenticationOptions(
-            @RequestBody(required = false) PasskeyAuthenticationOptionsRequest request,
-            HttpSession session) {
-        String email = request != null ? request.email() : null;
-        Map<String, Object> options = passkeyService.generateAuthenticationOptions(email, session);
-        return ResponseEntity.ok(options);
+    public ResponseEntity<Map<String, Object>> authenticationOptions(HttpSession session) {
+        return ResponseEntity.ok(passkeyService.generateAuthenticationOptions(session));
     }
 
     @PostMapping("/api/passkeys/authenticate/verify")
@@ -81,7 +77,7 @@ public class PasskeyController {
             HttpServletRequest request) {
         Account account = passkeyService.verifyAuthentication(response, request.getSession());
 
-        SecurityContextHelper.establishSession(account, request.getSession(true));
+        SecurityContextHelper.establishSession(account, request);
 
         // Redirect to the SPA login URL — the SPA will re-initiate the OAuth2 flow,
         // and since the KYC session is now authenticated, the authorize endpoint will

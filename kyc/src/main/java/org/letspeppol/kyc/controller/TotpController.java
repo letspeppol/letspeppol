@@ -10,6 +10,7 @@ import org.letspeppol.kyc.dto.TotpSetupResponse;
 import org.letspeppol.kyc.dto.TotpStatusResponse;
 import org.letspeppol.kyc.dto.TotpVerifyRequest;
 import org.letspeppol.kyc.model.Account;
+import org.letspeppol.kyc.service.LoginAttemptService;
 import org.letspeppol.kyc.service.TotpService;
 import org.letspeppol.kyc.service.jwt.JwtClaimExtractor;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,13 +32,16 @@ public class TotpController {
 
     private final TotpService totpService;
     private final JwtClaimExtractor jwtClaimExtractor;
+    private final LoginAttemptService loginAttemptService;
     private final String uiBaseUrl;
     private final HttpSessionRequestCache requestCache;
 
     public TotpController(TotpService totpService, JwtClaimExtractor jwtClaimExtractor,
+                          LoginAttemptService loginAttemptService,
                           @Value("${UI_URL:http://localhost:9000}") String uiBaseUrl) {
         this.totpService = totpService;
         this.jwtClaimExtractor = jwtClaimExtractor;
+        this.loginAttemptService = loginAttemptService;
         this.uiBaseUrl = uiBaseUrl;
         this.requestCache = new HttpSessionRequestCache();
         this.requestCache.setMatchingRequestParameterName(null);
@@ -81,6 +85,16 @@ public class TotpController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "No pending TOTP verification"));
         }
 
+        if (request.code() == null || request.code().isBlank()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Missing code"));
+        }
+
+        String attemptKey = "totp:" + accountId;
+        if (loginAttemptService.isBlocked(attemptKey)) {
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                    .body(Map.of("error", "Too many attempts. Please try again later."));
+        }
+
         Account account = totpService.findById(accountId);
         String code = request.code().trim();
         boolean valid = totpService.verify(account, code);
@@ -89,10 +103,12 @@ public class TotpController {
         }
 
         if (!valid) {
+            loginAttemptService.recordFailure(attemptKey);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Invalid code"));
         }
 
-        SecurityContextHelper.establishSession(account, session);
+        loginAttemptService.recordSuccess(attemptKey);
+        SecurityContextHelper.establishSession(account, httpRequest);
         session.removeAttribute(TotpAuthenticationSuccessHandler.TOTP_PENDING_ACCOUNT_ID);
 
         SavedRequest savedRequest = requestCache.getRequest(httpRequest, null);

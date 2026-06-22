@@ -25,6 +25,7 @@ import org.letspeppol.kyc.model.PasskeyCredential;
 import org.letspeppol.kyc.repository.AccountRepository;
 import org.letspeppol.kyc.repository.PasskeyCredentialRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -35,7 +36,6 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -59,23 +59,59 @@ public class PasskeyService {
             PasskeyCredentialRepository passkeyRepo,
             AccountRepository accountRepo,
             ChallengeStore challengeStore,
+            Environment environment,
             @Value("${webauthn.rp.id}") String rpId,
             @Value("${webauthn.rp.name}") String rpName,
             @Value("${webauthn.rp.origins}") String originsStr) {
         this.passkeyRepo = passkeyRepo;
         this.accountRepo = accountRepo;
         this.challengeStore = challengeStore;
-        this.rpId = rpId;
+        this.rpId = rpId == null ? "" : rpId.trim();
         this.rpName = rpName;
         this.origins = new HashSet<>();
-        for (String o : originsStr.split("[,;\\s]+")) {
-            if (!o.isBlank()) origins.add(new Origin(o.trim()));
+        if (originsStr != null) {
+            for (String o : originsStr.split("[,;\\s]+")) {
+                if (!o.isBlank()) origins.add(new Origin(o.trim()));
+            }
         }
+        validateRelyingPartyConfig(environment);
         this.webAuthnManager = WebAuthnManager.createNonStrictWebAuthnManager();
         this.credentialDataConverter = new AttestedCredentialDataConverter(new ObjectConverter());
     }
 
-    public Map<String, Object> generateRegistrationOptions(UUID accountExternalId, String displayName) {
+    /**
+     * Fail fast at startup on a misconfigured relying party (passkeys are origin-bound, so a wrong
+     * rp id/origin rejects every ceremony). Deployed profiles must set rp id and origins explicitly,
+     * and each origin host must equal the rp id or be a subdomain of it (WebAuthn suffix rule).
+     */
+    private void validateRelyingPartyConfig(Environment environment) {
+        if (environment.matchesProfiles("postgres")) {
+            requireExplicit(environment, "WEBAUTHN_RP_ID");
+            requireExplicit(environment, "WEBAUTHN_RP_ORIGINS");
+        }
+        if (rpId.isBlank()) {
+            throw new IllegalStateException("webauthn.rp.id must be configured");
+        }
+        if (origins.isEmpty()) {
+            throw new IllegalStateException("webauthn.rp.origins must list at least one origin");
+        }
+        for (Origin origin : origins) {
+            String host = origin.getHost();
+            if (host == null || !(host.equals(rpId) || host.endsWith("." + rpId))) {
+                throw new IllegalStateException("webauthn origin '" + origin + "' is not valid for rp id '"
+                        + rpId + "': the origin host must equal the rp id or be a subdomain of it");
+            }
+        }
+    }
+
+    private static void requireExplicit(Environment environment, String envVar) {
+        String value = environment.getProperty(envVar);
+        if (value == null || value.isBlank()) {
+            throw new IllegalStateException(envVar + " must be set in deployed environments");
+        }
+    }
+
+    public Map<String, Object> generateRegistrationOptions(UUID accountExternalId) {
         Account account = accountRepo.findByExternalId(accountExternalId)
                 .orElseThrow(() -> new IllegalArgumentException("Account not found"));
 
@@ -101,10 +137,12 @@ public class PasskeyService {
         ));
         options.put("timeout", 300000);
         options.put("excludeCredentials", excludeCredentials);
+        // Require a resident (discoverable) credential so username-less login can find it via the
+        // authenticator's account picker — no allowCredentials hint needed.
         options.put("authenticatorSelection", Map.of(
-                "residentKey", "preferred",
-                "requireResidentKey", false,
-                "userVerification", "preferred"
+                "residentKey", "required",
+                "requireResidentKey", true,
+                "userVerification", "required"
         ));
         options.put("attestation", "none");
 
@@ -127,8 +165,10 @@ public class PasskeyService {
 
         ServerProperty serverProperty = new ServerProperty(origins, rpId, new DefaultChallenge(challenge), null);
         RegistrationRequest registrationRequest = new RegistrationRequest(attestationObject, clientDataJSON);
+        // userVerificationRequired = true: passkeys act as multi-factor (possession + PIN/biometric),
+        // which is what allows passkey login to bypass the separate TOTP step safely.
         RegistrationParameters registrationParameters = new RegistrationParameters(
-                serverProperty, null, false, true);
+                serverProperty, null, true, true);
 
         RegistrationData registrationData;
         try {
@@ -165,26 +205,20 @@ public class PasskeyService {
         passkeyRepo.save(credential);
     }
 
-    public Map<String, Object> generateAuthenticationOptions(String email, HttpSession session) {
+    public Map<String, Object> generateAuthenticationOptions(HttpSession session) {
         byte[] challenge = new byte[32];
         secureRandom.nextBytes(challenge);
         session.setAttribute(SESSION_CHALLENGE_KEY, challenge);
-
-        List<Map<String, Object>> allowCredentials = List.of();
-        if (email != null && !email.isBlank()) {
-            Optional<Account> accountOpt = accountRepo.findByEmail(email.toLowerCase());
-            if (accountOpt.isPresent()) {
-                allowCredentials = buildCredentialDescriptors(
-                        passkeyRepo.findAllByAccountId(accountOpt.get().getId()));
-            }
-        }
 
         Map<String, Object> options = new LinkedHashMap<>();
         options.put("challenge", Base64.getUrlEncoder().withoutPadding().encodeToString(challenge));
         options.put("rpId", rpId);
         options.put("timeout", 300000);
-        options.put("allowCredentials", allowCredentials);
-        options.put("userVerification", "preferred");
+        // Discoverable-credential login: the authenticator presents its own account picker, so we
+        // never return an allowCredentials list derived from the email. This keeps the response
+        // shape constant and removes the account-enumeration oracle (email-with-passkey vs not).
+        options.put("allowCredentials", List.of());
+        options.put("userVerification", "required");
 
         return options;
     }
@@ -212,8 +246,10 @@ public class PasskeyService {
         ServerProperty serverProperty = new ServerProperty(origins, rpId, new DefaultChallenge(challenge), null);
         AuthenticationRequest authRequest = new AuthenticationRequest(
                 credentialId, authenticatorData, clientDataJSON, signature);
+        // userVerificationRequired = true: enforce that the authenticator verified the user
+        // (PIN/biometric), so a passkey is a true multi-factor credential, not possession-only.
         AuthenticationParameters authParameters = new AuthenticationParameters(
-                serverProperty, authenticator, null, false, true);
+                serverProperty, authenticator, null, true, true);
 
         AuthenticationData authData;
         try {

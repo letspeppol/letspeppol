@@ -26,7 +26,7 @@ public class ChallengeStore {
         return token;
     }
 
-    public byte[] getChallenge(String token) {
+    private byte[] getChallenge(String token) {
         Entry entry = store.get(token);
         if (entry == null) return null;
         return entry.challenge;

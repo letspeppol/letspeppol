@@ -3,6 +3,7 @@ package org.letspeppol.kyc.config;
 import lombok.RequiredArgsConstructor;
 import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.repository.AccountRepository;
+import org.letspeppol.kyc.service.LoginAttemptService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,6 +17,7 @@ import java.util.UUID;
 public class AccountUserDetailsService implements UserDetailsService {
 
     private final AccountRepository accountRepository;
+    private final LoginAttemptService loginAttemptService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -32,8 +34,14 @@ public class AccountUserDetailsService implements UserDetailsService {
             account = accountRepository.findByEmail(username.toLowerCase());
         }
 
+        boolean locked = loginAttemptService.isBlocked(loginKey(username));
         return account
-                .map(AccountUserDetails::new)
+                .map(a -> new AccountUserDetails(a, locked))
                 .orElseThrow(() -> new UsernameNotFoundException("Account not found: " + username));
+    }
+
+    /** Throttle key used for form-login attempts; matches LoginAttemptEventListener. */
+    public static String loginKey(String username) {
+        return "login:" + username.toLowerCase();
     }
 }

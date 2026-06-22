@@ -12,9 +12,9 @@ export class KYCApi {
         const baseUrl = import.meta.env.VITE_KYC_BASE_URL || '/kyc';
         this.httpClient.configure(config => config
             .withBaseUrl(baseUrl)
-            .withDefaults({
-                headers: localStorage.getItem('token') ? {'Authorization': `Bearer ${localStorage.getItem('token')}`} : undefined,
-            })
+            // No token at construction — LoginService.setAuthHeader() injects the bearer header once
+            // a token is obtained (tokens are held in memory, never in localStorage).
+            .withDefaults({})
             .rejectErrorResponses()
             .withInterceptor({
                 responseError: (error: Response) => {

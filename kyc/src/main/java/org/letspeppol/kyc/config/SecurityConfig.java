@@ -5,6 +5,8 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import org.letspeppol.kyc.model.Account;
+import org.letspeppol.kyc.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +28,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
+import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
 import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
@@ -55,6 +58,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 @Configuration
 public class SecurityConfig {
@@ -108,6 +112,8 @@ public class SecurityConfig {
 
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
+                // CSRF guards only the cookie/session browser surface (the /login form, which carries a token).
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**", "/sapi/**", "/actuator/**"))
                 .requestCache(rc -> rc.requestCache(requestCache))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/totp-verify", "/error", "/css/**", "/images/**", "/js/**", "/favicon.ico").permitAll()
@@ -138,8 +144,13 @@ public class SecurityConfig {
     }
 
     @Bean
-    public JwtDecoder jwtDecoder(@Value("${jwt.public-key}") RSAPublicKey publicKey) {
-        return NimbusJwtDecoder.withPublicKey(publicKey).build();
+    public JwtDecoder jwtDecoder(
+            @Value("${jwt.public-key}") RSAPublicKey publicKey,
+            @Value("${oauth2.audience:letspeppol-api}") String audience,
+            @Value("${spring.security.oauth2.authorizationserver.issuer:}") String issuer) {
+        NimbusJwtDecoder decoder = NimbusJwtDecoder.withPublicKey(publicKey).build();
+        decoder.setJwtValidator(JwtValidationSupport.build(audience, issuer));
+        return decoder;
     }
 
     @Bean
@@ -177,7 +188,8 @@ public class SecurityConfig {
                 .clientId("letspeppol-ui")
                 .clientAuthenticationMethod(ClientAuthenticationMethod.NONE)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+                // No REFRESH_TOKEN grant: the SPA holds tokens in memory and renews via silent
+                // re-authorization, so no refresh token is issued to the browser.
                 .redirectUri(redirectUri)
                 .postLogoutRedirectUri(redirectUri.replace("/callback", "/login"))
                 .scope(OidcScopes.OPENID)
@@ -187,8 +199,6 @@ public class SecurityConfig {
                         .build())
                 .tokenSettings(TokenSettings.builder()
                         .accessTokenTimeToLive(Duration.ofHours(1))
-                        .refreshTokenTimeToLive(Duration.ofHours(8))
-                        .reuseRefreshTokens(false)
                         .build())
                 .build();
 
@@ -198,7 +208,10 @@ public class SecurityConfig {
 
         RegisteredClient serviceClient = RegisteredClient.withId("service")
                 .clientId("kyc-service")
-                .clientSecret("{bcrypt}" + passwordEncoder.encode(serviceClientSecret))
+                // No "{bcrypt}" prefix: the PasswordEncoder bean is a plain BCryptPasswordEncoder
+                // (kept that way for raw-bcrypt user password hashes), not a DelegatingPasswordEncoder,
+                // so a "{bcrypt}$2a$..." value would never match and client auth would fail.
+                .clientSecret(passwordEncoder.encode(serviceClientSecret))
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
                 .scope("service")
@@ -232,14 +245,35 @@ public class SecurityConfig {
     }
 
     @Bean
-    public OAuth2TokenCustomizer<JwtEncodingContext> tokenCustomizer() {
+    public OAuth2TokenCustomizer<JwtEncodingContext> tokenCustomizer(
+            AccountRepository accountRepository,
+            @Value("${oauth2.audience:letspeppol-api}") String audience,
+            @Value("${oauth2.app-client.account-external-id:b095630d-1bf3-4250-bf9e-2d49e6ce505b}") String appAccountExternalId) {
         return context -> {
+            JwtClaimsSet.Builder claims = context.getClaims();
+
+            if (OAuth2TokenType.ACCESS_TOKEN.equals(context.getTokenType())) {
+                claims.audience(new ArrayList<>(List.of(audience)));
+            }
+
             if (context.getPrincipal().getPrincipal() instanceof AccountUserDetails userDetails) {
-                JwtClaimsSet.Builder claims = context.getClaims();
                 claims.claim("peppolId", userDetails.getPeppolId());
                 claims.claim("peppolActive", userDetails.isPeppolActive());
                 claims.claim("uid", userDetails.getUid().toString());
                 claims.claim("accountType", userDetails.getAccountType().name());
+            } else if (AuthorizationGrantType.CLIENT_CREDENTIALS.equals(context.getAuthorizationGrantType())
+                    && "kyc-service".equals(context.getRegisteredClient().getClientId())) {
+                // Service-to-service token for the App backend's scheduled document sync:
+                // act as the seeded APP account so the proxy can resolve app-linked documents.
+                Account app = accountRepository
+                        .findByExternalId(UUID.fromString(appAccountExternalId))
+                        .orElseThrow(() -> new IllegalStateException("App service account not found: " + appAccountExternalId));
+                claims.claim("uid", app.getExternalId().toString());
+                claims.claim("accountType", app.getType().name());
+                if (app.getCompany() != null && app.getCompany().getPeppolId() != null) {
+                    claims.claim("peppolId", app.getCompany().getPeppolId());
+                    claims.claim("peppolActive", app.getCompany().isPeppolActive());
+                }
             }
         };
     }

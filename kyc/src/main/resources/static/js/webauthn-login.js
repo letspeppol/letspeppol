@@ -59,10 +59,9 @@
     // Passkey button click
     if (passkeyBtn) {
         passkeyBtn.addEventListener('click', function () {
-            var emailInput = document.querySelector('input[name="username"]');
-            var email = emailInput ? emailInput.value : '';
-
-            fetchJson('/api/passkeys/authenticate/options', { email: email }).then(function (options) {
+            // No email is sent: login uses discoverable credentials so the authenticator presents
+            // its own account picker, and the server never reveals which emails have passkeys.
+            fetchJson('/api/passkeys/authenticate/options', {}).then(function (options) {
                 var publicKey = {
                     challenge: base64urlDecode(options.challenge),
                     rpId: options.rpId,

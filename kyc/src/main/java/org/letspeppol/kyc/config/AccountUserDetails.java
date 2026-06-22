@@ -24,8 +24,13 @@ public class AccountUserDetails implements UserDetails {
     private final AccountType accountType;
     private final boolean totpEnabled;
     private final Long accountId;
+    private final boolean locked;
 
     public AccountUserDetails(Account account) {
+        this(account, false);
+    }
+
+    public AccountUserDetails(Account account, boolean locked) {
         this.username = account.getEmail();
         this.password = account.getPasswordHash();
         this.peppolId = account.getCompany().getPeppolId();
@@ -34,6 +39,7 @@ public class AccountUserDetails implements UserDetails {
         this.accountType = account.getType();
         this.totpEnabled = account.isTotpEnabled();
         this.accountId = account.getId();
+        this.locked = locked;
     }
 
     @JsonCreator
@@ -45,7 +51,8 @@ public class AccountUserDetails implements UserDetails {
             @JsonProperty("uid") UUID uid,
             @JsonProperty("accountType") AccountType accountType,
             @JsonProperty("totpEnabled") boolean totpEnabled,
-            @JsonProperty("accountId") Long accountId) {
+            @JsonProperty("accountId") Long accountId,
+            @JsonProperty("locked") boolean locked) {
         this.username = username;
         this.password = password;
         this.peppolId = peppolId;
@@ -54,6 +61,7 @@ public class AccountUserDetails implements UserDetails {
         this.accountType = accountType;
         this.totpEnabled = totpEnabled;
         this.accountId = accountId;
+        this.locked = locked;
     }
 
     public String getPeppolId() {
@@ -102,7 +110,7 @@ public class AccountUserDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return !locked;
     }
 
     @Override

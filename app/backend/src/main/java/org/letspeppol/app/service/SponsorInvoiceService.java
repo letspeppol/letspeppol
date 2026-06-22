@@ -65,8 +65,7 @@ public class SponsorInvoiceService {
     private final EmailJobRepository emailJobRepository;
     private final ObjectMapper objectMapper;
     private final ApplicationEventPublisher eventPublisher;
-    private final JwtService jwtService;
-    private final WebClient proxyWebClient;
+    private final WebClient serviceProxyWebClient;
     @Value("${notification.mail.from}")
     private String notificationMailFrom;
     @Value("${sponsors.package-request.mail-to:partnership@letspeppol.org}")
@@ -79,8 +78,7 @@ public class SponsorInvoiceService {
             EmailJobRepository emailJobRepository,
             ObjectMapper objectMapper,
             ApplicationEventPublisher eventPublisher,
-            JwtService jwtService,
-            @Qualifier("proxyWebClient") WebClient proxyWebClient
+            @Qualifier("serviceProxyWebClient") WebClient serviceProxyWebClient
     ) {
         this.companyRepository = companyRepository;
         this.sponsorInvoiceRepository = sponsorInvoiceRepository;
@@ -88,8 +86,7 @@ public class SponsorInvoiceService {
         this.emailJobRepository = emailJobRepository;
         this.objectMapper = objectMapper;
         this.eventPublisher = eventPublisher;
-        this.jwtService = jwtService;
-        this.proxyWebClient = proxyWebClient;
+        this.serviceProxyWebClient = serviceProxyWebClient;
     }
 
     public List<SponsorContributionDto> getSponsorContributions() {
@@ -129,12 +126,11 @@ public class SponsorInvoiceService {
                 ublXml
         );
 
-        UblDocumentDto document = proxyWebClient.post()
+        // Service-to-service send: serviceProxyWebClient auto-attaches the APP-identity token;
+        // the acting user's token is forwarded so the proxy can validate the sender relationship.
+        UblDocumentDto document = serviceProxyWebClient.post()
                 .uri("/sapi/document")
-                .headers(headers -> {
-                    headers.setBearerAuth(jwtService.getAppTokenFromKyc());
-                    headers.add(ACTING_USER_AUTHORIZATION_HEADER, "Bearer " + actingUserToken);
-                })
+                .headers(headers -> headers.add(ACTING_USER_AUTHORIZATION_HEADER, "Bearer " + actingUserToken))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(payload)
                 .retrieve()

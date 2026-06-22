@@ -11,9 +11,12 @@ export class AuthenticationHook {
         if (next.data?.allowEveryone) {
             return true;
         }
-        if (!this.loginService.authenticated) {
-            return 'login';
+        if (this.loginService.authenticated) {
+            return true;
         }
-        return true;
+        // Not authenticated in this tab — try to restore the session silently against the KYC
+        // session cookie before falling back to the interactive login route.
+        const restored = await this.loginService.ensureAuthenticated();
+        return restored ? true : 'login';
     }
 }

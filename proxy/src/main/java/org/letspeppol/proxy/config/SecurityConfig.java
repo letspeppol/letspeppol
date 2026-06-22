@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
@@ -58,12 +60,24 @@ public class SecurityConfig {
             if (scopes != null && scopes.contains("service")) {
                 authorities.add(new SimpleGrantedAuthority(ROLE_SERVICE));
             }
-            if (jwt.hasClaim(PEPPOL_ID)) {
+            // Both end-user tokens and the APP service token carry a uid; APP accounts have no
+            // peppolId, so uid (not peppolId) is the correct discriminator for ROLE_KYC_USER here.
+            if (jwt.hasClaim(UID)) {
                 authorities.add(new SimpleGrantedAuthority(ROLE_KYC_USER));
             }
             return authorities;
         });
         return converter;
+    }
+
+    @Bean
+    public JwtDecoder jwtDecoder(
+            @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}") String jwkSetUri,
+            @Value("${oauth2.audience:letspeppol-api}") String audience,
+            @Value("${oauth2.issuer:}") String issuer) {
+        NimbusJwtDecoder decoder = NimbusJwtDecoder.withJwkSetUri(jwkSetUri).build();
+        decoder.setJwtValidator(JwtValidationSupport.build(audience, issuer));
+        return decoder;
     }
 
     @Bean
