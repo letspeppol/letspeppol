@@ -1,5 +1,7 @@
 package org.letspeppol.kyc.config;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
 /**
@@ -13,10 +15,10 @@ public class AccountUserDetailsJacksonModule extends SimpleModule {
         context.setMixInAnnotations(AccountUserDetails.class, AccountUserDetailsMixin.class);
     }
 
-    @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.CLASS)
-    @com.fasterxml.jackson.annotation.JsonAutoDetect(
-            fieldVisibility = com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY,
-            getterVisibility = com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE,
-            isGetterVisibility = com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE)
+    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
+    @JsonAutoDetect(
+            fieldVisibility = JsonAutoDetect.Visibility.ANY,
+            getterVisibility = JsonAutoDetect.Visibility.NONE,
+            isGetterVisibility = JsonAutoDetect.Visibility.NONE)
     private static abstract class AccountUserDetailsMixin {}
 }

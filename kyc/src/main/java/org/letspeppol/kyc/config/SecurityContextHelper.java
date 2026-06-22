@@ -24,7 +24,9 @@ public final class SecurityContextHelper {
         establishSession(account, request.getSession(true));
     }
 
-    public static void establishSession(Account account, HttpSession session) {
+    // Private: callers must go through the HttpServletRequest overload above so the session id is
+    // always rotated. Establishing on an un-rotated session would reopen the session-fixation hole.
+    private static void establishSession(Account account, HttpSession session) {
         AccountUserDetails userDetails = new AccountUserDetails(account);
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
