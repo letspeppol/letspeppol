@@ -1,4 +1,5 @@
 import {IEventAggregator} from "aurelia";
+import {onModalEnter} from "../util/modal-keyboard";
 import {resolve} from "@aurelia/kernel";
 import {I18N} from "@aurelia/i18n";
 import {CompanyService} from "../../services/app/company-service";
@@ -123,7 +124,7 @@ export class SponsorPaymentModal {
     }
 
     async sponsor() {
-        if (!this.validAmount || this.sending) {
+        if (!this.canConfirm()) {
             return;
         }
         this.sending = true;
@@ -181,5 +182,13 @@ export class SponsorPaymentModal {
 
     private truncate(value: string, maxLength: number) {
         return value.length > maxLength ? value.slice(0, maxLength) : value;
+    }
+
+    onKeyDown(event: KeyboardEvent) {
+        onModalEnter(event, () => this.sent ? this.closeModal() : this.sponsor());
+    }
+
+    private canConfirm() {
+        return !!this.validAmount && !this.sending;
     }
 }

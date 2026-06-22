@@ -1,20 +1,18 @@
-<import from="../app/value-converters/date-format.ts"></import>
-
 <div class="invoices-layout">
     <aside class="mailbox">
         <div class="mailbox-title" t="partner.title">Partners</div>
         <nav>
             <button active.class="category === 'all'" class="mail-item" click.trigger="filterItems('all')">
                 <span class="label" t="partner.all">All</span>
-                <span class="badge">0</span>
+                <span class="badge">${allCount}</span>
             </button>
             <button active.class="category === 'customers'" class="mail-item" click.trigger="filterItems('customers')">
                 <span class="label" t="partner.customers">Customers</span>
-                <span class="badge">0</span>
+                <span class="badge">${customerCount}</span>
             </button>
             <button active.class="category === 'suppliers'" class="mail-item" click.trigger="filterItems('suppliers')">
                 <span class="label" t="partner.suppliers">Suppliers</span>
-                <span class="badge">0</span>
+                <span class="badge">${supplierCount}</span>
             </button>
         </nav>
     </aside>
@@ -53,17 +51,47 @@
                         <thead>
                         <tr>
                             <th t="partner.table.type">Type</th>
-                            <th t="partner.table.name">Name</th>
-                            <th t="partner.table.address">Address</th>
-                            <th t="partner.table.postal-code">Postal code</th>
-                            <th t="partner.table.city">City</th>
-                            <th t="partner.table.country">Country</th>
-                            <th t="partner.table.vat">VAT</th>
+                            <th>
+                                <button type="button" class="sort-button" click.trigger="toggleSort('name')">
+                                    <span t="partner.table.name">Name</span>
+                                    <span class="sort-indicator ${activeSortProperty!=='name'?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
+                                </button>
+                            </th>
+                            <th>
+                                <button type="button" class="sort-button" click.trigger="toggleSort('address')">
+                                    <span t="partner.table.address">Address</span>
+                                    <span class="sort-indicator ${activeSortProperty!=='address'?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
+                                </button>
+                            </th>
+                            <th>
+                                <button type="button" class="sort-button" click.trigger="toggleSort('postalCode')">
+                                    <span t="partner.table.postal-code">Postal code</span>
+                                    <span class="sort-indicator ${activeSortProperty!=='postalCode'?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
+                                </button>
+                            </th>
+                            <th>
+                                <button type="button" class="sort-button" click.trigger="toggleSort('city')">
+                                    <span t="partner.table.city">City</span>
+                                    <span class="sort-indicator ${activeSortProperty!=='city'?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
+                                </button>
+                            </th>
+                            <th>
+                                <button type="button" class="sort-button" click.trigger="toggleSort('countryCode')">
+                                    <span t="partner.table.country">Country</span>
+                                    <span class="sort-indicator ${activeSortProperty!=='countryCode'?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
+                                </button>
+                            </th>
+                            <th>
+                                <button type="button" class="sort-button" click.trigger="toggleSort('vatNumber')">
+                                    <span t="partner.table.vat">VAT</span>
+                                    <span class="sort-indicator ${activeSortProperty!=='vatNumber'?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
+                                </button>
+                            </th>
                             <th class="actions-col" t="partner.table.actions">Actions</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr repeat.for="item of partnerContext.filteredPartners.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()))" click.trigger="selectItem(item)">
+                        <tr repeat.for="item of visiblePartners" click.trigger="selectItem(item)">
                             <td>
                                 <span if.bind="item.customer" class="pill sent" t="partner.edit.customer">C</span>
                                 <span if.bind="item.supplier" class="pill incoming" t="partner.edit.supplier">S</span>
@@ -83,7 +111,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div if.bind="!partnerContext.filteredPartners || partnerContext.filteredPartners.length === 0" class="empty-state" >
+                <div if.bind="visiblePartnerCount === 0" class="empty-state" >
                     <div class="empty-icon" aria-hidden="true">
                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                             <path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
@@ -92,10 +120,10 @@
                     </div>
                     <p t="partner.empty">No partners match your filters.</p>
                 </div>
-                <div class="table-footer pager" hidden>
-                    <button type="button" class="btn ghost" t="common.previous">← Previous</button>
-                    <span class="pager-range"></span>
-                    <button type="button" class="btn ghost" t="common.next">Next →</button>
+                <div class="table-footer pager" if.bind="visiblePartnerCount > 0">
+                    <button type="button" class="btn ghost" click.trigger="previousPage()" disabled.bind="currentPage <= 0" t="common.previous">Previous</button>
+                    <span class="pager-range">${pageStart} - ${pageEnd} / ${visiblePartnerCount}</span>
+                    <button type="button" class="btn ghost" click.trigger="nextPage()" disabled.bind="currentPage >= totalPages - 1" t="common.next">Next</button>
                 </div>
             </div>
         </div>

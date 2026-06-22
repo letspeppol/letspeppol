@@ -3,6 +3,8 @@ import {ChangePasswordRequest, PasswordService} from "../services/kyc/password-s
 import {AlertType} from "../components/alert/alert";
 import {computed, IEventAggregator} from "aurelia";
 import {I18N} from "@aurelia/i18n";
+import {ChoosePassword} from "../components/choose-password/choose-password";
+import {onModalEnter} from "../components/util/modal-keyboard";
 
 export class ChangePasswordModal {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -12,6 +14,7 @@ export class ChangePasswordModal {
     error: boolean = false;
     password: string;
     confirmPassword: string;
+    choosePassword: ChoosePassword;
 
     public showChangePasswordModal() {
         this.password = '';
@@ -20,6 +23,9 @@ export class ChangePasswordModal {
     }
 
     async changePassword() {
+        if (!this.canConfirm()) {
+            return;
+        }
         const request = {
             password: this.password,
         } as ChangePasswordRequest;
@@ -40,5 +46,13 @@ export class ChangePasswordModal {
 
     closeModal() {
         this.open = false;
+    }
+
+    onKeyDown(event: KeyboardEvent) {
+        onModalEnter(event, () => this.changePassword());
+    }
+
+    private canConfirm() {
+        return !!this.password && !!this.choosePassword?.rules.matchOk && !!this.choosePassword?.rules.pwStrong && !this.isRequesting;
     }
 }

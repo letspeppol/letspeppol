@@ -178,4 +178,13 @@ export class LoginService {
         this.sponsorService.clearCache();
         this.statisticsService.clearCache();
     }
+
+    private toBase64Utf8(value: string) {
+        const bytes = new TextEncoder().encode(value);
+        let binary = '';
+        for (const byte of bytes) {
+            binary += String.fromCharCode(byte);
+        }
+        return btoa(binary);
+    }
 }

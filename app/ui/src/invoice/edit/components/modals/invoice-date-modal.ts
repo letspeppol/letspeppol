@@ -1,4 +1,5 @@
 import {bindable, observable} from "aurelia";
+import {onModalEnter} from "../../../../components/util/modal-keyboard";
 import {resolve} from "@aurelia/kernel";
 import {Account} from "../../../../account/account";
 import {InvoiceComposer} from "../../../invoice-composer";
@@ -56,6 +57,9 @@ export class InvoiceDateModal {
     }
 
     private saveDate() {
+        if (!this.issueDate) {
+            return;
+        }
         this.open = false;
         this.invoiceContext.selectedInvoice.IssueDate = this.issueDate;
         this.invoiceContext.selectedInvoice.DueDate = this.dueDate;
@@ -79,5 +83,9 @@ export class InvoiceDateModal {
         if (selectedPaymentTerm) {
             setTimeout(() => this.selectedPaymentTerm = selectedPaymentTerm, 100);
         }
+    }
+
+    onKeyDown(event: KeyboardEvent) {
+        onModalEnter(event, () => this.saveDate());
     }
 }

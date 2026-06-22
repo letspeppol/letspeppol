@@ -1,6 +1,6 @@
 <div class="modal" role="dialog" aria-modal="true" show.bind="open">
     <div class="modal-backdrop"></div>
-    <div class="modal-card">
+    <div class="modal-card" keydown.trigger="onKeyDown($event)">
         <header class="modal-header">
             <h2 t="product.categoryModal.title">Product Category</h2>
             <button class="icon-btn" aria-label="Close dialog" t="[aria-label]common.close" title="Close" t="[title]common.close" click.trigger="closeModal()">×</button>
@@ -19,7 +19,7 @@
             <footer class="modal-footer">
                 <button type="button" class="btn danger" click.trigger="deleteProductCategory()" style="margin-right: auto" t="common.delete">Delete</button>
                 <button type="button" class="btn" click.trigger="closeModal()" t="common.cancel">Cancel</button>
-                <button type="button" class="btn primary" click.trigger="saveProductCategory()" t="common.confirm">Confirm</button>
+                <button type="button" class="btn primary" click.trigger="saveProductCategory()" disabled.bind="!category.name || !category.name.trim()" t="common.confirm">Confirm</button>
             </footer>
         </div>
     </div>

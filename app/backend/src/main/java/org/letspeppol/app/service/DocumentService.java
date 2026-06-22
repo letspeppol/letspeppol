@@ -282,8 +282,24 @@ public class DocumentService {
 //        document = documentRepository.save(document); //Not saving, as we only save the proxy returned result
         backupService.backupFile(document);
         documentBackupCounter.increment(); //TODO : how to correctly use these counters ?
-        document = deliverOnSchedule(document, tokenValue);
+        document = deliver(document, tokenValue);
         documentSendCounter.increment();
+        return DocumentMapper.toDto(document);
+    }
+
+    public DocumentDto reschedule(String peppolId, UUID id, Instant schedule, String tokenValue) {
+        Document document = documentRepository.findById(id).orElseThrow(() -> new NotFoundException("Document does not exist"));
+        if (!peppolId.equals(document.getOwnerPeppolId())) {
+            throw new SecurityException(AppErrorCodes.PEPPOL_ID_MISMATCH);
+        }
+        if (document.getProcessedOn() != null) {
+            throw new ConflictException("Document is already processed"); //TODO : port to 409 Conflict ?
+        }
+        if (document.getProxyOn() == null) {
+            throw new ConflictException("Document is not yet sent to proxy");
+        }
+        document.setScheduledOn(schedule);
+        document = rescheduleAtProxy(document, tokenValue);
         return DocumentMapper.toDto(document);
     }
 
@@ -355,9 +371,9 @@ public class DocumentService {
         return documentRepository.save(document);
     }
 
-    private Document deliverOnSchedule(Document document, String tokenValue) { //TODO : use boolean noArchive from Company
+    private Document rescheduleAtProxy(Document document, String tokenValue) { //TODO : use boolean noArchive from Company
         UblDocumentDto ublDocumentDto = proxyWebClient.put()
-                .uri("/sapi/document/" + document.getId() + "/send")
+                .uri("/sapi/document/" + document.getId() + "/reschedule")
                 .headers(headers -> headers.setBearerAuth(tokenValue))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UblDocumentDto(

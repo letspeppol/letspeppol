@@ -1,6 +1,6 @@
 <div class="modal" role="dialog" aria-modal="true" show.bind="open">
     <div class="modal-backdrop"></div>
-    <div class="modal-card">
+    <div class="modal-card" keydown.trigger="onKeyDown($event)">
         <header class="modal-header">
             <h2 t="${isCreditNote ? 'invoice.modal.credit-note-number' : 'invoice.modal.invoice-number'}">Invoice Number</h2>
             <button class="icon-btn" click.trigger="closeModal()" aria-label="Close dialog" t="[aria-label]common.close" title="Close" t="[title]common.close">×</button>

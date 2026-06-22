@@ -29,6 +29,23 @@ export function getAmount(line: UBLLine): Quantity {
     }
 }
 
+/**
+ * Ensures a line has a valid, non-negative numeric unit price, defaulting missing or
+ * invalid values to 0. Mutates the line in place and returns the normalized unit price.
+ */
+export function normalizeLinePrice(line: UBLLine): number {
+    if (!line.Price) {
+        line.Price = { PriceAmount: { value: 0 } } as UBLLine["Price"];
+    }
+    if (!line.Price.PriceAmount) {
+        line.Price.PriceAmount = { value: 0 };
+    }
+    const rawUnitPrice = Number(line.Price.PriceAmount.value);
+    const unitPrice = Number.isFinite(rawUnitPrice) && rawUnitPrice >= 0 ? rawUnitPrice : 0;
+    line.Price.PriceAmount.value = unitPrice;
+    return unitPrice;
+}
+
 export interface InvoiceLine extends UBLBaseLine {
     InvoicedQuantity?: Quantity;
 }

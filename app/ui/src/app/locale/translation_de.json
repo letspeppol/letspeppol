@@ -143,6 +143,15 @@
     "INVOICE" : "Rechnung",
     "CREDIT_NOTE" : "Gutschrift"
   },
+  "password-rules": {
+    "length": "Mindestens 12 Zeichen",
+    "lower": "Mindestens 1 Kleinbuchstabe",
+    "upper": "Mindestens 1 Großbuchstabe",
+    "number": "Mindestens 1 Zahl",
+    "symbol": "Mindestens 1 Symbol",
+    "match": "Passwörter stimmen überein",
+    "strength": "Passwortstärke"
+  },
   "confirmation": {
     "header": "Identität bestätigen",
     "header-sign": "Vertrag unterschreiben",

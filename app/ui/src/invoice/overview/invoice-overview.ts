@@ -14,6 +14,8 @@ import {IRouter} from "@aurelia/router";
 import {UploadUblModal} from "./components/upload-ubl-modal";
 import {I18N} from "@aurelia/i18n";
 
+type SortDirection = "asc" | "desc";
+
 export class InvoiceOverview {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
     private invoiceService = resolve(InvoiceService);
@@ -22,7 +24,9 @@ export class InvoiceOverview {
     private readonly i18n = resolve(I18N);
     private vatDisplay = resolve(IVatDisplay);
     vatMode: VatDisplayMode = this.vatDisplay.mode;
-    query: DocumentQuery = {pageable: {page: 0, size: 20}};
+    query: DocumentQuery = {pageable: {page: 0, size: 20, sort: [{property: 'issueDate', direction: 'desc'}]}};
+    activeSortProperty = 'issueDate';
+    activeSortDirection: SortDirection = 'desc';
     private resetSubscription: IDisposable;
     private vatUnsubscribe: () => void;
 
@@ -49,16 +53,22 @@ export class InvoiceOverview {
     }
 
     @watch((vm) => [vm.query.invoiceReference, vm.query.partnerName])
+    queryChanged() {
+        this.query.pageable.page = 0;
+        this.reloadCurrentView();
+    }
+
     loadInvoices() {
         this.invoiceService.getDocuments({
             ...this.query,
-            draft: this.invoiceContext.activeBox === 'drafts'
+            draft: this.invoiceContext.activeBox === 'DRAFTS'
         }).then(page => this.invoiceContext.invoicePage = page);
     }
 
     changeDocType(value: DocumentType) {
         this.query.type = value;
-        this.loadInvoices();
+        this.query.pageable.page = 0;
+        this.reloadCurrentView();
     }
 
     setActiveItems(box) {
@@ -66,15 +76,18 @@ export class InvoiceOverview {
         switch (box) {
             case 'ALL':
                 this.query.direction = undefined;
+                this.query.pageable.page = 0;
                 this.loadInvoices();
                 break;
             case DocumentDirection.INCOMING:
             case DocumentDirection.OUTGOING:
                 this.query.direction = box;
+                this.query.pageable.page = 0;
                 this.loadInvoices();
                 break;
             case 'DRAFTS':
-                this.invoiceContext.invoicePage = this.invoiceContext.draftPage;
+                this.query.pageable.page = 0;
+                this.loadDrafts();
                 break;
         }
     }
@@ -97,11 +110,37 @@ export class InvoiceOverview {
     }
 
     previousPage() {
-        if (this.query.pageable.page === 1) {
+        if (this.query.pageable.page <= 0) {
             return;
         }
         this.query.pageable.page--;
-        this.loadInvoices();
+        this.reloadCurrentView();
+    }
+
+    get pageStart() {
+        const total = this.invoiceContext.invoicePage?.totalElements ?? 0;
+        if (!total) {
+            return 0;
+        }
+        return (this.invoiceContext.invoicePage.page * this.invoiceContext.invoicePage.size) + 1;
+    }
+
+    get pageEnd() {
+        const total = this.invoiceContext.invoicePage?.totalElements ?? 0;
+        if (!total) {
+            return 0;
+        }
+        return Math.min((this.invoiceContext.invoicePage.page + 1) * this.invoiceContext.invoicePage.size, total);
+    }
+
+    toggleSort(property: string) {
+        const currentDirection = this.sortDirection(property);
+        const direction: SortDirection = currentDirection === 'asc' ? 'desc' : 'asc';
+        this.query.pageable.sort = [{property, direction}];
+        this.activeSortProperty = property;
+        this.activeSortDirection = direction;
+        this.query.pageable.page = 0;
+        this.reloadCurrentView();
     }
 
     isOverdue(item: DocumentDto) {
@@ -147,5 +186,17 @@ export class InvoiceOverview {
 
     showUploadUblModal() {
         this.uploadUblModal.showModal();
+    }
+
+    private reloadCurrentView() {
+        if (this.invoiceContext.activeBox === 'DRAFTS') {
+            this.loadDrafts();
+            return;
+        }
+        this.loadInvoices();
+    }
+
+    private sortDirection(property: string): SortDirection | undefined {
+        return this.query.pageable.sort?.find(sort => sort.property === property)?.direction;
     }
 }

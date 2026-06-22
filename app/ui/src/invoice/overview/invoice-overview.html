@@ -83,10 +83,18 @@
                             <th style="width: 10px"></th>
                             <th t="invoice.table.direction">Direction</th>
                             <th t="invoice.table.type">Type</th>
-                            <th t="invoice.table.doc">Doc</th>
-                            <th class="th-filter" t="invoice.table.issue-date">
+                            <th>
+                                <button type="button" class="sort-button" click.trigger="toggleSort('invoiceReference')">
+                                    <span t="invoice.table.doc">Doc</span>
+                                    <span class="sort-indicator ${activeSortProperty!=='invoiceReference'?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
+                                </button>
+                            </th>
+                            <th class="th-filter">
                                 <div class="th-inner">
-                                    <span t="invoice.table.issue-date">Date</span>
+                                    <button type="button" class="sort-button" click.trigger="toggleSort('issueDate')">
+                                        <span t="invoice.table.issue-date">Date</span>
+                                        <span class="sort-indicator ${activeSortProperty!=='issueDate'?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
+                                    </button>
                                 </div>
                                 <div class="filter-panel" hidden>
                                     <label class="field">
@@ -103,9 +111,12 @@
                                     </div>
                                 </div>
                             </th>
-                            <th class="th-filter" t="invoice.table.due-date">
+                            <th class="th-filter">
                                 <div class="th-inner">
-                                    <span t="invoice.table.due-date">Date</span>
+                                    <button type="button" class="sort-button" click.trigger="toggleSort('dueDate')">
+                                        <span t="invoice.table.due-date">Date</span>
+                                        <span class="sort-indicator ${activeSortProperty!=='dueDate'?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
+                                    </button>
                                 </div>
                                 <div class="filter-panel" hidden>
                                     <label class="field">
@@ -123,15 +134,21 @@
                                 </div>
                             </th>
                             <th>
-                                <span if.bind="invoiceContext.activeBox === 'OUTGOING' || invoiceContext.activeBox === 'DRAFTS'" t="invoice.customer">Customer</span>
-                                <span if.bind="invoiceContext.activeBox === 'INCOMING'" t="invoice.supplier">Supplier</span>
-                                <span if.bind="invoiceContext.activeBox === 'ALL'" t="invoice.partner">Partner</span>
+                                <button type="button" class="sort-button" click.trigger="toggleSort('partnerName')">
+                                    <span if.bind="invoiceContext.activeBox === 'OUTGOING' || invoiceContext.activeBox === 'DRAFTS'" t="invoice.customer">Customer</span>
+                                    <span if.bind="invoiceContext.activeBox === 'INCOMING'" t="invoice.supplier">Supplier</span>
+                                    <span if.bind="invoiceContext.activeBox === 'ALL'" t="invoice.partner">Partner</span>
+                                    <span class="sort-indicator ${activeSortProperty!=='partnerName'?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
+                                </button>
                             </th>
                             <th>
-                                <span class="th-stack">
-                                    <span t="invoice.table.total">Total</span>
-                                    <span class="th-subline" t="invoice.table.total-vat-suffix.${vatMode}"></span>
-                                </span>
+                                <button type="button" class="sort-button" click.trigger="toggleSort(vatMode === 'inclVat' ? 'amountInclVat' : 'amountExclVat')">
+                                    <span class="th-stack">
+                                        <span t="invoice.table.total">Total</span>
+                                        <span class="th-subline" t="invoice.table.total-vat-suffix.${vatMode}"></span>
+                                    </span>
+                                    <span class="sort-indicator ${activeSortProperty!==(vatMode === 'inclVat' ? 'amountInclVat' : 'amountExclVat')?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
+                                </button>
                             </th>
                             <th t="invoice.table.status">Status</th>
                             <th class="actions-col" t="invoice.table.actions">Actions</th>
@@ -181,7 +198,7 @@
                 </div>
                 <div class="table-footer pager">
                     <button type="button" class="btn ghost" click.trigger="previousPage()" disabled.bind="query.pageable.page <= 0" t="invoice.pager.previous">← Previous</button>
-                    <span class="pager-range"></span>
+                    <span class="pager-range">${pageStart} - ${pageEnd} / ${invoiceContext.invoicePage?.totalElements ?? 0}</span>
                     <button type="button" class="btn ghost" click.trigger="nextPage()" disabled.bind="invoiceContext.invoicePage.last" t="invoice.pager.next">Next →</button>
                 </div>
             </div>

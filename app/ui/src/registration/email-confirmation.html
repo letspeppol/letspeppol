@@ -1,6 +1,7 @@
 <import from="../components/view/wizard-view"></import>
 <import from="../components/stepper/stepper"></import>
 <import from="../components/eid/card-reader"></import>
+<import from="../components/choose-password/choose-password"></import>
 
 <wizard-view>
     <stepper if.bind="step !== 3" au-slot="stepper" steps.bind="[1,2,3,4,5]" completed-steps.bind="step+2"></stepper>
@@ -98,26 +99,7 @@
                 </div>
 
                 <div style="width: 100%" show.bind="agreedToContract">
-                    <h3 t="confirmation.choose-credentials-title">2. Choose Credentials</h3>
-                    <div class="grid single">
-                        <label class="field full">
-                            <span t="label.password">Password</span>
-                            <input name="password" type="password" value.bind="password"/>
-                        </label>
-                        <label class="field full">
-                            <span t="label.confirm-password">Confirm password</span>
-                            <input name="password" type="password" value.bind="passwordDuplicate"/>
-                        </label>
-                    </div>
-                    <ul class="pw-hints" if.bind="password">
-                        <li class.bind="lengthOk?'ok':''">At least 12 characters</li>
-                        <li class.bind="lowerOk?'ok':''">At least 1 lower</li>
-                        <li class.bind="upperOk?'ok':''">At least 1 UPPER</li>
-                        <li class.bind="numberOk?'ok':''">At least 1 number</li>
-                        <li class.bind="symbolOk?'ok':''">At least 1 symbol</li>
-                        <li class.bind="matchOk?'ok':''">Passwords match</li>
-                    </ul>
-                    <meter min="0" max="8" low="4" high="7" optimum="8" value.bind="pwScore" aria-label="Password strength"></meter>
+                    <choose-password component.ref="choosePassword" password.two-way="password" confirm-password.two-way="passwordDuplicate" show-heading.bind="true"></choose-password>
                 </div>
 
                 <div class="vertical-separator" show.bind="agreedToContract"></div>
@@ -128,7 +110,7 @@
                 </div>
                 <div show.bind="agreedToContract">
                     <div class="auth-actions" style="margin-top: 15px">
-                        <button type="button" class="btn primary" disabled.bind="!pwStrong || !password || password !== passwordDuplicate || !agreedToContract || confirmInProgress" click.trigger="confirmContract()" t="confirmation.sign-button">
+                        <button type="button" class="btn primary" disabled.bind="!choosePassword || !choosePassword.rules.pwStrong || !password || !choosePassword.rules.matchOk || !agreedToContract || confirmInProgress" click.trigger="confirmContract()" t="confirmation.sign-button">
                             Sign
                         </button>
                     </div>

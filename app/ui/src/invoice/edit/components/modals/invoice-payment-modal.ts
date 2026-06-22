@@ -1,4 +1,5 @@
 import {bindable, IEventAggregator} from "aurelia";
+import {onModalEnter} from "../../../../components/util/modal-keyboard";
 import {PaymentMeans} from "../../../../services/peppol/ubl";
 import {InvoiceComposer} from "../../../invoice-composer";
 import {resolve} from "@aurelia/kernel";
@@ -28,6 +29,9 @@ export class InvoicePaymentModal {
     }
 
     savePaymentMeans() {
+        if (this.paymentMeansCode === 30 && !this.paymentMeans?.PayeeFinancialAccount?.ID) {
+            return;
+        }
         this.open = false;
         this.invoiceContext.selectedInvoice.PaymentMeans = this.paymentMeans;
     }
@@ -54,5 +58,9 @@ export class InvoicePaymentModal {
         } catch {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.company.save-failed')});
         }
+    }
+
+    onKeyDown(event: KeyboardEvent) {
+        onModalEnter(event, () => this.savePaymentMeans());
     }
 }
