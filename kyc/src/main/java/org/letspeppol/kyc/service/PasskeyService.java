@@ -75,6 +75,11 @@ public class PasskeyService {
             }
         }
         validateRelyingPartyConfig(environment);
+        // Non-strict only skips attestation-certificate trust-anchor validation, which is moot here:
+        // we request attestation "none" (consumer passwordless — we don't verify which authenticator
+        // make/model the user enrolled). All security-critical checks (challenge, origin, RP ID,
+        // signature, user verification, sign-count) are still enforced. Strict mode would only add
+        // value with attestation "direct" plus a configured trust-anchor repository / FIDO MDS.
         this.webAuthnManager = WebAuthnManager.createNonStrictWebAuthnManager();
         this.credentialDataConverter = new AttestedCredentialDataConverter(new ObjectConverter());
     }
