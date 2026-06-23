@@ -652,6 +652,11 @@ class DocumentRepositoryTotalsTest extends PostgresIntegrationTest {
             d.setProcessedStatus("ERR-D");
             d.setDraftedOn(Instant.now());
         });
+        // Incoming document carrying a status is not an outgoing send error -> NOT counted (#270 review)
+        persist(d -> {
+            d.setDirection(DocumentDirection.INCOMING);
+            d.setProcessedStatus("ERR-INCOMING");
+        });
         // Other owner's errored document -> isolated
         persistOther(d -> {
             d.setDirection(DocumentDirection.OUTGOING);

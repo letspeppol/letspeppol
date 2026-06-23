@@ -42,7 +42,7 @@ public interface DocumentRepository extends JpaRepository<Document, UUID>, JpaSp
       COALESCE(SUM(CASE WHEN direction = 'OUTGOING' AND processed_status IS NULL AND paid_on IS NULL THEN signed_excl END), 0) AS totalReceivableOpenExclVat,
       COALESCE(SUM(CASE WHEN direction = 'OUTGOING' AND processed_status IS NULL AND paid_on IS NULL AND due_date < NOW() THEN signed_excl END), 0) AS totalReceivableOverdueExclVat,
       COALESCE(SUM(CASE WHEN direction = 'OUTGOING' AND processed_status IS NULL AND issue_date >= date_trunc('year', NOW()) AND issue_date < date_trunc('year', NOW()) + INTERVAL '1 year' THEN signed_excl END), 0) AS totalReceivableThisYearExclVat,
-      COALESCE(SUM(CASE WHEN processed_status IS NOT NULL AND error_seen_on IS NULL THEN 1 ELSE 0 END), 0) AS erroredUnseenCount
+      COALESCE(SUM(CASE WHEN direction = 'OUTGOING' AND processed_status IS NOT NULL AND error_seen_on IS NULL THEN 1 ELSE 0 END), 0) AS erroredUnseenCount
     FROM (
       SELECT
         direction,

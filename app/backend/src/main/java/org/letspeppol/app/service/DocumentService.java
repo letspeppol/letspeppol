@@ -432,7 +432,9 @@ public class DocumentService {
     private void notifyIfNewlyErrored(Document document, String previousProcessedStatus) {
         if (previousProcessedStatus == null && document.getProcessedStatus() != null) {
             Company company = document.getCompany();
-            if (company != null && company.isEnableEmailNotification()) {
+            // A failed outgoing document is important enough to always notify, independently of
+            // enableEmailNotification (which only governs incoming-document notifications).
+            if (company != null) {
                 notificationService.notifyDocumentError(company, document);
             }
         }
