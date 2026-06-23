@@ -28,10 +28,6 @@ export class InvoiceAttachmentModal {
         } else {
             this.additionalDocumentReference = [];
         }
-        if (!this.invoiceContext.addPdfToSendingInvoice) {
-            // Auto PDF is disabled account-wide: never keep a marker the backend won't render.
-            this.additionalDocumentReference = this.additionalDocumentReference.filter(item => item.ID !== GENERATED_INVOICE);
-        }
         this.includeGeneratedPdf = this.additionalDocumentReference.some(item => item.ID === GENERATED_INVOICE);
         this.refreshUserAttachments();
         this.validate();
@@ -78,11 +74,7 @@ export class InvoiceAttachmentModal {
         if (!this.validated) {
             return;
         }
-        // Defensive: if auto PDF is off account-wide, never persist a generated marker.
-        const toSave = this.invoiceContext.addPdfToSendingInvoice
-            ? this.additionalDocumentReference
-            : this.additionalDocumentReference.filter(item => item.ID !== GENERATED_INVOICE);
-        this.invoiceContext.selectedInvoice.AdditionalDocumentReference = toSave;
+        this.invoiceContext.selectedInvoice.AdditionalDocumentReference = this.additionalDocumentReference;
         this.closeModal();
     }
 

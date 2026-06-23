@@ -588,7 +588,6 @@
       "upload-hint" : "Glissez-déposez ou cliquez pour parcourir",
       "upload-aria" : "Ajouter une pièce jointe : glissez-déposez un fichier ou cliquez pour parcourir",
       "auto-pdf" : "Inclure le PDF de facture généré automatiquement",
-      "auto-pdf-disabled" : "Activez le PDF généré automatiquement dans les paramètres de votre compte.",
       "auto-pdf-replace" : "Un PDF de facture est généré automatiquement. Désactivez-le ci-dessus si votre fichier importé le remplace."
     },
     "productSearch" : {

@@ -590,7 +590,6 @@
       "upload-hint": "Drag & drop or click to browse",
       "upload-aria": "Add an attachment: drag and drop a file or click to browse",
       "auto-pdf": "Include the auto-generated invoice PDF",
-      "auto-pdf-disabled": "Enable the auto-generated PDF in your account settings.",
       "auto-pdf-replace": "An invoice PDF is generated automatically. Turn it off above if your uploaded file replaces it."
     },
     "productSearch": {

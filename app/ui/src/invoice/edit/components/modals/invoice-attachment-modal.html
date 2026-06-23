@@ -24,11 +24,9 @@
                    change.trigger="onFileSelected()">
             <label class="field checkbox auto-pdf-toggle">
                 <input type="checkbox" checked.to-view="includeGeneratedPdf"
-                       change.trigger="onToggleGeneratedPdf($event.target.checked)"
-                       disabled.bind="!invoiceContext.addPdfToSendingInvoice" />
+                       change.trigger="onToggleGeneratedPdf($event.target.checked)" />
                 <span t="invoice.attachmentModal.auto-pdf">Include the auto-generated invoice PDF</span>
             </label>
-            <p class="auto-pdf-help" if.bind="!invoiceContext.addPdfToSendingInvoice" t="invoice.attachmentModal.auto-pdf-disabled">Enable the auto-generated PDF in your account settings.</p>
             <p class="auto-pdf-help" if.bind="includeGeneratedPdf && hasUploadedPdf" t="invoice.attachmentModal.auto-pdf-replace">An invoice PDF is generated automatically. Turn it off above if your uploaded file replaces it.</p>
             <div class="table-wrapper">
                 <table class="data-table line-table">
