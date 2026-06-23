@@ -1,4 +1,4 @@
-<import from="../../../../app/value-converters/filename-truncate.ts"></import>
+<import from="../../../../app/value-converters/smart-truncate.ts"></import>
 
 <div class="modal" role="dialog" aria-modal="true" show.bind="open">
     <div class="modal-backdrop"></div>
@@ -32,7 +32,7 @@
                     <tr repeat.for="line of additionalDocumentReference">
                         <template if.bind="line.Attachment.EmbeddedDocumentBinaryObject">
                             <td>File</td>
-                            <td title.bind="line.Attachment.EmbeddedDocumentBinaryObject.__filename"><span class="attachment-name attachment-cell">${line.Attachment.EmbeddedDocumentBinaryObject.__filename | filenameTruncate}</span></td>
+                            <td title.bind="line.Attachment.EmbeddedDocumentBinaryObject.__filename"><span class="attachment-name attachment-cell">${line.Attachment.EmbeddedDocumentBinaryObject.__filename | smartTruncate}</span></td>
                             <td><input type="text" value.bind="line.DocumentDescription" change.trigger="validate()"/></td>
                         </template>
                         <template else>

@@ -1,12 +1,12 @@
 import {valueConverter} from "aurelia";
 
-@valueConverter('filenameTruncate')
-export class FilenameTruncateConverter {
-    // Shortens a long file name for display while keeping its extension visible,
-    // e.g. "very_long_invoice_name.pdf" -> "very_long_invo... .pdf"; the full name
-    // stays available via a title tooltip on the element. Multi-part extensions keep
-    // only the last segment (".tar.gz" -> ".gz"), which is fine for the .pdf/.xml
-    // attachments this app handles.
+@valueConverter('smartTruncate')
+export class SmartTruncateConverter {
+    // Shortens a long label (file name or URL) for display while keeping a trailing
+    // extension visible when there is one, e.g. "very_long_invoice_name.pdf" ->
+    // "very_long_invo... .pdf"; the full value stays available via a title tooltip on
+    // the element. Multi-part extensions keep only the last segment (".tar.gz" -> ".gz"),
+    // which is fine for the .pdf/.xml attachments and links this app handles.
     toView(value: string, maxLength: number = 22 /* fits the attachments card; CSS clamps the actual width */): string {
         if (!value) {
             return '';

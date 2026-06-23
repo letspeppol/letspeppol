@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { FilenameTruncateConverter } from '../../../src/app/value-converters/filename-truncate';
+import { SmartTruncateConverter } from '../../../src/app/value-converters/smart-truncate';
 
-describe('FilenameTruncateConverter', () => {
-  const converter = new FilenameTruncateConverter();
+describe('SmartTruncateConverter', () => {
+  const converter = new SmartTruncateConverter();
   const truncate = (name: string, max?: number) => converter.toView(name, max);
 
   it('returns short names unchanged', () => {
