@@ -53,6 +53,7 @@ export class InvoiceEdit {
     returnToOverview() {
         this.invoiceContext.setActiveBoxFromDocument(this.invoiceContext.selectedDocument);
         this.invoiceContext.clearSelectedInvoice();
+        this.ea.publish('invoicesReset');
         this.router.load('/invoices');
     }
 
@@ -104,11 +105,12 @@ export class InvoiceEdit {
 
     async sendInvoice() {
         const type = this.selectedDocumentType;
+        const selectedDocument = this.invoiceContext.selectedDocument;
         try {
             this.ea.publish('showOverlay', this.i18n.tr(`overlay.sending.${type}`));
             let doc;
-            if (this.invoiceContext.selectedDocument?.createdExternally && this.invoiceContext.selectedDocument?.id) {
-                doc = await this.invoiceService.sendDocument(this.invoiceContext.selectedDocument.id);
+            if (selectedDocument?.createdExternally && selectedDocument.id) {
+                doc = await this.invoiceService.sendDocument(selectedDocument.id);
             } else {
                 const xml = this.buildXml();
                 const response = await this.invoiceService.validate(xml);
@@ -116,16 +118,19 @@ export class InvoiceEdit {
                     this.validationResultModal.showModal(response);
                     return;
                 }
-                doc = await this.invoiceService.createDocument(xml);
+                if (selectedDocument?.id) {
+                    doc = await this.invoiceService.updateDocument(selectedDocument.id, xml, false);
+                } else {
+                    doc = await this.invoiceService.createDocument(xml);
+                }
             }
             this.recordFinalVatReasonSelections(doc.id);
-            this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(`alert.invoice.sent.${type}`)});
-            this.invoiceContext.invoicePage.content.unshift(doc);
-            if (this.invoiceContext.selectedDocument.draftedOn) {
-                await this.deleteDraft();
-            } else {
-                this.returnToOverview();
+            if (selectedDocument?.draftedOn) {
+                this.invoiceContext.deleteDraft(selectedDocument);
             }
+            this.invoiceContext.selectedDocument = doc;
+            this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(`alert.invoice.sent.${type}`)});
+            this.returnToOverview();
         } catch (e: unknown) {
             const errorResponse = await toErrorResponse(e);
             if (errorResponse?.errorCode === 'INVOICE_NUMBER_ALREADY_USED') {

@@ -5,7 +5,7 @@ import {PartnerDto, PartnerService} from "../../../../services/app/partner-servi
 import {CustomerSearch} from "../customer-search";
 import {countryListAlpha2} from "../../../../app/countries"
 import {isIso6523Scheme} from "../../../../app/util/iso6523list";
-import {normalizeVatNumber} from "../../../../partner/vat-normalizer";
+import {normalizeEnterpriseNumber, normalizeVatNumber} from "../../../../partner/vat-normalizer";
 import {KycCompanyResponse} from "../../../../services/kyc/registration-service";
 import {resolve} from "@aurelia/kernel";
 import {CompanySearchService} from "../../../../services/kyc/company-search-service";
@@ -183,6 +183,25 @@ export class InvoiceCustomerModal {
             });
         }
         this.peppolIdChangedFunction(this.peppolId);
+    }
+
+    enterpriseNumberChanged() {
+        if (!this.customer?.PartyLegalEntity) {
+            return;
+        }
+
+        this.customer.PartyLegalEntity.CompanyID ??= {value: undefined};
+
+        const {normalized, isValidShape} = normalizeEnterpriseNumber(this.customer.PartyLegalEntity.CompanyID.value);
+        this.customer.PartyLegalEntity.CompanyID.value = normalized;
+
+        if (isValidShape) {
+            this.companySearchService.searchCompany({identifier: normalized}).then(companies => {
+                if (companies.length) {
+                    this.completeCustomerInfo(companies[0]);
+                }
+            });
+        }
     }
 
     vatNumberChanged() {
