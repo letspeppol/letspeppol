@@ -2,7 +2,7 @@ import {resolve} from "@aurelia/kernel";
 import {InvoiceContext} from "../../invoice-context";
 import {ClassifiedTaxCategory, CreditNoteLine, getAmount, InvoiceLine, normalizeLinePrice, UBLLine} from "../../../services/peppol/ubl";
 import {InvoiceCalculator, roundTwoDecimals} from "../../invoice-calculator";
-import {DocumentType} from "../../../services/app/invoice-service";
+import {DocumentType, InvoiceService} from "../../../services/app/invoice-service";
 import {bindable} from "aurelia";
 import {ProductDto} from "../../../services/app/product-service";
 import {CompanyService} from "../../../services/app/company-service";
@@ -10,6 +10,7 @@ import {
     createNotSubjectToVatCategory,
     createVatExemptCategory,
     isVatExemptRuleset,
+    ZeroVatReasonId,
 } from "../../../services/app/vat-rules";
 import {InvoiceZeroVatReasonModal} from "./modals/invoice-zero-vat-reason-modal";
 import {I18N} from "@aurelia/i18n";
@@ -17,6 +18,7 @@ import {I18N} from "@aurelia/i18n";
 export class InvoiceEditItems {
     private invoiceContext = resolve(InvoiceContext);
     private invoiceCalculator = resolve(InvoiceCalculator);
+    private invoiceService = resolve(InvoiceService);
     private companyService = resolve(CompanyService);
     private i18n = resolve(I18N);
 
@@ -46,12 +48,14 @@ export class InvoiceEditItems {
         }
     }
 
-    calcLineTotal(line: UBLLine) {
+    calcLineTotal(line: UBLLine, autoSave: boolean = true) {
         const quantity = getAmount(line);
         const unitPrice = normalizeLinePrice(line);
         line.LineExtensionAmount.value = roundTwoDecimals(unitPrice * quantity.value);
         this.invoiceCalculator.calculateTaxAndTotals(this.invoiceContext.selectedInvoice);
-        this.checkLineAutoSave(line);
+        if (autoSave) {
+            this.checkLineAutoSave(line);
+        }
     }
 
     deleteLine(line: UBLLine) {
@@ -84,10 +88,12 @@ export class InvoiceEditItems {
             }
             const taxCategory = this.taxCategories.find(item => item.Percent === p.taxPercentage);
             if (taxCategory) {
-                line.Item.ClassifiedTaxCategory = taxCategory.Percent === 0
-                    ? { ID: '', Percent: 0, TaxScheme: { ID: 'VAT' } }
-                    : taxCategory;
-                this.calcLineTotal(line);
+                if (taxCategory.Percent === 0) {
+                    this.startZeroVatReasonSelection(line);
+                } else {
+                    line.Item.ClassifiedTaxCategory = taxCategory;
+                    this.calcLineTotal(line);
+                }
             }
         }
     }
@@ -109,14 +115,7 @@ export class InvoiceEditItems {
         }
 
         if (percent === 0) {
-            line.Item.ClassifiedTaxCategory = {
-                ID: '',
-                Percent: 0,
-                TaxExemptionReasonCode: undefined,
-                TaxScheme: { ID: 'VAT' },
-                TaxExemptionReason: line.Item.ClassifiedTaxCategory?.TaxExemptionReason
-            };
-            this.calcLineTotal(line);
+            this.startZeroVatReasonSelection(line);
             return;
         } else {
             line.Item.ClassifiedTaxCategory = {
@@ -130,7 +129,8 @@ export class InvoiceEditItems {
 
     checkLineAutoSave(line: InvoiceLine | CreditNoteLine) {
         let autosave = false;
-        if (line?.Item?.Name && line?.Price?.PriceAmount?.value != null) {
+        const hasPersistableTaxCategory = !!line?.Item?.ClassifiedTaxCategory?.ID?.trim();
+        if (line?.Item?.Name && line?.Price?.PriceAmount?.value != null && hasPersistableTaxCategory) {
             if (this.invoiceContext.selectedDocumentType === DocumentType.INVOICE && (line as InvoiceLine).InvoicedQuantity?.value
                 || this.invoiceContext.selectedDocumentType === DocumentType.CREDIT_NOTE && (line as CreditNoteLine).CreditedQuantity?.value) {
                 autosave = true;
@@ -139,5 +139,35 @@ export class InvoiceEditItems {
         if (autosave) {
             this.autoSave();
         }
+    }
+
+    private startZeroVatReasonSelection(line: UBLLine) {
+        const previousTaxCategory = line.Item.ClassifiedTaxCategory
+            ? structuredClone(line.Item.ClassifiedTaxCategory)
+            : undefined;
+
+        line.Item.ClassifiedTaxCategory = {
+            ID: '',
+            Percent: 0,
+            TaxExemptionReasonCode: undefined,
+            TaxScheme: { ID: 'VAT' },
+            TaxExemptionReason: previousTaxCategory?.TaxExemptionReason
+        };
+        this.calcLineTotal(line, false);
+        this.zeroVatReasonModal.showModal(line, line.Item.ClassifiedTaxCategory, previousTaxCategory);
+    }
+
+    recordVatReasonSelection(reasonId: ZeroVatReasonId, reasonText: string) {
+        if (!reasonText?.trim()) {
+            return;
+        }
+        void this.invoiceService.recordVatReasonSelections([{
+            documentId: this.invoiceContext.selectedDocument?.id,
+            selectedTaxCategoryId: reasonId,
+            writtenReason: reasonText.trim(),
+            duringDraft: true,
+        }]).catch(error => {
+            console.warn('Failed to record draft VAT reason selection', error);
+        });
     }
 }

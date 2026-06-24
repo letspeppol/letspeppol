@@ -1,4 +1,4 @@
-import type {ClassifiedTaxCategory} from "../peppol/ubl";
+import {getLines, type ClassifiedTaxCategory, type UBLDoc} from "../peppol/ubl";
 
 export const VAT_RULESET_OPTIONS = [
     'VAT_REGISTERED',
@@ -14,6 +14,11 @@ export const ZERO_VAT_REASON_OPTIONS = [
     'Z',
 ] as const;
 export type ZeroVatReasonId = typeof ZERO_VAT_REASON_OPTIONS[number];
+
+export interface VatReasonSelectionPayload {
+    selectedTaxCategoryId: string;
+    writtenReason: string;
+}
 
 export function isVatExemptRuleset(vatRuleset?: VatRuleset): boolean {
     return vatRuleset === 'VAT_EXEMPT_ART_56BIS';
@@ -64,4 +69,13 @@ export function createVatExemptCategory(reason: string): ClassifiedTaxCategory {
 
 export function requiresDeliveryDetails(reasonId: ZeroVatReasonId | string | undefined): boolean {
     return reasonId === 'K';
+}
+
+export function collectVatReasonSelections(doc: UBLDoc | undefined): VatReasonSelectionPayload[] {
+    return (getLines(doc) ?? [])
+        .map(line => ({
+            selectedTaxCategoryId: line.Item?.ClassifiedTaxCategory?.ID?.trim() ?? '',
+            writtenReason: line.Item?.ClassifiedTaxCategory?.TaxExemptionReason?.trim() ?? '',
+        }))
+        .filter(item => item.selectedTaxCategoryId && item.writtenReason);
 }

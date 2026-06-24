@@ -14,9 +14,7 @@ import org.letspeppol.app.model.DocumentType;
 import org.letspeppol.app.repository.CompanyRepository;
 import org.letspeppol.app.repository.DocumentRepository;
 import org.letspeppol.app.repository.DocumentSpecifications;
-import org.letspeppol.app.repository.InvoiceVatReasonUsageRepository;
 import org.letspeppol.app.util.UblParser;
-import org.letspeppol.app.util.UblVatReasonExtractor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -50,7 +48,6 @@ public class DocumentService {
 
     private final CompanyRepository companyRepository;
     private final DocumentRepository documentRepository;
-    private final InvoiceVatReasonUsageRepository invoiceVatReasonUsageRepository;
     private final BackupService backupService;
     private final ValidationService validationService;
     private final NotificationService notificationService;
@@ -169,7 +166,6 @@ public class DocumentService {
         );
         document.setCompany(company);
         document = documentRepository.save(document);
-        synchronizeVatReasonUsage(document);
         documentCreateCounter.increment();
         if (!draft) {
             backupService.backupFile(document); //TODO : do we want to backUp drafts and not on proxy documents ?
@@ -254,7 +250,6 @@ public class DocumentService {
         if (document.getProxyOn() == null) {
             document = documentRepository.save(document); //Only save in database when it is not on proxy yet, else the safe is only allowed when it is proper delivered as proxy has the truth
         }
-        synchronizeVatReasonUsage(document);
         if (!draft) {
             backupService.backupFile(document); //TODO : do we want to backUp drafts and not on proxy documents ?
             documentBackupCounter.increment();
@@ -283,7 +278,6 @@ public class DocumentService {
         }
         document.setScheduledOn(schedule);
         document.setDraftedOn(null);
-        synchronizeVatReasonUsage(document);
 //        document = documentRepository.save(document); //Not saving, as we only save the proxy returned result
         backupService.backupFile(document);
         documentBackupCounter.increment(); //TODO : how to correctly use these counters ?
@@ -408,24 +402,6 @@ public class DocumentService {
             document.getCompany().setLastInvoiceReference(document.getInvoiceReference());
         }
         return documentRepository.save(document);
-    }
-
-    private void synchronizeVatReasonUsage(Document document) {
-        if (document == null || document.getId() == null || document.getDirection() != DocumentDirection.OUTGOING || document.getDraftedOn() != null) {
-            return;
-        }
-        invoiceVatReasonUsageRepository.deleteByDocumentId(document.getId());
-        List<UblVatReasonExtractor.VatReasonUsage> usages = UblVatReasonExtractor.extract(document.getUbl());
-        if (usages.isEmpty()) {
-            return;
-        }
-        invoiceVatReasonUsageRepository.saveAll(usages.stream()
-                .map(item -> new org.letspeppol.app.model.InvoiceVatReasonUsage(
-                        document,
-                        item.selectedTaxCategoryId(),
-                        item.writtenReason()
-                ))
-                .toList());
     }
 
     @Scheduled(cron = "0 0 * * * *")

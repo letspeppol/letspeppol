@@ -20,7 +20,7 @@
         </div>
         <footer class="modal-footer">
             <button type="button" class="btn" click.trigger="closeModal()" t="common.cancel">Cancel</button>
-            <button type="button" class="btn primary" click.trigger="save()" disabled.bind="!reasonId || !reasonText?.trim()" t="common.apply">Apply</button>
+            <button type="button" class="btn primary" click.trigger="save()" disabled.bind="readOnly || !reasonId || !reasonText?.trim()" t="common.apply">Apply</button>
         </footer>
     </div>
 </div>

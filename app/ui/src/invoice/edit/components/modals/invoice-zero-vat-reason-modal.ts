@@ -10,6 +10,7 @@ import {
 export class InvoiceZeroVatReasonModal {
     @bindable readOnly;
     @bindable calcLineTotal: (line: UBLLine) => void;
+    @bindable recordVatReasonSelection: (reasonId: ZeroVatReasonId, reasonText: string) => void | Promise<void>;
 
     open = false;
     line: UBLLine | undefined;
@@ -25,7 +26,7 @@ export class InvoiceZeroVatReasonModal {
             ? currentTaxCategory?.ID as ZeroVatReasonId
             : undefined;
         this.reasonText = currentTaxCategory?.TaxExemptionReason ?? '';
-        this.previousTaxCategory = previousTaxCategory;
+        this.previousTaxCategory = previousTaxCategory ? structuredClone(previousTaxCategory) : undefined;
         this.open = true;
     }
 
@@ -38,17 +39,23 @@ export class InvoiceZeroVatReasonModal {
     }
 
     save() {
-        if (!this.line || !this.reasonId) {
+        if (this.readOnly || !this.line || !this.reasonId) {
             return;
         }
+        const trimmedReasonText = this.reasonText.trim();
         this.line.Item.ClassifiedTaxCategory = {
             ...createZeroVatCategory(this.reasonId),
-            TaxExemptionReason: this.reasonText.trim()
+            TaxExemptionReason: trimmedReasonText
         };
         if (this.reasonId === 'Z') {
             this.line.Item.ClassifiedTaxCategory.TaxExemptionReasonCode = undefined;
         }
         this.calcLineTotal?.(this.line);
+        if (trimmedReasonText) {
+            void Promise.resolve(this.recordVatReasonSelection?.(this.reasonId, trimmedReasonText)).catch(error => {
+                console.warn('Failed to record VAT reason selection', error);
+            });
+        }
         this.resetModal();
     }
 

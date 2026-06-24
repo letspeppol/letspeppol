@@ -25,7 +25,7 @@ import {PaymentInfo} from "./components/tiles/payment-info";
 import moment, {Moment} from "moment";
 import {IRouter} from "@aurelia/router";
 import {I18N} from "@aurelia/i18n";
-import {requiresDeliveryDetails} from "../../services/app/vat-rules";
+import {collectVatReasonSelections, requiresDeliveryDetails} from "../../services/app/vat-rules";
 
 export class InvoiceEdit {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -118,6 +118,7 @@ export class InvoiceEdit {
                 }
                 doc = await this.invoiceService.createDocument(xml);
             }
+            this.recordFinalVatReasonSelections(doc.id);
             this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(`alert.invoice.sent.${type}`)});
             this.invoiceContext.invoicePage.content.unshift(doc);
             if (this.invoiceContext.selectedDocument.draftedOn) {
@@ -261,6 +262,25 @@ export class InvoiceEdit {
         for (const line of lines) {
             normalizeLinePrice(line);
         }
+    }
+
+    private collectVatReasonSelections() {
+        return collectVatReasonSelections(this.invoiceContext.selectedInvoice);
+    }
+
+    private recordFinalVatReasonSelections(documentId: string | undefined) {
+        const selections = this.collectVatReasonSelections().map(item => ({
+            documentId,
+            selectedTaxCategoryId: item.selectedTaxCategoryId,
+            writtenReason: item.writtenReason,
+            duringDraft: false,
+        }));
+        if (!selections.length) {
+            return;
+        }
+        void this.invoiceService.recordVatReasonSelections(selections).catch(error => {
+            console.warn('Failed to record final VAT reason selections', error);
+        });
     }
 
     savePartner() {
