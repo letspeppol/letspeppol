@@ -20,6 +20,9 @@ export class InvoiceZeroVatReasonModal {
     zeroVatReasonOptions = ZERO_VAT_REASON_OPTIONS;
 
     showModal(line: UBLLine, taxCategory?: ClassifiedTaxCategory, previousTaxCategory?: ClassifiedTaxCategory) {
+        if (this.readOnly) {
+            return;
+        }
         const currentTaxCategory = taxCategory ?? line.Item.ClassifiedTaxCategory;
         this.line = line;
         this.reasonId = this.zeroVatReasonOptions.includes(currentTaxCategory?.ID as ZeroVatReasonId)

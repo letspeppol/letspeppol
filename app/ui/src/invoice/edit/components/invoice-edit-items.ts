@@ -34,6 +34,53 @@ export class InvoiceEditItems {
     vatRateOptions = [21, 12, 6, 0];
     zeroVatReasonModal: InvoiceZeroVatReasonModal;
 
+    getVatSelectionTooltip(
+        line: UBLLine,
+        reasonId?: string,
+        reasonText?: string,
+    ): string | undefined {
+        const taxCategory = line?.Item?.ClassifiedTaxCategory;
+        const effectiveReasonId = reasonId?.trim() || taxCategory?.ID;
+        const effectiveReasonText = reasonText?.trim() || taxCategory?.TaxExemptionReason?.trim();
+
+        if (!taxCategory || effectiveReasonId == 'S') {
+            return undefined;
+        }
+        const reasonType = this.getVatReasonTypeLabel(effectiveReasonId);
+
+        if (reasonType && effectiveReasonText) {
+            return `${this.i18n.tr('invoice.zero-vat-reason.modal.reason-type')}: ${reasonType}\n${this.i18n.tr('invoice.zero-vat-reason.modal.reason-text')}: ${effectiveReasonText}`;
+        }
+        if (reasonType) {
+            return `${this.i18n.tr('invoice.zero-vat-reason.modal.reason-type')}: ${reasonType}`;
+        }
+        if (effectiveReasonText) {
+            return `${this.i18n.tr('invoice.zero-vat-reason.modal.reason-text')}: ${effectiveReasonText}`;
+        }
+        return undefined;
+    }
+
+    private getVatReasonTypeLabel(reasonId: string | undefined): string | undefined {
+        const trimmedReasonId = reasonId?.trim();
+        if (!trimmedReasonId) {
+            return undefined;
+        }
+
+        const primaryKey = `invoice.zero-vat-reason.options.${trimmedReasonId}`;
+        const primaryTranslation = this.i18n.tr(primaryKey);
+        if (primaryTranslation !== primaryKey) {
+            return primaryTranslation;
+        }
+
+        const legacyKey = `alert.invoice.zero-vat-reason.options.${trimmedReasonId}`;
+        const legacyTranslation = this.i18n.tr(legacyKey);
+        if (legacyTranslation !== legacyKey) {
+            return legacyTranslation;
+        }
+
+        return trimmedReasonId;
+    }
+
     private hasNoVatNumber(): boolean {
         return !this.companyService.myCompany?.vatNumber?.trim();
     }
