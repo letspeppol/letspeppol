@@ -55,6 +55,19 @@
           white-space: pre-wrap;
         }
 
+        .footnotes {
+          margin-top: 10px;
+          font-size: 10px;
+        }
+
+        .footnote-entry {
+          margin-top: 2px;
+        }
+
+        .footnote-ref {
+          font-size: 9px;
+        }
+
         /* Watermark for draft/proforma */
         .watermark {
           position: fixed;
@@ -236,8 +249,25 @@
               </td>
               <td class="amount">
                 <xsl:variable name="tax" select="normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='Percent'])[1])"/>
+                <xsl:variable name="lineTaxReasonId" select="normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='ID'])[1])"/>
+                <xsl:variable name="lineTaxExplanation" select="normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='TaxExemptionReason'])[1])"/>
+                <xsl:variable name="hasZeroVatFootnote"
+                              select="string-length($tax) &gt; 0 and number($tax) = 0 and (string-length($lineTaxReasonId) &gt; 0 or string-length($lineTaxExplanation) &gt; 0)"/>
                 <xsl:if test="string-length($tax) &gt; 0">
                   <xsl:value-of select="$tax"/> <span>&#37;</span>
+                  <xsl:if test="$hasZeroVatFootnote">
+                    <xsl:variable name="footnoteIndex"
+                                  select="count(preceding-sibling::*[
+                                    local-name()='CreditNoteLine'
+                                    and string-length(normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='Percent'])[1])) &gt; 0
+                                    and number(normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='Percent'])[1])) = 0
+                                    and (
+                                      string-length(normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='ID'])[1])) &gt; 0
+                                      or string-length(normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='TaxExemptionReason'])[1])) &gt; 0
+                                    )
+                                  ]) + 1"/>
+                    <sup class="footnote-ref"><xsl:value-of select="$footnoteIndex"/></sup>
+                  </xsl:if>
                 </xsl:if>
               </td>
               <td class="amount">
@@ -249,6 +279,34 @@
           </xsl:for-each>
         </tbody>
       </table>
+
+      <xsl:variable name="zeroVatLines"
+                    select="/*/*[
+                      local-name()='CreditNoteLine'
+                      and string-length(normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='Percent'])[1])) &gt; 0
+                      and number(normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='Percent'])[1])) = 0
+                      and (
+                        string-length(normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='ID'])[1])) &gt; 0
+                        or string-length(normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='TaxExemptionReason'])[1])) &gt; 0
+                      )
+                    ]"/>
+      <xsl:if test="count($zeroVatLines) &gt; 0">
+        <div class="footnotes">
+          <strong>0% VAT notes</strong>
+          <xsl:for-each select="$zeroVatLines">
+            <xsl:variable name="lineTaxReasonId" select="normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='ID'])[1])"/>
+            <xsl:variable name="lineTaxExplanation" select="normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='TaxExemptionReason'])[1])"/>
+            <div class="footnote-entry">
+              <sup class="footnote-ref"><xsl:value-of select="position()"/></sup>
+              <xsl:text> </xsl:text>
+              <xsl:call-template name="render-zero-vat-footnote-text">
+                <xsl:with-param name="reasonId" select="$lineTaxReasonId"/>
+                <xsl:with-param name="explanation" select="$lineTaxExplanation"/>
+              </xsl:call-template>
+            </div>
+          </xsl:for-each>
+        </div>
+      </xsl:if>
 
       <table class="totals">
         <tr>
@@ -401,6 +459,55 @@
         </xsl:if>
       </xsl:if>
     </xsl:if>
+  </xsl:template>
+
+  <xsl:template name="render-zero-vat-footnote-text">
+    <xsl:param name="reasonId"/>
+    <xsl:param name="explanation"/>
+
+    <xsl:variable name="reasonLabel">
+      <xsl:call-template name="zero-vat-reason-label">
+        <xsl:with-param name="reasonId" select="$reasonId"/>
+      </xsl:call-template>
+    </xsl:variable>
+
+    <xsl:choose>
+      <xsl:when test="string-length(normalize-space($reasonLabel)) &gt; 0 and string-length(normalize-space($explanation)) &gt; 0">
+        <xsl:element name="strong" namespace="http://www.w3.org/1999/xhtml">
+          <xsl:value-of select="normalize-space($reasonLabel)"/>
+        </xsl:element>
+        <xsl:text> : </xsl:text>
+        <xsl:value-of select="normalize-space($explanation)"/>
+      </xsl:when>
+      <xsl:when test="string-length(normalize-space($reasonLabel)) &gt; 0">
+        <xsl:element name="strong" namespace="http://www.w3.org/1999/xhtml">
+          <xsl:value-of select="normalize-space($reasonLabel)"/>
+        </xsl:element>
+      </xsl:when>
+      <xsl:when test="string-length(normalize-space($explanation)) &gt; 0">
+        <xsl:value-of select="normalize-space($explanation)"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="normalize-space($reasonId)"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template name="zero-vat-reason-label">
+    <xsl:param name="reasonId"/>
+
+    <xsl:variable name="normalizedReasonId"
+                  select="translate(normalize-space($reasonId), 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')"/>
+
+    <xsl:choose>
+      <xsl:when test="$normalizedReasonId = 'E'">Exempt from VAT</xsl:when>
+      <xsl:when test="$normalizedReasonId = 'K'">VAT exempt for EEA intra-community supply of goods and services</xsl:when>
+      <xsl:when test="$normalizedReasonId = 'G'">Free export item, VAT not charged</xsl:when>
+      <xsl:when test="$normalizedReasonId = 'AE'">Reverse Charge</xsl:when>
+      <xsl:when test="$normalizedReasonId = 'Z'">Zero rated goods</xsl:when>
+      <xsl:when test="$normalizedReasonId = 'O'">Miscellaneous non-VAT</xsl:when>
+      <xsl:otherwise><xsl:value-of select="normalize-space($reasonId)"/></xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <xsl:template name="format-eur">

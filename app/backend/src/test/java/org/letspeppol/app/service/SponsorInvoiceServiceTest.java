@@ -28,6 +28,7 @@ class SponsorInvoiceServiceTest {
     void buildInvoiceXmlChargesBelgianVatForBelgianCustomer() throws Exception {
         Company customer = new Company(
                 "0208:0123456789",
+                "0123456789",
                 "BE0123456789",
                 "Belgian Customer",
                 "Director",
@@ -52,6 +53,7 @@ class SponsorInvoiceServiceTest {
     void buildInvoiceXmlAppliesReverseChargeForEuCustomerOutsideBelgium() throws Exception {
         Company customer = new Company(
                 "9925:NL123456789B01",
+                "123456789-B01",
                 "NL123456789B01",
                 "Dutch Customer",
                 "Director",
