@@ -1,5 +1,5 @@
 import {singleton} from "aurelia";
-import {ClassifiedTaxCategory, getLines, TaxSubtotal, UBLDoc,} from "../services/peppol/ubl";
+import {ClassifiedTaxCategory, getLines, TaxCategory, TaxSubtotal, UBLDoc} from "../services/peppol/ubl";
 
 @singleton
 export class InvoiceCalculator {
@@ -12,12 +12,7 @@ export class InvoiceCalculator {
         const taxSubtotals: TaxSubtotal[] = [];
         for (const line of lines) {
             const normalizedTaxCategory = normalizeTaxCategory(line.Item.ClassifiedTaxCategory);
-            let taxSubtotal = taxSubtotals.find(item =>
-                item.TaxCategory.Percent === normalizedTaxCategory.Percent
-                && item.TaxCategory.ID === normalizedTaxCategory.ID
-                && item.TaxCategory.TaxExemptionReasonCode === normalizedTaxCategory.TaxExemptionReasonCode
-                && item.TaxCategory.TaxExemptionReason === normalizedTaxCategory.TaxExemptionReason
-            );
+            let taxSubtotal = taxSubtotals.find(item => matchesTaxBreakdownKey(item.TaxCategory, normalizedTaxCategory));
             if (!taxSubtotal) {
                 taxSubtotal = {
                     TaxableAmount: {
@@ -28,10 +23,11 @@ export class InvoiceCalculator {
                         value: 0,
                         __currencyID: "EUR"
                     },
-                    TaxCategory: normalizedTaxCategory
+                    TaxCategory: normalizedTaxCategory ? {...normalizedTaxCategory} : undefined
                 }
                 taxSubtotals.push(taxSubtotal);
             }
+            taxSubtotal.TaxCategory = mergeTaxCategoryDetails(taxSubtotal.TaxCategory, normalizedTaxCategory);
             taxSubtotal.TaxableAmount.value += line.LineExtensionAmount.value;
             totalWithoutTax += line.LineExtensionAmount.value;
             const tax = roundTwoDecimals(line.LineExtensionAmount.value * ((normalizedTaxCategory.Percent ?? 0) / 100.0));
@@ -83,20 +79,60 @@ function normalizeTaxCategory(category: ClassifiedTaxCategory | undefined): Clas
     if (!category) {
         return undefined;
     }
-    if (category.ID === 'Z') {
+    const categoryId = category.ID.trim();
+
+    if (categoryId === 'Z') {
         return {
             ...category,
+            ID: categoryId,
             TaxExemptionReasonCode: undefined,
             TaxExemptionReason: undefined
         };
     }
-    if (category.ID === 'O') {
+    if (categoryId === 'O') {
         return {
             ...category,
+            ID: categoryId,
             Percent: undefined,
             TaxExemptionReasonCode: undefined,
             TaxExemptionReason: undefined
         };
     }
-    return category;
+    return {
+        ...category,
+        ID: categoryId,
+        TaxExemptionReasonCode: category.TaxExemptionReasonCode?.trim() || undefined,
+        TaxExemptionReason: category.TaxExemptionReason?.trim() || undefined
+    };
+}
+
+function matchesTaxBreakdownKey(
+    left: TaxCategory,
+    right: ClassifiedTaxCategory | undefined,
+): boolean {
+    if (!left || !right) {
+        return left === right;
+    }
+
+    return left.Percent === right.Percent
+        && left.ID === right.ID;
+}
+
+function mergeTaxCategoryDetails(
+    current: TaxCategory | undefined,
+    incoming: ClassifiedTaxCategory | undefined,
+): TaxCategory | undefined {
+    if (!current) {
+        return incoming ? {...incoming} : undefined;
+    }
+    if (!incoming) {
+        return current;
+    }
+
+    return {
+        ...current,
+        TaxScheme: current.TaxScheme ?? incoming.TaxScheme,
+        TaxExemptionReasonCode: current.TaxExemptionReasonCode ?? incoming.TaxExemptionReasonCode,
+        TaxExemptionReason: current.TaxExemptionReason ?? incoming.TaxExemptionReason,
+    };
 }

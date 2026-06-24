@@ -2,7 +2,13 @@
 <import from="../../../app/value-converters/price.ts"></import>
 <import from="./modals/invoice-zero-vat-reason-modal"></import>
 
-<invoice-zero-vat-reason-modal component.ref="zeroVatReasonModal" read-only.bind="readOnly" calc-line-total.bind="(line) => calcLineTotal(line)" record-vat-reason-selection.bind="(reasonId, reasonText) => recordVatReasonSelection(reasonId, reasonText)"></invoice-zero-vat-reason-modal>
+<invoice-zero-vat-reason-modal
+    component.ref="zeroVatReasonModal"
+    read-only.bind="readOnly"
+    calc-line-total.bind="(line) => calcLineTotal(line)"
+    record-vat-reason-selection.bind="(reasonId, reasonText) => recordVatReasonSelection(reasonId, reasonText)"
+    get-suggested-vat-reason-text.bind="(reasonId, line) => getSuggestedVatReasonText(reasonId, line)"
+    sync-shared-vat-reason-text.bind="(reasonId, reasonText, line) => syncSharedVatReasonText(reasonId, reasonText, line)"></invoice-zero-vat-reason-modal>
 <div class="line-items">
     <div class="line-items-head">
         <h3 t="invoice.edit.invoice-lines">Invoice lines</h3>

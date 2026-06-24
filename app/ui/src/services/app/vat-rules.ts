@@ -1,4 +1,4 @@
-import {getLines, type ClassifiedTaxCategory, type UBLDoc} from "../peppol/ubl";
+import {getLines, type ClassifiedTaxCategory, type UBLDoc, type UBLLine} from "../peppol/ubl";
 
 export const VAT_RULESET_OPTIONS = [
     'VAT_REGISTERED',
@@ -78,4 +78,45 @@ export function collectVatReasonSelections(doc: UBLDoc | undefined): VatReasonSe
             writtenReason: line.Item?.ClassifiedTaxCategory?.TaxExemptionReason?.trim() ?? '',
         }))
         .filter(item => item.selectedTaxCategoryId && item.writtenReason);
+}
+
+export function getSharedVatReasonText(
+    doc: UBLDoc | undefined,
+    reasonId: ZeroVatReasonId,
+    sourceLine?: UBLLine,
+): string | undefined {
+    if (reasonId !== 'E') {
+        return undefined;
+    }
+
+    return (getLines(doc) ?? [])
+        .filter(line => line !== sourceLine)
+        .map(line => line.Item?.ClassifiedTaxCategory)
+        .find(taxCategory => taxCategory?.ID?.trim() === reasonId && !!taxCategory.TaxExemptionReason?.trim())
+        ?.TaxExemptionReason?.trim();
+}
+
+export function applySharedVatReasonText(
+    doc: UBLDoc | undefined,
+    reasonId: ZeroVatReasonId,
+    reasonText: string,
+    sourceLine?: UBLLine,
+) {
+    const trimmedReasonText = reasonText?.trim();
+    if (reasonId !== 'E' || !trimmedReasonText) {
+        return;
+    }
+
+    for (const line of getLines(doc) ?? []) {
+        if (line === sourceLine) {
+            continue;
+        }
+
+        const taxCategory = line.Item?.ClassifiedTaxCategory;
+        if (taxCategory?.ID?.trim() !== reasonId) {
+            continue;
+        }
+
+        taxCategory.TaxExemptionReason = trimmedReasonText;
+    }
 }

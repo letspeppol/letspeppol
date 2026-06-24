@@ -19,6 +19,21 @@
   <!-- Format money values with 2 decimals -->
   <xsl:decimal-format name="money" decimal-separator="." grouping-separator=","/>
 
+  <xsl:key name="invoice-zero-vat-footnote-group"
+           match="*[local-name()='InvoiceLine'][
+             string-length(normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='Percent'])[1])) &gt; 0
+             and number(normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='Percent'])[1])) = 0
+             and (
+               string-length(normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='ID'])[1])) &gt; 0
+               or string-length(normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='TaxExemptionReason'])[1])) &gt; 0
+             )
+           ]"
+           use="concat(
+             normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='ID'])[1]),
+             '|',
+             normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='TaxExemptionReason'])[1])
+           )"/>
+
   <xsl:template match="/">
     <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -183,6 +198,30 @@
         </tr>
       </table>
 
+      <xsl:variable name="zeroVatLines"
+                    select="/*/*[
+                      local-name()='InvoiceLine'
+                      and string-length(normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='Percent'])[1])) &gt; 0
+                      and number(normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='Percent'])[1])) = 0
+                      and (
+                        string-length(normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='ID'])[1])) &gt; 0
+                        or string-length(normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='TaxExemptionReason'])[1])) &gt; 0
+                      )
+                    ]"/>
+      <xsl:variable name="uniqueZeroVatLines"
+                    select="$zeroVatLines[
+                      generate-id() = generate-id(
+                        key(
+                          'invoice-zero-vat-footnote-group',
+                          concat(
+                            normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='ID'])[1]),
+                            '|',
+                            normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='TaxExemptionReason'])[1])
+                          )
+                        )[1]
+                      )
+                    ]"/>
+
       <h2>Lines</h2>
       <table>
         <thead>
@@ -247,22 +286,25 @@
                 <xsl:variable name="tax" select="normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='Percent'])[1])"/>
                 <xsl:variable name="lineTaxReasonId" select="normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='ID'])[1])"/>
                 <xsl:variable name="lineTaxExplanation" select="normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='TaxExemptionReason'])[1])"/>
+                <xsl:variable name="zeroVatFootnoteKey" select="concat($lineTaxReasonId, '|', $lineTaxExplanation)"/>
                 <xsl:variable name="hasZeroVatFootnote"
                               select="string-length($tax) &gt; 0 and number($tax) = 0 and (string-length($lineTaxReasonId) &gt; 0 or string-length($lineTaxExplanation) &gt; 0)"/>
                 <xsl:if test="string-length($tax) &gt; 0">
                   <xsl:value-of select="$tax"/> <span>&#37;</span>
                   <xsl:if test="$hasZeroVatFootnote">
-                    <xsl:variable name="footnoteIndex"
-                                  select="count(preceding-sibling::*[
-                                    local-name()='InvoiceLine'
-                                    and string-length(normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='Percent'])[1])) &gt; 0
-                                    and number(normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='Percent'])[1])) = 0
-                                    and (
-                                      string-length(normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='ID'])[1])) &gt; 0
-                                      or string-length(normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='TaxExemptionReason'])[1])) &gt; 0
-                                    )
-                                  ]) + 1"/>
-                    <sup class="footnote-ref"><xsl:value-of select="$footnoteIndex"/></sup>
+                    <sup class="footnote-ref">
+                      <xsl:for-each select="$uniqueZeroVatLines">
+                        <xsl:variable name="candidateFootnoteKey"
+                                      select="concat(
+                                        normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='ID'])[1]),
+                                        '|',
+                                        normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='TaxExemptionReason'])[1])
+                                      )"/>
+                        <xsl:if test="$candidateFootnoteKey = $zeroVatFootnoteKey">
+                          <xsl:value-of select="position()"/>
+                        </xsl:if>
+                      </xsl:for-each>
+                    </sup>
                   </xsl:if>
                 </xsl:if>
               </td>
@@ -276,20 +318,10 @@
         </tbody>
       </table>
 
-      <xsl:variable name="zeroVatLines"
-                    select="/*/*[
-                      local-name()='InvoiceLine'
-                      and string-length(normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='Percent'])[1])) &gt; 0
-                      and number(normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='Percent'])[1])) = 0
-                      and (
-                        string-length(normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='ID'])[1])) &gt; 0
-                        or string-length(normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='TaxExemptionReason'])[1])) &gt; 0
-                      )
-                    ]"/>
-      <xsl:if test="count($zeroVatLines) &gt; 0">
+      <xsl:if test="count($uniqueZeroVatLines) &gt; 0">
         <div class="footnotes">
           <strong>0% VAT notes</strong>
-          <xsl:for-each select="$zeroVatLines">
+          <xsl:for-each select="$uniqueZeroVatLines">
             <xsl:variable name="lineTaxReasonId" select="normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='ID'])[1])"/>
             <xsl:variable name="lineTaxExplanation" select="normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='TaxExemptionReason'])[1])"/>
             <div class="footnote-entry">

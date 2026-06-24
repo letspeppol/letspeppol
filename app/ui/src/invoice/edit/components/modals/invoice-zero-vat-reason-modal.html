@@ -8,7 +8,7 @@
         <div class="modal-body" style="display:grid;gap:var(--space-1)">
             <label class="field required">
                 <span t="invoice.zero-vat-reason.modal.reason-type">Reason type</span>
-                <select value.to-view="reasonId ?? ''" change.trigger="reasonId = $event.target.value || undefined" disabled.bind="readOnly">
+                <select value.to-view="reasonId ?? ''" change.trigger="updateReasonId($event.target.value)" disabled.bind="readOnly">
                     <option value="" t="common.none"></option>
                     <option repeat.for="reason of zeroVatReasonOptions" value.bind="reason" t.bind="getZeroVatReasonLabelKey(reason)"></option>
                 </select>

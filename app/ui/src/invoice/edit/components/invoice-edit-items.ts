@@ -7,8 +7,10 @@ import {bindable} from "aurelia";
 import {ProductDto} from "../../../services/app/product-service";
 import {CompanyService} from "../../../services/app/company-service";
 import {
+    applySharedVatReasonText,
     createNotSubjectToVatCategory,
     createVatExemptCategory,
+    getSharedVatReasonText,
     isVatExemptRuleset,
     ZeroVatReasonId,
 } from "../../../services/app/vat-rules";
@@ -216,5 +218,13 @@ export class InvoiceEditItems {
         }]).catch(error => {
             console.warn('Failed to record draft VAT reason selection', error);
         });
+    }
+
+    getSuggestedVatReasonText(reasonId: ZeroVatReasonId, line?: UBLLine): string | undefined {
+        return getSharedVatReasonText(this.invoiceContext.selectedInvoice, reasonId, line);
+    }
+
+    syncSharedVatReasonText(reasonId: ZeroVatReasonId, reasonText: string, line?: UBLLine) {
+        applySharedVatReasonText(this.invoiceContext.selectedInvoice, reasonId, reasonText, line);
     }
 }
