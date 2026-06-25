@@ -1,6 +1,7 @@
 import {describe, expect, test} from 'vitest';
 import {buildInvoiceXml} from '../../src/services/peppol/ubl-builder';
 import {parseInvoice} from '../../src/services/peppol/ubl-parser';
+import {NOT_SUBJECT_TO_VAT_REASON_TEXT} from '../../src/services/app/vat-rules';
 import type {Invoice} from '../../src/services/peppol/ubl';
 
 describe('UBL VAT exemption reasons', () => {
@@ -98,7 +99,7 @@ describe('UBL VAT exemption reasons', () => {
         expect(xml).not.toContain('TaxExemptionReasonCode');
     });
 
-    test('omits percent and party tax ids for not-subject-to-vat invoices', () => {
+    test('omits percent and party tax ids but keeps the mandatory reason for not-subject-to-vat invoices', () => {
         const invoice: Invoice = {
             CustomizationID: 'c',
             ProfileID: 'p',
@@ -140,5 +141,10 @@ describe('UBL VAT exemption reasons', () => {
         const xml = buildInvoiceXml(invoice);
         expect(xml).not.toContain('<cbc:Percent>');
         expect(xml).not.toContain('<cac:PartyTaxScheme>');
+        expect(xml).toContain(`<cbc:TaxExemptionReason>${NOT_SUBJECT_TO_VAT_REASON_TEXT}</cbc:TaxExemptionReason>`);
+
+        const parsed = parseInvoice(xml);
+        expect(parsed.TaxTotal?.[0]?.TaxSubtotal?.[0]?.TaxCategory?.TaxExemptionReason).toBe(NOT_SUBJECT_TO_VAT_REASON_TEXT);
+        expect(parsed.InvoiceLine[0].Item.ClassifiedTaxCategory?.TaxExemptionReason).toBe(NOT_SUBJECT_TO_VAT_REASON_TEXT);
     });
 });

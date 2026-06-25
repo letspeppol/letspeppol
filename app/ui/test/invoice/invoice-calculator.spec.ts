@@ -1,5 +1,6 @@
 import {describe, expect, test} from 'vitest';
 import {InvoiceCalculator} from '../../src/invoice/invoice-calculator';
+import {NOT_SUBJECT_TO_VAT_REASON_TEXT} from '../../src/services/app/vat-rules';
 import type {ClassifiedTaxCategory, Invoice, InvoiceLine} from '../../src/services/peppol/ubl';
 
 function createInvoice(lines: InvoiceLine[]): Invoice {
@@ -82,5 +83,20 @@ describe('InvoiceCalculator', () => {
         expect(byId.S?.TaxAmount.value).toBe(8.4);
         expect(invoice.LegalMonetaryTotal.LineExtensionAmount?.value).toBe(248);
         expect(invoice.LegalMonetaryTotal.TaxInclusiveAmount?.value).toBe(256.4);
+    });
+
+    test('keeps the default explanation on not-subject-to-vat breakdown rows', () => {
+        const invoice = createInvoice([
+            createLine('1', 26, { ID: 'O', TaxScheme: { ID: 'VAT' } }),
+            createLine('2', 14, { ID: 'O', TaxExemptionReason: NOT_SUBJECT_TO_VAT_REASON_TEXT, TaxScheme: { ID: 'VAT' } }),
+        ]);
+
+        new InvoiceCalculator().calculateTaxAndTotals(invoice);
+
+        expect(invoice.TaxTotal?.[0]?.TaxSubtotal).toHaveLength(1);
+        expect(invoice.TaxTotal?.[0]?.TaxSubtotal?.[0]?.TaxCategory?.ID).toBe('O');
+        expect(invoice.TaxTotal?.[0]?.TaxSubtotal?.[0]?.TaxCategory?.Percent).toBeUndefined();
+        expect(invoice.TaxTotal?.[0]?.TaxSubtotal?.[0]?.TaxCategory?.TaxExemptionReason).toBe(NOT_SUBJECT_TO_VAT_REASON_TEXT);
+        expect(invoice.TaxTotal?.[0]?.TaxSubtotal?.[0]?.TaxAmount.value).toBe(0);
     });
 });

@@ -1,5 +1,6 @@
 import {singleton} from "aurelia";
 import {ClassifiedTaxCategory, getLines, TaxCategory, TaxSubtotal, UBLDoc} from "../services/peppol/ubl";
+import {NOT_SUBJECT_TO_VAT_REASON_TEXT} from "../services/app/vat-rules";
 
 @singleton
 export class InvoiceCalculator {
@@ -94,8 +95,8 @@ function normalizeTaxCategory(category: ClassifiedTaxCategory | undefined): Clas
             ...category,
             ID: categoryId,
             Percent: undefined,
-            TaxExemptionReasonCode: undefined,
-            TaxExemptionReason: undefined
+            TaxExemptionReasonCode: category.TaxExemptionReasonCode?.trim() || undefined,
+            TaxExemptionReason: category.TaxExemptionReason?.trim() || NOT_SUBJECT_TO_VAT_REASON_TEXT
         };
     }
     return {

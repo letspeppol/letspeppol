@@ -2,6 +2,8 @@
 // Builds XML by string concatenation with explicit ordering, matching the
 // structures used in peppol-parser tests.
 
+import {NOT_SUBJECT_TO_VAT_REASON_TEXT} from '../app/vat-rules';
+
 import type {
     AccountingParty,
     Address,
@@ -627,8 +629,7 @@ function normalizeTaxCategory<T extends TaxCategory | ClassifiedTaxCategory>(tax
         return {
             ...taxCategory,
             Percent: undefined,
-            TaxExemptionReasonCode: undefined,
-            TaxExemptionReason: undefined,
+            TaxExemptionReason: taxCategory.TaxExemptionReason?.trim() || NOT_SUBJECT_TO_VAT_REASON_TEXT,
         };
     }
     return taxCategory;

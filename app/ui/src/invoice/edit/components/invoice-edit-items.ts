@@ -10,8 +10,11 @@ import {
     applySharedVatReasonText,
     createNotSubjectToVatCategory,
     createVatExemptCategory,
+    getDisplayedVatRatePercent,
+    getReadonlyDisplayedVatRatePercent,
     getSharedVatReasonText,
     isVatExemptRuleset,
+    shouldUseFixedVatMode,
     ZeroVatReasonId,
 } from "../../../services/app/vat-rules";
 import {InvoiceZeroVatReasonModal} from "./modals/invoice-zero-vat-reason-modal";
@@ -35,6 +38,14 @@ export class InvoiceEditItems {
     ];
     vatRateOptions = [21, 12, 6, 0];
     zeroVatReasonModal: InvoiceZeroVatReasonModal;
+
+    getDisplayedVatRate(line: UBLLine): number | undefined {
+        return getDisplayedVatRatePercent(line?.Item?.ClassifiedTaxCategory);
+    }
+
+    getReadonlyDisplayedVatRate(line: UBLLine): number {
+        return getReadonlyDisplayedVatRatePercent(line?.Item?.ClassifiedTaxCategory);
+    }
 
     getVatSelectionTooltip(
         line: UBLLine,
@@ -88,7 +99,12 @@ export class InvoiceEditItems {
     }
 
     isFixedVatMode(): boolean {
-        return this.hasNoVatNumber() || this.isAccountVatExempt();
+        return shouldUseFixedVatMode(
+            this.companyService.myCompany?.vatNumber,
+            this.companyService.myCompany?.vatRuleset,
+            this.invoiceContext.readOnly,
+            this.invoiceContext.selectedDocument?.direction,
+        );
     }
 
     recalculateLinePositions() {

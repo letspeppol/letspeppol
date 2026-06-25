@@ -333,12 +333,12 @@
         "options": {
           "E": "Exempt from VAT",
           "K": "VAT exempt for EEA intra-community supply of goods and services",
-          "G": "Free export item, VAT not charged",
-          "AE": "Reverse Charge",
-          "Z": "Zero rated goods",
-          "O": "Miscellaneous non-VAT"
-        }
-      },
+        "G": "Free export item, VAT not charged",
+        "AE": "Reverse Charge",
+        "Z": "Zero rated goods",
+        "O": "Not subject to VAT"
+      }
+    },
       "load-failed": "Failed to get invoice",
       "sent": {
         "INVOICE": "Invoice sent successfully",
@@ -490,7 +490,8 @@
         "K": "VAT exempt for EEA intra-community supply of goods and services",
         "G": "Free export item, VAT not charged",
         "AE": "Reverse Charge",
-        "Z": "Zero rated goods"
+        "Z": "Zero rated goods",
+        "O": "Not subject to VAT"
       },
       "modal": {
         "title": "0% VAT reason",

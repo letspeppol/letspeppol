@@ -633,7 +633,8 @@
         "K": "Vrijgesteld van btw voor intracommunautaire leveringen van goederen en diensten binnen de EER",
         "G": "Vrijgesteld exportartikel, geen btw aangerekend",
         "AE": "Verleggingsregeling",
-        "Z": "Goederen met nultarief"
+        "Z": "Goederen met nultarief",
+        "O": "Niet onderworpen aan btw"
       },
       "modal": {
         "title": "Reden voor 0% btw",

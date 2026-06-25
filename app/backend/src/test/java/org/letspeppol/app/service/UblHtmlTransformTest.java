@@ -55,6 +55,7 @@ class UblHtmlTransformTest {
                 """
         );
 
+        assertTrue(html.contains("<th style=\"width: 10%\" class=\"amount\">Tax</th>"), html);
         assertTrue(html.contains("0<span>%</span><sup class=\"footnote-ref\">1</sup>"), html);
         assertTrue(html.contains("0% VAT notes"), html);
         assertTrue(html.contains("<strong>Reverse Charge</strong> : Reverse charge due to article 44"), html);
@@ -99,6 +100,7 @@ class UblHtmlTransformTest {
                 """
         );
 
+        assertTrue(html.contains("<th style=\"width: 10%\" class=\"amount\">Tax</th>"), html);
         assertTrue(html.contains("0<span>%</span><sup class=\"footnote-ref\">1</sup>"), html);
         assertTrue(html.contains("0% VAT notes"), html);
         assertTrue(html.contains("<strong>Reverse Charge</strong> : Reverse charge due to article 44"), html);
@@ -258,6 +260,90 @@ class UblHtmlTransformTest {
         assertEquals(1, countOccurrences(html, "0<span>%</span><sup class=\"footnote-ref\">2</sup>"), html);
         assertEquals(1, countOccurrences(html, "<strong>Reverse Charge</strong> : due to article 44"), html);
         assertEquals(1, countOccurrences(html, "<strong>Free export item, VAT not charged</strong> : export outside EU"), html);
+    }
+
+    @Test
+    void invoiceTransformOmitsVatColumnAndAddsVatNoteForNotSubjectToVatDocuments() throws Exception {
+        String html = transform(
+                "pdf/ubl-invoice-to-html.xsl",
+                """
+                <Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
+                         xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+                         xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+                    <cbc:ID>INV-O</cbc:ID>
+                    <cbc:IssueDate>2026-06-24</cbc:IssueDate>
+                    <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
+                    <cac:AccountingSupplierParty><cac:Party><cac:PartyName><cbc:Name>Supplier Ltd</cbc:Name></cac:PartyName></cac:Party></cac:AccountingSupplierParty>
+                    <cac:AccountingCustomerParty><cac:Party><cac:PartyName><cbc:Name>Customer BV</cbc:Name></cac:PartyName></cac:Party></cac:AccountingCustomerParty>
+                    <cac:InvoiceLine>
+                        <cbc:ID>1</cbc:ID>
+                        <cbc:InvoicedQuantity unitCode="C62">1</cbc:InvoicedQuantity>
+                        <cbc:LineExtensionAmount currencyID="EUR">100.00</cbc:LineExtensionAmount>
+                        <cac:Item>
+                            <cbc:Name>Services</cbc:Name>
+                            <cac:ClassifiedTaxCategory>
+                                <cbc:ID>O</cbc:ID>
+                                <cbc:TaxExemptionReason>Not subject to VAT</cbc:TaxExemptionReason>
+                                <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
+                            </cac:ClassifiedTaxCategory>
+                        </cac:Item>
+                        <cac:Price><cbc:PriceAmount currencyID="EUR">100.00</cbc:PriceAmount></cac:Price>
+                    </cac:InvoiceLine>
+                    <cac:TaxTotal><cbc:TaxAmount currencyID="EUR">0.00</cbc:TaxAmount></cac:TaxTotal>
+                    <cac:LegalMonetaryTotal>
+                        <cbc:TaxExclusiveAmount currencyID="EUR">100.00</cbc:TaxExclusiveAmount>
+                        <cbc:PayableAmount currencyID="EUR">100.00</cbc:PayableAmount>
+                    </cac:LegalMonetaryTotal>
+                </Invoice>
+                """
+        );
+
+        assertFalse(html.contains("<th style=\"width: 10%\" class=\"amount\">Tax</th>"), html);
+        assertFalse(html.contains("0% VAT notes"), html);
+        assertTrue(html.contains("VAT note"), html);
+        assertTrue(html.contains("This document is not subject to VAT. Reason: Not subject to VAT."), html);
+    }
+
+    @Test
+    void creditNoteTransformOmitsVatColumnAndAddsVatNoteForNotSubjectToVatDocuments() throws Exception {
+        String html = transform(
+                "pdf/ubl-creditnote-to-html.xsl",
+                """
+                <CreditNote xmlns="urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2"
+                            xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+                            xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+                    <cbc:ID>CN-O</cbc:ID>
+                    <cbc:IssueDate>2026-06-24</cbc:IssueDate>
+                    <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
+                    <cac:AccountingSupplierParty><cac:Party><cac:PartyName><cbc:Name>Supplier Ltd</cbc:Name></cac:PartyName></cac:Party></cac:AccountingSupplierParty>
+                    <cac:AccountingCustomerParty><cac:Party><cac:PartyName><cbc:Name>Customer BV</cbc:Name></cac:PartyName></cac:Party></cac:AccountingCustomerParty>
+                    <cac:CreditNoteLine>
+                        <cbc:ID>1</cbc:ID>
+                        <cbc:CreditedQuantity unitCode="C62">1</cbc:CreditedQuantity>
+                        <cbc:LineExtensionAmount currencyID="EUR">100.00</cbc:LineExtensionAmount>
+                        <cac:Item>
+                            <cbc:Name>Services</cbc:Name>
+                            <cac:ClassifiedTaxCategory>
+                                <cbc:ID>O</cbc:ID>
+                                <cbc:TaxExemptionReason>Not subject to VAT</cbc:TaxExemptionReason>
+                                <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
+                            </cac:ClassifiedTaxCategory>
+                        </cac:Item>
+                        <cac:Price><cbc:PriceAmount currencyID="EUR">100.00</cbc:PriceAmount></cac:Price>
+                    </cac:CreditNoteLine>
+                    <cac:TaxTotal><cbc:TaxAmount currencyID="EUR">0.00</cbc:TaxAmount></cac:TaxTotal>
+                    <cac:LegalMonetaryTotal>
+                        <cbc:TaxExclusiveAmount currencyID="EUR">100.00</cbc:TaxExclusiveAmount>
+                        <cbc:PayableAmount currencyID="EUR">100.00</cbc:PayableAmount>
+                    </cac:LegalMonetaryTotal>
+                </CreditNote>
+                """
+        );
+
+        assertFalse(html.contains("<th style=\"width: 10%\" class=\"amount\">Tax</th>"), html);
+        assertFalse(html.contains("0% VAT notes"), html);
+        assertTrue(html.contains("VAT note"), html);
+        assertTrue(html.contains("This document is not subject to VAT. Reason: Not subject to VAT."), html);
     }
 
     private String transform(String xsltPath, String ublXml) throws Exception {

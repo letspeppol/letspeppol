@@ -477,7 +477,8 @@
         "K": "Von der MwSt. befreit für innergemeinschaftliche Lieferungen von Waren und Dienstleistungen im EWR",
         "G": "Steuerfreier Exportartikel, keine MwSt. berechnet",
         "AE": "Reverse Charge",
-        "Z": "Nullsteuersatz-Waren"
+        "Z": "Nullsteuersatz-Waren",
+        "O": "Nicht der MwSt. unterliegend"
       },
       "modal": {
         "title": "Grund für 0 % MwSt.",

@@ -15,6 +15,8 @@ export const ZERO_VAT_REASON_OPTIONS = [
 ] as const;
 export type ZeroVatReasonId = typeof ZERO_VAT_REASON_OPTIONS[number];
 
+export const NOT_SUBJECT_TO_VAT_REASON_TEXT = 'Not subject to VAT';
+
 export interface VatReasonSelectionPayload {
     selectedTaxCategoryId: string;
     writtenReason: string;
@@ -53,6 +55,7 @@ export function createZeroVatCategory(reasonId: ZeroVatReasonId): ClassifiedTaxC
 export function createNotSubjectToVatCategory(): ClassifiedTaxCategory {
     return {
         ID: 'O',
+        TaxExemptionReason: NOT_SUBJECT_TO_VAT_REASON_TEXT,
         Percent: undefined,
         TaxScheme: { ID: 'VAT' }
     };
@@ -65,6 +68,35 @@ export function createVatExemptCategory(reason: string): ClassifiedTaxCategory {
         TaxExemptionReason: reason,
         TaxScheme: { ID: 'VAT' }
     };
+}
+
+export function getDisplayedVatRatePercent(taxCategory: ClassifiedTaxCategory | undefined): number | undefined {
+    if (!taxCategory) {
+        return undefined;
+    }
+
+    if (taxCategory.ID?.trim().toUpperCase() === 'O') {
+        return 0;
+    }
+
+    return taxCategory.Percent;
+}
+
+export function getReadonlyDisplayedVatRatePercent(taxCategory: ClassifiedTaxCategory | undefined): number {
+    return getDisplayedVatRatePercent(taxCategory) ?? 0;
+}
+
+export function shouldUseFixedVatMode(
+    vatNumber: string | undefined,
+    vatRuleset: VatRuleset | undefined,
+    readOnly = false,
+    documentDirection?: string,
+): boolean {
+    if (readOnly && documentDirection === 'INCOMING') {
+        return false;
+    }
+
+    return !vatNumber?.trim() || isVatExemptRuleset(vatRuleset);
 }
 
 export function requiresDeliveryDetails(reasonId: ZeroVatReasonId | string | undefined): boolean {

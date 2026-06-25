@@ -633,7 +633,8 @@
         "K": "Exonéré de TVA pour les livraisons intracommunautaires de biens et services dans l’EEE",
         "G": "Article d’exportation exonéré, TVA non facturée",
         "AE": "Autoliquidation",
-        "Z": "Biens à taux zéro"
+        "Z": "Biens à taux zéro",
+        "O": "Non soumis à la TVA"
       },
       "modal": {
         "title": "Raison du taux de TVA de 0 %",

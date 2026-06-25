@@ -70,8 +70,11 @@
                 <td if.bind="!isFixedVatMode()" class="num">
                     <div style="display:flex;gap:.35rem;align-items:center">
                         <span class="disabled-tooltip-wrapper disabled-tooltip-wrapper-fill" title.bind="getVatSelectionTooltip(line, line.Item.ClassifiedTaxCategory.ID, line.Item.ClassifiedTaxCategory.TaxExemptionReason) || null">
-                            <select style="flex:1" value.bind="line.Item.ClassifiedTaxCategory.Percent" change.trigger="vatRateChanged(line, line.Item.ClassifiedTaxCategory.Percent)" disabled.bind="readOnly">
-                                <option repeat.for="taxRate of vatRateOptions" model.bind="taxRate">${taxRate}%</option>
+                            <select if.bind="!readOnly" style="flex:1" value.bind="line.Item.ClassifiedTaxCategory.Percent" change.trigger="vatRateChanged(line, Number($event.target.value))" disabled.bind="readOnly">
+                                <option repeat.for="taxRate of vatRateOptions" value.bind="taxRate">${taxRate}%</option>
+                            </select>
+                            <select else style="flex:1" disabled>
+                                <option repeat.for="taxRate of vatRateOptions" value.bind="taxRate" selected.bind="taxRate === getReadonlyDisplayedVatRate(line)">${taxRate}%</option>
                             </select>
                         </span>
                         <span
