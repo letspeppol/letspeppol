@@ -16,8 +16,15 @@ export function hasVatNumber(vatNumber?: string): boolean {
     return !!vatNumber?.trim();
 }
 
+export function getVatDisplayMode(
+    vatNumber: string | undefined,
+    preferredMode: VatDisplayMode = 'excl',
+): VatDisplayMode {
+    return hasVatNumber(vatNumber) ? preferredMode : 'incl';
+}
+
 export function getAutomaticVatDisplayMode(vatNumber?: string): VatDisplayMode {
-    return hasVatNumber(vatNumber) ? 'excl' : 'incl';
+    return getVatDisplayMode(vatNumber, 'excl');
 }
 
 const STORAGE_KEY = 'lp.vatDisplay.v1';

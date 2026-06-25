@@ -8,7 +8,7 @@ import {
     DocumentQuery,
     InvoiceService, DocumentDirection,
 } from "../../services/app/invoice-service";
-import {getAutomaticVatDisplayMode, hasVatNumber, VatDisplayMode} from "../../services/app/vat-display-service";
+import {getVatDisplayMode, IVatDisplay, VatDisplayMode} from "../../services/app/vat-display-service";
 import moment from "moment";
 import {IRouter} from "@aurelia/router";
 import {UploadUblModal} from "./components/upload-ubl-modal";
@@ -24,18 +24,20 @@ export class InvoiceOverview {
     private router = resolve(IRouter);
     private readonly i18n = resolve(I18N);
     private readonly companyService = resolve(CompanyService);
-    vatMode: VatDisplayMode = getAutomaticVatDisplayMode(this.companyService.myCompany?.vatNumber);
-    showVatColumn = hasVatNumber(this.companyService.myCompany?.vatNumber);
+    private readonly vatDisplay = resolve(IVatDisplay);
+    vatMode: VatDisplayMode = getVatDisplayMode(this.companyService.myCompany?.vatNumber, this.vatDisplay.mode);
     query: DocumentQuery = {pageable: {page: 0, size: 20, sort: [{property: 'issueDate', direction: 'desc'}]}}; 
     activeSortProperty = 'issueDate';
     activeSortDirection: SortDirection = 'desc';
     private resetSubscription: IDisposable;
+    private unsubscribeVatDisplay?: () => void;
 
     @bindable uploadUblModal: UploadUblModal;
 
     async attached() {
         await this.invoiceContext.initCompany();
         this.updateVatDisplayMode();
+        this.unsubscribeVatDisplay = this.vatDisplay.subscribe(mode => this.updateVatDisplayMode(mode));
         this.resetSubscription = this.ea.subscribe('invoicesReset', () => this.setActiveItems(this.invoiceContext.activeBox));
         this.setActiveItems(this.invoiceContext.activeBox);
         this.loadDrafts();
@@ -43,6 +45,7 @@ export class InvoiceOverview {
 
     detaching() {
         this.resetSubscription?.dispose();
+        this.unsubscribeVatDisplay?.();
     }
 
     async loadDrafts() {
@@ -175,13 +178,6 @@ export class InvoiceOverview {
         return this.vatMode === 'incl' ? item.amountInclVat : item.amountExclVat;
     }
 
-    vatAmount(item: DocumentDto): number | undefined {
-        if (item.amountInclVat == null || item.amountExclVat == null) {
-            return undefined;
-        }
-        return item.amountInclVat - item.amountExclVat;
-    }
-
     async markPaid(event: Event, item: DocumentDto) {
         event.stopPropagation();
         try {
@@ -211,10 +207,24 @@ export class InvoiceOverview {
         this.loadInvoices();
     }
 
-    private updateVatDisplayMode() {
+    private updateVatDisplayMode(preferredMode: VatDisplayMode = this.vatDisplay.mode) {
         const vatNumber = this.companyService.myCompany?.vatNumber;
-        this.vatMode = getAutomaticVatDisplayMode(vatNumber);
-        this.showVatColumn = hasVatNumber(vatNumber);
+        const nextMode = getVatDisplayMode(vatNumber, preferredMode);
+        if (this.vatMode === nextMode) {
+            return;
+        }
+
+        const currentSort = this.query.pageable.sort?.[0];
+        const sortWasByAmount = currentSort?.property === 'amountInclVat' || currentSort?.property === 'amountExclVat';
+        this.vatMode = nextMode;
+
+        if (!sortWasByAmount || !currentSort) {
+            return;
+        }
+
+        currentSort.property = this.amountSortProperty;
+        this.activeSortProperty = this.amountSortProperty;
+        this.reloadCurrentView();
     }
 
     private sortDirection(property: string): SortDirection | undefined {

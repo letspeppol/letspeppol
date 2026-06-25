@@ -1,7 +1,7 @@
 import {DirectionTotals, StatisticsService, Totals} from "../services/app/statistics-service";
 import {resolve} from "@aurelia/kernel";
 import {CompanyService} from "../services/app/company-service";
-import {getAutomaticVatDisplayMode, VatDisplayMode} from "../services/app/vat-display-service";
+import {getVatDisplayMode, IVatDisplay, VatDisplayMode} from "../services/app/vat-display-service";
 
 const EMPTY_TOTALS: DirectionTotals = {
     payableOpen: 0, payableOverdue: 0, payableThisYear: 0,
@@ -11,12 +11,22 @@ const EMPTY_TOTALS: DirectionTotals = {
 export class Dashboard {
     private statisticsService = resolve(StatisticsService);
     private companyService = resolve(CompanyService);
+    private vatDisplay = resolve(IVatDisplay);
     totals: Totals;
-    vatMode: VatDisplayMode = getAutomaticVatDisplayMode(this.companyService.myCompany?.vatNumber);
+    vatMode: VatDisplayMode = getVatDisplayMode(this.companyService.myCompany?.vatNumber, this.vatDisplay.mode);
     activeTotals: DirectionTotals = EMPTY_TOTALS;
+    private unsubscribeVatDisplay?: () => void;
 
     attached() {
+        this.unsubscribeVatDisplay = this.vatDisplay.subscribe(mode => {
+            this.vatMode = getVatDisplayMode(this.companyService.myCompany?.vatNumber, mode);
+            this.refreshActive();
+        });
         void this.load();
+    }
+
+    detaching() {
+        this.unsubscribeVatDisplay?.();
     }
 
     private async load() {
@@ -30,7 +40,7 @@ export class Dashboard {
         if (!this.companyService.myCompany) {
             await this.companyService.getAndSetMyCompanyForToken().catch(() => undefined);
         }
-        this.vatMode = getAutomaticVatDisplayMode(this.companyService.myCompany?.vatNumber);
+        this.vatMode = getVatDisplayMode(this.companyService.myCompany?.vatNumber, this.vatDisplay.mode);
         this.refreshActive();
     }
 

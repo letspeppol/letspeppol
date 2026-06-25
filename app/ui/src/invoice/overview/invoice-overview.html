@@ -149,7 +149,6 @@
                                     <span class="sort-indicator ${activeSortProperty!==amountSortProperty?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
                                 </button>
                             </th>
-                            <th if.bind="showVatColumn" t="invoice.table.vat">VAT</th>
                             <th t="invoice.table.status">Status</th>
                             <th class="actions-col" t="invoice.table.actions">Actions</th>
                         </tr>
@@ -164,7 +163,6 @@
                                 <td>${item.dueDate | dateFormat}</td>
                                 <td>${item.partnerName}</td>
                                 <td>${totalAmount(item) | price:item.currency}</td>
-                                <td if.bind="showVatColumn">${vatAmount(item) | price:item.currency}</td>
                                 <td>
                                     <span class="pill" if.bind="item.draftedOn" t="invoice.status.draft" title="${item.draftedOn | dateTimeFormat}">Drafted</span>
                                     <span class="pill scheduled" if.bind="item.scheduledOn && !item.processedOn" t="invoice.status.scheduled" title="${item.scheduledOn | dateTimeFormat}">Scheduled</span>
