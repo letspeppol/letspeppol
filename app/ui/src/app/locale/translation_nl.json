@@ -513,6 +513,7 @@
       "issue-date": "Uitgiftedatum",
       "due-date": "Vervaldatum",
       "total": "Totaal",
+      "vat": "BTW",
       "total-vat-suffix": {
         "incl": "incl. btw",
         "excl": "excl. btw"

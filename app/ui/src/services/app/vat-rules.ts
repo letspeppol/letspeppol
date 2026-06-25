@@ -86,19 +86,6 @@ export function getReadonlyDisplayedVatRatePercent(taxCategory: ClassifiedTaxCat
     return getDisplayedVatRatePercent(taxCategory) ?? 0;
 }
 
-export function shouldUseFixedVatMode(
-    vatNumber: string | undefined,
-    vatRuleset: VatRuleset | undefined,
-    readOnly = false,
-    documentDirection?: string,
-): boolean {
-    if (readOnly && documentDirection === 'INCOMING') {
-        return false;
-    }
-
-    return !vatNumber?.trim() || isVatExemptRuleset(vatRuleset);
-}
-
 export function requiresDeliveryDetails(reasonId: ZeroVatReasonId | string | undefined): boolean {
     return reasonId === 'K';
 }

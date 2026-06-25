@@ -532,6 +532,7 @@
       "issue-date": "Ausstellungsdatum",
       "due-date": "Fälligkeitsdatum",
       "total": "Gesamt",
+      "vat": "MwSt.",
       "total-vat-suffix": {
         "incl": "inkl. MwSt.",
         "excl": "exkl. MwSt."

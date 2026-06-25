@@ -1,6 +1,7 @@
 import {DirectionTotals, StatisticsService, Totals} from "../services/app/statistics-service";
 import {resolve} from "@aurelia/kernel";
-import {IVatDisplay, VatDisplayMode} from "../services/app/vat-display-service";
+import {CompanyService} from "../services/app/company-service";
+import {getAutomaticVatDisplayMode, VatDisplayMode} from "../services/app/vat-display-service";
 
 const EMPTY_TOTALS: DirectionTotals = {
     payableOpen: 0, payableOverdue: 0, payableThisYear: 0,
@@ -9,29 +10,33 @@ const EMPTY_TOTALS: DirectionTotals = {
 
 export class Dashboard {
     private statisticsService = resolve(StatisticsService);
-    private vatDisplay = resolve(IVatDisplay);
+    private companyService = resolve(CompanyService);
     totals: Totals;
-    vatMode: VatDisplayMode = this.vatDisplay.mode;
+    vatMode: VatDisplayMode = getAutomaticVatDisplayMode(this.companyService.myCompany?.vatNumber);
     activeTotals: DirectionTotals = EMPTY_TOTALS;
-    private vatUnsubscribe: () => void;
 
     attached() {
-        this.vatUnsubscribe = this.vatDisplay.subscribe(mode => {
-            this.vatMode = mode;
-            this.refreshActive();
-        });
-        this.loadTotals();
+        void this.load();
     }
 
-    detaching() {
-        this.vatUnsubscribe?.();
+    private async load() {
+        await Promise.all([
+            this.loadCompany(),
+            this.loadTotals(),
+        ]);
     }
 
-    loadTotals() {
-        this.statisticsService.getTotals().then(response => {
-            this.totals = response;
-            this.refreshActive();
-        });
+    private async loadCompany() {
+        if (!this.companyService.myCompany) {
+            await this.companyService.getAndSetMyCompanyForToken().catch(() => undefined);
+        }
+        this.vatMode = getAutomaticVatDisplayMode(this.companyService.myCompany?.vatNumber);
+        this.refreshActive();
+    }
+
+    private async loadTotals() {
+        this.totals = await this.statisticsService.getTotals();
+        this.refreshActive();
     }
 
     private refreshActive() {

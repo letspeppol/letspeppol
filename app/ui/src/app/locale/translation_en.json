@@ -545,6 +545,7 @@
       "issue-date": "Issue Date",
       "due-date": "Due Date",
       "total": "Total",
+      "vat": "VAT",
       "total-vat-suffix": {
         "incl": "incl. VAT",
         "excl": "excl. VAT"

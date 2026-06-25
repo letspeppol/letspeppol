@@ -6,7 +6,6 @@ import {
     getDisplayedVatRatePercent,
     getReadonlyDisplayedVatRatePercent,
     NOT_SUBJECT_TO_VAT_REASON_TEXT,
-    shouldUseFixedVatMode,
 } from '../../src/services/app/vat-rules';
 import type {Invoice} from '../../src/services/peppol/ubl';
 
@@ -85,12 +84,6 @@ describe('shared E VAT reason helpers', () => {
         expect(getReadonlyDisplayedVatRatePercent(createNotSubjectToVatCategory())).toBe(0);
         expect(getReadonlyDisplayedVatRatePercent({ ID: 'S', Percent: 12, TaxScheme: { ID: 'VAT' } })).toBe(12);
         expect(getReadonlyDisplayedVatRatePercent(undefined)).toBe(0);
-    });
-
-    test('does not force fixed VAT mode when viewing incoming documents', () => {
-        expect(shouldUseFixedVatMode(undefined, undefined, true, 'INCOMING')).toBe(false);
-        expect(shouldUseFixedVatMode(undefined, undefined, true, 'OUTGOING')).toBe(true);
-        expect(shouldUseFixedVatMode('BE0123456789', 'VAT_REGISTERED', true, 'INCOMING')).toBe(false);
     });
 
     test('reuses the existing exempt explanation from another line', () => {

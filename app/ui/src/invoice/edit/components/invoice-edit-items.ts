@@ -14,7 +14,6 @@ import {
     getReadonlyDisplayedVatRatePercent,
     getSharedVatReasonText,
     isVatExemptRuleset,
-    shouldUseFixedVatMode,
     ZeroVatReasonId,
 } from "../../../services/app/vat-rules";
 import {InvoiceZeroVatReasonModal} from "./modals/invoice-zero-vat-reason-modal";
@@ -94,17 +93,18 @@ export class InvoiceEditItems {
         return trimmedReasonId;
     }
 
-    private hasNoVatNumber(): boolean {
-        return !this.companyService.myCompany?.vatNumber?.trim();
+    hasVatNumber(): boolean {
+        return !!this.companyService.myCompany?.vatNumber?.trim();
     }
 
-    isFixedVatMode(): boolean {
-        return shouldUseFixedVatMode(
-            this.companyService.myCompany?.vatNumber,
-            this.companyService.myCompany?.vatRuleset,
-            this.invoiceContext.readOnly,
-            this.invoiceContext.selectedDocument?.direction,
-        );
+    lineTotalAmount(line: UBLLine): number {
+        const lineTotal = line?.LineExtensionAmount?.value ?? 0;
+        if (this.hasVatNumber()) {
+            return lineTotal;
+        }
+
+        const vatRate = getDisplayedVatRatePercent(line?.Item?.ClassifiedTaxCategory) ?? 0;
+        return roundTwoDecimals(lineTotal * (1 + (vatRate / 100)));
     }
 
     recalculateLinePositions() {
@@ -141,7 +141,7 @@ export class InvoiceEditItems {
             line.Item.Description = p.description;
         }
         if (p.taxPercentage != null) {
-            if (this.hasNoVatNumber()) {
+            if (!this.hasVatNumber()) {
                 line.Item.ClassifiedTaxCategory = createNotSubjectToVatCategory();
                 this.calcLineTotal(line);
                 return;
@@ -167,8 +167,18 @@ export class InvoiceEditItems {
         return isVatExemptRuleset(this.companyService.myCompany?.vatRuleset);
     }
 
+    isVatRateEditable(): boolean {
+        return !this.readOnly && !this.isAccountVatExempt();
+    }
+
+    canEditZeroVatReason(line: UBLLine): boolean {
+        return !this.readOnly
+            && !this.isAccountVatExempt()
+            && line.Item.ClassifiedTaxCategory?.Percent === 0;
+    }
+
     vatRateChanged(line: UBLLine, percent: number) {
-        if (this.hasNoVatNumber()) {
+        if (!this.hasVatNumber()) {
             line.Item.ClassifiedTaxCategory = createNotSubjectToVatCategory();
             this.calcLineTotal(line);
             return;

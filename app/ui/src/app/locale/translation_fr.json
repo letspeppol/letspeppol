@@ -513,6 +513,7 @@
       "issue-date": "Date d'émission",
       "due-date": "Date d'échéance",
       "total": "Total",
+      "vat": "TVA",
       "total-vat-suffix": {
         "incl": "TVA inc.",
         "excl": "HT"

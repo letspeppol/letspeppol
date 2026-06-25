@@ -8,11 +8,12 @@ import {
     DocumentQuery,
     InvoiceService, DocumentDirection,
 } from "../../services/app/invoice-service";
-import {IVatDisplay, VatDisplayMode} from "../../services/app/vat-display-service";
+import {getAutomaticVatDisplayMode, hasVatNumber, VatDisplayMode} from "../../services/app/vat-display-service";
 import moment from "moment";
 import {IRouter} from "@aurelia/router";
 import {UploadUblModal} from "./components/upload-ubl-modal";
 import {I18N} from "@aurelia/i18n";
+import {CompanyService} from "../../services/app/company-service";
 
 type SortDirection = "asc" | "desc";
 
@@ -22,27 +23,26 @@ export class InvoiceOverview {
     private invoiceContext = resolve(InvoiceContext);
     private router = resolve(IRouter);
     private readonly i18n = resolve(I18N);
-    private vatDisplay = resolve(IVatDisplay);
-    vatMode: VatDisplayMode = this.vatDisplay.mode;
-    query: DocumentQuery = {pageable: {page: 0, size: 20, sort: [{property: 'issueDate', direction: 'desc'}]}};
+    private readonly companyService = resolve(CompanyService);
+    vatMode: VatDisplayMode = getAutomaticVatDisplayMode(this.companyService.myCompany?.vatNumber);
+    showVatColumn = hasVatNumber(this.companyService.myCompany?.vatNumber);
+    query: DocumentQuery = {pageable: {page: 0, size: 20, sort: [{property: 'issueDate', direction: 'desc'}]}}; 
     activeSortProperty = 'issueDate';
     activeSortDirection: SortDirection = 'desc';
     private resetSubscription: IDisposable;
-    private vatUnsubscribe: () => void;
 
     @bindable uploadUblModal: UploadUblModal;
 
-    attached() {
-        this.invoiceContext.initCompany();
+    async attached() {
+        await this.invoiceContext.initCompany();
+        this.updateVatDisplayMode();
         this.resetSubscription = this.ea.subscribe('invoicesReset', () => this.setActiveItems(this.invoiceContext.activeBox));
-        this.vatUnsubscribe = this.vatDisplay.subscribe(mode => this.vatMode = mode);
         this.setActiveItems(this.invoiceContext.activeBox);
         this.loadDrafts();
     }
 
     detaching() {
         this.resetSubscription?.dispose();
-        this.vatUnsubscribe?.();
     }
 
     async loadDrafts() {
@@ -167,6 +167,21 @@ export class InvoiceOverview {
         return moment(date).format('D/M/YYYY');
     }
 
+    get amountSortProperty(): string {
+        return this.vatMode === 'incl' ? 'amountInclVat' : 'amountExclVat';
+    }
+
+    totalAmount(item: DocumentDto): number | undefined {
+        return this.vatMode === 'incl' ? item.amountInclVat : item.amountExclVat;
+    }
+
+    vatAmount(item: DocumentDto): number | undefined {
+        if (item.amountInclVat == null || item.amountExclVat == null) {
+            return undefined;
+        }
+        return item.amountInclVat - item.amountExclVat;
+    }
+
     async markPaid(event: Event, item: DocumentDto) {
         event.stopPropagation();
         try {
@@ -179,7 +194,7 @@ export class InvoiceOverview {
                 item.paidOn = datePaid;
                 this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(`alert.invoice.marked-paid.${item.type}`)});
             }
-        } catch (e) {
+        } catch {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.invoice.paid-status-failed')});
         }
     }
@@ -194,6 +209,12 @@ export class InvoiceOverview {
             return;
         }
         this.loadInvoices();
+    }
+
+    private updateVatDisplayMode() {
+        const vatNumber = this.companyService.myCompany?.vatNumber;
+        this.vatMode = getAutomaticVatDisplayMode(vatNumber);
+        this.showVatColumn = hasVatNumber(vatNumber);
     }
 
     private sortDirection(property: string): SortDirection | undefined {
