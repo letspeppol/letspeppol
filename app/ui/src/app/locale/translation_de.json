@@ -40,10 +40,12 @@
     "due-date": "Fälligkeitsdatum",
     "type": "Typ",
     "number": "Nummer",
-    "peppolId": "Peppol-ID"
+    "peppolId": "Peppol-ID",
+    "enterprise-number": "Unternehmensnr."
   },
   "placeholder": {
     "email": "you@company.com",
+    "enterprise-number": "0123456789",
     "vat-number": "BE0123456789",
     "password": "••••••••",
     "product-search": "Produkt suchen",
@@ -211,6 +213,12 @@
     "label": "Neu",
     "click-to-dismiss": "Hinweis bestätigen"
   },
+  "dashboard": {
+    "vat-suffix": {
+      "incl": "inkl. MwSt.",
+      "excl": "exkl. MwSt."
+    }
+  },
   "donations": {
     "sponsors": "Stufensponsoren",
     "sponsors-title": "Bronze-, Silber- und Gold-Sponsoren zusammen",
@@ -263,12 +271,6 @@
     "load-error": "Die Sponsoren konnten derzeit nicht geladen werden.",
     "empty": "Noch keine Sponsoren."
   },
-  "dashboard": {
-    "vat-suffix": {
-      "incl": "inkl. MwSt.",
-      "excl": "exkl. MwSt."
-    }
-  },
   "navigation": {
     "dashboard": "Dashboard",
     "invoices": "Rechnungen",
@@ -276,7 +278,8 @@
     "products": "Produkte",
     "account": "Konto",
     "brand-alt": "Let’s Peppol",
-    "toggle-theme": "Theme umschalten"
+    "toggle-theme": "Theme umschalten",
+    "language": "Sprache"
   },
   "alert": {
     "success": "Erfolg",
@@ -327,6 +330,16 @@
       "save-failed": "Unternehmen konnte nicht gespeichert werden"
     },
     "invoice": {
+      "zero-vat-reason": {
+        "options": {
+          "E": "Von der MwSt. befreit",
+          "K": "Von der MwSt. befreit für innergemeinschaftliche Lieferungen von Waren und Dienstleistungen im EWR",
+          "G": "Steuerfreier Exportartikel, keine MwSt. berechnet",
+          "AE": "Reverse Charge",
+          "Z": "Nullsteuersatz-Waren",
+          "O": "Nicht der MwSt. unterliegend"
+        }
+      },
       "load-failed": "Rechnung konnte nicht geladen werden",
       "sent": {
         "INVOICE": "Rechnung erfolgreich gesendet",
@@ -451,6 +464,7 @@
       "postal-code": "Postleitzahl",
       "city": "Ort",
       "country": "Land",
+      "kbo": "KBO",
       "vat": "USt-IdNr.",
       "actions": "Aktionen"
     },
@@ -610,6 +624,7 @@
       "country": "Land",
       "house-number": "Hausnummer",
       "country-value": "Belgien",
+      "search-placeholder": "Nach Namen suchen",
       "search-name-vat": "Name oder USt-IdNr.",
       "search-partner-placeholder": "Partner nach Name oder USt-IdNr. suchen",
       "no-matches": "Keine Treffer",

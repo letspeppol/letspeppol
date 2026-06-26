@@ -9,6 +9,7 @@
     "postal-code": "Code postal",
     "street": "Rue",
     "house-number": "Numéro",
+    "house-number-short": "N°",
     "company-name": "Nom de l'entreprise",
     "description": "Description",
     "reference": "Référence",
@@ -33,16 +34,18 @@
     "customer": "Client",
     "supplier": "Fournisseur",
     "invoice-number": "Numéro de facture",
+    "buyer-reference": "Référence acheteur",
     "note-optional": "Note (optionnel)",
     "issue-date": "Date d'émission",
     "due-date": "Date d'échéance",
     "type": "Type",
     "number": "Numéro",
-    "house-number-short": "N°",
-    "peppolId": "ID Peppol"
+    "peppolId": "ID Peppol",
+    "enterprise-number": "N° d’entreprise"
   },
   "placeholder": {
     "email": "vous@entreprise.com",
+    "enterprise-number": "0123456789",
     "vat-number": "BE0123456789",
     "password": "••••••••",
     "product-search": "Rechercher produit",
@@ -210,6 +213,12 @@
     "label": "Nouveau",
     "click-to-dismiss": "Valider le message"
   },
+  "dashboard": {
+    "vat-suffix": {
+      "incl": "TVA inc.",
+      "excl": "HT"
+    }
+  },
   "donations": {
     "sponsors": "sponsors tiers",
     "sponsors-title": "Sponsors Bronze, Argent et Or réunis",
@@ -262,12 +271,6 @@
     "load-error": "Impossible de charger les sponsors pour le moment.",
     "empty": "Pas encore de sponsors."
   },
-  "dashboard": {
-    "vat-suffix": {
-      "incl": "TVA inc.",
-      "excl": "HT"
-    }
-  },
   "navigation": {
     "dashboard": "Tableau de bord",
     "invoices": "Factures",
@@ -275,7 +278,8 @@
     "products": "Produits",
     "account": "Compte",
     "brand-alt": "Let’s Peppol",
-    "toggle-theme": "Changer de thème"
+    "toggle-theme": "Changer de thème",
+    "language": "Langue"
   },
   "alert": {
     "success": "Succès",
@@ -326,6 +330,16 @@
       "save-failed": "Échec de l'enregistrement de l'entreprise"
     },
     "invoice": {
+      "zero-vat-reason": {
+        "options": {
+          "E": "Exonéré de TVA",
+          "K": "Exonéré de TVA pour les livraisons intracommunautaires de biens et services dans l’EEE",
+          "G": "Article d’exportation exonéré, TVA non facturée",
+          "AE": "Autoliquidation",
+          "Z": "Biens à taux zéro",
+          "O": "Non soumis à la TVA"
+        }
+      },
       "load-failed": "Échec de la récupération de la facture",
       "sent": {
         "INVOICE": "Facture envoyée avec succès",
@@ -450,6 +464,7 @@
       "postal-code": "Code postal",
       "city": "Ville",
       "country": "Pays",
+      "kbo": "BCE",
       "vat": "TVA",
       "actions": "Actions"
     },
@@ -470,6 +485,24 @@
     }
   },
   "invoice": {
+    "zero-vat-reason": {
+      "options": {
+        "E": "Exonéré de TVA",
+        "K": "Exonéré de TVA pour les livraisons intracommunautaires de biens et services dans l’EEE",
+        "G": "Article d’exportation exonéré, TVA non facturée",
+        "AE": "Autoliquidation",
+        "Z": "Biens à taux zéro",
+        "O": "Non soumis à la TVA"
+      },
+      "modal": {
+        "title": "Raison du taux de TVA de 0 %",
+        "reason-type": "Type de raison",
+        "reason-text": "Explication",
+        "reason-text-placeholder": "Pourquoi cette ligne est-elle à 0 % de TVA ?",
+        "update-account": "Utiliser ceci comme régime TVA par défaut pour ce compte",
+        "edit-button": "Modifier la raison de la TVA à 0 %"
+      }
+    },
     "direction": "Direction",
     "all": "Tous",
     "outgoing": "Sortant",
@@ -591,9 +624,11 @@
       "country": "Pays",
       "house-number": "Numéro",
       "country-value": "Belgique",
+      "search-placeholder": "Rechercher par nom",
       "search-name-vat": "Nom ou numéro TVA",
       "search-partner-placeholder": "Rechercher un partenaire par nom ou numéro TVA",
-      "no-matches": "Aucun résultat"
+      "no-matches": "Aucun résultat",
+      "save-as-partner": "Enregistrer comme partenaire"
     },
     "productSearch": {
       "placeholder": "nom",
@@ -627,24 +662,6 @@
       "note": "Note",
       "recreate-positions": "Recréer les positions de lignes",
       "attachments": "Pièces jointes"
-    },
-    "zero-vat-reason": {
-      "options": {
-        "E": "Exonéré de TVA",
-        "K": "Exonéré de TVA pour les livraisons intracommunautaires de biens et services dans l’EEE",
-        "G": "Article d’exportation exonéré, TVA non facturée",
-        "AE": "Autoliquidation",
-        "Z": "Biens à taux zéro",
-        "O": "Non soumis à la TVA"
-      },
-      "modal": {
-        "title": "Raison du taux de TVA de 0 %",
-        "reason-type": "Type de raison",
-        "reason-text": "Explication",
-        "reason-text-placeholder": "Pourquoi cette ligne est-elle à 0 % de TVA ?",
-        "update-account": "Utiliser ceci comme régime TVA par défaut pour ce compte",
-        "edit-button": "Modifier la raison de la TVA à 0 %"
-      }
     }
   },
   "account": {
@@ -656,7 +673,6 @@
     "download-contract": "Télécharger le contrat",
     "change-password": "Changer le mot de passe",
     "company-info": "Informations société",
-    "company-name": "Nom de l'entreprise",
     "company-legal-name": "Dénomination sociale",
     "company-display-name": "Nom commercial",
     "peppol-registration": "Enregistrement Peppol",

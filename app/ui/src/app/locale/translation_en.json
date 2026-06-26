@@ -278,7 +278,8 @@
     "products": "Products",
     "account": "Account",
     "brand-alt": "Let’s Peppol",
-    "toggle-theme": "Toggle theme"
+    "toggle-theme": "Toggle theme",
+    "language": "Language"
   },
   "alert": {
     "success": "Success",
@@ -623,6 +624,7 @@
       "country": "Country",
       "house-number": "House Number",
       "country-value": "Belgium",
+      "search-placeholder": "Search by name",
       "search-name-vat": "Name or VAT Number",
       "search-partner-placeholder": "Search partner by name or VAT number",
       "no-matches": "No matches",

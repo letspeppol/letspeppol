@@ -9,6 +9,7 @@
     "postal-code": "Postcode",
     "street": "Straat",
     "house-number": "Huisnummer",
+    "house-number-short": "Huisnr",
     "company-name": "Bedrijfsnaam",
     "description": "Beschrijving",
     "reference": "Referentie",
@@ -33,16 +34,18 @@
     "customer": "Klant",
     "supplier": "Leverancier",
     "invoice-number": "Factuurnummer",
+    "buyer-reference": "Referentie koper",
     "note-optional": "Notitie (optioneel)",
     "issue-date": "Uitgiftedatum",
     "due-date": "Vervaldatum",
     "type": "Type",
     "number": "Nummer",
-    "house-number-short": "Huisnr",
-    "peppolId": "Peppol ID"
+    "peppolId": "Peppol ID",
+    "enterprise-number": "Ondernemingsnr."
   },
   "placeholder": {
     "email": "naam@bedrijf.be",
+    "enterprise-number": "0123456789",
     "vat-number": "BE0123456789",
     "password": "••••••••",
     "product-search": "Product zoeken",
@@ -210,6 +213,12 @@
     "label": "Nieuw",
     "click-to-dismiss": "Melding bevestigen"
   },
+  "dashboard": {
+    "vat-suffix": {
+      "incl": "incl. btw",
+      "excl": "excl. btw"
+    }
+  },
   "donations": {
     "sponsors": "tiersponsors",
     "sponsors-title": "Bronzen, zilveren en gouden sponsors samen",
@@ -262,12 +271,6 @@
     "load-error": "De sponsors konden nu niet worden geladen.",
     "empty": "Nog geen sponsors."
   },
-  "dashboard": {
-    "vat-suffix": {
-      "incl": "incl. btw",
-      "excl": "excl. btw"
-    }
-  },
   "navigation": {
     "dashboard": "Dashboard",
     "invoices": "Facturen",
@@ -275,7 +278,8 @@
     "products": "Producten",
     "account": "Account",
     "brand-alt": "Let’s Peppol",
-    "toggle-theme": "Thema wisselen"
+    "toggle-theme": "Thema wisselen",
+    "language": "Taal"
   },
   "alert": {
     "success": "Succes",
@@ -326,6 +330,16 @@
       "save-failed": "Bedrijf opslaan mislukt"
     },
     "invoice": {
+      "zero-vat-reason": {
+        "options": {
+          "E": "Vrijgesteld van btw",
+          "K": "Vrijgesteld van btw voor intracommunautaire leveringen van goederen en diensten binnen de EER",
+          "G": "Vrijgesteld exportartikel, geen btw aangerekend",
+          "AE": "Verlegd",
+          "Z": "Goederen met nultarief",
+          "O": "Niet onderworpen aan btw"
+        }
+      },
       "load-failed": "Factuur ophalen mislukt",
       "sent": {
         "INVOICE": "Factuur succesvol verzonden",
@@ -450,6 +464,7 @@
       "postal-code": "Postcode",
       "city": "Stad",
       "country": "Land",
+      "kbo": "KBO",
       "vat": "BTW",
       "actions": "Acties"
     },
@@ -470,6 +485,24 @@
     }
   },
   "invoice": {
+    "zero-vat-reason": {
+      "options": {
+        "E": "Vrijgesteld van btw",
+        "K": "Vrijgesteld van btw voor intracommunautaire leveringen van goederen en diensten binnen de EER",
+        "G": "Vrijgesteld exportartikel, geen btw aangerekend",
+        "AE": "Verleggingsregeling",
+        "Z": "Goederen met nultarief",
+        "O": "Niet onderworpen aan btw"
+      },
+      "modal": {
+        "title": "Reden voor 0% btw",
+        "reason-type": "Type reden",
+        "reason-text": "Toelichting",
+        "reason-text-placeholder": "Waarom geldt voor deze lijn 0% btw?",
+        "update-account": "Gebruik dit als standaard btw-regelset voor dit account",
+        "edit-button": "Reden voor 0% btw bewerken"
+      }
+    },
     "direction": "Richting",
     "all": "Alle",
     "outgoing": "Uitgaand",
@@ -591,9 +624,11 @@
       "country": "Land",
       "house-number": "Huisnummer",
       "country-value": "België",
+      "search-placeholder": "Zoeken op naam",
       "search-name-vat": "Naam of BTW-nummer",
       "search-partner-placeholder": "Zoek partner op naam of BTW-nummer",
-      "no-matches": "Geen resultaten"
+      "no-matches": "Geen resultaten",
+      "save-as-partner": "Opslaan als partner"
     },
     "productSearch": {
       "placeholder": "naam",
@@ -627,24 +662,6 @@
       "note": "Notitie",
       "recreate-positions": "Lijnposities opnieuw aanmaken",
       "attachments": "Bijlagen"
-    },
-    "zero-vat-reason": {
-      "options": {
-        "E": "Vrijgesteld van btw",
-        "K": "Vrijgesteld van btw voor intracommunautaire leveringen van goederen en diensten binnen de EER",
-        "G": "Vrijgesteld exportartikel, geen btw aangerekend",
-        "AE": "Verleggingsregeling",
-        "Z": "Goederen met nultarief",
-        "O": "Niet onderworpen aan btw"
-      },
-      "modal": {
-        "title": "Reden voor 0% btw",
-        "reason-type": "Type reden",
-        "reason-text": "Toelichting",
-        "reason-text-placeholder": "Waarom geldt voor deze lijn 0% btw?",
-        "update-account": "Gebruik dit als standaard btw-regelset voor dit account",
-        "edit-button": "Reden voor 0% btw bewerken"
-      }
     }
   },
   "account": {
