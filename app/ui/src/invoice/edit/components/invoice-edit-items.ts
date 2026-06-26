@@ -97,13 +97,12 @@ export class InvoiceEditItems {
         return !!this.companyService.myCompany?.vatNumber?.trim();
     }
 
-    lineTotalAmount(line: UBLLine): number {
-        const lineTotal = line?.LineExtensionAmount?.value ?? 0;
+    lineTotalAmount(lineTotal: number, taxCategory: ClassifiedTaxCategory | undefined): number {
         if (this.hasVatNumber()) {
             return lineTotal;
         }
 
-        const vatRate = getDisplayedVatRatePercent(line?.Item?.ClassifiedTaxCategory) ?? 0;
+        const vatRate = getDisplayedVatRatePercent(taxCategory) ?? 0;
         return roundTwoDecimals(lineTotal * (1 + (vatRate / 100)));
     }
 
