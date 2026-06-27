@@ -70,15 +70,15 @@
                 <td if.bind="hasVatNumber()" class="num">
                     <div style="display:flex;gap:.35rem;align-items:center">
                         <span class="disabled-tooltip-wrapper disabled-tooltip-wrapper-fill" title.bind="getVatSelectionTooltip(line, line.Item.ClassifiedTaxCategory.ID, line.Item.ClassifiedTaxCategory.TaxExemptionReason) || null">
-                            <select if.bind="isVatRateEditable()" style="flex:1" value.bind="line.Item.ClassifiedTaxCategory.Percent" change.trigger="vatRateChanged(line, Number($event.target.value))" disabled.bind="readOnly">
+                            <select if.bind="isVatRateEditable()" style="flex:1" change.trigger="vatRateChanged(line, $event.target.value)" disabled.bind="readOnly">
                                 <option repeat.for="taxRate of vatRateOptions" value.bind="taxRate">${taxRate}%</option>
                             </select>
                             <select else style="flex:1" disabled>
-                                <option repeat.for="taxRate of vatRateOptions" value.bind="taxRate" selected.bind="taxRate === getReadonlyDisplayedVatRate(line)">${taxRate}%</option>
+                                <option repeat.for="taxRate of vatRateOptions" value.bind="taxRate" selected.bind="taxRate === getReadonlyDisplayedVatRate(line?.Item?.ClassifiedTaxCategory)">${taxRate}%</option>
                             </select>
                         </span>
                         <span
-                            if.bind="canEditZeroVatReason(line)"
+                            if.bind="canEditZeroVatReason(line.Item.ClassifiedTaxCategory)"
                             class="disabled-tooltip-wrapper"
                             title.bind="getVatSelectionTooltip(line, line.Item.ClassifiedTaxCategory.ID, line.Item.ClassifiedTaxCategory.TaxExemptionReason) || null">
                             <button

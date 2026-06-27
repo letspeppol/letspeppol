@@ -38,12 +38,12 @@ export class InvoiceEditItems {
     vatRateOptions = [21, 12, 6, 0];
     zeroVatReasonModal: InvoiceZeroVatReasonModal;
 
-    getDisplayedVatRate(line: UBLLine): number | undefined {
-        return getDisplayedVatRatePercent(line?.Item?.ClassifiedTaxCategory);
+    getDisplayedVatRate(taxCategory: ClassifiedTaxCategory): number | undefined {
+        return getDisplayedVatRatePercent(taxCategory);
     }
 
-    getReadonlyDisplayedVatRate(line: UBLLine): number {
-        return getReadonlyDisplayedVatRatePercent(line?.Item?.ClassifiedTaxCategory);
+    getReadonlyDisplayedVatRate(taxCategory: ClassifiedTaxCategory): number {
+        return getReadonlyDisplayedVatRatePercent(taxCategory);
     }
 
     getVatSelectionTooltip(
@@ -170,13 +170,18 @@ export class InvoiceEditItems {
         return !this.readOnly && !this.isAccountVatExempt();
     }
 
-    canEditZeroVatReason(line: UBLLine): boolean {
+    canEditZeroVatReason(taxCategory: ClassifiedTaxCategory): boolean {
         return !this.readOnly
             && !this.isAccountVatExempt()
-            && line.Item.ClassifiedTaxCategory?.Percent === 0;
+            && taxCategory?.Percent === 0;
     }
 
-    vatRateChanged(line: UBLLine, percent: number) {
+    vatRateChanged(line: UBLLine, value: number | string) {
+        const percent = Number(value);
+        if (Number.isNaN(percent)) {
+            return;
+        }
+
         if (!this.hasVatNumber()) {
             line.Item.ClassifiedTaxCategory = createNotSubjectToVatCategory();
             this.calcLineTotal(line);
