@@ -221,9 +221,7 @@ export class InvoiceEditItems {
     }
 
     private startZeroVatReasonSelection(line: UBLLine) {
-        const previousTaxCategory = line.Item.ClassifiedTaxCategory
-            ? structuredClone(line.Item.ClassifiedTaxCategory)
-            : undefined;
+        const previousTaxCategory = structuredClone(line.Item.ClassifiedTaxCategory ?? this.taxCategories[0]);
 
         line.Item.ClassifiedTaxCategory = {
             ID: '',
