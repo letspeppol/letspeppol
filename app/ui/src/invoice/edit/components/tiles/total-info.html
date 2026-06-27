@@ -5,7 +5,7 @@
         <span t="invoice.edit.subtotal">Subtotal</span>
         <b>${invoiceContext.selectedInvoice.LegalMonetaryTotal.TaxExclusiveAmount.value.toFixed(2) | price:item.currency}</b>
         <span t="invoice.edit.tax">Tax</span>
-        <b>${invoiceContext.selectedInvoice.TaxTotal[0].TaxAmount.value.toFixed(2) | price:item.currency}</b>
+        <b title.bind="vatTooltip() || null">${invoiceContext.selectedInvoice.TaxTotal[0].TaxAmount.value.toFixed(2) | price:item.currency}</b>
     </div>
     <div class="total-display">
         <span t="invoice.edit.total">Total</span>

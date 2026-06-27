@@ -6,6 +6,7 @@ import {CacheTtl} from "./cache-config";
 
 export interface PartnerDto {
     id?: number,
+    identifier?: string,
     vatNumber?: string,
     name: string,
     email?: string,

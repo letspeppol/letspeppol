@@ -2,7 +2,7 @@ package org.letspeppol.kyc.util;
 
 public class CompanyNumberUtil {
 
-    public static String normalizeVat(String input) {
+    public static String normalizeEnterpriseNumber(String input) {
         if (input == null) throw new IllegalArgumentException("VAT number required");
         String digits = input.replaceAll("[^0-9]", "");
         if (digits.length() != 10) {

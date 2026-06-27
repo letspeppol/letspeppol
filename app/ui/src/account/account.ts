@@ -8,7 +8,7 @@ import {ChangePasswordModal} from "./change-password-modal";
 import {ConfirmationModalContext} from "../components/confirmation/confirmation-modal-context";
 import {validateEmail} from "../app/util/email-validation";
 import {I18N} from "@aurelia/i18n";
-import {IVatDisplay, VatDisplayMode} from "../services/app/vat-display-service";
+import {getVatDisplayMode, hasVatNumber, IVatDisplay, VatDisplayMode} from "../services/app/vat-display-service";
 
 export class Account {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -19,22 +19,37 @@ export class Account {
     private readonly peppolDirService = resolve(PeppolDirService);
     private readonly i18n = resolve(I18N);
     private readonly vatDisplay = resolve(IVatDisplay);
-    private _vatMode: VatDisplayMode = this.vatDisplay.mode;
-    private vatUnsubscribe: () => void;
     private company: CompanyDto;
-
-    // Setter routes through the service so localStorage + subscribers stay in sync.
-    get vatMode(): VatDisplayMode { return this._vatMode; }
-    set vatMode(value: VatDisplayMode) {
-        if (this._vatMode === value) return;
-        this._vatMode = value;
-        this.vatDisplay.setMode(value);
-    }
     public static PAYMENT_TERMS = ['15_DAYS', '30_DAYS', '60_DAYS', 'END_OF_NEXT_MONTH'];
     private alreadyPeppolActivated = false;
     changePasswordModal: ChangePasswordModal;
     private warningKey;
     private alreadyRegisteredProvider = '';
+    private initialVatDisplayMode: VatDisplayMode = this.vatDisplay.mode;
+
+    get isVatExempt(): boolean {
+        return this.company?.vatRuleset === 'VAT_EXEMPT_ART_56BIS';
+    }
+
+    get showVatDisplaySettings(): boolean {
+        return hasVatNumber(this.company?.vatNumber);
+    }
+
+    get vatMode(): VatDisplayMode {
+        return getVatDisplayMode(this.company?.vatNumber, this.vatDisplay.mode);
+    }
+
+    set vatMode(mode: VatDisplayMode) {
+        if (!this.showVatDisplaySettings) {
+            this.vatDisplay.setMode('incl');
+            return;
+        }
+        this.vatDisplay.setMode(mode);
+    }
+
+    setVatRuleset(isExempt: boolean) {
+        this.company.vatRuleset = isExempt ? 'VAT_EXEMPT_ART_56BIS' : 'VAT_REGISTERED';
+    }
 
     attaching() {
         this.getCompany().catch(() => {
@@ -43,8 +58,7 @@ export class Account {
         this.sub = this.ea.subscribe('account:register', () => {
             this.register();
         });
-        this.vatUnsubscribe = this.vatDisplay.subscribe(mode => { this._vatMode = mode; });
-        const st = (history.state ?? {}) as any;
+        const st = (history.state ?? {}) as { runRegister?: boolean };
         if (st.runRegister) {
             history.replaceState({ ...st, runRegister: false }, '');// consume it so refresh doesn't re-run
             this.register();
@@ -53,7 +67,6 @@ export class Account {
 
     unbinding() {
         this.sub?.dispose();
-        this.vatUnsubscribe?.();
     }
 
     async getCompany() {
@@ -62,6 +75,7 @@ export class Account {
             company = await this.companyService.getAndSetMyCompanyForToken();
         }
         this.company = JSON.parse(JSON.stringify(company));
+        this.initialVatDisplayMode = this.vatDisplay.mode;
 
         if (!this.company.peppolActive && this.company.peppolId) {
             const peppolDirectoryResponse = await this.peppolDirService.findByParticipant(this.company.peppolId); // TODO : peppolId undefined ?
@@ -75,6 +89,7 @@ export class Account {
         try {
             this.ea.publish('showOverlay', this.i18n.tr('overlay.saving'));
             await this.companyService.updateCompany(this.company);
+            this.initialVatDisplayMode = this.vatDisplay.mode;
             this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.account.updated')});
         } catch(e) {
             console.error(e);
@@ -86,6 +101,7 @@ export class Account {
 
     cancelChanges() {
         this.company = JSON.parse(JSON.stringify(this.companyService.myCompany));
+        this.vatDisplay.setMode(this.initialVatDisplayMode);
         this.ea.publish('alert', {alertType: AlertType.Info, text: this.i18n.tr('alert.account.reverted')});
     }
 
@@ -114,11 +130,11 @@ export class Account {
     async registerOnPeppol() {
         try {
             this.company.peppolActive = await this.registrationService.registerCompany();
-            localStorage.setItem('peppolActive', this.company.peppolActive);
+            localStorage.setItem('peppolActive', String(this.company.peppolActive));
             this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.account.peppol-activated')});
             window.location.reload();
-        } catch (response: Response) {
-            if (!response) {
+        } catch (response: unknown) {
+            if (!(response instanceof Response)) {
                 this.ea.publish('alert', { alertType: AlertType.Danger, text: this.i18n.tr('alert.account.peppol-activation-request-failed') });
                 return;
             }
@@ -162,7 +178,7 @@ export class Account {
     async unregisterFromPeppol() {
         try {
             this.company.peppolActive = await this.registrationService.unregisterCompany()
-            localStorage.setItem('peppolActive', this.company.peppolActive);
+            localStorage.setItem('peppolActive', String(this.company.peppolActive));
             this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.account.peppol-removed')});
             window.location.reload();
         } catch {

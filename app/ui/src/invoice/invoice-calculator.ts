@@ -1,5 +1,6 @@
 import {singleton} from "aurelia";
-import {getLines, TaxSubtotal, UBLDoc,} from "../services/peppol/ubl";
+import {ClassifiedTaxCategory, getLines, TaxCategory, TaxSubtotal, UBLDoc} from "../services/peppol/ubl";
+import {NOT_SUBJECT_TO_VAT_REASON_TEXT} from "../services/app/vat-rules";
 
 @singleton
 export class InvoiceCalculator {
@@ -11,7 +12,8 @@ export class InvoiceCalculator {
         let totalWithoutTax = 0;
         const taxSubtotals: TaxSubtotal[] = [];
         for (const line of lines) {
-            let taxSubtotal = taxSubtotals.find(item => item.TaxCategory.Percent === line.Item.ClassifiedTaxCategory.Percent);
+            const normalizedTaxCategory = normalizeTaxCategory(line.Item.ClassifiedTaxCategory);
+            let taxSubtotal = taxSubtotals.find(item => matchesTaxBreakdownKey(item.TaxCategory, normalizedTaxCategory));
             if (!taxSubtotal) {
                 taxSubtotal = {
                     TaxableAmount: {
@@ -22,19 +24,14 @@ export class InvoiceCalculator {
                         value: 0,
                         __currencyID: "EUR"
                     },
-                    TaxCategory: {
-                        ID: line.Item.ClassifiedTaxCategory.ID,
-                        Percent: line.Item.ClassifiedTaxCategory.Percent,
-                        TaxScheme: {
-                            ID: line.Item.ClassifiedTaxCategory.TaxScheme.ID
-                        }
-                    }
+                    TaxCategory: normalizedTaxCategory ? {...normalizedTaxCategory} : undefined
                 }
                 taxSubtotals.push(taxSubtotal);
             }
+            taxSubtotal.TaxCategory = mergeTaxCategoryDetails(taxSubtotal.TaxCategory, normalizedTaxCategory);
             taxSubtotal.TaxableAmount.value += line.LineExtensionAmount.value;
             totalWithoutTax += line.LineExtensionAmount.value;
-            const tax = roundTwoDecimals(line.LineExtensionAmount.value * (line.Item.ClassifiedTaxCategory.Percent / 100.0));
+            const tax = roundTwoDecimals(line.LineExtensionAmount.value * ((normalizedTaxCategory.Percent ?? 0) / 100.0));
             taxSubtotal.TaxAmount.value += tax;
             taxTotal += tax;
         }
@@ -77,4 +74,66 @@ export class InvoiceCalculator {
 
 export function roundTwoDecimals(value: number): number {
     return Math.round((value + Number.EPSILON) * 100) / 100;
+}
+
+function normalizeTaxCategory(category: ClassifiedTaxCategory | undefined): ClassifiedTaxCategory | undefined {
+    if (!category) {
+        return undefined;
+    }
+    const categoryId = category.ID.trim();
+
+    if (categoryId === 'Z') {
+        return {
+            ...category,
+            ID: categoryId,
+            TaxExemptionReasonCode: undefined,
+            TaxExemptionReason: undefined
+        };
+    }
+    if (categoryId === 'O') {
+        return {
+            ...category,
+            ID: categoryId,
+            Percent: undefined,
+            TaxExemptionReasonCode: category.TaxExemptionReasonCode?.trim() || undefined,
+            TaxExemptionReason: category.TaxExemptionReason?.trim() || NOT_SUBJECT_TO_VAT_REASON_TEXT
+        };
+    }
+    return {
+        ...category,
+        ID: categoryId,
+        TaxExemptionReasonCode: category.TaxExemptionReasonCode?.trim() || undefined,
+        TaxExemptionReason: category.TaxExemptionReason?.trim() || undefined
+    };
+}
+
+function matchesTaxBreakdownKey(
+    left: TaxCategory,
+    right: ClassifiedTaxCategory | undefined,
+): boolean {
+    if (!left || !right) {
+        return left === right;
+    }
+
+    return left.Percent === right.Percent
+        && left.ID === right.ID;
+}
+
+function mergeTaxCategoryDetails(
+    current: TaxCategory | undefined,
+    incoming: ClassifiedTaxCategory | undefined,
+): TaxCategory | undefined {
+    if (!current) {
+        return incoming ? {...incoming} : undefined;
+    }
+    if (!incoming) {
+        return current;
+    }
+
+    return {
+        ...current,
+        TaxScheme: current.TaxScheme ?? incoming.TaxScheme,
+        TaxExemptionReasonCode: current.TaxExemptionReasonCode ?? incoming.TaxExemptionReasonCode,
+        TaxExemptionReason: current.TaxExemptionReason ?? incoming.TaxExemptionReason,
+    };
 }

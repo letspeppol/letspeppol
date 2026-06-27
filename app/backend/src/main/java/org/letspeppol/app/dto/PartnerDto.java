@@ -2,6 +2,7 @@ package org.letspeppol.app.dto;
 
 public record PartnerDto(
     Long id,
+    String identifier,
     String vatNumber,
     String name,
     String email,

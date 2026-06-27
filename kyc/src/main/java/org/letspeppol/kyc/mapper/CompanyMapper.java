@@ -13,6 +13,7 @@ public class CompanyMapper {
         return new CompanyResponse(
                 company.getId(),
                 company.getPeppolId(),
+                company.getIdentifier(),
                 company.getVatNumber(),
                 company.getName(),
                 company.getStreet(),
@@ -29,6 +30,7 @@ public class CompanyMapper {
     public static CompanySearchResponse toSearchResponse(Company company) {
         return new CompanySearchResponse(
                 company.getPeppolId(),
+                company.getIdentifier(),
                 company.getVatNumber(),
                 company.getName(),
                 company.getStreet(),

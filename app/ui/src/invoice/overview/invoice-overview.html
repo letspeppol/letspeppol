@@ -1,7 +1,6 @@
 <import from="../../app/value-converters/date-format.ts"></import>
 <import from="../../app/value-converters/date-time-format.ts"></import>
 <import from="../../app/value-converters/price.ts"></import>
-<import from="../../app/value-converters/vat-amount.ts"></import>
 <import from="./components/upload-ubl-modal"></import>
 
 <upload-ubl-modal component.ref="uploadUblModal"></upload-ubl-modal>
@@ -142,12 +141,12 @@
                                 </button>
                             </th>
                             <th>
-                                <button type="button" class="sort-button" click.trigger="toggleSort(vatMode === 'inclVat' ? 'amountInclVat' : 'amountExclVat')">
+                                <button type="button" class="sort-button" click.trigger="toggleSort(amountSortProperty)">
                                     <span class="th-stack">
                                         <span t="invoice.table.total">Total</span>
                                         <span class="th-subline" t="invoice.table.total-vat-suffix.${vatMode}"></span>
                                     </span>
-                                    <span class="sort-indicator ${activeSortProperty!==(vatMode === 'inclVat' ? 'amountInclVat' : 'amountExclVat')?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
+                                    <span class="sort-indicator ${activeSortProperty!==amountSortProperty?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
                                 </button>
                             </th>
                             <th t="invoice.table.status">Status</th>
@@ -163,7 +162,7 @@
                                 <td>${item.issueDate | dateFormat}</td>
                                 <td>${item.dueDate | dateFormat}</td>
                                 <td>${item.partnerName}</td>
-                                <td>${item | vatAmount:vatMode | price:item.currency}</td>
+                                <td>${totalAmount(item) | price:item.currency}</td>
                                 <td>
                                     <span class="pill" if.bind="item.draftedOn" t="invoice.status.draft" title="${item.draftedOn | dateTimeFormat}">Drafted</span>
                                     <span class="pill scheduled" if.bind="item.scheduledOn && !item.processedOn" t="invoice.status.scheduled" title="${item.scheduledOn | dateTimeFormat}">Scheduled</span>

@@ -50,7 +50,7 @@ class DocumentRepositoryTotalsTest extends PostgresIntegrationTest {
 
     private Company saveCompany(String peppolId) {
         return companyRepository.saveAndFlush(new Company(
-                peppolId, "BE0123456789", "Name " + peppolId, "Sub", "sub@example.com",
+                peppolId, "0123456789", "BE0123456789", "Name " + peppolId, "Sub", "sub@example.com",
                 "Brussels", "1000", "Rue de Test 1", "BE"));
     }
 

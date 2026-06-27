@@ -2,6 +2,8 @@
 // Builds XML by string concatenation with explicit ordering, matching the
 // structures used in peppol-parser tests.
 
+import {NOT_SUBJECT_TO_VAT_REASON_TEXT} from '../app/vat-rules';
+
 import type {
     AccountingParty,
     Address,
@@ -243,14 +245,17 @@ function buildAccountingParty(wrapperName: 'cac:AccountingSupplierParty' | 'cac:
 
 function buildTaxCategory(tc?: TaxCategory): string {
     if (!tc) return '';
+    const normalized = normalizeTaxCategory(tc);
     return joinNonEmpty([
         '<cac:TaxCategory>',
-        textElement('cbc:ID', tc.ID),
-        textElement('cbc:Percent', tc.Percent),
-        tc.TaxScheme
+        textElement('cbc:ID', normalized.ID),
+        textElement('cbc:Percent', normalized.Percent),
+        textElement('cbc:TaxExemptionReasonCode', normalized.TaxExemptionReasonCode),
+        textElement('cbc:TaxExemptionReason', normalized.TaxExemptionReason),
+        normalized.TaxScheme
             ? joinNonEmpty([
                   '<cac:TaxScheme>',
-                  textElement('cbc:ID', tc.TaxScheme.ID),
+                  textElement('cbc:ID', normalized.TaxScheme.ID),
                   '</cac:TaxScheme>',
               ])
             : '',
@@ -321,12 +326,15 @@ function buildCommodityClassification(cc?: CommodityClassification): string {
 
 function buildClassifiedTaxCategory(ctc?: ClassifiedTaxCategory): string {
     if (!ctc) return '';
+    const normalized = normalizeTaxCategory(ctc);
     return joinNonEmpty([
         '<cac:ClassifiedTaxCategory>',
-        textElement('cbc:ID', ctc.ID),
-        textElement('cbc:Percent', ctc.Percent),
+        textElement('cbc:ID', normalized.ID),
+        textElement('cbc:Percent', normalized.Percent),
+        textElement('cbc:TaxExemptionReasonCode', normalized.TaxExemptionReasonCode),
+        textElement('cbc:TaxExemptionReason', normalized.TaxExemptionReason),
         '<cac:TaxScheme>',
-        textElement('cbc:ID', ctc.TaxScheme.ID),
+        textElement('cbc:ID', normalized.TaxScheme.ID),
         '</cac:TaxScheme>',
         '</cac:ClassifiedTaxCategory>',
     ]);
@@ -607,4 +615,22 @@ export function buildCreditNoteXml(creditNote: CreditNote): string {
     ]);
 
     return `<?xml version="1.0" encoding="UTF-8"?><CreditNote ${CREDIT_NOTE_NS_ATTRS}>${body}</CreditNote>`;
+}
+
+function normalizeTaxCategory<T extends TaxCategory | ClassifiedTaxCategory>(taxCategory: T): T {
+    if (taxCategory.ID === 'Z') {
+        return {
+            ...taxCategory,
+            TaxExemptionReasonCode: undefined,
+            TaxExemptionReason: undefined,
+        };
+    }
+    if (taxCategory.ID === 'O') {
+        return {
+            ...taxCategory,
+            Percent: undefined,
+            TaxExemptionReason: taxCategory.TaxExemptionReason?.trim() || NOT_SUBJECT_TO_VAT_REASON_TEXT,
+        };
+    }
+    return taxCategory;
 }

@@ -3,12 +3,10 @@ package org.letspeppol.app.service;
 import com.helger.ubl21.UBL21Marshaller;
 import lombok.SneakyThrows;
 import oasis.names.specification.ubl.schema.xsd.creditnote_21.CreditNoteType;
-import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.Test;
 import org.letspeppol.app.util.CreditNoteUBLBuilder;
-import org.letspeppol.app.util.InvoiceUBLBuilder;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
@@ -67,13 +65,80 @@ class UblCreditnotePdfServiceTest {
         UblInvoicePdfService sut = new UblInvoicePdfService(null);
         byte[] pdf = sut.toPdf(xml, UblInvoicePdfService.RenderMode.DRAFT);
 
-        // Raw byte scanning misses the watermark because PDF text streams use FlateDecode.
-        String pdfText;
-        try (PDDocument doc = PDDocument.load(pdf)) {
-            pdfText = new PDFTextStripper().getText(doc);
-        }
+        String pdfText = extractText(pdf);
         assertTrue(pdfText.contains("DRAFT"));
         assertFalse(pdfText.contains("CN-SECRET"));
+    }
+
+    @SneakyThrows
+    @Test
+    void creditNoteZeroVatLinesRenderReasonFootnotes() {
+        String xml = """
+                <CreditNote xmlns="urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2"
+                            xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+                            xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+                    <cbc:ID>CN-FOOTNOTE</cbc:ID>
+                    <cbc:IssueDate>2026-01-05</cbc:IssueDate>
+                    <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
+
+                    <cac:AccountingSupplierParty>
+                        <cac:Party>
+                            <cac:PartyName><cbc:Name>Supplier Ltd</cbc:Name></cac:PartyName>
+                        </cac:Party>
+                    </cac:AccountingSupplierParty>
+
+                    <cac:AccountingCustomerParty>
+                        <cac:Party>
+                            <cac:PartyName><cbc:Name>Customer BV</cbc:Name></cac:PartyName>
+                        </cac:Party>
+                    </cac:AccountingCustomerParty>
+
+                    <cac:CreditNoteLine>
+                        <cbc:ID>1</cbc:ID>
+                        <cbc:CreditedQuantity unitCode="H87">1</cbc:CreditedQuantity>
+                        <cbc:LineExtensionAmount currencyID="EUR">100.00</cbc:LineExtensionAmount>
+                        <cac:Item>
+                            <cbc:Name>Credit for consulting services</cbc:Name>
+                            <cac:ClassifiedTaxCategory>
+                                <cbc:ID>AE</cbc:ID>
+                                <cbc:Percent>0</cbc:Percent>
+                                <cbc:TaxExemptionReasonCode>VATEX-EU-AE</cbc:TaxExemptionReasonCode>
+                                <cbc:TaxExemptionReason>due to article 44</cbc:TaxExemptionReason>
+                                <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
+                            </cac:ClassifiedTaxCategory>
+                        </cac:Item>
+                        <cac:Price>
+                            <cbc:PriceAmount currencyID="EUR">100.00</cbc:PriceAmount>
+                        </cac:Price>
+                    </cac:CreditNoteLine>
+
+                    <cac:TaxTotal>
+                        <cbc:TaxAmount currencyID="EUR">0.00</cbc:TaxAmount>
+                    </cac:TaxTotal>
+
+                    <cac:LegalMonetaryTotal>
+                        <cbc:TaxExclusiveAmount currencyID="EUR">100.00</cbc:TaxExclusiveAmount>
+                        <cbc:PayableAmount currencyID="EUR">100.00</cbc:PayableAmount>
+                    </cac:LegalMonetaryTotal>
+                </CreditNote>
+                """;
+
+        UblInvoicePdfService sut = new UblInvoicePdfService(null);
+        byte[] pdf = sut.toPdf(xml);
+
+        Files.createDirectories(Paths.get("build", "debug"));
+        Files.write(Paths.get("build", "debug", "creditnote-zero-vat-footnote.pdf"), pdf);
+
+        String pdfText = extractText(pdf);
+        assertTrue(pdfText.contains("0% VAT notes"), pdfText);
+        assertTrue(pdfText.contains("Reverse Charge"), pdfText);
+        assertTrue(pdfText.contains("due to article 44"), pdfText);
+    }
+
+    private static String extractText(byte[] pdf) throws java.io.IOException {
+        try (PDDocument doc = PDDocument.load(pdf)) {
+            return new PDFTextStripper().getText(doc);
+        }
     }
 
 }

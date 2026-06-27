@@ -1,9 +1,9 @@
 {
-  "label" : {
-    "email" : "Email",
-    "password" : "Password",
-    "confirm-password" : "Confirm Password",
-    "vat-number" : "VAT number",
+  "label": {
+    "email": "Email",
+    "password": "Password",
+    "confirm-password": "Confirm Password",
+    "vat-number": "VAT number",
     "name": "Name",
     "city": "City",
     "postal-code": "Postal Code",
@@ -40,11 +40,13 @@
     "due-date": "Due Date",
     "type": "Type",
     "number": "Number",
-    "peppolId": "Peppol ID"
+    "peppolId": "Peppol ID",
+    "enterprise-number": "Enterprise nr."
   },
-  "placeholder" : {
-    "email" : "you@company.com",
-    "vat-number" : "BE0123456789",
+  "placeholder": {
+    "email": "you@company.com",
+    "enterprise-number": "0123456789",
+    "vat-number": "BE0123456789",
     "password": "••••••••",
     "product-search": "Search product",
     "partner-search": "Search partner",
@@ -55,20 +57,29 @@
     "customer-search": "Search by name or VAT number",
     "name": "Name"
   },
-  "login" : {
-    "action" : "Log in",
-    "title" : "Sign in to your account",
-    "new" : "New here?",
-    "register" : "Register your company",
-    "continue" : "Sign in",
-    "forgot" : "Forgot my password",
+  "login": {
+    "action": "Log in",
+    "title": "Sign in to your account",
+    "new": "New here?",
+    "register": "Register your company",
+    "continue": "Sign in",
+    "forgot": "Forgot my password",
     "remember": "Remember me"
   },
   "onboarding": {
     "title": "Onboarding steps",
     "or": "or",
-    "os": { "windows": "Windows", "macos": "macOS", "linux": "Linux" },
-    "browser": { "chrome": "Chrome", "firefox": "Firefox", "safari": "Safari", "edge": "Microsoft Edge" },
+    "os": {
+      "windows": "Windows",
+      "macos": "macOS",
+      "linux": "Linux"
+    },
+    "browser": {
+      "chrome": "Chrome",
+      "firefox": "Firefox",
+      "safari": "Safari",
+      "edge": "Microsoft Edge"
+    },
     "step": {
       "register-company": "Register your company",
       "prepare-eid": {
@@ -104,11 +115,11 @@
     "anim-caption-sign": "Insert your eID card and press confirm to verify installation.",
     "anim-reader-label": "READER"
   },
-  "registration" : {
-    "title-step0" : "Register your company",
-    "create-account" : "Create account",
-    "already-registered" : "Already registered?",
-    "title-step1" : "Confirm your company",
+  "registration": {
+    "title-step0": "Register your company",
+    "create-account": "Create account",
+    "already-registered": "Already registered?",
+    "title-step1": "Confirm your company",
     "confirm-company": "Confirm",
     "wrong-company": "Wrong company?",
     "back": "Back",
@@ -118,27 +129,27 @@
     "instructions-go-checklist": "Go to checklist",
     "instructions-finally": "<b>Finally</b>, open the confirmation email and click the verification link."
   },
-  "error" : {
-    "login-failed" : "Login failed",
-    "registration-company-not-found" : "Company not found",
-    "registration-company-already-registered" : "Company already registered",
-    "registration-company-already-registered-on-peppol" : "It looks like this Peppol ID is already registered with another provider. Activation here requires unregistering there first. You can still complete the signing process and handle this afterward.",
-    "not-peppol-active" : "You are currently not registered on Peppol",
-    "not-peppol-active-action" : "Solve this now"
+  "error": {
+    "login-failed": "Login failed",
+    "registration-company-not-found": "Company not found",
+    "registration-company-already-registered": "Company already registered",
+    "registration-company-already-registered-on-peppol": "It looks like this Peppol ID is already registered with another provider. Activation here requires unregistering there first. You can still complete the signing process and handle this afterward.",
+    "not-peppol-active": "You are currently not registered on Peppol",
+    "not-peppol-active-action": "Solve this now"
   },
-  "paymentTerms" : {
-    "15_DAYS" :  "15 days",
-    "30_DAYS" :  "30 days",
-    "60_DAYS" : "60 days",
-    "END_OF_NEXT_MONTH" : "End of the month"
+  "paymentTerms": {
+    "15_DAYS": "15 days",
+    "30_DAYS": "30 days",
+    "60_DAYS": "60 days",
+    "END_OF_NEXT_MONTH": "End of the month"
   },
-  "documentDirection" : {
-    "OUTGOING" : "Outgoing",
-    "INCOMING" : "Incoming"
+  "documentDirection": {
+    "OUTGOING": "Outgoing",
+    "INCOMING": "Incoming"
   },
-  "documentType" : {
-    "INVOICE" : "Invoice",
-    "CREDIT_NOTE" : "Credit Note"
+  "documentType": {
+    "INVOICE": "Invoice",
+    "CREDIT_NOTE": "Credit Note"
   },
   "password-rules": {
     "length": "At least 12 characters",
@@ -267,7 +278,8 @@
     "products": "Products",
     "account": "Account",
     "brand-alt": "Let’s Peppol",
-    "toggle-theme": "Toggle theme"
+    "toggle-theme": "Toggle theme",
+    "language": "Language"
   },
   "alert": {
     "success": "Success",
@@ -318,6 +330,16 @@
       "save-failed": "Company save failed"
     },
     "invoice": {
+      "zero-vat-reason": {
+        "options": {
+          "E": "Exempt from VAT",
+          "K": "VAT exempt for EEA intra-community supply of goods and services",
+        "G": "Free export item, VAT not charged",
+        "AE": "Reverse Charge",
+        "Z": "Zero rated goods",
+        "O": "Not subject to VAT"
+      }
+    },
       "load-failed": "Failed to get invoice",
       "sent": {
         "INVOICE": "Invoice sent successfully",
@@ -442,6 +464,7 @@
       "postal-code": "Postal code",
       "city": "City",
       "country": "Country",
+      "kbo": "KBO",
       "vat": "VAT",
       "actions": "Actions"
     },
@@ -462,6 +485,24 @@
     }
   },
   "invoice": {
+    "zero-vat-reason": {
+      "options": {
+        "E": "Exempt from VAT",
+        "K": "VAT exempt for EEA intra-community supply of goods and services",
+        "G": "Free export item, VAT not charged",
+        "AE": "Reverse Charge",
+        "Z": "Zero rated goods",
+        "O": "Not subject to VAT"
+      },
+      "modal": {
+        "title": "0% VAT reason",
+        "reason-type": "Reason type",
+        "reason-text": "Explanation",
+        "reason-text-placeholder": "Why is this line 0% VAT?",
+        "update-account": "Use this as default account VAT ruleset",
+        "edit-button": "Edit 0% VAT reason"
+      }
+    },
     "direction": "Direction",
     "all": "All",
     "outgoing": "Outgoing",
@@ -505,6 +546,7 @@
       "issue-date": "Issue Date",
       "due-date": "Due Date",
       "total": "Total",
+      "vat": "VAT",
       "total-vat-suffix": {
         "incl": "incl. VAT",
         "excl": "excl. VAT"
@@ -535,13 +577,15 @@
       "note-placeholder": "Additional notes for this invoice",
       "credit-note-note-placeholder": "Additional notes for this credit note",
       "credit-note-vat-note": "VAT to be refunded to the State to the extent that it was originally deducted",
-      "reference-required" : "Either buyer reference OR order reference is required"
+      "reference-required": "Either buyer reference OR order reference is required"
     },
     "dateModal": {
       "title": "Date",
       "issue-date": "Issue Date",
       "payment-terms": "Payment Terms",
-      "due-date": "Due Date"
+      "due-date": "Due Date",
+      "actual-delivery-date": "Actual Delivery Date",
+      "delivery-country": "Deliver To Country"
     },
     "paymentModal": {
       "title": "Payment",
@@ -580,6 +624,7 @@
       "country": "Country",
       "house-number": "House Number",
       "country-value": "Belgium",
+      "search-placeholder": "Search by name",
       "search-name-vat": "Name or VAT Number",
       "search-partner-placeholder": "Search partner by name or VAT number",
       "no-matches": "No matches",
@@ -624,12 +669,6 @@
     "cancel": "Cancel",
     "save": "Save",
     "notifications": "Notifications",
-    "vat-display": {
-      "title": "Amount Display",
-      "description": "Choose whether totals in the dashboard and invoice list are shown including or excluding VAT.",
-      "incl": "Include VAT",
-      "excl": "Exclude VAT"
-    },
     "subscriber-info": "Subscriber Info",
     "download-contract": "Download Contract",
     "change-password": "Change Password",
@@ -650,6 +689,19 @@
     "email-notification-cc-list": "Email notification CC list",
     "add-pdf-to-sending-invoice": "Add pdf to invoice",
     "invoice-settings": "Invoice Settings",
+    "vat-display": {
+      "title": "Amount Display",
+      "description": "Choose whether totals in the dashboard and invoice list are shown including or excluding VAT.",
+      "incl": "Include VAT",
+      "excl": "Exclude VAT"
+    },
+    "vat-ruleset": {
+      "title": "VAT Settings",
+      "options": {
+        "VAT_REGISTERED": "Subject to VAT",
+        "VAT_EXEMPT_ART_56BIS": "VAT exempt by Art. 56bis - Small enterprises < €25.000"
+      }
+    },
     "registration-failed": {
       "contact-us": "Registration was not finalized. Please contact support at support@letspeppol.org for the next steps.",
       "contact-provider": "Your Peppol ID is currently registered with {{provider}}. Please contact them to unregister it, then log in and try activating again.",

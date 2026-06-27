@@ -5,7 +5,7 @@ import {PartnerDto, PartnerService} from "../../../../services/app/partner-servi
 import {CustomerSearch} from "../customer-search";
 import {countryListAlpha2} from "../../../../app/countries"
 import {isIso6523Scheme} from "../../../../app/util/iso6523list";
-import {normalizeVatNumber} from "../../../../partner/vat-normalizer";
+import {normalizeEnterpriseNumber, normalizeVatNumber} from "../../../../partner/vat-normalizer";
 import {KycCompanyResponse} from "../../../../services/kyc/registration-service";
 import {resolve} from "@aurelia/kernel";
 import {CompanySearchService} from "../../../../services/kyc/company-search-service";
@@ -13,6 +13,7 @@ import {AlertType} from "../../../../components/alert/alert";
 import {InvoiceContext} from "../../../invoice-context";
 import {InvoiceComposer} from "../../../invoice-composer";
 import {I18N} from "@aurelia/i18n";
+import {CompanyService} from "../../../../services/app/company-service";
 
 export class InvoiceCustomerModal {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -20,6 +21,7 @@ export class InvoiceCustomerModal {
     private readonly partnerService = resolve(PartnerService);
     private invoiceComposer = resolve(InvoiceComposer);
     private readonly i18n = resolve(I18N);
+    private readonly companyService = resolve(CompanyService);
     private countryList = countryListAlpha2;
     @bindable invoiceContext: InvoiceContext;
     customerSearch: CustomerSearch;
@@ -31,9 +33,13 @@ export class InvoiceCustomerModal {
 
     vatChanged() {
         if (!this.customer) return;
-        if (this.customer.PartyTaxScheme.CompanyID?.value) {
+        if (this.customer.PartyTaxScheme?.CompanyID?.value) {
             this.customer.PartyTaxScheme.CompanyID.value = this.customer.PartyTaxScheme.CompanyID.value.toUpperCase();
         }
+    }
+
+    hasNoVatNumber(): boolean {
+        return !this.companyService.myCompany?.vatNumber?.trim();
     }
 
     nameChanged() {
@@ -42,6 +48,8 @@ export class InvoiceCustomerModal {
 
     showModal(customerSavedFunction: () => void) {
         this.customer = structuredClone(this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party);
+        this.customer.PartyTaxScheme ??= {CompanyID: {value: undefined}, TaxScheme: {ID: 'VAT'}};
+        this.customer.PartyTaxScheme.CompanyID ??= {value: undefined};
         if (this.customer && this.customer.EndpointID.__schemeID && this.customer.EndpointID.value) {
             this.peppolId = `${this.customer.EndpointID.__schemeID}:${this.customer.EndpointID.value}`;
         } else {
@@ -67,6 +75,11 @@ export class InvoiceCustomerModal {
         this.open = false;
         const previousPeppolId = this.toPeppolIdString(this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party?.EndpointID);
         const newPeppolId = this.toPeppolIdString(this.customer?.EndpointID);
+        if (this.hasNoVatNumber()) {
+            if (this.customer?.PartyTaxScheme?.CompanyID) {
+                this.customer.PartyTaxScheme.CompanyID.value = undefined;
+            }
+        }
         this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party = this.customer;
         if (previousPeppolId !== newPeppolId) {
             this.invoiceContext.selectedInvoice.BillingReference = undefined;
@@ -151,7 +164,7 @@ export class InvoiceCustomerModal {
                 Country: { IdentificationCode: 'BE' }
             },
             PartyTaxScheme: { CompanyID: {value: c.vatNumber } , TaxScheme: { ID: 'VAT' } },
-            PartyLegalEntity: { RegistrationName: c.name, CompanyID: { value: c.vatNumber } },
+            PartyLegalEntity: { RegistrationName: c.name, CompanyID: { value: c.identifier } },
             Contact: { Name: c.paymentAccountName }
         } as Party;
         if (isIso6523Scheme(scheme)) {
@@ -170,6 +183,25 @@ export class InvoiceCustomerModal {
             });
         }
         this.peppolIdChangedFunction(this.peppolId);
+    }
+
+    enterpriseNumberChanged() {
+        if (!this.customer?.PartyLegalEntity) {
+            return;
+        }
+
+        this.customer.PartyLegalEntity.CompanyID ??= {value: undefined};
+
+        const {normalized, isValidShape} = normalizeEnterpriseNumber(this.customer.PartyLegalEntity.CompanyID.value);
+        this.customer.PartyLegalEntity.CompanyID.value = normalized;
+
+        if (isValidShape) {
+            this.companySearchService.searchCompany({identifier: normalized}).then(companies => {
+                if (companies.length) {
+                    this.completeCustomerInfo(companies[0]);
+                }
+            });
+        }
     }
 
     vatNumberChanged() {
@@ -196,6 +228,9 @@ export class InvoiceCustomerModal {
         if (!this.peppolId) {
             this.peppolId = kycCompanyResponse.peppolId;
             this.peppolIdChangedFunction(this.peppolId);
+        }
+        if (!this.customer.PartyLegalEntity.CompanyID.value) {
+            this.customer.PartyLegalEntity.CompanyID.value = kycCompanyResponse.identifier;
         }
         if (!this.customer.PartyName.Name) {
             this.customer.PartyName.Name = kycCompanyResponse.name;

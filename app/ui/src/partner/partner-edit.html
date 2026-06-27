@@ -19,10 +19,16 @@
                 <h2 t="partner.edit.company-info">Company Info</h2>
             </div>
             <div style="display: grid; gap: var(--space-1)">
-                <label class="field">
-                    <span t="label.vat-number">VAT Number</span>
-                    <input type="text" value.bind="partnerContext.selectedPartner.vatNumber" change.trigger="vatNumberChanged()"/>
-                </label>
+                <div style="display: flex; gap: var(--space-1)">
+                    <label class="field">
+                        <span t="label.enterprise-number">Enterprise Number</span>
+                        <input type="text" value.bind="partnerContext.selectedPartner.identifier" change.trigger="enterpriseNumberChanged()"/>
+                    </label>
+                    <label class="field">
+                        <span t="label.vat-number">VAT Number</span>
+                        <input type="text" value.bind="partnerContext.selectedPartner.vatNumber" change.trigger="vatNumberChanged()"/>
+                    </label>
+                </div>
                 <company-search select-company-function.bind="(company) => completePartnerInfo(company)"
                                 search-query.two-way="partnerContext.selectedPartner.name">
                 </company-search>

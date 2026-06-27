@@ -3,6 +3,7 @@ import {KYCApi} from "./kyc-api";
 import {KycCompanyResponse} from "./registration-service";
 
 export interface CompanySearchParams {
+    identifier?: string;
     vatNumber?: string;
     peppolId?: string;
     companyName?: string;
@@ -14,6 +15,7 @@ export class CompanySearchService {
     async searchCompany(params: CompanySearchParams): Promise<KycCompanyResponse[]> {
         const qs = new URLSearchParams();
 
+        if (params.identifier?.trim()) qs.set(`identifier`, params.identifier.trim());
         if (params.vatNumber?.trim()) qs.set(`vatNumber`, params.vatNumber.trim());
         if (params.peppolId?.trim()) qs.set(`peppolId`, params.peppolId.trim());
         if (params.companyName?.trim()) qs.set(`companyName`, params.companyName.trim());

@@ -1,9 +1,10 @@
 package org.letspeppol.app.dto;
 
-import com.sun.jdi.StringReference;
+import org.letspeppol.app.model.VatRuleset;
 
 public record CompanyDto(
         String peppolId,
+        String identifier,
         String vatNumber,
         String name,
         String displayName,
@@ -12,6 +13,7 @@ public record CompanyDto(
         String paymentTerms,
         String iban,
         String paymentAccountName,
+        VatRuleset vatRuleset,
         String lastInvoiceReference,
         String lastCreditNoteReference,
         // TODO boolean noArchive,

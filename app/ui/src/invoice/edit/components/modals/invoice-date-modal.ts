@@ -4,6 +4,8 @@ import {resolve} from "@aurelia/kernel";
 import {Account} from "../../../../account/account";
 import {InvoiceComposer} from "../../../invoice-composer";
 import {DocumentType} from "../../../../services/app/invoice-service";
+import {countryListAlpha2} from "../../../../app/countries";
+import {requiresDeliveryDetails} from "../../../../services/app/vat-rules";
 
 export interface Translation {
     key: string,
@@ -12,11 +14,14 @@ export interface Translation {
 
 export class InvoiceDateModal {
     private invoiceComposer = resolve(InvoiceComposer);
+    countryList = countryListAlpha2;
     @bindable invoiceContext;
     @bindable documentType: DocumentType;
     @observable issueDate;
     @observable selectedPaymentTerm;
     dueDate;
+    actualDeliveryDate;
+    deliveryCountryCode;
     open = false;
     possiblePaymentTerms: Translation[];
 
@@ -34,7 +39,13 @@ export class InvoiceDateModal {
             this.dueDate = undefined;
             this.recalculateDueDate();
         }
+        this.actualDeliveryDate = this.invoiceContext.selectedInvoice.Delivery?.ActualDeliveryDate;
+        this.deliveryCountryCode = this.invoiceContext.selectedInvoice.Delivery?.DeliveryLocation?.Address?.Country?.IdentificationCode;
         this.open = true;
+    }
+
+    get requiresDeliveryDetails(): boolean {
+        return this.invoiceContext.lines?.some(line => requiresDeliveryDetails(line.Item?.ClassifiedTaxCategory?.ID)) ?? false;
     }
 
     issueDateChanged() {
@@ -67,6 +78,23 @@ export class InvoiceDateModal {
             this.invoiceContext.selectedInvoice.PaymentTerms = {
                 Note: this.invoiceComposer.translatePaymentTerm(this.selectedPaymentTerm)
             };
+        }
+        if (this.actualDeliveryDate || this.deliveryCountryCode) {
+            if (!this.invoiceContext.selectedInvoice.Delivery) {
+                this.invoiceContext.selectedInvoice.Delivery = {};
+            }
+            this.invoiceContext.selectedInvoice.Delivery.ActualDeliveryDate = this.actualDeliveryDate;
+            if (!this.invoiceContext.selectedInvoice.Delivery.DeliveryLocation) {
+                this.invoiceContext.selectedInvoice.Delivery.DeliveryLocation = {};
+            }
+            if (!this.invoiceContext.selectedInvoice.Delivery.DeliveryLocation.Address) {
+                this.invoiceContext.selectedInvoice.Delivery.DeliveryLocation.Address = {};
+            }
+            this.invoiceContext.selectedInvoice.Delivery.DeliveryLocation.Address.Country = this.deliveryCountryCode
+                ? {IdentificationCode: this.deliveryCountryCode}
+                : undefined;
+        } else {
+            this.invoiceContext.selectedInvoice.Delivery = undefined;
         }
     }
 

@@ -1,9 +1,9 @@
 {
-  "label" : {
-    "email" : "E-Mail",
-    "password" : "Passwort",
-    "confirm-password" : "Passwort bestätigen",
-    "vat-number" : "USt-IdNr.",
+  "label": {
+    "email": "E-Mail",
+    "password": "Passwort",
+    "confirm-password": "Passwort bestätigen",
+    "vat-number": "USt-IdNr.",
     "name": "Name",
     "city": "Ort",
     "postal-code": "Postleitzahl",
@@ -40,11 +40,13 @@
     "due-date": "Fälligkeitsdatum",
     "type": "Typ",
     "number": "Nummer",
-    "peppolId": "Peppol-ID"
+    "peppolId": "Peppol-ID",
+    "enterprise-number": "Unternehmensnr."
   },
-  "placeholder" : {
-    "email" : "you@company.com",
-    "vat-number" : "BE0123456789",
+  "placeholder": {
+    "email": "you@company.com",
+    "enterprise-number": "0123456789",
+    "vat-number": "BE0123456789",
     "password": "••••••••",
     "product-search": "Produkt suchen",
     "partner-search": "Partner suchen",
@@ -55,20 +57,29 @@
     "customer-search": "Suche nach Name oder USt-IdNr.",
     "name": "Name"
   },
-  "login" : {
-    "action" : "Anmelden",
-    "title" : "Bei Ihrem Konto anmelden",
-    "new" : "Neu hier?",
-    "register" : "Unternehmen registrieren",
-    "continue" : "Anmelden",
-    "forgot" : "Passwort vergessen",
+  "login": {
+    "action": "Anmelden",
+    "title": "Bei Ihrem Konto anmelden",
+    "new": "Neu hier?",
+    "register": "Unternehmen registrieren",
+    "continue": "Anmelden",
+    "forgot": "Passwort vergessen",
     "remember": "Angemeldet bleiben"
   },
   "onboarding": {
     "title": "Onboarding-Schritte",
     "or": "oder",
-    "os": { "windows": "Windows", "macos": "macOS", "linux": "Linux" },
-    "browser": { "chrome": "Chrome", "firefox": "Firefox", "safari": "Safari", "edge": "Microsoft Edge" },
+    "os": {
+      "windows": "Windows",
+      "macos": "macOS",
+      "linux": "Linux"
+    },
+    "browser": {
+      "chrome": "Chrome",
+      "firefox": "Firefox",
+      "safari": "Safari",
+      "edge": "Microsoft Edge"
+    },
     "step": {
       "register-company": "Unternehmen registrieren",
       "prepare-eid": {
@@ -104,11 +115,11 @@
     "anim-caption-sign": "Stecken Sie Ihre eID-Karte ein und drücken Sie auf Bestätigen, um die Installation zu überprüfen.",
     "anim-reader-label": "LESER"
   },
-  "registration" : {
-    "title-step0" : "Unternehmen registrieren",
-    "create-account" : "Konto erstellen",
-    "already-registered" : "Bereits registriert?",
-    "title-step1" : "Unternehmen bestätigen",
+  "registration": {
+    "title-step0": "Unternehmen registrieren",
+    "create-account": "Konto erstellen",
+    "already-registered": "Bereits registriert?",
+    "title-step1": "Unternehmen bestätigen",
     "confirm-company": "Bestätigen",
     "wrong-company": "Falsches Unternehmen?",
     "back": "Zurück",
@@ -118,27 +129,27 @@
     "instructions-go-checklist": "Zur Checkliste",
     "instructions-finally": "<b>Zum Schluss</b> öffnen Sie die Bestätigungs-E-Mail und klicken Sie auf den Bestätigungslink."
   },
-  "error" : {
-    "login-failed" : "Anmeldung fehlgeschlagen",
-    "registration-company-not-found" : "Unternehmen nicht gefunden",
-    "registration-company-already-registered" : "Unternehmen bereits registriert",
-    "registration-company-already-registered-on-peppol" : "Diese Peppol-ID ist offenbar bereits bei einem anderen Anbieter registriert. Um sie hier zu aktivieren, muss sie dort zuerst abgemeldet werden. Sie können den Signaturprozess trotzdem abschließen und das anschließend erledigen.",
-    "not-peppol-active" : "Sie sind derzeit nicht bei Peppol registriert",
-    "not-peppol-active-action" : "Jetzt lösen"
+  "error": {
+    "login-failed": "Anmeldung fehlgeschlagen",
+    "registration-company-not-found": "Unternehmen nicht gefunden",
+    "registration-company-already-registered": "Unternehmen bereits registriert",
+    "registration-company-already-registered-on-peppol": "Diese Peppol-ID ist offenbar bereits bei einem anderen Anbieter registriert. Um sie hier zu aktivieren, muss sie dort zuerst abgemeldet werden. Sie können den Signaturprozess trotzdem abschließen und das anschließend erledigen.",
+    "not-peppol-active": "Sie sind derzeit nicht bei Peppol registriert",
+    "not-peppol-active-action": "Jetzt lösen"
   },
-  "paymentTerms" : {
-    "15_DAYS" :  "15 Tage",
-    "30_DAYS" :  "30 Tage",
-    "60_DAYS" : "60 Tage",
-    "END_OF_NEXT_MONTH" : "Ende des Monats"
+  "paymentTerms": {
+    "15_DAYS": "15 Tage",
+    "30_DAYS": "30 Tage",
+    "60_DAYS": "60 Tage",
+    "END_OF_NEXT_MONTH": "Ende des Monats"
   },
-  "documentDirection" : {
-    "OUTGOING" : "Ausgehend",
-    "INCOMING" : "Eingehend"
+  "documentDirection": {
+    "OUTGOING": "Ausgehend",
+    "INCOMING": "Eingehend"
   },
-  "documentType" : {
-    "INVOICE" : "Rechnung",
-    "CREDIT_NOTE" : "Gutschrift"
+  "documentType": {
+    "INVOICE": "Rechnung",
+    "CREDIT_NOTE": "Gutschrift"
   },
   "password-rules": {
     "length": "Mindestens 12 Zeichen",
@@ -202,6 +213,12 @@
     "label": "Neu",
     "click-to-dismiss": "Hinweis bestätigen"
   },
+  "dashboard": {
+    "vat-suffix": {
+      "incl": "inkl. MwSt.",
+      "excl": "exkl. MwSt."
+    }
+  },
   "donations": {
     "sponsors": "Stufensponsoren",
     "sponsors-title": "Bronze-, Silber- und Gold-Sponsoren zusammen",
@@ -254,12 +271,6 @@
     "load-error": "Die Sponsoren konnten derzeit nicht geladen werden.",
     "empty": "Noch keine Sponsoren."
   },
-  "dashboard": {
-    "vat-suffix": {
-      "incl": "inkl. MwSt.",
-      "excl": "exkl. MwSt."
-    }
-  },
   "navigation": {
     "dashboard": "Dashboard",
     "invoices": "Rechnungen",
@@ -267,7 +278,8 @@
     "products": "Produkte",
     "account": "Konto",
     "brand-alt": "Let’s Peppol",
-    "toggle-theme": "Theme umschalten"
+    "toggle-theme": "Theme umschalten",
+    "language": "Sprache"
   },
   "alert": {
     "success": "Erfolg",
@@ -318,6 +330,16 @@
       "save-failed": "Unternehmen konnte nicht gespeichert werden"
     },
     "invoice": {
+      "zero-vat-reason": {
+        "options": {
+          "E": "Von der MwSt. befreit",
+          "K": "Von der MwSt. befreit für innergemeinschaftliche Lieferungen von Waren und Dienstleistungen im EWR",
+          "G": "Steuerfreier Exportartikel, keine MwSt. berechnet",
+          "AE": "Reverse Charge",
+          "Z": "Nullsteuersatz-Waren",
+          "O": "Nicht der MwSt. unterliegend"
+        }
+      },
       "load-failed": "Rechnung konnte nicht geladen werden",
       "sent": {
         "INVOICE": "Rechnung erfolgreich gesendet",
@@ -442,6 +464,7 @@
       "postal-code": "Postleitzahl",
       "city": "Ort",
       "country": "Land",
+      "kbo": "KBO",
       "vat": "USt-IdNr.",
       "actions": "Aktionen"
     },
@@ -462,6 +485,24 @@
     }
   },
   "invoice": {
+    "zero-vat-reason": {
+      "options": {
+        "E": "Von der MwSt. befreit",
+        "K": "Von der MwSt. befreit für innergemeinschaftliche Lieferungen von Waren und Dienstleistungen im EWR",
+        "G": "Steuerfreier Exportartikel, keine MwSt. berechnet",
+        "AE": "Reverse Charge",
+        "Z": "Nullsteuersatz-Waren",
+        "O": "Nicht der MwSt. unterliegend"
+      },
+      "modal": {
+        "title": "Grund für 0 % MwSt.",
+        "reason-type": "Grundtyp",
+        "reason-text": "Erläuterung",
+        "reason-text-placeholder": "Warum gilt für diese Zeile 0 % MwSt.?",
+        "update-account": "Dies als Standard-MwSt.-Regelwerk für dieses Konto verwenden",
+        "edit-button": "Grund für 0 % MwSt. bearbeiten"
+      }
+    },
     "direction": "Richtung",
     "all": "Alle",
     "outgoing": "Ausgehend",
@@ -505,6 +546,7 @@
       "issue-date": "Ausstellungsdatum",
       "due-date": "Fälligkeitsdatum",
       "total": "Gesamt",
+      "vat": "MwSt.",
       "total-vat-suffix": {
         "incl": "inkl. MwSt.",
         "excl": "exkl. MwSt."
@@ -535,13 +577,15 @@
       "note-placeholder": "Zusätzliche Notizen zu dieser Rechnung",
       "credit-note-note-placeholder": "Zusätzliche Notizen zu dieser Gutschrift",
       "credit-note-vat-note": "MwSt. an den Staat zurückzuzahlen in dem Maße, wie sie ursprünglich in Abzug gebracht wurde",
-      "reference-required" : "Entweder Käuferreferenz ODER Bestellreferenz ist erforderlich"
+      "reference-required": "Entweder Käuferreferenz ODER Bestellreferenz ist erforderlich"
     },
     "dateModal": {
       "title": "Datum",
       "issue-date": "Ausstellungsdatum",
       "payment-terms": "Zahlungsbedingungen",
-      "due-date": "Fälligkeitsdatum"
+      "due-date": "Fälligkeitsdatum",
+      "actual-delivery-date": "Tatsächliches Lieferdatum",
+      "delivery-country": "Lieferland"
     },
     "paymentModal": {
       "title": "Zahlung",
@@ -580,6 +624,7 @@
       "country": "Land",
       "house-number": "Hausnummer",
       "country-value": "Belgien",
+      "search-placeholder": "Nach Namen suchen",
       "search-name-vat": "Name oder USt-IdNr.",
       "search-partner-placeholder": "Partner nach Name oder USt-IdNr. suchen",
       "no-matches": "Keine Treffer",
@@ -624,12 +669,6 @@
     "cancel": "Abbrechen",
     "save": "Speichern",
     "notifications": "Benachrichtigungen",
-    "vat-display": {
-      "title": "Beträge anzeigen",
-      "description": "Wählen Sie, ob Summen im Dashboard und in der Rechnungsliste inklusive oder exklusive MwSt. angezeigt werden.",
-      "incl": "Inkl. MwSt.",
-      "excl": "Exkl. MwSt."
-    },
     "subscriber-info": "Teilnehmerinformationen",
     "download-contract": "Vertrag herunterladen",
     "change-password": "Passwort ändern",
@@ -650,6 +689,19 @@
     "email-notification-cc-list": "CC-Liste für E-Mail-Benachrichtigungen",
     "add-pdf-to-sending-invoice": "PDF zur Rechnung hinzufügen",
     "invoice-settings": "Rechnungseinstellungen",
+    "vat-display": {
+      "title": "Beträge anzeigen",
+      "description": "Wählen Sie, ob Summen im Dashboard und in der Rechnungsliste inklusive oder exklusive MwSt. angezeigt werden.",
+      "incl": "Inkl. MwSt.",
+      "excl": "Exkl. MwSt."
+    },
+    "vat-ruleset": {
+      "title": "MwSt.-Einstellungen",
+      "options": {
+        "VAT_REGISTERED": "MwSt.-registriert",
+        "VAT_EXEMPT_ART_56BIS": "Von der MwSt. befreit nach Art. 56bis - Kleinunternehmen < €25.000"
+      }
+    },
     "registration-failed": {
       "contact-us": "Die Registrierung wurde nicht abgeschlossen. Bitte wenden Sie sich an den Support unter support@letspeppol.org für die nächsten Schritte.",
       "contact-provider": "Ihre Peppol-ID ist derzeit bei {{provider}} registriert. Bitte kontaktieren Sie den Anbieter, um sie dort abzumelden, und melden Sie sich anschließend an und versuchen Sie die Aktivierung erneut.",
