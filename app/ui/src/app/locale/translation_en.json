@@ -124,7 +124,10 @@
     "registration-company-already-registered" : "Company already registered",
     "registration-company-already-registered-on-peppol" : "It looks like this Peppol ID is already registered with another provider. Activation here requires unregistering there first. You can still complete the signing process and handle this afterward.",
     "not-peppol-active" : "You are currently not registered on Peppol",
-    "not-peppol-active-action" : "Solve this now"
+    "not-peppol-active-action" : "Solve this now",
+    "DUPLICATE_REQUEST" : "This request was already processed.",
+    "UBL_DOCUMENT_ALREADY_CREATED" : "This document was already submitted for delivery. Update the existing document instead.",
+    "UBL_DOCUMENT_CONTENT_ALREADY_SENT" : "This exact document was already submitted. Change the content before sending again."
   },
   "paymentTerms" : {
     "15_DAYS" :  "15 days",

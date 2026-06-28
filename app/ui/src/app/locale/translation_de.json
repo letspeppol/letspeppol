@@ -124,7 +124,10 @@
     "registration-company-already-registered" : "Unternehmen bereits registriert",
     "registration-company-already-registered-on-peppol" : "Diese Peppol-ID ist offenbar bereits bei einem anderen Anbieter registriert. Um sie hier zu aktivieren, muss sie dort zuerst abgemeldet werden. Sie können den Signaturprozess trotzdem abschließen und das anschließend erledigen.",
     "not-peppol-active" : "Sie sind derzeit nicht bei Peppol registriert",
-    "not-peppol-active-action" : "Jetzt lösen"
+    "not-peppol-active-action" : "Jetzt lösen",
+    "DUPLICATE_REQUEST" : "Diese Anfrage wurde bereits verarbeitet.",
+    "UBL_DOCUMENT_ALREADY_CREATED" : "Dieses Dokument wurde bereits zur Zustellung eingereicht. Aktualisieren Sie das vorhandene Dokument.",
+    "UBL_DOCUMENT_CONTENT_ALREADY_SENT" : "Dieses identische Dokument wurde bereits eingereicht. Ändern Sie den Inhalt, bevor Sie es erneut senden."
   },
   "paymentTerms" : {
     "15_DAYS" :  "15 Tage",

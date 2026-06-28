@@ -123,7 +123,10 @@
     "registration-company-already-registered" : "Bedrijf al geregistreerd",
     "registration-company-already-registered-on-peppol" : "Het lijkt erop dat deze Peppol-ID al bij een andere provider is geregistreerd. Activering hier vereist dat u zich daar eerst uitschrijft. U kunt het ondertekenproces wel afronden en dit daarna regelen.",
     "not-peppol-active" : "U bent momenteel niet geregistreerd op Peppol",
-    "not-peppol-active-action" : "Los dit nu op"
+    "not-peppol-active-action" : "Los dit nu op",
+    "DUPLICATE_REQUEST" : "Deze aanvraag is al verwerkt.",
+    "UBL_DOCUMENT_ALREADY_CREATED" : "Dit document is al ingediend voor verzending. Werk het bestaande document bij.",
+    "UBL_DOCUMENT_CONTENT_ALREADY_SENT" : "Dit identieke document is al ingediend. Wijzig de inhoud voordat u het opnieuw verzendt."
   },
   "paymentTerms" : {
     "15_DAYS" : "15 dagen",

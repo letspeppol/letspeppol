@@ -1,5 +1,8 @@
 package org.letspeppol.app.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +29,10 @@ import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.xml.sax.SAXException;
+import reactor.core.publisher.Mono;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
@@ -53,6 +58,7 @@ public class DocumentService {
     private final NotificationService notificationService;
     private final JwtService jwtService;
     private final UblInvoicePdfService ublInvoicePdfService;
+    private final ObjectMapper objectMapper;
     @Qualifier("proxyWebClient")
     private final WebClient proxyWebClient;
     private final Counter documentBackupCounter;
@@ -367,6 +373,7 @@ public class DocumentService {
                         document.getUbl()
                 ))
                 .retrieve()
+                .onStatus(HttpStatusCode::isError, this::mapProxyError)
                 .bodyToMono(UblDocumentDto.class)
                 .blockOptional()
                 .orElseThrow(() -> new IllegalStateException("Could not deliver at PROXY")); //TODO : make correct error
@@ -391,6 +398,35 @@ public class DocumentService {
         return document;
     }
 
+    private Mono<? extends Throwable> mapProxyError(ClientResponse response) {
+        return response.bodyToMono(String.class)
+                .defaultIfEmpty("")
+                .map(body -> buildProxyRequestException(response.statusCode(), body));
+    }
+
+    private ProxyRequestException buildProxyRequestException(HttpStatusCode statusCode, String body) {
+        if (body == null || body.isBlank()) {
+            return new ProxyRequestException(statusCode, "Proxy request failed with status " + statusCode.value());
+        }
+        try {
+            JsonNode root = objectMapper.readTree(body);
+            String errorCode = readText(root, "errorCode");
+            String message = readText(root, "message");
+            return new ProxyRequestException(statusCode, errorCode, message == null ? body : message);
+        } catch (JsonProcessingException e) {
+            log.warn("Proxy returned an unstructured error response (status={}): {}", statusCode.value(), body, e);
+        }
+        return new ProxyRequestException(statusCode, body);
+    }
+
+    private String readText(JsonNode root, String fieldName) {
+        JsonNode node = root.get(fieldName);
+        if (node == null || node.asText().isBlank()) {
+            return null;
+        }
+        return node.asText();
+    }
+
     private Document rescheduleAtProxy(Document document, String tokenValue) { //TODO : use boolean noArchive from Company
         String previousProcessedStatus = document.getProcessedStatus();
         UblDocumentDto ublDocumentDto = proxyWebClient.put()
@@ -410,6 +446,7 @@ public class DocumentService {
                         document.getUbl()
                 ))
                 .retrieve()
+                .onStatus(HttpStatusCode::isError, this::mapProxyError)
                 .bodyToMono(UblDocumentDto.class)
                 .blockOptional()
                 .orElseThrow(() -> new IllegalStateException("Could not deliver at PROXY")); //TODO : make correct error
