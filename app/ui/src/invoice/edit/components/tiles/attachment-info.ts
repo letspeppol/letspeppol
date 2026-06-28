@@ -4,6 +4,7 @@ import {resolve} from "@aurelia/kernel";
 import {InvoiceContext} from "../../../invoice-context";
 import {bindable, IEventAggregator} from "aurelia";
 import {InvoiceService} from "../../../../services/app/invoice-service";
+import {GENERATED_INVOICE} from "../../../invoice-composer";
 import {I18N} from "@aurelia/i18n";
 
 export class AttachmentInfo {
@@ -20,7 +21,7 @@ export class AttachmentInfo {
         if (attachment.EmbeddedDocumentBinaryObject) {
             let source = `data:${attachment.EmbeddedDocumentBinaryObject.__mimeCode};base64,${attachment.EmbeddedDocumentBinaryObject.value}`;
             let objectUrl: string | null = null;
-            if (additionalDocumentReference.ID === 'generated_invoice') {
+            if (additionalDocumentReference.ID === GENERATED_INVOICE) {
                 if (!this.invoiceContext.selectedDocument || !this.invoiceContext.selectedDocument.id) {
                     this.ea.publish('alert', {alertType: AlertType.Warning, text: this.i18n.tr('alert.attachment.document-not-saved')});
                     return;
