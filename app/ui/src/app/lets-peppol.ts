@@ -13,10 +13,12 @@ import {ResetPassword} from "../login/reset-password";
 import {ForgotPassword} from "../login/forgot-password";
 import {Dashboard} from "../dashboard/dashboard";
 import {Sponsors} from "../sponsor/sponsors";
+import {Callback} from "../login/callback";
 
 @route({
     routes: [
         { path: ['/login'],                                 component: Login,                title: 'Login',                 data: { allowEveryone: true }},
+        { path: '/callback',                                component: Callback,             title: 'Callback',              data: { allowEveryone: true }},
         { path: '/forgot-password',                         component: ForgotPassword,       title: 'Forgot Password',       data: { allowEveryone: true }},
         { path: '/reset-password',                          component: ResetPassword,        title: 'Reset Password',        data: { allowEveryone: true }},
         { path: '/onboarding',                              component: Onboarding,           title: 'Onboarding',            data: { allowEveryone: true }},
