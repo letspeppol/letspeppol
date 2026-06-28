@@ -1,3 +1,13 @@
+.attachment-modal-name {
+    display: inline-block;
+    max-width: 230px;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
 .upload-wrapper {
     display: flex;
     flex-direction: column;

@@ -32,7 +32,7 @@
                     <tr repeat.for="line of additionalDocumentReference">
                         <template if.bind="line.Attachment.EmbeddedDocumentBinaryObject">
                             <td>File</td>
-                            <td title.bind="line.Attachment.EmbeddedDocumentBinaryObject.__filename"><span class="attachment-name attachment-cell">${line.Attachment.EmbeddedDocumentBinaryObject.__filename | smartTruncate}</span></td>
+                            <td title.bind="line.Attachment.EmbeddedDocumentBinaryObject.__filename"><span class="attachment-modal-name">${line.Attachment.EmbeddedDocumentBinaryObject.__filename | smartTruncate}</span></td>
                             <td><input type="text" value.bind="line.DocumentDescription" change.trigger="validate()"/></td>
                         </template>
                         <template else>

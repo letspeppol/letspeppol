@@ -1111,26 +1111,6 @@ main.container .data-table tbody td {
     font-size: .85rem;
 }
 
-/* Keep long attachment names inside their card: cap the width and clip the overflow
-   (no text-overflow:ellipsis on purpose -- the smartTruncate converter already adds the "..."). */
-.attachment-btn {
-    max-width: 100%;
-    min-width: 0;
-}
-
-.attachment-name {
-    min-width: 0;
-    overflow: hidden;
-    white-space: nowrap;
-}
-
-/* Filename cell in the attachments table: clamp it so it cannot stretch the column */
-.attachment-cell {
-    display: inline-block;
-    max-width: 230px;
-    vertical-align: middle;
-}
-
 .total-display strong,
 .composer-info strong {
     font-size: 1.25rem;
