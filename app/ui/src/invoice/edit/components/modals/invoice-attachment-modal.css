@@ -17,3 +17,50 @@
 .upload-wrapper.dragging {
     background-color: #2C3C6911; /* Light blue background for drag over */
 }
+
+/* The attachment upload area is a real <button> so it is keyboard- and
+   screen-reader-accessible; reset the native button look while keeping the
+   shared .upload-wrapper styling. Scoped to button so the Upload UBL modal
+   (a <div> reusing .upload-wrapper) is unaffected. */
+button.upload-wrapper {
+    width: 100%;
+    box-sizing: border-box;
+    background: transparent;
+    color: inherit;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+button.upload-wrapper:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.upload-hint {
+    margin-top: var(--space-1);
+    font-size: var(--space-1);
+    font-weight: normal;
+    opacity: 0.7;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.auto-pdf-toggle {
+    margin-bottom: var(--space-05);
+}
+
+.auto-pdf-help {
+    margin: 0 0 var(--space-1);
+    font-size: var(--space-1);
+    opacity: 0.7;
+}
