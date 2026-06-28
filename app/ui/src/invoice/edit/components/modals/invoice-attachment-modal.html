@@ -1,5 +1,3 @@
-<import from="../../../../app/value-converters/smart-truncate.ts"></import>
-
 <div class="modal" role="dialog" aria-modal="true" show.bind="open">
     <div class="modal-backdrop"></div>
     <div class="modal-card" style="width: 800px" keydown.trigger="onKeyDown($event)">
@@ -32,7 +30,16 @@
                     <tr repeat.for="line of additionalDocumentReference">
                         <template if.bind="line.Attachment.EmbeddedDocumentBinaryObject">
                             <td>File</td>
-                            <td title.bind="line.Attachment.EmbeddedDocumentBinaryObject.__filename"><span class="attachment-modal-name">${line.Attachment.EmbeddedDocumentBinaryObject.__filename | smartTruncate}</span></td>
+                            <td title.bind="line.Attachment.EmbeddedDocumentBinaryObject.__filename">
+                                <template if.bind="line.ID === 'generated_invoice'">
+                                    <span class="attachment-modal-name attachment-modal-name-generated-pdf">
+                                        <span class="attachment-modal-name-stem">${line.Attachment.EmbeddedDocumentBinaryObject.__filename.slice(0, -4)}</span>
+                                    </span>
+                                </template>
+                                <template else>
+                                    <span class="attachment-modal-name">${line.Attachment.EmbeddedDocumentBinaryObject.__filename}</span>
+                                </template>
+                            </td>
                             <td><input type="text" value.bind="line.DocumentDescription" change.trigger="validate()"/></td>
                         </template>
                         <template else>

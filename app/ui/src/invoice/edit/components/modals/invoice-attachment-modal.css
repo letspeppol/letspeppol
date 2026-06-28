@@ -8,6 +8,23 @@
     white-space: nowrap;
 }
 
+.attachment-modal-name-generated-pdf {
+    display: inline-flex;
+    text-overflow: clip;
+}
+
+.attachment-modal-name-stem {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.attachment-modal-name-generated-pdf::after {
+    content: ".pdf";
+    flex: 0 0 auto;
+}
+
 .upload-wrapper {
     display: flex;
     flex-direction: column;

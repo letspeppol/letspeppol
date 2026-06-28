@@ -14,3 +14,20 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+.attachment-info-name-generated-pdf {
+    display: flex;
+    text-overflow: clip;
+}
+
+.attachment-info-name-stem {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.attachment-info-name-generated-pdf::after {
+    content: ".pdf";
+    flex: 0 0 auto;
+}
