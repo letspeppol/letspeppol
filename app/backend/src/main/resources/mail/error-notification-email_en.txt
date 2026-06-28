@@ -1,0 +1,13 @@
+Hello,
+
+Your invoice with reference {{reference}} for {{partner}} could not be delivered over the Peppol network.
+Reason: {{errorMessage}}
+
+Please review and correct the invoice, then resend it from your dashboard:
+https://be.letspeppol.org/invoices/{{uuid}}
+
+Kind regards,
+Let’s Peppol Team
+
+--
+{{supportedByText}}: {{sponsorName}} ({{sponsorUrl}})

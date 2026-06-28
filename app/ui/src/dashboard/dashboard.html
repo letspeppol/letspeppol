@@ -8,6 +8,10 @@
             <span class="vat-mode-tag" t="dashboard.vat-suffix.${vatMode}"></span>
         </h1>
     </div>
+    <div class="card kpi-error-card" if.bind="erroredCount > 0" role="alert">
+        <span class="kpi-error-count">${erroredCount}</span>
+        <span class="label" t="dashboard.errored"></span>
+    </div>
     <div class="dashboard-grid">
         <div class="card kpi-card">
             <h3 style="text-align: center">Income</h3>

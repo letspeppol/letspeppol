@@ -261,11 +261,13 @@ public class DocumentService {
 
     public void updateStatus(UblDocumentDto ublDocumentDto) {
         Document document = documentRepository.findById(ublDocumentDto.id()).orElseThrow(() -> new NotFoundException("Document does not exist"));
+        String previousProcessedStatus = document.getProcessedStatus();
         document.setProxyOn(ublDocumentDto.createdOn());
         document.setScheduledOn(ublDocumentDto.scheduledOn());
         document.setProcessedOn(ublDocumentDto.processedOn());
         document.setProcessedStatus(ublDocumentDto.processedStatus());
         documentRepository.save(document);
+        notifyIfNewlyErrored(document, previousProcessedStatus);
     }
 
     public DocumentDto send(String peppolId, UUID id, Instant schedule, String tokenValue) {
@@ -327,11 +329,28 @@ public class DocumentService {
         return DocumentMapper.toDto(document);
     }
 
+    public DocumentDto markErrorSeen(String peppolId, UUID id) {
+        Document document = documentRepository.findById(id).orElseThrow(() -> new NotFoundException("Document does not exist"));
+        if (!peppolId.equals(document.getOwnerPeppolId())) {
+            throw new SecurityException(AppErrorCodes.PEPPOL_ID_MISMATCH);
+        }
+        if (document.getProcessedStatus() == null) {
+            throw new ConflictException("Document is not errored"); //Only errored documents can be acknowledged
+        }
+        if (document.getErrorSeenOn() != null) {
+            return DocumentMapper.toDto(document); //One-way: keep the original acknowledgement timestamp
+        }
+        document.setErrorSeenOn(Instant.now());
+        document = documentRepository.save(document);
+        return DocumentMapper.toDto(document);
+    }
+
     public void delete(String peppolId, UUID id) { //TODO : do we need to send boundaries ?
         documentRepository.deleteByIdAndOwnerPeppolId(id, peppolId);
     }
 
     private Document deliver(Document document, String tokenValue) { //TODO : use boolean noArchive from Company
+        String previousProcessedStatus = document.getProcessedStatus();
         UblDocumentDto ublDocumentDto = ((document.getProxyOn() == null) ? proxyWebClient.post().uri("/sapi/document") : proxyWebClient.put().uri("/sapi/document/"+document.getId()))
                 .headers(headers -> headers.setBearerAuth(tokenValue))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -367,10 +386,13 @@ public class DocumentService {
             document.getCompany().setLastInvoiceReference(document.getInvoiceReference());
         }
 
-        return documentRepository.save(document);
+        document = documentRepository.save(document);
+        notifyIfNewlyErrored(document, previousProcessedStatus);
+        return document;
     }
 
     private Document rescheduleAtProxy(Document document, String tokenValue) { //TODO : use boolean noArchive from Company
+        String previousProcessedStatus = document.getProcessedStatus();
         UblDocumentDto ublDocumentDto = proxyWebClient.put()
                 .uri("/sapi/document/" + document.getId() + "/reschedule")
                 .headers(headers -> headers.setBearerAuth(tokenValue))
@@ -401,7 +423,21 @@ public class DocumentService {
         } else {
             document.getCompany().setLastInvoiceReference(document.getInvoiceReference());
         }
-        return documentRepository.save(document);
+        document = documentRepository.save(document);
+        notifyIfNewlyErrored(document, previousProcessedStatus);
+        return document;
+    }
+
+    //Notify only on the null -> non-null transition; processedStatus is persisted, so repeated proxy syncs never re-send.
+    private void notifyIfNewlyErrored(Document document, String previousProcessedStatus) {
+        if (previousProcessedStatus == null && document.getProcessedStatus() != null) {
+            Company company = document.getCompany();
+            // A failed outgoing document is important enough to always notify, independently of
+            // enableEmailNotification (which only governs incoming-document notifications).
+            if (company != null) {
+                notificationService.notifyDocumentError(company, document);
+            }
+        }
     }
 
     @Scheduled(cron = "0 0 * * * *")

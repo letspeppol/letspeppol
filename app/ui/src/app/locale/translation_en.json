@@ -206,7 +206,8 @@
     "vat-suffix": {
       "incl": "incl. VAT",
       "excl": "excl. VAT"
-    }
+    },
+    "errored": "Errored invoices"
   },
   "donations": {
     "sponsors": "tier sponsors",
@@ -362,6 +363,12 @@
         "CREDIT_NOTE": "Credit note marked as unpaid"
       },
       "paid-status-failed": "Failed to change invoice paid status",
+      "marked-seen": "Invoice marked as seen",
+      "mark-seen-failed": "Failed to mark invoice as seen",
+      "resend-failed": {
+        "INVOICE": "Failed to reuse the invoice",
+        "CREDIT_NOTE": "Failed to reuse the credit note"
+      },
       "no-ubl-data": "No UBL data available"
     },
     "iban": {
@@ -496,6 +503,11 @@
       "mark-unpaid": {
         "INVOICE": "Mark invoice as unpaid",
         "CREDIT_NOTE": "Mark credit note as unpaid"
+      },
+      "mark-seen": "Mark as seen",
+      "resend": {
+        "INVOICE": "Reuse and resend invoice",
+        "CREDIT_NOTE": "Reuse and resend credit note"
       }
     },
     "table": {
