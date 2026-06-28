@@ -347,7 +347,7 @@ export class InvoiceEdit {
             && inv.AccountingCustomerParty.Party.PartyName.Name
             && inv.AccountingCustomerParty.Party.PartyTaxScheme.TaxScheme.ID
             && inv.LegalMonetaryTotal.LineExtensionAmount.value > 0
-            && this.paymentInfo.isPaymentInfoComplete;
+            && this.paymentInfo?.isPaymentInfoComplete;
     }
 
 }
