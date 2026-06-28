@@ -23,8 +23,8 @@
                    accept="application/pdf,image/png,image/jpeg,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.oasis.opendocument.spreadsheet"
                    change.trigger="onFileSelected()">
             <label class="field checkbox auto-pdf-toggle">
-                <input type="checkbox" checked.to-view="includeGeneratedPdf"
-                       change.trigger="onToggleGeneratedPdf($event.target.checked)" />
+                <input type="checkbox" checked.bind="includeGeneratedPdf"
+                       change.trigger="onToggleGeneratedPdf($event)" />
                 <span t="invoice.attachmentModal.auto-pdf">Include the auto-generated invoice PDF</span>
             </label>
             <p class="auto-pdf-help" if.bind="includeGeneratedPdf && hasUploadedPdf" t="invoice.attachmentModal.auto-pdf-replace">An invoice PDF is generated automatically. Turn it off above if your uploaded file replaces it.</p>

@@ -373,14 +373,8 @@ export class InvoiceComposer {
         } as Invoice;
     }
 
-    public getAdditionalDocumentReference() {
-        // Only seed the generated-PDF marker when the company opted in. The backend
-        // renders the real PDF over this marker at send time; without the opt-in it
-        // would otherwise travel as an empty placeholder.
-        if (!this.companyService.myCompany?.addPdfToSendingInvoice) {
-            return [];
-        }
-        return [{
+    public getGeneratedInvoiceDocumentReference(): AdditionalDocumentReference {
+        return {
             ID: GENERATED_INVOICE,
             DocumentDescription: 'Generated Invoice PDF',
             Attachment: {
@@ -390,6 +384,12 @@ export class InvoiceComposer {
                     value: 'ZW1wdHk='
                 }
             }
-        } as AdditionalDocumentReference];
+        } as AdditionalDocumentReference;
+    }
+
+    public getAdditionalDocumentReference() {
+        // New documents include the generated-PDF marker by default. The attachment
+        // modal can still remove it per invoice before saving or sending.
+        return [this.getGeneratedInvoiceDocumentReference()];
     }
 }

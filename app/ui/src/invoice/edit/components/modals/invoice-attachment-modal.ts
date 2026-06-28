@@ -59,11 +59,12 @@ export class InvoiceAttachmentModal {
             && item.Attachment?.EmbeddedDocumentBinaryObject?.__mimeCode === 'application/pdf');
     }
 
-    onToggleGeneratedPdf(checked: boolean) {
+    onToggleGeneratedPdf(event: Event) {
+        const checked = (event.target as HTMLInputElement).checked;
         this.includeGeneratedPdf = checked;
         if (checked) {
             if (!this.additionalDocumentReference.some(item => item.ID === GENERATED_INVOICE)) {
-                this.additionalDocumentReference.push(...this.invoiceComposer.getAdditionalDocumentReference());
+                this.additionalDocumentReference.push(this.invoiceComposer.getGeneratedInvoiceDocumentReference());
             }
         } else {
             this.additionalDocumentReference = this.additionalDocumentReference.filter(item => item.ID !== GENERATED_INVOICE);
