@@ -63,6 +63,7 @@ export interface DocumentDto {
     draftedOn?: string;             // ISO datetime (Instant)
     readOn?: string;                // ISO datetime (Instant)
     paidOn?: string;                // ISO datetime (Instant)
+    errorSeenOn?: string;           // ISO datetime (Instant) - errored invoice acknowledged ("seen")
     partnerName?: string;
     invoiceReference?: string;
     type?: DocumentType;
@@ -144,6 +145,10 @@ export class InvoiceService {
 
     async togglePaidDocument(id: string) : Promise<DocumentDto> {
         return await this.appApi.httpClient.put(`/sapi/document/${id}/paid`).then(response => response.json());
+    }
+
+    async markErrorSeenDocument(id: string) : Promise<DocumentDto> {
+        return await this.appApi.httpClient.put(`/sapi/document/${id}/error-seen`).then(response => response.json());
     }
 
     async deleteDocument(id: string) {

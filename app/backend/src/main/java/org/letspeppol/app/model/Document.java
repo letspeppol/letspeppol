@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Currency;
 import java.util.UUID;
+import static org.hibernate.type.SqlTypes.LONGVARCHAR;
 import static org.hibernate.type.SqlTypes.VARCHAR;
 
 @Entity
@@ -48,7 +49,7 @@ public class Document implements Persistable<UUID> {
 
     private String processedStatus; //Useful for feedback from Peppol AP
 
-    @Lob
+    @JdbcTypeCode(LONGVARCHAR) //Map to the PG `text` column as a plain string; @Lob would make Hibernate treat it as a large object (OID) and fail to read text content
     private String ubl; //Can be left empty once processed as owner owns the data, i.e. no-archive is enabled and downloadCount > 1, the other field are sufficient to keep the proxy fully operational
 
     ///INTERNAL INFORMATION
@@ -65,6 +66,8 @@ public class Document implements Persistable<UUID> {
     private Instant readOn; //Useful for keeping track of read status, flagged by user
 
     private Instant paidOn; //Useful for keeping track of paid status, flagged by user
+
+    private Instant errorSeenOn; //Useful for keeping track when an errored document was acknowledged ("seen") by the user, null is not yet acknowledged
 
 // TODO    private Instant accountantOn; //Useful for keeping track of accountant status, action executed by user, send to company.accountantEmail or null when not send yet/successful
 

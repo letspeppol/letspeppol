@@ -1,5 +1,8 @@
 package org.letspeppol.app.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +29,10 @@ import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.xml.sax.SAXException;
+import reactor.core.publisher.Mono;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
@@ -53,6 +58,7 @@ public class DocumentService {
     private final NotificationService notificationService;
     private final JwtService jwtService;
     private final UblInvoicePdfService ublInvoicePdfService;
+    private final ObjectMapper objectMapper;
     @Qualifier("proxyWebClient")
     private final WebClient proxyWebClient;
     private final Counter documentBackupCounter;
@@ -261,11 +267,13 @@ public class DocumentService {
 
     public void updateStatus(UblDocumentDto ublDocumentDto) {
         Document document = documentRepository.findById(ublDocumentDto.id()).orElseThrow(() -> new NotFoundException("Document does not exist"));
+        String previousProcessedStatus = document.getProcessedStatus();
         document.setProxyOn(ublDocumentDto.createdOn());
         document.setScheduledOn(ublDocumentDto.scheduledOn());
         document.setProcessedOn(ublDocumentDto.processedOn());
         document.setProcessedStatus(ublDocumentDto.processedStatus());
         documentRepository.save(document);
+        notifyIfNewlyErrored(document, previousProcessedStatus);
     }
 
     public DocumentDto send(String peppolId, UUID id, Instant schedule, String tokenValue) {
@@ -327,11 +335,28 @@ public class DocumentService {
         return DocumentMapper.toDto(document);
     }
 
+    public DocumentDto markErrorSeen(String peppolId, UUID id) {
+        Document document = documentRepository.findById(id).orElseThrow(() -> new NotFoundException("Document does not exist"));
+        if (!peppolId.equals(document.getOwnerPeppolId())) {
+            throw new SecurityException(AppErrorCodes.PEPPOL_ID_MISMATCH);
+        }
+        if (document.getProcessedStatus() == null) {
+            throw new ConflictException("Document is not errored"); //Only errored documents can be acknowledged
+        }
+        if (document.getErrorSeenOn() != null) {
+            return DocumentMapper.toDto(document); //One-way: keep the original acknowledgement timestamp
+        }
+        document.setErrorSeenOn(Instant.now());
+        document = documentRepository.save(document);
+        return DocumentMapper.toDto(document);
+    }
+
     public void delete(String peppolId, UUID id) { //TODO : do we need to send boundaries ?
         documentRepository.deleteByIdAndOwnerPeppolId(id, peppolId);
     }
 
     private Document deliver(Document document, String tokenValue) { //TODO : use boolean noArchive from Company
+        String previousProcessedStatus = document.getProcessedStatus();
         UblDocumentDto ublDocumentDto = ((document.getProxyOn() == null) ? proxyWebClient.post().uri("/sapi/document") : proxyWebClient.put().uri("/sapi/document/"+document.getId()))
                 .headers(headers -> headers.setBearerAuth(tokenValue))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -348,6 +373,7 @@ public class DocumentService {
                         document.getUbl()
                 ))
                 .retrieve()
+                .onStatus(HttpStatusCode::isError, this::mapProxyError)
                 .bodyToMono(UblDocumentDto.class)
                 .blockOptional()
                 .orElseThrow(() -> new IllegalStateException("Could not deliver at PROXY")); //TODO : make correct error
@@ -367,10 +393,42 @@ public class DocumentService {
             document.getCompany().setLastInvoiceReference(document.getInvoiceReference());
         }
 
-        return documentRepository.save(document);
+        document = documentRepository.save(document);
+        notifyIfNewlyErrored(document, previousProcessedStatus);
+        return document;
+    }
+
+    private Mono<? extends Throwable> mapProxyError(ClientResponse response) {
+        return response.bodyToMono(String.class)
+                .defaultIfEmpty("")
+                .map(body -> buildProxyRequestException(response.statusCode(), body));
+    }
+
+    private ProxyRequestException buildProxyRequestException(HttpStatusCode statusCode, String body) {
+        if (body == null || body.isBlank()) {
+            return new ProxyRequestException(statusCode, "Proxy request failed with status " + statusCode.value());
+        }
+        try {
+            JsonNode root = objectMapper.readTree(body);
+            String errorCode = readText(root, "errorCode");
+            String message = readText(root, "message");
+            return new ProxyRequestException(statusCode, errorCode, message == null ? body : message);
+        } catch (JsonProcessingException e) {
+            log.warn("Proxy returned an unstructured error response (status={}): {}", statusCode.value(), body, e);
+        }
+        return new ProxyRequestException(statusCode, body);
+    }
+
+    private String readText(JsonNode root, String fieldName) {
+        JsonNode node = root.get(fieldName);
+        if (node == null || node.asText().isBlank()) {
+            return null;
+        }
+        return node.asText();
     }
 
     private Document rescheduleAtProxy(Document document, String tokenValue) { //TODO : use boolean noArchive from Company
+        String previousProcessedStatus = document.getProcessedStatus();
         UblDocumentDto ublDocumentDto = proxyWebClient.put()
                 .uri("/sapi/document/" + document.getId() + "/reschedule")
                 .headers(headers -> headers.setBearerAuth(tokenValue))
@@ -388,6 +446,7 @@ public class DocumentService {
                         document.getUbl()
                 ))
                 .retrieve()
+                .onStatus(HttpStatusCode::isError, this::mapProxyError)
                 .bodyToMono(UblDocumentDto.class)
                 .blockOptional()
                 .orElseThrow(() -> new IllegalStateException("Could not deliver at PROXY")); //TODO : make correct error
@@ -401,7 +460,21 @@ public class DocumentService {
         } else {
             document.getCompany().setLastInvoiceReference(document.getInvoiceReference());
         }
-        return documentRepository.save(document);
+        document = documentRepository.save(document);
+        notifyIfNewlyErrored(document, previousProcessedStatus);
+        return document;
+    }
+
+    //Notify only on the null -> non-null transition; processedStatus is persisted, so repeated proxy syncs never re-send.
+    private void notifyIfNewlyErrored(Document document, String previousProcessedStatus) {
+        if (previousProcessedStatus == null && document.getProcessedStatus() != null) {
+            Company company = document.getCompany();
+            // A failed outgoing document is important enough to always notify, independently of
+            // enableEmailNotification (which only governs incoming-document notifications).
+            if (company != null) {
+                notificationService.notifyDocumentError(company, document);
+            }
+        }
     }
 
     @Scheduled(cron = "0 0 * * * *")
