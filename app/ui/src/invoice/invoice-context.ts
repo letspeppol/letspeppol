@@ -26,7 +26,6 @@ export class InvoiceContext {
     lines : undefined | InvoiceLine[] | CreditNoteLine[];
     @observable selectedInvoice:  undefined | Invoice | CreditNote;
     selectedDocument: DocumentDto;
-    selectedRouteId: string = undefined;
     selectedDocumentType: DocumentType = DocumentType.INVOICE;
     lastReference: string = undefined;
     nextReference: string = undefined;
