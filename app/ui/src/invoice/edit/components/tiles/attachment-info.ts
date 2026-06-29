@@ -1,4 +1,4 @@
-import {AdditionalDocumentReference} from "../../../../services/peppol/ubl";
+import {AdditionalDocumentReference, EmbeddedDocumentBinaryObject} from "../../../../services/peppol/ubl";
 import {AlertType} from "../../../../components/alert/alert";
 import {resolve} from "@aurelia/kernel";
 import {InvoiceContext} from "../../../invoice-context";
@@ -7,6 +7,15 @@ import {InvoiceService} from "../../../../services/app/invoice-service";
 import {I18N} from "@aurelia/i18n";
 
 export class AttachmentInfo {
+    private static readonly attachmentIconByMimeCode: Record<string, string> = {
+        'text/csv': 'csv.png',
+        'application/pdf': 'pdf.png',
+        'image/png': 'png.png',
+        'image/jpeg': 'jpg.png',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xls.png',
+        'application/vnd.oasis.opendocument.spreadsheet': 'ods.png'
+    };
+
     private invoiceContext = resolve(InvoiceContext);
     private invoiceService = resolve(InvoiceService);
     private ea: IEventAggregator = resolve(IEventAggregator);
@@ -14,6 +23,14 @@ export class AttachmentInfo {
 
     @bindable readOnly: boolean;
     @bindable showAttachmentModal;
+
+    getAttachmentIconSrc(embeddedDocumentBinaryObject: EmbeddedDocumentBinaryObject): string {
+        return AttachmentInfo.attachmentIconByMimeCode[embeddedDocumentBinaryObject.__mimeCode] ?? 'file.svg';
+    }
+
+    getAttachmentIconAlt(embeddedDocumentBinaryObject: EmbeddedDocumentBinaryObject): string {
+        return embeddedDocumentBinaryObject.__mimeCode ? `${embeddedDocumentBinaryObject.__mimeCode} attachment` : 'Attachment';
+    }
 
     async downloadAttachment(additionalDocumentReference: AdditionalDocumentReference) {
         const attachment = additionalDocumentReference.Attachment;

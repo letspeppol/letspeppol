@@ -1,10 +1,15 @@
 .attachment-info-btn {
     max-width: 100%;
     min-width: 0;
+    padding: 0;
+    border: none;
 }
 
-.attachment-info-btn svg {
+.attachment-info-file-icon {
     flex: 0 0 auto;
+    height: 32px;
+    object-fit: contain;
+    width: 32px;
 }
 
 .attachment-info-name {
