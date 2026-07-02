@@ -1,27 +1,36 @@
-.attachment-modal-name {
-    display: inline-block;
+.attachment-info-file-icon {
+    height: 32px;
+    object-fit: contain;
+    vertical-align: middle;
+    width: 32px;
+}
+
+.attachment-modal-filename-cell .attachment-info-name {
     max-width: 230px;
+}
+
+.attachment-info-name {
+    flex: 1 1 auto;
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
-    vertical-align: middle;
     white-space: nowrap;
 }
 
-.attachment-modal-name-generated-pdf {
-    display: inline-flex;
+.attachment-info-name-with-extension {
+    display: flex;
     text-overflow: clip;
 }
 
-.attachment-modal-name-stem {
+.attachment-info-name-stem {
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-.attachment-modal-name-generated-pdf::after {
-    content: ".pdf";
+.attachment-info-name-with-extension::after {
+    content: attr(data-extension);
     flex: 0 0 auto;
 }
 

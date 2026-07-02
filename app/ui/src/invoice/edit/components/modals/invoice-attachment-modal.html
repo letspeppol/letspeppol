@@ -29,16 +29,14 @@
                     <tbody>
                     <tr repeat.for="line of additionalDocumentReference">
                         <template if.bind="line.Attachment.EmbeddedDocumentBinaryObject">
-                            <td>File</td>
-                            <td title.bind="line.Attachment.EmbeddedDocumentBinaryObject.__filename">
-                                <template if.bind="line.ID === 'generated_invoice'">
-                                    <span class="attachment-modal-name attachment-modal-name-generated-pdf">
-                                        <span class="attachment-modal-name-stem">${line.Attachment.EmbeddedDocumentBinaryObject.__filename.slice(0, -4)}</span>
-                                    </span>
-                                </template>
-                                <template else>
-                                    <span class="attachment-modal-name">${line.Attachment.EmbeddedDocumentBinaryObject.__filename}</span>
-                                </template>
+                            <td>
+                                <img class="attachment-info-file-icon" src.bind="getAttachmentIconSrc(line.Attachment.EmbeddedDocumentBinaryObject)" alt.bind="getAttachmentIconAlt(line.Attachment.EmbeddedDocumentBinaryObject)" width="32" height="32">
+                            </td>
+                            <td class="attachment-modal-filename-cell" title.bind="line.Attachment.EmbeddedDocumentBinaryObject.__filename">
+                                <span class="attachment-info-name attachment-info-name-with-extension"
+                                      data-extension="${getAttachmentFilenameExtension(line.Attachment.EmbeddedDocumentBinaryObject.__filename)}">
+                                    <span class="attachment-info-name-stem">${getAttachmentFilenameStem(line.Attachment.EmbeddedDocumentBinaryObject.__filename)}</span>
+                                </span>
                             </td>
                             <td><input type="text" value.bind="line.DocumentDescription" change.trigger="validate()"/></td>
                         </template>
