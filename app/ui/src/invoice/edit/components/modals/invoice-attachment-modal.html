@@ -41,7 +41,9 @@
                             <td><input type="text" value.bind="line.DocumentDescription" change.trigger="validate()"/></td>
                         </template>
                         <template else>
-                            <td>Link</td>
+                            <td>
+                                <img class="attachment-info-file-icon" src="link.png" alt="Link" width="32" height="32">
+                            </td>
                             <td><input type="text" value.bind="line.Attachment.ExternalReference.URI" change.trigger="validate()"/></td>
                             <td><input type="text" value.bind="line.DocumentDescription" change.trigger="validate()"/></td>
                         </template>
