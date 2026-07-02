@@ -20,7 +20,7 @@
     white-space: nowrap;
 }
 
-.attachment-info-name-generated-pdf {
+.attachment-info-name-with-extension {
     display: flex;
     text-overflow: clip;
 }
@@ -32,7 +32,7 @@
     white-space: nowrap;
 }
 
-.attachment-info-name-generated-pdf::after {
-    content: ".pdf";
+.attachment-info-name-with-extension::after {
+    content: attr(data-extension);
     flex: 0 0 auto;
 }

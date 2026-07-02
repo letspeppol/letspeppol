@@ -32,6 +32,29 @@ export class AttachmentInfo {
         return embeddedDocumentBinaryObject.__mimeCode ? `${embeddedDocumentBinaryObject.__mimeCode} attachment` : 'Attachment';
     }
 
+    getAttachmentFilenameStem(filename?: string): string {
+        const extensionStart = this.getAttachmentFilenameExtensionStart(filename);
+        return extensionStart === -1 ? filename ?? '' : filename.slice(0, extensionStart);
+    }
+
+    getAttachmentFilenameExtension(filename?: string): string {
+        const extensionStart = this.getAttachmentFilenameExtensionStart(filename);
+        return extensionStart === -1 ? '' : filename.slice(extensionStart);
+    }
+
+    private getAttachmentFilenameExtensionStart(filename?: string): number {
+        if (!filename) {
+            return -1;
+        }
+
+        const lastDotIndex = filename.lastIndexOf('.');
+        if (lastDotIndex <= 0 || lastDotIndex === filename.length - 1) {
+            return -1;
+        }
+
+        return lastDotIndex;
+    }
+
     async downloadAttachment(additionalDocumentReference: AdditionalDocumentReference) {
         const attachment = additionalDocumentReference.Attachment;
         if (attachment.EmbeddedDocumentBinaryObject) {
