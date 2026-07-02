@@ -1,12 +1,15 @@
-.attachment-info-file-icon {
-    height: 32px;
-    object-fit: contain;
-    vertical-align: middle;
-    width: 32px;
+.attachment-info-btn {
+    max-width: 100%;
+    min-width: 0;
+    padding: 0;
+    border: none;
 }
 
-.attachment-modal-filename-cell .attachment-info-name {
-    max-width: 230px;
+.attachment-info-file-icon {
+    flex: 0 0 auto;
+    height: 32px;
+    object-fit: contain;
+    width: 32px;
 }
 
 .attachment-info-name {
@@ -32,24 +35,4 @@
 .attachment-info-name-with-extension::after {
     content: attr(data-extension);
     flex: 0 0 auto;
-}
-
-.upload-wrapper {
-    display: flex;
-    flex-direction: column;
-    border: 2px dashed black;
-    justify-content: center;
-    align-items: center;
-    padding: var(--space-14);
-    margin: var(--space-14) 0;
-    font-size: var(--space-125);
-    font-weight: bold;
-}
-
-.upload-wrapper p {
-    margin-top: 0;
-}
-
-.upload-wrapper.dragging {
-    background-color: #2C3C6911; /* Light blue background for drag over */
 }

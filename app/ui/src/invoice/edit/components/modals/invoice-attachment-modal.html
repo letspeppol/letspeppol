@@ -29,12 +29,21 @@
                     <tbody>
                     <tr repeat.for="line of additionalDocumentReference">
                         <template if.bind="line.Attachment.EmbeddedDocumentBinaryObject">
-                            <td>File</td>
-                            <td>${line.Attachment.EmbeddedDocumentBinaryObject.__filename}</td>
+                            <td>
+                                <img class="attachment-info-file-icon" src.bind="getAttachmentIconSrc(line.Attachment.EmbeddedDocumentBinaryObject)" alt.bind="getAttachmentIconAlt(line.Attachment.EmbeddedDocumentBinaryObject)" width="32" height="32">
+                            </td>
+                            <td class="attachment-modal-filename-cell" title.bind="line.Attachment.EmbeddedDocumentBinaryObject.__filename">
+                                <span class="attachment-info-name attachment-info-name-with-extension"
+                                      data-extension="${getAttachmentFilenameExtension(line.Attachment.EmbeddedDocumentBinaryObject.__filename)}">
+                                    <span class="attachment-info-name-stem">${getAttachmentFilenameStem(line.Attachment.EmbeddedDocumentBinaryObject.__filename)}</span>
+                                </span>
+                            </td>
                             <td><input type="text" value.bind="line.DocumentDescription" change.trigger="validate()"/></td>
                         </template>
                         <template else>
-                            <td>Link</td>
+                            <td>
+                                <img class="attachment-info-file-icon" src="link.png" alt="Link" width="32" height="32">
+                            </td>
                             <td><input type="text" value.bind="line.Attachment.ExternalReference.URI" change.trigger="validate()"/></td>
                             <td><input type="text" value.bind="line.DocumentDescription" change.trigger="validate()"/></td>
                         </template>
