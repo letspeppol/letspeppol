@@ -16,6 +16,7 @@ import org.letspeppol.app.model.Company;
 import org.letspeppol.app.model.DocumentDirection;
 import org.letspeppol.app.model.DocumentType;
 import org.letspeppol.app.model.EmailJob;
+import org.letspeppol.app.model.NotificationGroup;
 import org.letspeppol.app.model.SponsorInvoice;
 import org.letspeppol.app.repository.CompanyRepository;
 import org.letspeppol.app.repository.EmailJobRepository;
@@ -165,6 +166,7 @@ public class SponsorInvoiceService {
                 request.message(),
                 invoiceId
         );
+        customer.setCompanyGroup(NotificationGroup.SPONSOR);
         return sponsorInvoiceRepository.saveAndFlush(sponsorInvoice);
     }
 

@@ -1,6 +1,6 @@
 package org.letspeppol.app.dto;
 
-import com.sun.jdi.StringReference;
+import org.letspeppol.app.model.NotificationGroup;
 
 public record CompanyDto(
         String peppolId,
@@ -20,6 +20,7 @@ public record CompanyDto(
         boolean addAttachmentToNotification,
         boolean addPdfToSendingInvoice,
         String emailNotificationCCList,
+        NotificationGroup companyGroup,
         AddressDto registeredOffice
 )
 {}

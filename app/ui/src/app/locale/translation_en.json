@@ -202,6 +202,9 @@
     "label": "New",
     "click-to-dismiss": "Click to dismiss"
   },
+  "welcome-notification": {
+    "title": "Welcome"
+  },
   "dashboard": {
     "vat-suffix": {
       "incl": "incl. VAT",

@@ -202,6 +202,9 @@
     "label": "Neu",
     "click-to-dismiss": "Hinweis bestätigen"
   },
+  "welcome-notification": {
+    "title": "Willkommen"
+  },
   "donations": {
     "sponsors": "Stufensponsoren",
     "sponsors-title": "Bronze-, Silber- und Gold-Sponsoren zusammen",

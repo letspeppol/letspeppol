@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 @Entity
 @Table(name = "company", indexes = {
@@ -36,6 +38,11 @@ public class Company extends GenericEntity{
     private boolean addAttachmentToNotification;
     private boolean addPdfToSendingInvoice;
     private String emailNotificationCcList; // comma-separated list
+
+    @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(name = "notification_group", nullable = false)
+    private NotificationGroup companyGroup = NotificationGroup.USER;
 
 // TODO    private boolean noArchive; //Setting by user that data should not be stored once processed (user is absolute owner & responsible)
 // TODO    private String accountant; //Either email or UUID of accounting system or accountant, flaggable by user what invoices should be sent to accountant

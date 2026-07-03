@@ -201,6 +201,9 @@
     "label" : "Nieuw",
     "click-to-dismiss" : "Melding bevestigen"
   },
+  "welcome-notification" : {
+    "title" : "Welkom"
+  },
   "donations" : {
     "sponsors" : "tiersponsors",
     "sponsors-title" : "Bronzen, zilveren en gouden sponsors samen",

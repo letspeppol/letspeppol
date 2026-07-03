@@ -201,6 +201,9 @@
     "label" : "Nouveau",
     "click-to-dismiss" : "Valider le message"
   },
+  "welcome-notification" : {
+    "title" : "Bienvenue"
+  },
   "donations" : {
     "sponsors" : "sponsors tiers",
     "sponsors-title" : "Sponsors Bronze, Argent et Or réunis",

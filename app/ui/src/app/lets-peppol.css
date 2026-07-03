@@ -1056,6 +1056,22 @@ main.container .data-table tbody td {
     margin-top: var(--space-05);
 }
 
+.welcome-notification-card {
+    width: min(720px, calc(100% - var(--space-2rem)));
+}
+
+.welcome-notification-body {
+    line-height: 1.55;
+}
+
+.welcome-notification-body :first-child {
+    margin-top: 0;
+}
+
+.welcome-notification-body :last-child {
+    margin-bottom: 0;
+}
+
 /* ============================================================================
    13. Composer (Invoice editor)
    ============================================================================ */
