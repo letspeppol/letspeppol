@@ -40,10 +40,10 @@ public class WelcomeNotificationService {
     private Set<NotificationGroup> notificationGroupsFor(NotificationGroup companyGroup) {
         return switch (companyGroup) {
             case USER -> Set.of(NotificationGroup.USER, NotificationGroup.ONCE);
+            case ONCE -> Set.of(NotificationGroup.USER, NotificationGroup.ONCE);
+            case SPONSOR -> Set.of(NotificationGroup.SPONSOR, NotificationGroup.ONCE);
             case SPECIAL -> Set.of(NotificationGroup.USER, NotificationGroup.SPECIAL, NotificationGroup.ONCE);
-            case SPONSOR -> Set.of(NotificationGroup.USER, NotificationGroup.SPONSOR, NotificationGroup.ONCE);
             case EDITOR -> Set.of(NotificationGroup.EDITOR);
-            case ONCE -> Set.of(NotificationGroup.ONCE);
         };
     }
 

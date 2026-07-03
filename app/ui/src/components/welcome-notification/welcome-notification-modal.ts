@@ -149,7 +149,7 @@ export class WelcomeNotificationModal {
     }
 
     private shouldStoreSeenId(companyGroup: CompanyGroup, notificationGroup: NotificationGroup) {
-        return companyGroup === "SPONSOR" || notificationGroup === "ONCE";
+        return companyGroup === "SPONSOR" || companyGroup === "ONCE" || notificationGroup === "ONCE";
     }
 
     private shouldResumeAfterRefresh() {

@@ -4,7 +4,7 @@ import {AppApi} from "./app-api";
 
 export const SEEN_NOTIFICATION_KEY = "seenNotification";
 
-export type CompanyGroup = "USER" | "SPECIAL" | "SPONSOR" | "EDITOR";
+export type CompanyGroup = "USER" | "SPECIAL" | "SPONSOR" | "EDITOR" | "ONCE";
 export type NotificationGroup = "USER" | "SPECIAL" | "SPONSOR" | "EDITOR" | "ONCE";
 
 export interface WelcomeNotificationDto {

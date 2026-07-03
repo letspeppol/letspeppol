@@ -2,8 +2,8 @@ package org.letspeppol.app.model;
 
 public enum NotificationGroup {
     USER,
-    SPECIAL,
+    ONCE,
     SPONSOR,
-    EDITOR,
-    ONCE
+    SPECIAL,
+    EDITOR
 }
