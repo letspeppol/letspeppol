@@ -40,49 +40,35 @@
 }
 
 .delivery-stamp-mark {
-    width: 250px;
-    height: 250px;
-    display: grid;
-    place-items: center;
-}
-
-.delivery-stamp-mark svg {
-    width: 100%;
-    height: 100%;
+    transform: rotate(12deg);
     color: var(--primary);
-}
-
-.delivery-stamp-mark circle {
-    fill: none;
-    stroke: currentcolor;
-    stroke-width: 4;
-    stroke-dasharray: 10 7;
-}
-
-.delivery-stamp-mark circle + circle {
-    stroke-width: 2;
-    stroke-dasharray: none;
-}
-
-.delivery-stamp-date,
-.delivery-stamp-access-point,
-.delivery-stamp-processed {
-    fill: currentcolor;
-    font-weight: 800;
+    border: .25rem solid var(--primary);
+    border-radius: 1rem;
+    display: inline-grid;
+    gap: var(--space-025);
+    justify-items: center;
+    width: min(270px, 100%);
+    padding: var(--space-05) var(--space-1);
+    font-family: "Courier New", Courier, monospace;
+    font-weight: 700;
     letter-spacing: 0;
-}
-
-.delivery-stamp-date {
-    font-size: 15px;
+    line-height: 1.05;
+    text-align: center;
+    text-transform: uppercase;
+    -webkit-mask-image: url("grunge.png");
+    mask-image: url("grunge.png");
+    -webkit-mask-size: 128px 128px;
+    mask-size: 128px 128px;
 }
 
 .delivery-stamp-access-point {
-    font-size: 22px;
+    font-size: 2rem;
+    overflow-wrap: anywhere;
 }
 
-.delivery-stamp-processed {
-    font-size: 12px;
-    fill: var(--muted);
+.delivery-stamp-date {
+    font-size: 1rem;
+    overflow-wrap: anywhere;
 }
 
 .delivery-stamp-corners {
@@ -112,9 +98,7 @@
     }
 
     .delivery-stamp-mark {
-        width: min(280px, 100%);
-        height: auto;
-        aspect-ratio: 1;
+        width: 100%;
     }
 
     .delivery-stamp-corners div {

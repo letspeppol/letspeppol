@@ -17,17 +17,12 @@ export class InvoiceDeliveryModal {
         return this.formatDateTime(this.details?.partnerPeppolMessageOn);
     }
 
-    get processedOnLabel(): string {
-        return this.formatDateTime(this.details?.processedOn);
-    }
-
     private formatDateTime(value?: string): string {
         if (!value) {
             return "/";
         }
-        return new Intl.DateTimeFormat(undefined, {
-            dateStyle: "medium",
-            timeStyle: "short"
-        }).format(new Date(value));
+        const date = new Date(value);
+        const pad = (part: number) => part.toString().padStart(2, "0");
+        return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
     }
 }

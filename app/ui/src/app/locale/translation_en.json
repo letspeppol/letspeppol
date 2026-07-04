@@ -573,6 +573,16 @@
       "title": "Validation",
       "error-count": "Error count"
     },
+    "deliveryModal": {
+      "title": "Stamp of delivery",
+      "from": "from",
+      "to": "to",
+      "invoice-number": "Invoice Number",
+      "stamp-label": "Delivery stamp",
+      "corner1-id": "Corner 1 ID",
+      "corner2-id": "Corner 2 ID",
+      "corner3-id": "Corner 3 ID"
+    },
     "customerModal": {
       "title": "Customer",
       "search-title": "Select Partner",
@@ -592,6 +602,8 @@
     "edit": {
       "download-ubl": "UBL",
       "download-pdf": "PDF",
+      "delivery": "Delivery",
+      "loading": "Loading",
       "validate": "Validate",
       "delete-draft": "Delete draft",
       "update-draft": "Update draft",

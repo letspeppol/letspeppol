@@ -572,6 +572,16 @@
       "title" : "Validation",
       "error-count" : "Nombre d'erreurs"
     },
+    "deliveryModal" : {
+      "title" : "Cachet de livraison",
+      "from" : "de",
+      "to" : "à",
+      "invoice-number" : "Numéro de facture",
+      "stamp-label" : "Cachet de livraison",
+      "corner1-id" : "ID Corner 1",
+      "corner2-id" : "ID Corner 2",
+      "corner3-id" : "ID Corner 3"
+    },
     "customerModal" : {
       "title" : "Client",
       "search-title" : "Sélectionner un partenaire",
@@ -590,6 +600,8 @@
     "edit" : {
       "download-ubl" : "UBL",
       "download-pdf" : "PDF",
+      "delivery" : "Livraison",
+      "loading" : "Chargement",
       "validate" : "Valider",
       "delete-draft" : "Supprimer brouillon",
       "update-draft" : "Mettre à jour le brouillon",

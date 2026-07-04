@@ -4,65 +4,49 @@
     <div class="modal-backdrop"></div>
     <div class="modal-card delivery-modal-card">
         <header class="modal-header">
-            <h2>stamp of delivery</h2>
-            <button class="icon-btn" type="button" click.trigger="closeModal()" aria-label="Close dialog" title="Close">&times;</button>
+            <h2 t="invoice.deliveryModal.title">Stamp of delivery</h2>
+            <button class="icon-btn" type="button" click.trigger="closeModal()" aria-label="Close dialog" title="Close" t="[aria-label]common.close;[title]common.close">&times;</button>
         </header>
         <div class="modal-body" if.bind="details">
             <section class="delivery-stamp-paper">
                 <div class="delivery-stamp-parties">
                     <div>
-                        <span>from</span>
+                        <span t="invoice.deliveryModal.from">from</span>
                         <strong>${details.ownerPeppolId}</strong>
                     </div>
                     <div>
-                        <span>to</span>
+                        <span t="invoice.deliveryModal.to">to</span>
                         <strong>${details.partnerPeppolId}</strong>
                     </div>
                     <div>
-                        <span>Invoice Number</span>
+                        <span t="invoice.deliveryModal.invoice-number">Invoice Number</span>
                         <strong>${details.invoiceReference || '/'}</strong>
                     </div>
                 </div>
 
-                <div class="delivery-stamp-mark" aria-label="Delivery stamp">
-                    <svg viewBox="0 0 250 250" role="img">
-                        <defs>
-                            <path id="delivery-stamp-date-path" d="M 125 125 m -112 0 a 112 112 0 1 1 224 0 a 112 112 0 1 1 -224 0"></path>
-                        </defs>
-                        <circle cx="125" cy="125" r="118"></circle>
-                        <circle cx="125" cy="125" r="88"></circle>
-                        <text class="delivery-stamp-date">
-                            <textPath href="#delivery-stamp-date-path" startOffset="50%" text-anchor="middle">
-                                ${processedOnLabel}
-                            </textPath>
-                        </text>
-                        <text class="delivery-stamp-access-point" x="125" y="118" text-anchor="middle">
-                            ${details.partnerPeppolAccessPoint || '/'}
-                        </text>
-                        <text class="delivery-stamp-processed" x="125" y="145" text-anchor="middle">
-                            ${partnerMessageOnLabel}
-                        </text>
-                    </svg>
+                <div class="delivery-stamp-mark" aria-label="Delivery stamp" t="[aria-label]invoice.deliveryModal.stamp-label">
+                    <span class="delivery-stamp-access-point">${details.partnerPeppolAccessPoint || '/'}</span>
+                    <span class="delivery-stamp-date">${partnerMessageOnLabel}</span>
                 </div>
 
                 <dl class="delivery-stamp-corners">
                     <div>
-                        <dt>Corner 1 ID</dt>
+                        <dt t="invoice.deliveryModal.corner1-id">Corner 1 ID</dt>
                         <dd>${details.id}</dd>
                     </div>
                     <div>
-                        <dt>Corner 2 ID</dt>
+                        <dt t="invoice.deliveryModal.corner2-id">Corner 2 ID</dt>
                         <dd>${details.accessPointId || '/'}</dd>
                     </div>
                     <div>
-                        <dt>Corner 3 ID</dt>
+                        <dt t="invoice.deliveryModal.corner3-id">Corner 3 ID</dt>
                         <dd>${details.partnerPeppolMessageId || '/'}</dd>
                     </div>
                 </dl>
             </section>
         </div>
         <footer class="modal-footer">
-            <button type="button" class="btn" click.trigger="closeModal()">Close</button>
+            <button type="button" class="btn" click.trigger="closeModal()" t="common.close">Close</button>
         </footer>
     </div>
 </div>

@@ -573,6 +573,16 @@
       "title": "Validierung",
       "error-count": "Anzahl der Fehler"
     },
+    "deliveryModal": {
+      "title": "Zustellstempel",
+      "from": "von",
+      "to": "an",
+      "invoice-number": "Rechnungsnummer",
+      "stamp-label": "Zustellstempel",
+      "corner1-id": "Corner 1-ID",
+      "corner2-id": "Corner 2-ID",
+      "corner3-id": "Corner 3-ID"
+    },
     "customerModal": {
       "title": "Kunde",
       "search-title": "Partner auswählen",
@@ -592,6 +602,8 @@
     "edit": {
       "download-ubl": "UBL",
       "download-pdf": "PDF",
+      "delivery": "Zustellung",
+      "loading": "Laden",
       "validate": "Validieren",
       "delete-draft": "Entwurf löschen",
       "update-draft": "Entwurf aktualisieren",

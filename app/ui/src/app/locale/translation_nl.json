@@ -572,6 +572,16 @@
       "title" : "Validatie",
       "error-count" : "Aantal fouten"
     },
+    "deliveryModal" : {
+      "title" : "Bewijs van levering",
+      "from" : "van",
+      "to" : "aan",
+      "invoice-number" : "Factuurnummer",
+      "stamp-label" : "Leveringsstempel",
+      "corner1-id" : "Corner 1-ID",
+      "corner2-id" : "Corner 2-ID",
+      "corner3-id" : "Corner 3-ID"
+    },
     "customerModal" : {
       "title" : "Klant",
       "search-title" : "Partner selecteren",
@@ -590,6 +600,8 @@
     "edit" : {
       "download-ubl" : "UBL",
       "download-pdf" : "PDF",
+      "delivery" : "Levering",
+      "loading" : "Laden",
       "validate" : "Valideren",
       "delete-draft" : "Concept verwijderen",
       "update-draft" : "Concept bijwerken",
