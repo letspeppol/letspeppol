@@ -22,6 +22,7 @@ import {InvoiceNumberModal} from "./components/modals/invoice-number-modal";
 import {toErrorResponse} from "../../app/util/error-response-handler";
 import {PartnerService} from "../../services/app/partner-service";
 import {PaymentInfo} from "./components/tiles/payment-info";
+import {InvoiceDeliveryModal} from "./components/modals/invoice-delivery-modal";
 import moment, {Moment} from "moment";
 import {IRouter} from "@aurelia/router";
 import {I18N} from "@aurelia/i18n";
@@ -47,7 +48,9 @@ export class InvoiceEdit {
     @bindable invoiceAttachmentModal: InvoiceAttachmentModal;
     @bindable invoiceNumberModal: InvoiceNumberModal;
     @bindable validationResultModal: ValidationResultModal;
+    @bindable invoiceDeliveryModal: InvoiceDeliveryModal;
     @bindable paymentInfo: PaymentInfo;
+    deliveryDetailsLoading = false;
 
     returnToOverview() {
         this.invoiceContext.setActiveBoxFromDocument(this.invoiceContext.selectedDocument);
@@ -238,6 +241,44 @@ export class InvoiceEdit {
             name += '-draft';
         }
         return name;
+    }
+
+    async showDeliveryDetails() {
+        const documentId = this.invoiceContext.selectedDocument?.id;
+        if (!documentId || this.deliveryDetailsLoading) {
+            return;
+        }
+        this.deliveryDetailsLoading = true;
+        try {
+            const details = await this.invoiceService.getDocumentDetails(documentId);
+            this.invoiceDeliveryModal.showModal(details);
+        } catch (e: unknown) {
+            this.ea.publish('alert', {
+                alertType: AlertType.Danger,
+                text: await this.deliveryDetailsErrorMessage(e)
+            });
+        } finally {
+            this.deliveryDetailsLoading = false;
+        }
+    }
+
+    private async deliveryDetailsErrorMessage(error: unknown): Promise<string> {
+        if (error instanceof Response) {
+            try {
+                const body = await error.json() as { message?: string };
+                if (body?.message) {
+                    return body.message;
+                }
+            } catch {
+                return 'Could not load delivery details';
+            }
+        }
+        return 'Could not load delivery details';
+    }
+
+    get canShowDeliveryDetails() {
+        const document = this.invoiceContext.selectedDocument;
+        return document?.direction === DocumentDirection.OUTGOING && !!document?.processedOn;
     }
 
     async validate() {

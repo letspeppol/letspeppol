@@ -1,0 +1,124 @@
+.delivery-modal-card {
+    width: min(720px, calc(100% - var(--space-2rem)));
+}
+
+.delivery-stamp-paper {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 280px;
+    gap: var(--space-1);
+    align-items: center;
+    padding: var(--space-1);
+    border: 1px dashed color-mix(in hsl, var(--primary) 38%, var(--border-soft));
+    border-radius: var(--radius-sm);
+    background: color-mix(in hsl, var(--panel) 94%, var(--bg));
+}
+
+.delivery-stamp-parties {
+    display: grid;
+    gap: var(--space-075);
+    min-width: 0;
+}
+
+.delivery-stamp-parties div {
+    display: grid;
+    gap: var(--space-025);
+}
+
+.delivery-stamp-parties span,
+.delivery-stamp-corners dt {
+    color: var(--muted);
+    font-size: .78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.delivery-stamp-parties strong,
+.delivery-stamp-corners dd {
+    margin: 0;
+    color: var(--text-strong);
+    overflow-wrap: anywhere;
+}
+
+.delivery-stamp-mark {
+    width: 250px;
+    height: 250px;
+    display: grid;
+    place-items: center;
+}
+
+.delivery-stamp-mark svg {
+    width: 100%;
+    height: 100%;
+    color: var(--primary);
+}
+
+.delivery-stamp-mark circle {
+    fill: none;
+    stroke: currentcolor;
+    stroke-width: 4;
+    stroke-dasharray: 10 7;
+}
+
+.delivery-stamp-mark circle + circle {
+    stroke-width: 2;
+    stroke-dasharray: none;
+}
+
+.delivery-stamp-date,
+.delivery-stamp-access-point,
+.delivery-stamp-processed {
+    fill: currentcolor;
+    font-weight: 800;
+    letter-spacing: 0;
+}
+
+.delivery-stamp-date {
+    font-size: 15px;
+}
+
+.delivery-stamp-access-point {
+    font-size: 22px;
+}
+
+.delivery-stamp-processed {
+    font-size: 12px;
+    fill: var(--muted);
+}
+
+.delivery-stamp-corners {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: var(--space-05);
+    margin: 0;
+    padding-top: var(--space-075);
+    border-top: 1px dashed var(--border-soft);
+}
+
+.delivery-stamp-corners div {
+    display: grid;
+    grid-template-columns: 120px minmax(0, 1fr);
+    gap: var(--space-05);
+    align-items: baseline;
+}
+
+@media (max-width: 550px) {
+    .delivery-stamp-paper {
+        grid-template-columns: 1fr;
+        justify-items: center;
+    }
+
+    .delivery-stamp-parties {
+        width: 100%;
+    }
+
+    .delivery-stamp-mark {
+        width: min(280px, 100%);
+        height: auto;
+        aspect-ratio: 1;
+    }
+
+    .delivery-stamp-corners div {
+        grid-template-columns: 1fr;
+        gap: var(--space-025);
+    }
+}

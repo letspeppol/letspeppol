@@ -120,6 +120,42 @@ public class DocumentService {
         return DocumentMapper.toDto(document);
     }
 
+    public DocumentDetailsDto findDetailsById(String peppolId, UUID id, String tokenValue) {
+        Document document = documentRepository.findById(id).orElseThrow(() -> new NotFoundException("Document does not exist"));
+        if (!peppolId.equals(document.getOwnerPeppolId())) {
+            throw new SecurityException(AppErrorCodes.PEPPOL_ID_MISMATCH);
+        }
+        if (!DocumentDirection.OUTGOING.equals(document.getDirection()) || document.getProcessedOn() == null) {
+            throw new ConflictException("Delivery details are only available for processed outgoing documents");
+        }
+        DocumentDetailsDto details = proxyWebClient.get()
+                .uri("/sapi/document/" + id + "/details")
+                .headers(headers -> headers.setBearerAuth(tokenValue))
+                .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, response ->
+                        response.bodyToMono(SimpleMessage.class)
+                                .map(SimpleMessage::message)
+                                .defaultIfEmpty("Delivery details are not available")
+                                .map(ConflictException::new)
+                )
+                .bodyToMono(DocumentDetailsDto.class)
+                .blockOptional()
+                .orElseThrow(() -> new IllegalStateException("Could not retrieve delivery details from PROXY"));
+        return new DocumentDetailsDto(
+                details.id(),
+                document.getInvoiceReference(),
+                details.ownerPeppolId(),
+                details.partnerPeppolId(),
+                details.accessPoint(),
+                details.accessPointId(),
+                details.processedOn(),
+                details.processedStatus(),
+                details.partnerPeppolAccessPoint(),
+                details.partnerPeppolMessageId(),
+                details.partnerPeppolMessageOn()
+        );
+    }
+
     public void synchronize(String peppolId, String tokenValue) throws InterruptedException {
         companyRepository.findByPeppolId(peppolId).ifPresent(company -> {
             synchronizeNewDocuments(tokenValue);

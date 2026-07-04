@@ -75,6 +75,20 @@ export interface DocumentDto {
     createdExternally?: boolean;
 }
 
+export interface DocumentDetailsDto {
+    id: string;
+    invoiceReference?: string;
+    ownerPeppolId: string;
+    partnerPeppolId: string;
+    accessPoint?: string;
+    accessPointId?: string;
+    processedOn?: string;
+    processedStatus?: string;
+    partnerPeppolAccessPoint?: string;
+    partnerPeppolMessageId?: string;
+    partnerPeppolMessageOn?: string;
+}
+
 export interface ValidationResultDto {
     isValid: boolean,
     errorCount: number,
@@ -123,6 +137,10 @@ export class InvoiceService {
 
     async getDocument(id: string) : Promise<DocumentDto> {
         return await this.appApi.httpClient.get(`/sapi/document/${id}`).then(response => response.json());
+    }
+
+    async getDocumentDetails(id: string) : Promise<DocumentDetailsDto> {
+        return await this.appApi.httpClient.get(`/sapi/document/${id}/details`).then(response => response.json());
     }
 
     async createDocument(xml: string, draft: boolean = false, createdExternally: boolean = false) : Promise<DocumentDto> {
