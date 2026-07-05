@@ -550,7 +550,7 @@
       "name" : "Naam",
       "iban" : "IBAN",
       "bic" : "BIC",
-      "reference" : "Referentie",
+      "reference" : "Mededeling",
       "store-iban": "IBAN opslaan in account"
     },
     "paymentQr" : {
@@ -569,7 +569,7 @@
       "iban" : "IBAN",
       "bic" : "BIC",
       "amount" : "Bedrag",
-      "reference" : "Referentie"
+      "reference" : "Mededeling"
     },
     "validationModal" : {
       "title" : "Validatie",

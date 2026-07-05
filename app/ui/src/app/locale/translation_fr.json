@@ -550,7 +550,7 @@
       "name" : "Nom",
       "iban" : "IBAN",
       "bic" : "BIC",
-      "reference" : "Référence",
+      "reference" : "Communication",
       "store-iban": "Enregistrer l’IBAN dans le compte"
     },
     "paymentQr" : {
@@ -569,7 +569,7 @@
       "iban" : "IBAN",
       "bic" : "BIC",
       "amount" : "Montant",
-      "reference" : "Référence"
+      "reference" : "Communication"
     },
     "validationModal" : {
       "title" : "Validation",

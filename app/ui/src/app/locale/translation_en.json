@@ -551,7 +551,7 @@
       "name": "Name",
       "iban": "IBAN",
       "bic": "BIC",
-      "reference": "Reference",
+      "reference": "Remittance information",
       "store-iban": "Save IBAN in account"
     },
     "paymentQr": {
@@ -570,7 +570,7 @@
       "iban": "IBAN",
       "bic": "BIC",
       "amount": "Amount",
-      "reference": "Reference"
+      "reference": "Remittance information"
     },
     "validationModal": {
       "title": "Validation",
