@@ -71,6 +71,11 @@ public class KboXmlSyncService {
             throw new KboSyncException("Failed to create KBO data directory: " + kboBase, e);
         }
 
+        if (kboProcessedZipRepository.existsByFilename(remoteZipName)) {
+            log.info("Skipping already processed full ZIP {}", remoteZipName);
+            return;
+        }
+
         log.info("Downloading initial full KBO ZIP: {} -> {}", remoteZipPath, localZip);
         kboSftpClient.downloadFile(remoteZipPath, localZip);
 
