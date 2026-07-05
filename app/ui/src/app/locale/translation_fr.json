@@ -374,7 +374,8 @@
     "attachment" : {
       "size-too-large-3mb" : "Le fichier ne peut pas dépasser 3 Mo",
       "document-not-saved" : "Document non enregistré. Rendu PDF non disponible.",
-      "downloaded" : "Fichier '{{filename}}' téléchargé"
+      "downloaded" : "Fichier '{{filename}}' téléchargé",
+      "unsafe-link" : "Ce lien de pièce jointe n'a pas pu être ouvert car il ne s'agit pas d'une adresse web sécurisée."
     }
   },
   "overlay" : {

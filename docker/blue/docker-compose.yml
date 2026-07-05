@@ -160,12 +160,13 @@ services:
       - "traefik.http.routers.blue-api.service=nginx"
       - "traefik.http.routers.blue-api.tls.certresolver=${CERT_RESOLVER_BLUE}"
 
-      # Protected API router
-      - "traefik.http.routers.blue-api.rule=Host(`${ACTIVE_DOMAIN_BLUE}`) && (PathPrefix(`/proxy/sapi/`) || PathPrefix(`/app/sapi/`) || PathPrefix(`/kyc/sapi/`))"
-      - "traefik.http.routers.blue-api.entryPoints=websecure"
-      - "traefik.http.routers.blue-api.middlewares=jwt-auth,api-limit"
-      - "traefik.http.routers.blue-api.service=nginx"
-      - "traefik.http.routers.blue-api.tls.certresolver=${CERT_RESOLVER_BLUE}"
+      # Protected API router (distinct router name; sharing "blue-api" silently overrode the public
+      # /api/ router above, dropping its rate-limit and routing /api/ through the catch-all instead).
+      - "traefik.http.routers.blue-sapi.rule=Host(`${ACTIVE_DOMAIN_BLUE}`) && (PathPrefix(`/proxy/sapi/`) || PathPrefix(`/app/sapi/`) || PathPrefix(`/kyc/sapi/`))"
+      - "traefik.http.routers.blue-sapi.entryPoints=websecure"
+      - "traefik.http.routers.blue-sapi.middlewares=jwt-auth,api-limit"
+      - "traefik.http.routers.blue-sapi.service=nginx"
+      - "traefik.http.routers.blue-sapi.tls.certresolver=${CERT_RESOLVER_BLUE}"
 
       # Service definition
       - "traefik.http.services.nginx.loadbalancer.server.port=80"

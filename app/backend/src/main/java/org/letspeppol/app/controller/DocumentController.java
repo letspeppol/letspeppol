@@ -13,14 +13,18 @@ import org.letspeppol.app.service.ValidationService;
 import org.letspeppol.app.service.UblInvoicePdfService;
 import org.letspeppol.app.util.JwtUtil;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -28,6 +32,9 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/sapi/document")
 public class DocumentController {
+
+    private static final int MAX_PAGE_SIZE = 100;
+    private static final int MAX_UBL_BYTES = 5 * 1024 * 1024; // 5 MB
 
     private final DocumentService documentService;
     private final ValidationService validationService;
@@ -38,6 +45,7 @@ public class DocumentController {
         if (ublXml == null || ublXml.isBlank()) {
             return ResponseEntity.badRequest().body("Missing XML content");
         }
+        rejectIfUblTooLarge(ublXml);
         ValidationResultDto response = validationService.validateUblXml(ublXml);
         return ResponseEntity.ok(response);
     }
@@ -65,7 +73,8 @@ public class DocumentController {
         filter.setPaid(paid);
         filter.setRead(read);
         filter.setDraft(draft);
-        Page<DocumentDto> page = documentService.findAll(filter, pageable);
+        Pageable cappedPageable = capPageSize(pageable);
+        Page<DocumentDto> page = documentService.findAll(filter, cappedPageable);
         return new PageResponse<>(
                 page.getContent(),
                 page.getNumber(),
@@ -74,6 +83,19 @@ public class DocumentController {
                 page.getTotalPages(),
                 page.isLast()
         );
+    }
+
+    private void rejectIfUblTooLarge(String ublXml) {
+        if (ublXml != null && ublXml.getBytes(StandardCharsets.UTF_8).length > MAX_UBL_BYTES) {
+            throw new ResponseStatusException(HttpStatus.PAYLOAD_TOO_LARGE, "UBL XML exceeds the maximum allowed size");
+        }
+    }
+
+    private Pageable capPageSize(Pageable pageable) {
+        if (pageable == null || pageable.getPageSize() <= MAX_PAGE_SIZE) {
+            return pageable;
+        }
+        return PageRequest.of(pageable.getPageNumber(), MAX_PAGE_SIZE, pageable.getSort());
     }
 
     @GetMapping("{id}")
@@ -88,6 +110,7 @@ public class DocumentController {
                               @RequestParam(required = false) boolean draft,
                               @RequestParam(required = false) Instant schedule,
                               @RequestParam(required = false, defaultValue = "true") boolean createdExternally) {
+        rejectIfUblTooLarge(ublXml);
         if (!JwtUtil.isPeppolActive(jwt)) {
             draft = true;
         }
@@ -101,6 +124,7 @@ public class DocumentController {
                               @RequestBody String ublXml,
                               @RequestParam(required = false) boolean draft,
                               @RequestParam(required = false) Instant schedule) {
+        rejectIfUblTooLarge(ublXml);
         if (!JwtUtil.isPeppolActive(jwt)) {
             draft = true;
         }

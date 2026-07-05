@@ -374,7 +374,8 @@
     "attachment" : {
       "size-too-large-3mb" : "Bestand mag niet groter zijn dan 3 MB",
       "document-not-saved" : "Document niet opgeslagen. PDF-weergave niet beschikbaar.",
-      "downloaded" : "Bestand '{{filename}}' gedownload"
+      "downloaded" : "Bestand '{{filename}}' gedownload",
+      "unsafe-link" : "Deze bijlagekoppeling kon niet worden geopend omdat het geen veilig webadres is."
     }
   },
   "overlay" : {

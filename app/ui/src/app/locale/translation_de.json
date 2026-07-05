@@ -375,7 +375,8 @@
     "attachment": {
       "size-too-large-3mb": "Datei darf nicht größer als 3 MB sein",
       "document-not-saved": "Dokument nicht gespeichert. PDF-Vorschau nicht verfügbar.",
-      "downloaded": "Datei '{{filename}}' heruntergeladen"
+      "downloaded": "Datei '{{filename}}' heruntergeladen",
+      "unsafe-link": "Dieser Anhang-Link konnte nicht geöffnet werden, da es sich nicht um eine sichere Webadresse handelt."
     }
   },
   "overlay": {

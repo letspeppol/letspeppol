@@ -36,19 +36,24 @@ public class ActivationService {
     private final CompanyService companyService;
     private final AccountService accountService;
     private final ActivationEmailTemplateProvider templateProvider;
+    private final RateLimiterService rateLimiterService;
     private final SecureRandom random = new SecureRandom();
-    private final Duration ttl = Duration.ofDays(7);
     private final Counter activationRequestedCounter;
     private final Counter tokenVerificationCounter;
 
     @Value("${app.mail.activation.base-url}")
     private String baseUrl;
 
+    // Activation token lifetime in days; configurable so the exposure window can be tightened (was hard-coded 7).
+    @Value("${app.mail.activation.ttl-days:7}")
+    private long ttlDays;
+
     @Value("${app.mail.from:noreply@example.com}")
     private String fromAddress;
 
     @Transactional
     public void requestActivation(ConfirmCompanyRequest request, String acceptLanguage) {
+        rateLimiterService.checkActivation(request.email());
         if (isVerified(request.peppolId())) {
             log.warn("User with email {} tried to register for company {} but company was already registered", request.email(), request.peppolId());
             throw new KycException(KycErrorCodes.COMPANY_ALREADY_REGISTERED);
@@ -59,7 +64,7 @@ public class ActivationService {
                 request.email().toLowerCase(),
                 request.peppolId(),
                 token,
-                Instant.now().plus(ttl)
+                Instant.now().plus(Duration.ofDays(ttlDays))
         );
         verificationRepository.save(verification);
         String langTag = LocaleUtil.extractLanguageTag(acceptLanguage);
@@ -132,8 +137,8 @@ public class ActivationService {
             mailSender.send(message);
             log.info("Sent activation email to {} for company {} lang={} ", to, peppolId, languageTag);
         } catch (Exception e) {
-            log.warn("Failed to send email (logging activation link) token={} error={}", token, e.getMessage());
-            log.info("Activation link for {} -> {}", to, activationLink);
+            // Do not log the token or activation link: they allow completing registration for this email.
+            log.warn("Failed to send activation email to {} for company {} error={}", to, peppolId, e.getMessage());
         }
     }
 

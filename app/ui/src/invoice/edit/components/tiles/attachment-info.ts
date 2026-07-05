@@ -41,7 +41,20 @@ export class AttachmentInfo {
             this.ea.publish('alert', {alertType: AlertType.Info, text: this.i18n.tr('alert.attachment.downloaded', {filename: attachment.EmbeddedDocumentBinaryObject.__filename})});
         }
         if (attachment.ExternalReference && attachment.ExternalReference.URI) {
-            window.open(attachment.ExternalReference.URI, '_blank');
+            this.openExternalReference(attachment.ExternalReference.URI);
+        }
+    }
+
+    private openExternalReference(uri: string) {
+        try {
+            const url = new URL(uri, location.origin);
+            if (url.protocol === 'http:' || url.protocol === 'https:') {
+                window.open(url.href, '_blank', 'noopener,noreferrer');
+            } else {
+                this.ea.publish('alert', {alertType: AlertType.Warning, text: this.i18n.tr('alert.attachment.unsafe-link')});
+            }
+        } catch {
+            this.ea.publish('alert', {alertType: AlertType.Warning, text: this.i18n.tr('alert.attachment.unsafe-link')});
         }
     }
 }

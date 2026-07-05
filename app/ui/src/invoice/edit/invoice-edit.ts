@@ -249,7 +249,6 @@ export class InvoiceEdit {
         const xml = this.buildXml();
         const response = await this.invoiceService.validate(xml);
         this.validationResultModal.showModal(response);
-        console.log(response);
     }
 
     private normalizeUnitPrices() {

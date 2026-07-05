@@ -29,7 +29,7 @@ services:
       retries: 12
       start_period: 10s
     ports:
-      - "${DB_PORT:-5432}:5432"
+      - "127.0.0.1:${DB_PORT:-5432}:5432"
 
   proxy:
     build:

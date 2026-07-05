@@ -375,7 +375,8 @@
     "attachment": {
       "size-too-large-3mb": "File can not be more than 3MB",
       "document-not-saved": "Document not saved. PDF render not available.",
-      "downloaded": "File '{{filename}}' downloaded"
+      "downloaded": "File '{{filename}}' downloaded",
+      "unsafe-link": "This attachment link could not be opened because it is not a safe web address."
     }
   },
   "overlay": {

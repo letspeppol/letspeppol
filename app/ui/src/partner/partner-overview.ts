@@ -124,8 +124,7 @@ export class PartnerOverview {
             this.partnerContext.deletePartner(partner);
             this.updateCounts();
             this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.partner.deleted')});
-        } catch (e) {
-            console.log(e);
+        } catch {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.partner.delete-failed')});
         }
         return false;

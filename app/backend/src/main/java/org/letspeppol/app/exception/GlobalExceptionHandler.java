@@ -8,6 +8,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,6 +49,13 @@ public class GlobalExceptionHandler {
         }
         body.put("errors", errors);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+    }
+
+    // Honour the status carried by ResponseStatusException (e.g. 413 from the UBL size guard, 404 from
+    // NoResourceFoundException) instead of letting the catch-all below mask it as 500.
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<SimpleMessage> handleResponseStatus(ResponseStatusException ex) {
+        return ResponseEntity.status(ex.getStatusCode()).body(new SimpleMessage(ex.getReason()));
     }
 
     @ExceptionHandler(Exception.class)

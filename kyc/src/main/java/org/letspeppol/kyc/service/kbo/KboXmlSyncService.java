@@ -168,6 +168,7 @@ public class KboXmlSyncService {
         }
 
         Path targetDir = zipFile.getParent();
+        Path normalizedTargetDir = targetDir.toAbsolutePath().normalize();
         try (ZipInputStream zis = new ZipInputStream(Files.newInputStream(zipFile))) {
             ZipEntry entry;
             Path chosen = null;
@@ -176,7 +177,13 @@ public class KboXmlSyncService {
                 if (!entry.isDirectory()
                         && entryName.toLowerCase().endsWith(".xml")
                         && entryName.toLowerCase().endsWith(".wijzig.xml")) {
-                    Path out = targetDir.resolve(entryName);
+                    Path out = targetDir.resolve(entryName).toAbsolutePath().normalize();
+                    // Zip Slip guard: reject entries that resolve outside the target directory.
+                    if (!out.startsWith(normalizedTargetDir)) {
+                        log.warn("Skipping ZIP entry that escapes target directory: {}", entryName);
+                        zis.closeEntry();
+                        continue;
+                    }
                     Files.createDirectories(out.getParent());
                     Files.copy(zis, out, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
                     if (chosen == null) {

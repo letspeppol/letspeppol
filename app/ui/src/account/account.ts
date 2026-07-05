@@ -126,22 +126,18 @@ export class Account {
             const body = await response.text().catch(() => "");
             switch (status) {
                 case 403:
-                    console.log("Forbidden: " + body);
                     this.warningKey = 'account.registration-failed.contact-us';
                     break;
                 case 409:
-                    console.log("Already registered at " + body);
                     this.warningKey = 'account.registration-failed.contact-provider';
                     this.alreadyRegisteredProvider = body;
                     break;
                 case 503:
-                    console.log("Service could not process request at this moment, try again later.");
                     this.warningKey = 'account.registration-failed.try-again-one-hour';
                     break;
                 case 424:
                 case 500:
                 default:
-                    console.log("Service could not process request");
                     this.warningKey = 'account.registration-failed.try-again-one-day';
                     break;
             }

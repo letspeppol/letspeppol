@@ -2,6 +2,7 @@ import {Params, RouteNode, Router} from "@aurelia/router";
 import {resolve} from "@aurelia/kernel";
 import {PasswordService, ResetPasswordRequest} from "../services/kyc/password-service";
 import {ChoosePassword} from "../components/choose-password/choose-password";
+import {clearTokenFromUrl} from "../services/util/url";
 
 export class ResetPassword {
     readonly passwordService = resolve(PasswordService);
@@ -14,6 +15,7 @@ export class ResetPassword {
 
     public loading(params: Params, next: RouteNode) {
         this.token = next.queryParams.get('token');
+        clearTokenFromUrl();
     }
 
     async resetPassword() {

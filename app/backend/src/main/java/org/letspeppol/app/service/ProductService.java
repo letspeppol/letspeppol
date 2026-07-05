@@ -63,7 +63,7 @@ public class ProductService {
     }
 
     public ProductDto updateProduct(String peppolId, Long id, ProductDto productDto) {
-        Product product = productRepository.findById(id).orElseThrow(() -> new NotFoundException("Product does not exist"));
+        Product product = productRepository.findByIdAndCompanyPeppolId(id, peppolId).orElseThrow(() -> new NotFoundException("Product does not exist"));
 
         product.setName(productDto.name());
         product.setDescription(productDto.description());

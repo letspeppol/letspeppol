@@ -55,6 +55,7 @@ public class IdentityVerificationService {
         account.setIdentityVerified(true);
         account.setIdentityVerifiedOn(Instant.now());
         account.setCreatedOn(Instant.now());
+        accountService.validatePasswordStrength(req.password());
         String passwordHash = passwordEncoder.encode(req.password());
         account.setPasswordHash(passwordHash);
         account.setCompany(req.director().getCompany());

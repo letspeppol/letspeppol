@@ -34,6 +34,7 @@ import org.letspeppol.kyc.service.signing.CertificateUtil;
 import org.letspeppol.kyc.service.signing.EmbeddableSignatureUtil;
 import org.letspeppol.kyc.service.signing.FinalizeSignatureContainer;
 import org.letspeppol.kyc.service.signing.PreSignatureContainer;
+import org.letspeppol.kyc.service.signing.SignatureUtil;
 import org.letspeppol.kyc.util.NameMatchUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
@@ -47,6 +48,21 @@ import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Date;
+import java.util.regex.Pattern;
+import java.util.concurrent.ConcurrentHashMap;
+import java.security.KeyStore;
+import java.security.cert.CertPath;
+import java.security.cert.CertPathValidator;
+import java.security.cert.CertificateFactory;
+import java.security.cert.PKIXParameters;
+import java.security.cert.PKIXRevocationChecker;
+import java.security.cert.TrustAnchor;
+import java.security.cert.CertStore;
+import java.security.cert.CollectionCertStoreParameters;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.letspeppol.kyc.service.signing.CertificateUtil.getRDNName;
 
@@ -79,6 +95,17 @@ public class SigningService {
     private String workingDirectory;
     private String contractDirectory;
 
+    // Maps a prepared-signing id (hashToFinalize) to the exact digest the server prepared for signing.
+    // Binds the eID signature to OUR contract and makes a prepared signing single-use (anti-replay).
+    private final ConcurrentHashMap<String, String> preparedHashes = new ConcurrentHashMap<>();
+
+    @Value("${webeid.trusted-ca-truststore:#{null}}")
+    private String trustedCaTruststore;
+    @Value("${webeid.trusted-ca-truststore-password:#{null}}")
+    private String trustedCaTruststorePassword;
+    @Value("${webeid.check-revocation:false}")
+    private boolean checkRevocation;
+
     @PostConstruct
     public void init() throws IOException {
         workingDirectory = initDirectory( "/temp");
@@ -92,8 +119,19 @@ public class SigningService {
         return path.toString();
     }
 
+    // Strict base64 charset only; the '/' and '+' base64 may contain are mapped to filesystem-safe
+    // characters and the charset rules out path separators / '..' traversal in the contract filename.
+    private static final Pattern SAFE_HASH = Pattern.compile("^[A-Za-z0-9+/=]{1,64}$");
+
+    private static String safeHashName(String hashToFinalize) {
+        if (hashToFinalize == null || !SAFE_HASH.matcher(hashToFinalize).matches()) {
+            throw new RuntimeException("Invalid hashToFinalize");
+        }
+        return hashToFinalize.replace('/', '_').replace('+', '-').replace("=", "");
+    }
+
     public File getGeneratedContractFileName(String hashToFinalize) {
-        return new File(workingDirectory, "contract_en_" + hashToFinalize + "_prepare.pdf");
+        return new File(workingDirectory, "contract_en_" + safeHashName(hashToFinalize) + "_prepare.pdf");
     }
 
     public static String beVatPretty(String s) {
@@ -179,6 +217,7 @@ public class SigningService {
 
         String hash = Base64.getEncoder().encodeToString(preparedPdfBytes);
         log.info("Contract prepared for signing, hash length: {}", hash.length());
+        preparedHashes.put(safeHashName(hashToFinalize), hash);
         return new PrepareSigningResponse(hash, hashToFinalize, HASH_ALGORITHM, isAllowedToSign(x500Name, director));
     }
 
@@ -258,6 +297,27 @@ public class SigningService {
             throw new RuntimeException(e);
         }
 
+        // SECURITY: (1) validate the certificate (temporal validity always; full chain-to-trusted-eID-root
+        // when 'webeid.trusted-ca-truststore' is configured), (2) cryptographically verify the Web-eID
+        // signature, and (3) bind it to the exact digest the server prepared for THIS contract (anti-replay,
+        // single-use). Previously arbitrary signature bytes with any (self-signed) certificate were accepted.
+        // NOTE: full chain validation requires the eID/QTSP root CAs in the configured truststore; without it
+        // only signature validity + temporal validity are enforced. Adopting eu.webeid.security:authtoken-validator
+        // remains the recommended definitive solution (bundles the trust anchors + nonce ceremony).
+        validateCertificateChain(certificates);
+        byte[] signedDigest = Base64.getDecoder().decode(signingRequest.hashToSign());
+        byte[] eidSignature = Base64.getDecoder().decode(signingRequest.signature());
+        if (!SignatureUtil.verifyWebEidSignature(certificates[0], signedDigest, eidSignature)) {
+            log.error("eID signature verification FAILED for company {} email {}",
+                    tokenVerificationResponse.company().peppolId(), tokenVerificationResponse.email());
+            throw new RuntimeException("eID signature verification failed");
+        }
+        String expectedDigest = preparedHashes.remove(safeHashName(signingRequest.hashToFinalize()));
+        if (expectedDigest == null || !expectedDigest.equals(signingRequest.hashToSign())) {
+            log.error("eID prepared-digest mismatch / replay for company {}", tokenVerificationResponse.company().peppolId());
+            throw new RuntimeException("eID signature does not match a freshly prepared contract");
+        }
+
         byte[] finalPdfBytes = createFinalContract(certificates, signingRequest, tokenVerificationResponse);
 
         IdentityVerificationRequest identityVerificationRequest = new IdentityVerificationRequest(
@@ -298,7 +358,7 @@ public class SigningService {
     }
 
     private byte[] createFinalContract(X509Certificate[] certificates, FinalizeSigningRequest request, TokenVerificationResponse tokenVerificationResponse) {
-        File preparedPdf = new File(workingDirectory, "contract_en_%s_prepare.pdf".formatted(request.hashToFinalize()));
+        File preparedPdf = getGeneratedContractFileName(request.hashToFinalize());
         if (!preparedPdf.exists()) {
             throw new RuntimeException("FinalizeSigningRequest invalid");
         }
@@ -331,5 +391,68 @@ public class SigningService {
             throw new RuntimeException("Invalid director");
         }
         return director;
+    }
+
+    /**
+     * Validates the eID certificate: always checks temporal validity; when a truststore of trusted
+     * eID/QTSP root CAs is configured ('webeid.trusted-ca-truststore'), also validates that the
+     * certificate chains to one of those roots (rejects self-signed / forged certificates). When no
+     * truststore is configured the chain is NOT validated (a prominent warning is logged) — set it in
+     * production. This is fail-open-without-config so it never breaks the current flow.
+     */
+    private void validateCertificateChain(X509Certificate[] chain) {
+        if (chain == null || chain.length == 0) {
+            throw new RuntimeException("Empty certificate chain");
+        }
+        try {
+            chain[0].checkValidity();
+        } catch (Exception e) {
+            throw new RuntimeException("eID certificate is expired or not yet valid", e);
+        }
+        boolean[] keyUsage = chain[0].getKeyUsage();
+        if (keyUsage != null && keyUsage.length >= 2 && !keyUsage[0] && !keyUsage[1]) {
+            // Neither digitalSignature (0) nor nonRepudiation (1): not a usable eID signing certificate.
+            throw new RuntimeException("eID certificate is not valid for signing (key usage)");
+        }
+        if (trustedCaTruststore == null || trustedCaTruststore.isBlank()) {
+            log.warn("eID certificate chain validation DISABLED — set 'webeid.trusted-ca-truststore' " +
+                    "(Belgian eID / QTSP root CAs) in production to reject self-signed / forged certificates.");
+            return;
+        }
+        try {
+            KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+            try (InputStream in = new FileInputStream(trustedCaTruststore)) {
+                ks.load(in, trustedCaTruststorePassword == null ? null : trustedCaTruststorePassword.toCharArray());
+            }
+            Set<TrustAnchor> anchors = new HashSet<>();
+            java.util.List<java.security.cert.Certificate> caCerts = new java.util.ArrayList<>();
+            Enumeration<String> aliases = ks.aliases();
+            while (aliases.hasMoreElements()) {
+                java.security.cert.Certificate c = ks.getCertificate(aliases.nextElement());
+                if (c instanceof X509Certificate xc) {
+                    anchors.add(new TrustAnchor(xc, null));
+                    caCerts.add(xc);
+                }
+            }
+            CertPath certPath = CertificateFactory.getInstance("X.509").generateCertPath(Arrays.asList(chain));
+            PKIXParameters params = new PKIXParameters(anchors);
+            // Supply the truststore CA certs (roots + intermediates) as a CertStore so PKIX can build the
+            // path even though getCertificateChain() returns only the end-entity cert (the JDK does not
+            // AIA-chase missing intermediates). Operators must load the issuing CA(s), not only the root.
+            params.addCertStore(CertStore.getInstance("Collection", new CollectionCertStoreParameters(caCerts)));
+            if (checkRevocation) {
+                // Opt-in OCSP/CRL revocation checking (needs network access + the certs' AIA/CDP entries).
+                params.addCertPathChecker((PKIXRevocationChecker) CertPathValidator.getInstance("PKIX").getRevocationChecker());
+                params.setRevocationEnabled(true);
+            } else {
+                params.setRevocationEnabled(false);
+            }
+            CertPathValidator.getInstance("PKIX").validate(certPath, params);
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("eID certificate chain is NOT trusted: {}", e.getMessage());
+            throw new RuntimeException("eID certificate chain is not trusted", e);
+        }
     }
 }

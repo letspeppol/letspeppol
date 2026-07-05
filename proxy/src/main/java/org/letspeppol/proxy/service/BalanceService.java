@@ -6,6 +6,12 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 public class BalanceService {
+
+    /** Maximum amount accepted in a single top-up. */
+    public static final long MAX_INCREMENT = 100_000L;
+    /** Ceiling the running balance is clamped to. */
+    public static final long MAX_BALANCE = 1_000_000L;
+
     private final AtomicLong value = new AtomicLong(0);
 
     public boolean isPositive() {
@@ -17,7 +23,10 @@ public class BalanceService {
     }
 
     public long incrementBy(long delta) {
-        return value.addAndGet(delta);
+        if (delta <= 0 || delta > MAX_INCREMENT) {
+            throw new IllegalArgumentException("Amount must be between 1 and " + MAX_INCREMENT);
+        }
+        return value.updateAndGet(current -> Math.min(current + delta, MAX_BALANCE));
     }
 
     public long decrement() {
