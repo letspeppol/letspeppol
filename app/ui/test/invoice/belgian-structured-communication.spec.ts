@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { normalizeBelgianStructuredCommunication } from '../../src/invoice/belgian-structured-communication';
+import {
+    formatBelgianStructuredCommunication,
+    normalizeBelgianStructuredCommunication
+} from '../../src/invoice/belgian-structured-communication';
 
 describe('normalizeBelgianStructuredCommunication', () => {
     it('normalizes valid Belgian structured communication values to 12 digits', () => {
@@ -19,5 +22,11 @@ describe('normalizeBelgianStructuredCommunication', () => {
         expect(normalizeBelgianStructuredCommunication('1234567890023')).toBe('');
         expect(normalizeBelgianStructuredCommunication(null)).toBe('');
         expect(normalizeBelgianStructuredCommunication(undefined)).toBe('');
+    });
+
+    it('formats valid values for Belgian OGM display', () => {
+        expect(formatBelgianStructuredCommunication('123456789002')).toBe('+++123/4567/89002+++');
+        expect(formatBelgianStructuredCommunication('000000000097')).toBe('+++000/0000/00097+++');
+        expect(formatBelgianStructuredCommunication('INV-2026-0001')).toBe('');
     });
 });

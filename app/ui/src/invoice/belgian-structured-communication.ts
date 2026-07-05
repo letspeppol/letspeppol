@@ -26,3 +26,13 @@ export function normalizeBelgianStructuredCommunication(value: unknown): string 
 
     return checkDigits === expectedCheckDigits ? digits : '';
 }
+
+export function formatBelgianStructuredCommunication(value: unknown): string {
+    const normalized = normalizeBelgianStructuredCommunication(value);
+
+    if (!normalized) {
+        return '';
+    }
+
+    return `+++${normalized.slice(0, 3)}/${normalized.slice(3, 7)}/${normalized.slice(7)}+++`;
+}

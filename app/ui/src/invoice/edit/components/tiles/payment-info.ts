@@ -6,6 +6,7 @@ import {InvoiceService, DocumentDirection, DocumentType} from "../../../../servi
 import {AlertType} from "../../../../components/alert/alert";
 import moment from "moment";
 import {I18N} from "@aurelia/i18n";
+import {formatBelgianStructuredCommunication} from "../../../belgian-structured-communication";
 
 export class PaymentInfo {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -41,6 +42,11 @@ export class PaymentInfo {
     get isSuccessfullyProcessed(): boolean {
         const document = this.invoiceContext.selectedDocument;
         return !!document?.processedOn && !document?.processedStatus;
+    }
+
+    get paymentReference(): string {
+        const paymentId = this.invoiceContext.selectedInvoice?.PaymentMeans?.PaymentID || '';
+        return formatBelgianStructuredCommunication(paymentId) || paymentId;
     }
 
     showPaymentQrModal() {

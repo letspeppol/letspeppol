@@ -1,6 +1,9 @@
 import {bindable} from "aurelia";
 import {DocumentType} from "../../../../services/app/invoice-service";
-import {normalizeBelgianStructuredCommunication} from "../../../belgian-structured-communication";
+import {
+    formatBelgianStructuredCommunication,
+    normalizeBelgianStructuredCommunication
+} from "../../../belgian-structured-communication";
 
 export class InvoicePaymentQrModal {
     @bindable open = false;
@@ -49,6 +52,10 @@ export class InvoicePaymentQrModal {
 
     get creditorReference(): string {
         return normalizeBelgianStructuredCommunication(this.paymentId);
+    }
+
+    get referenceLabel(): string {
+        return formatBelgianStructuredCommunication(this.paymentId) || this.reference;
     }
 
     get remittanceInformation(): string {

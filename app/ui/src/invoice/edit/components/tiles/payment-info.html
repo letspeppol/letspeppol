@@ -22,7 +22,7 @@
     </template>
     <template if.bind="invoiceContext.selectedInvoice.PaymentMeans.PaymentID">
         <span t="label.reference">Reference</span>
-        <b>${invoiceContext.selectedInvoice.PaymentMeans.PaymentID}</b>
+        <b>${paymentReference}</b>
     </template>
 
     <template if.bind="isSuccessfullyProcessed">
