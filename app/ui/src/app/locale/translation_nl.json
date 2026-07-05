@@ -29,6 +29,7 @@
     "remove-from-peppol" : "Verwijderen van Peppol",
     "activate-on-peppol" : "Activeren op Peppol",
     "iban" : "IBAN",
+    "bic" : "BIC",
     "country" : "Land",
     "customer" : "Klant",
     "supplier" : "Leverancier",
@@ -456,6 +457,7 @@
       "account-name" : "Accountnaam",
       "payment-terms" : "Betalingsvoorwaarden",
       "iban" : "IBAN",
+      "bic" : "BIC",
       "save" : "Partner opslaan",
       "cancel" : "Annuleren"
     }
@@ -547,6 +549,7 @@
       "type" : "Type",
       "name" : "Naam",
       "iban" : "IBAN",
+      "bic" : "BIC",
       "reference" : "Referentie",
       "store-iban": "IBAN opslaan in account"
     },

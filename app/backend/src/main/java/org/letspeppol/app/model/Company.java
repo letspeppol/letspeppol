@@ -28,6 +28,7 @@ public class Company extends GenericEntity{
 
     private String paymentTerms;
     private String iban;
+    private String bic;
     private String paymentAccountName;
     private String lastInvoiceReference;
     private String lastCreditNoteReference;

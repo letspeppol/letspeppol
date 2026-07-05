@@ -11,6 +11,7 @@ export interface CompanyDto {
     subscriberEmail: string,
     paymentTerms: string,
     iban: string,
+    bic: string,
     paymentAccountName: string,
     lastInvoiceReference: string,
     lastCreditNoteReference: string,

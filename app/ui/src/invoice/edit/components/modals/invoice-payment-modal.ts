@@ -20,7 +20,7 @@ export class InvoicePaymentModal {
     showModal() {
         this.paymentMeansCode = structuredClone(this.invoiceContext.selectedInvoice.PaymentMeans?.PaymentMeansCode.value);
         this.paymentMeans = structuredClone(this.invoiceContext.selectedInvoice.PaymentMeans);
-        console.log(this.paymentMeans);
+        this.ensureFinancialInstitutionBranch();
         this.open = true;
     }
 
@@ -32,8 +32,11 @@ export class InvoicePaymentModal {
         if (this.paymentMeansCode === 30 && !this.paymentMeans?.PayeeFinancialAccount?.ID) {
             return;
         }
+        this.normalizePaymentMeans();
+        const paymentMeans = structuredClone(this.paymentMeans);
         this.open = false;
-        this.invoiceContext.selectedInvoice.PaymentMeans = this.paymentMeans;
+        this.invoiceContext.selectedInvoice.PaymentMeans = paymentMeans;
+        this.ensureFinancialInstitutionBranch();
     }
 
     paymentMeansCodeChanged() {
@@ -43,6 +46,7 @@ export class InvoicePaymentModal {
         }
         if (this.paymentMeansCode === 30) {
             this.paymentMeans = this.invoiceComposer.getPaymentMeansForMyCompany(this.paymentMeansCode);
+            this.ensureFinancialInstitutionBranch();
         } else {
             this.paymentMeans = {
                 PaymentMeansCode: this.invoiceComposer.getPaymentMeansCode(this.paymentMeansCode)
@@ -50,9 +54,48 @@ export class InvoicePaymentModal {
         }
     }
 
+    private ensureFinancialInstitutionBranch() {
+        if (this.paymentMeansCode !== 30 || !this.paymentMeans) {
+            return;
+        }
+        if (!this.paymentMeans.PayeeFinancialAccount) {
+            this.paymentMeans.PayeeFinancialAccount = {};
+        }
+        if (!this.paymentMeans.PayeeFinancialAccount.FinancialInstitutionBranch) {
+            this.paymentMeans.PayeeFinancialAccount.FinancialInstitutionBranch = {};
+        }
+    }
+
+    private normalizePaymentMeans() {
+        if (this.paymentMeansCode !== 30 || !this.paymentMeans?.PayeeFinancialAccount) {
+            return;
+        }
+
+        const account = this.paymentMeans.PayeeFinancialAccount;
+        if (account.ID) {
+            account.ID = account.ID.toUpperCase();
+        }
+
+        const bic = account.FinancialInstitutionBranch?.ID?.trim().toUpperCase();
+        if (bic) {
+            account.FinancialInstitutionBranch = {ID: bic};
+        } else {
+            delete account.FinancialInstitutionBranch;
+        }
+    }
+
     async saveIbanToAccount() {
         try {
-            this.companyService.myCompany.iban = this.paymentMeans.PayeeFinancialAccount.ID.toUpperCase();
+            const account = this.paymentMeans.PayeeFinancialAccount;
+            this.companyService.myCompany.iban = account.ID.toUpperCase();
+            const bic = account.FinancialInstitutionBranch?.ID?.trim().toUpperCase();
+            if (bic) {
+                this.companyService.myCompany.bic = bic;
+                if (!account.FinancialInstitutionBranch) {
+                    account.FinancialInstitutionBranch = {};
+                }
+                account.FinancialInstitutionBranch.ID = bic;
+            }
             await this.companyService.updateCompany(this.companyService.myCompany);
             this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.iban.saved')});
         } catch {

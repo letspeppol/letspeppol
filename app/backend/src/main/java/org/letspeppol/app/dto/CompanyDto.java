@@ -1,7 +1,5 @@
 package org.letspeppol.app.dto;
 
-import com.sun.jdi.StringReference;
-
 public record CompanyDto(
         String peppolId,
         String vatNumber,
@@ -11,6 +9,7 @@ public record CompanyDto(
         String subscriberEmail,
         String paymentTerms,
         String iban,
+        String bic,
         String paymentAccountName,
         String lastInvoiceReference,
         String lastCreditNoteReference,

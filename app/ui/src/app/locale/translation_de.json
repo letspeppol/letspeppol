@@ -30,6 +30,7 @@
     "remove-from-peppol": "Aus Peppol entfernen",
     "activate-on-peppol": "Auf Peppol aktivieren",
     "iban": "IBAN",
+    "bic": "BIC",
     "country": "Land",
     "customer": "Kunde",
     "supplier": "Lieferant",
@@ -457,6 +458,7 @@
       "account-name": "Kontoname",
       "payment-terms": "Zahlungsbedingungen",
       "iban": "IBAN",
+      "bic": "BIC",
       "save": "Partner speichern",
       "cancel": "Abbrechen"
     }
@@ -548,6 +550,7 @@
       "type": "Typ",
       "name": "Name",
       "iban": "IBAN",
+      "bic": "BIC",
       "reference": "Referenz",
       "store-iban": "IBAN im Konto speichern"
     },

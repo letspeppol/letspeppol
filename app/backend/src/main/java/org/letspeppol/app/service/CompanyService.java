@@ -101,6 +101,7 @@ public class CompanyService {
         company.setPaymentAccountName(companyDto.paymentAccountName());
         company.setPaymentTerms(companyDto.paymentTerms());
         company.setIban(companyDto.iban());
+        company.setBic(companyDto.bic());
         company.setEnableEmailNotification(companyDto.enableEmailNotification());
         company.setAddAttachmentToNotification(companyDto.addAttachmentToNotification());
         company.setEmailNotificationCcList(companyDto.emailNotificationCCList());
