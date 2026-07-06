@@ -135,7 +135,7 @@ public class DocumentService {
                  throw new AppException(AppErrorCodes.INVOICE_NUMBER_ALREADY_USED);
              }
         }
-        if (!draft && company.isAddPdfToSendingInvoice()) {
+        if (!draft) {
             ublXml = ublInvoicePdfService.addRenderedPdfToUbl(ublXml, ublDto.invoiceReference());
         }
         Document document = new Document(
@@ -219,7 +219,7 @@ public class DocumentService {
     }
 
     public DocumentDto update(String peppolId, UUID id, String ublXml, boolean draft, Instant schedule, String tokenValue) {
-//        Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new NotFoundException("Company does not exist"));
+        Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new NotFoundException("Company does not exist"));
         Document document = documentRepository.findById(id).orElseThrow(() -> new NotFoundException("Document does not exist"));
         if (!peppolId.equals(document.getOwnerPeppolId())) {
             throw new SecurityException(AppErrorCodes.PEPPOL_ID_MISMATCH);
@@ -228,6 +228,9 @@ public class DocumentService {
             throw new ConflictException("Document is already processed"); //TODO : port to 409 Conflict ?
         }
         UblDto ublDto = readUBL(DocumentDirection.OUTGOING, ublXml, peppolId, draft);
+        if (!draft) {
+            ublXml = ublInvoicePdfService.addRenderedPdfToUbl(ublXml, ublDto.invoiceReference());
+        }
         document.setPartnerPeppolId(ublDto.receiverPeppolId());
         document.setScheduledOn(schedule);
         document.setUbl(ublXml);
