@@ -73,6 +73,7 @@
         }
 
         .footnotes {
+          clear: both;
           margin-top: 10px;
           font-size: 10px;
         }
@@ -336,6 +337,39 @@
         </tbody>
       </table>
 
+      <table class="totals">
+        <tr>
+          <td>Tax exclusive</td>
+          <td class="amount">
+            <xsl:call-template name="format-eur">
+              <xsl:with-param name="value" select="normalize-space((/*/*[local-name()='LegalMonetaryTotal']/*[local-name()='TaxExclusiveAmount'])[1])"/>
+            </xsl:call-template>
+          </td>
+        </tr>
+        <tr>
+          <td>Tax amount</td>
+          <td class="amount">
+            <xsl:call-template name="format-eur">
+              <xsl:with-param name="value" select="normalize-space((/*/*[local-name()='TaxTotal']/*[local-name()='TaxAmount'])[1])"/>
+            </xsl:call-template>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Payable amount</strong></td>
+          <td class="amount"><strong>
+            <xsl:call-template name="format-eur">
+              <xsl:with-param name="value" select="normalize-space((/*/*[local-name()='LegalMonetaryTotal']/*[local-name()='PayableAmount'])[1])"/>
+            </xsl:call-template>
+          </strong></td>
+        </tr>
+      </table>
+
+      <xsl:variable name="note" select="./*/*[local-name()='Note'][1]"/>
+      <xsl:if test="string-length($note) &gt; 0">
+          <strong class="note">Note</strong>
+          <span class="note note-pre"><xsl:value-of select="$note"/></span>
+      </xsl:if>
+
       <xsl:if test="$isNotSubjectToVatDocument">
         <div class="footnotes">
           <strong>VAT note</strong>
@@ -368,40 +402,7 @@
         </div>
       </xsl:if>
 
-      <table class="totals">
-        <tr>
-          <td>Tax exclusive</td>
-          <td class="amount">
-            <xsl:call-template name="format-eur">
-              <xsl:with-param name="value" select="normalize-space((/*/*[local-name()='LegalMonetaryTotal']/*[local-name()='TaxExclusiveAmount'])[1])"/>
-            </xsl:call-template>
-          </td>
-        </tr>
-        <tr>
-          <td>Tax amount</td>
-          <td class="amount">
-            <xsl:call-template name="format-eur">
-              <xsl:with-param name="value" select="normalize-space((/*/*[local-name()='TaxTotal']/*[local-name()='TaxAmount'])[1])"/>
-            </xsl:call-template>
-          </td>
-        </tr>
-        <tr>
-          <td><strong>Payable amount</strong></td>
-          <td class="amount"><strong>
-            <xsl:call-template name="format-eur">
-              <xsl:with-param name="value" select="normalize-space((/*/*[local-name()='LegalMonetaryTotal']/*[local-name()='PayableAmount'])[1])"/>
-            </xsl:call-template>
-          </strong></td>
-        </tr>
-      </table>
-
       </div>
-
-      <xsl:variable name="note" select="./*/*[local-name()='Note'][1]"/>
-      <xsl:if test="string-length($note) &gt; 0">
-          <strong class="note">Note</strong>
-          <span class="note note-pre"><xsl:value-of select="$note"/></span>
-      </xsl:if>
 
     </body>
     </html>
@@ -577,7 +578,8 @@
       <xsl:when test="$normalizedReasonId = 'AE'">Reverse Charge</xsl:when>
       <xsl:when test="$normalizedReasonId = 'Z'">Zero rated goods</xsl:when>
       <xsl:when test="$normalizedReasonId = 'O'">Not subject to VAT</xsl:when>
-      <xsl:otherwise><xsl:value-of select="normalize-space($reasonId)"/></xsl:otherwise>
+      <xsl:when test="string-length($normalizedReasonId) &gt; 0">Other 0% VAT reason</xsl:when>
+      <xsl:otherwise/>
     </xsl:choose>
   </xsl:template>
 

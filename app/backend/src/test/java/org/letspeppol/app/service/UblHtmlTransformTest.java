@@ -28,6 +28,7 @@ class UblHtmlTransformTest {
                          xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
                     <cbc:ID>INV-FOOTNOTE</cbc:ID>
                     <cbc:IssueDate>2026-01-05</cbc:IssueDate>
+                    <cbc:Note>Translated customer note</cbc:Note>
                     <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
                     <cac:AccountingSupplierParty><cac:Party><cac:PartyName><cbc:Name>Supplier Ltd</cbc:Name></cac:PartyName></cac:Party></cac:AccountingSupplierParty>
                     <cac:AccountingCustomerParty><cac:Party><cac:PartyName><cbc:Name>Customer BV</cbc:Name></cac:PartyName></cac:Party></cac:AccountingCustomerParty>
@@ -40,7 +41,7 @@ class UblHtmlTransformTest {
                             <cac:ClassifiedTaxCategory>
                                 <cbc:ID>AE</cbc:ID>
                                 <cbc:Percent>0</cbc:Percent>
-                                <cbc:TaxExemptionReason>Reverse charge due to article 44</cbc:TaxExemptionReason>
+                                <cbc:TaxExemptionReason>Verleggingsregeling volgens artikel 44</cbc:TaxExemptionReason>
                                 <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
                             </cac:ClassifiedTaxCategory>
                         </cac:Item>
@@ -58,7 +59,8 @@ class UblHtmlTransformTest {
         assertTrue(html.contains("<th style=\"width: 10%\" class=\"amount\">Tax</th>"), html);
         assertTrue(html.contains("0<span>%</span><sup class=\"footnote-ref\">1</sup>"), html);
         assertTrue(html.contains("0% VAT notes"), html);
-        assertTrue(html.contains("<strong>Reverse Charge</strong> : Reverse charge due to article 44"), html);
+        assertTrue(html.contains("<strong>Reverse Charge</strong> : Verleggingsregeling volgens artikel 44"), html);
+        assertInOrder(html, "Translated customer note", "0% VAT notes");
         assertFalse(html.contains("Reason type:"), html);
         assertFalse(html.contains("Explanation:"), html);
     }
@@ -73,6 +75,7 @@ class UblHtmlTransformTest {
                             xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
                     <cbc:ID>CN-FOOTNOTE</cbc:ID>
                     <cbc:IssueDate>2026-01-05</cbc:IssueDate>
+                    <cbc:Note>Translated credit note</cbc:Note>
                     <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
                     <cac:AccountingSupplierParty><cac:Party><cac:PartyName><cbc:Name>Supplier Ltd</cbc:Name></cac:PartyName></cac:Party></cac:AccountingSupplierParty>
                     <cac:AccountingCustomerParty><cac:Party><cac:PartyName><cbc:Name>Customer BV</cbc:Name></cac:PartyName></cac:Party></cac:AccountingCustomerParty>
@@ -85,7 +88,7 @@ class UblHtmlTransformTest {
                             <cac:ClassifiedTaxCategory>
                                 <cbc:ID>AE</cbc:ID>
                                 <cbc:Percent>0</cbc:Percent>
-                                <cbc:TaxExemptionReason>Reverse charge due to article 44</cbc:TaxExemptionReason>
+                                <cbc:TaxExemptionReason>Autoliquidation selon article 44</cbc:TaxExemptionReason>
                                 <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
                             </cac:ClassifiedTaxCategory>
                         </cac:Item>
@@ -103,7 +106,8 @@ class UblHtmlTransformTest {
         assertTrue(html.contains("<th style=\"width: 10%\" class=\"amount\">Tax</th>"), html);
         assertTrue(html.contains("0<span>%</span><sup class=\"footnote-ref\">1</sup>"), html);
         assertTrue(html.contains("0% VAT notes"), html);
-        assertTrue(html.contains("<strong>Reverse Charge</strong> : Reverse charge due to article 44"), html);
+        assertTrue(html.contains("<strong>Reverse Charge</strong> : Autoliquidation selon article 44"), html);
+        assertInOrder(html, "Translated credit note", "0% VAT notes");
         assertFalse(html.contains("Reason type:"), html);
         assertFalse(html.contains("Explanation:"), html);
     }
@@ -272,6 +276,7 @@ class UblHtmlTransformTest {
                          xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
                     <cbc:ID>INV-O</cbc:ID>
                     <cbc:IssueDate>2026-06-24</cbc:IssueDate>
+                    <cbc:Note>Not subject invoice note</cbc:Note>
                     <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
                     <cac:AccountingSupplierParty><cac:Party><cac:PartyName><cbc:Name>Supplier Ltd</cbc:Name></cac:PartyName></cac:Party></cac:AccountingSupplierParty>
                     <cac:AccountingCustomerParty><cac:Party><cac:PartyName><cbc:Name>Customer BV</cbc:Name></cac:PartyName></cac:Party></cac:AccountingCustomerParty>
@@ -302,6 +307,7 @@ class UblHtmlTransformTest {
         assertFalse(html.contains("0% VAT notes"), html);
         assertTrue(html.contains("VAT note"), html);
         assertTrue(html.contains("This document is not subject to VAT. Reason: Not subject to VAT."), html);
+        assertInOrder(html, "Not subject invoice note", "VAT note");
     }
 
     @Test
@@ -314,6 +320,7 @@ class UblHtmlTransformTest {
                             xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
                     <cbc:ID>CN-O</cbc:ID>
                     <cbc:IssueDate>2026-06-24</cbc:IssueDate>
+                    <cbc:Note>Not subject credit note</cbc:Note>
                     <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
                     <cac:AccountingSupplierParty><cac:Party><cac:PartyName><cbc:Name>Supplier Ltd</cbc:Name></cac:PartyName></cac:Party></cac:AccountingSupplierParty>
                     <cac:AccountingCustomerParty><cac:Party><cac:PartyName><cbc:Name>Customer BV</cbc:Name></cac:PartyName></cac:Party></cac:AccountingCustomerParty>
@@ -344,6 +351,7 @@ class UblHtmlTransformTest {
         assertFalse(html.contains("0% VAT notes"), html);
         assertTrue(html.contains("VAT note"), html);
         assertTrue(html.contains("This document is not subject to VAT. Reason: Not subject to VAT."), html);
+        assertInOrder(html, "Not subject credit note", "VAT note");
     }
 
     private String transform(String xsltPath, String ublXml) throws Exception {
@@ -374,5 +382,14 @@ class UblHtmlTransformTest {
             start += needle.length();
         }
         return count;
+    }
+
+    private void assertInOrder(String text, String first, String second) {
+        int firstIndex = text.indexOf(first);
+        int secondIndex = text.indexOf(second);
+
+        assertTrue(firstIndex >= 0, text);
+        assertTrue(secondIndex >= 0, text);
+        assertTrue(firstIndex < secondIndex, text);
     }
 }
