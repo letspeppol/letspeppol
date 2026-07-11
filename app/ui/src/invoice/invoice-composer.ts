@@ -243,6 +243,7 @@ export class InvoiceComposer {
                 },
                 PartyLegalEntity: {
                     RegistrationName: this.companyService.myCompany.name,
+                    CompanyID: {value: this.companyService.myCompany.identifier}
                 }
             }
         } as AccountingParty;
