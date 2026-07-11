@@ -113,6 +113,176 @@ class UblHtmlTransformTest {
     }
 
     @Test
+    void invoiceTransformFallsBackToEnterpriseNumberWhenVatIsMissing() throws Exception {
+        String html = transform(
+                "pdf/ubl-invoice-to-html.xsl",
+                """
+                <Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
+                         xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+                         xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+                    <cbc:ID>INV-ENTERPRISE-FALLBACK</cbc:ID>
+                    <cbc:IssueDate>2026-01-05</cbc:IssueDate>
+                    <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
+                    <cac:AccountingSupplierParty>
+                        <cac:Party>
+                            <cbc:EndpointID schemeID="0208">SUP-ENDPOINT-0208</cbc:EndpointID>
+                            <cac:PartyIdentification><cbc:ID>SUP-ID-001</cbc:ID></cac:PartyIdentification>
+                            <cac:PartyName><cbc:Name>Supplier Ltd</cbc:Name></cac:PartyName>
+                            <cac:PartyTaxScheme>
+                                <cbc:CompanyID>SUP-VAT-001</cbc:CompanyID>
+                                <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
+                            </cac:PartyTaxScheme>
+                            <cac:PartyLegalEntity><cbc:CompanyID>SUP-ENT-001</cbc:CompanyID></cac:PartyLegalEntity>
+                        </cac:Party>
+                    </cac:AccountingSupplierParty>
+                    <cac:AccountingCustomerParty>
+                        <cac:Party>
+                            <cbc:EndpointID schemeID="0208">CUST-ENDPOINT-0208</cbc:EndpointID>
+                            <cac:PartyIdentification><cbc:ID>CUST-ID-002</cbc:ID></cac:PartyIdentification>
+                            <cac:PartyName><cbc:Name>Customer BV</cbc:Name></cac:PartyName>
+                            <cac:PartyLegalEntity><cbc:CompanyID>CUST-ENT-002</cbc:CompanyID></cac:PartyLegalEntity>
+                        </cac:Party>
+                    </cac:AccountingCustomerParty>
+                    <cac:LegalMonetaryTotal>
+                        <cbc:PayableAmount currencyID="EUR">12.34</cbc:PayableAmount>
+                    </cac:LegalMonetaryTotal>
+                </Invoice>
+                """
+        );
+
+        assertTrue(html.contains("<div class=\"muted\">SUP-VAT-001</div>"), html);
+        assertTrue(html.contains("<div class=\"muted\">CUST-ENT-002</div>"), html);
+        assertFalse(html.contains("SUP-ENT-001"), html);
+        assertFalse(html.contains("SUP-ID-001"), html);
+        assertFalse(html.contains("CUST-ID-002"), html);
+        assertFalse(html.contains("SUP-ENDPOINT-0208"), html);
+        assertFalse(html.contains("CUST-ENDPOINT-0208"), html);
+    }
+
+    @Test
+    void creditNoteTransformFallsBackToEnterpriseNumberWhenVatIsMissing() throws Exception {
+        String html = transform(
+                "pdf/ubl-creditnote-to-html.xsl",
+                """
+                <CreditNote xmlns="urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2"
+                            xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+                            xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+                    <cbc:ID>CN-ENTERPRISE-FALLBACK</cbc:ID>
+                    <cbc:IssueDate>2026-01-05</cbc:IssueDate>
+                    <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
+                    <cac:AccountingSupplierParty>
+                        <cac:Party>
+                            <cbc:EndpointID schemeID="0208">SUP-ENDPOINT-0208</cbc:EndpointID>
+                            <cac:PartyIdentification><cbc:ID>SUP-ID-001</cbc:ID></cac:PartyIdentification>
+                            <cac:PartyName><cbc:Name>Supplier Ltd</cbc:Name></cac:PartyName>
+                            <cac:PartyTaxScheme>
+                                <cbc:CompanyID>SUP-VAT-001</cbc:CompanyID>
+                                <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
+                            </cac:PartyTaxScheme>
+                            <cac:PartyLegalEntity><cbc:CompanyID>SUP-ENT-001</cbc:CompanyID></cac:PartyLegalEntity>
+                        </cac:Party>
+                    </cac:AccountingSupplierParty>
+                    <cac:AccountingCustomerParty>
+                        <cac:Party>
+                            <cbc:EndpointID schemeID="0208">CUST-ENDPOINT-0208</cbc:EndpointID>
+                            <cac:PartyIdentification><cbc:ID>CUST-ID-002</cbc:ID></cac:PartyIdentification>
+                            <cac:PartyName><cbc:Name>Customer BV</cbc:Name></cac:PartyName>
+                            <cac:PartyLegalEntity><cbc:CompanyID>CUST-ENT-002</cbc:CompanyID></cac:PartyLegalEntity>
+                        </cac:Party>
+                    </cac:AccountingCustomerParty>
+                    <cac:LegalMonetaryTotal>
+                        <cbc:PayableAmount currencyID="EUR">-12.34</cbc:PayableAmount>
+                    </cac:LegalMonetaryTotal>
+                </CreditNote>
+                """
+        );
+
+        assertTrue(html.contains("<div class=\"muted\">SUP-VAT-001</div>"), html);
+        assertTrue(html.contains("<div class=\"muted\">CUST-ENT-002</div>"), html);
+        assertFalse(html.contains("SUP-ENT-001"), html);
+        assertFalse(html.contains("SUP-ID-001"), html);
+        assertFalse(html.contains("CUST-ID-002"), html);
+        assertFalse(html.contains("SUP-ENDPOINT-0208"), html);
+        assertFalse(html.contains("CUST-ENDPOINT-0208"), html);
+    }
+
+    @Test
+    void invoiceTransformFallsBackToIdentificationWhenVatAndEnterpriseNumberAreMissing() throws Exception {
+        String html = transform(
+                "pdf/ubl-invoice-to-html.xsl",
+                """
+                <Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
+                         xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+                         xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+                    <cbc:ID>INV-ID-FALLBACK</cbc:ID>
+                    <cbc:IssueDate>2026-01-05</cbc:IssueDate>
+                    <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
+                    <cac:AccountingSupplierParty>
+                        <cac:Party>
+                            <cbc:EndpointID schemeID="0208">SUP-ENDPOINT-0208</cbc:EndpointID>
+                            <cac:PartyIdentification><cbc:ID>SUP-ID-003</cbc:ID></cac:PartyIdentification>
+                            <cac:PartyName><cbc:Name>Supplier Ltd</cbc:Name></cac:PartyName>
+                        </cac:Party>
+                    </cac:AccountingSupplierParty>
+                    <cac:AccountingCustomerParty>
+                        <cac:Party>
+                            <cbc:EndpointID schemeID="0208">CUST-ENDPOINT-0208</cbc:EndpointID>
+                            <cac:PartyIdentification><cbc:ID>CUST-ID-004</cbc:ID></cac:PartyIdentification>
+                            <cac:PartyName><cbc:Name>Customer BV</cbc:Name></cac:PartyName>
+                        </cac:Party>
+                    </cac:AccountingCustomerParty>
+                    <cac:LegalMonetaryTotal>
+                        <cbc:PayableAmount currencyID="EUR">12.34</cbc:PayableAmount>
+                    </cac:LegalMonetaryTotal>
+                </Invoice>
+                """
+        );
+
+        assertTrue(html.contains("<div class=\"muted\">SUP-ID-003</div>"), html);
+        assertTrue(html.contains("<div class=\"muted\">CUST-ID-004</div>"), html);
+        assertFalse(html.contains("SUP-ENDPOINT-0208"), html);
+        assertFalse(html.contains("CUST-ENDPOINT-0208"), html);
+    }
+
+    @Test
+    void creditNoteTransformFallsBackToIdentificationWhenVatAndEnterpriseNumberAreMissing() throws Exception {
+        String html = transform(
+                "pdf/ubl-creditnote-to-html.xsl",
+                """
+                <CreditNote xmlns="urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2"
+                            xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+                            xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+                    <cbc:ID>CN-ID-FALLBACK</cbc:ID>
+                    <cbc:IssueDate>2026-01-05</cbc:IssueDate>
+                    <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
+                    <cac:AccountingSupplierParty>
+                        <cac:Party>
+                            <cbc:EndpointID schemeID="0208">SUP-ENDPOINT-0208</cbc:EndpointID>
+                            <cac:PartyIdentification><cbc:ID>SUP-ID-003</cbc:ID></cac:PartyIdentification>
+                            <cac:PartyName><cbc:Name>Supplier Ltd</cbc:Name></cac:PartyName>
+                        </cac:Party>
+                    </cac:AccountingSupplierParty>
+                    <cac:AccountingCustomerParty>
+                        <cac:Party>
+                            <cbc:EndpointID schemeID="0208">CUST-ENDPOINT-0208</cbc:EndpointID>
+                            <cac:PartyIdentification><cbc:ID>CUST-ID-004</cbc:ID></cac:PartyIdentification>
+                            <cac:PartyName><cbc:Name>Customer BV</cbc:Name></cac:PartyName>
+                        </cac:Party>
+                    </cac:AccountingCustomerParty>
+                    <cac:LegalMonetaryTotal>
+                        <cbc:PayableAmount currencyID="EUR">-12.34</cbc:PayableAmount>
+                    </cac:LegalMonetaryTotal>
+                </CreditNote>
+                """
+        );
+
+        assertTrue(html.contains("<div class=\"muted\">SUP-ID-003</div>"), html);
+        assertTrue(html.contains("<div class=\"muted\">CUST-ID-004</div>"), html);
+        assertFalse(html.contains("SUP-ENDPOINT-0208"), html);
+        assertFalse(html.contains("CUST-ENDPOINT-0208"), html);
+    }
+
+    @Test
     void invoiceTransformReusesFootnoteNumberForDuplicateZeroVatNotes() throws Exception {
         String html = transform(
                 "pdf/ubl-invoice-to-html.xsl",

@@ -179,9 +179,19 @@
             <div><strong><xsl:value-of select="normalize-space((/*/*[local-name()='AccountingCustomerParty']/*[local-name()='Party']/*[local-name()='PartyName']/*[local-name()='Name'])[1])"/></strong></div>
 
             <xsl:variable name="customerCompanyId" select="normalize-space((/*/*[local-name()='AccountingCustomerParty']/*[local-name()='Party']/*[local-name()='PartyTaxScheme']/*[local-name()='CompanyID'])[1])"/>
-            <xsl:if test="string-length($customerCompanyId) &gt; 0">
-              <div class="muted"><xsl:value-of select="$customerCompanyId"/></div>
-            </xsl:if>
+            <xsl:variable name="customerEnterpriseNumber" select="normalize-space((/*/*[local-name()='AccountingCustomerParty']/*[local-name()='Party']/*[local-name()='PartyLegalEntity']/*[local-name()='CompanyID'])[1])"/>
+            <xsl:variable name="customerIdentification" select="normalize-space((/*/*[local-name()='AccountingCustomerParty']/*[local-name()='Party']/*[local-name()='PartyIdentification']/*[local-name()='ID'])[1])"/>
+            <xsl:choose>
+              <xsl:when test="string-length($customerCompanyId) &gt; 0">
+                <div class="muted"><xsl:value-of select="$customerCompanyId"/></div>
+              </xsl:when>
+              <xsl:when test="string-length($customerEnterpriseNumber) &gt; 0">
+                <div class="muted"><xsl:value-of select="$customerEnterpriseNumber"/></div>
+              </xsl:when>
+              <xsl:when test="string-length($customerIdentification) &gt; 0">
+                <div class="muted"><xsl:value-of select="$customerIdentification"/></div>
+              </xsl:when>
+            </xsl:choose>
 
             <xsl:call-template name="render-address">
               <xsl:with-param name="address" select="(/*/*[local-name()='AccountingCustomerParty']/*[local-name()='Party']/*[local-name()='PostalAddress'])[1]"/>
@@ -192,9 +202,19 @@
             <div><strong><xsl:value-of select="normalize-space((/*/*[local-name()='AccountingSupplierParty']/*[local-name()='Party']/*[local-name()='PartyName']/*[local-name()='Name'])[1])"/></strong></div>
 
             <xsl:variable name="supplierCompanyId" select="normalize-space((/*/*[local-name()='AccountingSupplierParty']/*[local-name()='Party']/*[local-name()='PartyTaxScheme']/*[local-name()='CompanyID'])[1])"/>
-            <xsl:if test="string-length($supplierCompanyId) &gt; 0">
-              <div class="muted"><xsl:value-of select="$supplierCompanyId"/></div>
-            </xsl:if>
+            <xsl:variable name="supplierEnterpriseNumber" select="normalize-space((/*/*[local-name()='AccountingSupplierParty']/*[local-name()='Party']/*[local-name()='PartyLegalEntity']/*[local-name()='CompanyID'])[1])"/>
+            <xsl:variable name="supplierIdentification" select="normalize-space((/*/*[local-name()='AccountingSupplierParty']/*[local-name()='Party']/*[local-name()='PartyIdentification']/*[local-name()='ID'])[1])"/>
+            <xsl:choose>
+              <xsl:when test="string-length($supplierCompanyId) &gt; 0">
+                <div class="muted"><xsl:value-of select="$supplierCompanyId"/></div>
+              </xsl:when>
+              <xsl:when test="string-length($supplierEnterpriseNumber) &gt; 0">
+                <div class="muted"><xsl:value-of select="$supplierEnterpriseNumber"/></div>
+              </xsl:when>
+              <xsl:when test="string-length($supplierIdentification) &gt; 0">
+                <div class="muted"><xsl:value-of select="$supplierIdentification"/></div>
+              </xsl:when>
+            </xsl:choose>
 
             <xsl:call-template name="render-address">
               <xsl:with-param name="address" select="(/*/*[local-name()='AccountingSupplierParty']/*[local-name()='Party']/*[local-name()='PostalAddress'])[1]"/>
