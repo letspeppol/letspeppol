@@ -1,4 +1,4 @@
-import {getLines, type ClassifiedTaxCategory, type UBLDoc, type UBLLine} from "../peppol/ubl";
+import {type ClassifiedTaxCategory, type TaxCategory, type UBLDoc, type UBLLine} from "../peppol/ubl";
 
 export const VAT_RULESET_OPTIONS = [
     'VAT_REGISTERED',
@@ -16,6 +16,7 @@ export const ZERO_VAT_REASON_OPTIONS = [
 export type ZeroVatReasonId = typeof ZERO_VAT_REASON_OPTIONS[number];
 
 export const NOT_SUBJECT_TO_VAT_REASON_TEXT = 'Not subject to VAT';
+const NOT_SUBJECT_TO_VAT_CATEGORY_ID = 'O';
 
 export interface VatReasonSelectionPayload {
     selectedTaxCategoryId: string;
@@ -47,25 +48,22 @@ export function createZeroVatCategory(reasonId: ZeroVatReasonId): ClassifiedTaxC
     return {
         ID: reasonId,
         Percent: 0,
-        TaxExemptionReasonCode: getZeroVatReasonCode(reasonId),
         TaxScheme: { ID: 'VAT' }
     };
 }
 
 export function createNotSubjectToVatCategory(): ClassifiedTaxCategory {
     return {
-        ID: 'O',
-        TaxExemptionReason: NOT_SUBJECT_TO_VAT_REASON_TEXT,
+        ID: NOT_SUBJECT_TO_VAT_CATEGORY_ID,
         Percent: undefined,
         TaxScheme: { ID: 'VAT' }
     };
 }
 
-export function createVatExemptCategory(reason: string): ClassifiedTaxCategory {
+export function createVatExemptCategory(): ClassifiedTaxCategory {
     return {
         ID: 'E',
         Percent: 0,
-        TaxExemptionReason: reason,
         TaxScheme: { ID: 'VAT' }
     };
 }
@@ -75,7 +73,7 @@ export function getDisplayedVatRatePercent(taxCategory: ClassifiedTaxCategory | 
         return undefined;
     }
 
-    if (taxCategory.ID?.trim().toUpperCase() === 'O') {
+    if (taxCategory.ID?.trim().toUpperCase() === NOT_SUBJECT_TO_VAT_CATEGORY_ID) {
         return 0;
     }
 
@@ -90,52 +88,97 @@ export function requiresDeliveryDetails(reasonId: ZeroVatReasonId | string | und
     return reasonId === 'K';
 }
 
+export function supportsTaxExemptionReasonText(reasonId: ZeroVatReasonId | string | undefined): boolean {
+    const normalizedReasonId = reasonId?.trim().toUpperCase();
+    return normalizedReasonId === NOT_SUBJECT_TO_VAT_CATEGORY_ID
+        || (normalizedReasonId !== 'Z' && ZERO_VAT_REASON_OPTIONS.some(item => item === normalizedReasonId));
+}
+
+function isRecordableVatReasonSelection(reasonId: ZeroVatReasonId | string | undefined): boolean {
+    const normalizedReasonId = reasonId?.trim().toUpperCase();
+    return normalizedReasonId === NOT_SUBJECT_TO_VAT_CATEGORY_ID
+        || ZERO_VAT_REASON_OPTIONS.some(item => item === normalizedReasonId);
+}
+
 export function collectVatReasonSelections(doc: UBLDoc | undefined): VatReasonSelectionPayload[] {
-    return (getLines(doc) ?? [])
-        .map(line => ({
-            selectedTaxCategoryId: line.Item?.ClassifiedTaxCategory?.ID?.trim() ?? '',
-            writtenReason: line.Item?.ClassifiedTaxCategory?.TaxExemptionReason?.trim() ?? '',
-        }))
-        .filter(item => item.selectedTaxCategoryId && item.writtenReason);
+    return (doc?.TaxTotal ?? [])
+        .flatMap(taxTotal => taxTotal.TaxSubtotal ?? [])
+        .map(subtotal => {
+            const selectedTaxCategoryId = subtotal.TaxCategory?.ID?.trim() ?? '';
+            return {
+                selectedTaxCategoryId,
+                writtenReason: subtotal.TaxCategory?.TaxExemptionReason?.trim() ?? '',
+            };
+        })
+        .filter(item => isRecordableVatReasonSelection(item.selectedTaxCategoryId) && item.writtenReason);
 }
 
 export function getSharedVatReasonText(
     doc: UBLDoc | undefined,
-    reasonId: ZeroVatReasonId,
-    sourceLine?: UBLLine,
+    reasonId: ZeroVatReasonId | string | undefined,
+    _sourceLine?: UBLLine,
 ): string | undefined {
-    if (reasonId !== 'E') {
-        return undefined;
-    }
-
-    return (getLines(doc) ?? [])
-        .filter(line => line !== sourceLine)
-        .map(line => line.Item?.ClassifiedTaxCategory)
-        .find(taxCategory => taxCategory?.ID?.trim() === reasonId && !!taxCategory.TaxExemptionReason?.trim())
-        ?.TaxExemptionReason?.trim();
+    void _sourceLine;
+    return findTaxCategory(doc, reasonId)
+        ?.TaxExemptionReason?.trim() || undefined;
 }
 
 export function applySharedVatReasonText(
     doc: UBLDoc | undefined,
-    reasonId: ZeroVatReasonId,
+    reasonId: ZeroVatReasonId | string,
     reasonText: string,
-    sourceLine?: UBLLine,
+    _sourceLine?: UBLLine,
 ) {
+    void _sourceLine;
     const trimmedReasonText = reasonText?.trim();
-    if (reasonId !== 'E' || !trimmedReasonText) {
+    if (!supportsTaxExemptionReasonText(reasonId) || !trimmedReasonText) {
         return;
     }
 
-    for (const line of getLines(doc) ?? []) {
-        if (line === sourceLine) {
-            continue;
-        }
-
-        const taxCategory = line.Item?.ClassifiedTaxCategory;
-        if (taxCategory?.ID?.trim() !== reasonId) {
-            continue;
-        }
-
+    const taxCategory = findTaxCategory(doc, reasonId) ?? createTaxSubtotalCategory(doc, reasonId);
+    if (taxCategory) {
         taxCategory.TaxExemptionReason = trimmedReasonText;
     }
+}
+
+function createTaxSubtotalCategory(doc: UBLDoc | undefined, reasonId: ZeroVatReasonId | string): TaxCategory | undefined {
+    if (!doc) {
+        return undefined;
+    }
+
+    const currency = doc.DocumentCurrencyCode || 'EUR';
+    const normalizedReasonId = reasonId.trim().toUpperCase();
+    const taxTotal = doc.TaxTotal?.[0] ?? {
+        TaxAmount: { __currencyID: currency, value: 0 },
+        TaxSubtotal: [],
+    };
+    doc.TaxTotal = [taxTotal];
+    taxTotal.TaxSubtotal ??= [];
+
+    const taxCategory: TaxCategory = {
+        ID: normalizedReasonId,
+        Percent: normalizedReasonId === NOT_SUBJECT_TO_VAT_CATEGORY_ID ? undefined : 0,
+        TaxExemptionReasonCode: ZERO_VAT_REASON_OPTIONS.includes(normalizedReasonId as ZeroVatReasonId)
+            ? getZeroVatReasonCode(normalizedReasonId as ZeroVatReasonId)
+            : undefined,
+        TaxScheme: { ID: 'VAT' },
+    };
+    taxTotal.TaxSubtotal.push({
+        TaxableAmount: { __currencyID: currency, value: 0 },
+        TaxAmount: { __currencyID: currency, value: 0 },
+        TaxCategory: taxCategory,
+    });
+    return taxCategory;
+}
+
+function findTaxCategory(doc: UBLDoc | undefined, reasonId: ZeroVatReasonId | string | undefined): TaxCategory | undefined {
+    const normalizedReasonId = reasonId?.trim().toUpperCase();
+    if (!normalizedReasonId) {
+        return undefined;
+    }
+
+    return (doc?.TaxTotal ?? [])
+        .flatMap(taxTotal => taxTotal.TaxSubtotal ?? [])
+        .map(subtotal => subtotal.TaxCategory)
+        .find(taxCategory => taxCategory?.ID?.trim().toUpperCase() === normalizedReasonId);
 }

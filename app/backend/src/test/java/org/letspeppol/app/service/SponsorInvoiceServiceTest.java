@@ -71,8 +71,8 @@ class SponsorInvoiceServiceTest {
         assertThat(xml).contains("<cbc:PayableAmount currencyID=\"EUR\">100.00</cbc:PayableAmount>");
         assertThat(xml).contains("<cbc:ID>AE</cbc:ID>");
         assertThat(xml).contains("<cbc:Percent>0</cbc:Percent>");
-        assertThat(xml).contains("<cbc:TaxExemptionReasonCode>VATEX-EU-AE</cbc:TaxExemptionReasonCode>");
-        assertThat(xml).contains("<cbc:TaxExemptionReason>Reverse charge</cbc:TaxExemptionReason>");
+        assertThat(xml).containsOnlyOnce("<cbc:TaxExemptionReasonCode>VATEX-EU-AE</cbc:TaxExemptionReasonCode>");
+        assertThat(xml).containsOnlyOnce("<cbc:TaxExemptionReason>Reverse charge</cbc:TaxExemptionReason>");
         assertThat(xml).doesNotContain("VAT due by recipient");
     }
 

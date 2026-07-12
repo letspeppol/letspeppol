@@ -286,7 +286,7 @@ export class InvoiceComposer {
                 ClassifiedTaxCategory: hasNoVatNumber
                     ? createNotSubjectToVatCategory()
                     : isExempt
-                    ? createVatExemptCategory(this.i18n.tr('account.vat-ruleset.options.VAT_EXEMPT_ART_56BIS'))
+                    ? createVatExemptCategory()
                     : {
                         ID: "S",
                         Percent: 21,

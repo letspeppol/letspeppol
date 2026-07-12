@@ -1,11 +1,17 @@
 import {describe, expect, test} from 'vitest';
-import {buildInvoiceXml} from '../../src/services/peppol/ubl-builder';
-import {parseInvoice} from '../../src/services/peppol/ubl-parser';
+import {buildCreditNoteXml, buildInvoiceXml} from '../../src/services/peppol/ubl-builder';
+import {parseCreditNote, parseInvoice} from '../../src/services/peppol/ubl-parser';
 import {NOT_SUBJECT_TO_VAT_REASON_TEXT} from '../../src/services/app/vat-rules';
-import type {Invoice} from '../../src/services/peppol/ubl';
+import type {CreditNote, Invoice} from '../../src/services/peppol/ubl';
+
+function extractElement(xml: string, tagName: string): string {
+    const start = xml.indexOf(`<${tagName}>`);
+    const end = xml.indexOf(`</${tagName}>`);
+    return start === -1 || end === -1 ? '' : xml.slice(start, end + tagName.length + 3);
+}
 
 describe('UBL VAT exemption reasons', () => {
-    test('keeps TaxExemptionReason and TaxExemptionReasonCode on tax subtotal and invoice line', () => {
+    test('emits TaxExemptionReason and TaxExemptionReasonCode on tax subtotal but not invoice line', () => {
         const invoice: Invoice = {
             CustomizationID: 'c',
             ProfileID: 'p',
@@ -47,12 +53,68 @@ describe('UBL VAT exemption reasons', () => {
         const xml = buildInvoiceXml(invoice);
         expect(xml).toContain('<cbc:TaxExemptionReasonCode>VATEX-EU-AE</cbc:TaxExemptionReasonCode>');
         expect(xml).toContain('<cbc:TaxExemptionReason>Reverse charge</cbc:TaxExemptionReason>');
+        const lineXml = extractElement(xml, 'cac:InvoiceLine');
+        expect(lineXml).not.toContain('TaxExemptionReasonCode');
+        expect(lineXml).not.toContain('TaxExemptionReason');
 
         const parsed = parseInvoice(xml);
         expect(parsed.TaxTotal?.[0]?.TaxSubtotal?.[0]?.TaxCategory?.TaxExemptionReasonCode).toBe('VATEX-EU-AE');
         expect(parsed.TaxTotal?.[0]?.TaxSubtotal?.[0]?.TaxCategory?.TaxExemptionReason).toBe('Reverse charge');
-        expect(parsed.InvoiceLine[0].Item.ClassifiedTaxCategory?.TaxExemptionReasonCode).toBe('VATEX-EU-AE');
-        expect(parsed.InvoiceLine[0].Item.ClassifiedTaxCategory?.TaxExemptionReason).toBe('Reverse charge');
+        expect(parsed.InvoiceLine[0].Item.ClassifiedTaxCategory?.TaxExemptionReasonCode).toBeUndefined();
+        expect(parsed.InvoiceLine[0].Item.ClassifiedTaxCategory?.TaxExemptionReason).toBeUndefined();
+    });
+
+    test('emits TaxExemptionReason and TaxExemptionReasonCode on credit note tax subtotal but not credit note line', () => {
+        const creditNote: CreditNote = {
+            CustomizationID: 'c',
+            ProfileID: 'p',
+            ID: 'CN-1',
+            IssueDate: '2026-06-05',
+            CreditNoteTypeCode: 381,
+            BuyerReference: 'BR',
+            DocumentCurrencyCode: 'EUR',
+            BillingReference: [],
+            AccountingSupplierParty: { Party: { EndpointID: { __schemeID: '0208', value: '123' }, PartyIdentification: [{ ID: { __schemeID: '0208', value: '123' } }], PartyName: { Name: 'Supplier' }, PartyTaxScheme: { CompanyID: { value: 'BE123' }, TaxScheme: { ID: 'VAT' } } } },
+            AccountingCustomerParty: { Party: { EndpointID: { __schemeID: '0208', value: '456' }, PartyIdentification: [{ ID: { __schemeID: '0208', value: '456' } }], PartyName: { Name: 'Customer' }, PartyTaxScheme: { CompanyID: { value: 'BE456' }, TaxScheme: { ID: 'VAT' } } } },
+            LegalMonetaryTotal: {
+                LineExtensionAmount: { __currencyID: 'EUR', value: 100 },
+                TaxExclusiveAmount: { __currencyID: 'EUR', value: 100 },
+                TaxInclusiveAmount: { __currencyID: 'EUR', value: 100 },
+                PayableAmount: { __currencyID: 'EUR', value: 100 }
+            },
+            TaxTotal: [{
+                TaxAmount: { __currencyID: 'EUR', value: 0 },
+                TaxSubtotal: [{
+                    TaxableAmount: { __currencyID: 'EUR', value: 100 },
+                    TaxAmount: { __currencyID: 'EUR', value: 0 },
+                    TaxCategory: { ID: 'AE', Percent: 0, TaxExemptionReasonCode: 'VATEX-EU-AE', TaxExemptionReason: 'Reverse charge', TaxScheme: { ID: 'VAT' } }
+                }]
+            }],
+            CreditNoteLine: [{
+                ID: '1',
+                CreditedQuantity: { __unitCode: 'C62', value: 1 },
+                LineExtensionAmount: { __currencyID: 'EUR', value: 100 },
+                Item: {
+                    Name: 'Line',
+                    ClassifiedTaxCategory: { ID: 'AE', Percent: 0, TaxExemptionReasonCode: 'VATEX-EU-AE', TaxExemptionReason: 'Reverse charge', TaxScheme: { ID: 'VAT' } }
+                },
+                Price: { PriceAmount: { __currencyID: 'EUR', value: 100 } }
+            }],
+            AdditionalDocumentReference: []
+        };
+
+        const xml = buildCreditNoteXml(creditNote);
+        expect(xml).toContain('<cbc:TaxExemptionReasonCode>VATEX-EU-AE</cbc:TaxExemptionReasonCode>');
+        expect(xml).toContain('<cbc:TaxExemptionReason>Reverse charge</cbc:TaxExemptionReason>');
+        const lineXml = extractElement(xml, 'cac:CreditNoteLine');
+        expect(lineXml).not.toContain('TaxExemptionReasonCode');
+        expect(lineXml).not.toContain('TaxExemptionReason');
+
+        const parsed = parseCreditNote(xml);
+        expect(parsed.TaxTotal?.[0]?.TaxSubtotal?.[0]?.TaxCategory?.TaxExemptionReasonCode).toBe('VATEX-EU-AE');
+        expect(parsed.TaxTotal?.[0]?.TaxSubtotal?.[0]?.TaxCategory?.TaxExemptionReason).toBe('Reverse charge');
+        expect(parsed.CreditNoteLine[0].Item.ClassifiedTaxCategory?.TaxExemptionReasonCode).toBeUndefined();
+        expect(parsed.CreditNoteLine[0].Item.ClassifiedTaxCategory?.TaxExemptionReason).toBeUndefined();
     });
 
     test('omits exemption reason fields for zero-rated Z categories', () => {
@@ -145,6 +207,6 @@ describe('UBL VAT exemption reasons', () => {
 
         const parsed = parseInvoice(xml);
         expect(parsed.TaxTotal?.[0]?.TaxSubtotal?.[0]?.TaxCategory?.TaxExemptionReason).toBe(NOT_SUBJECT_TO_VAT_REASON_TEXT);
-        expect(parsed.InvoiceLine[0].Item.ClassifiedTaxCategory?.TaxExemptionReason).toBe(NOT_SUBJECT_TO_VAT_REASON_TEXT);
+        expect(parsed.InvoiceLine[0].Item.ClassifiedTaxCategory?.TaxExemptionReason).toBeUndefined();
     });
 });

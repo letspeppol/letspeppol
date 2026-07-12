@@ -51,8 +51,30 @@ describe('InvoiceCalculator', () => {
 
         expect(invoice.TaxTotal?.[0]?.TaxSubtotal).toHaveLength(1);
         expect(invoice.TaxTotal?.[0]?.TaxSubtotal?.[0]?.TaxCategory?.ID).toBe('E');
+        expect(invoice.TaxTotal?.[0]?.TaxSubtotal?.[0]?.TaxCategory?.TaxExemptionReason).toBeUndefined();
         expect(invoice.TaxTotal?.[0]?.TaxSubtotal?.[0]?.TaxableAmount.value).toBe(40);
         expect(invoice.TaxTotal?.[0]?.TaxSubtotal?.[0]?.TaxAmount.value).toBe(0);
+    });
+
+    test('preserves existing VAT breakdown explanations when totals are recalculated', () => {
+        const invoice = createInvoice([
+            createLine('1', 26, { ID: 'E', Percent: 0, TaxScheme: { ID: 'VAT' } }),
+            createLine('2', 14, { ID: 'E', Percent: 0, TaxScheme: { ID: 'VAT' } }),
+        ]);
+        invoice.TaxTotal = [{
+            TaxAmount: { __currencyID: 'EUR', value: 0 },
+            TaxSubtotal: [{
+                TaxableAmount: { __currencyID: 'EUR', value: 40 },
+                TaxAmount: { __currencyID: 'EUR', value: 0 },
+                TaxCategory: { ID: 'E', Percent: 0, TaxExemptionReason: 'Header exemption reason', TaxScheme: { ID: 'VAT' } },
+            }],
+        }];
+
+        new InvoiceCalculator().calculateTaxAndTotals(invoice);
+
+        expect(invoice.TaxTotal?.[0]?.TaxSubtotal).toHaveLength(1);
+        expect(invoice.TaxTotal?.[0]?.TaxSubtotal?.[0]?.TaxCategory?.TaxExemptionReason).toBe('Header exemption reason');
+        expect(invoice.InvoiceLine[0].Item.ClassifiedTaxCategory?.TaxExemptionReason).toBeUndefined();
     });
 
     test('merges AE, G and K VAT breakdown rows by category code and rate', () => {
@@ -88,7 +110,7 @@ describe('InvoiceCalculator', () => {
     test('keeps the default explanation on not-subject-to-vat breakdown rows', () => {
         const invoice = createInvoice([
             createLine('1', 26, { ID: 'O', TaxScheme: { ID: 'VAT' } }),
-            createLine('2', 14, { ID: 'O', TaxExemptionReason: NOT_SUBJECT_TO_VAT_REASON_TEXT, TaxScheme: { ID: 'VAT' } }),
+            createLine('2', 14, { ID: 'O', TaxScheme: { ID: 'VAT' } }),
         ]);
 
         new InvoiceCalculator().calculateTaxAndTotals(invoice);

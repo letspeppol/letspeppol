@@ -69,7 +69,7 @@
                 </td>
                 <td if.bind="hasVatNumber()" class="num">
                     <div style="display:flex;gap:.35rem;align-items:center">
-                        <span class="disabled-tooltip-wrapper disabled-tooltip-wrapper-fill" title.bind="getVatSelectionTooltip(line, line.Item.ClassifiedTaxCategory.ID, line.Item.ClassifiedTaxCategory.TaxExemptionReason) || null">
+                        <span class="disabled-tooltip-wrapper disabled-tooltip-wrapper-fill" title.bind="getVatSelectionTooltip(line, line.Item.ClassifiedTaxCategory.ID) || null">
                             <select if.bind="isVatRateEditable()" style="flex:1" change.trigger="vatRateChanged(line, $event.target.value)" disabled.bind="readOnly">
                                 <option repeat.for="taxRate of vatRateOptions" value.bind="taxRate" selected.bind="taxRate === getReadonlyDisplayedVatRate(line?.Item?.ClassifiedTaxCategory)">${taxRate}%</option>
                             </select>
@@ -80,7 +80,7 @@
                         <span
                             if.bind="canEditZeroVatReason(line.Item.ClassifiedTaxCategory)"
                             class="disabled-tooltip-wrapper"
-                            title.bind="getVatSelectionTooltip(line, line.Item.ClassifiedTaxCategory.ID, line.Item.ClassifiedTaxCategory.TaxExemptionReason) || null">
+                            title.bind="getVatSelectionTooltip(line, line.Item.ClassifiedTaxCategory.ID) || null">
                             <button
                                 type="button"
                                 class="icon-btn"

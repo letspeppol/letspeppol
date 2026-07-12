@@ -53,7 +53,8 @@ export class InvoiceEditItems {
     ): string | undefined {
         const taxCategory = line?.Item?.ClassifiedTaxCategory;
         const effectiveReasonId = reasonId?.trim() || taxCategory?.ID;
-        const effectiveReasonText = reasonText?.trim() || taxCategory?.TaxExemptionReason?.trim();
+        const effectiveReasonText = reasonText?.trim()
+            || this.getSuggestedVatReasonText(effectiveReasonId, line)?.trim();
 
         if (!taxCategory || effectiveReasonId == 'S') {
             return undefined;
@@ -116,9 +117,20 @@ export class InvoiceEditItems {
         const quantity = getAmount(line);
         const unitPrice = normalizeLinePrice(line);
         line.LineExtensionAmount.value = roundTwoDecimals(unitPrice * quantity.value);
+        this.syncAutomaticHeaderVatReason(line);
         this.invoiceCalculator.calculateTaxAndTotals(this.invoiceContext.selectedInvoice);
         if (autoSave) {
             this.checkLineAutoSave(line);
+        }
+    }
+
+    private syncAutomaticHeaderVatReason(line: UBLLine) {
+        const taxCategoryId = line.Item.ClassifiedTaxCategory?.ID?.trim().toUpperCase();
+        if (taxCategoryId === 'O') {
+            applySharedVatReasonText(this.invoiceContext.selectedInvoice, 'O', this.i18n.tr('invoice.zero-vat-reason.options.O'), line);
+        }
+        if (taxCategoryId === 'E' && this.isAccountVatExempt()) {
+            applySharedVatReasonText(this.invoiceContext.selectedInvoice, 'E', this.i18n.tr('account.vat-ruleset.options.VAT_EXEMPT_ART_56BIS'), line);
         }
     }
 
@@ -146,7 +158,7 @@ export class InvoiceEditItems {
                 return;
             }
             if (this.isAccountVatExempt()) {
-                line.Item.ClassifiedTaxCategory = createVatExemptCategory(this.i18n.tr('account.vat-ruleset.options.VAT_EXEMPT_ART_56BIS'));
+                line.Item.ClassifiedTaxCategory = createVatExemptCategory();
                 this.calcLineTotal(line);
                 return;
             }
@@ -188,7 +200,7 @@ export class InvoiceEditItems {
             return;
         }
         if (this.isAccountVatExempt()) {
-            line.Item.ClassifiedTaxCategory = createVatExemptCategory(this.i18n.tr('account.vat-ruleset.options.VAT_EXEMPT_ART_56BIS'));
+            line.Item.ClassifiedTaxCategory = createVatExemptCategory();
             this.calcLineTotal(line);
             return;
         }
@@ -228,7 +240,6 @@ export class InvoiceEditItems {
             Percent: 0,
             TaxExemptionReasonCode: undefined,
             TaxScheme: { ID: 'VAT' },
-            TaxExemptionReason: previousTaxCategory?.TaxExemptionReason
         };
         this.calcLineTotal(line, false);
         this.zeroVatReasonModal.showModal(line, line.Item.ClassifiedTaxCategory, previousTaxCategory);
@@ -248,7 +259,7 @@ export class InvoiceEditItems {
         });
     }
 
-    getSuggestedVatReasonText(reasonId: ZeroVatReasonId, line?: UBLLine): string | undefined {
+    getSuggestedVatReasonText(reasonId: ZeroVatReasonId | string | undefined, line?: UBLLine): string | undefined {
         return getSharedVatReasonText(this.invoiceContext.selectedInvoice, reasonId, line);
     }
 

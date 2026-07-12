@@ -102,8 +102,6 @@ class UblCreditnotePdfServiceTest {
                             <cac:ClassifiedTaxCategory>
                                 <cbc:ID>AE</cbc:ID>
                                 <cbc:Percent>0</cbc:Percent>
-                                <cbc:TaxExemptionReasonCode>VATEX-EU-AE</cbc:TaxExemptionReasonCode>
-                                <cbc:TaxExemptionReason>due to article 44</cbc:TaxExemptionReason>
                                 <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
                             </cac:ClassifiedTaxCategory>
                         </cac:Item>
@@ -114,6 +112,17 @@ class UblCreditnotePdfServiceTest {
 
                     <cac:TaxTotal>
                         <cbc:TaxAmount currencyID="EUR">0.00</cbc:TaxAmount>
+                        <cac:TaxSubtotal>
+                            <cbc:TaxableAmount currencyID="EUR">100.00</cbc:TaxableAmount>
+                            <cbc:TaxAmount currencyID="EUR">0.00</cbc:TaxAmount>
+                            <cac:TaxCategory>
+                                <cbc:ID>AE</cbc:ID>
+                                <cbc:Percent>0</cbc:Percent>
+                                <cbc:TaxExemptionReasonCode>VATEX-EU-AE</cbc:TaxExemptionReasonCode>
+                                <cbc:TaxExemptionReason>due to article 44</cbc:TaxExemptionReason>
+                                <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
+                            </cac:TaxCategory>
+                        </cac:TaxSubtotal>
                     </cac:TaxTotal>
 
                     <cac:LegalMonetaryTotal>

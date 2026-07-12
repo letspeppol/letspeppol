@@ -3,6 +3,7 @@ import {ClassifiedTaxCategory, UBLLine} from "../../../../services/peppol/ubl";
 import {
     createZeroVatCategory,
     getZeroVatReasonLabelKey,
+    supportsTaxExemptionReasonText,
     ZERO_VAT_REASON_OPTIONS,
     ZeroVatReasonId,
 } from "../../../../services/app/vat-rules";
@@ -30,7 +31,7 @@ export class InvoiceZeroVatReasonModal {
         this.reasonId = this.zeroVatReasonOptions.includes(currentTaxCategory?.ID as ZeroVatReasonId)
             ? currentTaxCategory?.ID as ZeroVatReasonId
             : undefined;
-        this.reasonText = currentTaxCategory?.TaxExemptionReason ?? '';
+        this.reasonText = '';
         this.previousTaxCategory = previousTaxCategory ? structuredClone(previousTaxCategory) : undefined;
         this.prefillSuggestedReasonText();
         this.open = true;
@@ -38,7 +39,7 @@ export class InvoiceZeroVatReasonModal {
 
     updateReasonId(value: string) {
         this.reasonId = value ? value as ZeroVatReasonId : undefined;
-        this.prefillSuggestedReasonText();
+        this.prefillSuggestedReasonText(true);
     }
 
     closeModal() {
@@ -54,22 +55,17 @@ export class InvoiceZeroVatReasonModal {
             return;
         }
         const trimmedReasonText = this.reasonText.trim();
-        this.line.Item.ClassifiedTaxCategory = {
-            ...createZeroVatCategory(this.reasonId),
-            TaxExemptionReason: trimmedReasonText
-        };
-        if (this.reasonId === 'Z') {
-            this.line.Item.ClassifiedTaxCategory.TaxExemptionReasonCode = undefined;
+        if (!trimmedReasonText) {
+            return;
         }
-        if (trimmedReasonText) {
+        this.line.Item.ClassifiedTaxCategory = createZeroVatCategory(this.reasonId);
+        if (supportsTaxExemptionReasonText(this.reasonId)) {
             this.syncSharedVatReasonText?.(this.reasonId, trimmedReasonText, this.line);
         }
         this.calcLineTotal?.(this.line);
-        if (trimmedReasonText) {
-            void Promise.resolve(this.recordVatReasonSelection?.(this.reasonId, trimmedReasonText)).catch(error => {
-                console.warn('Failed to record VAT reason selection', error);
-            });
-        }
+        void Promise.resolve(this.recordVatReasonSelection?.(this.reasonId, trimmedReasonText)).catch(error => {
+            console.warn('Failed to record VAT reason selection', error);
+        });
         this.resetModal();
     }
 
@@ -85,8 +81,8 @@ export class InvoiceZeroVatReasonModal {
         this.previousTaxCategory = undefined;
     }
 
-    private prefillSuggestedReasonText() {
-        if (!this.reasonId || this.reasonText.trim()) {
+    private prefillSuggestedReasonText(overwrite = false) {
+        if (!this.reasonId || (!overwrite && this.reasonText.trim())) {
             return;
         }
 

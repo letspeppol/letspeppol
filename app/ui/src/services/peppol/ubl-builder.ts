@@ -331,8 +331,6 @@ function buildClassifiedTaxCategory(ctc?: ClassifiedTaxCategory): string {
         '<cac:ClassifiedTaxCategory>',
         textElement('cbc:ID', normalized.ID),
         textElement('cbc:Percent', normalized.Percent),
-        textElement('cbc:TaxExemptionReasonCode', normalized.TaxExemptionReasonCode),
-        textElement('cbc:TaxExemptionReason', normalized.TaxExemptionReason),
         '<cac:TaxScheme>',
         textElement('cbc:ID', normalized.TaxScheme.ID),
         '</cac:TaxScheme>',

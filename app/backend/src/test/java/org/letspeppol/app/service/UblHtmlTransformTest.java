@@ -41,13 +41,24 @@ class UblHtmlTransformTest {
                             <cac:ClassifiedTaxCategory>
                                 <cbc:ID>AE</cbc:ID>
                                 <cbc:Percent>0</cbc:Percent>
-                                <cbc:TaxExemptionReason>Verleggingsregeling volgens artikel 44</cbc:TaxExemptionReason>
                                 <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
                             </cac:ClassifiedTaxCategory>
                         </cac:Item>
                         <cac:Price><cbc:PriceAmount currencyID="EUR">100.00</cbc:PriceAmount></cac:Price>
                     </cac:InvoiceLine>
-                    <cac:TaxTotal><cbc:TaxAmount currencyID="EUR">0.00</cbc:TaxAmount></cac:TaxTotal>
+                    <cac:TaxTotal>
+                        <cbc:TaxAmount currencyID="EUR">0.00</cbc:TaxAmount>
+                        <cac:TaxSubtotal>
+                            <cbc:TaxableAmount currencyID="EUR">100.00</cbc:TaxableAmount>
+                            <cbc:TaxAmount currencyID="EUR">0.00</cbc:TaxAmount>
+                            <cac:TaxCategory>
+                                <cbc:ID>AE</cbc:ID>
+                                <cbc:Percent>0</cbc:Percent>
+                                <cbc:TaxExemptionReason>Verleggingsregeling volgens artikel 44</cbc:TaxExemptionReason>
+                                <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
+                            </cac:TaxCategory>
+                        </cac:TaxSubtotal>
+                    </cac:TaxTotal>
                     <cac:LegalMonetaryTotal>
                         <cbc:TaxExclusiveAmount currencyID="EUR">100.00</cbc:TaxExclusiveAmount>
                         <cbc:PayableAmount currencyID="EUR">100.00</cbc:PayableAmount>
@@ -88,13 +99,24 @@ class UblHtmlTransformTest {
                             <cac:ClassifiedTaxCategory>
                                 <cbc:ID>AE</cbc:ID>
                                 <cbc:Percent>0</cbc:Percent>
-                                <cbc:TaxExemptionReason>Autoliquidation selon article 44</cbc:TaxExemptionReason>
                                 <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
                             </cac:ClassifiedTaxCategory>
                         </cac:Item>
                         <cac:Price><cbc:PriceAmount currencyID="EUR">100.00</cbc:PriceAmount></cac:Price>
                     </cac:CreditNoteLine>
-                    <cac:TaxTotal><cbc:TaxAmount currencyID="EUR">0.00</cbc:TaxAmount></cac:TaxTotal>
+                    <cac:TaxTotal>
+                        <cbc:TaxAmount currencyID="EUR">0.00</cbc:TaxAmount>
+                        <cac:TaxSubtotal>
+                            <cbc:TaxableAmount currencyID="EUR">100.00</cbc:TaxableAmount>
+                            <cbc:TaxAmount currencyID="EUR">0.00</cbc:TaxAmount>
+                            <cac:TaxCategory>
+                                <cbc:ID>AE</cbc:ID>
+                                <cbc:Percent>0</cbc:Percent>
+                                <cbc:TaxExemptionReason>Autoliquidation selon article 44</cbc:TaxExemptionReason>
+                                <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
+                            </cac:TaxCategory>
+                        </cac:TaxSubtotal>
+                    </cac:TaxTotal>
                     <cac:LegalMonetaryTotal>
                         <cbc:TaxExclusiveAmount currencyID="EUR">100.00</cbc:TaxExclusiveAmount>
                         <cbc:PayableAmount currencyID="EUR">100.00</cbc:PayableAmount>
@@ -305,7 +327,6 @@ class UblHtmlTransformTest {
                             <cac:ClassifiedTaxCategory>
                                 <cbc:ID>AE</cbc:ID>
                                 <cbc:Percent>0</cbc:Percent>
-                                <cbc:TaxExemptionReason>due to article 44</cbc:TaxExemptionReason>
                                 <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
                             </cac:ClassifiedTaxCategory>
                         </cac:Item>
@@ -321,7 +342,6 @@ class UblHtmlTransformTest {
                             <cac:ClassifiedTaxCategory>
                                 <cbc:ID>AE</cbc:ID>
                                 <cbc:Percent>0</cbc:Percent>
-                                <cbc:TaxExemptionReason>due to article 44</cbc:TaxExemptionReason>
                                 <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
                             </cac:ClassifiedTaxCategory>
                         </cac:Item>
@@ -337,14 +357,35 @@ class UblHtmlTransformTest {
                             <cac:ClassifiedTaxCategory>
                                 <cbc:ID>G</cbc:ID>
                                 <cbc:Percent>0</cbc:Percent>
-                                <cbc:TaxExemptionReason>export outside EU</cbc:TaxExemptionReason>
                                 <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
                             </cac:ClassifiedTaxCategory>
                         </cac:Item>
                         <cac:Price><cbc:PriceAmount currencyID="EUR">25.00</cbc:PriceAmount></cac:Price>
                     </cac:InvoiceLine>
 
-                    <cac:TaxTotal><cbc:TaxAmount currencyID="EUR">0.00</cbc:TaxAmount></cac:TaxTotal>
+                    <cac:TaxTotal>
+                        <cbc:TaxAmount currencyID="EUR">0.00</cbc:TaxAmount>
+                        <cac:TaxSubtotal>
+                            <cbc:TaxableAmount currencyID="EUR">150.00</cbc:TaxableAmount>
+                            <cbc:TaxAmount currencyID="EUR">0.00</cbc:TaxAmount>
+                            <cac:TaxCategory>
+                                <cbc:ID>AE</cbc:ID>
+                                <cbc:Percent>0</cbc:Percent>
+                                <cbc:TaxExemptionReason>due to article 44</cbc:TaxExemptionReason>
+                                <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
+                            </cac:TaxCategory>
+                        </cac:TaxSubtotal>
+                        <cac:TaxSubtotal>
+                            <cbc:TaxableAmount currencyID="EUR">25.00</cbc:TaxableAmount>
+                            <cbc:TaxAmount currencyID="EUR">0.00</cbc:TaxAmount>
+                            <cac:TaxCategory>
+                                <cbc:ID>G</cbc:ID>
+                                <cbc:Percent>0</cbc:Percent>
+                                <cbc:TaxExemptionReason>export outside EU</cbc:TaxExemptionReason>
+                                <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
+                            </cac:TaxCategory>
+                        </cac:TaxSubtotal>
+                    </cac:TaxTotal>
                     <cac:LegalMonetaryTotal>
                         <cbc:TaxExclusiveAmount currencyID="EUR">175.00</cbc:TaxExclusiveAmount>
                         <cbc:PayableAmount currencyID="EUR">175.00</cbc:PayableAmount>
@@ -382,7 +423,6 @@ class UblHtmlTransformTest {
                             <cac:ClassifiedTaxCategory>
                                 <cbc:ID>AE</cbc:ID>
                                 <cbc:Percent>0</cbc:Percent>
-                                <cbc:TaxExemptionReason>due to article 44</cbc:TaxExemptionReason>
                                 <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
                             </cac:ClassifiedTaxCategory>
                         </cac:Item>
@@ -398,7 +438,6 @@ class UblHtmlTransformTest {
                             <cac:ClassifiedTaxCategory>
                                 <cbc:ID>AE</cbc:ID>
                                 <cbc:Percent>0</cbc:Percent>
-                                <cbc:TaxExemptionReason>due to article 44</cbc:TaxExemptionReason>
                                 <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
                             </cac:ClassifiedTaxCategory>
                         </cac:Item>
@@ -414,14 +453,35 @@ class UblHtmlTransformTest {
                             <cac:ClassifiedTaxCategory>
                                 <cbc:ID>G</cbc:ID>
                                 <cbc:Percent>0</cbc:Percent>
-                                <cbc:TaxExemptionReason>export outside EU</cbc:TaxExemptionReason>
                                 <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
                             </cac:ClassifiedTaxCategory>
                         </cac:Item>
                         <cac:Price><cbc:PriceAmount currencyID="EUR">25.00</cbc:PriceAmount></cac:Price>
                     </cac:CreditNoteLine>
 
-                    <cac:TaxTotal><cbc:TaxAmount currencyID="EUR">0.00</cbc:TaxAmount></cac:TaxTotal>
+                    <cac:TaxTotal>
+                        <cbc:TaxAmount currencyID="EUR">0.00</cbc:TaxAmount>
+                        <cac:TaxSubtotal>
+                            <cbc:TaxableAmount currencyID="EUR">150.00</cbc:TaxableAmount>
+                            <cbc:TaxAmount currencyID="EUR">0.00</cbc:TaxAmount>
+                            <cac:TaxCategory>
+                                <cbc:ID>AE</cbc:ID>
+                                <cbc:Percent>0</cbc:Percent>
+                                <cbc:TaxExemptionReason>due to article 44</cbc:TaxExemptionReason>
+                                <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
+                            </cac:TaxCategory>
+                        </cac:TaxSubtotal>
+                        <cac:TaxSubtotal>
+                            <cbc:TaxableAmount currencyID="EUR">25.00</cbc:TaxableAmount>
+                            <cbc:TaxAmount currencyID="EUR">0.00</cbc:TaxAmount>
+                            <cac:TaxCategory>
+                                <cbc:ID>G</cbc:ID>
+                                <cbc:Percent>0</cbc:Percent>
+                                <cbc:TaxExemptionReason>export outside EU</cbc:TaxExemptionReason>
+                                <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
+                            </cac:TaxCategory>
+                        </cac:TaxSubtotal>
+                    </cac:TaxTotal>
                     <cac:LegalMonetaryTotal>
                         <cbc:TaxExclusiveAmount currencyID="EUR">175.00</cbc:TaxExclusiveAmount>
                         <cbc:PayableAmount currencyID="EUR">175.00</cbc:PayableAmount>
@@ -458,13 +518,23 @@ class UblHtmlTransformTest {
                             <cbc:Name>Services</cbc:Name>
                             <cac:ClassifiedTaxCategory>
                                 <cbc:ID>O</cbc:ID>
-                                <cbc:TaxExemptionReason>Not subject to VAT</cbc:TaxExemptionReason>
                                 <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
                             </cac:ClassifiedTaxCategory>
                         </cac:Item>
                         <cac:Price><cbc:PriceAmount currencyID="EUR">100.00</cbc:PriceAmount></cac:Price>
                     </cac:InvoiceLine>
-                    <cac:TaxTotal><cbc:TaxAmount currencyID="EUR">0.00</cbc:TaxAmount></cac:TaxTotal>
+                    <cac:TaxTotal>
+                        <cbc:TaxAmount currencyID="EUR">0.00</cbc:TaxAmount>
+                        <cac:TaxSubtotal>
+                            <cbc:TaxableAmount currencyID="EUR">100.00</cbc:TaxableAmount>
+                            <cbc:TaxAmount currencyID="EUR">0.00</cbc:TaxAmount>
+                            <cac:TaxCategory>
+                                <cbc:ID>O</cbc:ID>
+                                <cbc:TaxExemptionReason>Not subject to VAT</cbc:TaxExemptionReason>
+                                <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
+                            </cac:TaxCategory>
+                        </cac:TaxSubtotal>
+                    </cac:TaxTotal>
                     <cac:LegalMonetaryTotal>
                         <cbc:TaxExclusiveAmount currencyID="EUR">100.00</cbc:TaxExclusiveAmount>
                         <cbc:PayableAmount currencyID="EUR">100.00</cbc:PayableAmount>
@@ -502,13 +572,23 @@ class UblHtmlTransformTest {
                             <cbc:Name>Services</cbc:Name>
                             <cac:ClassifiedTaxCategory>
                                 <cbc:ID>O</cbc:ID>
-                                <cbc:TaxExemptionReason>Not subject to VAT</cbc:TaxExemptionReason>
                                 <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
                             </cac:ClassifiedTaxCategory>
                         </cac:Item>
                         <cac:Price><cbc:PriceAmount currencyID="EUR">100.00</cbc:PriceAmount></cac:Price>
                     </cac:CreditNoteLine>
-                    <cac:TaxTotal><cbc:TaxAmount currencyID="EUR">0.00</cbc:TaxAmount></cac:TaxTotal>
+                    <cac:TaxTotal>
+                        <cbc:TaxAmount currencyID="EUR">0.00</cbc:TaxAmount>
+                        <cac:TaxSubtotal>
+                            <cbc:TaxableAmount currencyID="EUR">100.00</cbc:TaxableAmount>
+                            <cbc:TaxAmount currencyID="EUR">0.00</cbc:TaxAmount>
+                            <cac:TaxCategory>
+                                <cbc:ID>O</cbc:ID>
+                                <cbc:TaxExemptionReason>Not subject to VAT</cbc:TaxExemptionReason>
+                                <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
+                            </cac:TaxCategory>
+                        </cac:TaxSubtotal>
+                    </cac:TaxTotal>
                     <cac:LegalMonetaryTotal>
                         <cbc:TaxExclusiveAmount currencyID="EUR">100.00</cbc:TaxExclusiveAmount>
                         <cbc:PayableAmount currencyID="EUR">100.00</cbc:PayableAmount>

@@ -31,4 +31,47 @@ describe('InvoiceZeroVatReasonModal', () => {
         expect(modal.reasonId).toBe('E');
         expect(modal.reasonText).toBe('Article 44 exemption');
     });
+
+    test('replaces existing text with a suggested reason when the selected category changes', () => {
+        const modal = new InvoiceZeroVatReasonModal();
+        const line = createLine();
+        modal.getSuggestedVatReasonText = vi.fn().mockReturnValue('Zero-rated suggested text');
+
+        modal.showModal(line, line.Item.ClassifiedTaxCategory);
+        modal.reasonText = 'Previous category text';
+        modal.updateReasonId('Z');
+
+        expect(modal.reasonId).toBe('Z');
+        expect(modal.reasonText).toBe('Zero-rated suggested text');
+    });
+
+    test('does not save a reason-required zero VAT category without explanation text', () => {
+        const modal = new InvoiceZeroVatReasonModal();
+        const line = createLine();
+
+        modal.line = line;
+        modal.reasonId = 'AE';
+        modal.reasonText = '   ';
+        modal.save();
+
+        expect(line.Item.ClassifiedTaxCategory?.ID).toBe('');
+    });
+
+    test('saves and records zero-rated Z explanation for analytics', () => {
+        const modal = new InvoiceZeroVatReasonModal();
+        const line = createLine();
+        modal.recordVatReasonSelection = vi.fn();
+        modal.syncSharedVatReasonText = vi.fn();
+
+        modal.line = line;
+        modal.reasonId = 'Z';
+        modal.reasonText = 'Zero-rated goods explanation';
+        modal.save();
+
+        expect(line.Item.ClassifiedTaxCategory?.ID).toBe('Z');
+        expect(line.Item.ClassifiedTaxCategory?.TaxExemptionReason).toBeUndefined();
+        expect(line.Item.ClassifiedTaxCategory?.TaxExemptionReasonCode).toBeUndefined();
+        expect(modal.recordVatReasonSelection).toHaveBeenCalledWith('Z', 'Zero-rated goods explanation');
+        expect(modal.syncSharedVatReasonText).not.toHaveBeenCalled();
+    });
 });
