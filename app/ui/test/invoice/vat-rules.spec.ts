@@ -117,6 +117,11 @@ describe('shared zero VAT reason helpers', () => {
 
     test('stores localized O reason text in the VAT breakdown', () => {
         const invoice = createInvoice();
+        invoice.TaxTotal?.[0]?.TaxSubtotal?.push({
+            TaxableAmount: { __currencyID: 'EUR', value: 0 },
+            TaxAmount: { __currencyID: 'EUR', value: 0 },
+            TaxCategory: { ID: 'O', TaxScheme: { ID: 'VAT' } },
+        });
 
         applySharedVatReasonText(invoice, 'O', 'Niet onderworpen aan btw');
 

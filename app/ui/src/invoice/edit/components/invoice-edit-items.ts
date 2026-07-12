@@ -117,8 +117,8 @@ export class InvoiceEditItems {
         const quantity = getAmount(line);
         const unitPrice = normalizeLinePrice(line);
         line.LineExtensionAmount.value = roundTwoDecimals(unitPrice * quantity.value);
-        this.syncAutomaticHeaderVatReason(line);
         this.invoiceCalculator.calculateTaxAndTotals(this.invoiceContext.selectedInvoice);
+        this.syncAutomaticHeaderVatReason(line);
         if (autoSave) {
             this.checkLineAutoSave(line);
         }

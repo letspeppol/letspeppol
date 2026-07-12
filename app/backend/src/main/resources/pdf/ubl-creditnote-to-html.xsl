@@ -29,6 +29,25 @@
              normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='Percent'])[1])
            )"/>
 
+  <xsl:key name="tax-category-by-id"
+           match="*[local-name()='TaxTotal']/*[local-name()='TaxSubtotal']/*[local-name()='TaxCategory']"
+           use="translate(
+             normalize-space((*[local-name()='ID'])[1]),
+             'abcdefghijklmnopqrstuvwxyz',
+             'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+           )"/>
+  <xsl:key name="tax-category-by-id-percent"
+           match="*[local-name()='TaxTotal']/*[local-name()='TaxSubtotal']/*[local-name()='TaxCategory']"
+           use="concat(
+             translate(
+               normalize-space((*[local-name()='ID'])[1]),
+               'abcdefghijklmnopqrstuvwxyz',
+               'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+             ),
+             '|',
+             normalize-space((*[local-name()='Percent'])[1])
+           )"/>
+
   <xsl:template match="/">
     <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -232,13 +251,7 @@
       <xsl:variable name="isNotSubjectToVatDocument"
                     select="count($creditNoteLines) &gt; 0 and count($creditNoteLines) = count($notSubjectToVatLines)"/>
       <xsl:variable name="notSubjectToVatExplanation"
-                    select="normalize-space((/*/*[local-name()='TaxTotal']/*[local-name()='TaxSubtotal']/*[local-name()='TaxCategory'][
-                      translate(
-                        normalize-space((./*[local-name()='ID'])[1]),
-                        'abcdefghijklmnopqrstuvwxyz',
-                        'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-                      ) = 'O'
-                    ]/*[local-name()='TaxExemptionReason'])[1])"/>
+                    select="normalize-space((key('tax-category-by-id', 'O')/*[local-name()='TaxExemptionReason'])[1])"/>
 
       <xsl:variable name="zeroVatLines"
                     select="/*/*[
@@ -414,18 +427,14 @@
             <xsl:variable name="lineTaxReasonId" select="normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='ID'])[1])"/>
             <xsl:variable name="lineTaxPercent" select="normalize-space((./*[local-name()='Item']/*[local-name()='ClassifiedTaxCategory']/*[local-name()='Percent'])[1])"/>
             <xsl:variable name="lineTaxExplanation"
-                          select="normalize-space((/*/*[local-name()='TaxTotal']/*[local-name()='TaxSubtotal']/*[local-name()='TaxCategory'][
-                            translate(
-                              normalize-space((./*[local-name()='ID'])[1]),
-                              'abcdefghijklmnopqrstuvwxyz',
-                              'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-                            ) = translate(
-                              $lineTaxReasonId,
-                              'abcdefghijklmnopqrstuvwxyz',
-                              'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+                          select="normalize-space((key(
+                            'tax-category-by-id-percent',
+                            concat(
+                              translate($lineTaxReasonId, 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'),
+                              '|',
+                              $lineTaxPercent
                             )
-                            and normalize-space((./*[local-name()='Percent'])[1]) = $lineTaxPercent
-                          ]/*[local-name()='TaxExemptionReason'])[1])"/>
+                          )/*[local-name()='TaxExemptionReason'])[1])"/>
             <div class="footnote-entry">
               <sup class="footnote-ref"><xsl:value-of select="position()"/></sup>
               <xsl:text> </xsl:text>

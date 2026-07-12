@@ -10,7 +10,7 @@ import {
 
 export class InvoiceZeroVatReasonModal {
     @bindable readOnly;
-    @bindable calcLineTotal: (line: UBLLine) => void;
+    @bindable calcLineTotal: (line: UBLLine, autoSave?: boolean) => void;
     @bindable recordVatReasonSelection: (reasonId: ZeroVatReasonId, reasonText: string) => void | Promise<void>;
     @bindable getSuggestedVatReasonText: (reasonId: ZeroVatReasonId, line?: UBLLine) => string | undefined;
     @bindable syncSharedVatReasonText: (reasonId: ZeroVatReasonId, reasonText: string, line?: UBLLine) => void;
@@ -60,6 +60,7 @@ export class InvoiceZeroVatReasonModal {
         }
         this.line.Item.ClassifiedTaxCategory = createZeroVatCategory(this.reasonId);
         if (supportsTaxExemptionReasonText(this.reasonId)) {
+            this.calcLineTotal?.(this.line, false);
             this.syncSharedVatReasonText?.(this.reasonId, trimmedReasonText, this.line);
         }
         this.calcLineTotal?.(this.line);

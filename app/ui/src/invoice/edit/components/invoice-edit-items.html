@@ -5,7 +5,7 @@
 <invoice-zero-vat-reason-modal
     component.ref="zeroVatReasonModal"
     read-only.bind="readOnly"
-    calc-line-total.bind="(line) => calcLineTotal(line)"
+    calc-line-total.bind="(line, autoSave) => calcLineTotal(line, autoSave)"
     record-vat-reason-selection.bind="(reasonId, reasonText) => recordVatReasonSelection(reasonId, reasonText)"
     get-suggested-vat-reason-text.bind="(reasonId, line) => getSuggestedVatReasonText(reasonId, line)"
     sync-shared-vat-reason-text.bind="(reasonId, reasonText, line) => syncSharedVatReasonText(reasonId, reasonText, line)"></invoice-zero-vat-reason-modal>
