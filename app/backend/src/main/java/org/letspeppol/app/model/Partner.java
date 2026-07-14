@@ -18,6 +18,7 @@ public class Partner extends GenericEntity {
     private String peppolId;
     private Boolean customer;
     private Boolean supplier;
+    private boolean timesheet;
 
     private String paymentTerms;
     private String iban;

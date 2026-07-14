@@ -14,6 +14,7 @@ public class PartnerMapper {
                 partner.getPeppolId(),
                 partner.getCustomer(),
                 partner.getSupplier(),
+                partner.isTimesheet(),
                 partner.getPaymentTerms(),
                 partner.getIban(),
                 partner.getPaymentAccountName(),
