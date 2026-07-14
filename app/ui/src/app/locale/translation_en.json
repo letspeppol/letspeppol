@@ -454,6 +454,7 @@
       "payment-info": "Payment Info",
       "customer": "Customer",
       "supplier": "Supplier",
+      "timesheet": "Timesheet",
       "account-name": "Account Name",
       "payment-terms": "Payment Terms",
       "iban": "IBAN",
@@ -616,7 +617,8 @@
       "add-line": "Add line",
       "note": "Note",
       "recreate-positions": "Recreate line positions",
-      "attachments": "Attachments"
+      "attachments": "Attachments",
+      "timesheet-warning": "Timesheet is missing"
     }
   },
   "account": {

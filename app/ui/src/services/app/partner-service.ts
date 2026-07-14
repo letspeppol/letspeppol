@@ -12,6 +12,7 @@ export interface PartnerDto {
     peppolId: string,
     customer: boolean,
     supplier: boolean,
+    timesheet: boolean,
 
     paymentTerms?: string,
     iban?: string,

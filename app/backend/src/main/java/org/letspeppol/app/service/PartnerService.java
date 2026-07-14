@@ -55,6 +55,7 @@ public class PartnerService {
                 partnerDto.registeredOffice().street(),
                 partnerDto.registeredOffice().countryCode()
         );
+        partner.setTimesheet(partnerDto.timesheet());
         partner.setCompany(company);
         partner = partnerRepository.save(partner);
         partnerCreateCounter.increment();
@@ -69,6 +70,7 @@ public class PartnerService {
         partner.setPeppolId(partnerDto.peppolId());
         partner.setCustomer(partnerDto.customer());
         partner.setSupplier(partnerDto.supplier());
+        partner.setTimesheet(partnerDto.timesheet());
         partner.setPaymentTerms(partnerDto.paymentTerms());
         partner.setIban(partnerDto.iban());
         partner.setPaymentAccountName(partnerDto.paymentAccountName());

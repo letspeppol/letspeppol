@@ -8,6 +8,7 @@ public record PartnerDto(
     String peppolId,
     Boolean customer,
     Boolean supplier,
+    boolean timesheet,
 
     String paymentTerms,
     String iban,

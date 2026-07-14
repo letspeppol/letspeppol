@@ -1,0 +1,15 @@
+.timesheet-warning-message {
+    display: flex;
+    gap: var(--space-025);
+    align-items: flex-start;
+}
+
+.timesheet-warning-message svg {
+    flex: 0 0 auto;
+    color: var(--pill-error-fg);
+}
+
+.composer-info .timesheet-warning-message span {
+    color: var(--pill-error-fg);
+    line-height: 1.3;
+}

@@ -32,10 +32,13 @@ export class InvoiceContext {
     readOnly: boolean = false;
     partnerMissing: boolean = false;
     addPdfToSendingInvoice: boolean = false;
+    timesheetRequired: boolean = false;
+    private timesheetRequirementLookupGeneration = 0;
 
     clearSelectedInvoice() {
         this.selectedInvoice = undefined;
         this.selectedDocument = undefined;
+        this.setTimesheetRequirement(false);
     }
 
     setActiveBoxFromDocument(doc: DocumentDto) {
@@ -70,6 +73,7 @@ export class InvoiceContext {
             this.selectedDocumentType = DocumentType.INVOICE;
             this.selectedInvoice = parseInvoice(item.ubl);
         }
+        this.restoreTimesheetRequirement(item);
         if (this.readOnly) {
             this.partnerMissing = true;
             this.partnerService.searchPartners({peppolId: item.partnerPeppolId})
@@ -89,6 +93,8 @@ export class InvoiceContext {
     }
 
     newUBLDocument(documentType : DocumentType = DocumentType.INVOICE) {
+        this.selectedDocumentType = documentType;
+        this.setTimesheetRequirement(false);
         if (documentType === DocumentType.INVOICE) {
             this.selectedInvoice = this.invoiceComposer.createInvoice();
         } else {
@@ -151,6 +157,8 @@ export class InvoiceContext {
             name: party.PartyName?.Name,
             peppolId: `${party.EndpointID.__schemeID}:${party.EndpointID.value}`,
             customer: true,
+            supplier: false,
+            timesheet: false,
             registeredOffice: {
                 city: party?.PostalAddress?.CityName,
                 postalCode: party?.PostalAddress?.PostalZone,
@@ -158,6 +166,34 @@ export class InvoiceContext {
                 countryCode: party?.PostalAddress?.Country.IdentificationCode
             }
         } as PartnerDto;
+    }
+
+    public setTimesheetRequirement(required: boolean) {
+        this.timesheetRequirementLookupGeneration++;
+        this.timesheetRequired = required;
+    }
+
+    private restoreTimesheetRequirement(item: DocumentDto) {
+        const lookupGeneration = ++this.timesheetRequirementLookupGeneration;
+        this.timesheetRequired = false;
+        if (this.readOnly || item.direction !== DocumentDirection.OUTGOING || item.type !== DocumentType.INVOICE) {
+            return;
+        }
+
+        const documentId = item.id;
+        this.partnerService.searchPartners({peppolId: item.partnerPeppolId})
+            .then((partners) => {
+                if (this.timesheetRequirementLookupGeneration === lookupGeneration
+                    && this.selectedDocument?.id === documentId) {
+                    this.timesheetRequired = partners.some((partner) => partner.timesheet);
+                }
+            })
+            .catch(() => {
+                if (this.timesheetRequirementLookupGeneration === lookupGeneration
+                    && this.selectedDocument?.id === documentId) {
+                    this.timesheetRequired = false;
+                }
+            });
     }
 
     // Drafts
