@@ -453,6 +453,7 @@
       "payment-info" : "Betaalinformatie",
       "customer" : "Klant",
       "supplier" : "Leverancier",
+      "timesheet" : "Urenstaat",
       "account-name" : "Accountnaam",
       "payment-terms" : "Betalingsvoorwaarden",
       "iban" : "IBAN",
@@ -614,7 +615,8 @@
       "add-line" : "Lijn toevoegen",
       "note" : "Notitie",
       "recreate-positions" : "Lijnposities opnieuw aanmaken",
-      "attachments" : "Bijlagen"
+      "attachments" : "Bijlagen",
+      "timesheet-warning" : "Urenstaat ontbreekt"
     }
   },
   "account" : {

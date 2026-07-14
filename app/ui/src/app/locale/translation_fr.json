@@ -453,6 +453,7 @@
       "payment-info" : "Infos paiement",
       "customer" : "Client",
       "supplier" : "Fournisseur",
+      "timesheet" : "Feuille de temps",
       "account-name" : "Nom du compte",
       "payment-terms" : "Conditions de paiement",
       "iban" : "IBAN",
@@ -614,7 +615,8 @@
       "add-line" : "Ajouter ligne",
       "note" : "Note",
       "recreate-positions" : "Recréer les positions de lignes",
-      "attachments" : "Pièces jointes"
+      "attachments" : "Pièces jointes",
+      "timesheet-warning" : "La feuille de temps est manquante"
     }
   },
   "account" : {

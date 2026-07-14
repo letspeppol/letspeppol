@@ -454,6 +454,7 @@
       "payment-info": "Zahlungsinformationen",
       "customer": "Kunde",
       "supplier": "Lieferant",
+      "timesheet": "Stundenzettel",
       "account-name": "Kontoname",
       "payment-terms": "Zahlungsbedingungen",
       "iban": "IBAN",
@@ -616,7 +617,8 @@
       "add-line": "Zeile hinzufügen",
       "note": "Notiz",
       "recreate-positions": "Positionen neu erstellen",
-      "attachments": "Anhänge"
+      "attachments": "Anhänge",
+      "timesheet-warning": "Stundenzettel fehlt"
     }
   },
   "account": {
