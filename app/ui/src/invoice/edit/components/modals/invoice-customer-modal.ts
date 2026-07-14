@@ -26,8 +26,11 @@ export class InvoiceCustomerModal {
     peppolId: string;
     open = false;
     saveAsPartner = false;
+    pendingTimesheetRequired = false;
     customer: Party | undefined;
     customerSavedFunction: () => void;
+    private customerInfoLookupGeneration = 0;
+    private pendingTimesheetRequirementOverridden = false;
 
     vatChanged() {
         if (!this.customer) return;
@@ -41,6 +44,7 @@ export class InvoiceCustomerModal {
     }
 
     showModal(customerSavedFunction: () => void) {
+        this.invalidateCustomerInfoLookup();
         this.customer = structuredClone(this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party);
         if (this.customer && this.customer.EndpointID.__schemeID && this.customer.EndpointID.value) {
             this.peppolId = `${this.customer.EndpointID.__schemeID}:${this.customer.EndpointID.value}`;
@@ -48,6 +52,8 @@ export class InvoiceCustomerModal {
             this.peppolId = undefined;
         }
         this.saveAsPartner = false;
+        this.pendingTimesheetRequired = this.invoiceContext.timesheetRequired;
+        this.pendingTimesheetRequirementOverridden = false;
         this.open = true;
         this.customerSearch.resetSearch();
         this.customerSearch.focusInput();
@@ -55,8 +61,11 @@ export class InvoiceCustomerModal {
     }
 
     closeModal() {
+        this.invalidateCustomerInfoLookup();
         this.open = false;
         this.customer = undefined;
+        this.pendingTimesheetRequired = false;
+        this.pendingTimesheetRequirementOverridden = false;
         this.customerSearch.resetSearch();
     }
 
@@ -64,10 +73,14 @@ export class InvoiceCustomerModal {
         if (!this.canConfirm()) {
             return;
         }
+        this.invalidateCustomerInfoLookup();
         this.open = false;
         const previousPeppolId = this.toPeppolIdString(this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party?.EndpointID);
         const newPeppolId = this.toPeppolIdString(this.customer?.EndpointID);
         this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party = this.customer;
+        if (this.pendingTimesheetRequirementOverridden) {
+            this.invoiceContext.setTimesheetRequirement(this.pendingTimesheetRequired);
+        }
         if (previousPeppolId !== newPeppolId) {
             this.invoiceContext.selectedInvoice.BillingReference = undefined;
         }
@@ -84,6 +97,9 @@ export class InvoiceCustomerModal {
     }
 
     selectMatchFunction(name: string, participantID: string) {
+        this.invalidateCustomerInfoLookup();
+        this.pendingTimesheetRequired = false;
+        this.pendingTimesheetRequirementOverridden = true;
         this.peppolId = participantID;
         if (!this.customer.PartyName.Name) {
             this.customer.PartyName.Name = name;
@@ -116,6 +132,9 @@ export class InvoiceCustomerModal {
     }
 
     selectCustomer(c: PartnerDto) {
+        this.invalidateCustomerInfoLookup();
+        this.pendingTimesheetRequired = c.timesheet;
+        this.pendingTimesheetRequirementOverridden = true;
         this.peppolId = c.peppolId;
         let scheme = undefined;
         let identifier = undefined;
@@ -161,10 +180,14 @@ export class InvoiceCustomerModal {
     }
 
     peppolIdChanged() {
+        const lookupGeneration = this.invalidateCustomerInfoLookup();
+        this.pendingTimesheetRequired = false;
+        this.pendingTimesheetRequirementOverridden = true;
         if (this.peppolId && this.peppolId.length === 15 && this.peppolId.startsWith('0208:')) {
-            this.companySearchService.searchCompany({peppolId: this.peppolId}).then(companies => {
+            const requestedPeppolId = this.peppolId;
+            this.companySearchService.searchCompany({peppolId: requestedPeppolId}).then(companies => {
                 if (companies.length) {
-                    this.completeCustomerInfo(companies[0]);
+                    this.completeCustomerInfo(companies[0], lookupGeneration);
                     return;
                 }
             });
@@ -173,6 +196,7 @@ export class InvoiceCustomerModal {
     }
 
     vatNumberChanged() {
+        const lookupGeneration = this.invalidateCustomerInfoLookup();
         const {normalized, isValidShape} = normalizeVatNumber(this.customer?.PartyTaxScheme?.CompanyID?.value);
         this.customer.PartyTaxScheme.CompanyID.value = normalized;
 
@@ -180,13 +204,29 @@ export class InvoiceCustomerModal {
         if (isValidShape && normalized.length === 12) {
             this.companySearchService.searchCompany({vatNumber: normalized}).then(companies => {
                 if (companies.length) {
-                    this.completeCustomerInfo(companies[0]);
+                    this.completeCustomerInfo(companies[0], lookupGeneration);
                 }
             });
         }
     }
 
-    private completeCustomerInfo(kycCompanyResponse: KycCompanyResponse) {
+    private invalidateCustomerInfoLookup(): number {
+        return ++this.customerInfoLookupGeneration;
+    }
+
+    selectDirectoryCompany(kycCompanyResponse: KycCompanyResponse) {
+        const lookupGeneration = this.invalidateCustomerInfoLookup();
+        this.customer.PartyName.Name = kycCompanyResponse.name;
+        this.customer.PartyLegalEntity.RegistrationName = kycCompanyResponse.name;
+        this.completeCustomerInfo(kycCompanyResponse, lookupGeneration);
+    }
+
+    private completeCustomerInfo(kycCompanyResponse: KycCompanyResponse, lookupGeneration: number) {
+        if (this.customerInfoLookupGeneration !== lookupGeneration) {
+            return;
+        }
+        this.pendingTimesheetRequired = false;
+        this.pendingTimesheetRequirementOverridden = true;
         if (!this.customer.PartyTaxScheme.CompanyID) {
             this.customer.PartyTaxScheme.CompanyID = {value: undefined};
         }
