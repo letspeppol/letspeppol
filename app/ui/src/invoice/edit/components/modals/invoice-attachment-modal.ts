@@ -7,6 +7,17 @@ import moment from "moment";
 import {InvoiceComposer} from "../../../invoice-composer";
 import {I18N} from "@aurelia/i18n";
 
+export function isAttachmentReferenceValid(reference: AdditionalDocumentReference): boolean {
+    const hasId = !!reference.ID?.trim();
+    const hasEmbeddedFile = !!reference.Attachment?.EmbeddedDocumentBinaryObject?.value?.trim();
+    const hasExternalLink = !!reference.Attachment?.ExternalReference?.URI?.trim();
+    return hasId && (hasEmbeddedFile || hasExternalLink);
+}
+
+export function areAttachmentReferencesValid(references: AdditionalDocumentReference[]): boolean {
+    return references.every(isAttachmentReferenceValid);
+}
+
 export class InvoiceAttachmentModal {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
     private readonly invoiceComposer = resolve(InvoiceComposer);
@@ -35,7 +46,7 @@ export class InvoiceAttachmentModal {
 
     @watch((vm) => vm.additionalDocumentReference.length)
     validate() {
-        this.validated = !this.additionalDocumentReference.length || this.additionalDocumentReference.filter(item => !item.ID || (item.Attachment.ExternalReference && !item.Attachment.ExternalReference.URI)).length === 0;
+        this.validated = areAttachmentReferencesValid(this.additionalDocumentReference);
     }
 
     @watch((vm) => vm.additionalDocumentReference.length)
