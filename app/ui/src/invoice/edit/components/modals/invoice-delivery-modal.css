@@ -55,13 +55,25 @@
     line-height: 1.05;
     text-align: center;
     text-transform: uppercase;
-    -webkit-mask-image: url("grunge.png");
-    mask-image: url("grunge.png");
+    -webkit-mask-image: url("/grunge.png");
+    mask-image: url("/grunge.png");
     -webkit-mask-size: 128px 128px;
     mask-size: 128px 128px;
 }
 
-.delivery-stamp-access-point {
+.delivery-stamp-marks {
+    display: grid;
+    gap: var(--space-075);
+    justify-items: center;
+}
+
+.delivery-stamp-mark.error {
+    transform: rotate(-8deg);
+    color: var(--status-overdue);
+    border-color: var(--status-overdue);
+}
+
+.delivery-stamp-body {
     font-size: 2rem;
     overflow-wrap: anywhere;
 }
@@ -98,6 +110,10 @@
     }
 
     .delivery-stamp-mark {
+        width: 100%;
+    }
+
+    .delivery-stamp-marks {
         width: 100%;
     }
 

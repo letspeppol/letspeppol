@@ -13,8 +13,20 @@ export class InvoiceDeliveryModal {
         this.open = false;
     }
 
+    get hasPartnerPeppolAccessPoint(): boolean {
+        return this.details?.partnerPeppolAccessPoint != null;
+    }
+
+    get hasProcessedStatus(): boolean {
+        return this.details?.processedStatus != null;
+    }
+
     get partnerMessageOnLabel(): string {
         return this.formatDateTime(this.details?.partnerPeppolMessageOn);
+    }
+
+    get processedOnLabel(): string {
+        return this.formatDateTime(this.details?.processedOn);
     }
 
     private formatDateTime(value?: string): string {

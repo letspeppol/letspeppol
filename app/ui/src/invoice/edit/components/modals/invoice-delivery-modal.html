@@ -24,9 +24,15 @@
                     </div>
                 </div>
 
-                <div class="delivery-stamp-mark" aria-label="Delivery stamp" t="[aria-label]invoice.deliveryModal.stamp-label">
-                    <span class="delivery-stamp-access-point">${details.partnerPeppolAccessPoint || '/'}</span>
-                    <span class="delivery-stamp-date">${partnerMessageOnLabel}</span>
+                <div class="delivery-stamp-marks" if.bind="hasPartnerPeppolAccessPoint || hasProcessedStatus">
+                    <div class="delivery-stamp-mark" if.bind="hasPartnerPeppolAccessPoint" aria-label="Delivery stamp" t="[aria-label]invoice.deliveryModal.stamp-label">
+                        <span class="delivery-stamp-body">${details.partnerPeppolAccessPoint}</span>
+                        <span class="delivery-stamp-date">${partnerMessageOnLabel}</span>
+                    </div>
+                    <div class="delivery-stamp-mark error" if.bind="hasProcessedStatus" aria-label="Delivery error stamp" t="[aria-label]invoice.deliveryModal.error-stamp-label">
+                        <span class="delivery-stamp-body">${details.processedStatus}</span>
+                        <span class="delivery-stamp-date">${processedOnLabel}</span>
+                    </div>
                 </div>
 
                 <dl class="delivery-stamp-corners">
@@ -36,11 +42,11 @@
                     </div>
                     <div>
                         <dt t="invoice.deliveryModal.corner2-id">Corner 2 ID</dt>
-                        <dd>${details.accessPointId || '/'}</dd>
+                        <dd>${details.accessPointId || 'REJECTED'}</dd>
                     </div>
                     <div>
                         <dt t="invoice.deliveryModal.corner3-id">Corner 3 ID</dt>
-                        <dd>${details.partnerPeppolMessageId || '/'}</dd>
+                        <dd>${details.partnerPeppolMessageId || 'REJECTED'}</dd>
                     </div>
                 </dl>
             </section>

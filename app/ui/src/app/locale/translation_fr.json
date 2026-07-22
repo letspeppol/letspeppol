@@ -573,11 +573,12 @@
       "error-count" : "Nombre d'erreurs"
     },
     "deliveryModal" : {
-      "title" : "Cachet de livraison",
+      "title" : "Preuve de livraison",
       "from" : "de",
       "to" : "à",
       "invoice-number" : "Numéro de facture",
       "stamp-label" : "Cachet de livraison",
+      "error-stamp-label" : "Cachet d'erreur de livraison",
       "corner1-id" : "ID Corner 1",
       "corner2-id" : "ID Corner 2",
       "corner3-id" : "ID Corner 3"
@@ -600,7 +601,7 @@
     "edit" : {
       "download-ubl" : "UBL",
       "download-pdf" : "PDF",
-      "delivery" : "Livraison",
+      "delivery" : "Preuve de livraison",
       "loading" : "Chargement",
       "validate" : "Valider",
       "delete-draft" : "Supprimer brouillon",
