@@ -51,15 +51,14 @@ import java.util.Date;
 import java.util.regex.Pattern;
 import java.util.concurrent.ConcurrentHashMap;
 import java.security.KeyStore;
-import java.security.cert.CertPath;
+import java.security.cert.CertPathBuilder;
 import java.security.cert.CertPathValidator;
-import java.security.cert.CertificateFactory;
-import java.security.cert.PKIXParameters;
+import java.security.cert.PKIXBuilderParameters;
 import java.security.cert.PKIXRevocationChecker;
 import java.security.cert.TrustAnchor;
 import java.security.cert.CertStore;
 import java.security.cert.CollectionCertStoreParameters;
-import java.util.Arrays;
+import java.security.cert.X509CertSelector;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
@@ -106,10 +105,47 @@ public class SigningService {
     @Value("${webeid.check-revocation:false}")
     private boolean checkRevocation;
 
+    private KeyStore trustedCaKeyStore;
+
     @PostConstruct
     public void init() throws IOException {
         workingDirectory = initDirectory( "/temp");
         contractDirectory = initDirectory( "/contracts");
+        loadTrustedCaKeyStore();
+    }
+
+    /**
+     * Load the optional eID truststore once at startup. A configured store must be readable, be a
+     * JKS, and contain at least one self-signed X.509 root; otherwise KYC must not start with a
+     * silently disabled or ineffective trust policy.
+     */
+    private void loadTrustedCaKeyStore() {
+        if (trustedCaTruststore == null || trustedCaTruststore.isBlank()) {
+            return;
+        }
+        try (InputStream in = new FileInputStream(trustedCaTruststore)) {
+            // This setting deliberately accepts a JKS file. Do not use the JVM default here: since
+            // Java 9 that default is usually PKCS12, which makes the configured file format implicit.
+            KeyStore keyStore = KeyStore.getInstance("JKS");
+            keyStore.load(in, trustedCaTruststorePassword == null ? null : trustedCaTruststorePassword.toCharArray());
+
+            boolean containsRoot = false;
+            Enumeration<String> aliases = keyStore.aliases();
+            while (aliases.hasMoreElements()) {
+                java.security.cert.Certificate certificate = keyStore.getCertificate(aliases.nextElement());
+                if (certificate instanceof X509Certificate x509Certificate && isSelfSigned(x509Certificate)) {
+                    containsRoot = true;
+                    break;
+                }
+            }
+            if (!containsRoot) {
+                throw new IllegalStateException("contains no self-signed X.509 trust root");
+            }
+            trustedCaKeyStore = keyStore;
+            log.info("Loaded Web-eID truststore {} with {} entries", trustedCaTruststore, keyStore.size());
+        } catch (Exception e) {
+            throw new IllegalStateException("Cannot load configured Web-eID truststore '" + trustedCaTruststore + "'", e);
+        }
     }
 
     private String initDirectory(String dir) throws IOException {
@@ -420,9 +456,11 @@ public class SigningService {
             return;
         }
         try {
-            KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-            try (InputStream in = new FileInputStream(trustedCaTruststore)) {
-                ks.load(in, trustedCaTruststorePassword == null ? null : trustedCaTruststorePassword.toCharArray());
+            // A configured store is loaded and structurally checked during startup, so this path
+            // cannot silently fall back to an empty/unreadable store during signature validation.
+            KeyStore ks = trustedCaKeyStore;
+            if (ks == null) {
+                throw new IllegalStateException("Configured Web-eID truststore was not initialized");
             }
             Set<TrustAnchor> anchors = new HashSet<>();
             java.util.List<java.security.cert.Certificate> caCerts = new java.util.ArrayList<>();
@@ -430,15 +468,21 @@ public class SigningService {
             while (aliases.hasMoreElements()) {
                 java.security.cert.Certificate c = ks.getCertificate(aliases.nextElement());
                 if (c instanceof X509Certificate xc) {
-                    anchors.add(new TrustAnchor(xc, null));
-                    caCerts.add(xc);
+                    if (isSelfSigned(xc)) {
+                        anchors.add(new TrustAnchor(xc, null));
+                    } else {
+                        // An issuing CA helps construct the path, but is not itself a trust anchor.
+                        // Otherwise a compromised/intermediate CA would be accepted without proving
+                        // its chain to one of the configured Belgian eID roots.
+                        caCerts.add(xc);
+                    }
                 }
             }
-            CertPath certPath = CertificateFactory.getInstance("X.509").generateCertPath(Arrays.asList(chain));
-            PKIXParameters params = new PKIXParameters(anchors);
-            // Supply the truststore CA certs (roots + intermediates) as a CertStore so PKIX can build the
-            // path even though getCertificateChain() returns only the end-entity cert (the JDK does not
-            // AIA-chase missing intermediates). Operators must load the issuing CA(s), not only the root.
+            X509CertSelector target = new X509CertSelector();
+            target.setCertificate(chain[0]);
+            PKIXBuilderParameters params = new PKIXBuilderParameters(anchors, target);
+            // Web-eID supplies only the end-entity certificate. Build its path from the issuing
+            // CAs in the truststore; the JDK does not AIA-chase missing intermediates by default.
             params.addCertStore(CertStore.getInstance("Collection", new CollectionCertStoreParameters(caCerts)));
             if (checkRevocation) {
                 // Opt-in OCSP/CRL revocation checking (needs network access + the certs' AIA/CDP entries).
@@ -447,12 +491,24 @@ public class SigningService {
             } else {
                 params.setRevocationEnabled(false);
             }
-            CertPathValidator.getInstance("PKIX").validate(certPath, params);
+            CertPathBuilder.getInstance("PKIX").build(params);
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
             log.error("eID certificate chain is NOT trusted: {}", e.getMessage());
             throw new RuntimeException("eID certificate chain is not trusted", e);
+        }
+    }
+
+    private static boolean isSelfSigned(X509Certificate certificate) {
+        if (!certificate.getSubjectX500Principal().equals(certificate.getIssuerX500Principal())) {
+            return false;
+        }
+        try {
+            certificate.verify(certificate.getPublicKey());
+            return true;
+        } catch (Exception ignored) {
+            return false;
         }
     }
 }

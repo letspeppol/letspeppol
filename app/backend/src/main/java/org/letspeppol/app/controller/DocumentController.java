@@ -34,7 +34,7 @@ import java.util.UUID;
 public class DocumentController {
 
     private static final int MAX_PAGE_SIZE = 100;
-    private static final int MAX_UBL_BYTES = 5 * 1024 * 1024; // 5 MB
+    private static final int MAX_UBL_BYTES = 10 * 1024 * 1024; // 10 MB
 
     private final DocumentService documentService;
     private final ValidationService validationService;
