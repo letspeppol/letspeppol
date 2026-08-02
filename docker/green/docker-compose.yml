@@ -167,6 +167,12 @@ services:
       - "traefik.http.routers.green-sapi.service=nginx"
       - "traefik.http.routers.green-sapi.tls.certresolver=${CERT_RESOLVER_GREEN}"
 
+      # Local API router
+      - "traefik.http.routers.green-lapi.rule=Host(`localhost`) && (PathPrefix(`/proxy/lapi/`) || PathPrefix(`/app/lapi/`) || PathPrefix(`/kyc/lapi/`))"
+      - "traefik.http.routers.green-lapi.entrypoints=internal"
+      - "traefik.http.routers.green-lapi.middlewares=api-limit"
+      - "traefik.http.routers.green-lapi.service=nginx"
+
       # Service definition
       - "traefik.http.services.nginx.loadbalancer.server.port=80"
 
