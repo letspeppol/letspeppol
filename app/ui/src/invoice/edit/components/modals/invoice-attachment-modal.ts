@@ -1,6 +1,6 @@
 import {bindable, IEventAggregator, watch} from "aurelia";
 import {onModalEnter} from "../../../../components/util/modal-keyboard";
-import {AdditionalDocumentReference} from "../../../../services/peppol/ubl";
+import {AdditionalDocumentReference, EmbeddedDocumentBinaryObject} from "../../../../services/peppol/ubl";
 import {resolve} from "@aurelia/kernel";
 import {AlertType} from "../../../../components/alert/alert";
 import moment from "moment";
@@ -8,6 +8,15 @@ import {InvoiceComposer} from "../../../invoice-composer";
 import {I18N} from "@aurelia/i18n";
 
 export class InvoiceAttachmentModal {
+    private static readonly attachmentIconByMimeCode: Record<string, string> = {
+        'text/csv': 'csv.png',
+        'application/pdf': 'pdf.png',
+        'image/png': 'png.png',
+        'image/jpeg': 'jpg.png',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xls.png',
+        'application/vnd.oasis.opendocument.spreadsheet': 'ods.png'
+    };
+
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
     private readonly invoiceComposer = resolve(InvoiceComposer);
     private readonly i18n = resolve(I18N);
@@ -69,6 +78,37 @@ export class InvoiceAttachmentModal {
 
     deleteAttachment(additionalDocumentReference: AdditionalDocumentReference) {
         this.additionalDocumentReference.splice(this.additionalDocumentReference.indexOf(additionalDocumentReference), 1);
+    }
+
+    getAttachmentIconSrc(embeddedDocumentBinaryObject: EmbeddedDocumentBinaryObject): string {
+        return InvoiceAttachmentModal.attachmentIconByMimeCode[embeddedDocumentBinaryObject.__mimeCode] ?? 'file.svg';
+    }
+
+    getAttachmentIconAlt(embeddedDocumentBinaryObject: EmbeddedDocumentBinaryObject): string {
+        return embeddedDocumentBinaryObject.__mimeCode ? `${embeddedDocumentBinaryObject.__mimeCode} attachment` : 'Attachment';
+    }
+
+    getAttachmentFilenameStem(filename?: string): string {
+        const extensionStart = this.getAttachmentFilenameExtensionStart(filename);
+        return extensionStart === -1 ? filename ?? '' : filename.slice(0, extensionStart);
+    }
+
+    getAttachmentFilenameExtension(filename?: string): string {
+        const extensionStart = this.getAttachmentFilenameExtensionStart(filename);
+        return extensionStart === -1 ? '' : filename.slice(extensionStart);
+    }
+
+    private getAttachmentFilenameExtensionStart(filename?: string): number {
+        if (!filename) {
+            return -1;
+        }
+
+        const lastDotIndex = filename.lastIndexOf('.');
+        if (lastDotIndex <= 0 || lastDotIndex === filename.length - 1) {
+            return -1;
+        }
+
+        return lastDotIndex;
     }
 
     dragOver(event) {
