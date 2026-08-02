@@ -216,12 +216,6 @@
     "label": "Neu",
     "click-to-dismiss": "Hinweis bestätigen"
   },
-  "dashboard": {
-    "vat-suffix": {
-      "incl": "inkl. MwSt.",
-      "excl": "exkl. MwSt."
-    }
-  },
   "donations": {
     "sponsors": "Stufensponsoren",
     "sponsors-title": "Bronze-, Silber- und Gold-Sponsoren zusammen",

@@ -552,9 +552,6 @@
       "resend": {
         "INVOICE": "Factuur hergebruiken en opnieuw verzenden",
         "CREDIT_NOTE": "Creditnota hergebruiken en opnieuw verzenden"
-      "mark-unpaid": {
-        "INVOICE": "Factuur markeren als niet betaald",
-        "CREDIT_NOTE": "Creditnota markeren als niet betaald"
       }
     },
     "table": {
