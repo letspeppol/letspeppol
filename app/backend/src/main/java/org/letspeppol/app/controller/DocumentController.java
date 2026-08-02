@@ -1,5 +1,6 @@
 package org.letspeppol.app.controller;
 import lombok.RequiredArgsConstructor;
+import org.letspeppol.app.dto.DocumentDetailsDto;
 import org.letspeppol.app.dto.DocumentDto;
 import org.letspeppol.app.dto.DocumentFilter;
 import org.letspeppol.app.dto.PageResponse;
@@ -79,6 +80,12 @@ public class DocumentController {
     public DocumentDto getById(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
         String peppolId = JwtUtil.getPeppolId(jwt);
         return documentService.findById(peppolId, id);
+    }
+
+    @GetMapping("{id}/details")
+    public DocumentDetailsDto getDetails(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
+        String peppolId = JwtUtil.getPeppolId(jwt);
+        return documentService.findDetailsById(peppolId, id, jwt.getTokenValue());
     }
 
     @PostMapping()

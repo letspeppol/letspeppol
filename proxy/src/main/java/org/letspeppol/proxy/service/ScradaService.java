@@ -1,5 +1,6 @@
 package org.letspeppol.proxy.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.core.instrument.Counter;
@@ -191,13 +192,8 @@ public class ScradaService implements AccessPointServiceInterface {
     public StatusReport getStatus(UblDocument ublDocument) {
         System.out.print("?");
         try {
-            OutboundDocument outboundDocument = scradaWebClient
-                    .get()
-                    .uri("/outbound/document/{documentID}/info", ublDocument.getAccessPointId())
-                    .retrieve()
-                    .bodyToMono(OutboundDocument.class)
-                    .blockOptional()
-                    .orElseThrow(() -> new IllegalStateException("Empty response from Scrada get unconfirmed inbound documents"));
+            OutboundDocument outboundDocument = getOutboundDocumentInfo(ublDocument);
+            ublDocument.setAccessPointDetails(toMap(outboundDocument));
             return switch (outboundDocument.status()) {
                 case "Created" -> null;
                 case "Processed" -> new StatusReport(true, null);
@@ -215,6 +211,36 @@ public class ScradaService implements AccessPointServiceInterface {
             log.error("Scrada outbound status API call error {}", e.toString(), e);
             throw new RuntimeException("Failed to call Scrada API", e);
         }
+    }
+
+    @Override
+    public Map<String, Object> getDeliveryDetails(UblDocument ublDocument) {
+        try {
+            OutboundDocument outboundDocument = getOutboundDocumentInfo(ublDocument);
+            Map<String, Object> details = toMap(outboundDocument);
+            ublDocument.setAccessPointDetails(details);
+            return details;
+        } catch (WebClientResponseException e) { // HTTP error (non-2xx)
+            log.error("Scrada outbound details API error {} {}: {}", e.getRawStatusCode(), e.getStatusText(), e.getResponseBodyAsString(), e);
+            throw new RuntimeException("Scrada API error: " + e.getStatusCode(), e);
+        } catch (Exception e) { // timeouts, connection issues, deserialization errors, etc.
+            log.error("Scrada outbound details API call error {}", e.toString(), e);
+            throw new RuntimeException("Failed to call Scrada API", e);
+        }
+    }
+
+    private OutboundDocument getOutboundDocumentInfo(UblDocument ublDocument) {
+        return scradaWebClient
+                .get()
+                .uri("/outbound/document/{documentID}/info", ublDocument.getAccessPointId())
+                .retrieve()
+                .bodyToMono(OutboundDocument.class)
+                .blockOptional()
+                .orElseThrow(() -> new IllegalStateException("Empty response from Scrada get outbound document info"));
+    }
+
+    private Map<String, Object> toMap(OutboundDocument outboundDocument) {
+        return objectMapper.convertValue(outboundDocument, new TypeReference<>() {});
     }
 
     @Override

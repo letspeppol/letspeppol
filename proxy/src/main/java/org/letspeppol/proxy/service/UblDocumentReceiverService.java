@@ -73,7 +73,8 @@ public class UblDocumentReceiverService {
                 0,
                 null,
                 accessPoint,
-                accessPointId //Unique
+                accessPointId, //Unique
+                null
         );
         ublDocument = ublDocumentRepository.save(ublDocument); //This is needed as it is a new
         try {

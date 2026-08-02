@@ -18,6 +18,10 @@ public interface AccessPointServiceInterface {
 
     StatusReport getStatus(UblDocument ublDocument);
 
+    default Map<String, Object> getDeliveryDetails(UblDocument ublDocument) {
+        return Map.of();
+    }
+
     void updateStatus(String id, String status); //For webhooks
 
     void receiveDocument(UblDocument ublDocument); //For webhooks

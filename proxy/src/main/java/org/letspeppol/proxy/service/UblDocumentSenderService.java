@@ -62,6 +62,7 @@ public class UblDocumentSenderService {
                 noArchive?-1:0,
                 null,
                 null,
+                null,
                 null
         );
         ublDocument = ublDocumentRepository.save(ublDocument); //This is needed as it is a new
