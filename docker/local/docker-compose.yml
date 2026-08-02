@@ -125,6 +125,8 @@ services:
       KBO_SFTP_DELTA_DIR: ${KBO_SFTP_DELTA_DIR}
       KBO_SFTP_DELTA_CRON: ${KBO_SFTP_DELTA_CRON}
       CONTRACT_DATA_DIR: /opt/data/kyc
+      WEBEID_TRUSTED_CA_TRUSTSTORE: /kyc/truststore/belgian-eid.jks
+      WEBEID_TRUSTED_CA_TRUSTSTORE_PASSWORD: changeit
     volumes:
       - ./opt/data/kyc:/opt/data/kyc
     networks:
