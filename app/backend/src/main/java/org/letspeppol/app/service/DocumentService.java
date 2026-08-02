@@ -142,6 +142,9 @@ public class DocumentService {
              }
         }
         if (!draft) {
+            // The UI's generated_invoice marker is the source of truth: addRenderedPdfToUbl only
+            // renders a PDF when that marker is present, so the per-invoice toggle wins. The
+            // company addPdfToSendingInvoice flag only controls the toggle's default in the UI.
             ublXml = ublInvoicePdfService.addRenderedPdfToUbl(ublXml, ublDto.invoiceReference());
         }
         Document document = new Document(
