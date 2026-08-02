@@ -20,6 +20,7 @@ public record DocumentDto(
         Instant draftedOn,
         Instant readOn,
         Instant paidOn,
+        Instant errorSeenOn,
         String partnerName,
         String invoiceReference,
         DocumentType type,

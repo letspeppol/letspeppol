@@ -6,6 +6,7 @@ import {AppApi} from "./app-api";
 import {PartnerService} from "./partner-service";
 import {SponsorService} from "./sponsor-service";
 import {StatisticsService} from "./statistics-service";
+import {SEEN_NOTIFICATION_KEY} from "./welcome-notification-service";
 
 @singleton()
 export class LoginService {
@@ -45,6 +46,7 @@ export class LoginService {
 
     async auth(username: string, password: string) : Promise<void> {
         this.clearCachedData();
+        this.clearSeenNotificationFlag();
         const token = await this.getJwtToken(username, password);
         localStorage.setItem('token', token);
         this.setAuthHeader(token);
@@ -53,6 +55,7 @@ export class LoginService {
 
     updateToken(token: string) {
         this.clearCachedData();
+        this.clearSeenNotificationFlag();
         localStorage.setItem('token', token);
         this.setAuthHeader(token);
         this.verifyAuthenticated();
@@ -77,6 +80,7 @@ export class LoginService {
         this.appApi.httpClient.configure(config => config.withDefaults({ headers: {'Authorization': ''} }));
         localStorage.removeItem('token');
         localStorage.removeItem('peppolActive');
+        this.clearSeenNotificationFlag();
         this.authenticated = false;
     }
 
@@ -84,6 +88,10 @@ export class LoginService {
         this.partnerService.clearCache();
         this.sponsorService.clearCache();
         this.statisticsService.clearCache();
+    }
+
+    private clearSeenNotificationFlag() {
+        localStorage.removeItem(SEEN_NOTIFICATION_KEY);
     }
 
     private toBase64Utf8(value: string) {

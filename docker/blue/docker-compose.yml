@@ -161,11 +161,17 @@ services:
       - "traefik.http.routers.blue-api.tls.certresolver=${CERT_RESOLVER_BLUE}"
 
       # Protected API router
-      - "traefik.http.routers.blue-api.rule=Host(`${ACTIVE_DOMAIN_BLUE}`) && (PathPrefix(`/proxy/sapi/`) || PathPrefix(`/app/sapi/`) || PathPrefix(`/kyc/sapi/`))"
-      - "traefik.http.routers.blue-api.entryPoints=websecure"
-      - "traefik.http.routers.blue-api.middlewares=jwt-auth,api-limit"
-      - "traefik.http.routers.blue-api.service=nginx"
-      - "traefik.http.routers.blue-api.tls.certresolver=${CERT_RESOLVER_BLUE}"
+      - "traefik.http.routers.blue-sapi.rule=Host(`${ACTIVE_DOMAIN_BLUE}`) && (PathPrefix(`/proxy/sapi/`) || PathPrefix(`/app/sapi/`) || PathPrefix(`/kyc/sapi/`))"
+      - "traefik.http.routers.blue-sapi.entryPoints=websecure"
+      - "traefik.http.routers.blue-sapi.middlewares=jwt-auth,api-limit"
+      - "traefik.http.routers.blue-sapi.service=nginx"
+      - "traefik.http.routers.blue-sapi.tls.certresolver=${CERT_RESOLVER_BLUE}"
+
+      # Local API router
+      - "traefik.http.routers.blue-lapi.rule=Host(`localhost`) && (PathPrefix(`/proxy/lapi/`) || PathPrefix(`/app/lapi/`) || PathPrefix(`/kyc/lapi/`))"
+      - "traefik.http.routers.blue-lapi.entrypoints=internal"
+      - "traefik.http.routers.blue-lapi.middlewares=api-limit"
+      - "traefik.http.routers.blue-lapi.service=nginx"
 
       # Service definition
       - "traefik.http.services.nginx.loadbalancer.server.port=80"

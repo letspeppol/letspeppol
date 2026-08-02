@@ -1,6 +1,6 @@
 package org.letspeppol.app.controller;
-
 import lombok.RequiredArgsConstructor;
+import org.letspeppol.app.dto.DocumentDetailsDto;
 import org.letspeppol.app.dto.DocumentDto;
 import org.letspeppol.app.dto.DocumentFilter;
 import org.letspeppol.app.dto.PageResponse;
@@ -82,6 +82,12 @@ public class DocumentController {
         return documentService.findById(peppolId, id);
     }
 
+    @GetMapping("{id}/details")
+    public DocumentDetailsDto getDetails(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
+        String peppolId = JwtUtil.getPeppolId(jwt);
+        return documentService.findDetailsById(peppolId, id, jwt.getTokenValue());
+    }
+
     @PostMapping()
     public DocumentDto create(@AuthenticationPrincipal Jwt jwt,
                               @RequestBody String ublXml,
@@ -136,6 +142,12 @@ public class DocumentController {
     public DocumentDto paid(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
         String peppolId = JwtUtil.getPeppolId(jwt);
         return documentService.paid(peppolId, id);
+    }
+
+    @PutMapping("{id}/error-seen")
+    public DocumentDto markErrorSeen(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
+        String peppolId = JwtUtil.getPeppolId(jwt);
+        return documentService.markErrorSeen(peppolId, id);
     }
 
     @DeleteMapping("{id}")

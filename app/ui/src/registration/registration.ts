@@ -9,15 +9,15 @@ export class Registration {
     private readonly router = resolve(IRouter);
     step = 0;
     email: string | undefined;
-    vatNumber : string | undefined;
+    enterpriseNumber : string | undefined;
     company : KycCompanyResponse | undefined;
     errorCode: string | undefined;
 
-    async checkVatNumber() {
+    async checkEnterpriseNumber() {
         this.errorCode = undefined;
         try {
             this.ea.publish('showOverlay', "Searching company");
-            const digits = (this.vatNumber ?? '').replace(/\D/g, '');
+            const digits = (this.enterpriseNumber ?? '').replace(/\D/g, '');
             const companyNumber = digits.slice(-10).padStart(10, '0');
             const peppolId = `0208:${companyNumber}`;
             this.company = await this.registrationService.getCompany(peppolId);
@@ -31,7 +31,7 @@ export class Registration {
 
     restart(e) {
         this.errorCode = undefined;
-        this.vatNumber = undefined;
+        this.enterpriseNumber = undefined;
         this.company = undefined;
         this.step = 0;
         e.preventDefault();

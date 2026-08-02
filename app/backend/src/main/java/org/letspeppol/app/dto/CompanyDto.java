@@ -1,7 +1,11 @@
 package org.letspeppol.app.dto;
 
+import org.letspeppol.app.model.NotificationGroup;
+import org.letspeppol.app.model.VatRuleset;
+
 public record CompanyDto(
         String peppolId,
+        String identifier,
         String vatNumber,
         String name,
         String displayName,
@@ -11,6 +15,7 @@ public record CompanyDto(
         String iban,
         String bic,
         String paymentAccountName,
+        VatRuleset vatRuleset,
         String lastInvoiceReference,
         String lastCreditNoteReference,
         // TODO boolean noArchive,
@@ -19,6 +24,7 @@ public record CompanyDto(
         boolean addAttachmentToNotification,
         boolean addPdfToSendingInvoice,
         String emailNotificationCCList,
+        NotificationGroup companyGroup,
         AddressDto registeredOffice
 )
 {}

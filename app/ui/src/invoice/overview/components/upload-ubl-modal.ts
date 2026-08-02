@@ -2,7 +2,7 @@ import {resolve} from "@aurelia/kernel";
 import {DocumentType, InvoiceService, ValidationResultDto} from "../../../services/app/invoice-service";
 import {AlertType} from "../../../components/alert/alert";
 import {IEventAggregator} from "aurelia";
-import {toErrorResponse} from "../../../app/util/error-response-handler";
+import {toErrorResponse, toLocalizedErrorMessage} from "../../../app/util/error-response-handler";
 import {InvoiceContext} from "../../invoice-context";
 import {I18N} from "@aurelia/i18n";
 
@@ -88,13 +88,11 @@ export class UploadUblModal {
         } catch (e: unknown) {
             const type = this.invoiceContext.selectedDocumentType;
             const errorResponse = await toErrorResponse(e);
-            if (errorResponse?.errorCode === 'INVOICE_NUMBER_ALREADY_USED') {
-                this.ea.publish('alert', { alertType: AlertType.Danger, text: this.i18n.tr(`alert.invoice.number-used.${type}`) });
-            } else if (errorResponse?.message) {
-                this.ea.publish('alert', { alertType: AlertType.Danger, text: errorResponse.message });
-            } else {
-                this.ea.publish('alert', { alertType: AlertType.Danger, text: this.i18n.tr(`alert.invoice.send-failed.${type}`)});
-            }
+            const fallback = this.i18n.tr(`alert.invoice.send-failed.${type}`);
+            const text = toLocalizedErrorMessage(errorResponse, this.i18n, fallback, {
+                INVOICE_NUMBER_ALREADY_USED: `alert.invoice.number-used.${type}`
+            });
+            this.ea.publish('alert', { alertType: AlertType.Danger, text });
         } finally {
             this.ea.publish('hideOverlay');
         }

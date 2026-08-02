@@ -163,7 +163,8 @@ public class UblDocumentSchedulerService {
                 0,
                 null,
                 AccessPoint.LOOPBACK,
-                ublDocument.getId().toString()
+                ublDocument.getId().toString(),
+                null
         );
         loopbackUblDocument = ublDocumentRepository.save(loopbackUblDocument);
         try {

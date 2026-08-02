@@ -15,8 +15,9 @@ import {resolve} from "@aurelia/kernel";
 import {CompanyService} from "../services/app/company-service";
 import {DocumentType} from "../services/app/invoice-service";
 import {I18N} from "@aurelia/i18n";
+import {createNotSubjectToVatCategory, createVatExemptCategory, isVatExemptRuleset} from "../services/app/vat-rules";
 
-const GENERATED_INVOICE = 'generated_invoice';
+export const GENERATED_INVOICE = 'generated_invoice';
 
 @singleton()
 export class InvoiceComposer {
@@ -209,6 +210,10 @@ export class InvoiceComposer {
         return this.companyService.myCompany.vatNumber;
     }
 
+    hasNoVatNumber(): boolean {
+        return !this.companyService.myCompany?.vatNumber?.trim();
+    }
+
     getAccountingSupplierParty(): AccountingParty {
         return {
             Party :  {
@@ -240,6 +245,7 @@ export class InvoiceComposer {
                 },
                 PartyLegalEntity: {
                     RegistrationName: this.companyService.myCompany.name,
+                    CompanyID: {value: this.companyService.myCompany.identifier}
                 }
             }
         } as AccountingParty;
@@ -268,6 +274,9 @@ export class InvoiceComposer {
     }
 
     private getLine(): UBLBaseLine {
+        const vatRuleset = this.companyService.myCompany.vatRuleset;
+        const isExempt = isVatExemptRuleset(vatRuleset);
+        const hasNoVatNumber = this.hasNoVatNumber();
         return {
             LineExtensionAmount: {
                 __currencyID: "EUR",
@@ -276,13 +285,17 @@ export class InvoiceComposer {
             Item: {
                 Description: undefined,
                 Name: undefined,
-                ClassifiedTaxCategory: {
-                    ID: "S",
-                    Percent: 21,
-                    TaxScheme: {
-                        ID: 'VAT'
+                ClassifiedTaxCategory: hasNoVatNumber
+                    ? createNotSubjectToVatCategory()
+                    : isExempt
+                    ? createVatExemptCategory()
+                    : {
+                        ID: "S",
+                        Percent: 21,
+                        TaxScheme: {
+                            ID: 'VAT'
+                        }
                     }
-                }
             },
             Price: {
                 PriceAmount: {
@@ -329,6 +342,7 @@ export class InvoiceComposer {
             BuyerReference: invoice.BuyerReference,
             OrderReference: invoice.OrderReference,
             BillingReference: billingReference,
+            AdditionalDocumentReference: invoice.AdditionalDocumentReference,
             AccountingSupplierParty: invoice.AccountingSupplierParty,
             AccountingCustomerParty: invoice.AccountingCustomerParty,
             PaymentMeans: invoice.PaymentMeans,
@@ -357,6 +371,7 @@ export class InvoiceComposer {
             DocumentCurrencyCode: "EUR",
             BuyerReference: creditNote.BuyerReference,
             OrderReference: creditNote.OrderReference,
+            AdditionalDocumentReference: creditNote.AdditionalDocumentReference,
             AccountingSupplierParty: creditNote.AccountingSupplierParty,
             AccountingCustomerParty: creditNote.AccountingCustomerParty,
             PaymentMeans: creditNote.PaymentMeans,
@@ -373,8 +388,8 @@ export class InvoiceComposer {
         } as Invoice;
     }
 
-    public getAdditionalDocumentReference() {
-        return [{
+    public getGeneratedInvoiceDocumentReference(): AdditionalDocumentReference {
+        return {
             ID: GENERATED_INVOICE,
             DocumentDescription: 'Generated Invoice PDF',
             Attachment: {
@@ -384,6 +399,13 @@ export class InvoiceComposer {
                     value: 'ZW1wdHk='
                 }
             }
-        } as AdditionalDocumentReference];
+        } as AdditionalDocumentReference;
+    }
+
+    public getAdditionalDocumentReference() {
+        // New documents include the generated-PDF marker by default. The attachment
+        // modal can still remove it per invoice before saving or sending.
+        return [this.getGeneratedInvoiceDocumentReference()];
     }
 }
+
