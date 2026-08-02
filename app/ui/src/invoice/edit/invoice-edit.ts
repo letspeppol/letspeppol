@@ -369,7 +369,7 @@ export class InvoiceEdit {
             && inv.AccountingCustomerParty.Party.PartyName.Name
             && inv.LegalMonetaryTotal.LineExtensionAmount.value > 0
             && this.hasRequiredDeliveryDetails()
-            && this.paymentInfo.isPaymentInfoComplete;
+            && this.paymentInfo?.isPaymentInfoComplete;
     }
 
 }
