@@ -28,6 +28,7 @@ public class CompanyMapper {
                 company.isAddAttachmentToNotification(),
                 company.isAddPdfToSendingInvoice(),
                 company.getEmailNotificationCcList(),
+                company.getCompanyGroup(),
                 AddressMapper.toDto(company.getRegisteredOffice())
         );
     }

@@ -1,5 +1,6 @@
 package org.letspeppol.app.dto;
 
+import org.letspeppol.app.model.NotificationGroup;
 import org.letspeppol.app.model.VatRuleset;
 
 public record CompanyDto(
@@ -22,6 +23,7 @@ public record CompanyDto(
         boolean addAttachmentToNotification,
         boolean addPdfToSendingInvoice,
         String emailNotificationCCList,
+        NotificationGroup companyGroup,
         AddressDto registeredOffice
 )
 {}
