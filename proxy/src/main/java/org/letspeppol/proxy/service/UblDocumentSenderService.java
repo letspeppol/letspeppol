@@ -72,7 +72,9 @@ public class UblDocumentSenderService {
 
     public UblDocumentDto update(UUID id, UblDocumentDto ublDocumentDto, boolean noArchive) {
         String hash = HashUtil.sha256(ublDocumentDto.ubl());
-        UblDocument ublDocument = ublDocumentRepository.findById(id).orElseThrow(() -> new NotFoundException("UblDocument " + id + " does not exist"));
+        // Scope by ownerPeppolId (already validated against the JWT in validateSender) so a caller
+        // cannot overwrite a document belonging to another tenant by guessing its id.
+        UblDocument ublDocument = ublDocumentRepository.findByIdAndOwnerPeppolId(id, ublDocumentDto.ownerPeppolId()).orElseThrow(() -> new NotFoundException("UblDocument " + id + " does not exist"));
         ublDocument.setOwnerPeppolId(ublDocumentDto.ownerPeppolId());
         ublDocument.setPartnerPeppolId(ublDocumentDto.partnerPeppolId());
         ublDocument.setScheduledOn(calculateSchedule(ublDocumentDto));

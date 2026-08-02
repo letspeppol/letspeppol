@@ -78,8 +78,7 @@ export class ProductOverview {
             await this.productService.deleteProduct(product.id)
             this.productContext.deleteProduct(product);
             this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.product.deleted')});
-        } catch (e) {
-            console.log(e);
+        } catch {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.product.delete-failed')});
         }
         return false;

@@ -30,8 +30,7 @@ export class PartnerEdit {
             }
             this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(successKey)});
             this.partnerContext.selectedPartner = undefined;
-        } catch(e) {
-            console.error(e);
+        } catch {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.partner.update-failed')});
         }
     }

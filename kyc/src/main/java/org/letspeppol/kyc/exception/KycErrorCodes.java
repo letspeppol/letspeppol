@@ -45,6 +45,7 @@ public final class KycErrorCodes {
     // Auth
     public static final String AUTHENTCATION_FAILED = "auth_failed";
     public static final String NOT_ADMIN = "not_admin";
+    public static final String TOO_MANY_REQUESTS = "too_many_requests";
 
     private KycErrorCodes() {}
 }

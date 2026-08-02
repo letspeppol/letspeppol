@@ -29,7 +29,7 @@ services:
       retries: 12
       start_period: 10s
     ports:
-      - "${DB_PORT:-5432}:5432"
+      - "127.0.0.1:${DB_PORT:-5432}:5432"
 
   proxy:
     build:
@@ -87,7 +87,6 @@ services:
       OPEN_COLLECTIVE_URL: ${OPEN_COLLECTIVE_URL}
       OPEN_COLLECTIVE_API_KEY: ${OPEN_COLLECTIVE_API_KEY}
       DOCUMENT_PRICE: ${DOCUMENT_PRICE}
-      BACKUP_DATA_DIR: /opt/data/app
     volumes:
       - ./opt/data/app:/opt/data/app
 
@@ -125,6 +124,8 @@ services:
       KBO_SFTP_DELTA_DIR: ${KBO_SFTP_DELTA_DIR}
       KBO_SFTP_DELTA_CRON: ${KBO_SFTP_DELTA_CRON}
       CONTRACT_DATA_DIR: /opt/data/kyc
+      WEBEID_TRUSTED_CA_TRUSTSTORE: /kyc/truststore/belgian-eid.jks
+      WEBEID_TRUSTED_CA_TRUSTSTORE_PASSWORD: changeit
     volumes:
       - ./opt/data/kyc:/opt/data/kyc
     networks:

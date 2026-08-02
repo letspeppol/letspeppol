@@ -32,7 +32,7 @@ import java.util.UUID;
 public class AppController {
 
     public static final String DEFAULT_SIZE = "100";
-    public static final String ACTING_USER_AUTHORIZATION_HEADER = "X-Acting-User-Authorization";
+    public static final String ACTING_USER_AUTHORIZATION_HEADER = org.letspeppol.proxy.config.SecurityConfig.ACTING_USER_AUTHORIZATION_HEADER;
 
     private final UblDocumentService ublDocumentService;
     private final UblDocumentSenderService ublDocumentSenderService;

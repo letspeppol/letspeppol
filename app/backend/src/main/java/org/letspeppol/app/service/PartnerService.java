@@ -62,8 +62,8 @@ public class PartnerService {
         return PartnerMapper.toDto(partner);
     }
 
-    public PartnerDto updatePartner(Long id, PartnerDto partnerDto) {
-        Partner partner = partnerRepository.findById(id).orElseThrow(() -> new NotFoundException("Partner does not exist"));
+    public PartnerDto updatePartner(String peppolId, Long id, PartnerDto partnerDto) {
+        Partner partner = partnerRepository.findByIdAndCompanyPeppolId(id, peppolId).orElseThrow(() -> new NotFoundException("Partner does not exist"));
         partner.setIdentifier(partnerDto.identifier());
         partner.setVatNumber(partnerDto.vatNumber());
         partner.setName(partnerDto.name());
@@ -82,8 +82,9 @@ public class PartnerService {
         return PartnerMapper.toDto(partner);
     }
 
-    public void deletePartner(Long id) {
-        partnerRepository.deleteById(id);
+    public void deletePartner(String peppolId, Long id) {
+        Partner partner = partnerRepository.findByIdAndCompanyPeppolId(id, peppolId).orElseThrow(() -> new NotFoundException("Partner does not exist"));
+        partnerRepository.delete(partner);
     }
 
 }

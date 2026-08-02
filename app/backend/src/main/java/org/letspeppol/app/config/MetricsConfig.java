@@ -33,14 +33,6 @@ public class MetricsConfig {
     }
 
     @Bean
-    public Counter documentBackupCounter(MeterRegistry registry) {
-        return Counter.builder("document_backup_total")
-                .description("Total # documents backed up")
-                .tag("service", "app")
-                .register(registry);
-    }
-
-    @Bean
     public Counter documentCreateCounter(MeterRegistry registry) {
         return Counter.builder("document_create_total")
                 .description("Total # documents created")

@@ -159,8 +159,7 @@ export class InvoiceOverview {
             await this.invoiceService.deleteDocument(draft.id)
             this.invoiceContext.deleteDraft(draft);
             this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.invoice.draft-deleted')});
-        } catch (e) {
-            console.log(e);
+        } catch {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.invoice.draft-delete-overview-failed')});
         }
         return false;

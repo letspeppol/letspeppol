@@ -39,6 +39,9 @@ public class KboXmlParserService {
         try {
             XMLInputFactory factory = XMLInputFactory.newInstance();
             factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, true);
+            // Harden against XXE: disable DTDs and external entity resolution.
+            factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+            factory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
             XMLStreamReader reader = factory.createXMLStreamReader(xmlStream);
             AtomicInteger totalEnterprises = new AtomicInteger(0);
             AtomicInteger totalValidEnterprises = new AtomicInteger(0);

@@ -15,6 +15,7 @@ import {SignatureAlgorithm} from "@web-eid/web-eid-library/models/SignatureAlgor
 import {LibrarySignResponse} from "@web-eid/web-eid-library/models/message/LibraryResponse";
 import {I18N} from "@aurelia/i18n";
 import {ChoosePassword} from "../components/choose-password/choose-password";
+import {clearTokenFromUrl} from "../services/util/url";
 
 export class EmailConfirmation {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -45,6 +46,7 @@ export class EmailConfirmation {
             this.errorMessage = 'Token not available';
             return;
         }
+        clearTokenFromUrl();
         this.registrationService.verifyToken(this.emailToken).then(result => {
             this.tokenVerificationResponse = result;
             this.step = 1;

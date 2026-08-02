@@ -36,6 +36,7 @@ public class PasswordResetService {
     private final AccountService accountService;
     private final JavaMailSender mailSender;
     private final PasswordResetEmailTemplateProvider templateProvider;
+    private final RateLimiterService rateLimiterService;
     private final SecureRandom random = new SecureRandom();
     private final Duration ttl = Duration.ofHours(1);
 
@@ -47,6 +48,7 @@ public class PasswordResetService {
 
     @Transactional
     public void requestReset(String email, String acceptLanguage) {
+        rateLimiterService.checkPasswordReset(email);
         String langTag = LocaleUtil.extractLanguageTag(acceptLanguage);
         accountRepository.findByEmail(email.toLowerCase()).ifPresent(account -> {
             String tokenValue = generateToken();
@@ -111,8 +113,8 @@ public class PasswordResetService {
             mailSender.send(message);
             log.info("Sent password reset email to {} lang={}", to, languageTag);
         } catch (Exception e) {
-            log.warn("Failed to send password reset email (logging reset link) token={} error={}", tokenValue, e.getMessage());
-            log.info("Password reset link for {} -> {}", to, link);
+            // Do not log the token or reset link: they grant access to the account.
+            log.warn("Failed to send password reset email to {} error={}", to, e.getMessage());
         }
     }
 

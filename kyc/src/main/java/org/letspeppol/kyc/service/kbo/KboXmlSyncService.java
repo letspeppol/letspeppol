@@ -6,6 +6,7 @@ import org.letspeppol.kyc.model.kbo.KboProcessedZip;
 import org.letspeppol.kyc.repository.CompanyRepository;
 import org.letspeppol.kyc.repository.KboProcessedZipRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -44,6 +45,7 @@ public class KboXmlSyncService {
 
     private static final long INITIAL_LOAD_THRESHOLD = 1000L;
 
+    @Async
     public void initialSync() {
         long count = companyRepository.count();
 
@@ -80,10 +82,6 @@ public class KboXmlSyncService {
         kboSftpClient.downloadFile(remoteZipPath, localZip);
 
         Path localXml = extractSingleXml(localZip);
-
-//        Path localXml = Path.of("/opt/documents/bits/letspeppol_docs/D20260307.KBO/D20260307.xml"); // For testing purposes only
-//        String remoteZipName = "D20260307.xml";
-
         log.info("Importing initial KBO XML from {}", localXml);
         try (InputStream in = Files.newInputStream(localXml)) {
             kboXmlParserService.importEnterprises(in);
@@ -175,6 +173,7 @@ public class KboXmlSyncService {
         }
 
         Path targetDir = zipFile.getParent();
+        Path normalizedTargetDir = targetDir.toAbsolutePath().normalize();
         try (ZipInputStream zis = new ZipInputStream(Files.newInputStream(zipFile))) {
             ZipEntry entry;
             Path chosen = null;
@@ -183,7 +182,13 @@ public class KboXmlSyncService {
                 if (!entry.isDirectory()
                         && entryName.toLowerCase().endsWith(".xml")
                         && entryName.toLowerCase().endsWith(".wijzig.xml")) {
-                    Path out = targetDir.resolve(entryName);
+                    Path out = targetDir.resolve(entryName).toAbsolutePath().normalize();
+                    // Zip Slip guard: reject entries that resolve outside the target directory.
+                    if (!out.startsWith(normalizedTargetDir)) {
+                        log.warn("Skipping ZIP entry that escapes target directory: {}", entryName);
+                        zis.closeEntry();
+                        continue;
+                    }
                     Files.createDirectories(out.getParent());
                     Files.copy(zis, out, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
                     if (chosen == null) {

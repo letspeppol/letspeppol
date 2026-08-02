@@ -28,8 +28,7 @@ export class ProductEdit {
             this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(successKey)});
             this.productContext.selectedProduct = undefined;
             this.signaler.dispatchSignal('productUpdate');
-        } catch(e) {
-            console.error(e);
+        } catch {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.product.update-failed')});
         }
     }

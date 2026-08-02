@@ -82,9 +82,11 @@ public class NotificationService {
                         .replace("{{sponsorName}}", sponsor.getName())
                         .replace("{{sponsorUrl}}", sponsor.getUrl());
 
+                String supplierHtml = HtmlUtils.htmlEscape(document.getPartnerName() != null ? document.getPartnerName() : "");
+                String referenceHtml = HtmlUtils.htmlEscape(document.getInvoiceReference() != null ? document.getInvoiceReference() : "");
                 html = getTemplateContents("en-html", emailNotificationHtmlTemplate)
-                        .replace("{{supplier}}", document.getPartnerName())
-                        .replace("{{reference}}", document.getInvoiceReference())
+                        .replace("{{supplier}}", supplierHtml)
+                        .replace("{{reference}}", referenceHtml)
                         .replace("{{totalAmount}}", totalAmount)
                         .replace("{{uuid}}", document.getId().toString())
                         .replace("{{supportedByText}}", sponsorProperties.getEmailText())

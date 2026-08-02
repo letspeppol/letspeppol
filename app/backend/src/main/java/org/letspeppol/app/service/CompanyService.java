@@ -20,13 +20,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class CompanyService {
+
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
 
     private final CompanyRepository companyRepository;
     @Qualifier("kycWebClient")
@@ -107,7 +112,7 @@ public class CompanyService {
         company.setVatRuleset(companyDto.vatRuleset() == null ? VatRuleset.VAT_REGISTERED : companyDto.vatRuleset());
         company.setEnableEmailNotification(companyDto.enableEmailNotification());
         company.setAddAttachmentToNotification(companyDto.addAttachmentToNotification());
-        company.setEmailNotificationCcList(companyDto.emailNotificationCCList());
+        company.setEmailNotificationCcList(sanitizeCcList(companyDto.emailNotificationCCList()));
         company.setAddPdfToSendingInvoice(companyDto.addPdfToSendingInvoice());
         // TODO        company.setNoArchive(companyDto.noArchive());
         company.getRegisteredOffice().setCity(companyDto.registeredOffice().city());
@@ -115,5 +120,22 @@ public class CompanyService {
         company.getRegisteredOffice().setStreet(companyDto.registeredOffice().street());
         company = companyRepository.save(company);
         return CompanyMapper.toDto(company, isPeppolActive);
+    }
+
+    /**
+     * Sanitizes the comma/semicolon-separated CC list stored for a company: strips control
+     * characters (CR/LF) to prevent later mail-header injection, validates each entry looks
+     * like an email address, and drops invalid ones. Returns null when nothing valid remains.
+     */
+    private String sanitizeCcList(String ccList) {
+        if (ccList == null || ccList.isBlank()) {
+            return null;
+        }
+        String cleaned = Arrays.stream(ccList.split("[;,]"))
+                .map(s -> s.replaceAll("\\p{Cntrl}", "").trim())
+                .filter(s -> !s.isBlank())
+                .filter(s -> EMAIL_PATTERN.matcher(s).matches())
+                .collect(Collectors.joining(","));
+        return cleaned.isBlank() ? null : cleaned;
     }
 }

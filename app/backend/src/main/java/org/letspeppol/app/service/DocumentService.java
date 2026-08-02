@@ -53,7 +53,6 @@ public class DocumentService {
 
     private final CompanyRepository companyRepository;
     private final DocumentRepository documentRepository;
-    private final BackupService backupService;
     private final ValidationService validationService;
     private final NotificationService notificationService;
     private final JwtService jwtService;
@@ -61,7 +60,6 @@ public class DocumentService {
     private final ObjectMapper objectMapper;
     @Qualifier("proxyWebClient")
     private final WebClient proxyWebClient;
-    private final Counter documentBackupCounter;
     private final Counter documentCreateCounter;
     private final Counter documentSendCounter;
     private final Counter documentPaidCounter;
@@ -213,8 +211,6 @@ public class DocumentService {
         document = documentRepository.save(document);
         documentCreateCounter.increment();
         if (!draft) {
-            backupService.backupFile(document); //TODO : do we want to backUp drafts and not on proxy documents ?
-            documentBackupCounter.increment();
             document = deliver(document, tokenValue);
             documentSendCounter.increment();
         }
@@ -253,8 +249,6 @@ public class DocumentService {
         document.setCompany(company);
         document = documentRepository.save(document);
         documentCreateCounter.increment();
-        backupService.backupFile(document);
-        documentBackupCounter.increment();
 
         if (DocumentDirection.INCOMING.equals(document.getDirection()) && company.isEnableEmailNotification()) {
             notificationService.notifyIncomingDocument(company, document);
@@ -299,8 +293,6 @@ public class DocumentService {
             document = documentRepository.save(document); //Only save in database when it is not on proxy yet, else the safe is only allowed when it is proper delivered as proxy has the truth
         }
         if (!draft) {
-            backupService.backupFile(document); //TODO : do we want to backUp drafts and not on proxy documents ?
-            documentBackupCounter.increment();
             document = deliver(document, tokenValue);
             documentSendCounter.increment();
         }
@@ -329,8 +321,6 @@ public class DocumentService {
         document.setScheduledOn(schedule);
         document.setDraftedOn(null);
 //        document = documentRepository.save(document); //Not saving, as we only save the proxy returned result
-        backupService.backupFile(document);
-        documentBackupCounter.increment(); //TODO : how to correctly use these counters ?
         document = deliver(document, tokenValue);
         documentSendCounter.increment();
         return DocumentMapper.toDto(document);
