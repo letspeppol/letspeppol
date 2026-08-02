@@ -1,5 +1,4 @@
 package org.letspeppol.app.controller;
-
 import lombok.RequiredArgsConstructor;
 import org.letspeppol.app.dto.DocumentDto;
 import org.letspeppol.app.dto.DocumentFilter;
@@ -136,6 +135,12 @@ public class DocumentController {
     public DocumentDto paid(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
         String peppolId = JwtUtil.getPeppolId(jwt);
         return documentService.paid(peppolId, id);
+    }
+
+    @PutMapping("{id}/error-seen")
+    public DocumentDto markErrorSeen(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
+        String peppolId = JwtUtil.getPeppolId(jwt);
+        return documentService.markErrorSeen(peppolId, id);
     }
 
     @DeleteMapping("{id}")

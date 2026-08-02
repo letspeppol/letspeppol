@@ -1,7 +1,6 @@
 import {singleton} from "aurelia";
 import {resolve} from "@aurelia/kernel";
 import {AppApi} from "./app-api";
-import {create} from "node:domain";
 
 export interface DocumentPageDto {
     content: DocumentDto[];
@@ -63,6 +62,7 @@ export interface DocumentDto {
     draftedOn?: string;             // ISO datetime (Instant)
     readOn?: string;                // ISO datetime (Instant)
     paidOn?: string;                // ISO datetime (Instant)
+    errorSeenOn?: string;           // ISO datetime (Instant) - errored invoice acknowledged ("seen")
     partnerName?: string;
     invoiceReference?: string;
     type?: DocumentType;
@@ -88,6 +88,13 @@ export interface ValidationErrorDto {
     line: number,
     message: string,
     severity: string,
+}
+
+export interface VatReasonSelectionDto {
+    documentId?: string;
+    selectedTaxCategoryId: string;
+    writtenReason: string;
+    duringDraft: boolean;
 }
 
 @singleton()
@@ -138,12 +145,23 @@ export class InvoiceService {
         return await this.appApi.httpClient.put(`/sapi/document/${id}/send`).then(response => response.json());
     }
 
+    async recordVatReasonSelections(selections: VatReasonSelectionDto[]) : Promise<void> {
+        if (!selections?.length) {
+            return;
+        }
+        await this.appApi.httpClient.post(`/sapi/invoice-vat-reason-selection`, JSON.stringify(selections));
+    }
+
     async markReadDocument(id: string) : Promise<DocumentDto> {
         return await this.appApi.httpClient.put(`/sapi/document/${id}/read`).then(response => response.json());
     }
 
     async togglePaidDocument(id: string) : Promise<DocumentDto> {
         return await this.appApi.httpClient.put(`/sapi/document/${id}/paid`).then(response => response.json());
+    }
+
+    async markErrorSeenDocument(id: string) : Promise<DocumentDto> {
+        return await this.appApi.httpClient.put(`/sapi/document/${id}/error-seen`).then(response => response.json());
     }
 
     async deleteDocument(id: string) {

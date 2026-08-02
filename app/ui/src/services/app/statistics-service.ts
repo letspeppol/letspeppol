@@ -65,6 +65,7 @@ export type DirectionTotals = {
 export type Totals = {
     inclVat: DirectionTotals;
     exclVat: DirectionTotals;
+    erroredUnseenCount: number; // count of errored, not-yet-acknowledged invoices
 };
 
 // export type DocumentQuery = {
