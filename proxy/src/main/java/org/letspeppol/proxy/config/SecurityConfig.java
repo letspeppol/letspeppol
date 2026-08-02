@@ -39,9 +39,7 @@ public class SecurityConfig {
                 .cors(cors -> {})
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/**").permitAll()
-                        .requestMatchers("/api/scrada/**").hasAuthority(ROLE_SERVICE)
-                        .requestMatchers("/api/e-invoice/**").hasAuthority(ROLE_SERVICE)
-                        .requestMatchers("/api/monitor/**").hasAuthority(ROLE_SERVICE)
+                        .requestMatchers("/lapi/monitor/**").permitAll() // Secured by Traefik
                         // Public usage/donation stats rendered on the public site; the app backend calls
                         // /api/stats without a bearer token, so this endpoint must stay public.
                         .requestMatchers("/api/stats/**").permitAll()

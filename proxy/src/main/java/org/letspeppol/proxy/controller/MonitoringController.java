@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/monitor")
+@RequestMapping("/lapi/monitor")
 public class MonitoringController {
 
     private final BalanceService balanceService;
