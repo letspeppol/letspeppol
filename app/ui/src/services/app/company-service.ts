@@ -1,6 +1,7 @@
 import {resolve} from '@aurelia/kernel';
 import {singleton} from "aurelia";
 import {AppApi} from "./app-api";
+import {CompanyGroup} from "./welcome-notification-service";
 import {VatRuleset} from "./vat-rules";
 
 export interface CompanyDto {
@@ -13,6 +14,7 @@ export interface CompanyDto {
     subscriberEmail: string,
     paymentTerms: string,
     iban: string,
+    bic: string,
     paymentAccountName: string,
     vatRuleset: VatRuleset,
     lastInvoiceReference: string,
@@ -22,6 +24,7 @@ export interface CompanyDto {
     addAttachmentToNotification: boolean,
     addPdfToSendingInvoice: boolean,
     emailNotificationCCList: string,
+    companyGroup: CompanyGroup,
     registeredOffice: Address
 }
 

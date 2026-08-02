@@ -449,7 +449,7 @@ function buildPayeeFinancialAccount(acc?: PayeeFinancialAccount): string {
         '<cac:PayeeFinancialAccount>',
         textElement('cbc:ID', acc.ID),
         textElement('cbc:Name', acc.Name),
-        acc.FinancialInstitutionBranch
+        acc.FinancialInstitutionBranch?.ID
             ? joinNonEmpty([
                   '<cac:FinancialInstitutionBranch>',
                   textElement('cbc:ID', acc.FinancialInstitutionBranch.ID),

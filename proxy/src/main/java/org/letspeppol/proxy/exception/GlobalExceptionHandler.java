@@ -41,6 +41,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
     }
 
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<SimpleMessage> handleConflictException(ConflictException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new SimpleMessage(ex.getMessage()));
+    }
+
     @ExceptionHandler(SecurityException.class)
     public ResponseEntity<SimpleMessage> handleSecurityException(SecurityException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new SimpleMessage(ex.getMessage()));

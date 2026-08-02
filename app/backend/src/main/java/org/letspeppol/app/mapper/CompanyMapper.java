@@ -18,6 +18,7 @@ public class CompanyMapper {
                 company.getSubscriberEmail(),
                 company.getPaymentTerms(),
                 company.getIban(),
+                company.getBic(),
                 company.getPaymentAccountName(),
                 company.getVatRuleset(),
                 company.getLastInvoiceReference(),
@@ -28,6 +29,7 @@ public class CompanyMapper {
                 company.isAddAttachmentToNotification(),
                 company.isAddPdfToSendingInvoice(),
                 company.getEmailNotificationCcList(),
+                company.getCompanyGroup(),
                 AddressMapper.toDto(company.getRegisteredOffice())
         );
     }

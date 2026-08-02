@@ -2,6 +2,7 @@ package org.letspeppol.proxy.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.letspeppol.proxy.dto.DocumentDetailsDto;
 import org.letspeppol.proxy.dto.PeppolParties;
 import org.letspeppol.proxy.dto.UblDocumentDto;
 import org.letspeppol.proxy.exception.SecurityException;
@@ -78,6 +79,12 @@ public class AppController {
     public UblDocumentDto getById(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
         String peppolId = JwtUtil.getUserPeppolId(jwt);
         return ublDocumentService.findById(id, peppolId);
+    }
+
+    @GetMapping("{id}/details")
+    public DocumentDetailsDto getDetails(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
+        String peppolId = JwtUtil.getUserPeppolId(jwt);
+        return ublDocumentService.findDetailsById(id, peppolId);
     }
 
     @PostMapping()

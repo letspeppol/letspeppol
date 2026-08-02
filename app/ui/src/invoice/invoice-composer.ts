@@ -129,12 +129,14 @@ export class InvoiceComposer {
 
     getPaymentMeansForMyCompany(paymentMeansCode: number) : PaymentMeans {
         const myCompany = this.companyService.myCompany;
+        const bic = myCompany.bic?.trim().toUpperCase();
         return {
             PaymentMeansCode: this.paymentMeansCodes.find(item => item.value === paymentMeansCode),
             PaymentID: undefined,
             PayeeFinancialAccount: {
                 ID: myCompany.iban,
                 Name: myCompany.paymentAccountName ?? myCompany.name,
+                ...(bic ? {FinancialInstitutionBranch: {ID: bic}} : {}),
             }
         } as PaymentMeans;
     }
