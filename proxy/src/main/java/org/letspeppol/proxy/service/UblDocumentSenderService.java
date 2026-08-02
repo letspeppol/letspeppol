@@ -2,6 +2,7 @@ package org.letspeppol.proxy.service;
 
 import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.proxy.dto.UblDocumentDto;
 import org.letspeppol.proxy.exception.BadRequestException;
 import org.letspeppol.proxy.exception.DuplicateRequestException;
@@ -21,6 +22,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import java.util.UUID;
 
+@Slf4j
 @RequiredArgsConstructor
 @Transactional
 @Service
@@ -39,10 +41,11 @@ public class UblDocumentSenderService {
         String hash = HashUtil.sha256(ublDocumentDto.ubl()); //TODO : should we use HMAC ?
         UUID uuid = ublDocumentDto.id() == null ? UUID.randomUUID() : ublDocumentDto.id();
         if (ublDocumentRepository.findById(uuid).isPresent()) {
-            throw new DuplicateRequestException("UblDocument " + uuid + " is already created, please use the update call");
+            throw new DuplicateRequestException("UBL_DOCUMENT_ALREADY_CREATED", "Document " + uuid + " is already created, please use the update call");
         }
         if (!ublDocumentRepository.findAllByHash(hash).isEmpty()) {
-            throw new DuplicateRequestException("UblDocument seems to already send with hash " + hash + " content might be not unique");
+            log.warn("Duplicate outgoing UBL request with hash {}", hash);
+            throw new DuplicateRequestException("UBL_DOCUMENT_CONTENT_ALREADY_SENT", "Document as-is has been send before. Content must be unique to send.");
         }
         UblDocument ublDocument = new UblDocument(
                 uuid, //App can generate the uuid, because they might have used this for drafts

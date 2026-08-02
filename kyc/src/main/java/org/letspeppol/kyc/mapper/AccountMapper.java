@@ -20,6 +20,7 @@ public class AccountMapper {
     public static AccountInfo toAccountInfo(Account account) {
         return new AccountInfo(
                 account.getCompany().getPeppolId(),
+                account.getCompany().getIdentifier(),
                 account.getCompany().getVatNumber(),
                 account.getCompany().getName(),
                 account.getCompany().getStreet(),

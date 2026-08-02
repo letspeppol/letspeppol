@@ -12,6 +12,21 @@ export interface IVatDisplay {
 
 export const IVatDisplay = DI.createInterface<IVatDisplay>('IVatDisplay');
 
+export function hasVatNumber(vatNumber?: string): boolean {
+    return !!vatNumber?.trim();
+}
+
+export function getVatDisplayMode(
+    vatNumber: string | undefined,
+    preferredMode: VatDisplayMode = 'excl',
+): VatDisplayMode {
+    return hasVatNumber(vatNumber) ? preferredMode : 'incl';
+}
+
+export function getAutomaticVatDisplayMode(vatNumber?: string): VatDisplayMode {
+    return getVatDisplayMode(vatNumber, 'excl');
+}
+
 const STORAGE_KEY = 'lp.vatDisplay.v1';
 
 export class LocalStorageVatDisplay implements IVatDisplay {

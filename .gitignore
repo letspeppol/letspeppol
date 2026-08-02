@@ -6,3 +6,4 @@ acme.json
 .run
 .env_staging
 .env_live
+*.log
