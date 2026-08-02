@@ -56,4 +56,8 @@ export class Dashboard {
         }
         this.activeTotals = this.vatMode === 'incl' ? this.totals.inclVat : this.totals.exclVat;
     }
+
+    get erroredCount(): number {
+        return this.totals?.erroredUnseenCount ?? 0;
+    }
 }

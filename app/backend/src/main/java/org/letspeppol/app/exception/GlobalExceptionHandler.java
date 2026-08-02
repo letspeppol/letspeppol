@@ -38,6 +38,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new SimpleMessage(ex.getMessage()));
     }
 
+    @ExceptionHandler(ProxyRequestException.class)
+    public ResponseEntity<Map<String, Object>> handleProxyRequestException(ProxyRequestException ex) {
+        Map<String, Object> body = new HashMap<>();
+        if (ex.getErrorCode() != null && !ex.getErrorCode().isBlank()) {
+            body.put("errorCode", ex.getErrorCode());
+        }
+        body.put("message", ex.getMessage());
+        return ResponseEntity.status(ex.getStatusCode()).body(body);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException ex) {
         Map<String, Object> body = new HashMap<>();

@@ -129,13 +129,16 @@
     "instructions-go-checklist": "Zur Checkliste",
     "instructions-finally": "<b>Zum Schluss</b> öffnen Sie die Bestätigungs-E-Mail und klicken Sie auf den Bestätigungslink."
   },
-  "error": {
+  "error" : {
     "login-failed": "Anmeldung fehlgeschlagen",
     "registration-company-not-found": "Unternehmen nicht gefunden",
     "registration-company-already-registered": "Unternehmen bereits registriert",
     "registration-company-already-registered-on-peppol": "Diese Peppol-ID ist offenbar bereits bei einem anderen Anbieter registriert. Um sie hier zu aktivieren, muss sie dort zuerst abgemeldet werden. Sie können den Signaturprozess trotzdem abschließen und das anschließend erledigen.",
     "not-peppol-active": "Sie sind derzeit nicht bei Peppol registriert",
-    "not-peppol-active-action": "Jetzt lösen"
+    "not-peppol-active-action": "Jetzt lösen",
+    "DUPLICATE_REQUEST": "Diese Anfrage wurde bereits verarbeitet.",
+    "UBL_DOCUMENT_ALREADY_CREATED": "Dieses Dokument wurde bereits zur Zustellung eingereicht. Aktualisieren Sie das vorhandene Dokument.",
+    "UBL_DOCUMENT_CONTENT_ALREADY_SENT": "Dieses identische Dokument wurde bereits eingereicht. Ändern Sie den Inhalt, bevor Sie es erneut senden."
   },
   "paymentTerms": {
     "15_DAYS": "15 Tage",
@@ -213,12 +216,6 @@
     "label": "Neu",
     "click-to-dismiss": "Hinweis bestätigen"
   },
-  "dashboard": {
-    "vat-suffix": {
-      "incl": "inkl. MwSt.",
-      "excl": "exkl. MwSt."
-    }
-  },
   "donations": {
     "sponsors": "Stufensponsoren",
     "sponsors-title": "Bronze-, Silber- und Gold-Sponsoren zusammen",
@@ -270,6 +267,13 @@
     "loading": "Sponsoren werden geladen...",
     "load-error": "Die Sponsoren konnten derzeit nicht geladen werden.",
     "empty": "Noch keine Sponsoren."
+  },
+  "dashboard": {
+    "vat-suffix": {
+      "incl": "inkl. MwSt.",
+      "excl": "exkl. MwSt."
+    },
+    "errored": "Fehlerhafte Rechnungen"
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -384,6 +388,12 @@
         "CREDIT_NOTE": "Gutschrift als unbezahlt markiert"
       },
       "paid-status-failed": "Zahlungsstatus konnte nicht geändert werden",
+      "marked-seen": "Rechnung als gesehen markiert",
+      "mark-seen-failed": "Rechnung konnte nicht als gesehen markiert werden",
+      "resend-failed": {
+        "INVOICE": "Wiederverwenden der Rechnung fehlgeschlagen",
+        "CREDIT_NOTE": "Wiederverwenden der Gutschrift fehlgeschlagen"
+      },
       "no-ubl-data": "Keine UBL-Daten verfügbar"
     },
     "iban": {
@@ -537,6 +547,11 @@
       "mark-unpaid": {
         "INVOICE": "Rechnung als unbezahlt markieren",
         "CREDIT_NOTE": "Gutschrift als unbezahlt markieren"
+      },
+      "mark-seen": "Als gesehen markieren",
+      "resend": {
+        "INVOICE": "Rechnung wiederverwenden und erneut senden",
+        "CREDIT_NOTE": "Gutschrift wiederverwenden und erneut senden"
       }
     },
     "table": {
