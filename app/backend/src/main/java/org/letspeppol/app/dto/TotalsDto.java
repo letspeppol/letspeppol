@@ -2,7 +2,7 @@ package org.letspeppol.app.dto;
 
 import java.math.BigDecimal;
 
-public record TotalsDto(DirectionTotals inclVat, DirectionTotals exclVat) {
+public record TotalsDto(DirectionTotals inclVat, DirectionTotals exclVat, long erroredUnseenCount) {
 
     public record DirectionTotals(
             BigDecimal payableOpen,

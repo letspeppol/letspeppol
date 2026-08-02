@@ -1,4 +1,4 @@
-import {AdditionalDocumentReference} from "../../../../services/peppol/ubl";
+import {AdditionalDocumentReference, EmbeddedDocumentBinaryObject} from "../../../../services/peppol/ubl";
 import {AlertType} from "../../../../components/alert/alert";
 import {resolve} from "@aurelia/kernel";
 import {InvoiceContext} from "../../../invoice-context";
@@ -8,6 +8,15 @@ import {GENERATED_INVOICE} from "../../../invoice-composer";
 import {I18N} from "@aurelia/i18n";
 
 export class AttachmentInfo {
+    private static readonly attachmentIconByMimeCode: Record<string, string> = {
+        'text/csv': 'csv.png',
+        'application/pdf': 'pdf.png',
+        'image/png': 'png.png',
+        'image/jpeg': 'jpg.png',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xls.png',
+        'application/vnd.oasis.opendocument.spreadsheet': 'ods.png'
+    };
+
     private invoiceContext = resolve(InvoiceContext);
     private invoiceService = resolve(InvoiceService);
     private ea: IEventAggregator = resolve(IEventAggregator);
@@ -15,6 +24,37 @@ export class AttachmentInfo {
 
     @bindable readOnly: boolean;
     @bindable showAttachmentModal;
+
+    getAttachmentIconSrc(embeddedDocumentBinaryObject: EmbeddedDocumentBinaryObject): string {
+        return AttachmentInfo.attachmentIconByMimeCode[embeddedDocumentBinaryObject.__mimeCode] ?? 'file.svg';
+    }
+
+    getAttachmentIconAlt(embeddedDocumentBinaryObject: EmbeddedDocumentBinaryObject): string {
+        return embeddedDocumentBinaryObject.__mimeCode ? `${embeddedDocumentBinaryObject.__mimeCode} attachment` : 'Attachment';
+    }
+
+    getAttachmentFilenameStem(filename?: string): string {
+        const extensionStart = this.getAttachmentFilenameExtensionStart(filename);
+        return extensionStart === -1 ? filename ?? '' : filename.slice(0, extensionStart);
+    }
+
+    getAttachmentFilenameExtension(filename?: string): string {
+        const extensionStart = this.getAttachmentFilenameExtensionStart(filename);
+        return extensionStart === -1 ? '' : filename.slice(extensionStart);
+    }
+
+    private getAttachmentFilenameExtensionStart(filename?: string): number {
+        if (!filename) {
+            return -1;
+        }
+
+        const lastDotIndex = filename.lastIndexOf('.');
+        if (lastDotIndex <= 0 || lastDotIndex === filename.length - 1) {
+            return -1;
+        }
+
+        return lastDotIndex;
+    }
 
     async downloadAttachment(additionalDocumentReference: AdditionalDocumentReference) {
         const attachment = additionalDocumentReference.Attachment;

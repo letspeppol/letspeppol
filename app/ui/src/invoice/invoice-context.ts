@@ -26,6 +26,7 @@ export class InvoiceContext {
     lines : undefined | InvoiceLine[] | CreditNoteLine[];
     @observable selectedInvoice:  undefined | Invoice | CreditNote;
     selectedDocument: DocumentDto;
+    selectedRouteId: string = undefined;
     selectedDocumentType: DocumentType = DocumentType.INVOICE;
     lastReference: string = undefined;
     nextReference: string = undefined;
@@ -147,6 +148,7 @@ export class InvoiceContext {
 
     public mapPartner(party: Party): PartnerDto {
         return {
+            identifier: party.PartyLegalEntity?.CompanyID.value,
             vatNumber: party.PartyTaxScheme?.CompanyID?.value,
             name: party.PartyName?.Name,
             peppolId: `${party.EndpointID.__schemeID}:${party.EndpointID.value}`,

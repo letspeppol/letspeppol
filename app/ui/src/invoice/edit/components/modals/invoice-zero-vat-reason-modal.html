@@ -1,0 +1,26 @@
+<div class="modal" role="dialog" aria-modal="true" show.bind="open">
+    <div class="modal-backdrop"></div>
+    <div class="modal-card">
+        <header class="modal-header">
+            <h2 t="invoice.zero-vat-reason.modal.title">0% VAT reason</h2>
+            <button class="icon-btn" click.trigger="closeModal()" aria-label="Close dialog" t="[aria-label]common.close" title="Close" t="[title]common.close">×</button>
+        </header>
+        <div class="modal-body" style="display:grid;gap:var(--space-1)">
+            <label class="field required">
+                <span t="invoice.zero-vat-reason.modal.reason-type">Reason type</span>
+                <select value.to-view="reasonId ?? ''" change.trigger="updateReasonId($event.target.value)" disabled.bind="readOnly">
+                    <option value="" t="common.none"></option>
+                    <option repeat.for="reason of zeroVatReasonOptions" value.bind="reason" t.bind="getZeroVatReasonLabelKey(reason)"></option>
+                </select>
+            </label>
+            <label class="field required">
+                <span t="invoice.zero-vat-reason.modal.reason-text">Explanation</span>
+                <input type="text" value.bind="reasonText" placeholder="Why is this line 0% VAT?" t="[placeholder]invoice.zero-vat-reason.modal.reason-text-placeholder" readonly.bind="readOnly" />
+            </label>
+        </div>
+        <footer class="modal-footer">
+            <button type="button" class="btn" click.trigger="closeModal()" t="common.cancel">Cancel</button>
+            <button type="button" class="btn primary" click.trigger="save()" disabled.bind="readOnly || !reasonId || !reasonText?.trim()" t="common.apply">Apply</button>
+        </footer>
+    </div>
+</div>

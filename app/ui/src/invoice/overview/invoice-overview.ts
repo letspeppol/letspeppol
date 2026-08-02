@@ -8,11 +8,12 @@ import {
     DocumentQuery,
     InvoiceService, DocumentDirection,
 } from "../../services/app/invoice-service";
-import {IVatDisplay, VatDisplayMode} from "../../services/app/vat-display-service";
+import {getVatDisplayMode, IVatDisplay, VatDisplayMode} from "../../services/app/vat-display-service";
 import moment from "moment";
 import {IRouter} from "@aurelia/router";
 import {UploadUblModal} from "./components/upload-ubl-modal";
 import {I18N} from "@aurelia/i18n";
+import {CompanyService} from "../../services/app/company-service";
 
 type SortDirection = "asc" | "desc";
 
@@ -22,27 +23,29 @@ export class InvoiceOverview {
     private invoiceContext = resolve(InvoiceContext);
     private router = resolve(IRouter);
     private readonly i18n = resolve(I18N);
-    private vatDisplay = resolve(IVatDisplay);
-    vatMode: VatDisplayMode = this.vatDisplay.mode;
-    query: DocumentQuery = {pageable: {page: 0, size: 20, sort: [{property: 'issueDate', direction: 'desc'}]}};
+    private readonly companyService = resolve(CompanyService);
+    private readonly vatDisplay = resolve(IVatDisplay);
+    vatMode: VatDisplayMode = getVatDisplayMode(this.companyService.myCompany?.vatNumber, this.vatDisplay.mode);
+    query: DocumentQuery = {pageable: {page: 0, size: 20, sort: [{property: 'issueDate', direction: 'desc'}]}}; 
     activeSortProperty = 'issueDate';
     activeSortDirection: SortDirection = 'desc';
     private resetSubscription: IDisposable;
-    private vatUnsubscribe: () => void;
+    private unsubscribeVatDisplay?: () => void;
 
     @bindable uploadUblModal: UploadUblModal;
 
-    attached() {
-        this.invoiceContext.initCompany();
+    async attached() {
+        await this.invoiceContext.initCompany();
+        this.updateVatDisplayMode();
+        this.unsubscribeVatDisplay = this.vatDisplay.subscribe(mode => this.updateVatDisplayMode(mode));
         this.resetSubscription = this.ea.subscribe('invoicesReset', () => this.setActiveItems(this.invoiceContext.activeBox));
-        this.vatUnsubscribe = this.vatDisplay.subscribe(mode => this.vatMode = mode);
         this.setActiveItems(this.invoiceContext.activeBox);
         this.loadDrafts();
     }
 
     detaching() {
         this.resetSubscription?.dispose();
-        this.vatUnsubscribe?.();
+        this.unsubscribeVatDisplay?.();
     }
 
     async loadDrafts() {
@@ -167,6 +170,14 @@ export class InvoiceOverview {
         return moment(date).format('D/M/YYYY');
     }
 
+    get amountSortProperty(): string {
+        return this.vatMode === 'incl' ? 'amountInclVat' : 'amountExclVat';
+    }
+
+    totalAmount(item: DocumentDto): number | undefined {
+        return this.vatMode === 'incl' ? item.amountInclVat : item.amountExclVat;
+    }
+
     async markPaid(event: Event, item: DocumentDto) {
         event.stopPropagation();
         try {
@@ -179,8 +190,41 @@ export class InvoiceOverview {
                 item.paidOn = datePaid;
                 this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(`alert.invoice.marked-paid.${item.type}`)});
             }
-        } catch (e) {
+        } catch {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.invoice.paid-status-failed')});
+        }
+    }
+
+    // Acknowledge an errored invoice: it stays visible (greyed out) but leaves the errored counter and offers no further action.
+    async markErrorSeen(event: Event, item: DocumentDto) {
+        event.stopPropagation();
+        try {
+            const updated = await this.invoiceService.markErrorSeenDocument(item.id);
+            item.errorSeenOn = updated.errorSeenOn;
+            this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.invoice.marked-seen')});
+        } catch (e) {
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.invoice.mark-seen-failed')});
+        }
+    }
+
+    // Reuse the errored invoice's content as a new editable draft so the user can correct it and resend with the same number
+    // (the uniqueness check ignores errored documents, so the number is free to reuse).
+    async resendErrored(event: Event, item: DocumentDto) {
+        event.stopPropagation();
+        try {
+            const errored = await this.invoiceService.getDocument(item.id);
+            if (!errored.ubl) {
+                this.ea.publish('alert', {alertType: AlertType.Warning, text: this.i18n.tr('alert.invoice.no-ubl-data')});
+                return;
+            }
+            const draft = await this.invoiceService.createDocument(errored.ubl, true, false);
+            this.invoiceContext.draftPage?.content.unshift(draft);
+            if (this.invoiceContext.draftPage) {
+                this.invoiceContext.draftPage.totalElements++;
+            }
+            this.router.load(`/invoices/${draft.id}`);
+        } catch (e) {
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr(`alert.invoice.resend-failed.${item.type}`)});
         }
     }
 
@@ -194,6 +238,26 @@ export class InvoiceOverview {
             return;
         }
         this.loadInvoices();
+    }
+
+    private updateVatDisplayMode(preferredMode: VatDisplayMode = this.vatDisplay.mode) {
+        const vatNumber = this.companyService.myCompany?.vatNumber;
+        const nextMode = getVatDisplayMode(vatNumber, preferredMode);
+        if (this.vatMode === nextMode) {
+            return;
+        }
+
+        const currentSort = this.query.pageable.sort?.[0];
+        const sortWasByAmount = currentSort?.property === 'amountInclVat' || currentSort?.property === 'amountExclVat';
+        this.vatMode = nextMode;
+
+        if (!sortWasByAmount || !currentSort) {
+            return;
+        }
+
+        currentSort.property = this.amountSortProperty;
+        this.activeSortProperty = this.amountSortProperty;
+        this.reloadCurrentView();
     }
 
     private sortDirection(property: string): SortDirection | undefined {

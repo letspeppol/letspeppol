@@ -34,8 +34,11 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(DuplicateRequestException.class)
-    public ResponseEntity<SimpleMessage> handleDuplicateRequestException(DuplicateRequestException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new SimpleMessage(ex.getMessage()));
+    public ResponseEntity<Map<String, Object>> handleDuplicateRequestException(DuplicateRequestException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("errorCode", ex.getErrorCode());
+        body.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
     }
 
     @ExceptionHandler(SecurityException.class)
