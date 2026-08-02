@@ -87,7 +87,6 @@ services:
       OPEN_COLLECTIVE_URL: ${OPEN_COLLECTIVE_URL}
       OPEN_COLLECTIVE_API_KEY: ${OPEN_COLLECTIVE_API_KEY}
       DOCUMENT_PRICE: ${DOCUMENT_PRICE}
-      BACKUP_DATA_DIR: /opt/data/app
     volumes:
       - ./opt/data/app:/opt/data/app
 
