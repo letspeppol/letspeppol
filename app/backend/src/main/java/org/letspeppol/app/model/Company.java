@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 @Entity
 @Table(name = "company", indexes = {
@@ -16,7 +18,7 @@ public class Company extends GenericEntity{
 
     @Column(nullable = false, unique = true)
     private String peppolId;
-
+    private String identifier;
     private String vatNumber;
 
     @Column(nullable = false)
@@ -31,11 +33,20 @@ public class Company extends GenericEntity{
     private String paymentAccountName;
     private String lastInvoiceReference;
     private String lastCreditNoteReference;
+    @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(nullable = false)
+    private VatRuleset vatRuleset = VatRuleset.VAT_REGISTERED;
 
     private boolean enableEmailNotification;
     private boolean addAttachmentToNotification;
     private boolean addPdfToSendingInvoice;
     private String emailNotificationCcList; // comma-separated list
+
+    @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(name = "notification_group", nullable = false)
+    private NotificationGroup companyGroup = NotificationGroup.USER;
 
 // TODO    private boolean noArchive; //Setting by user that data should not be stored once processed (user is absolute owner & responsible)
 // TODO    private String accountant; //Either email or UUID of accounting system or accountant, flaggable by user what invoices should be sent to accountant
@@ -51,13 +62,15 @@ public class Company extends GenericEntity{
     @JoinColumn(name = "registered_office_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_company_registered_office"))
     private Address registeredOffice;
 
-    public Company(String peppolId, String vatNumber, String name, String subscriber, String subscriberEmail,
+    public Company(String peppolId, String identifier, String vatNumber, String name, String subscriber, String subscriberEmail,
                    String city, String postalCode, String street, String countryCode) {
         this.peppolId = peppolId;
+        this.identifier = identifier;
         this.vatNumber = vatNumber;
         this.name = name;
         this.subscriber = subscriber;
         this.subscriberEmail = subscriberEmail;
+        this.vatRuleset = VatRuleset.VAT_REGISTERED;
 // TODO        this.noArchive = false;
         this.registeredOffice = new Address(city, postalCode, street, countryCode);
     }

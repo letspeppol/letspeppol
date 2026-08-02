@@ -109,7 +109,6 @@
             <cac:ClassifiedTaxCategory>
                 <cbc:ID>{taxCategory}</cbc:ID>
                 <cbc:Percent>{taxPercent}</cbc:Percent>
-                {taxExemptionReason}
                 <cac:TaxScheme>
                     <cbc:ID>VAT</cbc:ID>
                 </cac:TaxScheme>

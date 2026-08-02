@@ -15,7 +15,8 @@ public record TotalsRow(
         BigDecimal totalPayableThisYearExclVat,
         BigDecimal totalReceivableOpenExclVat,
         BigDecimal totalReceivableOverdueExclVat,
-        BigDecimal totalReceivableThisYearExclVat
+        BigDecimal totalReceivableThisYearExclVat,
+        long erroredUnseenCount
 ) {
 
     public TotalsDto.DirectionTotals inclVat() {
@@ -39,6 +40,6 @@ public record TotalsRow(
     }
 
     public TotalsDto toDto() {
-        return new TotalsDto(inclVat(), exclVat());
+        return new TotalsDto(inclVat(), exclVat(), erroredUnseenCount);
     }
 }

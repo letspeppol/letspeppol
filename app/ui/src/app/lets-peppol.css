@@ -641,6 +641,23 @@ main.container {
     color: var(--muted);
 }
 
+.disabled-tooltip-wrapper {
+    display: inline-flex;
+}
+
+.disabled-tooltip-wrapper-fill {
+    display: flex;
+    flex: 1;
+}
+
+.disabled-tooltip-wrapper > :disabled {
+    pointer-events: none;
+}
+
+.disabled-tooltip-wrapper[title] {
+    cursor: not-allowed;
+}
+
 .btn.active-route {
     box-shadow: var(--shadow-active-btn);
 }
@@ -935,6 +952,31 @@ main.container .data-table tbody td {
     color: var(--status-overdue)
 }
 
+/* Dashboard errored-invoices indicator */
+.kpi-error-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-04);
+    margin-bottom: var(--space-04);
+    border-color: var(--pill-error-border);
+    background: var(--pill-error-bg);
+    color: var(--pill-error-fg);
+}
+
+.kpi-error-count {
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+/* Acknowledged ("seen") errored invoice, greyed out */
+.data-table tbody tr.row-seen {
+    opacity: .55;
+}
+
+.data-table tbody tr.row-seen .pill.error {
+    filter: grayscale(1);
+}
+
 /* ============================================================================
    10. Row Actions & Empty States
    ============================================================================ */
@@ -1054,6 +1096,22 @@ main.container .data-table tbody td {
     padding: var(--space-075) var(--space-1) var(--space-1);
     border-top: 1px dashed var(--border-soft);
     margin-top: var(--space-05);
+}
+
+.welcome-notification-card {
+    width: min(720px, calc(100% - var(--space-2rem)));
+}
+
+.welcome-notification-body {
+    line-height: 1.55;
+}
+
+.welcome-notification-body :first-child {
+    margin-top: 0;
+}
+
+.welcome-notification-body :last-child {
+    margin-bottom: 0;
 }
 
 /* ============================================================================
