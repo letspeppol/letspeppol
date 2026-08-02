@@ -14,6 +14,7 @@ export interface CompanyDto {
     subscriberEmail: string,
     paymentTerms: string,
     iban: string,
+    bic: string,
     paymentAccountName: string,
     vatRuleset: VatRuleset,
     lastInvoiceReference: string,

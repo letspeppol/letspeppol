@@ -103,6 +103,7 @@ public class CompanyService {
         company.setPaymentAccountName(companyDto.paymentAccountName());
         company.setPaymentTerms(companyDto.paymentTerms());
         company.setIban(companyDto.iban());
+        company.setBic(companyDto.bic());
         company.setVatRuleset(companyDto.vatRuleset() == null ? VatRuleset.VAT_REGISTERED : companyDto.vatRuleset());
         company.setEnableEmailNotification(companyDto.enableEmailNotification());
         company.setAddAttachmentToNotification(companyDto.addAttachmentToNotification());

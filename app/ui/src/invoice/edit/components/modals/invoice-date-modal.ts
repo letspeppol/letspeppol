@@ -26,17 +26,11 @@ export class InvoiceDateModal {
     possiblePaymentTerms: Translation[];
 
     showModal() {
+        const invoice = this.invoiceContext.selectedInvoice;
+        this.issueDate = JSON.parse(JSON.stringify(invoice.IssueDate));
+        this.dueDate = invoice.DueDate ? JSON.parse(JSON.stringify(invoice.DueDate)) : undefined;
         this.loadPossiblePaymentTerms();
-        this.issueDate = JSON.parse(JSON.stringify(this.invoiceContext.selectedInvoice.IssueDate));
-//         if (this.invoiceContext.selectedInvoice.PaymentTerms) {
-//             this.selectedPaymentTerm = JSON.parse(JSON.stringify(this.invoiceContext.selectedInvoice.PaymentTerms.Note));
-//         } else {
-//             this.selectedPaymentTerm = undefined;
-//         }
-        if (this.invoiceContext.selectedInvoice.dueDate) {
-            this.dueDate = JSON.parse(JSON.stringify(this.invoiceContext.selectedInvoice.dueDate));
-        } else {
-            this.dueDate = undefined;
+        if (!this.dueDate) {
             this.recalculateDueDate();
         }
         this.actualDeliveryDate = this.invoiceContext.selectedInvoice.Delivery?.ActualDeliveryDate;
@@ -58,6 +52,9 @@ export class InvoiceDateModal {
 
     private recalculateDueDate() {
         if (this.documentType === DocumentType.CREDIT_NOTE) {
+            return;
+        }
+        if (!this.issueDate || !this.selectedPaymentTerm) {
             return;
         }
         this.dueDate = this.invoiceComposer.getDueDate(this.selectedPaymentTerm, this.issueDate);
@@ -100,17 +97,21 @@ export class InvoiceDateModal {
 
     private loadPossiblePaymentTerms() {
         let selectedPaymentTerm: string = undefined;
+        const paymentTermNote = this.invoiceContext.selectedInvoice.PaymentTerms?.Note;
         this.possiblePaymentTerms = [];
         for (const paymentTerm of Account.PAYMENT_TERMS) {
             const translation = this.invoiceComposer.translatePaymentTerm(paymentTerm);
-            if (translation === this.invoiceContext.selectedInvoice.PaymentTerms.Note) {
+            if (paymentTermNote && translation === paymentTermNote) {
                 selectedPaymentTerm = paymentTerm;
             }
             this.possiblePaymentTerms.push({key: paymentTerm, translation: translation});
         }
-        if (selectedPaymentTerm) {
-            setTimeout(() => this.selectedPaymentTerm = selectedPaymentTerm, 100);
+        if (!selectedPaymentTerm && this.documentType === DocumentType.INVOICE && this.issueDate && this.dueDate) {
+            selectedPaymentTerm = Account.PAYMENT_TERMS.find(paymentTerm =>
+                this.invoiceComposer.getDueDate(paymentTerm, this.issueDate) === this.dueDate
+            );
         }
+        this.selectedPaymentTerm = selectedPaymentTerm;
     }
 
     onKeyDown(event: KeyboardEvent) {

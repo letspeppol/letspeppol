@@ -30,6 +30,7 @@
     "remove-from-peppol": "Verwijderen van Peppol",
     "activate-on-peppol": "Activeren op Peppol",
     "iban": "IBAN",
+    "bic" : "BIC",
     "country": "Land",
     "customer": "Klant",
     "supplier": "Leverancier",
@@ -536,6 +537,7 @@
       "account-name": "Accountnaam",
       "payment-terms": "Betalingsvoorwaarden",
       "iban": "IBAN",
+      "bic" : "BIC",
       "save": "Partner opslaan",
       "cancel": "Annuleren"
     }
@@ -653,7 +655,8 @@
       "type": "Type",
       "name": "Naam",
       "iban": "IBAN",
-      "reference": "Referentie",
+      "bic" : "BIC",
+      "reference" : "Mededeling",
       "store-iban": "IBAN opslaan in account"
     },
     "paymentQr": {
@@ -672,7 +675,7 @@
       "iban": "IBAN",
       "bic": "BIC",
       "amount": "Bedrag",
-      "reference": "Referentie"
+      "reference": "Mededeling"
     },
     "validationModal": {
       "title": "Validatie",

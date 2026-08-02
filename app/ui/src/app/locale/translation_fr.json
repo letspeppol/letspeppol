@@ -30,6 +30,7 @@
     "remove-from-peppol": "Retirer de Peppol",
     "activate-on-peppol": "Activer sur Peppol",
     "iban": "IBAN",
+    "bic": "BIC",
     "country": "Pays",
     "customer": "Client",
     "supplier": "Fournisseur",
@@ -545,6 +546,7 @@
       "account-name": "Nom du compte",
       "payment-terms": "Conditions de paiement",
       "iban": "IBAN",
+      "bic" : "BIC",
       "save": "Enregistrer partenaire",
       "cancel": "Annuler"
     }
@@ -662,7 +664,8 @@
       "type": "Type",
       "name": "Nom",
       "iban": "IBAN",
-      "reference": "Référence",
+      "bic" : "BIC",
+      "reference": "Communication",
       "store-iban": "Enregistrer l’IBAN dans le compte"
     },
     "paymentQr": {
@@ -681,7 +684,7 @@
       "iban": "IBAN",
       "bic": "BIC",
       "amount": "Montant",
-      "reference": "Référence"
+      "reference": "Communication"
     },
     "validationModal": {
       "title": "Validation",

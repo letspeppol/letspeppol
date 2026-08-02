@@ -13,6 +13,7 @@ public record CompanyDto(
         String subscriberEmail,
         String paymentTerms,
         String iban,
+        String bic,
         String paymentAccountName,
         VatRuleset vatRuleset,
         String lastInvoiceReference,

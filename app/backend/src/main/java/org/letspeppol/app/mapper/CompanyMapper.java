@@ -18,6 +18,7 @@ public class CompanyMapper {
                 company.getSubscriberEmail(),
                 company.getPaymentTerms(),
                 company.getIban(),
+                company.getBic(),
                 company.getPaymentAccountName(),
                 company.getVatRuleset(),
                 company.getLastInvoiceReference(),
