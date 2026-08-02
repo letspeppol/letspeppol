@@ -6,6 +6,7 @@ import org.letspeppol.kyc.model.kbo.KboProcessedZip;
 import org.letspeppol.kyc.repository.CompanyRepository;
 import org.letspeppol.kyc.repository.KboProcessedZipRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -44,6 +45,7 @@ public class KboXmlSyncService {
 
     private static final long INITIAL_LOAD_THRESHOLD = 1000L;
 
+    @Async
     public void initialSync() {
         long count = companyRepository.count();
 
