@@ -41,3 +41,18 @@ export function normalizeVatNumber(input: string | null | undefined): VatNormali
 
   return { normalized, isValidShape };
 }
+
+export function normalizeEnterpriseNumber(input: string | null | undefined): VatNormalizationResult {
+  if (!input) {
+    return { normalized: '', isValidShape: false };
+  }
+
+  // Remove whitespace, dots and any other non-alphanumeric characters.
+  const normalized = input.replace(/[^0-9]/gi, '');
+  if (normalized.length === 0) {
+    return { normalized: '', isValidShape: false };
+  }
+
+  const isValidShape = normalized.length === 10;
+  return {normalized, isValidShape};
+}

@@ -54,10 +54,16 @@
                     <h2 t="account.company-info">Company Info</h2>
                 </div>
                 <div style="display: grid; gap: var(--space-1)">
-                    <label class="field">
-                        <span t="label.vat-number">VAT Number</span>
-                        <input type="text" value.bind="company.vatNumber" disabled />
-                    </label>
+                    <div style="display: flex; gap: var(--space-1)">
+                        <label class="field">
+                            <span t="label.enterprise-number">Enterprise Number</span>
+                            <input type="text" value.bind="company.identifier" disabled />
+                        </label>
+                        <label class="field">
+                            <span t="label.vat-number">VAT Number</span>
+                            <input type="text" value.bind="company.vatNumber" disabled />
+                        </label>
+                    </div>
                     <label class="field">
                         <span t="account.company-legal-name">Company legal name</span>
                         <input type="text" value.bind="company.name" disabled />
@@ -130,12 +136,20 @@
                 </div>
             </div>
 
-            <div class="card" new-feature="vat-display">
+            <div class="card" new-feature="vat-display" if.bind="company.vatNumber">
                 <div class="card-header">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-percent-icon lucide-percent"><line x1="19" x2="5" y1="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
-                    <h2 t="account.vat-display.title">Amount Display</h2>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-badge-percent-icon lucide-badge-percent"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m15 9-6 6"/><path d="M9 9h.01"/><path d="M15 15h.01"/></svg>
+                    <h2 t="account.vat-ruleset.title">VAT Settings</h2>
                 </div>
                 <div style="display: grid; gap: var(--space-1)">
+                    <div class="vat-display-toggle">
+                        <span class="vat-toggle-label" class.bind="!isVatExempt ? 'active' : ''" click.trigger="setVatRuleset(false)" t="account.vat-ruleset.options.VAT_REGISTERED">Subject to VAT</span>
+                        <label class="switch" aria-label="Toggle VAT mode">
+                            <input type="checkbox" checked.to-view="isVatExempt" change.trigger="setVatRuleset($event.target.checked)" />
+                            <span class="slider"></span>
+                        </label>
+                        <span class="vat-toggle-label" class.bind="isVatExempt ? 'active' : ''" click.trigger="setVatRuleset(true)" t="account.vat-ruleset.options.VAT_EXEMPT_ART_56BIS">VAT exempt by Art. 56bis - Small enterprises &lt; € 25.000</span>
+                    </div>
                     <p class="muted" t="account.vat-display.description">Choose whether totals in the dashboard and invoice list are shown including or excluding VAT.</p>
                     <div class="vat-display-toggle">
                         <span class="vat-toggle-label" class.bind="vatMode === 'excl' ? 'active' : ''" click.trigger="vatMode = 'excl'" t="account.vat-display.excl">Exclude VAT</span>
@@ -172,3 +186,4 @@
         </div>
     </section>
 </application-view>
+

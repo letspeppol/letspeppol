@@ -641,6 +641,23 @@ main.container {
     color: var(--muted);
 }
 
+.disabled-tooltip-wrapper {
+    display: inline-flex;
+}
+
+.disabled-tooltip-wrapper-fill {
+    display: flex;
+    flex: 1;
+}
+
+.disabled-tooltip-wrapper > :disabled {
+    pointer-events: none;
+}
+
+.disabled-tooltip-wrapper[title] {
+    cursor: not-allowed;
+}
+
 .btn.active-route {
     box-shadow: var(--shadow-active-btn);
 }

@@ -74,6 +74,7 @@ class NotificationServiceEmailIT extends PostgresIntegrationTest {
     void sendNotificationEmail() {
         Company company = new Company(
                 "0208:BE0123456789",
+                "0123456789",
                 "BE0123456789",
                 "Test Company NV",
                 "Test User",
