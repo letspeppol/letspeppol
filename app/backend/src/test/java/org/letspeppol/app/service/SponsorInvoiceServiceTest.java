@@ -28,6 +28,7 @@ class SponsorInvoiceServiceTest {
     void buildInvoiceXmlChargesBelgianVatForBelgianCustomer() throws Exception {
         Company customer = new Company(
                 "0208:0123456789",
+                "0123456789",
                 "BE0123456789",
                 "Belgian Customer",
                 "Director",
@@ -52,6 +53,7 @@ class SponsorInvoiceServiceTest {
     void buildInvoiceXmlAppliesReverseChargeForEuCustomerOutsideBelgium() throws Exception {
         Company customer = new Company(
                 "9925:NL123456789B01",
+                "123456789-B01",
                 "NL123456789B01",
                 "Dutch Customer",
                 "Director",
@@ -69,8 +71,8 @@ class SponsorInvoiceServiceTest {
         assertThat(xml).contains("<cbc:PayableAmount currencyID=\"EUR\">100.00</cbc:PayableAmount>");
         assertThat(xml).contains("<cbc:ID>AE</cbc:ID>");
         assertThat(xml).contains("<cbc:Percent>0</cbc:Percent>");
-        assertThat(xml).contains("<cbc:TaxExemptionReasonCode>VATEX-EU-AE</cbc:TaxExemptionReasonCode>");
-        assertThat(xml).contains("<cbc:TaxExemptionReason>Reverse charge</cbc:TaxExemptionReason>");
+        assertThat(xml).containsOnlyOnce("<cbc:TaxExemptionReasonCode>VATEX-EU-AE</cbc:TaxExemptionReasonCode>");
+        assertThat(xml).containsOnlyOnce("<cbc:TaxExemptionReason>Reverse charge</cbc:TaxExemptionReason>");
         assertThat(xml).doesNotContain("VAT due by recipient");
     }
 

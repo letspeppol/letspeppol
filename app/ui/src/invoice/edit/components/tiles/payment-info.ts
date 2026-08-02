@@ -38,6 +38,12 @@ export class PaymentInfo {
             && !!this.invoiceContext.selectedInvoice?.PaymentMeans?.PayeeFinancialAccount?.ID;
     }
 
+    get currentDocumentType(): DocumentType {
+        return this.invoiceContext.selectedDocument?.type
+            || this.invoiceContext.selectedDocumentType
+            || DocumentType.INVOICE;
+    }
+
     get isSuccessfullyProcessed(): boolean {
         const document = this.invoiceContext.selectedDocument;
         return !!document?.processedOn && !document?.processedStatus;

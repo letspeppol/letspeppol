@@ -2,10 +2,12 @@ import {resolve} from '@aurelia/kernel';
 import {singleton} from "aurelia";
 import {AppApi} from "./app-api";
 import {CompanyGroup} from "./welcome-notification-service";
+import {VatRuleset} from "./vat-rules";
 
 export interface CompanyDto {
     peppolId: string,
-    vatNumber: string,
+    identifier: string,
+    vatNumber?: string,
     name: string,
     displayName: string,
     subscriber: string,
@@ -13,6 +15,7 @@ export interface CompanyDto {
     paymentTerms: string,
     iban: string,
     paymentAccountName: string,
+    vatRuleset: VatRuleset,
     lastInvoiceReference: string,
     lastCreditNoteReference: string,
     peppolActive: boolean,

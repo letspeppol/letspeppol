@@ -10,6 +10,8 @@ import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 import java.time.Instant;
 import java.util.UUID;
 
+import static org.hibernate.type.SqlTypes.LONGVARCHAR;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -47,7 +49,7 @@ public class UblDocument {
 
     private String processedStatus; //Useful for feedback from Peppol AP
 
-    @Lob
+    @JdbcTypeCode(LONGVARCHAR) //Map to the PG text column as a plain string; @Lob would make Hibernate treat it as a large object (OID) and fail to read text content
     private String ubl; //Can be left empty once processed as owner owns the data, i.e. no-archive is enabled and downloadCount > 1, the other field are sufficient to keep the proxy fully operational
 
     ///INTERNAL INFORMATION

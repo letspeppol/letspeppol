@@ -1,7 +1,6 @@
 package org.letspeppol.kyc.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.letspeppol.kyc.dto.AccountInfo;
 import org.letspeppol.kyc.dto.CompanySearchResponse;
 import org.letspeppol.kyc.dto.RegistrationResponse;
 import org.letspeppol.kyc.exception.ForbiddenException;
@@ -43,10 +42,11 @@ public class CompanyController {
 
     @GetMapping("/search")
     public ResponseEntity<List<CompanySearchResponse>> search(
+            @RequestParam(value = "identifier", required = false) String identifier,
             @RequestParam(value = "vatNumber", required = false) String vatNumber,
             @RequestParam(value = "peppolId", required = false) String peppolId,
             @RequestParam(value = "companyName", required = false) String companyName) {
-        return ResponseEntity.ok(companyService.search(vatNumber, peppolId, companyName)); //TODO : not really using the JWT, do we need to validate ? Also no comment :-o
+        return ResponseEntity.ok(companyService.search(identifier, vatNumber, peppolId, companyName)); //TODO : not really using the JWT, do we need to validate ? Also no comment :-o
     }
 
     /// Registers peppolId on the Peppol Directory, must call Proxy to register on AP
