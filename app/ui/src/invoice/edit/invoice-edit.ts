@@ -1,6 +1,6 @@
 import {resolve} from "@aurelia/kernel";
 import {InvoiceContext} from "../invoice-context";
-import {bindable, computed, IDisposable, IEventAggregator} from "aurelia";
+import {bindable, IDisposable, IEventAggregator} from "aurelia";
 import {
     CreditNote,
     Invoice,
@@ -25,6 +25,7 @@ import {PaymentInfo} from "./components/tiles/payment-info";
 import moment, {Moment} from "moment";
 import {IRouter} from "@aurelia/router";
 import {I18N} from "@aurelia/i18n";
+import {collectVatReasonSelections, requiresDeliveryDetails} from "../../services/app/vat-rules";
 
 export class InvoiceEdit {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -52,6 +53,7 @@ export class InvoiceEdit {
     returnToOverview() {
         this.invoiceContext.setActiveBoxFromDocument(this.invoiceContext.selectedDocument);
         this.invoiceContext.clearSelectedInvoice();
+        this.ea.publish('invoicesReset');
         this.router.load('/invoices');
     }
 
@@ -103,11 +105,12 @@ export class InvoiceEdit {
 
     async sendInvoice() {
         const type = this.selectedDocumentType;
+        const selectedDocument = this.invoiceContext.selectedDocument;
         try {
             this.ea.publish('showOverlay', this.i18n.tr(`overlay.sending.${type}`));
             let doc;
-            if (this.invoiceContext.selectedDocument?.createdExternally && this.invoiceContext.selectedDocument?.id) {
-                doc = await this.invoiceService.sendDocument(this.invoiceContext.selectedDocument.id);
+            if (selectedDocument?.createdExternally && selectedDocument.id) {
+                doc = await this.invoiceService.sendDocument(selectedDocument.id);
             } else {
                 const xml = this.buildXml();
                 const response = await this.invoiceService.validate(xml);
@@ -115,15 +118,19 @@ export class InvoiceEdit {
                     this.validationResultModal.showModal(response);
                     return;
                 }
-                doc = await this.invoiceService.createDocument(xml);
+                if (selectedDocument?.id) {
+                    doc = await this.invoiceService.updateDocument(selectedDocument.id, xml, false);
+                } else {
+                    doc = await this.invoiceService.createDocument(xml);
+                }
             }
+            this.recordFinalVatReasonSelections(doc.id);
+            if (selectedDocument?.draftedOn) {
+                this.invoiceContext.deleteDraft(selectedDocument);
+            }
+            this.invoiceContext.selectedDocument = doc;
             this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(`alert.invoice.sent.${type}`)});
-            this.invoiceContext.invoicePage.content.unshift(doc);
-            if (this.invoiceContext.selectedDocument.draftedOn) {
-                await this.deleteDraft();
-            } else {
-                this.returnToOverview();
-            }
+            this.returnToOverview();
         } catch (e: unknown) {
             const errorResponse = await toErrorResponse(e);
             if (errorResponse?.errorCode === 'INVOICE_NUMBER_ALREADY_USED') {
@@ -262,6 +269,25 @@ export class InvoiceEdit {
         }
     }
 
+    private collectVatReasonSelections() {
+        return collectVatReasonSelections(this.invoiceContext.selectedInvoice);
+    }
+
+    private recordFinalVatReasonSelections(documentId: string | undefined) {
+        const selections = this.collectVatReasonSelections().map(item => ({
+            documentId,
+            selectedTaxCategoryId: item.selectedTaxCategoryId,
+            writtenReason: item.writtenReason,
+            duringDraft: false,
+        }));
+        if (!selections.length) {
+            return;
+        }
+        void this.invoiceService.recordVatReasonSelections(selections).catch(error => {
+            console.warn('Failed to record final VAT reason selections', error);
+        });
+    }
+
     savePartner() {
         let partner;
         if (this.invoiceContext.selectedDocument.direction === DocumentDirection.INCOMING) {
@@ -316,20 +342,18 @@ export class InvoiceEdit {
         this.invoiceAttachmentModal.showModal();
     }
 
-    @computed({
-        deps: [
-            'invoiceContext.selectedInvoice.BuyerReference',
-            'invoiceContext.selectedInvoice.OrderReference.ID',
-            'invoiceContext.selectedInvoice.IssueDate',
-            'invoiceContext.selectedInvoice.DueDate',
-            'invoiceContext.selectedInvoice.PaymentTerms',
-            'invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PartyIdentification[0].ID.value',
-            'invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PartyName.Name',
-            'invoiceContext.selectedInvoice.AccountingCustomerParty.PartyTaxScheme.TaxScheme.ID',
-            'invoiceContext.selectedInvoice.LegalMonetaryTotal.LineExtensionAmount.value',
-            'invoiceContext.selectedInvoice.PaymentMeans.PaymentMeansCode.value',
-            'invoiceContext.selectedInvoice.PaymentMeans.PayeeFinancialAccount.ID'
-        ] })
+    private invoiceRequiresDeliveryDetails(): boolean {
+        return this.invoiceContext.lines?.some(line => requiresDeliveryDetails(line.Item?.ClassifiedTaxCategory?.ID)) ?? false;
+    }
+
+    private hasRequiredDeliveryDetails(): boolean {
+        if (!this.invoiceRequiresDeliveryDetails()) {
+            return true;
+        }
+        const delivery = this.invoiceContext.selectedInvoice?.Delivery;
+        return !!delivery?.ActualDeliveryDate && !!delivery?.DeliveryLocation?.Address?.Country?.IdentificationCode;
+    }
+
     get isValid() {
         const inv = this.invoiceContext.selectedInvoice;
         const hasParty = inv && inv.AccountingCustomerParty && inv.AccountingCustomerParty.Party;
@@ -345,8 +369,8 @@ export class InvoiceEdit {
             && hasParty
             && hasPartyIdentificationId
             && inv.AccountingCustomerParty.Party.PartyName.Name
-            && inv.AccountingCustomerParty.Party.PartyTaxScheme.TaxScheme.ID
             && inv.LegalMonetaryTotal.LineExtensionAmount.value > 0
+            && this.hasRequiredDeliveryDetails()
             && this.paymentInfo.isPaymentInfoComplete;
     }
 
