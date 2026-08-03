@@ -123,8 +123,13 @@ class KboXmlSyncServiceTests {
     private void createTestZipWithXml(Path zipPath) throws IOException {
         Files.createDirectories(zipPath.getParent());
         try (ZipOutputStream zos = new ZipOutputStream(Files.newOutputStream(zipPath))) {
-            ZipEntry entry = new ZipEntry("test.xml");
-            zos.putNextEntry(entry);
+            ZipEntry codesEntry = new ZipEntry("test.codes.xml");
+            zos.putNextEntry(codesEntry);
+            zos.write("<codes></codes>".getBytes());
+            zos.closeEntry();
+
+            ZipEntry dataEntry = new ZipEntry("test.xml");
+            zos.putNextEntry(dataEntry);
             zos.write("<root></root>".getBytes());
             zos.closeEntry();
         }
