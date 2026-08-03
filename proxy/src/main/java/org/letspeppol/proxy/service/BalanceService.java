@@ -23,7 +23,7 @@ public class BalanceService {
     }
 
     public long incrementBy(long delta) {
-        if (delta <= 0 || delta > MAX_INCREMENT) {
+        if (delta < -MAX_INCREMENT || delta > MAX_INCREMENT) {
             throw new IllegalArgumentException("Amount must be between 1 and " + MAX_INCREMENT);
         }
         return value.updateAndGet(current -> Math.min(current + delta, MAX_BALANCE));
