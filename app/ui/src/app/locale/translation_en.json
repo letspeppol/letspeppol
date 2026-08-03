@@ -281,7 +281,7 @@
     "not-peppol-active": "You are currently not registered on Peppol",
     "not-peppol-active-action": "Solve this now",
     "registration-company-already-registered": "Company already registered",
-    "registration-company-already-registered-on-peppol": "It looks like this Peppol ID is already registered with another provider. Activation here requires unregistering there first. You can still complete the signing process and handle this afterward.",
+    "registration-company-already-registered-on-peppol": "It looks like this Peppol ID is already active. We recommend completing the signing process first. Afterward, we can determine which provider your Peppol ID is active with and help you if you would like to switch.",
     "registration-company-not-found": "Company not found"
   },
   "forgot": {
