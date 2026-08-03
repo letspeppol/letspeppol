@@ -181,7 +181,7 @@ public class KboXmlSyncService {
                 String entryName = entry.getName();
                 if (!entry.isDirectory()
                         && entryName.toLowerCase().endsWith(".xml")
-                        && entryName.toLowerCase().endsWith(".wijzig.xml")) {
+                        && !entryName.toLowerCase().endsWith(".codes.xml")) {
                     Path out = targetDir.resolve(entryName).toAbsolutePath().normalize();
                     // Zip Slip guard: reject entries that resolve outside the target directory.
                     if (!out.startsWith(normalizedTargetDir)) {

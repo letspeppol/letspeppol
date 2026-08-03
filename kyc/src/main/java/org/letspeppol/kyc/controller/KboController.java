@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/lapi/kyc")
-public class KycController {
+@RequestMapping("/lapi/kbo")
+public class KboController {
 
     private final KboXmlSyncService kboXmlSyncService;
 
