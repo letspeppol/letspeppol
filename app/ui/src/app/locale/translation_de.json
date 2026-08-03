@@ -281,7 +281,7 @@
     "not-peppol-active": "Sie sind derzeit nicht bei Peppol registriert",
     "not-peppol-active-action": "Jetzt lösen",
     "registration-company-already-registered": "Unternehmen bereits registriert",
-    "registration-company-already-registered-on-peppol": "Diese Peppol-ID ist offenbar bereits bei einem anderen Anbieter registriert. Um sie hier zu aktivieren, muss sie dort zuerst abgemeldet werden. Sie können den Signaturprozess trotzdem abschließen und das anschließend erledigen.",
+    "registration-company-already-registered-on-peppol": "Diese Peppol-ID ist offenbar bereits aktiv. Wir empfehlen Ihnen, zunächst den Signaturprozess abzuschließen. Anschließend können wir feststellen, bei welchem Anbieter Ihre Peppol-ID aktiv ist, und Sie unterstützen, falls Sie wechseln möchten.",
     "registration-company-not-found": "Unternehmen nicht gefunden"
   },
   "forgot": {

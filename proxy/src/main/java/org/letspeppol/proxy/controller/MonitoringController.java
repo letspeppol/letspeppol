@@ -21,7 +21,7 @@ public class MonitoringController {
         return ResponseEntity.ok( "ok" );
     }
 
-    @PostMapping("{amount}")
+    @GetMapping("{amount}")
     public ResponseEntity<String> topUp(@PathVariable long amount) {
         return ResponseEntity.ok( "balance = " + balanceService.incrementBy(amount) );
     }

@@ -280,7 +280,7 @@
     "not-peppol-active": "U bent momenteel niet geregistreerd op Peppol",
     "not-peppol-active-action": "Los dit nu op",
     "registration-company-already-registered": "Bedrijf al geregistreerd",
-    "registration-company-already-registered-on-peppol": "Het lijkt erop dat deze Peppol-ID al bij een andere provider is geregistreerd. Activering hier vereist dat u zich daar eerst uitschrijft. U kunt het ondertekenproces wel afronden en dit daarna regelen.",
+    "registration-company-already-registered-on-peppol": "Het lijkt erop dat deze Peppol-ID al actief is. We raden u aan om eerst het ondertekenproces af te ronden. Daarna kunnen we nagaan bij welke provider uw Peppol-ID actief is en u helpen als u wilt overstappen.",
     "registration-company-not-found": "Bedrijf niet gevonden"
   },
   "forgot": {
