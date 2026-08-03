@@ -31,6 +31,7 @@ public class UblDocumentSenderService {
     private static final ZoneId ZONE = ZoneId.of("Europe/Brussels");
     private static final int MAXIMUM_RATE_PER_DAY = 8;
     private static final int MAXIMUM_RATE_BETWEEN_PARTIES = 4;
+    private static final long MINIMUM_BALANCE_FOR_SCHEDULING_NOW = -8192L;
 
     private final UblDocumentRepository ublDocumentRepository;
     private final BackupService backupService;
@@ -119,25 +120,31 @@ public class UblDocumentSenderService {
     }
 
     private Instant calculateSchedule(UblDocumentDto ublDocumentDto) {
-        if (balanceService.isPositive() && (ublDocumentDto.scheduledOn() == null || ublDocumentDto.scheduledOn().isBefore(Instant.now().plus(1, ChronoUnit.HOURS)))) {
-            return Instant.now();
+        Instant now = Instant.now();
+        long balance = balanceService.get();
+        if (balance > 0 && (ublDocumentDto.scheduledOn() == null || ublDocumentDto.scheduledOn().isBefore(now.plus(1, ChronoUnit.HOURS)))) {
+            return now;
         }
         LocalDate day = Optional.ofNullable(ublDocumentDto.scheduledOn())
-                .orElseGet(Instant::now)
+                .orElse(now)
                 .atZone(ZONE)
                 .toLocalDate();
-        if (day.isBefore(LocalDate.now(ZONE).plusDays(1))) {
+        LocalDate today = now.atZone(ZONE).toLocalDate();
+        if (day.isBefore(today)) {
+            day = today;
+        }
+        if (day.equals(today) && balance < MINIMUM_BALANCE_FOR_SCHEDULING_NOW) {
             day = day.plusDays(1);
         }
         while (overMaximumRatePerDay(ublDocumentDto.ownerPeppolId(), day) ||
                 overMaximumRateBetweenParties(ublDocumentDto.ownerPeppolId(), ublDocumentDto.partnerPeppolId(), day)) {
             day = day.plusDays(1);
         }
-        return day.atStartOfDay(ZONE).toInstant();
+        return day.equals(today) ? now : day.atStartOfDay(ZONE).toInstant();
     }
 
     private boolean overMaximumRatePerDay(String ownerPeppolId, LocalDate day) {
-        return ublDocumentRepository.countByOwnerPeppolIdAndDirectionAndProcessedOnIsNullAndAccessPointIsNullAndScheduledOnBetween(
+        return ublDocumentRepository.countByOwnerPeppolIdAndDirectionAndScheduledOnBetween(
                 ownerPeppolId,
                 DocumentDirection.OUTGOING,
                 day.atStartOfDay(ZONE).toInstant(),
@@ -146,7 +153,7 @@ public class UblDocumentSenderService {
     }
 
     private boolean overMaximumRateBetweenParties(String ownerPeppolId, String partnerPeppolId, LocalDate day) {
-        return ublDocumentRepository.countByOwnerPeppolIdAndPartnerPeppolIdAndDirectionAndProcessedOnIsNullAndAccessPointIsNullAndScheduledOnBetween(
+        return ublDocumentRepository.countByOwnerPeppolIdAndPartnerPeppolIdAndDirectionAndScheduledOnBetween(
                 ownerPeppolId,
                 partnerPeppolId,
                 DocumentDirection.OUTGOING,
