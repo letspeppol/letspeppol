@@ -15,7 +15,8 @@ public record UblDto(
         String orderReference,
         DocumentType type,
         Currency currency,
-        BigDecimal amount,
+        BigDecimal amountInclVat,
+        BigDecimal amountExclVat,
         Instant issueDate,
         Instant dueDate,
         String paymentTerms

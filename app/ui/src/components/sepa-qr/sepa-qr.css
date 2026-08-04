@@ -1,0 +1,11 @@
+.sepa-qr canvas,
+.sepa-qr img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+.sepa-qr-error {
+    color: var(--pill-error-fg);
+    font-size: .85rem;
+}

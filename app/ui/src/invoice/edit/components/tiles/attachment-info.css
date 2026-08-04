@@ -1,0 +1,38 @@
+.attachment-info-btn {
+    max-width: 100%;
+    min-width: 0;
+    padding: 0;
+    border: none;
+}
+
+.attachment-info-file-icon {
+    flex: 0 0 auto;
+    height: 32px;
+    object-fit: contain;
+    width: 32px;
+}
+
+.attachment-info-name {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.attachment-info-name-with-extension {
+    display: flex;
+    text-overflow: clip;
+}
+
+.attachment-info-name-stem {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.attachment-info-name-with-extension::after {
+    content: attr(data-extension);
+    flex: 0 0 auto;
+}

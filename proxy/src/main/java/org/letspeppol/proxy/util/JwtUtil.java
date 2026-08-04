@@ -22,11 +22,7 @@ public class JwtUtil {
         if (!accountType.isUser()) {
             throw new SecurityException("Not a user");
         }
-        String peppolId = jwt.getClaim(SecurityConfig.PEPPOL_ID);
-        if (peppolId == null || peppolId.isBlank()) {
-            throw new SecurityException("Peppol ID not present");
-        }
-        return peppolId;
+        return getPeppolId(jwt);
     }
 
     public static UUID getAppUid(Jwt jwt) {
@@ -39,6 +35,14 @@ public class JwtUtil {
             throw new SecurityException("UID not present");
         }
         return UUID.fromString(uid);
+    }
+
+    public static String getPeppolId(Jwt jwt) {
+        String peppolId = jwt.getClaim(SecurityConfig.PEPPOL_ID);
+        if (peppolId == null || peppolId.isBlank()) {
+            throw new SecurityException("Peppol ID not present");
+        }
+        return peppolId;
     }
 
 }

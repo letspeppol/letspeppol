@@ -43,7 +43,7 @@ public class PartnerController {
     @Operation(summary = "Update partner", description = "Updates one partner record used by the authenticated company.")
     public PartnerDto updatePartner(@AuthenticationPrincipal Jwt jwt, @PathVariable Long id, @RequestBody PartnerDto partnerDto) {
         String peppolId = JwtUtil.getPeppolId(jwt);
-        return partnerService.updatePartner(id, partnerDto);
+        return partnerService.updatePartner(peppolId, id, partnerDto);
     }
 
     @PostMapping
@@ -57,6 +57,6 @@ public class PartnerController {
     @Operation(summary = "Delete partner", description = "Deletes one partner record from the authenticated company's address book.")
     public void deletePartner(@AuthenticationPrincipal Jwt jwt, @PathVariable Long id) {
         String peppolId = JwtUtil.getPeppolId(jwt);
-        partnerService.deletePartner(id);
+        partnerService.deletePartner(peppolId, id);
     }
 }

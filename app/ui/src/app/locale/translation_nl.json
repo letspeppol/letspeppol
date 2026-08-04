@@ -1,479 +1,780 @@
 {
-  "label" : {
-    "email" : "E-mail",
-    "password" : "Wachtwoord",
-    "confirm-password" : "Bevestig wachtwoord",
-    "vat-number" : "BTW-nummer",
-    "name" : "Naam",
-    "city" : "Stad",
-    "postal-code" : "Postcode",
-    "street" : "Straat",
-    "house-number" : "Huisnummer",
-    "company-name" : "Bedrijfsnaam",
-    "description" : "Beschrijving",
-    "reference" : "Referentie",
-    "barcode" : "Barcode",
-    "cost-price" : "Kostprijs",
-    "sale-price" : "Verkoopprijs",
-    "tax-percentage" : "BTW-percentage",
-    "stock-quantity" : "Voorraad",
-    "product-category" : "Productcategorie",
-    "account-name" : "Accountnaam",
-    "payment-terms" : "Betalingsvoorwaarden",
-    "address" : "Adres",
-    "subscriber-info" : "Abonnee-info",
-    "download-contract" : "Contract downloaden",
-    "change-password" : "Wachtwoord wijzigen",
-    "company-info" : "Bedrijfsinfo",
-    "peppol-registration" : "Peppol-registratie",
-    "remove-from-peppol" : "Verwijderen van Peppol",
-    "activate-on-peppol" : "Activeren op Peppol",
-    "iban" : "IBAN",
-    "country" : "Land",
-    "customer" : "Klant",
-    "supplier" : "Leverancier",
-    "invoice-number" : "Factuurnummer",
-    "note-optional" : "Notitie (optioneel)",
-    "issue-date" : "Uitgiftedatum",
-    "due-date" : "Vervaldatum",
-    "type" : "Type",
-    "number" : "Nummer",
-    "house-number-short" : "Huisnr",
-    "peppolId" : "Peppol ID"
-  },
-  "placeholder" : {
-    "email" : "naam@bedrijf.be",
-    "vat-number" : "BE0123456789",
-    "password" : "••••••••",
-    "product-search" : "Product zoeken",
-    "partner-search" : "Partner zoeken",
-    "invoice-search" : {
-      "doc" : "Doc zoeken",
-      "customer" : "Klant zoeken"
-    },
-    "customer-search" : "Zoek op naam of BTW",
-    "name" : "Naam"
-  },
-  "login" : {
-    "action" : "Inloggen",
-    "title" : "Meld u aan bij uw account",
-    "new" : "Nieuw hier?",
-    "register" : "Registreer uw bedrijf",
-    "continue" : "Inloggen",
-    "forgot" : "Wachtwoord vergeten",
-    "remember" : "Onthoud mij"
-  },
-  "onboarding": {
-    "title": "Onboardingstappen",
-    "or": "of",
-    "os": { "windows": "Windows", "macos": "macOS", "linux": "Linux" },
-    "browser": { "chrome": "Chrome", "firefox": "Firefox", "safari": "Safari", "edge": "Microsoft Edge" },
-    "step": {
-      "register-company": "Registreer uw bedrijf",
-      "register-affiliate": "Registreer als affiliate",
-      "prepare-eid": {
-        "title": "Bereid uw eID-software, kaartlezer en kaart voor",
-        "install-web-eid": "Installeer de Web eID-applicatie",
-        "alt-stack": "Als alternatief kunt u de volledige softwarestack installeren via id.ee.",
-        "alt-stack-link": "Open de id.ee-installatiegids",
-        "install-beidconnect": "Zorg ervoor dat BeIDConnect is geïnstalleerd (Belgische eID-middleware).",
-        "install-beidconnect-link": "Download BeIDConnect",
-        "restart-browser": "Start uw browser opnieuw en controleer of de Web eID-extensie is ingeschakeld.",
-        "browser-help": "Hulp voor de extensie:",
-        "test-setup": "Sluit uw eID-kaartlezer aan, steek uw eID-kaart in en voer de test rechts uit.",
-        "troubleshoot": {
-          "title": "Als bevestigen mislukt:",
-          "reinsert": "Verwijder de eID-kaart en steek ze opnieuw in.",
-          "usb": "Gebruik een directe USB-verbinding (vermijd hubs/dongles).",
-          "restart": "Herstart uw browser en probeer opnieuw.",
-          "other-device": "Probeer een andere computer.",
-          "contact": "Contacteer support:"
-        },
-        "success": {
-          "title": "Web eID werkt",
-          "subtitle": "Uw kaartlezer en browserconfiguratie lijken in orde."
-        }
-      },
-      "verify-email": "Verifieer uw e-mailadres (controleer de spam voor e-mails van @letspeppol.org).",
-      "verify-director": "Verifieer uw identiteit als bestuurder van het bedrijf.",
-      "sign-contract": "Onderteken het contract om KYC (Know Your Customer) te voltooien.",
-      "login": "Log in op uw account."
-    },
-    "check-title": "Controleer uw Web eID-installatie",
-    "check" : "Web eID controleren",
-    "anim-caption-sign" : "Steek uw eID-kaart in en druk op bevestigen om de installatie te verifiëren.",
-    "anim-reader-label" : "LEZER"
-  },
-  "registration" : {
-    "title-step0" : "Registreer uw bedrijf",
-    "affiliate-title-step0" : "Registreer als affiliate",
-    "create-account" : "Account aanmaken",
-    "affiliate-create-account" : "Affiliate-account aanmaken",
-    "already-registered" : "Al geregistreerd?",
-    "affiliate-already-registered" : "Al affiliate?",
-    "title-step1" : "Bevestig uw bedrijf",
-    "affiliate-title-step1" : "Bevestig uw affiliatebedrijf",
-    "affiliate-intro" : "Registreer als affiliate voor uw eigen Belgische onderneming.<br />Als uw bedrijf al door een administrator wordt beheerd,<br />vraag die administrator om uw toegang toe te voegen of goed te keuren.",
-    "confirm-company" : "Bevestigen",
-    "wrong-company" : "Verkeerd bedrijf?",
-    "back" : "Terug",
-    "title-step2" : "Account verificatie",
-    "instructions-intro": "We hebben u een bevestigingsmail gestuurd van kyc@letspeppol.org. Controleer ook uw spamfolder.",
-    "instructions-onboarding": "Voordat u verdergaat, doorloop de onboarding-checklist om Web eID in te stellen.",
-    "instructions-go-checklist" : "Ga naar de checklist",
-    "instructions-finally": "<b>Tot slot</b>, open de bevestigingsmail en klik op de verificatielink."
-  },
-  "error" : {
-    "login-failed" : "Inloggen mislukt",
-    "registration-company-not-found" : "Bedrijf niet gevonden",
-    "registration-company-already-registered" : "Bedrijf al geregistreerd",
-    "registration-company-affiliate-contact-admin" : "Dit bedrijf heeft al een administrator. Neem contact op met uw administrator om de affiliate-onboarding voort te zetten.",
-    "registration-company-already-registered-on-peppol" : "Het lijkt erop dat deze Peppol-ID al bij een andere provider is geregistreerd. Activering hier vereist dat u zich daar eerst uitschrijft. U kunt het ondertekenproces wel afronden en dit daarna regelen.",
-    "not-peppol-active" : "U bent momenteel niet geregistreerd op Peppol",
-    "not-peppol-active-action" : "Los dit nu op"
-  },
-  "paymentTerms" : {
-    "15_DAYS" : "15 dagen",
-    "30_DAYS" : "30 dagen",
-    "60_DAYS" : "60 dagen",
-    "END_OF_NEXT_MONTH" : "Einde van de maand"
-  },
-  "documentDirection" : {
-    "OUTGOING" : "Uitgaand",
-    "INCOMING" : "Inkomend"
-  },
-  "documentType" : {
-    "INVOICE" : "Factuur",
-    "CREDIT_NOTE" : "Creditnota"
-  },
-  "confirmation" : {
-    "header" : "Identiteit bevestigen",
-    "header-sign" : "Contract ondertekenen",
-    "belgian-only" : "Momenteel activeren we alleen Belgische ondernemingen. <br /> Land laten ondersteunen? <a href=\"mailto:country@letspeppol.org\">Help mee</a>",
-    "manual-confirmation-needed" : "Uw contract vereist een handmatige controle, die tot 10 werkdagen kan duren. <br /> Houd uw e-mail in de gaten voor eventuele extra acties. <br /> Reden: de eID komt niet volledig overeen met de geselecteerde bestuurder.",
-    "loading" : "Bedrijfsgegevens laden…",
-    "company" : "Bedrijf",
-    "directors" : "Bestuurders",
-    "table.name" : "Naam",
-    "table.action" : "Actie",
-    "director-confirm" : "Bevestigen",
-    "director-confirmed" : "Bevestigd",
-    "no-directors" : "Geen bestuurders gevonden.",
-    "read-contract-title" : "1. Contract lezen",
-    "read-contract-info" : "U ontvangt een getekend exemplaar zodra de registratie is voltooid.",
-    "read-contract-agree" : "Ik heb het contract gelezen en ga akkoord met de voorwaarden",
-    "choose-credentials-title" : "2. Kies inloggegevens",
-    "sign-eid-title" : "3. Onderteken met eID",
-    "anim-caption-validate" : "Steek uw eID-kaart in en druk op bevestigen om uw identiteit te valideren.",
-    "anim-caption-sign" : "Steek uw eID-kaart in en druk op bevestigen om het contract te ondertekenen.",
-    "anim-reader-label" : "LEZER",
-    "anim-reader-sr" : "Plaats eID-kaart in de lezerssleuf",
-    "expand-button" : "Vergroten",
-    "minimize-button" : "Verkleinen",
-    "sign-button" : "Ondertekenen",
-    "success-title" : "Gelukt!",
-    "success-contract" : "Het ondertekende contract staat in uw downloadsmap",
-    "success-login-prefix" : "U kunt nu"
-  },
-  "common" : {
-    "confirm" : "Bevestigen",
-    "cancel" : "Annuleren",
-    "delete" : "Verwijderen",
-    "save" : "Opslaan",
-    "clear" : "Wissen",
-    "apply" : "Toepassen",
-    "previous" : "Vorige",
-    "next" : "Volgende",
-    "search" : "Zoeken",
-    "new" : "Nieuw",
-    "none" : "Geen",
-    "yes" : "Ja",
-    "no" : "Nee",
-    "remove" : "Verwijderen",
-    "switch-account" : "Account wisselen",
-    "logout" : "Uitloggen",
-    "edit" : "Bewerken",
-    "close" : "Sluiten"
-  },
-  "new-feature" : {
-    "label" : "Nieuw",
-    "click-to-dismiss" : "Klik om te sluiten"
-  },
-  "navigation" : {
-    "dashboard" : "Dashboard",
-    "invoices" : "Facturen",
-    "partners" : "Partners",
-    "products" : "Producten",
-    "account" : "Account",
-    "brand-alt" : "Let's Peppol",
-    "toggle-theme" : "Thema wisselen"
-  },
-  "ownershipAdd" : {
-    "action" : "Account toevoegen",
-    "title" : "Account toevoegen",
-    "intro" : "Voeg een extra account toe voor een bedrijf door te tekenen als een van de bestuurders.",
-    "cancel" : "Terug naar dashboard",
-    "lookup" : "Bedrijf zoeken",
-    "account-info-title" : "2. Bevestig het account",
-    "account-info-body" : "Dit bedrijf wordt toegevoegd aan het bestaande account hierboven. Het wachtwoord van dat account blijft hetzelfde.",
-    "read-contract-info" : "U ontvangt een ondertekend exemplaar zodra dit account is toegevoegd.",
-    "sign-button" : "Account toevoegen",
-    "success-title" : "Account toegevoegd",
-    "success-body" : "Het ondertekende contract werd gedownload en het nieuwe bedrijf is nu beschikbaar in uw accountkeuzelijst.",
-    "back-dashboard" : "Terug naar dashboard",
-    "company-has-admin" : "Dit bedrijf heeft al een admin-account. De huidige flow ondersteunt alleen bedrijven zonder bestaande admin."
-  },
-  "alert" : {
-    "success" : "Succes",
-    "info" : "Info",
-    "warning" : "Waarschuwing",
-    "danger" : "Fout",
-    "neutral" : "Bericht"
-  },
-  "overlay" : {
-    "saving-account" : "Account opslaan, een moment geduld"
-  },
-  "product" : {
-    "categories" : "Categorieën",
-    "category" : "Categorie",
-    "title" : "Producten",
-    "all" : "Alle",
-    "search" : "Product zoeken",
-    "new" : "Nieuw product",
-    "table" : {
-      "name" : "Naam",
-      "description" : "Beschrijving",
-      "category" : "Categorie",
-      "reference" : "Referentie",
-      "barcode" : "Barcode",
-      "cost-price" : "Kostprijs",
-      "sale-price" : "Verkoopprijs",
-      "tax-percentage" : "BTW-percentage",
-      "stock-quantity" : "Voorraad",
-      "actions" : "Acties"
-    },
-    "empty" : "Geen producten voldoen aan uw filters.",
-    "edit" : {
-      "new" : "Nieuw product",
-      "info" : "Productinfo",
-      "pricing" : "Prijzen",
-      "stock" : "Voorraad",
-      "stock-quantity" : "Voorraad",
-      "product-category" : "Productcategorie",
-      "none" : "Geen",
-      "save" : "Product opslaan",
-      "cancel" : "Annuleren"
-    },
-    "categoryModal" : {
-      "title" : "Productcategorie",
-      "name" : "Naam",
-      "color" : "Kleur"
-    }
-  },
-  "partner" : {
-    "title" : "Partners",
-    "customersSuppliers" : "Klanten & Leveranciers",
-    "customers" : "Klanten",
-    "suppliers" : "Leveranciers",
-    "search" : "Partner zoeken",
-    "new" : "Nieuwe partner",
-    "all" : "Alle",
-    "table" : {
-      "type" : "Type",
-      "name" : "Naam",
-      "address" : "Adres",
-      "postal-code" : "Postcode",
-      "city" : "Stad",
-      "country" : "Land",
-      "vat" : "BTW",
-      "actions" : "Acties"
-    },
-    "empty" : "Geen partners voldoen aan uw filters.",
-    "edit" : {
-      "new" : "Nieuwe partner",
-      "company-info" : "Bedrijfsinfo",
-      "peppol" : "Peppol",
-      "address" : "Adres",
-      "payment-info" : "Betaalinformatie",
-      "customer" : "Klant",
-      "supplier" : "Leverancier",
-      "account-name" : "Accountnaam",
-      "payment-terms" : "Betalingsvoorwaarden",
-      "iban" : "IBAN",
-      "save" : "Partner opslaan",
-      "cancel" : "Annuleren"
-    }
-  },
-  "invoice" : {
-    "direction" : "Richting",
-    "all" : "Alle",
-    "outgoing" : "Uitgaand",
-    "incoming" : "Inkomend",
-    "drafts" : "Concepten",
-    "title" : "Facturen",
-    "search" : "Klant of referentie zoeken",
-    "customer" : "Klant",
-    "supplier": "Leverancier",
-    "partner": "Partner",
-    "buyer-reference" : "Referentie koper",
-    "order-reference" : "Orderreferentie",
-    "invoice-reference" : "Factuurreferentie",
-    "invoice-reference-date" : "Factuurdatum",
-    "new" : {
-      "INVOICE" : "Nieuwe factuur",
-      "CREDIT_NOTE" : "Nieuwe creditnota"
-    },
-    "status" : {
-      "draft" : "Concept",
-      "scheduled" : "Gepland",
-      "processed" : "Verwerkt",
-      "error" : "Fout"
-    },
-    "table" : {
-      "direction" : "Richting",
-      "type" : "Type",
-      "doc" : "Doc",
-      "issue-date" : "Uitgiftedatum",
-      "due-date" : "Vervaldatum",
-      "total" : "Totaal",
-      "status" : "Status",
-      "actions" : "Acties"
-    },
-    "filter" : {
-      "from" : "Van",
-      "to" : "Tot",
-      "clear" : "Wissen",
-      "apply" : "Toepassen"
-    },
-    "loading" : "Facturen laden...",
-    "empty" : "Geen facturen voldoen aan uw filters.",
-    "pager" : {
-      "previous" : "Vorige",
-      "next" : "Volgende"
-    },
-    "modal" : {
-      "title" : "Factuur",
-      "title-credit-note" : "Creditnota",
-      "document" : "Document",
-      "invoice-number" : "Factuurnummer",
-      "credit-note-number" : "Creditnotanummer",
-      "invoice-reference" : "Factuur nr referentie selecteren",
-      "invoice-reference-none" : "Geen",
-      "note-optional" : "Notitie (optioneel)",
-      "note-placeholder" : "Extra notities voor deze factuur",
-      "credit-note-note-placeholder" : "Extra notities voor deze creditnota",
-      "credit-note-vat-note" : "BTW terug te storten aan de Staat in de mate waarin ze oorspronkelijk in aftrek werd gebracht",
-      "reference-required" : "Referentie koper OF orderreferentie is verplicht"
-    },
-    "dateModal" : {
-      "title" : "Datum",
-      "issue-date" : "Uitgiftedatum",
-      "payment-terms" : "Betalingsvoorwaarden",
-      "due-date" : "Vervaldatum"
-    },
-    "paymentModal" : {
-      "title" : "Betaling",
-      "type" : "Type",
-      "name" : "Naam",
-      "iban" : "IBAN",
-      "reference" : "Referentie",
-      "store-iban": "IBAN opslaan in account"
-    },
-    "validationModal" : {
-      "title" : "Validatie",
-      "error-count" : "Aantal fouten"
-    },
-    "customerModal" : {
-      "title" : "Klant",
-      "search-title" : "Partner selecteren",
-      "create-new" : "Nieuwe aanmaken",
-      "country" : "Land",
-      "house-number" : "Huisnummer",
-      "country-value" : "België",
-      "search-name-vat" : "Naam of BTW-nummer",
-      "search-partner-placeholder" : "Zoek partner op naam of BTW-nummer",
-      "no-matches" : "Geen resultaten"
-    },
-    "productSearch" : {
-      "placeholder" : "naam",
-      "no-matches" : "Geen resultaten"
-    },
-    "edit" : {
-      "download-ubl" : "UBL",
-      "download-pdf" : "PDF",
-      "validate" : "Valideren",
-      "delete-draft" : "Concept verwijderen",
-      "update-draft" : "Concept bijwerken",
-      "save-draft" : "Concept opslaan",
-      "cancel" : "Annuleren",
-      "send" : {
-        "INVOICE" : "Factuur verzenden",
-        "CREDIT_NOTE" : "Creditnota verzenden"
-      },
-      "number" : "Nummer",
-      "buyer-reference" : "Referentie koper",
-      "payment" : "Betaling",
-      "method" : "Methode",
-      "subtotal" : "Subtotaal",
-      "tax" : "BTW",
-      "total" : "Totaal",
-      "invoice-lines" : "Factuurlijnen",
-      "pos" : "Pos",
-      "amount" : "Aantal",
-      "unit-price" : "Stuksprijs",
-      "actions" : "Acties",
-      "add-line" : "Lijn toevoegen",
-      "note" : "Notitie",
-      "recreate-positions" : "Lijnposities opnieuw aanmaken",
-      "attachments" : "Bijlagen"
-    }
-  },
-  "account" : {
-    "title" : "Account",
-    "cancel" : "Annuleren",
-    "save" : "Opslaan",
-    "notifications": "Meldingen",
-    "subscriber-info" : "Abonnee-info",
-    "download-contract" : "Contract downloaden",
-    "change-password" : "Wachtwoord wijzigen",
-    "company-info" : "Bedrijfsinfo",
-    "company-legal-name": "Wettelijke bedrijfsnaam",
-    "company-display-name": "Zichtbare bedrijfsnaam",
-    "peppol-registration" : "Peppol-registratie",
-    "remove-from-peppol" : "Verwijderen van Peppol",
-    "activate-on-peppol" : "Activeren op Peppol",
-    "address" : "Adres",
-    "number" : "Nummer",
-    "payment-info" : "Betaalinformatie",
-    "iban" : "IBAN",
-    "account-name" : "Accountnaam",
-    "payment-terms" : "Betalingsvoorwaarden",
-    "enable-email-notification": "E-mailmeldingen inschakelen",
+  "account": {
+    "account-name": "Accountnaam",
+    "activate-on-peppol": "Activeren op Peppol",
     "add-attachment-to-notification": "Bijlage toevoegen aan de melding",
-    "email-notification-cc-list": "CC-lijst voor e-mailmeldingen",
     "add-pdf-to-sending-invoice": "PDF toevoegen aan factuur",
+    "address": "Adres",
+    "cancel": "Annuleren",
+    "change-password": "Wachtwoord wijzigen",
+    "company-display-name": "Zichtbare bedrijfsnaam",
+    "company-info": "Bedrijfsinfo",
+    "company-legal-name": "Wettelijke bedrijfsnaam",
+    "download-contract": "Contract downloaden",
+    "email-notification-cc-list": "CC-lijst voor e-mailmeldingen",
+    "enable-email-notification": "E-mailmeldingen inschakelen",
+    "iban": "IBAN",
     "invoice-settings": "Factuurinstellingen",
+    "notifications": "Meldingen",
+    "number": "Nummer",
+    "payment-info": "Betaalinformatie",
+    "payment-terms": "Betalingsvoorwaarden",
+    "peppol-registration": "Peppol-registratie",
     "registration-failed": {
-      "contact-us": "De registratie is niet afgerond. Neem contact op met support via support@letspeppol.org voor de volgende stappen.",
       "contact-provider": "Uw Peppol-ID is momenteel geregistreerd bij {{provider}}. Neem contact met hen op om het uit te schrijven, log daarna in en probeer opnieuw te activeren.",
+      "contact-us": "De registratie is niet afgerond. Neem contact op met support via support@letspeppol.org voor de volgende stappen.",
       "try-again-one-day": "De registratie is niet afgerond. Probeer het morgen opnieuw. Als het probleem aanhoudt, neem contact op met support via support@letspeppol.org en vermeld uw accountgegevens.",
       "try-again-one-hour": "De registratie is niet afgerond. Probeer het over ongeveer een uur opnieuw. Het Peppol-netwerk is mogelijk tijdelijk overbelast."
+    },
+    "remove-from-peppol": "Verwijderen van Peppol",
+    "save": "Opslaan",
+    "subscriber-info": "Abonnee-info",
+    "title": "Account",
+    "vat-display": {
+      "description": "Kies of totalen op het dashboard en in de factuurlijst inclusief of exclusief btw worden getoond.",
+      "excl": "Exclusief btw",
+      "incl": "Inclusief btw",
+      "title": "Bedragweergave"
+    },
+    "vat-ruleset": {
+      "options": {
+        "VAT_EXEMPT_ART_56BIS": "Vrijgesteld van btw volgens art. 56bis - Kleine ondernemingen < €25.000",
+        "VAT_REGISTERED": "Btw-geregistreerd"
+      },
+      "title": "Btw-instellingen"
     }
   },
-  "forgot" : {
-    "title" : "Wachtwoord vergeten",
-    "info-sent" : "Een resetlink is verzonden indien het adres bekend is.",
-    "enter-email" : "Voer uw e-mailadres in om uw wachtwoord te resetten.",
-    "reset-failed" : "Reset mislukt",
-    "request-link" : "Resetlink aanvragen"
+  "alert": {
+    "account": {
+      "contract-download-failed": "Ondertekend contract downloaden mislukt",
+      "load-failed": "Account ophalen mislukt",
+      "peppol-activated": "Bedrijf geactiveerd op Peppol",
+      "peppol-activation-failed": "Bedrijf activeren op Peppol mislukt",
+      "peppol-activation-request-failed": "Activatieverzoek versturen mislukt",
+      "peppol-remove-failed": "Bedrijf verwijderen van Peppol mislukt",
+      "peppol-removed": "Bedrijf verwijderd van Peppol",
+      "reverted": "Wijzigingen ongedaan gemaakt",
+      "update-failed": "Account bijwerken mislukt",
+      "updated": "Account succesvol bijgewerkt"
+    },
+    "attachment": {
+      "document-not-saved": "Document niet opgeslagen. PDF-weergave niet beschikbaar.",
+      "downloaded": "Bestand '{{filename}}' gedownload",
+      "size-too-large-3mb": "Bestand mag niet groter zijn dan 3 MB"
+    },
+    "company": {
+      "info-failed": "Bedrijfsinformatie ophalen mislukt",
+      "save-failed": "Bedrijf opslaan mislukt"
+    },
+    "danger": "Fout",
+    "iban": {
+      "saved": "IBAN opgeslagen"
+    },
+    "info": "Info",
+    "invoice": {
+      "draft-created": {
+        "CREDIT_NOTE": "Creditnotaconcept succesvol aangemaakt",
+        "INVOICE": "Factuurconcept succesvol aangemaakt"
+      },
+      "draft-delete-failed": {
+        "CREDIT_NOTE": "Creditnotaconcept verwijderen mislukt",
+        "INVOICE": "Factuurconcept verwijderen mislukt"
+      },
+      "draft-delete-overview-failed": "Concept verwijderen mislukt",
+      "draft-deleted": "Concept verwijderd",
+      "draft-removed": {
+        "CREDIT_NOTE": "Creditnotaconcept verwijderd",
+        "INVOICE": "Factuurconcept verwijderd"
+      },
+      "draft-save-failed": {
+        "CREDIT_NOTE": "Creditnota als concept opslaan mislukt",
+        "INVOICE": "Factuur als concept opslaan mislukt"
+      },
+      "draft-saved": {
+        "CREDIT_NOTE": "Creditnotaconcept opgeslagen",
+        "INVOICE": "Factuurconcept opgeslagen"
+      },
+      "load-failed": "Factuur ophalen mislukt",
+      "mark-seen-failed": "Markeren van factuur als gezien mislukt",
+      "marked-paid": {
+        "CREDIT_NOTE": "Creditnota gemarkeerd als betaald",
+        "INVOICE": "Factuur gemarkeerd als betaald"
+      },
+      "marked-seen": "Factuur gemarkeerd als gezien",
+      "marked-unpaid": {
+        "CREDIT_NOTE": "Creditnota gemarkeerd als onbetaald",
+        "INVOICE": "Factuur gemarkeerd als onbetaald"
+      },
+      "no-ubl-data": "Geen UBL-gegevens beschikbaar",
+      "number-used": {
+        "CREDIT_NOTE": "Creditnotanummer al in gebruik",
+        "INVOICE": "Factuurnummer al in gebruik"
+      },
+      "paid-status-failed": "Wijzigen van betalingsstatus mislukt",
+      "resend-failed": {
+        "CREDIT_NOTE": "Hergebruiken van de creditnota mislukt",
+        "INVOICE": "Hergebruiken van de factuur mislukt"
+      },
+      "send-failed": {
+        "CREDIT_NOTE": "Creditnota verzenden mislukt",
+        "INVOICE": "Factuur verzenden mislukt"
+      },
+      "sent": {
+        "CREDIT_NOTE": "Creditnota succesvol verzonden",
+        "INVOICE": "Factuur succesvol verzonden"
+      },
+      "zero-vat-reason": {
+        "options": {
+          "AE": "Verlegd",
+          "E": "Vrijgesteld van btw",
+          "G": "Vrijgesteld exportartikel, geen btw aangerekend",
+          "K": "Vrijgesteld van btw voor intracommunautaire leveringen van goederen en diensten binnen de EER",
+          "O": "Niet onderworpen aan btw",
+          "Z": "Goederen met nultarief"
+        }
+      }
+    },
+    "neutral": "Bericht",
+    "partner": {
+      "create-failed": "Partner aanmaken mislukt",
+      "created": "Partner aangemaakt",
+      "delete-failed": "Partner verwijderen mislukt",
+      "deleted": "Partner verwijderd",
+      "update-failed": "Partner bijwerken mislukt",
+      "updated": "Partner bijgewerkt"
+    },
+    "password": {
+      "changed": "Wachtwoord gewijzigd"
+    },
+    "peppol-search": {
+      "failed": "Zoeken in Peppol-directory mislukt",
+      "no-results": "Geen resultaten gevonden"
+    },
+    "product": {
+      "created": "Product aangemaakt",
+      "delete-failed": "Product verwijderen mislukt",
+      "deleted": "Product verwijderd",
+      "update-failed": "Product bijwerken mislukt",
+      "updated": "Product bijgewerkt"
+    },
+    "registration": {
+      "contract-downloaded": "Ondertekend contract gedownload!",
+      "token-invalid": "Token ongeldig"
+    },
+    "success": "Succes",
+    "upload": {
+      "size-too-large": "Som van alle bestandsgroottes mag niet meer dan 10 MB zijn",
+      "type-unsupported": "Bestandstype niet ondersteund",
+      "upload-error": "Fout bij uploaden van bestand"
+    },
+    "warning": "Waarschuwing"
   },
-  "reset" : {
-    "title" : "Wachtwoord resetten",
-    "enter-email" : "Voer uw e-mailadres in om uw wachtwoord te resetten.",
-    "reset-failed" : "Reset mislukt",
-    "action" : "Wachtwoord resetten"
+  "common": {
+    "apply": "Toepassen",
+    "cancel": "Annuleren",
+    "clear": "Wissen",
+    "close": "Sluiten",
+    "confirm": "Bevestigen",
+    "delete": "Verwijderen",
+    "edit": "Bewerken",
+    "logout": "Uitloggen",
+    "new": "Nieuw",
+    "next": "Volgende",
+    "no": "Nee",
+    "none": "Geen",
+    "previous": "Vorige",
+    "remove": "Verwijderen",
+    "save": "Opslaan",
+    "search": "Zoeken",
+    "switch-account": "Account wisselen",
+    "view-more": "meer bekijken…",
+    "yes": "Ja"
   },
-  "session" : {
-    "continue-title" : "Sessies voortzetten"
+  "confirmation": {
+    "anim-caption-sign": "Steek uw eID-kaart in en druk op bevestigen om het contract te ondertekenen.",
+    "anim-caption-validate": "Steek uw eID-kaart in en druk op bevestigen om uw identiteit te valideren.",
+    "anim-reader-label": "LEZER",
+    "anim-reader-sr": "Plaats eID-kaart in de lezerssleuf",
+    "belgian-only": "Momenteel activeren we alleen Belgische ondernemingen. <br /> Land laten ondersteunen? <a href=\"mailto:country@letspeppol.org\">Help mee</a>",
+    "choose-credentials-title": "2. Kies inloggegevens",
+    "company": "Bedrijf",
+    "director-confirm": "Bevestigen",
+    "director-confirmed": "Bevestigd",
+    "directors": "Bestuurders",
+    "expand-button": "Vergroten",
+    "header": "Identiteit bevestigen",
+    "header-sign": "Contract ondertekenen",
+    "loading": "Bedrijfsgegevens laden…",
+    "manual-confirmation-needed": "Uw contract vereist een handmatige controle, die tot 10 werkdagen kan duren. <br /> Houd uw e-mail in de gaten voor eventuele extra acties. <br /> Reden: de eID komt niet volledig overeen met de geselecteerde bestuurder.",
+    "minimize-button": "Verkleinen",
+    "no-directors": "Geen bestuurders gevonden.",
+    "read-contract-agree": "Ik heb het contract gelezen en ga akkoord met de voorwaarden",
+    "read-contract-info": "U ontvangt een getekend exemplaar zodra de registratie is voltooid.",
+    "read-contract-title": "1. Contract lezen",
+    "sign-button": "Ondertekenen",
+    "sign-eid-title": "3. Onderteken met eID",
+    "success-contract": "Het ondertekende contract staat in uw downloadsmap",
+    "success-login-prefix": "U kunt nu",
+    "success-title": "Gelukt!",
+    "table.action": "Actie",
+    "table.name": "Naam"
+  },
+  "dashboard": {
+    "errored": "Facturen met fout",
+    "vat-suffix": {
+      "excl": "excl. btw",
+      "incl": "incl. btw"
+    }
+  },
+  "documentDirection": {
+    "INCOMING": "Inkomend",
+    "OUTGOING": "Uitgaand"
+  },
+  "documentType": {
+    "CREDIT_NOTE": "Creditnota",
+    "INVOICE": "Factuur"
+  },
+  "donations": {
+    "active-companies": "bedrijven",
+    "active-companies-title": "Actieve bedrijven die Let’s Peppol gebruiken",
+    "donate": "doneer",
+    "donations-received": "donaties",
+    "donations-received-title": "Totaal aantal ontvangen donaties",
+    "follow": "volgen",
+    "follow-linkedin": "Volg ons op LinkedIn",
+    "invoices-processed": "facturen",
+    "invoices-processed-title": "Facturen verwerkt via Let’s Peppol",
+    "sponsor-payment": {
+      "amount-including-vat": "{{total}} incl. btw",
+      "amount-reverse-charge": "{{total}} btw verlegd",
+      "amount-without-vat": "Ander bedrag zonder btw",
+      "contribution": "Bijdrage",
+      "create-invoice": "Akkoord en factuur aanmaken",
+      "default-message": "Bedankt voor Let’s Peppol",
+      "duplicate-invoice": "We hebben in de afgelopen 48 uur al een sponsorfactuur voor uw bedrijf aangemaakt. Die komt via Peppol aan, dus u hoeft nu geen nieuwe factuur aan te maken.",
+      "error-alert": "Sponsorfactuur kon niet worden aangemaakt",
+      "info-invoice": "Uw bijdrage zal worden gefactureerd door BARGE vzw (Business Application Research Group Europe), een btw-plichtige Belgische vereniging zonder winstoogmerk.",
+      "info-vat": "U ontvangt een Peppol e-factuur met 21% btw, zodat uw organisatie over het juiste document beschikt voor btw-verwerking en fiscale aftrekbaarheid.",
+      "info-vat-reverse-charge": "U ontvangt een Peppol e-factuur zonder btw volgens de intracommunautaire verleggingsregeling.",
+      "message": "Bericht",
+      "package-note": "We waarderen uw bijdrage en nemen contact met u op om een passend sponsorpakket af te spreken.",
+      "request-package": "Sponsorpakket aanvragen",
+      "sending": "Verzenden…",
+      "sponsor-name": "Naam op sponsorpagina",
+      "success-alert": "Bedankt om ons te steunen",
+      "success-invoice-created": "Uw sponsorfactuur is aangemaakt en komt via Peppol aan. Dit kan even duren, meestal binnen 1 uur.",
+      "success-title": "Bedankt om Let’s Peppol te steunen.",
+      "title": "Doneer om Let’s Peppol te sponsoren",
+      "total-including-vat": "Totaal aangerekend, inclusief btw",
+      "total-reverse-charge": "Totaal aangerekend",
+      "vat": "Btw 21%",
+      "vat-reverse-charge": "Btw verlegd"
+    },
+    "sponsors": "tiersponsors",
+    "sponsors-title": "Bronzen, zilveren en gouden sponsors samen"
+  },
+  "error": {
+    "DUPLICATE_REQUEST": "Deze aanvraag is al verwerkt.",
+    "login-failed": "Inloggen mislukt",
+    "not-peppol-active": "U bent momenteel niet geregistreerd op Peppol",
+    "not-peppol-active-action": "Los dit nu op",
+    "registration-company-affiliate-contact-admin": "Dit bedrijf heeft al een administrator. Neem contact op met uw administrator om de affiliate-onboarding voort te zetten.",
+    "registration-company-already-registered": "Bedrijf al geregistreerd",
+    "registration-company-already-registered-on-peppol": "Het lijkt erop dat deze Peppol-ID al bij een andere provider is geregistreerd. Activering hier vereist dat u zich daar eerst uitschrijft. U kunt het ondertekenproces wel afronden en dit daarna regelen.",
+    "registration-company-not-found": "Bedrijf niet gevonden",
+    "UBL_DOCUMENT_ALREADY_CREATED": "Dit document is al ingediend voor verzending. Werk het bestaande document bij.",
+    "UBL_DOCUMENT_CONTENT_ALREADY_SENT": "Dit identieke document is al ingediend. Wijzig de inhoud voordat u het opnieuw verzendt."
+  },
+  "forgot": {
+    "enter-email": "Voer uw e-mailadres in om uw wachtwoord te resetten.",
+    "info-sent": "Een resetlink is verzonden indien het adres bekend is.",
+    "request-link": "Resetlink aanvragen",
+    "reset-failed": "Reset mislukt",
+    "title": "Wachtwoord vergeten"
+  },
+  "invoice": {
+    "action": {
+      "mark-paid": {
+        "CREDIT_NOTE": "Creditnota markeren als betaald",
+        "INVOICE": "Factuur markeren als betaald"
+      },
+      "mark-seen": "Markeren als gezien",
+      "mark-unpaid": {
+        "CREDIT_NOTE": "Creditnota markeren als niet betaald",
+        "INVOICE": "Factuur markeren als niet betaald"
+      },
+      "resend": {
+        "CREDIT_NOTE": "Creditnota hergebruiken en opnieuw verzenden",
+        "INVOICE": "Factuur hergebruiken en opnieuw verzenden"
+      }
+    },
+    "all": "Alle",
+    "attachmentModal": {
+      "auto-pdf": "Voeg de automatisch gegenereerde factuur-PDF toe",
+      "auto-pdf-replace": "Er wordt automatisch een factuur-PDF gegenereerd. Schakel deze hierboven uit als uw geüploade bestand deze vervangt.",
+      "upload-aria": "Een bijlage toevoegen: sleep een bestand hierheen of klik om te bladeren",
+      "upload-file": "Bestand uploaden",
+      "upload-hint": "Sleep een bestand hierheen of klik om te bladeren"
+    },
+    "buyer-reference": "Referentie koper",
+    "customer": "Klant",
+    "customerModal": {
+      "country": "Land",
+      "country-value": "België",
+      "create-new": "Nieuwe aanmaken",
+      "house-number": "Huisnummer",
+      "no-matches": "Geen resultaten",
+      "save-as-partner": "Opslaan als partner",
+      "search-name-vat": "Naam of BTW-nummer",
+      "search-partner-placeholder": "Zoek partner op naam of BTW-nummer",
+      "search-placeholder": "Zoeken op naam",
+      "search-title": "Partner selecteren",
+      "title": "Klant"
+    },
+    "dateModal": {
+      "actual-delivery-date": "Werkelijke leveringsdatum",
+      "delivery-country": "Land van levering",
+      "due-date": "Vervaldatum",
+      "issue-date": "Uitgiftedatum",
+      "payment-terms": "Betalingsvoorwaarden",
+      "title": "Datum"
+    },
+    "deliveryModal": {
+      "corner1-id": "Corner 1-ID",
+      "corner2-id": "Corner 2-ID",
+      "corner3-id": "Corner 3-ID",
+      "error-stamp-label": "Foutstempel voor levering",
+      "from": "van",
+      "invoice-number": "Factuurnummer",
+      "stamp-label": "Leveringsstempel",
+      "title": "Bewijs van levering",
+      "to": "aan"
+    },
+    "direction": "Richting",
+    "drafts": "Concepten",
+    "edit": {
+      "actions": "Acties",
+      "add-line": "Lijn toevoegen",
+      "amount": "Aantal",
+      "attachments": "Bijlagen",
+      "buyer-reference": "Referentie koper",
+      "cancel": "Annuleren",
+      "delete-draft": "Concept verwijderen",
+      "download-pdf": "PDF",
+      "download-ubl": "UBL",
+      "invoice-lines": "Factuurlijnen",
+      "method": "Methode",
+      "note": "Notitie",
+      "number": "Nummer",
+      "payment": "Betaling",
+      "pos": "Pos",
+      "recreate-positions": "Lijnposities opnieuw aanmaken",
+      "save-draft": "Concept opslaan",
+      "send": {
+        "CREDIT_NOTE": "Creditnota verzenden",
+        "INVOICE": "Factuur verzenden"
+      },
+      "subtotal": "Subtotaal",
+      "tax": "BTW",
+      "total": "Totaal",
+      "unit-price": "Stuksprijs",
+      "update-draft": "Concept bijwerken",
+      "validate": "Valideren"
+    },
+    "empty": "Geen facturen voldoen aan uw filters.",
+    "filter": {
+      "apply": "Toepassen",
+      "clear": "Wissen",
+      "from": "Van",
+      "to": "Tot"
+    },
+    "incoming": "Inkomend",
+    "invoice-reference": "Factuurreferentie",
+    "invoice-reference-date": "Factuurdatum",
+    "loading": "Facturen laden...",
+    "modal": {
+      "credit-note-note-placeholder": "Extra notities voor deze creditnota",
+      "credit-note-number": "Creditnotanummer",
+      "credit-note-vat-note": "BTW terug te storten aan de Staat in de mate waarin ze oorspronkelijk in aftrek werd gebracht",
+      "document": "Document",
+      "invoice-number": "Factuurnummer",
+      "invoice-reference": "Factuur nr referentie selecteren",
+      "invoice-reference-none": "Geen",
+      "note-optional": "Notitie (optioneel)",
+      "note-placeholder": "Extra notities voor deze factuur",
+      "reference-required": "Referentie koper OF orderreferentie is verplicht",
+      "title": "Factuur",
+      "title-credit-note": "Creditnota"
+    },
+    "new": {
+      "CREDIT_NOTE": "Nieuwe creditnota",
+      "INVOICE": "Nieuwe factuur"
+    },
+    "order-reference": "Orderreferentie",
+    "outgoing": "Uitgaand",
+    "pager": {
+      "next": "Volgende",
+      "previous": "Vorige"
+    },
+    "partner": "Partner",
+    "paymentModal": {
+      "bic": "BIC",
+      "iban": "IBAN",
+      "name": "Naam",
+      "reference": "Referentie",
+      "store-iban": "IBAN opslaan in account",
+      "title": "Betaling",
+      "type": "Type"
+    },
+    "paymentQr": {
+      "amount": "Bedrag",
+      "bic": "BIC",
+      "iban": "IBAN",
+      "mark-paid-document": {
+        "CREDIT_NOTE": "Creditnota als betaald markeren",
+        "INVOICE": "Factuur als betaald markeren"
+      },
+      "mark-unpaid-document": {
+        "CREDIT_NOTE": "Creditnota als onbetaald markeren",
+        "INVOICE": "Factuur als onbetaald markeren"
+      },
+      "marked-done-on": "Betaling als uitgevoerd gemarkeerd op",
+      "name": "Naam",
+      "reference": "Mededeling",
+      "show-and-mark-paid": "Betalings-QR tonen<br /> en als betaald markeren",
+      "title": "Factuurbetaling"
+    },
+    "productSearch": {
+      "no-matches": "Geen resultaten",
+      "placeholder": "naam"
+    },
+    "search": "Klant of referentie zoeken",
+    "status": {
+      "draft": "Concept",
+      "error": "Fout",
+      "overdue": "Vervallen",
+      "paid": "Betaald",
+      "processed": "Verwerkt",
+      "scheduled": "Gepland"
+    },
+    "supplier": "Leverancier",
+    "table": {
+      "actions": "Acties",
+      "direction": "Richting",
+      "doc": "Doc",
+      "due-date": "Vervaldatum",
+      "issue-date": "Uitgiftedatum",
+      "status": "Status",
+      "total": "Totaal",
+      "total-vat-suffix": {
+        "excl": "excl. btw",
+        "incl": "incl. btw"
+      },
+      "type": "Type",
+      "vat": "BTW"
+    },
+    "title": "Facturen",
+    "validationModal": {
+      "error-count": "Aantal fouten",
+      "title": "Validatie"
+    },
+    "zero-vat-reason": {
+      "modal": {
+        "edit-button": "Reden voor 0% btw bewerken",
+        "reason-text": "Toelichting",
+        "reason-text-placeholder": "Waarom geldt voor deze lijn 0% btw?",
+        "reason-type": "Type reden",
+        "title": "Reden voor 0% btw",
+        "update-account": "Gebruik dit als standaard btw-regelset voor dit account"
+      },
+      "options": {
+        "AE": "Verleggingsregeling",
+        "E": "Vrijgesteld van btw",
+        "G": "Vrijgesteld exportartikel, geen btw aangerekend",
+        "K": "Vrijgesteld van btw voor intracommunautaire leveringen van goederen en diensten binnen de EER",
+        "O": "Niet onderworpen aan btw",
+        "Z": "Goederen met nultarief"
+      }
+    }
+  },
+  "label": {
+    "account-name": "Accountnaam",
+    "activate-on-peppol": "Activeren op Peppol",
+    "address": "Adres",
+    "barcode": "Barcode",
+    "bic": "BIC",
+    "buyer-reference": "Referentie koper",
+    "change-password": "Wachtwoord wijzigen",
+    "city": "Stad",
+    "company-info": "Bedrijfsinfo",
+    "company-name": "Bedrijfsnaam",
+    "confirm-password": "Bevestig wachtwoord",
+    "cost-price": "Kostprijs",
+    "country": "Land",
+    "customer": "Klant",
+    "description": "Beschrijving",
+    "download-contract": "Contract downloaden",
+    "due-date": "Vervaldatum",
+    "email": "E-mail",
+    "enterprise-number": "Ondernemingsnr.",
+    "house-number": "Huisnummer",
+    "house-number-short": "Huisnr",
+    "iban": "IBAN",
+    "invoice-number": "Factuurnummer",
+    "issue-date": "Uitgiftedatum",
+    "name": "Naam",
+    "note-optional": "Notitie (optioneel)",
+    "number": "Nummer",
+    "password": "Wachtwoord",
+    "payment-terms": "Betalingsvoorwaarden",
+    "peppol-registration": "Peppol-registratie",
+    "peppolId": "Peppol ID",
+    "postal-code": "Postcode",
+    "product-category": "Productcategorie",
+    "reference": "Referentie",
+    "remove-from-peppol": "Verwijderen van Peppol",
+    "sale-price": "Verkoopprijs",
+    "stock-quantity": "Voorraad",
+    "street": "Straat",
+    "subscriber-info": "Abonnee-info",
+    "supplier": "Leverancier",
+    "tax-percentage": "BTW-percentage",
+    "type": "Type",
+    "vat-number": "BTW-nummer"
+  },
+  "login": {
+    "action": "Inloggen",
+    "continue": "Inloggen",
+    "forgot": "Wachtwoord vergeten",
+    "new": "Nieuw hier?",
+    "register": "Registreer uw bedrijf",
+    "remember": "Onthoud mij",
+    "title": "Meld u aan bij uw account"
+  },
+  "navigation": {
+    "account": "Account",
+    "brand-alt": "Let's Peppol",
+    "dashboard": "Dashboard",
+    "invoices": "Facturen",
+    "language": "Taal",
+    "partners": "Partners",
+    "products": "Producten",
+    "toggle-theme": "Thema wisselen"
+  },
+  "new-feature": {
+    "click-to-dismiss": "Klik om te sluiten",
+    "label": "Nieuw"
+  },
+  "onboarding": {
+    "anim-caption-sign": "Steek uw eID-kaart in en druk op bevestigen om de installatie te verifiëren.",
+    "anim-reader-label": "LEZER",
+    "browser": {
+      "chrome": "Chrome",
+      "edge": "Microsoft Edge",
+      "firefox": "Firefox",
+      "safari": "Safari"
+    },
+    "check": "Web eID controleren",
+    "check-title": "Controleer uw Web eID-installatie",
+    "or": "of",
+    "os": {
+      "linux": "Linux",
+      "macos": "macOS",
+      "windows": "Windows"
+    },
+    "step": {
+      "login": "Log in op uw account.",
+      "prepare-eid": {
+        "alt-stack": "Als alternatief kunt u de volledige softwarestack installeren via id.ee.",
+        "alt-stack-link": "Open de id.ee-installatiegids",
+        "browser-help": "Hulp voor de extensie:",
+        "install-beidconnect": "Zorg ervoor dat BeIDConnect is geïnstalleerd (Belgische eID-middleware).",
+        "install-beidconnect-link": "Download BeIDConnect",
+        "install-web-eid": "Installeer de Web eID-applicatie",
+        "restart-browser": "Start uw browser opnieuw en controleer of de Web eID-extensie is ingeschakeld.",
+        "success": {
+          "subtitle": "Uw kaartlezer en browserconfiguratie lijken in orde.",
+          "title": "Web eID werkt"
+        },
+        "test-setup": "Sluit uw eID-kaartlezer aan, steek uw eID-kaart in en voer de test rechts uit.",
+        "title": "Bereid uw eID-software, kaartlezer en kaart voor",
+        "troubleshoot": {
+          "contact": "Contacteer support:",
+          "other-device": "Probeer een andere computer.",
+          "reinsert": "Verwijder de eID-kaart en steek ze opnieuw in.",
+          "restart": "Herstart uw browser en probeer opnieuw.",
+          "title": "Als bevestigen mislukt:",
+          "usb": "Gebruik een directe USB-verbinding (vermijd hubs/dongles)."
+        }
+      },
+      "register-affiliate": "Registreer als affiliate",
+      "register-company": "Registreer uw bedrijf",
+      "sign-contract": "Onderteken het contract om KYC (Know Your Customer) te voltooien.",
+      "verify-director": "Verifieer uw identiteit als bestuurder van het bedrijf.",
+      "verify-email": "Verifieer uw e-mailadres (controleer de spam voor e-mails van @letspeppol.org)."
+    },
+    "title": "Onboardingstappen"
+  },
+  "overlay": {
+    "saving-account": "Account opslaan, een moment geduld"
+  },
+  "ownershipAdd": {
+    "account-info-body": "Dit bedrijf wordt toegevoegd aan het bestaande account hierboven. Het wachtwoord van dat account blijft hetzelfde.",
+    "account-info-title": "2. Bevestig het account",
+    "action": "Account toevoegen",
+    "back-dashboard": "Terug naar dashboard",
+    "cancel": "Terug naar dashboard",
+    "company-has-admin": "Dit bedrijf heeft al een admin-account. De huidige flow ondersteunt alleen bedrijven zonder bestaande admin.",
+    "intro": "Voeg een extra account toe voor een bedrijf door te tekenen als een van de bestuurders.",
+    "lookup": "Bedrijf zoeken",
+    "read-contract-info": "U ontvangt een ondertekend exemplaar zodra dit account is toegevoegd.",
+    "sign-button": "Account toevoegen",
+    "success-body": "Het ondertekende contract werd gedownload en het nieuwe bedrijf is nu beschikbaar in uw accountkeuzelijst.",
+    "success-title": "Account toegevoegd",
+    "title": "Account toevoegen"
+  },
+  "partner": {
+    "all": "Alle",
+    "customers": "Klanten",
+    "customersSuppliers": "Klanten & Leveranciers",
+    "edit": {
+      "account-name": "Accountnaam",
+      "address": "Adres",
+      "cancel": "Annuleren",
+      "company-info": "Bedrijfsinfo",
+      "customer": "Klant",
+      "iban": "IBAN",
+      "new": "Nieuwe partner",
+      "payment-info": "Betaalinformatie",
+      "payment-terms": "Betalingsvoorwaarden",
+      "peppol": "Peppol",
+      "save": "Partner opslaan",
+      "supplier": "Leverancier"
+    },
+    "empty": "Geen partners voldoen aan uw filters.",
+    "new": "Nieuwe partner",
+    "search": "Partner zoeken",
+    "suppliers": "Leveranciers",
+    "table": {
+      "actions": "Acties",
+      "address": "Adres",
+      "city": "Stad",
+      "country": "Land",
+      "name": "Naam",
+      "postal-code": "Postcode",
+      "type": "Type",
+      "vat": "BTW"
+    },
+    "title": "Partners"
+  },
+  "password-rules": {
+    "length": "Minstens 12 tekens",
+    "lower": "Minstens 1 kleine letter",
+    "match": "Wachtwoorden komen overeen",
+    "number": "Minstens 1 cijfer",
+    "strength": "Wachtwoordsterkte",
+    "symbol": "Minstens 1 symbool",
+    "upper": "Minstens 1 hoofdletter"
+  },
+  "paymentTerms": {
+    "15_DAYS": "15 dagen",
+    "30_DAYS": "30 dagen",
+    "60_DAYS": "60 dagen",
+    "END_OF_NEXT_MONTH": "Einde van de maand"
+  },
+  "placeholder": {
+    "customer-search": "Zoek op naam of BTW",
+    "email": "naam@bedrijf.be",
+    "enterprise-number": "0123456789",
+    "invoice-search": {
+      "customer": "Klant zoeken",
+      "doc": "Doc zoeken"
+    },
+    "name": "Naam",
+    "partner-search": "Partner zoeken",
+    "password": "••••••••",
+    "product-search": "Product zoeken",
+    "vat-number": "BE0123456789"
+  },
+  "product": {
+    "all": "Alle",
+    "categories": "Categorieën",
+    "category": "Categorie",
+    "categoryModal": {
+      "color": "Kleur",
+      "name": "Naam",
+      "title": "Productcategorie"
+    },
+    "edit": {
+      "cancel": "Annuleren",
+      "info": "Productinfo",
+      "new": "Nieuw product",
+      "none": "Geen",
+      "pricing": "Prijzen",
+      "product-category": "Productcategorie",
+      "save": "Product opslaan",
+      "stock": "Voorraad",
+      "stock-quantity": "Voorraad"
+    },
+    "empty": "Geen producten voldoen aan uw filters.",
+    "new": "Nieuw product",
+    "search": "Product zoeken",
+    "table": {
+      "actions": "Acties",
+      "barcode": "Barcode",
+      "category": "Categorie",
+      "cost-price": "Kostprijs",
+      "description": "Beschrijving",
+      "name": "Naam",
+      "reference": "Referentie",
+      "sale-price": "Verkoopprijs",
+      "stock-quantity": "Voorraad",
+      "tax-percentage": "BTW-percentage"
+    },
+    "title": "Producten"
+  },
+  "registration": {
+    "affiliate-already-registered": "Al affiliate?",
+    "affiliate-create-account": "Affiliate-account aanmaken",
+    "affiliate-intro": "Registreer als affiliate voor uw eigen Belgische onderneming.<br />Als uw bedrijf al door een administrator wordt beheerd,<br />vraag die administrator om uw toegang toe te voegen of goed te keuren.",
+    "affiliate-title-step0": "Registreer als affiliate",
+    "affiliate-title-step1": "Bevestig uw affiliatebedrijf",
+    "already-registered": "Al geregistreerd?",
+    "back": "Terug",
+    "confirm-company": "Bevestigen",
+    "create-account": "Account aanmaken",
+    "instructions-finally": "<b>Tot slot</b>, open de bevestigingsmail en klik op de verificatielink.",
+    "instructions-go-checklist": "Ga naar de checklist",
+    "instructions-intro": "We hebben u een bevestigingsmail gestuurd van kyc@letspeppol.org. Controleer ook uw spamfolder.",
+    "instructions-onboarding": "Voordat u verdergaat, doorloop de onboarding-checklist om Web eID in te stellen.",
+    "title-step0": "Registreer uw bedrijf",
+    "title-step1": "Bevestig uw bedrijf",
+    "title-step2": "Account verificatie",
+    "wrong-company": "Verkeerd bedrijf?"
+  },
+  "reset": {
+    "action": "Wachtwoord resetten",
+    "enter-email": "Voer uw e-mailadres in om uw wachtwoord te resetten.",
+    "reset-failed": "Reset mislukt",
+    "title": "Wachtwoord resetten"
+  },
+  "session": {
+    "continue-title": "Sessies voortzetten"
+  },
+  "sponsors-page": {
+    "empty": "Nog geen sponsors.",
+    "load-error": "De sponsors konden nu niet worden geladen.",
+    "loading": "Sponsors laden...",
+    "subtitle": "Bedrijven en mensen die Let's Peppol mee draaiende houden.",
+    "table": {
+      "amount": "Bedrag",
+      "date": "Datum",
+      "message": "Bericht",
+      "name": "Naam"
+    },
+    "title": "Sponsors"
+  },
+  "welcome-notification": {
+    "title": "Welkom"
   }
 }

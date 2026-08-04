@@ -10,6 +10,7 @@ public class CompanyMapper {
     public static CompanyDto toDto(Company company, boolean peppolActive) {
         return new CompanyDto(
                 company.getPeppolId(),
+                company.getIdentifier(),
                 company.getVatNumber(),
                 company.getName(),
                 Objects.requireNonNullElse(company.getDisplayName(), company.getName()),
@@ -17,7 +18,9 @@ public class CompanyMapper {
                 company.getSubscriberEmail(),
                 company.getPaymentTerms(),
                 company.getIban(),
+                company.getBic(),
                 company.getPaymentAccountName(),
+                company.getVatRuleset(),
                 company.getLastInvoiceReference(),
                 company.getLastCreditNoteReference(),
                 // TODO company.isNoArchive(),
@@ -26,6 +29,7 @@ public class CompanyMapper {
                 company.isAddAttachmentToNotification(),
                 company.isAddPdfToSendingInvoice(),
                 company.getEmailNotificationCcList(),
+                company.getCompanyGroup(),
                 AddressMapper.toDto(company.getRegisteredOffice())
         );
     }

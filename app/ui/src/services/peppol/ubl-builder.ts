@@ -2,6 +2,8 @@
 // Builds XML by string concatenation with explicit ordering, matching the
 // structures used in peppol-parser tests.
 
+import {NOT_SUBJECT_TO_VAT_REASON_TEXT} from '../app/vat-rules';
+
 import type {
     AccountingParty,
     Address,
@@ -96,6 +98,16 @@ function buildOrderReference(or?: OrderReference): string {
         textElement('cbc:ID', hasId ? or.ID : undefined),
         textElement('cbc:SalesOrderID', hasSalesOrderId ? or.SalesOrderID : undefined),
         '</cac:OrderReference>',
+    ]);
+}
+
+function buildReferences(buyerReference: string | undefined, orderReference?: OrderReference): string {
+    const buyerRef = typeof buyerReference === 'string' ? buyerReference.trim() : '';
+    const orderId = typeof orderReference?.ID === 'string' ? orderReference.ID.trim() : '';
+    const suppressOrderReference = orderId === 'NA' && buyerRef !== '';
+    return joinNonEmpty([
+        textElement('cbc:BuyerReference', buyerReference),
+        suppressOrderReference ? '' : buildOrderReference(orderReference),
     ]);
 }
 
@@ -233,14 +245,17 @@ function buildAccountingParty(wrapperName: 'cac:AccountingSupplierParty' | 'cac:
 
 function buildTaxCategory(tc?: TaxCategory): string {
     if (!tc) return '';
+    const normalized = normalizeTaxCategory(tc);
     return joinNonEmpty([
         '<cac:TaxCategory>',
-        textElement('cbc:ID', tc.ID),
-        textElement('cbc:Percent', tc.Percent),
-        tc.TaxScheme
+        textElement('cbc:ID', normalized.ID),
+        textElement('cbc:Percent', normalized.Percent),
+        textElement('cbc:TaxExemptionReasonCode', normalized.TaxExemptionReasonCode),
+        textElement('cbc:TaxExemptionReason', normalized.TaxExemptionReason),
+        normalized.TaxScheme
             ? joinNonEmpty([
                   '<cac:TaxScheme>',
-                  textElement('cbc:ID', tc.TaxScheme.ID),
+                  textElement('cbc:ID', normalized.TaxScheme.ID),
                   '</cac:TaxScheme>',
               ])
             : '',
@@ -311,12 +326,13 @@ function buildCommodityClassification(cc?: CommodityClassification): string {
 
 function buildClassifiedTaxCategory(ctc?: ClassifiedTaxCategory): string {
     if (!ctc) return '';
+    const normalized = normalizeTaxCategory(ctc);
     return joinNonEmpty([
         '<cac:ClassifiedTaxCategory>',
-        textElement('cbc:ID', ctc.ID),
-        textElement('cbc:Percent', ctc.Percent),
+        textElement('cbc:ID', normalized.ID),
+        textElement('cbc:Percent', normalized.Percent),
         '<cac:TaxScheme>',
-        textElement('cbc:ID', ctc.TaxScheme.ID),
+        textElement('cbc:ID', normalized.TaxScheme.ID),
         '</cac:TaxScheme>',
         '</cac:ClassifiedTaxCategory>',
     ]);
@@ -433,7 +449,7 @@ function buildPayeeFinancialAccount(acc?: PayeeFinancialAccount): string {
         '<cac:PayeeFinancialAccount>',
         textElement('cbc:ID', acc.ID),
         textElement('cbc:Name', acc.Name),
-        acc.FinancialInstitutionBranch
+        acc.FinancialInstitutionBranch?.ID
             ? joinNonEmpty([
                   '<cac:FinancialInstitutionBranch>',
                   textElement('cbc:ID', acc.FinancialInstitutionBranch.ID),
@@ -560,8 +576,7 @@ export function buildInvoiceXml(invoice: Invoice): string {
         textElement('cbc:Note', invoice.Note),
         textElement('cbc:DocumentCurrencyCode', invoice.DocumentCurrencyCode),
         textElement('cbc:AccountingCost', invoice.AccountingCost),
-        textElement('cbc:BuyerReference', invoice.BuyerReference),
-        buildOrderReference(invoice.OrderReference),
+        buildReferences(invoice.BuyerReference, invoice.OrderReference),
         buildAdditionalDocumentReference(invoice.AdditionalDocumentReference),
         buildAccountingParty('cac:AccountingSupplierParty', invoice.AccountingSupplierParty),
         buildAccountingParty('cac:AccountingCustomerParty', invoice.AccountingCustomerParty),
@@ -586,8 +601,7 @@ export function buildCreditNoteXml(creditNote: CreditNote): string {
         textElement('cbc:Note', creditNote.Note),
         textElement('cbc:DocumentCurrencyCode', creditNote.DocumentCurrencyCode),
         textElement('cbc:AccountingCost', creditNote.AccountingCost),
-        textElement('cbc:BuyerReference', creditNote.BuyerReference),
-        buildOrderReference(creditNote.OrderReference),
+        buildReferences(creditNote.BuyerReference, creditNote.OrderReference),
         buildBillingReference(creditNote.BillingReference),
         buildAdditionalDocumentReference(creditNote.AdditionalDocumentReference),
         buildAccountingParty('cac:AccountingSupplierParty', creditNote.AccountingSupplierParty),
@@ -599,4 +613,22 @@ export function buildCreditNoteXml(creditNote: CreditNote): string {
     ]);
 
     return `<?xml version="1.0" encoding="UTF-8"?><CreditNote ${CREDIT_NOTE_NS_ATTRS}>${body}</CreditNote>`;
+}
+
+function normalizeTaxCategory<T extends TaxCategory | ClassifiedTaxCategory>(taxCategory: T): T {
+    if (taxCategory.ID === 'Z') {
+        return {
+            ...taxCategory,
+            TaxExemptionReasonCode: undefined,
+            TaxExemptionReason: undefined,
+        };
+    }
+    if (taxCategory.ID === 'O') {
+        return {
+            ...taxCategory,
+            Percent: undefined,
+            TaxExemptionReason: taxCategory.TaxExemptionReason?.trim() || NOT_SUBJECT_TO_VAT_REASON_TEXT,
+        };
+    }
+    return taxCategory;
 }

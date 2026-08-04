@@ -1,9 +1,12 @@
 import {resolve} from "@aurelia/kernel";
 import {InvoiceContext} from "../invoice-context";
-import {bindable, computed, IDisposable, IEventAggregator} from "aurelia";
+import {bindable, IDisposable, IEventAggregator} from "aurelia";
 import {
     CreditNote,
     Invoice,
+    CreditNoteLine,
+    InvoiceLine,
+    normalizeLinePrice,
     UBLLine
 } from "../../services/peppol/ubl";
 import {AlertType} from "../../components/alert/alert";
@@ -16,11 +19,14 @@ import {InvoiceModal} from "./components/modals/invoice-modal";
 import {InvoiceAttachmentModal} from "./components/modals/invoice-attachment-modal";
 import {buildCreditNoteXml, buildInvoiceXml} from "../../services/peppol/ubl-builder";
 import {InvoiceNumberModal} from "./components/modals/invoice-number-modal";
-import {toErrorResponse} from "../../app/util/error-response-handler";
+import {toErrorResponse, toLocalizedErrorMessage} from "../../app/util/error-response-handler";
 import {PartnerService} from "../../services/app/partner-service";
 import {PaymentInfo} from "./components/tiles/payment-info";
+import {InvoiceDeliveryModal} from "./components/modals/invoice-delivery-modal";
 import moment, {Moment} from "moment";
 import {IRouter} from "@aurelia/router";
+import {I18N} from "@aurelia/i18n";
+import {collectVatReasonSelections, requiresDeliveryDetails} from "../../services/app/vat-rules";
 
 export class InvoiceEdit {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -29,6 +35,7 @@ export class InvoiceEdit {
     private invoiceComposer = resolve(InvoiceComposer);
     private partnerService = resolve(PartnerService);
     private router = resolve(IRouter);
+    private readonly i18n = resolve(I18N);
     private newInvoiceSubscription: IDisposable;
     private newCreditNoteSubscription: IDisposable;
     private previousSaveDate: undefined | Moment;
@@ -42,11 +49,14 @@ export class InvoiceEdit {
     @bindable invoiceAttachmentModal: InvoiceAttachmentModal;
     @bindable invoiceNumberModal: InvoiceNumberModal;
     @bindable validationResultModal: ValidationResultModal;
+    @bindable invoiceDeliveryModal: InvoiceDeliveryModal;
     @bindable paymentInfo: PaymentInfo;
+    deliveryDetailsLoading = false;
 
     returnToOverview() {
         this.invoiceContext.setActiveBoxFromDocument(this.invoiceContext.selectedDocument);
         this.invoiceContext.clearSelectedInvoice();
+        this.ea.publish('invoicesReset');
         this.router.load('/invoices');
     }
 
@@ -97,37 +107,40 @@ export class InvoiceEdit {
     }
 
     async sendInvoice() {
+        const type = this.selectedDocumentType;
+        const selectedDocument = this.invoiceContext.selectedDocument;
         try {
-            const overlayMsg = `Sending ${this.invoiceContext.getCurrentDocumentTypeName(false)}`;
-            this.ea.publish('showOverlay', overlayMsg);
-            const xml = this.buildXml();
-
-            const response = await this.invoiceService.validate(xml);
-            if (!response.isValid) {
-                this.validationResultModal.showModal(response);
-                return;
-            }
-
-            const doc = await this.invoiceService.createDocument(xml);
-            const msg = `${this.invoiceContext.getCurrentDocumentTypeName()} sent successfully`;
-            this.ea.publish('alert', {alertType: AlertType.Success, text: msg});
-            this.invoiceContext.invoicePage.content.unshift(doc);
-            if (this.invoiceContext.selectedDocument.draftedOn) {
-                await this.deleteDraft();
+            this.ea.publish('showOverlay', this.i18n.tr(`overlay.sending.${type}`));
+            let doc;
+            if (selectedDocument?.createdExternally && selectedDocument.id) {
+                doc = await this.invoiceService.sendDocument(selectedDocument.id);
             } else {
-                this.returnToOverview();
+                const xml = this.buildXml();
+                const response = await this.invoiceService.validate(xml);
+                if (!response.isValid) {
+                    this.validationResultModal.showModal(response);
+                    return;
+                }
+                if (selectedDocument?.id) {
+                    doc = await this.invoiceService.updateDocument(selectedDocument.id, xml, false);
+                } else {
+                    doc = await this.invoiceService.createDocument(xml);
+                }
             }
+            this.recordFinalVatReasonSelections(doc.id);
+            if (selectedDocument?.draftedOn) {
+                this.invoiceContext.deleteDraft(selectedDocument);
+            }
+            this.invoiceContext.selectedDocument = doc;
+            this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(`alert.invoice.sent.${type}`)});
+            this.returnToOverview();
         } catch (e: unknown) {
             const errorResponse = await toErrorResponse(e);
-            if (errorResponse?.errorCode === 'INVOICE_NUMBER_ALREADY_USED') {
-                const msg = `${this.invoiceContext.getCurrentDocumentTypeName()} number already used`;
-                this.ea.publish('alert', { alertType: AlertType.Danger, text: msg });
-            } else if (errorResponse?.message) {
-                this.ea.publish('alert', { alertType: AlertType.Danger, text: errorResponse.message });
-            } else {
-                const msg = `Failed to send ${this.invoiceContext.getCurrentDocumentTypeName(false)}`;
-                this.ea.publish('alert', { alertType: AlertType.Danger, text: msg});
-            }
+            const fallback = this.i18n.tr(`alert.invoice.send-failed.${type}`);
+            const text = toLocalizedErrorMessage(errorResponse, this.i18n, fallback, {
+                INVOICE_NUMBER_ALREADY_USED: `alert.invoice.number-used.${type}`
+            });
+            this.ea.publish('alert', { alertType: AlertType.Danger, text });
         } finally {
             this.ea.publish('hideOverlay');
         }
@@ -139,6 +152,7 @@ export class InvoiceEdit {
     // }
 
     buildXml(): string {
+        this.normalizeUnitPrices();
         if  (this.selectedDocumentType === DocumentType.INVOICE)  {
             return buildInvoiceXml(this.invoiceContext.selectedInvoice as Invoice)
         } else {
@@ -147,6 +161,7 @@ export class InvoiceEdit {
     }
 
     async saveAsDraft(returnToOverview: boolean = true) {
+        const type = this.selectedDocumentType;
         try {
             const xml = this.buildXml();
             if (this.invoiceContext.selectedDocument) {
@@ -161,12 +176,10 @@ export class InvoiceEdit {
             if (returnToOverview) {
                 this.returnToOverview();
             }
-            const msg = `${this.invoiceContext.getCurrentDocumentTypeName()} draft saved`;
-            this.ea.publish('alert', {alertType: AlertType.Success, text: msg});
+            this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(`alert.invoice.draft-saved.${type}`)});
         } catch(e) {
             console.error(e);
-            const msg = `Failed to save ${this.invoiceContext.getCurrentDocumentTypeName(false)} as draft`;
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: msg});
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr(`alert.invoice.draft-save-failed.${type}`)});
         }
     }
 
@@ -178,22 +191,21 @@ export class InvoiceEdit {
     }
 
     async deleteDraft() {
+        const type = this.selectedDocumentType;
         try {
             await this.invoiceService.deleteDocument(this.invoiceContext.selectedDocument.id);
             this.invoiceContext.deleteDraft(this.invoiceContext.selectedDocument);
             this.returnToOverview();
-            const msg = `${this.invoiceContext.getCurrentDocumentTypeName()} draft removed`;
-            this.ea.publish('alert', {alertType: AlertType.Success, text: msg});
+            this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(`alert.invoice.draft-removed.${type}`)});
         } catch(e) {
             console.error(e);
-            const msg = `Failed to delete ${this.invoiceContext.getCurrentDocumentTypeName(false)} draft`;
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: msg});
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr(`alert.invoice.draft-delete-failed.${type}`)});
         }
     }
 
     downloadUBL() {
         if (!this.invoiceContext.selectedDocument) {
-            this.ea.publish('alert', {alertType: AlertType.Warning, text: "No UBL data available"});
+            this.ea.publish('alert', {alertType: AlertType.Warning, text: this.i18n.tr('alert.invoice.no-ubl-data')});
         }
         const blob = new Blob([this.invoiceContext.selectedDocument.ubl], { type: "application/xml" });
         const url = URL.createObjectURL(blob);
@@ -210,7 +222,7 @@ export class InvoiceEdit {
 
     async downloadPDF() {
         if (!this.invoiceContext.selectedDocument) {
-            this.ea.publish('alert', {alertType: AlertType.Warning, text: "No UBL data available"});
+            this.ea.publish('alert', {alertType: AlertType.Warning, text: this.i18n.tr('alert.invoice.no-ubl-data')});
         }
         if (!this.readOnly) {
             await this.saveAsDraft(false);
@@ -236,6 +248,44 @@ export class InvoiceEdit {
         return name;
     }
 
+    async showDeliveryDetails() {
+        const documentId = this.invoiceContext.selectedDocument?.id;
+        if (!documentId || this.deliveryDetailsLoading) {
+            return;
+        }
+        this.deliveryDetailsLoading = true;
+        try {
+            const details = await this.invoiceService.getDocumentDetails(documentId);
+            this.invoiceDeliveryModal.showModal(details);
+        } catch (e: unknown) {
+            this.ea.publish('alert', {
+                alertType: AlertType.Danger,
+                text: await this.deliveryDetailsErrorMessage(e)
+            });
+        } finally {
+            this.deliveryDetailsLoading = false;
+        }
+    }
+
+    private async deliveryDetailsErrorMessage(error: unknown): Promise<string> {
+        if (error instanceof Response) {
+            try {
+                const body = await error.json() as { message?: string };
+                if (body?.message) {
+                    return body.message;
+                }
+            } catch {
+                return 'Could not load delivery details';
+            }
+        }
+        return 'Could not load delivery details';
+    }
+
+    get canShowDeliveryDetails() {
+        const document = this.invoiceContext.selectedDocument;
+        return document?.direction === DocumentDirection.OUTGOING && !!document?.processedOn;
+    }
+
     async validate() {
         const form = document.getElementById('invoiceForm') as HTMLFormElement;
         if (!form.checkValidity()) {
@@ -245,7 +295,35 @@ export class InvoiceEdit {
         const xml = this.buildXml();
         const response = await this.invoiceService.validate(xml);
         this.validationResultModal.showModal(response);
-        console.log(response);
+    }
+
+    private normalizeUnitPrices() {
+        const lines = this.invoiceContext.lines as Array<InvoiceLine | CreditNoteLine> | undefined;
+        if (!lines?.length) {
+            return;
+        }
+        for (const line of lines) {
+            normalizeLinePrice(line);
+        }
+    }
+
+    private collectVatReasonSelections() {
+        return collectVatReasonSelections(this.invoiceContext.selectedInvoice);
+    }
+
+    private recordFinalVatReasonSelections(documentId: string | undefined) {
+        const selections = this.collectVatReasonSelections().map(item => ({
+            documentId,
+            selectedTaxCategoryId: item.selectedTaxCategoryId,
+            writtenReason: item.writtenReason,
+            duringDraft: false,
+        }));
+        if (!selections.length) {
+            return;
+        }
+        void this.invoiceService.recordVatReasonSelections(selections).catch(error => {
+            console.warn('Failed to record final VAT reason selections', error);
+        });
     }
 
     savePartner() {
@@ -257,10 +335,10 @@ export class InvoiceEdit {
         }
         this.partnerService.createPartner(partner)
             .then(() => {
-                this.ea.publish('alert', {alertType: AlertType.Success, text: "Partner created"});
+                this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.partner.created')});
                 this.invoiceContext.partnerMissing = false;
             })
-            .catch(() => this.ea.publish('alert', {alertType: AlertType.Danger, text: "Partner creation failed"}));
+            .catch(() => this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.partner.create-failed')}));
     }
 
     // Modals
@@ -302,20 +380,18 @@ export class InvoiceEdit {
         this.invoiceAttachmentModal.showModal();
     }
 
-    @computed({
-        deps: [
-            'invoiceContext.selectedInvoice.BuyerReference',
-            'invoiceContext.selectedInvoice.OrderReference.ID',
-            'invoiceContext.selectedInvoice.IssueDate',
-            'invoiceContext.selectedInvoice.DueDate',
-            'invoiceContext.selectedInvoice.PaymentTerms',
-            'invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PartyIdentification[0].ID.value',
-            'invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PartyName.Name',
-            'invoiceContext.selectedInvoice.AccountingCustomerParty.PartyTaxScheme.TaxScheme.ID',
-            'invoiceContext.selectedInvoice.LegalMonetaryTotal.LineExtensionAmount.value',
-            'invoiceContext.selectedInvoice.PaymentMeans.PaymentMeansCode.value',
-            'invoiceContext.selectedInvoice.PaymentMeans.PayeeFinancialAccount.ID'
-        ] })
+    private invoiceRequiresDeliveryDetails(): boolean {
+        return this.invoiceContext.lines?.some(line => requiresDeliveryDetails(line.Item?.ClassifiedTaxCategory?.ID)) ?? false;
+    }
+
+    private hasRequiredDeliveryDetails(): boolean {
+        if (!this.invoiceRequiresDeliveryDetails()) {
+            return true;
+        }
+        const delivery = this.invoiceContext.selectedInvoice?.Delivery;
+        return !!delivery?.ActualDeliveryDate && !!delivery?.DeliveryLocation?.Address?.Country?.IdentificationCode;
+    }
+
     get isValid() {
         const inv = this.invoiceContext.selectedInvoice;
         const hasParty = inv && inv.AccountingCustomerParty && inv.AccountingCustomerParty.Party;
@@ -331,9 +407,9 @@ export class InvoiceEdit {
             && hasParty
             && hasPartyIdentificationId
             && inv.AccountingCustomerParty.Party.PartyName.Name
-            && inv.AccountingCustomerParty.Party.PartyTaxScheme.TaxScheme.ID
             && inv.LegalMonetaryTotal.LineExtensionAmount.value > 0
-            && this.paymentInfo.isPaymentInfoComplete;
+            && this.hasRequiredDeliveryDetails()
+            && this.paymentInfo?.isPaymentInfoComplete;
     }
 
 }

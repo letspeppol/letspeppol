@@ -13,12 +13,16 @@ import {
 import {PeppolDirectoryResponse, PeppolDirService} from "../services/peppol/peppol-dir-service";
 import {SignatureAlgorithm} from "@web-eid/web-eid-library/models/SignatureAlgorithm";
 import {LibrarySignResponse} from "@web-eid/web-eid-library/models/message/LibraryResponse";
+import {I18N} from "@aurelia/i18n";
+import {ChoosePassword} from "../components/choose-password/choose-password";
+import {clearTokenFromUrl} from "../services/util/url";
 
 export class EmailConfirmation {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
     readonly kycApi = resolve(KYCApi);
     readonly registrationService = resolve(RegistrationService);
     readonly peppolDirService = resolve(PeppolDirService);
+    readonly i18n = resolve(I18N);
     public errorMessage: string | undefined; // made public for template binding
     public emailToken: string;
     public tokenVerificationResponse: TokenVerificationResponse | undefined; // made public for template binding
@@ -34,6 +38,7 @@ export class EmailConfirmation {
     private confirmInProgress = false;
     private warningKey;
     private alreadyRegisteredProvider = '';
+    private choosePassword: ChoosePassword;
 
     public loading(params: Params, next: RouteNode) {
         this.emailToken = next.queryParams.get('token');
@@ -41,48 +46,19 @@ export class EmailConfirmation {
             this.errorMessage = 'Token not available';
             return;
         }
+        clearTokenFromUrl();
         this.registrationService.verifyToken(this.emailToken).then(result => {
             this.tokenVerificationResponse = result;
             this.step = 1;
             this.checkPeppolDirectory(result.company.peppolId);
         }).catch(error => {
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Token invalid"});
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.registration.token-invalid')});
         });
     }
 
     getContractUrl() {
         const contractUrl = this.registrationService.getContractUrl(this.tokenVerificationResponse.company.peppolId, this.confirmedDirector.id);
         return `${contractUrl}#page=1&view=FitH,300`;
-    }
-
-    get lengthOk(): boolean { return this.password.length >= 12; }
-
-    get lowerOk(): boolean {
-        return (/[a-z]/.test(this.password));
-    }
-
-    get upperOk(): boolean {
-        return (/[A-Z]/.test(this.password));
-    }
-
-    get numberOk(): boolean {
-        return (/\d/.test(this.password));
-    }
-
-    get symbolOk(): boolean {
-        return (/[^A-Za-z0-9]/.test(this.password));
-    }
-
-    get matchOk(): boolean {
-        return !!this.password && this.password === this.passwordDuplicate;
-    }
-
-    get pwScore(): number {
-        return this.password ? Math.min(4, Math.floor(this.password.length / 4)) + (this.lowerOk ? 1 : 0) + (this.upperOk ? 1 : 0) + (this.numberOk ? 1 : 0) + (this.symbolOk ? 1 : 0) : 0;
-    }
-
-    get pwStrong() {
-        return this.lengthOk && this.lowerOk && this.upperOk && this.numberOk && this.symbolOk;
     }
 
     public async checkPeppolDirectory(peppolId: string) {
@@ -139,7 +115,7 @@ export class EmailConfirmation {
                 break;
             }
             await this.downloadFile(finalizeSigningResponse);
-            this.ea.publish('alert', {alertType: AlertType.Success, text: "Signed contract downloaded!"});
+            this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.registration.contract-downloaded')});
         } catch (error) {
             let text = "Signing contract failed";
             if (error instanceof Response) {

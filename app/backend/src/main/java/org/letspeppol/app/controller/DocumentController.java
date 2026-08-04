@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.letspeppol.app.dto.DocumentDetailsDto;
 import org.letspeppol.app.dto.DocumentDto;
 import org.letspeppol.app.dto.DocumentFilter;
 import org.letspeppol.app.dto.PageResponse;
@@ -20,14 +21,18 @@ import org.letspeppol.app.service.ValidationService;
 import org.letspeppol.app.service.UblInvoicePdfService;
 import org.letspeppol.app.util.JwtUtil;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -37,6 +42,9 @@ import java.util.UUID;
 @Tag(name = "App Documents", description = "Endpoints for validating, listing, editing, sending, and rendering business documents inside the application.")
 @SecurityRequirement(name = "bearerAuth")
 public class DocumentController {
+
+    private static final int MAX_PAGE_SIZE = 100;
+    private static final int MAX_UBL_BYTES = 10 * 1024 * 1024; // 10 MB
 
     private final DocumentService documentService;
     private final ValidationService validationService;
@@ -52,6 +60,7 @@ public class DocumentController {
         if (ublXml == null || ublXml.isBlank()) {
             return ResponseEntity.badRequest().body("Missing XML content");
         }
+        rejectIfUblTooLarge(ublXml);
         ValidationResultDto response = validationService.validateUblXml(ublXml);
         return ResponseEntity.ok(response);
     }
@@ -80,7 +89,8 @@ public class DocumentController {
         filter.setPaid(paid);
         filter.setRead(read);
         filter.setDraft(draft);
-        Page<DocumentDto> page = documentService.findAll(filter, pageable);
+        Pageable cappedPageable = capPageSize(pageable);
+        Page<DocumentDto> page = documentService.findAll(filter, cappedPageable);
         return new PageResponse<>(
                 page.getContent(),
                 page.getNumber(),
@@ -91,11 +101,30 @@ public class DocumentController {
         );
     }
 
+    private void rejectIfUblTooLarge(String ublXml) {
+        if (ublXml != null && ublXml.getBytes(StandardCharsets.UTF_8).length > MAX_UBL_BYTES) {
+            throw new ResponseStatusException(HttpStatus.PAYLOAD_TOO_LARGE, "UBL XML exceeds the maximum allowed size");
+        }
+    }
+
+    private Pageable capPageSize(Pageable pageable) {
+        if (pageable == null || pageable.getPageSize() <= MAX_PAGE_SIZE) {
+            return pageable;
+        }
+        return PageRequest.of(pageable.getPageNumber(), MAX_PAGE_SIZE, pageable.getSort());
+    }
+
     @GetMapping("{id}")
     @Operation(summary = "Get document by id", description = "Loads one stored document visible to the authenticated company.")
     public DocumentDto getById(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
         String peppolId = JwtUtil.getPeppolId(jwt);
         return documentService.findById(peppolId, id);
+    }
+
+    @GetMapping("{id}/details")
+    public DocumentDetailsDto getDetails(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
+        String peppolId = JwtUtil.getPeppolId(jwt);
+        return documentService.findDetailsById(peppolId, id, jwt.getTokenValue());
     }
 
     @PostMapping()
@@ -105,6 +134,7 @@ public class DocumentController {
                               @RequestParam(required = false) boolean draft,
                               @RequestParam(required = false) Instant schedule,
                               @RequestParam(required = false, defaultValue = "true") boolean createdExternally) {
+        rejectIfUblTooLarge(ublXml);
         if (!JwtUtil.isPeppolActive(jwt)) {
             draft = true;
         }
@@ -119,6 +149,7 @@ public class DocumentController {
                               @RequestBody String ublXml,
                               @RequestParam(required = false) boolean draft,
                               @RequestParam(required = false) Instant schedule) {
+        rejectIfUblTooLarge(ublXml);
         if (!JwtUtil.isPeppolActive(jwt)) {
             draft = true;
         }
@@ -136,6 +167,15 @@ public class DocumentController {
         return documentService.send(peppolId, id, schedule, jwt.getTokenValue());
     }
 
+    @PutMapping("{id}/reschedule")
+    public DocumentDto reschedule(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestParam(required = false) Instant schedule) {
+        if (!JwtUtil.isPeppolActive(jwt)) {
+            throw new PeppolException("Peppol ID is not active");
+        }
+        String peppolId = JwtUtil.getPeppolId(jwt);
+        return documentService.reschedule(peppolId, id, schedule, jwt.getTokenValue());
+    }
+
     @PutMapping("{id}/read")
     @Operation(summary = "Mark document as read", description = "Updates the document workflow state to indicate it has been read by the current company.")
     public DocumentDto read(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
@@ -148,6 +188,12 @@ public class DocumentController {
     public DocumentDto paid(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
         String peppolId = JwtUtil.getPeppolId(jwt);
         return documentService.paid(peppolId, id);
+    }
+
+    @PutMapping("{id}/error-seen")
+    public DocumentDto markErrorSeen(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
+        String peppolId = JwtUtil.getPeppolId(jwt);
+        return documentService.markErrorSeen(peppolId, id);
     }
 
     @DeleteMapping("{id}")

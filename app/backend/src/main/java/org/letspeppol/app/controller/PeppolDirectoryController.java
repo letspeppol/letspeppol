@@ -34,6 +34,15 @@ public class PeppolDirectoryController {
     @Operation(summary = "Search Peppol Directory", description = "Searches the external Peppol Directory either by participant identifier or by organization name.")
     public ResponseEntity<String> find(@RequestParam(name = "name", required = false) String name, @RequestParam(name = "participant", required = false) String participant) {
 
+        // Validate the user-controlled query before relaying it to the external Peppol directory:
+        // non-blank, length-bounded, and free of control characters (defence-in-depth for this
+        // unauthenticated outbound relay).
+        String query = (name != null) ? name : participant;
+        if (query == null || query.isBlank() || query.length() > 100
+                || query.chars().anyMatch(c -> c < 0x20 || c == 0x7f)) {
+            throw new AppException(AppErrorCodes.PEPPOL_DIR_400_ERROR);
+        }
+
         WebClient.RequestHeadersSpec<?> requestSpec;
         if (name != null) {
             requestSpec = webClient.get().uri("/search/1.0/json?name={name}", name);

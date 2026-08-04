@@ -10,8 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -36,6 +38,20 @@ public class SpringKboSftpClient implements KboSftpClient {
     @Value("${kbo.sftp.password}")
     private String password;
 
+    /**
+     * Optional path to a known_hosts file. When set, host-key verification is enforced
+     * (StrictHostKeyChecking=yes), preventing man-in-the-middle attacks.
+     */
+    @Value("${kbo.sftp.known-hosts:}")
+    private String knownHostsPath;
+
+    /**
+     * Optional inline known_hosts entry (a single line in known_hosts format,
+     * e.g. "host ssh-ed25519 AAAA..."). Used when a file path is not convenient.
+     */
+    @Value("${kbo.sftp.host-key:}")
+    private String hostKeyLine;
+
     private Session session;
     private ChannelSftp channel;
 
@@ -46,10 +62,17 @@ public class SpringKboSftpClient implements KboSftpClient {
             }
             if (session == null || !session.isConnected()) {
                 JSch jsch = new JSch();
+                boolean hostKeyVerified = configureHostKeyChecking(jsch);
                 session = jsch.getSession(username, host, port);
                 session.setPassword(password);
                 Properties config = new Properties();
-                config.put("StrictHostKeyChecking", "no");
+                if (hostKeyVerified) {
+                    config.put("StrictHostKeyChecking", "yes");
+                } else {
+                    config.put("StrictHostKeyChecking", "no");
+                    log.warn("SFTP host-key verification is DISABLED for host {} (connection is vulnerable to "
+                            + "man-in-the-middle). Set kbo.sftp.known-hosts or kbo.sftp.host-key to lock it down.", host);
+                }
                 session.setConfig(config);
                 session.connect();
             }
@@ -59,6 +82,25 @@ public class SpringKboSftpClient implements KboSftpClient {
         } catch (JSchException e) {
             throw new KboSftpException("Failed to open SFTP channel", e);
         }
+    }
+
+    /**
+     * Loads known-host material into the {@link JSch} instance when configured.
+     *
+     * @return {@code true} if host-key verification material was loaded (so strict checking
+     *         can be enabled), {@code false} if no known hosts were configured.
+     */
+    private boolean configureHostKeyChecking(JSch jsch) throws JSchException {
+        if (knownHostsPath != null && !knownHostsPath.isBlank()) {
+            jsch.setKnownHosts(knownHostsPath.trim());
+            return true;
+        }
+        if (hostKeyLine != null && !hostKeyLine.isBlank()) {
+            byte[] bytes = (hostKeyLine.trim() + "\n").getBytes(StandardCharsets.UTF_8);
+            jsch.setKnownHosts(new ByteArrayInputStream(bytes));
+            return true;
+        }
+        return false;
     }
 
     @PreDestroy

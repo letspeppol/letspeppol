@@ -8,6 +8,7 @@ import {DocumentDirection, DocumentDto, DocumentPageDto, DocumentType} from "../
 import {parseCreditNote, parseInvoice} from "../services/peppol/ubl-parser";
 import {PartnerDto, PartnerService} from "../services/app/partner-service";
 import {resolve} from "@aurelia/kernel";
+import {I18N} from "@aurelia/i18n";
 
 @singleton()
 export class InvoiceContext {
@@ -16,6 +17,7 @@ export class InvoiceContext {
     private readonly partnerService = resolve(PartnerService);
     private readonly invoiceComposer = resolve(InvoiceComposer);
     private readonly invoiceCalculator = resolve(InvoiceCalculator);
+    private readonly i18n = resolve(I18N);
     private createEmptyPage(): DocumentPageDto {
         return {
             content: [],
@@ -36,19 +38,13 @@ export class InvoiceContext {
     lines : undefined | InvoiceLine[] | CreditNoteLine[];
     @observable selectedInvoice:  undefined | Invoice | CreditNote;
     selectedDocument: DocumentDto;
+    selectedRouteId: string = undefined;
     selectedDocumentType: DocumentType = DocumentType.INVOICE;
     lastReference: string = undefined;
     nextReference: string = undefined;
     readOnly: boolean = false;
     partnerMissing: boolean = false;
     addPdfToSendingInvoice: boolean = false;
-
-    getCurrentDocumentTypeName(startWithCapital = true) {
-        if (this.selectedDocumentType === DocumentType.CREDIT_NOTE) {
-            return startWithCapital ? 'Credit note' : 'credit note';
-        }
-        return startWithCapital ? 'Invoice' : 'invoice';
-    }
 
     clearSelectedInvoice() {
         this.selectedInvoice = undefined;
@@ -112,7 +108,7 @@ export class InvoiceContext {
             try {
                 await this.companyService.getAndSetMyCompanyForToken();
             } catch {
-                this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to get company info"});
+                this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.company.info-failed')});
             }
         }
         this.addPdfToSendingInvoice = this.companyService.myCompany.addPdfToSendingInvoice;
@@ -177,6 +173,7 @@ export class InvoiceContext {
 
     public mapPartner(party: Party): PartnerDto {
         return {
+            identifier: party?.PartyLegalEntity?.CompanyID?.value,
             vatNumber: party.PartyTaxScheme?.CompanyID?.value,
             name: party.PartyName?.Name,
             peppolId: `${party.EndpointID.__schemeID}:${party.EndpointID.value}`,

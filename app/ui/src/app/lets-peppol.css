@@ -112,6 +112,7 @@
     --space-16: 1.6rem;
     --space-2rem: 2rem;
     --space-4rem: 4rem;
+    --space-8rem: 8rem;
 
     /* Component sizing */
     --container-max: 1460px;
@@ -350,7 +351,7 @@ input[type=checkbox] {
 .container {
     max-width: var(--container-max);
     margin: var(--space-2rem) auto;
-    padding: 0 var(--space-1) var(--space-4rem);
+    padding: 0 var(--space-1) var(--space-8rem);
 }
 
 main.container {
@@ -620,6 +621,43 @@ main.container {
     color: var(--text);
 }
 
+.icon-btn.success {
+    color: var(--status-ok);
+}
+
+.icon-btn.success:hover {
+    color: color-mix(in hsl, var(--status-ok) 80%, black 20%);
+}
+
+.icon-btn:disabled,
+.icon-btn.success:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    color: var(--muted);
+}
+
+.icon-btn:disabled:hover,
+.icon-btn.success:disabled:hover {
+    color: var(--muted);
+}
+
+.disabled-tooltip-wrapper {
+    display: inline-flex;
+}
+
+.disabled-tooltip-wrapper-fill {
+    display: flex;
+    flex: 1;
+}
+
+.disabled-tooltip-wrapper > :disabled {
+    pointer-events: none;
+}
+
+.disabled-tooltip-wrapper[title] {
+    cursor: not-allowed;
+}
+
 .btn.active-route {
     box-shadow: var(--shadow-active-btn);
 }
@@ -714,6 +752,65 @@ main.container {
     display: inline-flex;
     align-items: center;
     gap: .25rem;
+}
+
+.sort-button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-035);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-weight: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.sort-indicator {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 10px;
+    height: 14px;
+    flex: 0 0 auto;
+}
+
+.sort-indicator::before,
+.sort-indicator::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    opacity: 0.35;
+}
+
+.sort-indicator::before {
+    top: 0;
+    border-bottom: 5px solid var(--muted);
+}
+
+.sort-indicator::after {
+    bottom: 0;
+    border-top: 5px solid var(--muted);
+}
+
+.sort-indicator.is-asc::before,
+.sort-indicator.is-desc::after {
+    opacity: 1;
+    border-bottom-color: var(--text);
+    border-top-color: var(--text);
+}
+
+.sort-indicator.is-idle::before,
+.sort-indicator.is-idle::after {
+    opacity: 0.35;
 }
 
 .filter-toggle {
@@ -860,13 +957,13 @@ main.container .data-table tbody td {
     border-color: var(--pill-invoice-border);
 }
 
-.pill.incoming, .pill.processed {
+.pill.incoming, .pill.processed, .pill.paid {
     color: var(--pill-incoming-fg);
     background: var(--pill-incoming-bg);
     border-color: var(--pill-incoming-border);
 }
 
-.pill.error {
+.pill.error, .pill.overdue {
     color: var(--pill-error-fg);
     background: var(--pill-error-bg);
     border-color: var(--pill-error-border);
@@ -874,6 +971,31 @@ main.container .data-table tbody td {
 
 .kpi-overdue {
     color: var(--status-overdue)
+}
+
+/* Dashboard errored-invoices indicator */
+.kpi-error-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-04);
+    margin-bottom: var(--space-04);
+    border-color: var(--pill-error-border);
+    background: var(--pill-error-bg);
+    color: var(--pill-error-fg);
+}
+
+.kpi-error-count {
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+/* Acknowledged ("seen") errored invoice, greyed out */
+.data-table tbody tr.row-seen {
+    opacity: .55;
+}
+
+.data-table tbody tr.row-seen .pill.error {
+    filter: grayscale(1);
 }
 
 /* ============================================================================
@@ -959,6 +1081,9 @@ main.container .data-table tbody td {
 .modal-card {
     position: relative;
     width: min(var(--modal-max-w), calc(100% - var(--space-2rem)));
+    max-height: calc(100vh - var(--space-2rem));
+    display: flex;
+    flex-direction: column;
     background: var(--panel);
     border: 1px solid var(--border-soft);
     border-radius: var(--radius-md);
@@ -979,7 +1104,9 @@ main.container .data-table tbody td {
 }
 
 .modal-body {
+    min-height: 0;
     padding: 0 var(--space-1) var(--space-1);
+    overflow: auto;
 }
 
 .modal-footer {
@@ -990,6 +1117,22 @@ main.container .data-table tbody td {
     padding: var(--space-075) var(--space-1) var(--space-1);
     border-top: 1px dashed var(--border-soft);
     margin-top: var(--space-05);
+}
+
+.welcome-notification-card {
+    width: min(720px, calc(100% - var(--space-2rem)));
+}
+
+.welcome-notification-body {
+    line-height: 1.55;
+}
+
+.welcome-notification-body :first-child {
+    margin-top: 0;
+}
+
+.welcome-notification-body :last-child {
+    margin-bottom: 0;
 }
 
 /* ============================================================================
@@ -1160,22 +1303,122 @@ main.container .data-table tbody td {
     text-align: right;
 }
 
-.field.checkbox {
+.field.checkbox,
+.field.radio {
     display: flex;
     align-items: center;
     gap: var(--space-05);
 }
 
-.field.checkbox input {
+.field.checkbox input,
+.field.radio input {
     width: 1rem;
     height: 1rem;
     cursor: pointer;
 }
 
-.field.checkbox span {
+.field.checkbox span,
+.field.radio span {
     font-size: .9rem;
     color: var(--text);
     cursor: pointer;
+}
+
+/* Two-line column header: bold label on top, smaller subtitle below (e.g. "Total" / "incl. VAT"). */
+.th-stack {
+    display: inline-flex;
+    flex-direction: column;
+    line-height: 1.1;
+}
+
+.th-subline {
+    font-size: .7rem;
+    font-weight: 400;
+    color: var(--muted);
+    text-transform: lowercase;
+    letter-spacing: 0.02em;
+    margin-top: 2px;
+}
+
+/* Dashboard heading uses the same suffix inline, kept lightweight next to the title. */
+.vat-mode-tag {
+    margin-left: var(--space-05);
+    font-size: .75em;
+    font-weight: 400;
+    color: var(--muted);
+    text-transform: lowercase;
+    letter-spacing: 0.02em;
+}
+
+/* iOS-style toggle for the VAT-display setting on the Account page. */
+.vat-display-toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--space-08);
+    padding: var(--space-05) 0;
+}
+
+.vat-toggle-label {
+    font-size: .9rem;
+    color: var(--muted);
+    cursor: pointer;
+    user-select: none;
+    transition: color .15s, font-weight .15s;
+}
+
+.vat-toggle-label.active {
+    color: var(--text-strong);
+    font-weight: 600;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    flex: 0 0 auto;
+    cursor: pointer;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    margin: 0;
+}
+
+.switch .slider {
+    position: absolute;
+    inset: 0;
+    background: var(--border-soft);
+    border-radius: 24px;
+    transition: background-color .2s;
+}
+
+.switch .slider::before {
+    content: '';
+    position: absolute;
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    top: 3px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .25);
+    transition: transform .2s;
+}
+
+.switch input:checked + .slider {
+    background: var(--primary);
+}
+
+.switch input:checked + .slider::before {
+    transform: translateX(20px);
+}
+
+.switch input:focus-visible + .slider {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
 }
 
 .field input::placeholder {

@@ -9,6 +9,7 @@ import {
     NewFeatureCustomAttribute,
     NewFeatureSectionCustomAttribute,
 } from "./components/new-feature";
+import {VatDisplayRegistration} from "./services/app/vat-display-service";
 import "./components/new-feature/rainbow-border.css";
 import en from "./app/locale/translation_en.json";
 import fr from "./app/locale/translation_fr.json";
@@ -37,6 +38,7 @@ Aurelia
         Alert,
         AuthenticationHook,
         FeatureAckRegistration,
+        VatDisplayRegistration,
         NewFeatureCustomAttribute,
         NewFeatureSectionCustomAttribute,
     )

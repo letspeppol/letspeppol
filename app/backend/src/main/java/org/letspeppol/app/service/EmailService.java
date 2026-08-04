@@ -34,10 +34,14 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Pattern;
 
 @Service
 @Slf4j
 public class EmailService {
+
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
+    private static final String DEFAULT_ATTACHMENT_NAME = "attachment";
 
     private final EmailJobRepository emailJobRepository;
     private final DocumentRepository documentRepository;
@@ -167,7 +171,7 @@ public class EmailService {
                                 filename = documentReferenceType.getAttachment().getEmbeddedDocumentBinaryObject().getFilename();
                             }
                             helper.addAttachment(
-                                    filename,
+                                    sanitizeFilename(filename),
                                     new ByteArrayDataSource(documentReferenceType.getAttachment().getEmbeddedDocumentBinaryObject().getValue(), MediaType.APPLICATION_PDF_VALUE)
                             );
                             pdfAttachmentAdded = true;
@@ -196,7 +200,7 @@ public class EmailService {
                                 filename = documentReferenceType.getAttachment().getEmbeddedDocumentBinaryObject().getFilename();
                             }
                             helper.addAttachment(
-                                    filename,
+                                    sanitizeFilename(filename),
                                     new ByteArrayDataSource(documentReferenceType.getAttachment().getEmbeddedDocumentBinaryObject().getValue(), MediaType.APPLICATION_PDF_VALUE)
                             );
                             pdfAttachmentAdded = true;
@@ -208,18 +212,38 @@ public class EmailService {
         if (!pdfAttachmentAdded) {
             byte[] pdf = ublInvoicePdfService.toPdf(document.getUbl());
             helper.addAttachment(
-                    document.getInvoiceReference() + ".pdf",
+                    sanitizeFilename(document.getInvoiceReference()) + ".pdf",
                     new ByteArrayDataSource(pdf, MediaType.APPLICATION_PDF_VALUE)
             );
         }
+    }
+
+    /**
+     * Strips CR/LF and other control characters from an attachment filename to prevent
+     * MIME header injection. Returns a safe default when the result would be empty.
+     */
+    private String sanitizeFilename(String filename) {
+        if (filename == null) {
+            return DEFAULT_ATTACHMENT_NAME;
+        }
+        // Remove all ISO control chars (incl. CR, LF, TAB) and trim surrounding whitespace.
+        String cleaned = filename.replaceAll("\\p{Cntrl}", "").trim();
+        return cleaned.isEmpty() ? DEFAULT_ATTACHMENT_NAME : cleaned;
     }
 
     private void setOptionalRecipients(MimeMessageHelper helper, String recipients, boolean cc) throws Exception {
         if (recipients == null || recipients.isBlank()) return;
 
         String[] parts = Arrays.stream(recipients.split("[;,]"))
-                .map(String::trim)
+                .map(this::sanitizeEmailAddress)
                 .filter(s -> !s.isBlank())
+                .filter(s -> {
+                    boolean valid = EMAIL_PATTERN.matcher(s).matches();
+                    if (!valid) {
+                        log.warn("Dropping invalid CC/BCC recipient");
+                    }
+                    return valid;
+                })
                 .toArray(String[]::new);
 
         if (parts.length == 0) return;
@@ -229,6 +253,17 @@ public class EmailService {
         } else {
             helper.setBcc(parts);
         }
+    }
+
+    /**
+     * Removes CR/LF and control characters from a recipient address to prevent
+     * mail header injection. Validation of the result is performed by the caller.
+     */
+    private String sanitizeEmailAddress(String address) {
+        if (address == null) {
+            return "";
+        }
+        return address.replaceAll("\\p{Cntrl}", "").trim();
     }
 
     private synchronized void rateLimit() {

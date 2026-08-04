@@ -10,7 +10,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 public abstract class PostgresIntegrationTest {
 
     @Container
-    static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:16-alpine");
+    protected static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:16-alpine");
 
     @DynamicPropertySource
     static void registerDatasource(DynamicPropertyRegistry registry) {

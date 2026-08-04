@@ -12,15 +12,14 @@ public final class DocumentSpecifications {
     }
 
     public static Specification<Document> build(DocumentFilter filter) {
-        Specification<Document> spec = Specification.anyOf();
-
-        if (filter == null) {
-            return spec;
+        // Tenant isolation: the owner filter must ALWAYS be applied. Without a valid
+        // owner peppolId we fail closed (match nothing) rather than returning everything.
+        if (filter == null || filter.getOwnerPeppolId() == null || filter.getOwnerPeppolId().isBlank()) {
+            return (root, query, cb) -> cb.disjunction();
         }
 
-        if (filter.getOwnerPeppolId() != null && !filter.getOwnerPeppolId().isBlank()) {
-            spec = spec.and(hasOwnerPeppolId(filter.getOwnerPeppolId()));
-        }
+        Specification<Document> spec = hasOwnerPeppolId(filter.getOwnerPeppolId());
+
         if (filter.getType() != null) {
             spec = spec.and(hasType(filter.getType()));
         }

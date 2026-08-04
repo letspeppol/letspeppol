@@ -3,12 +3,15 @@ import {LoginService} from "../services/app/login-service";
 import {IRouter} from "@aurelia/router";
 import {CompanyService} from "../services/app/company-service";
 import {InvoiceContext} from "../invoice/invoice-context";
+import {IEventAggregator} from "aurelia";
+import {SHOW_WELCOME_NOTIFICATIONS} from "../components/welcome-notification/welcome-notification-modal";
 
 export class Login {
     private readonly loginService = resolve(LoginService);
     private readonly companyService = resolve(CompanyService);
     private readonly invoiceContext = resolve(InvoiceContext);
     private readonly router: IRouter = resolve(IRouter);
+    private readonly ea: IEventAggregator = resolve(IEventAggregator);
     email: string;
     password: string;
     error: boolean = false;
@@ -35,12 +38,13 @@ export class Login {
 
     async loginSuccess() {
         this.invoiceContext.clearAccountCache();
-        await this.companyService.getAndSetMyCompanyForToken().then(result => localStorage.setItem('peppolActive', result.peppolActive));
+        await this.companyService.getAndSetMyCompanyForToken().then(result => localStorage.setItem('peppolActive', String(result.peppolActive)));
         this.error = false;
         if (this.rememberMe) {
             localStorage.setItem('email', this.email);
         }
         await this.router.load('dashboard');
+        this.ea.publish(SHOW_WELCOME_NOTIFICATIONS);
     }
 
     verifyAuthenticated() {

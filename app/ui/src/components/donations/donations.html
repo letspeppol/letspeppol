@@ -1,24 +1,61 @@
-<div if.bind="accountInfo" class="mailbox donations-container">
+<import from="./sponsor-payment-modal"></import>
+
+<sponsor-payment-modal component.ref="sponsorPaymentModal"></sponsor-payment-modal>
+
+<div if.bind="accountInfo" class="mailbox donations-container" new-feature="donation-bar">
     <div class="donations-stats">
         <div class="donations-icon">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart-handshake-icon lucide-heart-handshake"><path d="M19.414 14.414C21 12.828 22 11.5 22 9.5a5.5 5.5 0 0 0-9.591-3.676.6.6 0 0 1-.818.001A5.5 5.5 0 0 0 2 9.5c0 2.3 1.5 4 3 5.5l5.535 5.362a2 2 0 0 0 2.879.052 2.12 2.12 0 0 0-.004-3 2.124 2.124 0 1 0 3-3 2.124 2.124 0 0 0 3.004 0 2 2 0 0 0 0-2.828l-1.881-1.882a2.41 2.41 0 0 0-3.409 0l-1.71 1.71a2 2 0 0 1-2.828 0 2 2 0 0 1 0-2.828l2.823-2.762"/></svg>
         </div>
         <div class="donations-stats-total">
             <ul style="list-style: none; padding: 0; margin: 0;">
-                <li>${sponsors.length} sponsors</li>
-                <li>${accountInfo.totalContributions} donations received</li>
-                <li>${accountInfo.totalProcessed} invoices processed</li>
+                <li>${sponsors.length} <span t="[title]donations.sponsors-title;donations.sponsors">tier sponsors</span></li>
+                <li>${totalSponsorTransactions} <span t="[title]donations.donations-received-title;donations.donations-received">donations</span></li>
+                <li>${accountInfo.activeCompanies} <span t="[title]donations.active-companies-title;donations.active-companies">companies</span></li>
+                <li>${accountInfo.totalProcessed} <span t="[title]donations.invoices-processed-title;donations.invoices-processed">invoices</span></li>
             </ul>
         </div>
     </div>
-    <div class="donations-icon">
-        <a if.bind="activeSponsor" href.bind="activeSponsor.url" target="_blank" rel="noopener noreferrer">
-            <img src.bind="activeSponsor.logoUrl" style="height: 80px; width: auto; max-width: 200px;"/>
+    <div class="donations-sponsor-logo">
+        <a if.bind="activeSponsor" class="donations-sponsor-logo-link" href.bind="activeSponsor.url" target="_blank" rel="noopener noreferrer" title="Go to sponsor of Let’s Peppol">
+            <img class="donations-sponsor-logo-img" src.bind="activeSponsor.logoUrl"/>
         </a>
     </div>
-    <div class="donations-transactions">
+    <button type="button" class="donations-transactions" title="View sponsors" click.trigger="showSponsors()">
         <ul>
-            <li repeat.for="transaction of accountInfo.transactions">${$index + 1}. <b>${transaction.fromAccount.name}</b> (+ ${transaction.amount.value} ${transaction.amount.currency})</li>
+            <li repeat.for="transaction of recentTransactions">
+                <span class="donations-transaction-index">${$index + 1}.</span>
+                <b class="donations-transaction-name">${transaction.name}</b>
+                <span class="donations-transaction-amount">(+ ${transaction.amount} ${transaction.currency})</span>
+            </li>
+            <li class="donations-view-more" t="common.view-more">view more&hellip;</li>
         </ul>
-    </div>
+    </button>
+    <button type="button" class="donations-action donations-action-button" title="Sponsor Let’s Peppol" click.trigger="showSponsorPaymentModal()">
+        <span class="sponsor-button">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-hand-heart">
+                <path d="M11 14h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 16"/>
+                <path d="m7 20 1.6-1.4c.4-.4.9-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.8-2.8l-4.2 3.9"/>
+                <path d="m2 15 6 6"/>
+                <path d="M19.5 8.5c.7-.7 1.5-1.6 1.5-3A3.5 3.5 0 0 0 17.5 2c-1.1 0-2.1.5-2.8 1.2A3.8 3.8 0 0 0 12 2a3.5 3.5 0 0 0-3.5 3.5c0 1.4.8 2.3 1.5 3l4.7 4.7Z"/>
+            </svg>
+        </span>
+        <span class="donations-action-label" t="donations.donate">donate</span>
+    </button>
+    <a class="donations-action linkedin-action"
+           title="Follow Let’s Peppol on LinkedIn"
+           href="https://www.linkedin.com/company/letspeppol/"
+           target="_blank"
+           rel="noopener noreferrer"
+           aria-label="Follow us on LinkedIn"
+           t="[aria-label]donations.follow-linkedin">
+        <span class="sponsor-button linkedin-button">
+            <svg class="linkedin-icon" width="40" height="40" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <rect width="24" height="24" rx="2.5" fill="#0A66C2"/>
+                <path fill="#fff" d="M5.34 9.16h3.12v9.49H5.34V9.16Zm1.57-4.7c1 0 1.81.81 1.81 1.81S7.91 8.08 6.91 8.08s-1.81-.81-1.81-1.81.81-1.81 1.81-1.81Zm3.41 4.7h2.99v1.3h.04c.42-.79 1.43-1.62 2.95-1.62 3.15 0 3.73 2.07 3.73 4.76v5.05h-3.12v-4.48c0-1.07-.02-2.44-1.49-2.44-1.49 0-1.72 1.16-1.72 2.36v4.56h-3.12V9.16h-.26Z"/>
+            </svg>
+        </span>
+        <span class="donations-action-label" t="donations.follow">follow</span>
+    </a>
 </div>

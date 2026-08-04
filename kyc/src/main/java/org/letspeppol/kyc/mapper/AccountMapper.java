@@ -9,6 +9,7 @@ public class AccountMapper {
     public static AccountInfo toAccountInfo(Account account, Company company) {
         return new AccountInfo(
                 company.getPeppolId(),
+                company.getIdentifier(),
                 company.getVatNumber(),
                 company.getName(),
                 company.getStreet(),

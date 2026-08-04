@@ -13,6 +13,7 @@ import {ResetPassword} from "../login/reset-password";
 import {ForgotPassword} from "../login/forgot-password";
 import {Dashboard} from "../dashboard/dashboard";
 import {AddOwnership} from "../registration/add-ownership";
+import {Sponsors} from "../sponsor/sponsors";
 
 @route({
     routes: [
@@ -27,6 +28,7 @@ import {AddOwnership} from "../registration/add-ownership";
         { path: ['/invoices', '/invoices/:id' ],            component: Invoices,             title: 'Invoice',               },
         { path: '/partners',                                component: Partners,             title: 'Partners',              },
         { path: '/products',                                component: Products,             title: 'Products',              },
+        { path: '/sponsors',                                component: Sponsors,             title: 'Sponsors',              },
         { path: '/account',                                 component: Account,              title: 'Account',               },
         { path: ['', '/dashboard'],                         component: Dashboard,            title: 'Dashboard',             },
     ],

@@ -8,22 +8,36 @@ import {
     DocumentQuery,
     InvoiceService, DocumentDirection,
 } from "../../services/app/invoice-service";
+import {getVatDisplayMode, IVatDisplay, VatDisplayMode} from "../../services/app/vat-display-service";
 import moment from "moment";
 import {IRouter} from "@aurelia/router";
 import {UploadUblModal} from "./components/upload-ubl-modal";
+import {I18N} from "@aurelia/i18n";
+import {CompanyService} from "../../services/app/company-service";
+
+type SortDirection = "asc" | "desc";
 
 export class InvoiceOverview {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
     private invoiceService = resolve(InvoiceService);
     private invoiceContext = resolve(InvoiceContext);
     private router = resolve(IRouter);
-    query: DocumentQuery = {pageable: {page: 0, size: 20}};
+    private readonly i18n = resolve(I18N);
+    private readonly companyService = resolve(CompanyService);
+    private readonly vatDisplay = resolve(IVatDisplay);
+    vatMode: VatDisplayMode = getVatDisplayMode(this.companyService.myCompany?.vatNumber, this.vatDisplay.mode);
+    query: DocumentQuery = {pageable: {page: 0, size: 20, sort: [{property: 'issueDate', direction: 'desc'}]}}; 
+    activeSortProperty = 'issueDate';
+    activeSortDirection: SortDirection = 'desc';
     private resetSubscription: IDisposable;
+    private unsubscribeVatDisplay?: () => void;
 
     @bindable uploadUblModal: UploadUblModal;
 
-    attached() {
-        this.invoiceContext.initCompany();
+    async attached() {
+        await this.invoiceContext.initCompany();
+        this.updateVatDisplayMode();
+        this.unsubscribeVatDisplay = this.vatDisplay.subscribe(mode => this.updateVatDisplayMode(mode));
         this.resetSubscription = this.ea.subscribe('invoicesReset', () => this.setActiveItems(this.invoiceContext.activeBox));
         this.setActiveItems(this.invoiceContext.activeBox);
         this.loadDrafts();
@@ -31,6 +45,7 @@ export class InvoiceOverview {
 
     detaching() {
         this.resetSubscription?.dispose();
+        this.unsubscribeVatDisplay?.();
     }
 
     async loadDrafts() {
@@ -46,18 +61,24 @@ export class InvoiceOverview {
     }
 
     @watch((vm) => [vm.query.invoiceReference, vm.query.partnerName])
+    queryChanged() {
+        this.query.pageable.page = 0;
+        this.reloadCurrentView();
+    }
+
     loadInvoices() {
         this.invoiceContext.loadingInvoices = true;
         this.invoiceService.getDocuments({
             ...this.query,
-            draft: this.invoiceContext.activeBox === 'drafts'
+            draft: this.invoiceContext.activeBox === 'DRAFTS'
         }).then(page => this.invoiceContext.invoicePage = page)
         .finally(() => this.invoiceContext.loadingInvoices = false);
     }
 
     changeDocType(value: DocumentType) {
         this.query.type = value;
-        this.loadInvoices();
+        this.query.pageable.page = 0;
+        this.reloadCurrentView();
     }
 
     setActiveItems(box) {
@@ -65,15 +86,18 @@ export class InvoiceOverview {
         switch (box) {
             case 'ALL':
                 this.query.direction = undefined;
+                this.query.pageable.page = 0;
                 this.loadInvoices();
                 break;
             case DocumentDirection.INCOMING:
             case DocumentDirection.OUTGOING:
                 this.query.direction = box;
+                this.query.pageable.page = 0;
                 this.loadInvoices();
                 break;
             case 'DRAFTS':
-                this.invoiceContext.invoicePage = this.invoiceContext.draftPage;
+                this.query.pageable.page = 0;
+                this.loadDrafts();
                 this.invoiceContext.loadingInvoices = this.invoiceContext.loadingDrafts;
                 break;
         }
@@ -97,11 +121,37 @@ export class InvoiceOverview {
     }
 
     previousPage() {
-        if (this.query.pageable.page === 1) {
+        if (this.query.pageable.page <= 0) {
             return;
         }
         this.query.pageable.page--;
-        this.loadInvoices();
+        this.reloadCurrentView();
+    }
+
+    get pageStart() {
+        const total = this.invoiceContext.invoicePage?.totalElements ?? 0;
+        if (!total) {
+            return 0;
+        }
+        return (this.invoiceContext.invoicePage.page * this.invoiceContext.invoicePage.size) + 1;
+    }
+
+    get pageEnd() {
+        const total = this.invoiceContext.invoicePage?.totalElements ?? 0;
+        if (!total) {
+            return 0;
+        }
+        return Math.min((this.invoiceContext.invoicePage.page + 1) * this.invoiceContext.invoicePage.size, total);
+    }
+
+    toggleSort(property: string) {
+        const currentDirection = this.sortDirection(property);
+        const direction: SortDirection = currentDirection === 'asc' ? 'desc' : 'asc';
+        this.query.pageable.sort = [{property, direction}];
+        this.activeSortProperty = property;
+        this.activeSortDirection = direction;
+        this.query.pageable.page = 0;
+        this.reloadCurrentView();
     }
 
     isOverdue(item: DocumentDto) {
@@ -116,16 +166,23 @@ export class InvoiceOverview {
         try {
             await this.invoiceService.deleteDocument(draft.id)
             this.invoiceContext.deleteDraft(draft);
-            this.ea.publish('alert', {alertType: AlertType.Success, text: "Draft deleted"});
-        } catch (e) {
-            console.log(e);
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to delete draft"});
+            this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.invoice.draft-deleted')});
+        } catch {
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.invoice.draft-delete-overview-failed')});
         }
         return false;
     }
 
     formatDate(date) {
         return moment(date).format('D/M/YYYY');
+    }
+
+    get amountSortProperty(): string {
+        return this.vatMode === 'incl' ? 'amountInclVat' : 'amountExclVat';
+    }
+
+    totalAmount(item: DocumentDto): number | undefined {
+        return this.vatMode === 'incl' ? item.amountInclVat : item.amountExclVat;
     }
 
     async markPaid(event: Event, item: DocumentDto) {
@@ -135,17 +192,82 @@ export class InvoiceOverview {
             await this.invoiceService.togglePaidDocument(item.id);
             if (item.paidOn) {
                 item.paidOn = undefined;
-                this.ea.publish('alert', {alertType: AlertType.Success, text: "Invoice marked as unpaid"});
+                this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(`alert.invoice.marked-unpaid.${item.type}`)});
             } else {
                 item.paidOn = datePaid;
-                this.ea.publish('alert', {alertType: AlertType.Success, text: "Invoice marked as paid"});
+                this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(`alert.invoice.marked-paid.${item.type}`)});
             }
+        } catch {
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.invoice.paid-status-failed')});
+        }
+    }
+
+    // Acknowledge an errored invoice: it stays visible (greyed out) but leaves the errored counter and offers no further action.
+    async markErrorSeen(event: Event, item: DocumentDto) {
+        event.stopPropagation();
+        try {
+            const updated = await this.invoiceService.markErrorSeenDocument(item.id);
+            item.errorSeenOn = updated.errorSeenOn;
+            this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.invoice.marked-seen')});
         } catch (e) {
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to change invoice paid status"});
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.invoice.mark-seen-failed')});
+        }
+    }
+
+    // Reuse the errored invoice's content as a new editable draft so the user can correct it and resend with the same number
+    // (the uniqueness check ignores errored documents, so the number is free to reuse).
+    async resendErrored(event: Event, item: DocumentDto) {
+        event.stopPropagation();
+        try {
+            const errored = await this.invoiceService.getDocument(item.id);
+            if (!errored.ubl) {
+                this.ea.publish('alert', {alertType: AlertType.Warning, text: this.i18n.tr('alert.invoice.no-ubl-data')});
+                return;
+            }
+            const draft = await this.invoiceService.createDocument(errored.ubl, true, false);
+            this.invoiceContext.draftPage?.content.unshift(draft);
+            if (this.invoiceContext.draftPage) {
+                this.invoiceContext.draftPage.totalElements++;
+            }
+            this.router.load(`/invoices/${draft.id}`);
+        } catch (e) {
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr(`alert.invoice.resend-failed.${item.type}`)});
         }
     }
 
     showUploadUblModal() {
         this.uploadUblModal.showModal();
+    }
+
+    private reloadCurrentView() {
+        if (this.invoiceContext.activeBox === 'DRAFTS') {
+            this.loadDrafts();
+            return;
+        }
+        this.loadInvoices();
+    }
+
+    private updateVatDisplayMode(preferredMode: VatDisplayMode = this.vatDisplay.mode) {
+        const vatNumber = this.companyService.myCompany?.vatNumber;
+        const nextMode = getVatDisplayMode(vatNumber, preferredMode);
+        if (this.vatMode === nextMode) {
+            return;
+        }
+
+        const currentSort = this.query.pageable.sort?.[0];
+        const sortWasByAmount = currentSort?.property === 'amountInclVat' || currentSort?.property === 'amountExclVat';
+        this.vatMode = nextMode;
+
+        if (!sortWasByAmount || !currentSort) {
+            return;
+        }
+
+        currentSort.property = this.amountSortProperty;
+        this.activeSortProperty = this.amountSortProperty;
+        this.reloadCurrentView();
+    }
+
+    private sortDirection(property: string): SortDirection | undefined {
+        return this.query.pageable.sort?.find(sort => sort.property === property)?.direction;
     }
 }

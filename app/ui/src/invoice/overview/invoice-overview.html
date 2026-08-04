@@ -82,10 +82,18 @@
                             <th style="width: 10px"></th>
                             <th t="invoice.table.direction">Direction</th>
                             <th t="invoice.table.type">Type</th>
-                            <th t="invoice.table.doc">Doc</th>
-                            <th class="th-filter" t="invoice.table.issue-date">
+                            <th>
+                                <button type="button" class="sort-button" click.trigger="toggleSort('invoiceReference')">
+                                    <span t="invoice.table.doc">Doc</span>
+                                    <span class="sort-indicator ${activeSortProperty!=='invoiceReference'?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
+                                </button>
+                            </th>
+                            <th class="th-filter">
                                 <div class="th-inner">
-                                    <span t="invoice.table.issue-date">Date</span>
+                                    <button type="button" class="sort-button" click.trigger="toggleSort('issueDate')">
+                                        <span t="invoice.table.issue-date">Date</span>
+                                        <span class="sort-indicator ${activeSortProperty!=='issueDate'?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
+                                    </button>
                                 </div>
                                 <div class="filter-panel" hidden>
                                     <label class="field">
@@ -102,9 +110,12 @@
                                     </div>
                                 </div>
                             </th>
-                            <th class="th-filter" t="invoice.table.due-date">
+                            <th class="th-filter">
                                 <div class="th-inner">
-                                    <span t="invoice.table.due-date">Date</span>
+                                    <button type="button" class="sort-button" click.trigger="toggleSort('dueDate')">
+                                        <span t="invoice.table.due-date">Date</span>
+                                        <span class="sort-indicator ${activeSortProperty!=='dueDate'?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
+                                    </button>
                                 </div>
                                 <div class="filter-panel" hidden>
                                     <label class="field">
@@ -122,17 +133,28 @@
                                 </div>
                             </th>
                             <th>
-                                <span if.bind="invoiceContext.activeBox === 'OUTGOING' || invoiceContext.activeBox === 'DRAFTS'" t="invoice.customer">Customer</span>
-                                <span if.bind="invoiceContext.activeBox === 'INCOMING'" t="invoice.supplier">Supplier</span>
-                                <span if.bind="invoiceContext.activeBox === 'ALL'" t="invoice.partner">Partner</span>
+                                <button type="button" class="sort-button" click.trigger="toggleSort('partnerName')">
+                                    <span if.bind="invoiceContext.activeBox === 'OUTGOING' || invoiceContext.activeBox === 'DRAFTS'" t="invoice.customer">Customer</span>
+                                    <span if.bind="invoiceContext.activeBox === 'INCOMING'" t="invoice.supplier">Supplier</span>
+                                    <span if.bind="invoiceContext.activeBox === 'ALL'" t="invoice.partner">Partner</span>
+                                    <span class="sort-indicator ${activeSortProperty!=='partnerName'?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
+                                </button>
                             </th>
-                            <th t="invoice.table.total">Total</th>
+                            <th>
+                                <button type="button" class="sort-button" click.trigger="toggleSort(amountSortProperty)">
+                                    <span class="th-stack">
+                                        <span t="invoice.table.total">Total</span>
+                                        <span class="th-subline" t="invoice.table.total-vat-suffix.${vatMode}"></span>
+                                    </span>
+                                    <span class="sort-indicator ${activeSortProperty!==amountSortProperty?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
+                                </button>
+                            </th>
                             <th t="invoice.table.status">Status</th>
                             <th class="actions-col" t="invoice.table.actions">Actions</th>
                         </tr>
                         </thead>
                         <tbody>
-                            <tr repeat.for="item of invoiceContext.invoicePage.content" click.trigger="selectItem(item)">
+                            <tr repeat.for="item of invoiceContext.invoicePage.content" click.trigger="selectItem(item)" class.bind="item.errorSeenOn ? 'row-seen' : ''">
                                 <td><span class="status-dot" class.bind="item.paidOn ? 'status-ok' : isOverdue(item) ? 'status-overdue' : 'status-open'" title.bind="item.paidOn ? 'Paid at ' + formatDate(item.paidOn) : 'Not paid'"></span></td>
                                 <td><span class="pill" class.bind="item.direction === 'INCOMING' ? 'incoming' : 'sent'" t="documentDirection.${item.direction}">${item.direction}</span></td>
                                 <td><span class="pill" class.bind="item.type === 'INVOICE' ? 'sent' : 'incoming'" t="documentType.${item.type}">${item.type}</span></td>
@@ -140,22 +162,30 @@
                                 <td>${item.issueDate | dateFormat}</td>
                                 <td>${item.dueDate | dateFormat}</td>
                                 <td>${item.partnerName}</td>
-                                <td>${item.amount | price:item.currency}</td>
+                                <td>${totalAmount(item) | price:item.currency}</td>
                                 <td>
                                     <span class="pill" if.bind="item.draftedOn" t="invoice.status.draft" title="${item.draftedOn | dateTimeFormat}">Drafted</span>
                                     <span class="pill scheduled" if.bind="item.scheduledOn && !item.processedOn" t="invoice.status.scheduled" title="${item.scheduledOn | dateTimeFormat}">Scheduled</span>
                                     <span class="pill processed" if.bind="item.processedOn && !item.processedStatus" t="invoice.status.processed" title="${item.processedOn | dateTimeFormat}">Processed</span>
                                     <span class="pill error" if.bind="item.processedStatus" t="invoice.status.error" title.bind="item.processedStatus">Error</span>
+                                    <span class="pill paid" if.bind="item.paidOn" t="invoice.status.paid" title="${item.paidOn | dateFormat}">Paid</span>
+                                    <span class="pill overdue" if.bind="!item.paidOn && !item.draftedOn && !item.processedStatus && isOverdue(item)" t="invoice.status.overdue">Overdue</span>
                                 </td>
                                 <td class="actions-col">
                                     <button if.bind="invoiceContext.activeBox === 'DRAFTS'" class="icon-btn" title="Remove" t="[title]common.remove" click.trigger="deleteDraft($event, item)">
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-icon lucide-trash"><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                                     </button>
-                                    <button if.bind="item.paidOn" class="icon-btn" title="Mark invoice as unpaid" click.trigger="markPaid($event, item)">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-banknote-x-icon lucide-banknote-x"><path d="M13 18H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5"/><path d="m17 17 5 5"/><path d="M18 12h.01"/><path d="m22 17-5 5"/><path d="M6 12h.01"/><circle cx="12" cy="12" r="2"/></svg>
+                                    <button if.bind="item.paidOn" class="icon-btn" title="Mark invoice as unpaid" t="[title]invoice.action.mark-unpaid.${item.type}" disabled.bind="!!item.processedStatus" click.trigger="markPaid($event, item)">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-undo-2"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5 5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
                                     </button>
-                                    <button if.bind="!item.paidOn && !item.draftedOn" class="icon-btn" title="Mark invoice as paid" click.trigger="markPaid($event, item)">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-banknote-arrow-down-icon lucide-banknote-arrow-down"><path d="M12 18H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5"/><path d="m16 19 3 3 3-3"/><path d="M18 12h.01"/><path d="M19 16v6"/><path d="M6 12h.01"/><circle cx="12" cy="12" r="2"/></svg>
+                                    <button if.bind="!item.paidOn && !item.draftedOn" class="icon-btn success" title="Mark invoice as paid" t="[title]invoice.action.mark-paid.${item.type}" disabled.bind="!!item.processedStatus" click.trigger="markPaid($event, item)">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-banknote"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01"/><path d="M18 12h.01"/></svg>
+                                    </button>
+                                    <button if.bind="item.direction === 'OUTGOING' && item.processedStatus && !item.errorSeenOn && !item.draftedOn" class="icon-btn" title="Reuse and resend" t="[title]invoice.action.resend.${item.type}" click.trigger="resendErrored($event, item)">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-cw"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
+                                    </button>
+                                    <button if.bind="item.direction === 'OUTGOING' && item.processedStatus && !item.errorSeenOn && !item.draftedOn" class="icon-btn" title="Mark as seen" t="[title]invoice.action.mark-seen" click.trigger="markErrorSeen($event, item)">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                                     </button>
                                 </td>
                             </tr>
@@ -174,7 +204,7 @@
                 </div>
                 <div class="table-footer pager">
                     <button type="button" class="btn ghost" click.trigger="previousPage()" disabled.bind="query.pageable.page <= 0" t="invoice.pager.previous">← Previous</button>
-                    <span class="pager-range"></span>
+                    <span class="pager-range">${pageStart} - ${pageEnd} / ${invoiceContext.invoicePage?.totalElements ?? 0}</span>
                     <button type="button" class="btn ghost" click.trigger="nextPage()" disabled.bind="invoiceContext.invoicePage.last" t="invoice.pager.next">Next →</button>
                 </div>
             </div>

@@ -18,6 +18,7 @@ export interface TokenVerificationResponse {
 export interface KycCompanyResponse {
     id: number,
     peppolId: string,
+    identifier: string,
     vatNumber: string,
     name: string;
     street: string;

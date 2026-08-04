@@ -28,15 +28,17 @@ export class InvoiceModal {
     showModal() {
         this.selectedDocumentType = JSON.parse(JSON.stringify(this.originalDocumentType));
         this.id = undefined;
-        if (this.invoiceContext.selectedInvoice.BuyerReference) {
-            this.buyerReference = JSON.parse(JSON.stringify(this.invoiceContext.selectedInvoice.BuyerReference));
-        }
+        this.buyerReference = undefined;
+        this.orderReference = undefined;
         this.note = undefined;
         if (this.invoiceContext.selectedInvoice.ID) {
             this.id = JSON.parse(JSON.stringify(this.invoiceContext.selectedInvoice.ID));
         }
         if (this.invoiceContext.selectedInvoice.BuyerReference) {
             this.buyerReference = JSON.parse(JSON.stringify(this.invoiceContext.selectedInvoice.BuyerReference));
+        }
+        if (this.invoiceContext.selectedInvoice.OrderReference?.ID) {
+            this.orderReference = JSON.parse(JSON.stringify(this.invoiceContext.selectedInvoice.OrderReference.ID));
         }
         if (this.invoiceContext.selectedInvoice.Note) {
             this.note = JSON.parse(JSON.stringify(this.invoiceContext.selectedInvoice.Note));

@@ -2,6 +2,7 @@ package org.letspeppol.proxy.service;
 
 import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.proxy.dto.UblDocumentDto;
 import org.letspeppol.proxy.exception.BadRequestException;
 import org.letspeppol.proxy.exception.DuplicateRequestException;
@@ -21,14 +22,16 @@ import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import java.util.UUID;
 
+@Slf4j
 @RequiredArgsConstructor
 @Transactional
 @Service
 public class UblDocumentSenderService {
 
     private static final ZoneId ZONE = ZoneId.of("Europe/Brussels");
-    private static final int MAXIMUM_RATE_PER_DAY = 4;
-    private static final int MAXIMUM_RATE_BETWEEN_PARTIES = 2;
+    private static final int MAXIMUM_RATE_PER_DAY = 8;
+    private static final int MAXIMUM_RATE_BETWEEN_PARTIES = 4;
+    private static final long MINIMUM_BALANCE_FOR_SCHEDULING_NOW = -8192L;
 
     private final UblDocumentRepository ublDocumentRepository;
     private final BackupService backupService;
@@ -39,10 +42,11 @@ public class UblDocumentSenderService {
         String hash = HashUtil.sha256(ublDocumentDto.ubl()); //TODO : should we use HMAC ?
         UUID uuid = ublDocumentDto.id() == null ? UUID.randomUUID() : ublDocumentDto.id();
         if (ublDocumentRepository.findById(uuid).isPresent()) {
-            throw new DuplicateRequestException("UblDocument " + uuid + " is already created, please use the update call");
+            throw new DuplicateRequestException("UBL_DOCUMENT_ALREADY_CREATED", "Document " + uuid + " is already created, please use the update call");
         }
         if (!ublDocumentRepository.findAllByHash(hash).isEmpty()) {
-            throw new DuplicateRequestException("UblDocument seems to already send with hash " + hash + " content might be not unique");
+            log.warn("Duplicate outgoing UBL request with hash {}", hash);
+            throw new DuplicateRequestException("UBL_DOCUMENT_CONTENT_ALREADY_SENT", "Document as-is has been send before. Content must be unique to send.");
         }
         UblDocument ublDocument = new UblDocument(
                 uuid, //App can generate the uuid, because they might have used this for drafts
@@ -59,6 +63,7 @@ public class UblDocumentSenderService {
                 noArchive?-1:0,
                 null,
                 null,
+                null,
                 null
         );
         ublDocument = ublDocumentRepository.save(ublDocument); //This is needed as it is a new
@@ -68,7 +73,9 @@ public class UblDocumentSenderService {
 
     public UblDocumentDto update(UUID id, UblDocumentDto ublDocumentDto, boolean noArchive) {
         String hash = HashUtil.sha256(ublDocumentDto.ubl());
-        UblDocument ublDocument = ublDocumentRepository.findById(id).orElseThrow(() -> new NotFoundException("UblDocument " + id + " does not exist"));
+        // Scope by ownerPeppolId (already validated against the JWT in validateSender) so a caller
+        // cannot overwrite a document belonging to another tenant by guessing its id.
+        UblDocument ublDocument = ublDocumentRepository.findByIdAndOwnerPeppolId(id, ublDocumentDto.ownerPeppolId()).orElseThrow(() -> new NotFoundException("UblDocument " + id + " does not exist"));
         ublDocument.setOwnerPeppolId(ublDocumentDto.ownerPeppolId());
         ublDocument.setPartnerPeppolId(ublDocumentDto.partnerPeppolId());
         ublDocument.setScheduledOn(calculateSchedule(ublDocumentDto));
@@ -113,25 +120,31 @@ public class UblDocumentSenderService {
     }
 
     private Instant calculateSchedule(UblDocumentDto ublDocumentDto) {
-        if (balanceService.isPositive() && (ublDocumentDto.scheduledOn() == null || ublDocumentDto.scheduledOn().isBefore(Instant.now().plus(1, ChronoUnit.HOURS)))) {
-            return Instant.now();
+        Instant now = Instant.now();
+        long balance = balanceService.get();
+        if (balance > 0 && (ublDocumentDto.scheduledOn() == null || ublDocumentDto.scheduledOn().isBefore(now.plus(1, ChronoUnit.HOURS)))) {
+            return now;
         }
         LocalDate day = Optional.ofNullable(ublDocumentDto.scheduledOn())
-                .orElseGet(Instant::now)
+                .orElse(now)
                 .atZone(ZONE)
                 .toLocalDate();
-        if (day.isBefore(LocalDate.now(ZONE).plusDays(1))) {
+        LocalDate today = now.atZone(ZONE).toLocalDate();
+        if (day.isBefore(today)) {
+            day = today;
+        }
+        if (day.equals(today) && balance < MINIMUM_BALANCE_FOR_SCHEDULING_NOW) {
             day = day.plusDays(1);
         }
         while (overMaximumRatePerDay(ublDocumentDto.ownerPeppolId(), day) ||
                 overMaximumRateBetweenParties(ublDocumentDto.ownerPeppolId(), ublDocumentDto.partnerPeppolId(), day)) {
             day = day.plusDays(1);
         }
-        return day.atStartOfDay(ZONE).toInstant();
+        return day.equals(today) ? now : day.atStartOfDay(ZONE).toInstant();
     }
 
     private boolean overMaximumRatePerDay(String ownerPeppolId, LocalDate day) {
-        return ublDocumentRepository.countByOwnerPeppolIdAndDirectionAndProcessedOnIsNullAndAccessPointIsNullAndScheduledOnBetween(
+        return ublDocumentRepository.countByOwnerPeppolIdAndDirectionAndScheduledOnBetween(
                 ownerPeppolId,
                 DocumentDirection.OUTGOING,
                 day.atStartOfDay(ZONE).toInstant(),
@@ -140,7 +153,7 @@ public class UblDocumentSenderService {
     }
 
     private boolean overMaximumRateBetweenParties(String ownerPeppolId, String partnerPeppolId, LocalDate day) {
-        return ublDocumentRepository.countByOwnerPeppolIdAndPartnerPeppolIdAndDirectionAndProcessedOnIsNullAndAccessPointIsNullAndScheduledOnBetween(
+        return ublDocumentRepository.countByOwnerPeppolIdAndPartnerPeppolIdAndDirectionAndScheduledOnBetween(
                 ownerPeppolId,
                 partnerPeppolId,
                 DocumentDirection.OUTGOING,

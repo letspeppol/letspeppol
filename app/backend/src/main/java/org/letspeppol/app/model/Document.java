@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Currency;
 import java.util.UUID;
+import static org.hibernate.type.SqlTypes.LONGVARCHAR;
 import static org.hibernate.type.SqlTypes.VARCHAR;
 
 @Entity
@@ -48,7 +49,7 @@ public class Document implements Persistable<UUID> {
 
     private String processedStatus; //Useful for feedback from Peppol AP
 
-    @Lob
+    @JdbcTypeCode(LONGVARCHAR) //Map to the PG `text` column as a plain string; @Lob would make Hibernate treat it as a large object (OID) and fail to read text content
     private String ubl; //Can be left empty once processed as owner owns the data, i.e. no-archive is enabled and downloadCount > 1, the other field are sufficient to keep the proxy fully operational
 
     ///INTERNAL INFORMATION
@@ -66,6 +67,8 @@ public class Document implements Persistable<UUID> {
 
     private Instant paidOn; //Useful for keeping track of paid status, flagged by user
 
+    private Instant errorSeenOn; //Useful for keeping track when an errored document was acknowledged ("seen") by the user, null is not yet acknowledged
+
 // TODO    private Instant accountantOn; //Useful for keeping track of accountant status, action executed by user, send to company.accountantEmail or null when not send yet/successful
 
     ///UBL INFORMATION
@@ -82,7 +85,9 @@ public class Document implements Persistable<UUID> {
     @JdbcTypeCode(VARCHAR)
     private Currency currency; //Currency can be foreign, used for overview
 
-    private BigDecimal amount; //Total payable amount, used for overview
+    private BigDecimal amountInclVat;
+
+    private BigDecimal amountExclVat;
 
     private Instant issueDate; //Issue date on document, used for overview
 
@@ -119,7 +124,8 @@ public class Document implements Persistable<UUID> {
             String orderReference,
             DocumentType type,
             Currency currency,
-            BigDecimal amount,
+            BigDecimal amountInclVat,
+            BigDecimal amountExclVat,
             Instant issueDate,
             Instant dueDate,
             String paymentTerms,
@@ -144,7 +150,8 @@ public class Document implements Persistable<UUID> {
         this.orderReference     = orderReference;
         this.type               = type;
         this.currency           = currency;
-        this.amount             = amount;
+        this.amountInclVat      = amountInclVat;
+        this.amountExclVat      = amountExclVat;
         this.issueDate          = issueDate;
         this.dueDate            = dueDate;
         this.paymentTerms       = paymentTerms;

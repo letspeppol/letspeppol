@@ -27,6 +27,7 @@ public class SecurityConfig {
     public static final String ROLE_SERVICE = "service";
     public static final String ACCOUNT_TYPE = "accountType";
     public static final String ROLE_KYC_USER = "kyc_user";
+    public static final String ACTING_USER_AUTHORIZATION_HEADER = "X-Acting-User-Authorization";
 
     @Value("${cors.allowed-origins}")
     private String allowedOrigins;
@@ -39,9 +40,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
-                        .requestMatchers("/api/scrada/**").permitAll()
-                        .requestMatchers("/api/e-invoice/**").permitAll()
-                        .requestMatchers("/api/monitor/**").permitAll()//.hasAuthority(ROLE_SERVICE) --> /sapi/monitor/ ???
+                        .requestMatchers("/lapi/monitor/**").permitAll() // Secured by Traefik
+                        // Public usage/donation stats rendered on the public site; the app backend calls
+                        // /api/stats without a bearer token, so this endpoint must stay public.
+                        .requestMatchers("/api/stats/**").permitAll()
                         .requestMatchers("/sapi/registry/**").hasAuthority(ROLE_SERVICE)
                         .requestMatchers("/sapi/**").hasAuthority(ROLE_KYC_USER)
                         .anyRequest().denyAll()
@@ -79,7 +81,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of(origins));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept", "X-Requested-With", ACTING_USER_AUTHORIZATION_HEADER));
         config.setExposedHeaders(List.of("Location"));
         config.setAllowCredentials(true);
         config.setMaxAge(3600L);

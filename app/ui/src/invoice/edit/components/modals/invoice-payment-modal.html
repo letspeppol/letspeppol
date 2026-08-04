@@ -1,6 +1,6 @@
 <div class="modal" role="dialog" aria-modal="true" show.bind="open">
     <div class="modal-backdrop"></div>
-    <div class="modal-card">
+    <div class="modal-card" keydown.trigger="onKeyDown($event)">
         <header class="modal-header">
             <h2 t="invoice.paymentModal.title">Payment</h2>
             <button class="icon-btn" click.trigger="closeModal()" aria-label="Close dialog" t="[aria-label]common.close" title="Close" t="[title]common.close">×</button>
@@ -22,7 +22,11 @@
                     <label class="field required">
                         <span t="invoice.paymentModal.iban">IBAN</span>
                         <input type="text" name="payeeFinancialAccountID" placeholder="IBAN" t="[placeholder]label.iban" value.bind="paymentMeans.PayeeFinancialAccount.ID" />
-                        <button if.bind="!companyService.myCompany.iban && paymentMeans.PayeeFinancialAccount.ID.length >= 15" type="button" class="btn" click.trigger="saveIbanToAccount()" t="invoice.paymentModal.store-iban">Store IBAN in account</button>
+                        <button if.bind="!companyService.myCompany.iban && paymentMeans.PayeeFinancialAccount.ID && paymentMeans.PayeeFinancialAccount.ID.length >= 15" type="button" class="btn" click.trigger="saveIbanToAccount()" t="invoice.paymentModal.store-iban">Store IBAN in account</button>
+                    </label>
+                    <label class="field">
+                        <span t="invoice.paymentModal.bic">BIC</span>
+                        <input type="text" name="payeeFinancialInstitutionBranchID" placeholder="BIC" t="[placeholder]label.bic" value.bind="paymentMeans.PayeeFinancialAccount.FinancialInstitutionBranch.ID" />
                     </label>
                     <label class="field">
                         <span t="invoice.paymentModal.reference">Reference</span>

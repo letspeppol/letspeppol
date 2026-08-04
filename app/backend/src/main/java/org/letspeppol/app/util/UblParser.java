@@ -21,6 +21,10 @@ import java.util.Currency;
 public final class UblParser {
 
     private static Document prepareDomDocument(String xml) throws ParserConfigurationException, IOException, SAXException {
+        // Strip a leading UTF-8 BOM if present \u2014 SAX rejects it as "Content is not allowed in prolog".
+        if (xml != null && !xml.isEmpty() && xml.charAt(0) == '\uFEFF') {
+            xml = xml.substring(1);
+        }
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setNamespaceAware(true); //Safety if forgotten to add local-name()
         documentBuilderFactory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true); //Sets protective limits and disables risky stuff
@@ -51,6 +55,14 @@ public final class UblParser {
 
     public static PeppolParties parsePeppolParties(String xml) throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
         return getPeppolParties(prepareDomDocument(xml));
+    }
+
+    private static String firstNonEmpty(XPath xp, Document document, String... paths) throws XPathExpressionException {
+        for (String path : paths) {
+            String value = xp.evaluate(path, document).trim();
+            if (!value.isEmpty()) return value;
+        }
+        return "";
     }
 
     public static UblDto parse(DocumentDirection documentDirection, String xml) throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
@@ -96,17 +108,24 @@ public final class UblParser {
                 : "CreditNote".equals(document.getDocumentElement().getLocalName()) ? DocumentType.CREDIT_NOTE
                 : null;
 
-        // currency (PayableAmount first, then Inclusive/Exclusive)
-        String currencyCode = xp.evaluate("normalize-space((/*/*[local-name()='LegalMonetaryTotal']/*[local-name()='PayableAmount']/@currencyID"
-                + " | /*/*[local-name()='LegalMonetaryTotal']/*[local-name()='TaxInclusiveAmount']/@currencyID"
-                + " | /*/*[local-name()='LegalMonetaryTotal']/*[local-name()='TaxExclusiveAmount']/@currencyID)[1])", document).trim();
+        // Per-path evaluation, not an XPath union — `(A|B|C)[1]` returns document-order first, not listed-order.
+        String currencyCode = firstNonEmpty(xp, document,
+                "/*/*[local-name()='LegalMonetaryTotal']/*[local-name()='PayableAmount']/@currencyID",
+                "/*/*[local-name()='LegalMonetaryTotal']/*[local-name()='TaxInclusiveAmount']/@currencyID",
+                "/*/*[local-name()='LegalMonetaryTotal']/*[local-name()='TaxExclusiveAmount']/@currencyID");
         Currency currency = currencyCode.isEmpty() ? null : Currency.getInstance(currencyCode.toUpperCase());
 
-        // amount (PayableAmount text with same fallbacks)
-        String amountStr = xp.evaluate("normalize-space((/*/*[local-name()='LegalMonetaryTotal']/*[local-name()='PayableAmount']/text()"
-                + " | /*/*[local-name()='LegalMonetaryTotal']/*[local-name()='TaxInclusiveAmount']/text()"
-                + " | /*/*[local-name()='LegalMonetaryTotal']/*[local-name()='TaxExclusiveAmount']/text())[1])", document).trim();
-        BigDecimal amount = amountStr.isEmpty() ? null : new BigDecimal(amountStr);
+        // Fall back to TaxInclusive then TaxExclusive (zero-VAT case) only when PayableAmount is absent.
+        String inclStr = firstNonEmpty(xp, document,
+                "/*/*[local-name()='LegalMonetaryTotal']/*[local-name()='PayableAmount']",
+                "/*/*[local-name()='LegalMonetaryTotal']/*[local-name()='TaxInclusiveAmount']",
+                "/*/*[local-name()='LegalMonetaryTotal']/*[local-name()='TaxExclusiveAmount']");
+        BigDecimal amountInclVat = inclStr.isEmpty() ? null : new BigDecimal(inclStr);
+
+        // No fallback to PayableAmount — that would silently report gross as net.
+        String exclStr = firstNonEmpty(xp, document,
+                "/*/*[local-name()='LegalMonetaryTotal']/*[local-name()='TaxExclusiveAmount']");
+        BigDecimal amountExclVat = exclStr.isEmpty() ? null : new BigDecimal(exclStr);
 
         // issueDate (YYYY-MM-DD -> midnight UTC)
         String issueStr = xp.evaluate("normalize-space(/*/*[local-name()='IssueDate'])", document).trim();
@@ -122,6 +141,6 @@ public final class UblParser {
                 + " | /*/*[local-name()='PaymentTerms']/*[local-name()='PaymentTermsDetails'])[1])", document).trim();
         if (paymentTerms.isEmpty()) paymentTerms = null;
 
-        return new UblDto(peppolParties.sender(), peppolParties.receiver(), partnerName, invoiceReference, buyerReference, orderReference, type, currency, amount, issueDate, dueDate, paymentTerms);
+        return new UblDto(peppolParties.sender(), peppolParties.receiver(), partnerName, invoiceReference, buyerReference, orderReference, type, currency, amountInclVat, amountExclVat, issueDate, dueDate, paymentTerms);
     }
 }

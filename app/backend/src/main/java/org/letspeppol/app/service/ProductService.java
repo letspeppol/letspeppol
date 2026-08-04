@@ -45,6 +45,7 @@ public class ProductService {
         product.setCostPrice(productDto.costPrice());
         product.setSalePrice(productDto.salePrice());
         product.setTaxPercentage(productDto.taxPercentage());
+        product.setStockQuantity(productDto.stockQuantity());
         product.setCompany(company);
 
         if (productDto.categoryId() != null) {
@@ -62,7 +63,7 @@ public class ProductService {
     }
 
     public ProductDto updateProduct(String peppolId, Long id, ProductDto productDto) {
-        Product product = productRepository.findById(id).orElseThrow(() -> new NotFoundException("Product does not exist"));
+        Product product = productRepository.findByIdAndCompanyPeppolId(id, peppolId).orElseThrow(() -> new NotFoundException("Product does not exist"));
 
         product.setName(productDto.name());
         product.setDescription(productDto.description());
@@ -71,6 +72,7 @@ public class ProductService {
         product.setCostPrice(productDto.costPrice());
         product.setSalePrice(productDto.salePrice());
         product.setTaxPercentage(productDto.taxPercentage());
+        product.setStockQuantity(productDto.stockQuantity());
 
         if (productDto.categoryId() != null) {
             ProductCategory category = productCategoryRepository.findById(productDto.categoryId())

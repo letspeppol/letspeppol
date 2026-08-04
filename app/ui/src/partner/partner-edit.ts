@@ -5,32 +5,33 @@ import {PartnerService} from "../services/app/partner-service";
 import {PartnerContext} from "./partner-context";
 import {Account} from "../account/account";
 import {countryListAlpha2} from "../app/countries"
-import {normalizeVatNumber} from "./vat-normalizer";
+import {normalizeEnterpriseNumber, normalizeVatNumber} from "./vat-normalizer";
 import {CompanySearchService} from "../services/kyc/company-search-service";
 import {KycCompanyResponse} from "../services/kyc/registration-service";
+import {I18N} from "@aurelia/i18n";
 
 export class PartnerEdit {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
     private readonly companySearchService = resolve(CompanySearchService);
     private readonly partnerService = resolve(PartnerService);
     private readonly partnerContext = resolve(PartnerContext);
+    private readonly i18n = resolve(I18N);
     private countryList = countryListAlpha2;
 
     async savePartner() {
         try {
-            let successMessage = "Partner updated successfully";
+            let successKey = 'alert.partner.updated';
             if (this.partnerContext.selectedPartner.id) {
                 await this.partnerService.updatePartner(this.partnerContext.selectedPartner.id, this.partnerContext.selectedPartner);
             } else {
                 const partner = await this.partnerService.createPartner(this.partnerContext.selectedPartner);
                 this.partnerContext.addPartner(partner);
-                successMessage = "Partner created successfully";
+                successKey = 'alert.partner.created';
             }
-            this.ea.publish('alert', {alertType: AlertType.Success, text: successMessage});
+            this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(successKey)});
             this.partnerContext.selectedPartner = undefined;
-        } catch(e) {
-            console.error(e);
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to update account"});
+        } catch {
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.partner.update-failed')});
         }
     }
 
@@ -44,6 +45,22 @@ export class PartnerEdit {
 
         if (partner.peppolId.length === 15 && partner.peppolId.startsWith('0208:')) {
             this.companySearchService.searchCompany({peppolId: partner.peppolId}).then(companies => {
+                if (companies.length) {
+                    this.completePartnerInfo(companies[0]);
+                }
+            });
+        }
+    }
+
+    enterpriseNumberChanged() {
+        const partner = this.partnerContext.selectedPartner;
+        if (!partner) return;
+
+        const {normalized, isValidShape} = normalizeEnterpriseNumber(partner.identifier);
+        partner.identifier = normalized;
+
+        if (isValidShape) {
+            this.companySearchService.searchCompany({identifier: normalized}).then(companies => {
                 if (companies.length) {
                     this.completePartnerInfo(companies[0]);
                 }
@@ -70,6 +87,9 @@ export class PartnerEdit {
 
     private completePartnerInfo(kycCompanyResponse: KycCompanyResponse) {
         const partner = this.partnerContext.selectedPartner;
+        if (!partner.identifier) {
+            partner.identifier = kycCompanyResponse.identifier;
+        }
         if (!partner.vatNumber) {
             partner.vatNumber = kycCompanyResponse.vatNumber;
         }

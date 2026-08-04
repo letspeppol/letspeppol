@@ -25,7 +25,8 @@ public class EmailJob extends GenericEntity {
     public enum Template {
         DOCUMENT_NOTIFICATION,
         ACCOUNTANT_CUSTOMER_LINK,
-        GENERIC
+        GENERIC,
+        DOCUMENT_ERROR
     }
 
     @Enumerated(EnumType.STRING)

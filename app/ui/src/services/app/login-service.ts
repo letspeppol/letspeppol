@@ -4,12 +4,19 @@ import {jwtDecode} from "jwt-decode";
 import {KYCApi} from "../kyc/kyc-api";
 import {AppApi} from "./app-api";
 import {OwnershipService} from "./ownership-service";
+import {PartnerService} from "./partner-service";
+import {SponsorService} from "./sponsor-service";
+import {StatisticsService} from "./statistics-service";
+import {SEEN_NOTIFICATION_KEY} from "./welcome-notification-service";
 
 @singleton()
 export class LoginService {
     public kycApi = resolve(KYCApi);
     public appApi = resolve(AppApi);
     private ownershipService = resolve(OwnershipService);
+    private partnerService = resolve(PartnerService);
+    private sponsorService = resolve(SponsorService);
+    private statisticsService = resolve(StatisticsService);
     public authenticated = false;
 
     constructor() {
@@ -40,6 +47,8 @@ export class LoginService {
     }
 
     async auth(username: string, password: string) : Promise<void> {
+        this.clearCachedData();
+        this.clearSeenNotificationFlag();
         const token = await this.getJwtToken(username, password);
         localStorage.setItem('token', token);
         this.setAuthHeader(token);
@@ -48,6 +57,8 @@ export class LoginService {
     }
 
     updateToken(token: string) {
+        this.clearCachedData();
+        this.clearSeenNotificationFlag();
         localStorage.setItem('token', token);
         this.setAuthHeader(token);
         this.verifyAuthenticated();
@@ -56,7 +67,7 @@ export class LoginService {
 
     async getJwtToken(username: string, password: string) {
         const authHeaders: Headers = new Headers;
-        authHeaders.append('Authorization', `Basic ${btoa(`${username}:${password}`)}` );
+        authHeaders.append('Authorization', `Basic ${this.toBase64Utf8(`${username}:${password}`)}` );
         const requestInit: RequestInit = { headers: authHeaders }
         const response = await this.kycApi.httpClient.post(`/api/jwt/auth`, undefined, requestInit);
         return await response.text();
@@ -68,11 +79,32 @@ export class LoginService {
     }
 
     logout() {
+        this.clearCachedData();
         this.kycApi.httpClient.configure(config => config.withDefaults({ headers: {'Authorization': ''} }));
         this.appApi.httpClient.configure(config => config.withDefaults({ headers: {'Authorization': ''} }));
         localStorage.removeItem('token');
         localStorage.removeItem('peppolActive');
+        this.clearSeenNotificationFlag();
         this.authenticated = false;
         this.ownershipService.clearOwnerships();
+    }
+
+    private clearCachedData() {
+        this.partnerService.clearCache();
+        this.sponsorService.clearCache();
+        this.statisticsService.clearCache();
+    }
+
+    private clearSeenNotificationFlag() {
+        localStorage.removeItem(SEEN_NOTIFICATION_KEY);
+    }
+
+    private toBase64Utf8(value: string) {
+        const bytes = new TextEncoder().encode(value);
+        let binary = '';
+        for (const byte of bytes) {
+            binary += String.fromCharCode(byte);
+        }
+        return btoa(binary);
     }
 }

@@ -1,0 +1,38 @@
+.payment-qr-modal {
+    width: min(760px, calc(100% - var(--space-2rem)));
+}
+
+.payment-qr-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--space-1);
+    align-items: center;
+}
+
+.payment-qr-details {
+    display: grid;
+    gap: var(--space-075);
+    margin: 0;
+}
+
+.payment-qr-details div {
+    display: grid;
+    gap: var(--space-025);
+}
+
+.payment-qr-details dt {
+    color: var(--muted);
+    font-size: .85rem;
+}
+
+.payment-qr-details dd {
+    margin: 0;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+@media (width <= 720px) {
+    .payment-qr-layout {
+        grid-template-columns: 1fr;
+    }
+}

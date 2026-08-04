@@ -74,6 +74,7 @@ class NotificationServiceEmailIT extends PostgresIntegrationTest {
     void sendNotificationEmail() {
         Company company = new Company(
                 "0208:BE0123456789",
+                "0123456789",
                 "BE0123456789",
                 "Test Company NV",
                 "Test User",
@@ -103,6 +104,7 @@ class NotificationServiceEmailIT extends PostgresIntegrationTest {
                 DocumentType.INVOICE,
                 Currency.getInstance("EUR"),
                 new BigDecimal("1234.56"),
+                new BigDecimal("1020.30"),
                 Instant.now(),
                 Instant.now(),
                 null,

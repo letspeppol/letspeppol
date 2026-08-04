@@ -1,481 +1,780 @@
 {
-  "label" : {
-    "email" : "E-Mail",
-    "password" : "Passwort",
-    "confirm-password" : "Passwort bestätigen",
-    "vat-number" : "USt-IdNr.",
-    "name": "Name",
-    "city": "Ort",
-    "postal-code": "Postleitzahl",
-    "street": "Straße",
-    "house-number": "Hausnummer",
-    "house-number-short": "Hausnr.",
-    "company-name": "Firmenname",
-    "description": "Beschreibung",
-    "reference": "Referenz",
-    "barcode": "Barcode",
-    "cost-price": "Einkaufspreis",
-    "sale-price": "Verkaufspreis",
-    "tax-percentage": "Steuersatz",
-    "stock-quantity": "Lagerbestand",
-    "product-category": "Produktkategorie",
+  "account": {
     "account-name": "Kontoname",
-    "payment-terms": "Zahlungsbedingungen",
-    "address": "Adresse",
-    "subscriber-info": "Teilnehmerinformationen",
-    "download-contract": "Vertrag herunterladen",
-    "change-password": "Passwort ändern",
-    "company-info": "Unternehmensinformationen",
-    "peppol-registration": "Peppol-Registrierung",
-    "remove-from-peppol": "Aus Peppol entfernen",
     "activate-on-peppol": "Auf Peppol aktivieren",
-    "iban": "IBAN",
-    "country": "Land",
-    "customer": "Kunde",
-    "supplier": "Lieferant",
-    "invoice-number": "Rechnungsnummer",
-    "buyer-reference": "Käuferreferenz",
-    "note-optional": "Notiz (optional)",
-    "issue-date": "Ausstellungsdatum",
-    "due-date": "Fälligkeitsdatum",
-    "type": "Typ",
-    "number": "Nummer",
-    "peppolId": "Peppol-ID"
-  },
-  "placeholder" : {
-    "email" : "you@company.com",
-    "vat-number" : "BE0123456789",
-    "password": "••••••••",
-    "product-search": "Produkt suchen",
-    "partner-search": "Partner suchen",
-    "invoice-search": {
-      "doc": "Beleg suchen",
-      "customer": "Kunden suchen"
-    },
-    "customer-search": "Suche nach Name oder USt-IdNr.",
-    "name": "Name"
-  },
-  "login" : {
-    "action" : "Anmelden",
-    "title" : "Bei Ihrem Konto anmelden",
-    "new" : "Neu hier?",
-    "register" : "Unternehmen registrieren",
-    "continue" : "Anmelden",
-    "forgot" : "Passwort vergessen",
-    "remember": "Angemeldet bleiben"
-  },
-  "onboarding": {
-    "title": "Onboarding-Schritte",
-    "or": "oder",
-    "os": { "windows": "Windows", "macos": "macOS", "linux": "Linux" },
-    "browser": { "chrome": "Chrome", "firefox": "Firefox", "safari": "Safari", "edge": "Microsoft Edge" },
-    "step": {
-      "register-company": "Unternehmen registrieren",
-      "register-affiliate": "Als Affiliate registrieren",
-      "prepare-eid": {
-        "title": "eID-Software, Kartenleser und Karte vorbereiten",
-        "install-web-eid": "Web-eID-Anwendung installieren",
-        "alt-stack": "Alternativ können Sie den vollständigen Software-Stack von id.ee installieren.",
-        "alt-stack-link": "id.ee-Installationsanleitung öffnen",
-        "install-beidconnect": "Stellen Sie sicher, dass BeIDConnect installiert ist (belgische eID-Middleware).",
-        "install-beidconnect-link": "BeIDConnect herunterladen",
-        "restart-browser": "Starten Sie Ihren Browser neu und prüfen Sie, ob die Web-eID-Erweiterung aktiviert ist.",
-        "browser-help": "Hilfe zur Erweiterung:",
-        "test-setup": "Schließen Sie Ihren Kartenleser an, stecken Sie Ihre eID-Karte ein und führen Sie den Test rechts aus.",
-        "troubleshoot": {
-          "title": "Wenn die Bestätigung fehlschlägt:",
-          "reinsert": "Entfernen Sie die eID-Karte und stecken Sie sie erneut ein.",
-          "usb": "Verwenden Sie eine direkte USB-Verbindung (Hubs/Dongles vermeiden).",
-          "restart": "Starten Sie Ihren Browser neu und versuchen Sie es erneut.",
-          "other-device": "Versuchen Sie es an einem anderen Computer.",
-          "contact": "Support kontaktieren:"
-        },
-        "success": {
-          "title": "Web eID funktioniert",
-          "subtitle": "Ihr Kartenleser und die Browser-Einrichtung sehen gut aus."
-        }
-      },
-      "verify-email": "Bestätigen Sie Ihre E-Mail-Adresse (prüfen Sie ggf. den Spam-Ordner auf E-Mails von @letspeppol.org).",
-      "verify-director": "Bestätigen Sie Ihre Identität als Unternehmensleitung.",
-      "sign-contract": "Unterschreiben Sie den Vertrag, um KYC (Know Your Customer) abzuschließen.",
-      "login": "Melden Sie sich bei Ihrem Konto an."
-    },
-    "check-title": "Web-eID-Installation prüfen",
-    "check": "Web eID prüfen",
-    "anim-caption-sign": "Stecken Sie Ihre eID-Karte ein und drücken Sie auf Bestätigen, um die Installation zu überprüfen.",
-    "anim-reader-label": "LESER"
-  },
-  "registration" : {
-    "title-step0" : "Unternehmen registrieren",
-    "affiliate-title-step0" : "Als Affiliate registrieren",
-    "create-account" : "Konto erstellen",
-    "affiliate-create-account" : "Affiliate-Konto erstellen",
-    "already-registered" : "Bereits registriert?",
-    "affiliate-already-registered" : "Bereits Affiliate?",
-    "title-step1" : "Unternehmen bestätigen",
-    "affiliate-title-step1" : "Bestätigen Sie Ihr Affiliate-Unternehmen",
-    "affiliate-intro" : "Registrieren Sie sich als Affiliate für Ihr eigenes belgisches Unternehmen.<br />Wenn Ihr Unternehmen bereits von einem Administrator verwaltet wird,<br />bitten Sie diesen, Ihren Zugang hinzuzufügen oder freizugeben.",
-    "confirm-company": "Bestätigen",
-    "wrong-company": "Falsches Unternehmen?",
-    "back": "Zurück",
-    "title-step2": "Kontobestätigung",
-    "instructions-intro": "Wir haben Ihnen eine Bestätigungs-E-Mail von kyc@letspeppol.org gesendet. Bitte prüfen Sie auch Ihren Spam-Ordner.",
-    "instructions-onboarding": "Bevor Sie fortfahren, vervollständigen Sie die Onboarding-Checkliste, um Web eID einzurichten.",
-    "instructions-go-checklist": "Zur Checkliste",
-    "instructions-finally": "<b>Zum Schluss</b> öffnen Sie die Bestätigungs-E-Mail und klicken Sie auf den Bestätigungslink."
-  },
-  "error" : {
-    "login-failed" : "Anmeldung fehlgeschlagen",
-    "registration-company-not-found" : "Unternehmen nicht gefunden",
-    "registration-company-already-registered" : "Unternehmen bereits registriert",
-    "registration-company-affiliate-contact-admin" : "Dieses Unternehmen hat bereits einen Administrator. Bitte wenden Sie sich an Ihren Administrator, um das Affiliate-Onboarding fortzusetzen.",
-    "registration-company-already-registered-on-peppol" : "Diese Peppol-ID ist offenbar bereits bei einem anderen Anbieter registriert. Um sie hier zu aktivieren, muss sie dort zuerst abgemeldet werden. Sie können den Signaturprozess trotzdem abschließen und das anschließend erledigen.",
-    "not-peppol-active" : "Sie sind derzeit nicht bei Peppol registriert",
-    "not-peppol-active-action" : "Jetzt lösen"
-  },
-  "paymentTerms" : {
-    "15_DAYS" :  "15 Tage",
-    "30_DAYS" :  "30 Tage",
-    "60_DAYS" : "60 Tage",
-    "END_OF_NEXT_MONTH" : "Ende des Monats"
-  },
-  "documentDirection" : {
-    "OUTGOING" : "Ausgehend",
-    "INCOMING" : "Eingehend"
-  },
-  "documentType" : {
-    "INVOICE" : "Rechnung",
-    "CREDIT_NOTE" : "Gutschrift"
-  },
-  "confirmation": {
-    "header": "Identität bestätigen",
-    "header-sign": "Vertrag unterschreiben",
-    "belgian-only": "Wir aktivieren derzeit nur belgische Unternehmen. <br /> Soll Ihr Land unterstützt werden? <a href=\"mailto:country@letspeppol.org\">Helfen Sie uns</a>",
-    "manual-confirmation-needed": "Ihr Vertrag erfordert eine manuelle Prüfung, die bis zu 10 Werktage dauern kann. <br /> Bitte behalten Sie Ihre E-Mails im Blick, falls weitere Schritte erforderlich sind. <br /> Grund: Die eID stimmt nicht vollständig mit der ausgewählten Leitungsperson überein.",
-    "loading": "Unternehmensdaten werden geladen…",
-    "company": "Unternehmen",
-    "directors": "Geschäftsführung",
-    "table.name": "Name",
-    "table.action": "Aktion",
-    "director-confirm": "Bestätigen",
-    "director-confirmed": "Bestätigt",
-    "no-directors": "Keine Geschäftsführenden gefunden.",
-    "read-contract-title": "1. Vertrag lesen",
-    "read-contract-info": "Sie erhalten eine unterschriebene Kopie, sobald der Registrierungsprozess abgeschlossen ist.",
-    "read-contract-agree": "Ich habe den Vertrag gelesen und stimme den Bedingungen zu",
-    "choose-credentials-title": "2. Zugangsdaten wählen",
-    "sign-eid-title": "3. Mit eID unterschreiben",
-    "anim-caption-validate": "Stecken Sie Ihre eID-Karte ein und drücken Sie auf Bestätigen, um Ihre Identität zu verifizieren.",
-    "anim-caption-sign": "Stecken Sie Ihre eID-Karte ein und drücken Sie auf Bestätigen, um den Vertrag zu unterschreiben.",
-    "anim-reader-label": "LESER",
-    "anim-reader-sr": "eID-Karte in den Kartenleser einführen",
-    "expand-button": "Erweitern",
-    "minimize-button": "Minimieren",
-    "sign-button": "Unterschreiben",
-    "success-title": "Erfolg!",
-    "success-contract": "Der unterschriebene Vertrag befindet sich in Ihrem Download-Ordner",
-    "success-login-prefix": "Sie können jetzt"
-  },
-  "common": {
-    "confirm": "Bestätigen",
+    "add-attachment-to-notification": "Anhang zur Benachrichtigung hinzufügen",
+    "add-pdf-to-sending-invoice": "PDF zur Rechnung hinzufügen",
+    "address": "Adresse",
     "cancel": "Abbrechen",
-    "delete": "Löschen",
+    "change-password": "Passwort ändern",
+    "company-display-name": "Anzeigename des Unternehmens",
+    "company-info": "Unternehmensinformationen",
+    "company-legal-name": "Rechtlicher Unternehmensname",
+    "download-contract": "Vertrag herunterladen",
+    "email-notification-cc-list": "CC-Liste für E-Mail-Benachrichtigungen",
+    "enable-email-notification": "E-Mail-Benachrichtigungen aktivieren",
+    "iban": "IBAN",
+    "invoice-settings": "Rechnungseinstellungen",
+    "notifications": "Benachrichtigungen",
+    "number": "Nummer",
+    "payment-info": "Zahlungsinformationen",
+    "payment-terms": "Zahlungsbedingungen",
+    "peppol-registration": "Peppol-Registrierung",
+    "registration-failed": {
+      "contact-provider": "Ihre Peppol-ID ist derzeit bei {{provider}} registriert. Bitte kontaktieren Sie den Anbieter, um sie dort abzumelden, und melden Sie sich anschließend an und versuchen Sie die Aktivierung erneut.",
+      "contact-us": "Die Registrierung wurde nicht abgeschlossen. Bitte wenden Sie sich an den Support unter support@letspeppol.org für die nächsten Schritte.",
+      "try-again-one-day": "Die Registrierung wurde nicht abgeschlossen. Bitte versuchen Sie es morgen erneut. Wenn das Problem weiterhin besteht, wenden Sie sich an den Support unter support@letspeppol.org und geben Sie Ihre Kontodaten an.",
+      "try-again-one-hour": "Die Registrierung wurde nicht abgeschlossen. Bitte versuchen Sie es in etwa einer Stunde erneut. Das Peppol-Netzwerk ist möglicherweise vorübergehend überlastet."
+    },
+    "remove-from-peppol": "Aus Peppol entfernen",
     "save": "Speichern",
-    "clear": "Leeren",
-    "apply": "Anwenden",
-    "previous": "Zurück",
-    "next": "Weiter",
-    "search": "Suchen",
-    "new": "Neu",
-    "none": "Keine",
-    "yes": "Ja",
-    "no": "Nein",
-    "remove": "Entfernen",
-    "switch-account": "Konto wechseln",
-    "logout": "Abmelden",
-    "edit": "Bearbeiten",
-    "close": "Schließen"
-  },
-  "new-feature": {
-    "label": "Neu",
-    "click-to-dismiss": "Zum Schließen klicken"
-  },
-  "navigation": {
-    "dashboard": "Dashboard",
-    "invoices": "Rechnungen",
-    "partners": "Partner",
-    "products": "Produkte",
-    "account": "Konto",
-    "brand-alt": "Let's Peppol",
-    "toggle-theme": "Theme umschalten"
-  },
-  "ownershipAdd": {
-    "action": "Konto hinzufügen",
-    "title": "Konto hinzufügen",
-    "intro": "Fügen Sie ein weiteres Konto für ein Unternehmen hinzu, indem Sie als einer seiner Direktoren unterschreiben.",
-    "cancel": "Zurück zum Dashboard",
-    "lookup": "Unternehmen suchen",
-    "account-info-title": "2. Konto bestätigen",
-    "account-info-body": "Dieses Unternehmen wird dem oben angezeigten bestehenden Konto hinzugefügt. Das Passwort für dieses Konto bleibt unverändert.",
-    "read-contract-info": "Sie erhalten eine unterschriebene Kopie, sobald dieses Konto hinzugefügt wurde.",
-    "sign-button": "Konto hinzufügen",
-    "success-title": "Konto hinzugefügt",
-    "success-body": "Der unterschriebene Vertrag wurde heruntergeladen und das neue Unternehmen ist jetzt in Ihrer Konto-Auswahl verfügbar.",
-    "back-dashboard": "Zurück zum Dashboard",
-    "company-has-admin": "Dieses Unternehmen hat bereits ein Admin-Konto. Der aktuelle Ablauf unterstützt nur Unternehmen ohne bestehenden Admin."
+    "subscriber-info": "Teilnehmerinformationen",
+    "title": "Konto",
+    "vat-display": {
+      "description": "Wählen Sie, ob Summen im Dashboard und in der Rechnungsliste inklusive oder exklusive MwSt. angezeigt werden.",
+      "excl": "Exkl. MwSt.",
+      "incl": "Inkl. MwSt.",
+      "title": "Beträge anzeigen"
+    },
+    "vat-ruleset": {
+      "options": {
+        "VAT_EXEMPT_ART_56BIS": "Von der MwSt. befreit nach Art. 56bis - Kleinunternehmen < €25.000",
+        "VAT_REGISTERED": "MwSt.-registriert"
+      },
+      "title": "MwSt.-Einstellungen"
+    }
   },
   "alert": {
-    "success": "Erfolg",
-    "info": "Info",
-    "warning": "Warnung",
+    "account": {
+      "contract-download-failed": "Unterschriebener Vertrag konnte nicht heruntergeladen werden",
+      "load-failed": "Konto konnte nicht geladen werden",
+      "peppol-activated": "Unternehmen auf Peppol aktiviert",
+      "peppol-activation-failed": "Unternehmen konnte nicht auf Peppol aktiviert werden",
+      "peppol-activation-request-failed": "Aktivierungsanfrage konnte nicht gesendet werden",
+      "peppol-remove-failed": "Unternehmen konnte nicht aus Peppol entfernt werden",
+      "peppol-removed": "Unternehmen aus Peppol entfernt",
+      "reverted": "Kontoänderungen rückgängig gemacht",
+      "update-failed": "Konto konnte nicht aktualisiert werden",
+      "updated": "Konto erfolgreich aktualisiert"
+    },
+    "attachment": {
+      "document-not-saved": "Dokument nicht gespeichert. PDF-Vorschau nicht verfügbar.",
+      "downloaded": "Datei '{{filename}}' heruntergeladen",
+      "size-too-large-3mb": "Datei darf nicht größer als 3 MB sein"
+    },
+    "company": {
+      "info-failed": "Unternehmensinformationen konnten nicht geladen werden",
+      "save-failed": "Unternehmen konnte nicht gespeichert werden"
+    },
     "danger": "Fehler",
-    "neutral": "Nachricht"
-  },
-  "overlay": {
-    "saving-account": "Konto wird gespeichert, bitte warten"
-  },
-  "product": {
-    "categories": "Kategorien",
-    "category": "Kategorie",
-    "title": "Produkte",
-    "all": "Alle",
-    "search": "Produkt suchen",
-    "new": "Neues Produkt",
-    "table": {
-      "name": "Name",
-      "description": "Beschreibung",
-      "category": "Kategorie",
-      "reference": "Referenz",
-      "barcode": "Barcode",
-      "cost-price": "Einkaufspreis",
-      "sale-price": "Verkaufspreis",
-      "tax-percentage": "Steuersatz",
-      "stock-quantity": "Lagerbestand",
-      "actions": "Aktionen"
+    "iban": {
+      "saved": "IBAN gespeichert"
     },
-    "empty": "Keine Produkte entsprechen Ihren Filtern.",
-    "edit": {
-      "new": "Neues Produkt",
-      "info": "Produktinfo",
-      "pricing": "Preise",
-      "stock": "Lager",
-      "stock-quantity": "Lagerbestand",
-      "product-category": "Produktkategorie",
-      "none": "Keine",
-      "save": "Produkt speichern",
-      "cancel": "Abbrechen"
+    "info": "Info",
+    "invoice": {
+      "draft-created": {
+        "CREDIT_NOTE": "Gutschriftsentwurf erfolgreich erstellt",
+        "INVOICE": "Rechnungsentwurf erfolgreich erstellt"
+      },
+      "draft-delete-failed": {
+        "CREDIT_NOTE": "Gutschriftsentwurf konnte nicht gelöscht werden",
+        "INVOICE": "Rechnungsentwurf konnte nicht gelöscht werden"
+      },
+      "draft-delete-overview-failed": "Entwurf konnte nicht gelöscht werden",
+      "draft-deleted": "Entwurf gelöscht",
+      "draft-removed": {
+        "CREDIT_NOTE": "Gutschriftsentwurf entfernt",
+        "INVOICE": "Rechnungsentwurf entfernt"
+      },
+      "draft-save-failed": {
+        "CREDIT_NOTE": "Gutschriftsentwurf konnte nicht gespeichert werden",
+        "INVOICE": "Rechnungsentwurf konnte nicht gespeichert werden"
+      },
+      "draft-saved": {
+        "CREDIT_NOTE": "Gutschriftsentwurf gespeichert",
+        "INVOICE": "Rechnungsentwurf gespeichert"
+      },
+      "load-failed": "Rechnung konnte nicht geladen werden",
+      "mark-seen-failed": "Rechnung konnte nicht als gesehen markiert werden",
+      "marked-paid": {
+        "CREDIT_NOTE": "Gutschrift als bezahlt markiert",
+        "INVOICE": "Rechnung als bezahlt markiert"
+      },
+      "marked-seen": "Rechnung als gesehen markiert",
+      "marked-unpaid": {
+        "CREDIT_NOTE": "Gutschrift als unbezahlt markiert",
+        "INVOICE": "Rechnung als unbezahlt markiert"
+      },
+      "no-ubl-data": "Keine UBL-Daten verfügbar",
+      "number-used": {
+        "CREDIT_NOTE": "Gutschriftsnummer bereits verwendet",
+        "INVOICE": "Rechnungsnummer bereits verwendet"
+      },
+      "paid-status-failed": "Zahlungsstatus konnte nicht geändert werden",
+      "resend-failed": {
+        "CREDIT_NOTE": "Wiederverwenden der Gutschrift fehlgeschlagen",
+        "INVOICE": "Wiederverwenden der Rechnung fehlgeschlagen"
+      },
+      "send-failed": {
+        "CREDIT_NOTE": "Senden der Gutschrift fehlgeschlagen",
+        "INVOICE": "Senden der Rechnung fehlgeschlagen"
+      },
+      "sent": {
+        "CREDIT_NOTE": "Gutschrift erfolgreich gesendet",
+        "INVOICE": "Rechnung erfolgreich gesendet"
+      },
+      "zero-vat-reason": {
+        "options": {
+          "AE": "Reverse Charge",
+          "E": "Von der MwSt. befreit",
+          "G": "Steuerfreier Exportartikel, keine MwSt. berechnet",
+          "K": "Von der MwSt. befreit für innergemeinschaftliche Lieferungen von Waren und Dienstleistungen im EWR",
+          "O": "Nicht der MwSt. unterliegend",
+          "Z": "Nullsteuersatz-Waren"
+        }
+      }
     },
-    "categoryModal": {
-      "title": "Produktkategorie",
-      "name": "Name",
-      "color": "Farbe"
+    "neutral": "Nachricht",
+    "partner": {
+      "create-failed": "Partner konnte nicht angelegt werden",
+      "created": "Partner angelegt",
+      "delete-failed": "Partner konnte nicht gelöscht werden",
+      "deleted": "Partner gelöscht",
+      "update-failed": "Partner konnte nicht aktualisiert werden",
+      "updated": "Partner aktualisiert"
+    },
+    "password": {
+      "changed": "Passwort geändert"
+    },
+    "peppol-search": {
+      "failed": "Suche im Peppol-Verzeichnis fehlgeschlagen",
+      "no-results": "Keine Ergebnisse gefunden"
+    },
+    "product": {
+      "created": "Produkt angelegt",
+      "delete-failed": "Produkt konnte nicht gelöscht werden",
+      "deleted": "Produkt gelöscht",
+      "update-failed": "Produkt konnte nicht aktualisiert werden",
+      "updated": "Produkt aktualisiert"
+    },
+    "registration": {
+      "contract-downloaded": "Unterschriebener Vertrag heruntergeladen!",
+      "token-invalid": "Token ungültig"
+    },
+    "success": "Erfolg",
+    "upload": {
+      "size-too-large": "Die Gesamtgröße aller Dateien darf 10 MB nicht überschreiten",
+      "type-unsupported": "Dateityp nicht unterstützt",
+      "upload-error": "Fehler beim Hochladen der Datei"
+    },
+    "warning": "Warnung"
+  },
+  "common": {
+    "apply": "Anwenden",
+    "cancel": "Abbrechen",
+    "clear": "Leeren",
+    "close": "Schließen",
+    "confirm": "Bestätigen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "logout": "Abmelden",
+    "new": "Neu",
+    "next": "Weiter",
+    "no": "Nein",
+    "none": "Keine",
+    "previous": "Zurück",
+    "remove": "Entfernen",
+    "save": "Speichern",
+    "search": "Suchen",
+    "switch-account": "Konto wechseln",
+    "view-more": "mehr anzeigen…",
+    "yes": "Ja"
+  },
+  "confirmation": {
+    "anim-caption-sign": "Stecken Sie Ihre eID-Karte ein und drücken Sie auf Bestätigen, um den Vertrag zu unterschreiben.",
+    "anim-caption-validate": "Stecken Sie Ihre eID-Karte ein und drücken Sie auf Bestätigen, um Ihre Identität zu verifizieren.",
+    "anim-reader-label": "LESER",
+    "anim-reader-sr": "eID-Karte in den Kartenleser einführen",
+    "belgian-only": "Wir aktivieren derzeit nur belgische Unternehmen. <br /> Soll Ihr Land unterstützt werden? <a href=\"mailto:country@letspeppol.org\">Helfen Sie uns</a>",
+    "choose-credentials-title": "2. Zugangsdaten wählen",
+    "company": "Unternehmen",
+    "director-confirm": "Bestätigen",
+    "director-confirmed": "Bestätigt",
+    "directors": "Geschäftsführung",
+    "expand-button": "Erweitern",
+    "header": "Identität bestätigen",
+    "header-sign": "Vertrag unterschreiben",
+    "loading": "Unternehmensdaten werden geladen…",
+    "manual-confirmation-needed": "Ihr Vertrag erfordert eine manuelle Prüfung, die bis zu 10 Werktage dauern kann. <br /> Bitte behalten Sie Ihre E-Mails im Blick, falls weitere Schritte erforderlich sind. <br /> Grund: Die eID stimmt nicht vollständig mit der ausgewählten Leitungsperson überein.",
+    "minimize-button": "Minimieren",
+    "no-directors": "Keine Geschäftsführenden gefunden.",
+    "read-contract-agree": "Ich habe den Vertrag gelesen und stimme den Bedingungen zu",
+    "read-contract-info": "Sie erhalten eine unterschriebene Kopie, sobald der Registrierungsprozess abgeschlossen ist.",
+    "read-contract-title": "1. Vertrag lesen",
+    "sign-button": "Unterschreiben",
+    "sign-eid-title": "3. Mit eID unterschreiben",
+    "success-contract": "Der unterschriebene Vertrag befindet sich in Ihrem Download-Ordner",
+    "success-login-prefix": "Sie können jetzt",
+    "success-title": "Erfolg!",
+    "table.action": "Aktion",
+    "table.name": "Name"
+  },
+  "dashboard": {
+    "errored": "Fehlerhafte Rechnungen",
+    "vat-suffix": {
+      "excl": "exkl. MwSt.",
+      "incl": "inkl. MwSt."
     }
   },
-  "partner": {
-    "title": "Partner",
-    "customersSuppliers": "Kunden & Lieferanten",
-    "customers": "Kunden",
-    "suppliers": "Lieferanten",
-    "search": "Partner suchen",
-    "new": "Neuer Partner",
-    "all": "Alle",
-    "table": {
-      "type": "Typ",
-      "name": "Name",
-      "address": "Adresse",
-      "postal-code": "Postleitzahl",
-      "city": "Ort",
-      "country": "Land",
-      "vat": "USt-IdNr.",
-      "actions": "Aktionen"
+  "documentDirection": {
+    "INCOMING": "Eingehend",
+    "OUTGOING": "Ausgehend"
+  },
+  "documentType": {
+    "CREDIT_NOTE": "Gutschrift",
+    "INVOICE": "Rechnung"
+  },
+  "donations": {
+    "active-companies": "Unternehmen",
+    "active-companies-title": "Aktive Unternehmen, die Let’s Peppol nutzen",
+    "donate": "spenden",
+    "donations-received": "Spenden",
+    "donations-received-title": "Insgesamt erhaltene Spenden",
+    "follow": "folgen",
+    "follow-linkedin": "Folgen Sie uns auf LinkedIn",
+    "invoices-processed": "Rechnungen",
+    "invoices-processed-title": "Über Let’s Peppol verarbeitete Rechnungen",
+    "sponsor-payment": {
+      "amount-including-vat": "{{total}} inkl. MwSt.",
+      "amount-reverse-charge": "{{total}} Reverse Charge",
+      "amount-without-vat": "Anderer Betrag ohne MwSt.",
+      "contribution": "Beitrag",
+      "create-invoice": "Zustimmen und Rechnung erstellen",
+      "default-message": "Danke fur Let’s Peppol",
+      "duplicate-invoice": "Wir haben in den letzten 48 Stunden bereits eine Sponsoring-Rechnung fur Ihr Unternehmen erstellt. Sie wird uber Peppol zugestellt, daher mussen Sie jetzt keine weitere erstellen.",
+      "error-alert": "Sponsoring-Rechnung konnte nicht erstellt werden",
+      "info-invoice": "Ihr Beitrag wird von BARGE vzw (Business Application Research Group Europe), einem umsatzsteuerpflichtigen belgischen gemeinnutzigen Verein, in Rechnung gestellt.",
+      "info-vat": "Sie erhalten eine Peppol-E-Rechnung mit 21% MwSt., damit Ihre Organisation den richtigen Beleg fur die Umsatzsteuerverarbeitung und steuerliche Absetzbarkeit hat.",
+      "info-vat-reverse-charge": "Sie erhalten eine Peppol-E-Rechnung ohne MwSt. nach den innergemeinschaftlichen Reverse-Charge-Regeln.",
+      "message": "Nachricht",
+      "package-note": "Wir schatzen Ihren Beitrag und kontaktieren Sie, um ein passendes Sponsoring-Paket zu vereinbaren.",
+      "request-package": "Sponsoring-Paket anfragen",
+      "sending": "Wird gesendet…",
+      "sponsor-name": "Name auf der Sponsorenseite",
+      "success-alert": "Danke fur Ihre Unterstutzung",
+      "success-invoice-created": "Ihre Sponsoring-Rechnung wurde erstellt und wird uber Peppol zugestellt. Das kann etwas dauern, normalerweise innerhalb von 1 Stunde.",
+      "success-title": "Danke, dass Sie Let’s Peppol unterstutzen.",
+      "title": "Spenden, um Let’s Peppol zu sponsern",
+      "total-including-vat": "Gesamtbetrag, inklusive MwSt.",
+      "total-reverse-charge": "Gesamtbetrag",
+      "vat": "MwSt. 21%",
+      "vat-reverse-charge": "MwSt. Reverse Charge"
     },
-    "empty": "Keine Partner entsprechen Ihren Filtern.",
-    "edit": {
-      "new": "Neuer Partner",
-      "company-info": "Unternehmensinformationen",
-      "peppol": "Peppol",
-      "address": "Adresse",
-      "payment-info": "Zahlungsinformationen",
-      "customer": "Kunde",
-      "supplier": "Lieferant",
-      "account-name": "Kontoname",
-      "payment-terms": "Zahlungsbedingungen",
-      "iban": "IBAN",
-      "save": "Partner speichern",
-      "cancel": "Abbrechen"
-    }
+    "sponsors": "Stufensponsoren",
+    "sponsors-title": "Bronze-, Silber- und Gold-Sponsoren zusammen"
+  },
+  "error": {
+    "DUPLICATE_REQUEST": "Diese Anfrage wurde bereits verarbeitet.",
+    "login-failed": "Anmeldung fehlgeschlagen",
+    "not-peppol-active": "Sie sind derzeit nicht bei Peppol registriert",
+    "not-peppol-active-action": "Jetzt lösen",
+    "registration-company-affiliate-contact-admin": "Dieses Unternehmen hat bereits einen Administrator. Bitte wenden Sie sich an Ihren Administrator, um das Affiliate-Onboarding fortzusetzen.",
+    "registration-company-already-registered": "Unternehmen bereits registriert",
+    "registration-company-already-registered-on-peppol": "Diese Peppol-ID ist offenbar bereits bei einem anderen Anbieter registriert. Um sie hier zu aktivieren, muss sie dort zuerst abgemeldet werden. Sie können den Signaturprozess trotzdem abschließen und das anschließend erledigen.",
+    "registration-company-not-found": "Unternehmen nicht gefunden",
+    "UBL_DOCUMENT_ALREADY_CREATED": "Dieses Dokument wurde bereits zur Zustellung eingereicht. Aktualisieren Sie das vorhandene Dokument.",
+    "UBL_DOCUMENT_CONTENT_ALREADY_SENT": "Dieses identische Dokument wurde bereits eingereicht. Ändern Sie den Inhalt, bevor Sie es erneut senden."
+  },
+  "forgot": {
+    "enter-email": "Geben Sie Ihre E-Mail-Adresse ein, um Ihr Passwort zurückzusetzen.",
+    "info-sent": "Wenn die E-Mail-Adresse bekannt ist, wurde ein Link zum Zurücksetzen des Passworts gesendet.",
+    "request-link": "Link anfordern",
+    "reset-failed": "Passwort zurücksetzen fehlgeschlagen",
+    "title": "Passwort vergessen"
   },
   "invoice": {
-    "direction": "Richtung",
+    "action": {
+      "mark-paid": {
+        "CREDIT_NOTE": "Gutschrift als bezahlt markieren",
+        "INVOICE": "Rechnung als bezahlt markieren"
+      },
+      "mark-seen": "Als gesehen markieren",
+      "mark-unpaid": {
+        "CREDIT_NOTE": "Gutschrift als unbezahlt markieren",
+        "INVOICE": "Rechnung als unbezahlt markieren"
+      },
+      "resend": {
+        "CREDIT_NOTE": "Gutschrift wiederverwenden und erneut senden",
+        "INVOICE": "Rechnung wiederverwenden und erneut senden"
+      }
+    },
     "all": "Alle",
-    "outgoing": "Ausgehend",
-    "incoming": "Eingehend",
-    "drafts": "Entwürfe",
-    "title": "Rechnungen",
-    "search": "Kunde oder Referenz suchen",
-    "customer": "Kunde",
-    "supplier": "Lieferant",
-    "partner": "Partner",
+    "attachmentModal": {
+      "auto-pdf": "Automatisch generiertes Rechnungs-PDF einschließen",
+      "auto-pdf-replace": "Ein Rechnungs-PDF wird automatisch generiert. Schalten Sie es oben aus, wenn Ihre hochgeladene Datei es ersetzt.",
+      "upload-aria": "Anhang hinzufügen: Datei hierher ziehen oder zum Durchsuchen klicken",
+      "upload-file": "Datei hochladen",
+      "upload-hint": "Datei hierher ziehen oder zum Durchsuchen klicken"
+    },
     "buyer-reference": "Käuferreferenz",
-    "order-reference": "Bestellreferenz",
+    "customer": "Kunde",
+    "customerModal": {
+      "country": "Land",
+      "country-value": "Belgien",
+      "create-new": "Neu erstellen",
+      "house-number": "Hausnummer",
+      "no-matches": "Keine Treffer",
+      "save-as-partner": "Als Partner speichern",
+      "search-name-vat": "Name oder USt-IdNr.",
+      "search-partner-placeholder": "Partner nach Name oder USt-IdNr. suchen",
+      "search-placeholder": "Nach Namen suchen",
+      "search-title": "Partner auswählen",
+      "title": "Kunde"
+    },
+    "dateModal": {
+      "actual-delivery-date": "Tatsächliches Lieferdatum",
+      "delivery-country": "Lieferland",
+      "due-date": "Fälligkeitsdatum",
+      "issue-date": "Ausstellungsdatum",
+      "payment-terms": "Zahlungsbedingungen",
+      "title": "Datum"
+    },
+    "deliveryModal": {
+      "corner1-id": "Corner 1-ID",
+      "corner2-id": "Corner 2-ID",
+      "corner3-id": "Corner 3-ID",
+      "error-stamp-label": "Fehlerstempel",
+      "from": "von",
+      "invoice-number": "Rechnungsnummer",
+      "stamp-label": "Zustellstempel",
+      "title": "Zustellnachweis",
+      "to": "an"
+    },
+    "direction": "Richtung",
+    "drafts": "Entwürfe",
+    "edit": {
+      "actions": "Aktionen",
+      "add-line": "Zeile hinzufügen",
+      "amount": "Menge",
+      "attachments": "Anhänge",
+      "buyer-reference": "Käuferreferenz",
+      "cancel": "Abbrechen",
+      "delete-draft": "Entwurf löschen",
+      "download-pdf": "PDF",
+      "download-ubl": "UBL",
+      "invoice-lines": "Rechnungspositionen",
+      "method": "Methode",
+      "note": "Notiz",
+      "number": "Nummer",
+      "payment": "Zahlung",
+      "pos": "Pos.",
+      "recreate-positions": "Positionen neu erstellen",
+      "save-draft": "Entwurf speichern",
+      "send": {
+        "CREDIT_NOTE": "Gutschrift senden",
+        "INVOICE": "Rechnung senden"
+      },
+      "subtotal": "Zwischensumme",
+      "tax": "Steuer",
+      "total": "Gesamt",
+      "unit-price": "Stückpreis",
+      "update-draft": "Entwurf aktualisieren",
+      "validate": "Validieren"
+    },
+    "empty": "Keine Rechnungen entsprechen Ihren Filtern.",
+    "filter": {
+      "apply": "Anwenden",
+      "clear": "Leeren",
+      "from": "Von",
+      "to": "Bis"
+    },
+    "incoming": "Eingehend",
     "invoice-reference": "Rechnungsreferenz",
     "invoice-reference-date": "Rechnungsdatum",
-    "new": {
-      "INVOICE": "Neue Rechnung",
-      "CREDIT_NOTE": "Neue Gutschrift"
-    },
-    "status": {
-      "draft": "Entwurf",
-      "scheduled": "Geplant",
-      "processed": "Verarbeitet",
-      "error": "Fehler"
-    },
-    "table": {
-      "direction": "Richtung",
-      "type": "Typ",
-      "doc": "Beleg",
-      "issue-date": "Ausstellungsdatum",
-      "due-date": "Fälligkeitsdatum",
-      "total": "Gesamt",
-      "status": "Status",
-      "actions": "Aktionen"
-    },
-    "filter": {
-      "from": "Von",
-      "to": "Bis",
-      "clear": "Leeren",
-      "apply": "Anwenden"
-    },
     "loading": "Rechnungen werden geladen...",
-    "empty": "Keine Rechnungen entsprechen Ihren Filtern.",
-    "pager": {
-      "previous": "Zurück",
-      "next": "Weiter"
-    },
     "modal": {
-      "title": "Rechnung",
-      "title-credit-note": "Gutschrift",
+      "credit-note-note-placeholder": "Zusätzliche Notizen zu dieser Gutschrift",
+      "credit-note-number": "Gutschriftsnummer",
+      "credit-note-vat-note": "MwSt. an den Staat zurückzuzahlen in dem Maße, wie sie ursprünglich in Abzug gebracht wurde",
       "document": "Dokument",
       "invoice-number": "Rechnungsnummer",
-      "credit-note-number": "Gutschriftsnummer",
       "invoice-reference": "Rechnungsreferenz auswählen",
       "invoice-reference-none": "Keine",
       "note-optional": "Notiz (optional)",
       "note-placeholder": "Zusätzliche Notizen zu dieser Rechnung",
-      "credit-note-note-placeholder": "Zusätzliche Notizen zu dieser Gutschrift",
-      "credit-note-vat-note": "MwSt. an den Staat zurückzuzahlen in dem Maße, wie sie ursprünglich in Abzug gebracht wurde",
-      "reference-required" : "Entweder Käuferreferenz ODER Bestellreferenz ist erforderlich"
+      "reference-required": "Entweder Käuferreferenz ODER Bestellreferenz ist erforderlich",
+      "title": "Rechnung",
+      "title-credit-note": "Gutschrift"
     },
-    "dateModal": {
-      "title": "Datum",
-      "issue-date": "Ausstellungsdatum",
-      "payment-terms": "Zahlungsbedingungen",
-      "due-date": "Fälligkeitsdatum"
+    "new": {
+      "CREDIT_NOTE": "Neue Gutschrift",
+      "INVOICE": "Neue Rechnung"
     },
+    "order-reference": "Bestellreferenz",
+    "outgoing": "Ausgehend",
+    "pager": {
+      "next": "Weiter",
+      "previous": "Zurück"
+    },
+    "partner": "Partner",
     "paymentModal": {
-      "title": "Zahlung",
-      "type": "Typ",
-      "name": "Name",
+      "bic": "BIC",
       "iban": "IBAN",
+      "name": "Name",
       "reference": "Referenz",
-      "store-iban": "IBAN im Konto speichern"
+      "store-iban": "IBAN im Konto speichern",
+      "title": "Zahlung",
+      "type": "Typ"
     },
-    "validationModal": {
-      "title": "Validierung",
-      "error-count": "Anzahl der Fehler"
-    },
-    "customerModal": {
-      "title": "Kunde",
-      "search-title": "Partner auswählen",
-      "create-new": "Neu erstellen",
-      "country": "Land",
-      "house-number": "Hausnummer",
-      "country-value": "Belgien",
-      "search-name-vat": "Name oder USt-IdNr.",
-      "search-partner-placeholder": "Partner nach Name oder USt-IdNr. suchen",
-      "no-matches": "Keine Treffer",
-      "save-as-partner": "Als Partner speichern"
+    "paymentQr": {
+      "amount": "Betrag",
+      "bic": "BIC",
+      "iban": "IBAN",
+      "mark-paid-document": {
+        "CREDIT_NOTE": "Gutschrift als bezahlt markieren",
+        "INVOICE": "Rechnung als bezahlt markieren"
+      },
+      "mark-unpaid-document": {
+        "CREDIT_NOTE": "Gutschrift als unbezahlt markieren",
+        "INVOICE": "Rechnung als unbezahlt markieren"
+      },
+      "marked-done-on": "Zahlung als erledigt markiert am",
+      "name": "Name",
+      "reference": "Verwendungszweck",
+      "show-and-mark-paid": "Zahlungs-QR anzeigen<br /> und als bezahlt markieren",
+      "title": "Rechnungszahlung"
     },
     "productSearch": {
-      "placeholder": "Name",
-      "no-matches": "Keine Treffer"
+      "no-matches": "Keine Treffer",
+      "placeholder": "Name"
     },
-    "edit": {
-      "download-ubl": "UBL",
-      "download-pdf": "PDF",
-      "validate": "Validieren",
-      "delete-draft": "Entwurf löschen",
-      "update-draft": "Entwurf aktualisieren",
-      "save-draft": "Entwurf speichern",
-      "cancel": "Abbrechen",
-      "send": {
-        "INVOICE": "Rechnung senden",
-        "CREDIT_NOTE": "Gutschrift senden"
-      },
-      "number": "Nummer",
-      "buyer-reference": "Käuferreferenz",
-      "payment": "Zahlung",
-      "method": "Methode",
-      "subtotal": "Zwischensumme",
-      "tax": "Steuer",
-      "total": "Gesamt",
-      "invoice-lines": "Rechnungspositionen",
-      "pos": "Pos.",
-      "amount": "Menge",
-      "unit-price": "Stückpreis",
+    "search": "Kunde oder Referenz suchen",
+    "status": {
+      "draft": "Entwurf",
+      "error": "Fehler",
+      "overdue": "Überfällig",
+      "paid": "Bezahlt",
+      "processed": "Verarbeitet",
+      "scheduled": "Geplant"
+    },
+    "supplier": "Lieferant",
+    "table": {
       "actions": "Aktionen",
-      "add-line": "Zeile hinzufügen",
-      "note": "Notiz",
-      "recreate-positions": "Positionen neu erstellen",
-      "attachments": "Anhänge"
+      "direction": "Richtung",
+      "doc": "Beleg",
+      "due-date": "Fälligkeitsdatum",
+      "issue-date": "Ausstellungsdatum",
+      "status": "Status",
+      "total": "Gesamt",
+      "total-vat-suffix": {
+        "excl": "exkl. MwSt.",
+        "incl": "inkl. MwSt."
+      },
+      "type": "Typ",
+      "vat": "MwSt."
+    },
+    "title": "Rechnungen",
+    "validationModal": {
+      "error-count": "Anzahl der Fehler",
+      "title": "Validierung"
+    },
+    "zero-vat-reason": {
+      "modal": {
+        "edit-button": "Grund für 0 % MwSt. bearbeiten",
+        "reason-text": "Erläuterung",
+        "reason-text-placeholder": "Warum gilt für diese Zeile 0 % MwSt.?",
+        "reason-type": "Grundtyp",
+        "title": "Grund für 0 % MwSt.",
+        "update-account": "Dies als Standard-MwSt.-Regelwerk für dieses Konto verwenden"
+      },
+      "options": {
+        "AE": "Reverse Charge",
+        "E": "Von der MwSt. befreit",
+        "G": "Steuerfreier Exportartikel, keine MwSt. berechnet",
+        "K": "Von der MwSt. befreit für innergemeinschaftliche Lieferungen von Waren und Dienstleistungen im EWR",
+        "O": "Nicht der MwSt. unterliegend",
+        "Z": "Nullsteuersatz-Waren"
+      }
     }
   },
-  "account": {
-    "title": "Konto",
-    "cancel": "Abbrechen",
-    "save": "Speichern",
-    "notifications": "Benachrichtigungen",
-    "subscriber-info": "Teilnehmerinformationen",
-    "download-contract": "Vertrag herunterladen",
-    "change-password": "Passwort ändern",
-    "company-info": "Unternehmensinformationen",
-    "company-legal-name": "Rechtlicher Unternehmensname",
-    "company-display-name": "Anzeigename des Unternehmens",
-    "peppol-registration": "Peppol-Registrierung",
-    "remove-from-peppol": "Aus Peppol entfernen",
+  "label": {
+    "account-name": "Kontoname",
     "activate-on-peppol": "Auf Peppol aktivieren",
     "address": "Adresse",
-    "number": "Nummer",
-    "payment-info": "Zahlungsinformationen",
+    "barcode": "Barcode",
+    "bic": "BIC",
+    "buyer-reference": "Käuferreferenz",
+    "change-password": "Passwort ändern",
+    "city": "Ort",
+    "company-info": "Unternehmensinformationen",
+    "company-name": "Firmenname",
+    "confirm-password": "Passwort bestätigen",
+    "cost-price": "Einkaufspreis",
+    "country": "Land",
+    "customer": "Kunde",
+    "description": "Beschreibung",
+    "download-contract": "Vertrag herunterladen",
+    "due-date": "Fälligkeitsdatum",
+    "email": "E-Mail",
+    "enterprise-number": "Unternehmensnr.",
+    "house-number": "Hausnummer",
+    "house-number-short": "Hausnr.",
     "iban": "IBAN",
-    "account-name": "Kontoname",
+    "invoice-number": "Rechnungsnummer",
+    "issue-date": "Ausstellungsdatum",
+    "name": "Name",
+    "note-optional": "Notiz (optional)",
+    "number": "Nummer",
+    "password": "Passwort",
     "payment-terms": "Zahlungsbedingungen",
-    "enable-email-notification": "E-Mail-Benachrichtigungen aktivieren",
-    "add-attachment-to-notification": "Anhang zur Benachrichtigung hinzufügen",
-    "email-notification-cc-list": "CC-Liste für E-Mail-Benachrichtigungen",
-    "add-pdf-to-sending-invoice": "PDF zur Rechnung hinzufügen",
-    "invoice-settings": "Rechnungseinstellungen",
-    "registration-failed": {
-      "contact-us": "Die Registrierung wurde nicht abgeschlossen. Bitte wenden Sie sich an den Support unter support@letspeppol.org für die nächsten Schritte.",
-      "contact-provider": "Ihre Peppol-ID ist derzeit bei {{provider}} registriert. Bitte kontaktieren Sie den Anbieter, um sie dort abzumelden, und melden Sie sich anschließend an und versuchen Sie die Aktivierung erneut.",
-      "try-again-one-day": "Die Registrierung wurde nicht abgeschlossen. Bitte versuchen Sie es morgen erneut. Wenn das Problem weiterhin besteht, wenden Sie sich an den Support unter support@letspeppol.org und geben Sie Ihre Kontodaten an.",
-      "try-again-one-hour": "Die Registrierung wurde nicht abgeschlossen. Bitte versuchen Sie es in etwa einer Stunde erneut. Das Peppol-Netzwerk ist möglicherweise vorübergehend überlastet."
-    }
+    "peppol-registration": "Peppol-Registrierung",
+    "peppolId": "Peppol-ID",
+    "postal-code": "Postleitzahl",
+    "product-category": "Produktkategorie",
+    "reference": "Referenz",
+    "remove-from-peppol": "Aus Peppol entfernen",
+    "sale-price": "Verkaufspreis",
+    "stock-quantity": "Lagerbestand",
+    "street": "Straße",
+    "subscriber-info": "Teilnehmerinformationen",
+    "supplier": "Lieferant",
+    "tax-percentage": "Steuersatz",
+    "type": "Typ",
+    "vat-number": "USt-IdNr."
   },
-  "forgot": {
-    "title": "Passwort vergessen",
-    "info-sent": "Wenn die E-Mail-Adresse bekannt ist, wurde ein Link zum Zurücksetzen des Passworts gesendet.",
-    "enter-email": "Geben Sie Ihre E-Mail-Adresse ein, um Ihr Passwort zurückzusetzen.",
-    "reset-failed": "Passwort zurücksetzen fehlgeschlagen",
-    "request-link": "Link anfordern"
+  "login": {
+    "action": "Anmelden",
+    "continue": "Anmelden",
+    "forgot": "Passwort vergessen",
+    "new": "Neu hier?",
+    "register": "Unternehmen registrieren",
+    "remember": "Angemeldet bleiben",
+    "title": "Bei Ihrem Konto anmelden"
+  },
+  "navigation": {
+    "account": "Konto",
+    "brand-alt": "Let's Peppol",
+    "dashboard": "Dashboard",
+    "invoices": "Rechnungen",
+    "language": "Sprache",
+    "partners": "Partner",
+    "products": "Produkte",
+    "toggle-theme": "Theme umschalten"
+  },
+  "new-feature": {
+    "click-to-dismiss": "Zum Schließen klicken",
+    "label": "Neu"
+  },
+  "onboarding": {
+    "anim-caption-sign": "Stecken Sie Ihre eID-Karte ein und drücken Sie auf Bestätigen, um die Installation zu überprüfen.",
+    "anim-reader-label": "LESER",
+    "browser": {
+      "chrome": "Chrome",
+      "edge": "Microsoft Edge",
+      "firefox": "Firefox",
+      "safari": "Safari"
+    },
+    "check": "Web eID prüfen",
+    "check-title": "Web-eID-Installation prüfen",
+    "or": "oder",
+    "os": {
+      "linux": "Linux",
+      "macos": "macOS",
+      "windows": "Windows"
+    },
+    "step": {
+      "login": "Melden Sie sich bei Ihrem Konto an.",
+      "prepare-eid": {
+        "alt-stack": "Alternativ können Sie den vollständigen Software-Stack von id.ee installieren.",
+        "alt-stack-link": "id.ee-Installationsanleitung öffnen",
+        "browser-help": "Hilfe zur Erweiterung:",
+        "install-beidconnect": "Stellen Sie sicher, dass BeIDConnect installiert ist (belgische eID-Middleware).",
+        "install-beidconnect-link": "BeIDConnect herunterladen",
+        "install-web-eid": "Web-eID-Anwendung installieren",
+        "restart-browser": "Starten Sie Ihren Browser neu und prüfen Sie, ob die Web-eID-Erweiterung aktiviert ist.",
+        "success": {
+          "subtitle": "Ihr Kartenleser und die Browser-Einrichtung sehen gut aus.",
+          "title": "Web eID funktioniert"
+        },
+        "test-setup": "Schließen Sie Ihren Kartenleser an, stecken Sie Ihre eID-Karte ein und führen Sie den Test rechts aus.",
+        "title": "eID-Software, Kartenleser und Karte vorbereiten",
+        "troubleshoot": {
+          "contact": "Support kontaktieren:",
+          "other-device": "Versuchen Sie es an einem anderen Computer.",
+          "reinsert": "Entfernen Sie die eID-Karte und stecken Sie sie erneut ein.",
+          "restart": "Starten Sie Ihren Browser neu und versuchen Sie es erneut.",
+          "title": "Wenn die Bestätigung fehlschlägt:",
+          "usb": "Verwenden Sie eine direkte USB-Verbindung (Hubs/Dongles vermeiden)."
+        }
+      },
+      "register-affiliate": "Als Affiliate registrieren",
+      "register-company": "Unternehmen registrieren",
+      "sign-contract": "Unterschreiben Sie den Vertrag, um KYC (Know Your Customer) abzuschließen.",
+      "verify-director": "Bestätigen Sie Ihre Identität als Unternehmensleitung.",
+      "verify-email": "Bestätigen Sie Ihre E-Mail-Adresse (prüfen Sie ggf. den Spam-Ordner auf E-Mails von @letspeppol.org)."
+    },
+    "title": "Onboarding-Schritte"
+  },
+  "overlay": {
+    "saving-account": "Konto wird gespeichert, bitte warten"
+  },
+  "ownershipAdd": {
+    "account-info-body": "Dieses Unternehmen wird dem oben angezeigten bestehenden Konto hinzugefügt. Das Passwort für dieses Konto bleibt unverändert.",
+    "account-info-title": "2. Konto bestätigen",
+    "action": "Konto hinzufügen",
+    "back-dashboard": "Zurück zum Dashboard",
+    "cancel": "Zurück zum Dashboard",
+    "company-has-admin": "Dieses Unternehmen hat bereits ein Admin-Konto. Der aktuelle Ablauf unterstützt nur Unternehmen ohne bestehenden Admin.",
+    "intro": "Fügen Sie ein weiteres Konto für ein Unternehmen hinzu, indem Sie als einer seiner Direktoren unterschreiben.",
+    "lookup": "Unternehmen suchen",
+    "read-contract-info": "Sie erhalten eine unterschriebene Kopie, sobald dieses Konto hinzugefügt wurde.",
+    "sign-button": "Konto hinzufügen",
+    "success-body": "Der unterschriebene Vertrag wurde heruntergeladen und das neue Unternehmen ist jetzt in Ihrer Konto-Auswahl verfügbar.",
+    "success-title": "Konto hinzugefügt",
+    "title": "Konto hinzufügen"
+  },
+  "partner": {
+    "all": "Alle",
+    "customers": "Kunden",
+    "customersSuppliers": "Kunden & Lieferanten",
+    "edit": {
+      "account-name": "Kontoname",
+      "address": "Adresse",
+      "cancel": "Abbrechen",
+      "company-info": "Unternehmensinformationen",
+      "customer": "Kunde",
+      "iban": "IBAN",
+      "new": "Neuer Partner",
+      "payment-info": "Zahlungsinformationen",
+      "payment-terms": "Zahlungsbedingungen",
+      "peppol": "Peppol",
+      "save": "Partner speichern",
+      "supplier": "Lieferant"
+    },
+    "empty": "Keine Partner entsprechen Ihren Filtern.",
+    "new": "Neuer Partner",
+    "search": "Partner suchen",
+    "suppliers": "Lieferanten",
+    "table": {
+      "actions": "Aktionen",
+      "address": "Adresse",
+      "city": "Ort",
+      "country": "Land",
+      "name": "Name",
+      "postal-code": "Postleitzahl",
+      "type": "Typ",
+      "vat": "USt-IdNr."
+    },
+    "title": "Partner"
+  },
+  "password-rules": {
+    "length": "Mindestens 12 Zeichen",
+    "lower": "Mindestens 1 Kleinbuchstabe",
+    "match": "Passwörter stimmen überein",
+    "number": "Mindestens 1 Zahl",
+    "strength": "Passwortstärke",
+    "symbol": "Mindestens 1 Symbol",
+    "upper": "Mindestens 1 Großbuchstabe"
+  },
+  "paymentTerms": {
+    "15_DAYS": "15 Tage",
+    "30_DAYS": "30 Tage",
+    "60_DAYS": "60 Tage",
+    "END_OF_NEXT_MONTH": "Ende des Monats"
+  },
+  "placeholder": {
+    "customer-search": "Suche nach Name oder USt-IdNr.",
+    "email": "you@company.com",
+    "enterprise-number": "0123456789",
+    "invoice-search": {
+      "customer": "Kunden suchen",
+      "doc": "Beleg suchen"
+    },
+    "name": "Name",
+    "partner-search": "Partner suchen",
+    "password": "••••••••",
+    "product-search": "Produkt suchen",
+    "vat-number": "BE0123456789"
+  },
+  "product": {
+    "all": "Alle",
+    "categories": "Kategorien",
+    "category": "Kategorie",
+    "categoryModal": {
+      "color": "Farbe",
+      "name": "Name",
+      "title": "Produktkategorie"
+    },
+    "edit": {
+      "cancel": "Abbrechen",
+      "info": "Produktinfo",
+      "new": "Neues Produkt",
+      "none": "Keine",
+      "pricing": "Preise",
+      "product-category": "Produktkategorie",
+      "save": "Produkt speichern",
+      "stock": "Lager",
+      "stock-quantity": "Lagerbestand"
+    },
+    "empty": "Keine Produkte entsprechen Ihren Filtern.",
+    "new": "Neues Produkt",
+    "search": "Produkt suchen",
+    "table": {
+      "actions": "Aktionen",
+      "barcode": "Barcode",
+      "category": "Kategorie",
+      "cost-price": "Einkaufspreis",
+      "description": "Beschreibung",
+      "name": "Name",
+      "reference": "Referenz",
+      "sale-price": "Verkaufspreis",
+      "stock-quantity": "Lagerbestand",
+      "tax-percentage": "Steuersatz"
+    },
+    "title": "Produkte"
+  },
+  "registration": {
+    "affiliate-already-registered": "Bereits Affiliate?",
+    "affiliate-create-account": "Affiliate-Konto erstellen",
+    "affiliate-intro": "Registrieren Sie sich als Affiliate für Ihr eigenes belgisches Unternehmen.<br />Wenn Ihr Unternehmen bereits von einem Administrator verwaltet wird,<br />bitten Sie diesen, Ihren Zugang hinzuzufügen oder freizugeben.",
+    "affiliate-title-step0": "Als Affiliate registrieren",
+    "affiliate-title-step1": "Bestätigen Sie Ihr Affiliate-Unternehmen",
+    "already-registered": "Bereits registriert?",
+    "back": "Zurück",
+    "confirm-company": "Bestätigen",
+    "create-account": "Konto erstellen",
+    "instructions-finally": "<b>Zum Schluss</b> öffnen Sie die Bestätigungs-E-Mail und klicken Sie auf den Bestätigungslink.",
+    "instructions-go-checklist": "Zur Checkliste",
+    "instructions-intro": "Wir haben Ihnen eine Bestätigungs-E-Mail von kyc@letspeppol.org gesendet. Bitte prüfen Sie auch Ihren Spam-Ordner.",
+    "instructions-onboarding": "Bevor Sie fortfahren, vervollständigen Sie die Onboarding-Checkliste, um Web eID einzurichten.",
+    "title-step0": "Unternehmen registrieren",
+    "title-step1": "Unternehmen bestätigen",
+    "title-step2": "Kontobestätigung",
+    "wrong-company": "Falsches Unternehmen?"
   },
   "reset": {
-    "title": "Passwort zurücksetzen",
+    "action": "Passwort zurücksetzen",
     "enter-email": "Geben Sie Ihre E-Mail-Adresse ein, um Ihr Passwort zurückzusetzen.",
     "reset-failed": "Passwort zurücksetzen fehlgeschlagen",
-    "action": "Passwort zurücksetzen"
+    "title": "Passwort zurücksetzen"
   },
   "session": {
     "continue-title": "Sitzung fortsetzen"
+  },
+  "sponsors-page": {
+    "empty": "Noch keine Sponsoren.",
+    "load-error": "Die Sponsoren konnten derzeit nicht geladen werden.",
+    "loading": "Sponsoren werden geladen...",
+    "subtitle": "Unternehmen und Menschen, die helfen, Let’s Peppol am Laufen zu halten.",
+    "table": {
+      "amount": "Betrag",
+      "date": "Datum",
+      "message": "Nachricht",
+      "name": "Name"
+    },
+    "title": "Sponsoren"
+  },
+  "welcome-notification": {
+    "title": "Willkommen"
   }
 }

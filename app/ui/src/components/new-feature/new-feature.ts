@@ -2,11 +2,12 @@ import { customAttribute, bindable, INode } from 'aurelia';
 import { resolve } from '@aurelia/kernel';
 import { I18N, ILocalChangeSubscriber } from '@aurelia/i18n';
 import { IFeatureAck } from './feature-ack-service';
-import { isExpired } from './feature-registry';
+import { getFeature, isExpired } from './feature-registry';
 
 export type NewFeatureTrigger = 'click' | 'view' | 'hover' | 'none';
 
 const RAINBOW_CLASS = 'rainbow-border';
+const PRESERVE_POSITION_CLASS = 'rainbow-border-preserve-position';
 const DISMISSABLE_CLASS = 'new-feature-dismissable';
 
 @customAttribute({ name: 'new-feature', defaultProperty: 'id', noMultiBindings: true })
@@ -28,6 +29,9 @@ export class NewFeatureCustomAttribute implements ILocalChangeSubscriber {
         if (this.ack.isAcknowledged(this.id) || isExpired(this.id)) return;
 
         this.element.classList.add(RAINBOW_CLASS);
+        if (getFeature(this.id)?.preservePosition) {
+            this.element.classList.add(PRESERVE_POSITION_CLASS);
+        }
 
         switch (this.trigger) {
             case 'click':
@@ -53,7 +57,7 @@ export class NewFeatureCustomAttribute implements ILocalChangeSubscriber {
         this.cleanup?.();
         this.cleanup = null;
         this.removeHint();
-        this.element.classList.remove(DISMISSABLE_CLASS);
+        this.element.classList.remove(RAINBOW_CLASS, DISMISSABLE_CLASS, PRESERVE_POSITION_CLASS);
         if (this.localeSubscribed) {
             this.i18n.unsubscribeLocaleChange(this);
             this.localeSubscribed = false;
@@ -121,7 +125,7 @@ export class NewFeatureCustomAttribute implements ILocalChangeSubscriber {
         this.cleanup?.();
         this.cleanup = null;
         this.removeHint();
-        this.element.classList.remove(RAINBOW_CLASS, DISMISSABLE_CLASS);
+        this.element.classList.remove(RAINBOW_CLASS, DISMISSABLE_CLASS, PRESERVE_POSITION_CLASS);
         this.ack.acknowledge(this.id);
     }
 }

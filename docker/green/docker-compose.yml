@@ -33,7 +33,7 @@ services:
       retries: 12
       start_period: 10s
     volumes:
-      - /opt/data/proxy:/opt/data/proxy
+      - /mnt/data/proxy:/opt/data/proxy
     networks:
       - web
       - default
@@ -66,7 +66,6 @@ services:
       OPEN_COLLECTIVE_URL: ${OPEN_COLLECTIVE_URL}
       OPEN_COLLECTIVE_API_KEY: ${OPEN_COLLECTIVE_API_KEY}
       DOCUMENT_PRICE: ${DOCUMENT_PRICE}
-      BACKUP_DATA_DIR: /opt/data/app
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -h $DB_HOST -p $DB_PORT -U $DB_USER"]
       interval: 5s
@@ -74,7 +73,7 @@ services:
       retries: 12
       start_period: 10s
     volumes:
-      - /opt/data/app:/opt/data/app
+      - /mnt/data/app:/opt/data/app
     networks:
       - web
       - default
@@ -110,6 +109,8 @@ services:
       KBO_SFTP_DELTA_DIR: ${KBO_SFTP_DELTA_DIR}
       KBO_SFTP_DELTA_CRON: ${KBO_SFTP_DELTA_CRON}
       CONTRACT_DATA_DIR: /opt/data/kyc
+      WEBEID_TRUSTED_CA_TRUSTSTORE: /kyc/truststore/belgian-eid.jks
+      WEBEID_TRUSTED_CA_TRUSTSTORE_PASSWORD: changeit
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -h $DB_HOST -p $DB_PORT -U $DB_USER"]
       interval: 5s
@@ -117,7 +118,7 @@ services:
       retries: 12
       start_period: 10s
     volumes:
-      - /opt/data/kyc:/opt/data/kyc
+      - /mnt/data/kyc:/opt/data/kyc
     networks:
       - web
       - default
@@ -126,8 +127,6 @@ services:
     build:
       context: ../../app/ui
       dockerfile: Dockerfile
-      args:
-        VITE_LEADINFO_ID: ${VITE_LEADINFO_ID}
     image: lp-ui:latest
     depends_on:
       - app
@@ -166,6 +165,12 @@ services:
       - "traefik.http.routers.green-sapi.middlewares=jwt-auth,api-limit"
       - "traefik.http.routers.green-sapi.service=nginx"
       - "traefik.http.routers.green-sapi.tls.certresolver=${CERT_RESOLVER_GREEN}"
+
+      # Local API router
+      - "traefik.http.routers.green-lapi.rule=Host(`localhost`) && (PathPrefix(`/proxy/lapi/`) || PathPrefix(`/app/lapi/`) || PathPrefix(`/kyc/lapi/`))"
+      - "traefik.http.routers.green-lapi.entrypoints=internal"
+      - "traefik.http.routers.green-lapi.middlewares=api-limit"
+      - "traefik.http.routers.green-lapi.service=nginx"
 
       # Service definition
       - "traefik.http.services.nginx.loadbalancer.server.port=80"
