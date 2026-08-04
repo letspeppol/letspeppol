@@ -54,7 +54,7 @@ services:
       DB_LIST: "app kyc proxy"
       DATA_DIR: /opt/data/db
     volumes:
-      - /opt/data/db:/opt/data/db
+      - /mnt/data/db:/opt/data/db
     networks:
       - default
 
