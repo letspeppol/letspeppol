@@ -1,0 +1,49 @@
+<import from="../components/view/application-view"></import>
+<import from="./help.css"></import>
+
+<application-view>
+    <div class="help-page">
+        <div class="section-header help-heading">
+            <div>
+                <h1 t="help.title">Help & frequently asked questions</h1>
+                <p t="help.subtitle">Find quick answers about Let’s Peppol and electronic invoicing.</p>
+            </div>
+        </div>
+
+        <label class="help-search">
+            <span class="sr-only" t="help.search-label">Search help</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="search" value.bind="searchQuery" placeholder="Search help" t="[placeholder]help.search-placeholder" autocomplete="off">
+        </label>
+
+        <nav class="help-categories" aria-label="Help topics" t="[aria-label]help.topics-label">
+            <button repeat.for="category of categories" type="button" class="btn category-button" class.bind="selectedCategory === category ? 'btn category-button selected' : 'btn category-button'" click.trigger="selectCategory(category)" t="help.categories.${category}"></button>
+        </nav>
+
+        <p class="help-result-count" aria-live="polite">${filteredItems.length} <span t="help.results">answers</span></p>
+
+        <div class="faq-list" if.bind="filteredItems.length">
+            <details repeat.for="item of filteredItems" class="card faq-item" id.bind="item.id">
+                <summary>
+                    <span t="help.questions.${item.id}.question"></span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                </summary>
+                <div class="faq-answer" t="help.questions.${item.id}.answer"></div>
+            </details>
+        </div>
+
+        <div class="card help-empty" if.bind="!filteredItems.length">
+            <h2 t="help.empty-title">No matching answers</h2>
+            <p t="help.empty-text">Try another search or browse all topics.</p>
+            <button type="button" class="btn" click.trigger="clearSearch()" t="help.show-all">Show all questions</button>
+        </div>
+
+        <aside class="card support-card">
+            <div>
+                <h2 t="help.support-title">Still need help?</h2>
+                <p t="help.support-text">Email our support team. Include your company name and a description of what happened, but never send your password.</p>
+            </div>
+            <a class="btn primary" href="mailto:support@letspeppol.org">support@letspeppol.org</a>
+        </aside>
+    </div>
+</application-view>
