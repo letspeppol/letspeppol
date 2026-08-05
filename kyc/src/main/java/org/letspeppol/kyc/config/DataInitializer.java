@@ -43,14 +43,14 @@ public class DataInitializer implements CommandLineRunner {
             directorRepository.save(new Director("Bart In Stukken", company));
             directorRepository.save(new Director("Wout Schattebout", company));
             Account account = Account.builder()
-                    .company(company)
-//                  .type(AccountType.ADMIN)
                     .name("Bart In Stukken")
                     .email("test@softwareoplossing.be")
                     .passwordHash(passwordEncoder.encode("test"))
                     .externalId(UUID.randomUUID())
                     .build();
             accountRepository.save(account);
+            Ownership ownership = new Ownership(account, AccountType.ADMIN, company);
+            ownershipRepository.save(ownership);
             log.info("Seeded sample company {}", companyNumber);
         }
         companyNumber = "0705969661";
@@ -75,10 +75,11 @@ public class DataInitializer implements CommandLineRunner {
         }
         UUID appUUID = UUID.fromString("b095630d-1bf3-4250-bf9e-2d49e6ce505b");
         if (accountRepository.findByExternalId(appUUID).isEmpty()) {
-            Company company = companyRepository.search("1029545627", "BE1029545627", null, null, null).stream()
+            String cn = "1029545627";
+            Company company = companyRepository.search(cn, "BE"+cn, null, null, null).stream()
                     .findFirst()
                     .orElseGet(() -> {
-                        Company newCompany = new Company("0208:1029545627", "1029545627", "BE1029545627", "BARGE vzw");
+                        Company newCompany = new Company("0208:"+cn, cn, "BE"+cn, "BARGE vzw");
                         companyRepository.save(newCompany);
                         directorRepository.save(new Director("Barst Brokken", newCompany));
                         return newCompany;
@@ -109,7 +110,7 @@ public class DataInitializer implements CommandLineRunner {
         }
         companyNumber = "0746936523";
         if (companyRepository.findByPeppolId("0208:"+companyNumber).isEmpty()) {
-            Company company = new Company("0208:"+companyNumber, "BE"+companyNumber, "DIGITAL AFFILIATE");
+            Company company = new Company("0208:"+companyNumber, companyNumber, "BE"+companyNumber, "DIGITAL AFFILIATE");
             company.setAddress("Heusden-Zolder", "3550", "Belikstraat 109");
             companyRepository.save(company);
             directorRepository.save(new Director("Jurgen Wilmans", company));

@@ -351,13 +351,13 @@ public class SigningService {
         byte[] signedDigest = Base64.getDecoder().decode(signingRequest.hashToSign());
         byte[] eidSignature = Base64.getDecoder().decode(signingRequest.signature());
         if (!SignatureUtil.verifyWebEidSignature(certificates[0], signedDigest, eidSignature)) {
-            log.error("eID signature verification FAILED for company {} email {}",
-                    tokenVerificationResponse.company().peppolId(), tokenVerificationResponse.email());
+            log.error("eID signature verification FAILED for company {} and director {}",
+                    signingRequest.peppolId(), signingRequest.directorId());
             throw new RuntimeException("eID signature verification failed");
         }
         String expectedDigest = preparedHashes.remove(safeHashName(signingRequest.hashToFinalize()));
         if (expectedDigest == null || !expectedDigest.equals(signingRequest.hashToSign())) {
-            log.error("eID prepared-digest mismatch / replay for company {}", tokenVerificationResponse.company().peppolId());
+            log.error("eID prepared-digest mismatch / replay for company {}", signingRequest.peppolId());
             throw new RuntimeException("eID signature does not match a freshly prepared contract");
         }
 

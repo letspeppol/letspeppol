@@ -48,7 +48,7 @@ public class RegistrationSteps {
 
     void prepareDatabase(String peppolId, String companyName) {
         // Insert test company in DB
-        Company company = new Company(peppolId, "BE1234567890", companyName);
+        Company company = new Company(peppolId, "1234567890", "BE1234567890", companyName);
         company.setAddress("TestCity", "1234", "TestStreet");
         companyRepository.save(company);
         // Insert a director for the company
