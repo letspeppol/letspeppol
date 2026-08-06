@@ -1,5 +1,9 @@
 import {bindable} from "aurelia";
 import {DocumentType} from "../../../../services/app/invoice-service";
+import {
+    formatBelgianStructuredCommunication,
+    normalizeBelgianStructuredCommunication
+} from "../../../belgian-structured-communication";
 
 export class InvoicePaymentQrModal {
     @bindable open = false;
@@ -46,8 +50,24 @@ export class InvoicePaymentQrModal {
             || '';
     }
 
+    get creditorReference(): string {
+        return normalizeBelgianStructuredCommunication(this.paymentId);
+    }
+
+    get referenceLabel(): string {
+        return formatBelgianStructuredCommunication(this.paymentId) || this.reference;
+    }
+
+    get remittanceInformation(): string {
+        return this.creditorReference ? '' : this.reference;
+    }
+
     get currentDocumentType(): DocumentType {
         return this.invoiceContext?.selectedDocument?.type || DocumentType.INVOICE;
+    }
+
+    private get paymentId(): string {
+        return this.invoiceContext?.selectedInvoice?.PaymentMeans?.PaymentID || '';
     }
 
     closeModal() {

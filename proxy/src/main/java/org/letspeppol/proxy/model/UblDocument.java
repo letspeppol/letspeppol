@@ -7,8 +7,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.*;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
+import org.hibernate.type.SqlTypes;
 import java.time.Instant;
+import java.util.Map;
 import java.util.UUID;
+
+import static org.hibernate.type.SqlTypes.LONGVARCHAR;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -47,7 +51,7 @@ public class UblDocument {
 
     private String processedStatus; //Useful for feedback from Peppol AP
 
-    @Lob
+    @JdbcTypeCode(LONGVARCHAR) //Map to the PG text column as a plain string; @Lob would make Hibernate treat it as a large object (OID) and fail to read text content
     private String ubl; //Can be left empty once processed as owner owns the data, i.e. no-archive is enabled and downloadCount > 1, the other field are sufficient to keep the proxy fully operational
 
     ///INTERNAL INFORMATION
@@ -66,5 +70,9 @@ public class UblDocument {
     private AccessPoint accessPoint; //Can be null for outgoing ubl document when not yet send via Peppol AP
 
     private String accessPointId; //Could be a non-unique value when the same docUuid is used for sender and receiver, can be null for outgoing ubl document when not yet send via Peppol AP
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb")
+    private Map<String, Object> accessPointDetails; //Stores the AP delivery details response, e.g. Scrada outbound document info
 
 }

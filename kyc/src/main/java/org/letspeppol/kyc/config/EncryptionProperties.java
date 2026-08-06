@@ -20,6 +20,15 @@ public class EncryptionProperties {
         if (keys.isEmpty()) {
             throw new IllegalStateException("No encryption.keys.* configured");
         }
+        // Fail fast on blank values: an unset env var (e.g. ENCRYPTION_KEY_1) binds to an
+        // empty string rather than leaving the map empty, so guard against it explicitly.
+        keys.forEach((id, value) -> {
+            if (value == null || value.isBlank()) {
+                throw new IllegalStateException(
+                        "Encryption key '" + id + "' is blank. Set the corresponding environment variable "
+                                + "(e.g. ENCRYPTION_KEY_1) to a base64-encoded AES key.");
+            }
+        });
         if (!keys.containsKey(activeKeyId)) {
             if (keys.size() == 1) {
                 // Promote the single configured key as active

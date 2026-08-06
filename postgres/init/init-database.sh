@@ -26,7 +26,7 @@ for db in APP KYC PROXY; do
     psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -c "ALTER ROLE \"${DB_USER}\" WITH LOGIN PASSWORD '${DB_PASS}';"
   else
     echo "[init] Creating role $DB_USER"
-    psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -c "CREATE ROLE \"${DB_USER}\" LOGIN PASSWORD '${DB_PASS}';"
+    psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -c "CREATE ROLE \"${DB_USER}\" LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE PASSWORD '${DB_PASS}';"
   fi
 
   # Ensure databases exist and have correct owner
@@ -38,6 +38,10 @@ for db in APP KYC PROXY; do
     echo "[init] Creating database $db_name owned by $DB_USER"
     psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -c "CREATE DATABASE \"${db_name}\" OWNER \"${DB_USER}\";"
   fi
+
+  # Least privilege: only the owning service role may connect to its database (revoke the PUBLIC default).
+  psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -c "REVOKE CONNECT ON DATABASE \"${db_name}\" FROM PUBLIC;"
+  psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -c "GRANT CONNECT ON DATABASE \"${db_name}\" TO \"${DB_USER}\";"
 done
 
 echo "[init] Initialization complete."

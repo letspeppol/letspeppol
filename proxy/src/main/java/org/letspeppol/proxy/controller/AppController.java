@@ -2,6 +2,7 @@ package org.letspeppol.proxy.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.letspeppol.proxy.dto.DocumentDetailsDto;
 import org.letspeppol.proxy.dto.PeppolParties;
 import org.letspeppol.proxy.dto.UblDocumentDto;
 import org.letspeppol.proxy.exception.SecurityException;
@@ -31,7 +32,7 @@ import java.util.UUID;
 public class AppController {
 
     public static final String DEFAULT_SIZE = "100";
-    public static final String ACTING_USER_AUTHORIZATION_HEADER = "X-Acting-User-Authorization";
+    public static final String ACTING_USER_AUTHORIZATION_HEADER = org.letspeppol.proxy.config.SecurityConfig.ACTING_USER_AUTHORIZATION_HEADER;
 
     private final UblDocumentService ublDocumentService;
     private final UblDocumentSenderService ublDocumentSenderService;
@@ -78,6 +79,12 @@ public class AppController {
     public UblDocumentDto getById(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
         String peppolId = JwtUtil.getUserPeppolId(jwt);
         return ublDocumentService.findById(id, peppolId);
+    }
+
+    @GetMapping("{id}/details")
+    public DocumentDetailsDto getDetails(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
+        String peppolId = JwtUtil.getUserPeppolId(jwt);
+        return ublDocumentService.findDetailsById(id, peppolId);
     }
 
     @PostMapping()

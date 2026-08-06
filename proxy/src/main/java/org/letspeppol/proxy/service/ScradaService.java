@@ -1,5 +1,6 @@
 package org.letspeppol.proxy.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.core.instrument.Counter;
@@ -34,6 +35,11 @@ public class ScradaService implements AccessPointServiceInterface {
     public static final String CREDIT_NOTES_VALUE = "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2::CreditNote##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1";
     public static final String PROCESS_SCHEME = "cenbii-procid-ubl";
     public static final String PROCESS_VALUE = "urn:fdc:peppol.eu:2017:poacc:billing:01:1.0";
+
+    /// Peppol participant id as `scheme:value`, e.g. `0208:1029545627`.
+    /// Restricted to a safe header character set (no CR/LF/control chars) to prevent HTTP header injection.
+    private static final java.util.regex.Pattern PEPPOL_ID_PATTERN =
+            java.util.regex.Pattern.compile("[0-9A-Za-z]{1,16}:[0-9A-Za-z._\\-]{1,128}");
 
     private final UblDocumentReceiverService ublDocumentReceiverService;
     @Qualifier("scradaWebClient")
@@ -113,6 +119,20 @@ public class ScradaService implements AccessPointServiceInterface {
         }
     }
 
+    /// Validates and normalizes a Peppol participant id before it is reflected into outbound HTTP headers.
+    /// Rejects null/blank ids and anything that does not match the strict `scheme:value` pattern,
+    /// which also excludes CR/LF and other control characters (header-injection defense).
+    private static String normalizePeppolId(String peppolId) {
+        if (peppolId == null) {
+            throw new IllegalArgumentException("Peppol ID must not be null");
+        }
+        String trimmed = peppolId.trim();
+        if (!PEPPOL_ID_PATTERN.matcher(trimmed).matches()) {
+            throw new IllegalArgumentException("Invalid Peppol ID format");
+        }
+        return trimmed;
+    }
+
     private RuntimeException processErrorResponse(ErrorResponse errorResponse) {
         return switch (errorResponse.errorCode()) {
             case 110554 -> new AlreadyRegisteredException(errorResponse.parameters().get(1));
@@ -154,15 +174,17 @@ public class ScradaService implements AccessPointServiceInterface {
     /// DOCS : [Scrada : Send document](https://www.scrada.be/api-documentation/#tag/Peppol-outbound/paths/~1v1~1company~1%7BcompanyID%7D~1peppol~1outbound~1document/post)
     @Override
     public String sendDocument(UblDocument ublDocument) {
+        String senderId = normalizePeppolId(ublDocument.getOwnerPeppolId());
+        String receiverId = normalizePeppolId(ublDocument.getPartnerPeppolId());
         try {
             String uuid = scradaWebClient
                     .post()
                     .uri("/outbound/document")
                     .contentType(MediaType.APPLICATION_XML)
                     .header("x-scrada-peppol-sender-scheme", PARTICIPANT_SCHEME)
-                    .header("x-scrada-peppol-sender-id", ublDocument.getOwnerPeppolId())
+                    .header("x-scrada-peppol-sender-id", senderId)
                     .header("x-scrada-peppol-receiver-scheme", PARTICIPANT_SCHEME)
-                    .header("x-scrada-peppol-receiver-id", ublDocument.getPartnerPeppolId())
+                    .header("x-scrada-peppol-receiver-id", receiverId)
                     .header("x-scrada-peppol-c1-country-code", "BE") //This is Peppol Corner Stone 1 and always Belgium for Scrada
                     .header("x-scrada-peppol-document-type-scheme", ublDocument.getType() == org.letspeppol.proxy.model.DocumentType.INVOICE ? INVOICES_SCHEME : CREDIT_NOTES_SCHEME)
                     .header("x-scrada-peppol-document-type-value", ublDocument.getType() == org.letspeppol.proxy.model.DocumentType.INVOICE ? INVOICES_VALUE : CREDIT_NOTES_VALUE)
@@ -191,13 +213,8 @@ public class ScradaService implements AccessPointServiceInterface {
     public StatusReport getStatus(UblDocument ublDocument) {
         System.out.print("?");
         try {
-            OutboundDocument outboundDocument = scradaWebClient
-                    .get()
-                    .uri("/outbound/document/{documentID}/info", ublDocument.getAccessPointId())
-                    .retrieve()
-                    .bodyToMono(OutboundDocument.class)
-                    .blockOptional()
-                    .orElseThrow(() -> new IllegalStateException("Empty response from Scrada get unconfirmed inbound documents"));
+            OutboundDocument outboundDocument = getOutboundDocumentInfo(ublDocument);
+            ublDocument.setAccessPointDetails(toMap(outboundDocument));
             return switch (outboundDocument.status()) {
                 case "Created" -> null;
                 case "Processed" -> new StatusReport(true, null);
@@ -215,6 +232,36 @@ public class ScradaService implements AccessPointServiceInterface {
             log.error("Scrada outbound status API call error {}", e.toString(), e);
             throw new RuntimeException("Failed to call Scrada API", e);
         }
+    }
+
+    @Override
+    public Map<String, Object> getDeliveryDetails(UblDocument ublDocument) {
+        try {
+            OutboundDocument outboundDocument = getOutboundDocumentInfo(ublDocument);
+            Map<String, Object> details = toMap(outboundDocument);
+            ublDocument.setAccessPointDetails(details);
+            return details;
+        } catch (WebClientResponseException e) { // HTTP error (non-2xx)
+            log.error("Scrada outbound details API error {} {}: {}", e.getRawStatusCode(), e.getStatusText(), e.getResponseBodyAsString(), e);
+            throw new RuntimeException("Scrada API error: " + e.getStatusCode(), e);
+        } catch (Exception e) { // timeouts, connection issues, deserialization errors, etc.
+            log.error("Scrada outbound details API call error {}", e.toString(), e);
+            throw new RuntimeException("Failed to call Scrada API", e);
+        }
+    }
+
+    private OutboundDocument getOutboundDocumentInfo(UblDocument ublDocument) {
+        return scradaWebClient
+                .get()
+                .uri("/outbound/document/{documentID}/info", ublDocument.getAccessPointId())
+                .retrieve()
+                .bodyToMono(OutboundDocument.class)
+                .blockOptional()
+                .orElseThrow(() -> new IllegalStateException("Empty response from Scrada get outbound document info"));
+    }
+
+    private Map<String, Object> toMap(OutboundDocument outboundDocument) {
+        return objectMapper.convertValue(outboundDocument, new TypeReference<>() {});
     }
 
     @Override

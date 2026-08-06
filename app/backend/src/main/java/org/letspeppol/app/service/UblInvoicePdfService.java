@@ -3,6 +3,7 @@ package org.letspeppol.app.service;
 import com.helger.ubl21.UBL21Marshaller;
 import com.helger.xml.serialize.read.DOMReader;
 import com.helger.xml.serialize.read.DOMReaderSettings;
+import com.openhtmltopdf.extend.FSUriResolver;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import lombok.extern.slf4j.Slf4j;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.AttachmentType;
@@ -55,6 +56,23 @@ public class UblInvoicePdfService {
     private static final String INVOICE_XSLT = "pdf/ubl-invoice-to-html.xsl";
     private static final String CREDITNOTE_XSLT = "pdf/ubl-creditnote-to-html.xsl";
     private static final String GENERATED_INVOICE_ID = "generated_invoice";
+
+    /**
+     * SSRF hardening for the HTML->PDF renderer. The invoice/credit-note HTML is produced from
+     * our own inlined XSLT (no external resources), so we refuse to resolve any external URI
+     * (http/https/file/...) that attacker-controlled UBL/HTML might try to inject. Only inline
+     * {@code data:} URIs are permitted. Returning {@code null} tells openhtmltopdf not to fetch.
+     */
+    private static final FSUriResolver NO_EXTERNAL_RESOURCES_RESOLVER = (baseUri, uri) -> {
+        if (uri == null || uri.isBlank()) {
+            return null;
+        }
+        if (uri.regionMatches(true, 0, "data:", 0, "data:".length())) {
+            return uri;
+        }
+        log.warn("Blocked external resource fetch during PDF rendering");
+        return null;
+    };
 
     private final Templates invoiceToHtmlTemplates;
     private final Templates creditNoteToHtmlTemplates;
@@ -137,6 +155,7 @@ public class UblInvoicePdfService {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             PdfRendererBuilder builder = new PdfRendererBuilder();
             builder.useFastMode();
+            builder.useUriResolver(NO_EXTERNAL_RESOURCES_RESOLVER);
             builder.withHtmlContent(html, "classpath:/");
             builder.toStream(baos);
             builder.run();

@@ -29,7 +29,7 @@
                     </div>
                     <div>
                         <dt t="invoice.paymentQr.reference">Reference</dt>
-                        <dd>${reference || '/'}</dd>
+                        <dd>${referenceLabel || '/'}</dd>
                     </div>
                 </dl>
                 <sepa-qr
@@ -37,7 +37,8 @@
                     beneficiary-bic.bind="bic"
                     beneficiary-account-number.bind="iban"
                     amount-euro.bind="amount"
-                    remittance-information.bind="reference"
+                    creditor-reference.bind="creditorReference"
+                    remittance-information.bind="remittanceInformation"
                     size.bind="256">
                 </sepa-qr>
             </div>

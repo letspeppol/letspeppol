@@ -28,14 +28,14 @@ public interface UblDocumentRepository extends JpaRepository<UblDocument, UUID> 
 
     Optional<UblDocument> findByAccessPointId(String accessPointId);
 
-    long countByOwnerPeppolIdAndDirectionAndProcessedOnIsNullAndAccessPointIsNullAndScheduledOnBetween(
+    long countByOwnerPeppolIdAndDirectionAndScheduledOnBetween(
             String ownerPeppolId,
             DocumentDirection direction,
             Instant startInclusive,
             Instant endExclusive
     );
 
-    long countByOwnerPeppolIdAndPartnerPeppolIdAndDirectionAndProcessedOnIsNullAndAccessPointIsNullAndScheduledOnBetween(
+    long countByOwnerPeppolIdAndPartnerPeppolIdAndDirectionAndScheduledOnBetween(
             String ownerPeppolId,
             String partnerPeppolId,
             DocumentDirection direction,

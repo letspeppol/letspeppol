@@ -35,7 +35,7 @@ public class PartnerController {
     @PutMapping("{id}")
     public PartnerDto updatePartner(@AuthenticationPrincipal Jwt jwt, @PathVariable Long id, @RequestBody PartnerDto partnerDto) {
         String peppolId = JwtUtil.getPeppolId(jwt);
-        return partnerService.updatePartner(id, partnerDto);
+        return partnerService.updatePartner(peppolId, id, partnerDto);
     }
 
     @PostMapping
@@ -47,6 +47,6 @@ public class PartnerController {
     @DeleteMapping("{id}")
     public void deletePartner(@AuthenticationPrincipal Jwt jwt, @PathVariable Long id) {
         String peppolId = JwtUtil.getPeppolId(jwt);
-        partnerService.deletePartner(id);
+        partnerService.deletePartner(peppolId, id);
     }
 }

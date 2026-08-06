@@ -44,7 +44,9 @@ dependencies {
     implementation 'org.apache.pdfbox:pdfbox:3.0.2'
     implementation 'org.apache.pdfbox:fontbox:3.0.2'
     implementation 'com.github.loki4j:loki-logback-appender:2.0.1'
-    implementation 'com.jcraft:jsch:0.1.55'
+    // Maintained drop-in fork of the abandoned com.jcraft:jsch (CVE-2023-48795 / Terrapin).
+    // Same com.jcraft.jsch package API.
+    implementation 'com.github.mwiede:jsch:0.2.18'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 

@@ -23,10 +23,13 @@ import java.util.UUID;
 @Transactional
 public class AccountService {
 
+    private static final int MIN_PASSWORD_LENGTH = 8;
+
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
     private final Counter authenticationCounterFailure;
     private final ProxyService proxyService;
+    private final RateLimiterService rateLimiterService;
 
     public Account getByExternalId(UUID externalId) {
         return accountRepository.findByExternalId(externalId).orElseThrow(() -> new NotFoundException(KycErrorCodes.ACCOUNT_NOT_FOUND));
@@ -53,6 +56,7 @@ public class AccountService {
     }
 
     public Account findAccountWithCredentials(String emailOrUuid, String password) {
+        rateLimiterService.checkLogin(emailOrUuid);
         Account account = null;
         if (!emailOrUuid.contains("@")) {
             try {
@@ -75,8 +79,15 @@ public class AccountService {
     }
 
     public void updatePassword(Account account, String rawPassword) {
+        validatePasswordStrength(rawPassword);
         account.setPasswordHash(passwordEncoder.encode(rawPassword));
         accountRepository.save(account);
+    }
+
+    public void validatePasswordStrength(String rawPassword) {
+        if (rawPassword == null || rawPassword.length() < MIN_PASSWORD_LENGTH) {
+            throw new KycException(KycErrorCodes.INVALID_PASSWORD);
+        }
     }
 
     public void verifyNotRegistered(String email) {

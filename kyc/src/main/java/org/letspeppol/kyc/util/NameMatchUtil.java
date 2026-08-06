@@ -14,11 +14,18 @@ public class NameMatchUtil {
 
         boolean surnameOk = false;
         if (surName != null && !surName.isBlank()) {
-            String sur = norm(surName);
-            if (!sur.isEmpty()) {
-                // substring to allow particles/compounds: "van der Meer" etc.
-                surnameOk = full.contains(sur);
+            // Require every significant surname token (>=2 chars) to appear as a WHOLE WORD.
+            // This still allows compounds/particles like "van der Meer" (each token whole-word)
+            // but stops substring false-positives (e.g. surname "Li" matching "Charlie").
+            String[] surTokens = norm(surName).split("[\\s\\-]+");
+            boolean anySignificant = false;
+            surnameOk = true;
+            for (String t : surTokens) {
+                if (t.length() < 2) continue;
+                anySignificant = true;
+                if (!containsWholeWord(full, t)) { surnameOk = false; break; }
             }
+            if (!anySignificant) surnameOk = false;
         }
 
         boolean givenOk = false;

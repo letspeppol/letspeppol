@@ -60,6 +60,9 @@ function stripPrefixes(obj: unknown): unknown {
         const input = obj as Record<string, unknown>;
         const result: Record<string, unknown> = {};
         for (const key of Object.keys(input)) {
+            if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+                continue;
+            }
             result[key] = stripPrefixes(input[key]);
         }
 

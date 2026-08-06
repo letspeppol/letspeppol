@@ -7,6 +7,7 @@ import {generateCodeVerifier, generateCodeChallenge, generateState, storePkce, r
 import {PartnerService} from "./partner-service";
 import {SponsorService} from "./sponsor-service";
 import {StatisticsService} from "./statistics-service";
+import {SEEN_NOTIFICATION_KEY} from "./welcome-notification-service";
 
 const KYC_BASE = '/kyc';
 const CLIENT_ID = 'letspeppol-ui';
@@ -94,6 +95,7 @@ export class LoginService {
         });
 
         this.clearCachedData();
+        this.clearSeenNotificationFlag();
         window.location.href = `${KYC_BASE}/oauth2/authorize?${params.toString()}`;
     }
 
@@ -188,6 +190,7 @@ export class LoginService {
 
     updateToken(token: string) {
         this.clearCachedData();
+        this.clearSeenNotificationFlag();
         this.applyAccessToken(token);
     }
 
@@ -221,6 +224,7 @@ export class LoginService {
         this.idToken = null;
         localStorage.removeItem(PEPPOL_ACTIVE_KEY);
         localStorage.removeItem(SESSION_HINT_KEY);
+        this.clearSeenNotificationFlag();
         this.authenticated = false;
 
         if (redirectToAuthServer && idToken) {
@@ -233,5 +237,9 @@ export class LoginService {
         this.partnerService.clearCache();
         this.sponsorService.clearCache();
         this.statisticsService.clearCache();
+    }
+
+    private clearSeenNotificationFlag() {
+        localStorage.removeItem(SEEN_NOTIFICATION_KEY);
     }
 }

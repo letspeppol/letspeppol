@@ -33,6 +33,6 @@ RUN chmod +x /usr/local/bin/wait-for-db.sh
 ENV SERVER_PORT=8084
 
 COPY --from=build /workspace/build/libs/kyc.jar kyc.jar
+COPY truststore/belgian-eid.jks /kyc/truststore/belgian-eid.jks
 EXPOSE 8084
 ENTRYPOINT ["sh", "-c", "wait-for-db.sh java $JAVA_OPTS -Dserver.port=$SERVER_PORT -jar /kyc/kyc.jar"]
-

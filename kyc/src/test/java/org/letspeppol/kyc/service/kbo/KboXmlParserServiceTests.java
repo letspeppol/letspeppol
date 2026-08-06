@@ -99,7 +99,7 @@ class KboXmlParserServiceTests {
         InputStream is = getClass().getResourceAsStream("/D20251101.xml");
         assertNotNull(is);
 
-        Company existing = new Company("0208:200762878", "BE0200762878", "Old name");
+        Company existing = new Company("0208:200762878", null, "BE0200762878", "Old name");
         existing.setId(1L);
         existing.setAddress("OldCity", "0000", "OldStreet 1");
         existing.setDirectors(new ArrayList<>());
@@ -132,7 +132,7 @@ class KboXmlParserServiceTests {
         assertNotNull(is);
 
         // Existing company with a registered director that does not appear in the XML
-        Company existing = new Company("0208:0200762878", "BE0200762878", "Old name");
+        Company existing = new Company("0208:0200762878", null, "BE0200762878", "Old name");
         existing.setId(1L);
         existing.setAddress("OldCity", "0000", "OldStreet 1");
         Director registeredDirector = new Director("Legacy Director", existing);
@@ -168,11 +168,11 @@ class KboXmlParserServiceTests {
         InputStream is = getClass().getResourceAsStream("/D20251101.xml");
         assertNotNull(is);
 
-        Company existing1 = new Company("0208:0200762878", "BE0200762878", "VLOTTER");
+        Company existing1 = new Company("0208:0200762878", null, "BE0200762878", "VLOTTER");
         existing1.setId(1L);
         existing1.setAddress("Boom", "2850", "Colonel Silvertopstraat 15");
         existing1.setDirectors(new ArrayList<>(List.of(new Director("Go Van Dy", existing1), new Director("Bary De Smet", existing1))));
-        Company existing2 = new Company("0208:0200881951", "BE0200881951", "Intercommunale Maatschappij voor de Ruimtelijke Ordening en de Economisch- Sociale Expansie van het Arrondissement Halle-Vilvoorde");
+        Company existing2 = new Company("0208:0200881951", null, "BE0200881951", "Intercommunale Maatschappij voor de Ruimtelijke Ordening en de Economisch- Sociale Expansie van het Arrondissement Halle-Vilvoorde");
         existing2.setId(2L);
         existing2.setAddress("Asse", "1731", "Brusselsesteenweg 617");
         existing2.setDirectors(new ArrayList<>(List.of(new Director("Liev Imbrec", existing2), new Director("Diet Phili", existing2))));
@@ -194,7 +194,7 @@ class KboXmlParserServiceTests {
         InputStream is = getClass().getResourceAsStream("/D20251101.xml");
         assertNotNull(is);
 
-        Company existing = new Company("0208:0200762878", "BE0200762878", "VLOTTER");
+        Company existing = new Company("0208:0200762878", null, "BE0200762878", "VLOTTER");
         existing.setAddress("Boom", "2850", "Colonel Silvertopstraat 15");
         existing.setId(3L);
         Director legacyDirector = new Director("Legacy Director", existing);
@@ -267,7 +267,7 @@ class KboXmlParserServiceTests {
         String vatNumber = "BE0" + enterpriseNbr;
 
         // Existing company without KBO address, linked to the business unit number in the XML
-        Company existing = new Company(peppolId, vatNumber, "BITS");
+        Company existing = new Company(peppolId, null, vatNumber, "BITS");
         existing.setId(1L);
         existing.setBusinessUnit("2292261537");
         existing.setHasKboAddress(false);

@@ -21,6 +21,8 @@ export class AppApi {
             .withInterceptor({
                 responseError: (error: Response) => {
                     if (error.status === 401) {
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('peppolActive');
                         this.router.load('login');
                     }
                     throw error;
