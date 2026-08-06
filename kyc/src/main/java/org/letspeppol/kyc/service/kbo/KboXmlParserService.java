@@ -220,10 +220,11 @@ public class KboXmlParserService {
 
     private boolean updateCompany(Company company, EnterpriseData enterprise) {
         boolean changed = false;
+        String vatNumber = enterprise.subjectToVat ? buildVatNumberFromNbr(enterprise.nbr) : null;
 
         if (!Objects.equals(company.getName(), enterprise.name)
             || !Objects.equals(company.getIban(), enterprise.iban)
-            || (!enterprise.subjectToVat && company.getVatNumber() != null)
+            || !Objects.equals(company.getVatNumber(), vatNumber)
             || (enterprise.address != null && (
                 !Objects.equals(company.getCity(), enterprise.address.city)
                 || !Objects.equals(company.getPostalCode(), enterprise.address.postalCode)
@@ -237,12 +238,7 @@ public class KboXmlParserService {
                 company.setStreet(enterprise.address.street);
             }
             company.setIban(enterprise.iban);
-            if (enterprise.subjectToVat) {
-                String vatNumber = buildVatNumberFromNbr(enterprise.nbr);
-                company.setVatNumber(vatNumber);
-            } else {
-                company.setVatNumber(null);
-            }
+            company.setVatNumber(vatNumber);
             changed = true;
         }
         return changed;
@@ -415,19 +411,20 @@ public class KboXmlParserService {
     }
 
     private boolean hasAuthorizationCode00084NotEnded(XMLStreamReader reader) throws XMLStreamException {
+        boolean hasActiveVatAuthorization = false;
         while (reader.hasNext()) {
             int event = reader.next();
             if (event == XMLStreamConstants.START_ELEMENT && "Authorization".equals(reader.getLocalName())) {
                 AuthorizationCode authorizationCode = readAuthorizationCode(reader);
-                if ("00084".equals(authorizationCode.code)) {
-                    return !authorizationCode.ended;
+                if ("00084".equals(authorizationCode.code) && !authorizationCode.ended) {
+                    hasActiveVatAuthorization = true;
                 }
             } else if (event == XMLStreamConstants.END_ELEMENT && "Authorizations".equals(reader.getLocalName())) {
                 break;
             }
         }
 
-        return false;
+        return hasActiveVatAuthorization;
     }
 
     private AuthorizationCode readAuthorizationCode(XMLStreamReader reader) throws XMLStreamException {

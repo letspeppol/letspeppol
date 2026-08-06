@@ -13,7 +13,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +28,11 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class KboXmlParserServiceTests {
+
+    private static final String VAT_TEST_ENTERPRISE_NUMBER = "000000001";
+    private static final String VAT_TEST_PEPPOL_ID = "0208:0000000001";
+    private static final String VAT_TEST_NUMBER = "BE0000000001";
+    private static final String VAT_TEST_IBAN = "TEST-IBAN-0001";
 
     @Mock
     CompanyRepository companyRepository;
@@ -123,6 +130,86 @@ class KboXmlParserServiceTests {
         assertEquals("2850", updated.getPostalCode());
         assertEquals("Colonel Silvertopstraat 15", updated.getStreet());
         assertEquals(2, updated.getDirectors().size());
+    }
+
+    @Test
+    @DisplayName("importEnterprises adds VAT to an existing company when a later 00084 authorization is active")
+    void importEnterprisesAddsVatForLaterActiveAuthorization() {
+        Company existing = new Company(VAT_TEST_PEPPOL_ID, VAT_TEST_ENTERPRISE_NUMBER, null, "Example Company");
+        existing.setId(1L);
+        existing.setIban(VAT_TEST_IBAN);
+        existing.setDirectors(new ArrayList<>(List.of(new Director("Alex Example", existing))));
+
+        when(companyRepository.findWithDirectorsByPeppolId(VAT_TEST_PEPPOL_ID)).thenReturn(Optional.of(existing));
+
+        ArgumentCaptor<List<Company>> batchCaptor = ArgumentCaptor.forClass(List.class);
+        when(kboBatchPersistenceService.saveBatch(batchCaptor.capture())).thenAnswer(invocation -> invocation.getArgument(0));
+
+        kboXmlParserService.importEnterprises(enterpriseXml(activeAndEndedVatAuthorizations()));
+
+        assertEquals(VAT_TEST_NUMBER, existing.getVatNumber());
+        assertEquals(1, batchCaptor.getAllValues().size());
+        assertEquals(List.of(existing), batchCaptor.getValue());
+    }
+
+    @Test
+    @DisplayName("importEnterprises removes VAT from an existing company when all 00084 authorizations have ended")
+    void importEnterprisesRemovesVatForEndedAuthorizations() {
+        Company existing = new Company(VAT_TEST_PEPPOL_ID, VAT_TEST_ENTERPRISE_NUMBER, VAT_TEST_NUMBER, "Example Company");
+        existing.setId(1L);
+        existing.setIban(VAT_TEST_IBAN);
+        existing.setDirectors(new ArrayList<>(List.of(new Director("Alex Example", existing))));
+        when(companyRepository.findWithDirectorsByPeppolId(VAT_TEST_PEPPOL_ID)).thenReturn(Optional.of(existing));
+
+        ArgumentCaptor<List<Company>> batchCaptor = ArgumentCaptor.forClass(List.class);
+        when(kboBatchPersistenceService.saveBatch(batchCaptor.capture())).thenAnswer(invocation -> invocation.getArgument(0));
+
+        kboXmlParserService.importEnterprises(enterpriseXml(endedVatAuthorizations()));
+
+        assertNull(existing.getVatNumber());
+        assertEquals(List.of(existing), batchCaptor.getValue());
+    }
+
+    @Test
+    @DisplayName("importEnterprises gives a new company VAT when one of multiple 00084 authorizations is active")
+    void importEnterprisesCreatesNewCompanyWithVat() {
+        when(companyRepository.findWithDirectorsByPeppolId(VAT_TEST_PEPPOL_ID)).thenReturn(Optional.empty());
+
+        ArgumentCaptor<List<Company>> batchCaptor = ArgumentCaptor.forClass(List.class);
+        when(kboBatchPersistenceService.saveBatch(batchCaptor.capture())).thenAnswer(invocation -> invocation.getArgument(0));
+
+        kboXmlParserService.importEnterprises(enterpriseXml(activeAndEndedVatAuthorizations()));
+
+        Company created = batchCaptor.getValue().get(0);
+        assertEquals(VAT_TEST_NUMBER, created.getVatNumber());
+    }
+
+    @Test
+    @DisplayName("importEnterprises leaves a new company without VAT when all 00084 authorizations have ended")
+    void importEnterprisesCreatesNewCompanyWithoutVat() {
+        when(companyRepository.findWithDirectorsByPeppolId(VAT_TEST_PEPPOL_ID)).thenReturn(Optional.empty());
+
+        ArgumentCaptor<List<Company>> batchCaptor = ArgumentCaptor.forClass(List.class);
+        when(kboBatchPersistenceService.saveBatch(batchCaptor.capture())).thenAnswer(invocation -> invocation.getArgument(0));
+
+        kboXmlParserService.importEnterprises(enterpriseXml(endedVatAuthorizations()));
+
+        Company created = batchCaptor.getValue().get(0);
+        assertNull(created.getVatNumber());
+    }
+
+    @Test
+    @DisplayName("importEnterprises leaves a new company without VAT when it has no Authorizations element")
+    void importEnterprisesCreatesNewCompanyWithoutAuthorizations() {
+        when(companyRepository.findWithDirectorsByPeppolId(VAT_TEST_PEPPOL_ID)).thenReturn(Optional.empty());
+
+        ArgumentCaptor<List<Company>> batchCaptor = ArgumentCaptor.forClass(List.class);
+        when(kboBatchPersistenceService.saveBatch(batchCaptor.capture())).thenAnswer(invocation -> invocation.getArgument(0));
+
+        kboXmlParserService.importEnterprises(enterpriseXml(null));
+
+        Company created = batchCaptor.getValue().get(0);
+        assertNull(created.getVatNumber());
     }
 
     @Test
@@ -296,5 +383,36 @@ class KboXmlParserServiceTests {
 
         // Verify that the repository save was invoked to persist the updated address
         verify(companyRepository, atLeastOnce()).save(existing);
+    }
+
+    private InputStream enterpriseXml(String authorizations) {
+        String authorizationsElement = authorizations == null
+                ? ""
+                : "<Authorizations>" + authorizations + "</Authorizations>";
+        return new ByteArrayInputStream("""
+                <Enterprises>
+                  <Enterprise>
+                    <Nbr>000000001</Nbr>
+                    <Denominations><Denomination><Name>Example Company</Name><Validity><Begin>01/07/2019</Begin></Validity></Denomination></Denominations>
+                    <BankAccounts><BankAccount><Iban>TEST-IBAN-0001</Iban><Validity><Begin>01/07/2019</Begin></Validity></BankAccount></BankAccounts>
+                    <Functions><Function><Code>00001</Code><Validity><Begin>01/07/2019</Begin></Validity><HeldByPerson><Name>Example</Name><FirstName>Alex</FirstName></HeldByPerson></Function></Functions>
+                    %s
+                  </Enterprise>
+                </Enterprises>
+                """.formatted(authorizationsElement).getBytes(StandardCharsets.UTF_8));
+    }
+
+    private String activeAndEndedVatAuthorizations() {
+        return """
+                <Authorization><Code>00084</Code><Validity><Begin>01/07/2011</Begin><End>01/07/2015</End></Validity></Authorization>
+                <Authorization><Code>00084</Code><Validity><Begin>01/07/2019</Begin></Validity></Authorization>
+                """;
+    }
+
+    private String endedVatAuthorizations() {
+        return """
+                <Authorization><Code>00084</Code><Validity><Begin>01/07/2011</Begin><End>01/07/2015</End></Validity></Authorization>
+                <Authorization><Code>00084</Code><Validity><Begin>01/07/2019</Begin><End>31/12/2024</End></Validity></Authorization>
+                """;
     }
 }
