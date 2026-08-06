@@ -75,7 +75,6 @@ import static org.letspeppol.kyc.service.signing.CertificateUtil.getRDNName;
 @RequiredArgsConstructor
 public class SigningService {
 
-    private final ActivationService activationService;
     private final CompanyService companyService;
     private final Counter companyRegistrationCounterSuccess;
     private final Counter companyRegistrationCounterFailure;

@@ -3,6 +3,7 @@ package org.letspeppol.kyc.service;
 
 import org.junit.jupiter.api.Test;
 import org.letspeppol.kyc.model.AccountType;
+import org.letspeppol.kyc.exception.KycException;
 import org.letspeppol.kyc.service.jwt.JwtInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,7 +25,7 @@ public class JwtServiceTest {
         String token = jwtService.generateToken(AccountType.ADMIN, peppolId, true, UUID.randomUUID());
         assertNotNull(token, "Generated token should not be null");
 
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo(token);
+        JwtInfo jwtInfo = jwtService.validateAndGetInfo("Bearer " + token);
         assertEquals(peppolId, jwtInfo.peppolId(), "Extracted peppolId should match original");
     }
 
@@ -32,8 +33,7 @@ public class JwtServiceTest {
     void testInvalidToken() {
         String invalidToken = "this.is.not.a.valid.jwt";
 
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo(invalidToken);
-        assertNull(jwtInfo, "Invalid token should return null");
+        assertThrows(KycException.class, () -> jwtService.validateAndGetInfo("Bearer " + invalidToken));
     }
 
     @Test
@@ -43,7 +43,7 @@ public class JwtServiceTest {
         String token = jwtService.generateToken(AccountType.ADMIN, peppolId, false, UUID.randomUUID());
 
         // Since default expiry is 1h, token should still be valid now
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo(token);
+        JwtInfo jwtInfo = jwtService.validateAndGetInfo("Bearer " + token);
         assertNotNull(jwtInfo, "Token should still be valid (1h expiry)");
         assertEquals(peppolId, jwtInfo.peppolId());
     }

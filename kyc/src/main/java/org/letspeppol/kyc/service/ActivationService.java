@@ -71,7 +71,9 @@ public class ActivationService {
     public void requestActivation(Ownership requester, ConfirmCompanyRequest request, String acceptLanguage) {
         rateLimiterService.checkActivation(request.email());
         AccountType requestedType = request.type() == null ? AccountType.ADMIN : request.type();
-        if (requester == null || requestedType == AccountType.ADMIN) {
+        // Direct public registration must reject an already-administered company. An authenticated
+        // requester may still invite that company's existing administrator into a linked flow.
+        if (requester == null) {
             ownershipService.verifyPeppolIdNotRegistered(request.peppolId());
         }
         String token = generateToken();

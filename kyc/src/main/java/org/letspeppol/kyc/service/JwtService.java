@@ -53,18 +53,22 @@ public class JwtService {
             throw new KycException(KycErrorCodes.AUTHENTCATION_FAILED);
         }
         String token = authHeader.substring("Bearer ".length()).trim();
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-        return new JwtInfo(
-                token,
-                AccountType.valueOf(claims.get(ACCOUNT_TYPE, String.class)),
-                claims.get(PEPPOL_ID, String.class),
-                claims.get(PEPPOL_ACTIVE, Boolean.class),
-                UUID.fromString(claims.get(UID, String.class))
-        );
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+            return new JwtInfo(
+                    token,
+                    AccountType.valueOf(claims.get(ACCOUNT_TYPE, String.class)),
+                    claims.get(PEPPOL_ID, String.class),
+                    claims.get(PEPPOL_ACTIVE, Boolean.class),
+                    UUID.fromString(claims.get(UID, String.class))
+            );
+        } catch (Exception e) {
+            throw new KycException(KycErrorCodes.AUTHENTCATION_FAILED);
+        }
     }
 
     // Internal

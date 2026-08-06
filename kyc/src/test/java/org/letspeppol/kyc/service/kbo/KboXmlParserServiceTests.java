@@ -62,8 +62,8 @@ class KboXmlParserServiceTests {
         // Two enterprises (200762878 and 200881951) match the criteria
         assertEquals(2, persistedCompanies.size());
 
-        Company company1 = persistedCompanies.stream().filter(c -> "BE0200762878".equals(c.getVatNumber())).findFirst().orElseThrow();
-        Company company2 = persistedCompanies.stream().filter(c -> "BE0200881951".equals(c.getVatNumber())).findFirst().orElseThrow();
+        Company company1 = persistedCompanies.stream().filter(c -> "0208:0200762878".equals(c.getPeppolId())).findFirst().orElseThrow();
+        Company company2 = persistedCompanies.stream().filter(c -> "0208:0200881951".equals(c.getPeppolId())).findFirst().orElseThrow();
 
         // Check company 1
         assertEquals("VLOTTER", company1.getName());
@@ -168,11 +168,11 @@ class KboXmlParserServiceTests {
         InputStream is = getClass().getResourceAsStream("/D20251101.xml");
         assertNotNull(is);
 
-        Company existing1 = new Company("0208:0200762878", "0200762878", "BE0200762878", "VLOTTER");
+        Company existing1 = new Company("0208:0200762878", "0200762878", null, "VLOTTER");
         existing1.setId(1L);
         existing1.setAddress("Boom", "2850", "Colonel Silvertopstraat 15");
         existing1.setDirectors(new ArrayList<>(List.of(new Director("Go Van Dy", existing1), new Director("Bary De Smet", existing1))));
-        Company existing2 = new Company("0208:0200881951", "0200881951", "BE0200881951", "Intercommunale Maatschappij voor de Ruimtelijke Ordening en de Economisch- Sociale Expansie van het Arrondissement Halle-Vilvoorde");
+        Company existing2 = new Company("0208:0200881951", "0200881951", null, "Intercommunale Maatschappij voor de Ruimtelijke Ordening en de Economisch- Sociale Expansie van het Arrondissement Halle-Vilvoorde");
         existing2.setId(2L);
         existing2.setAddress("Asse", "1731", "Brusselsesteenweg 617");
         existing2.setDirectors(new ArrayList<>(List.of(new Director("Liev Imbrec", existing2), new Director("Diet Phili", existing2))));

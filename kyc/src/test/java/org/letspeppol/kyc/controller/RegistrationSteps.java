@@ -8,16 +8,22 @@ import org.letspeppol.kyc.model.kbo.Director;
 import org.letspeppol.kyc.repository.*;
 import org.letspeppol.kyc.service.JwtService;
 import org.letspeppol.kyc.service.jwt.JwtInfo;
-import org.letspeppol.kyc.service.signing.CertificateUtil;
-import org.mockito.Mockito;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestComponent;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import javax.security.auth.x500.X500Principal;
+import java.math.BigInteger;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.Signature;
 import java.security.cert.X509Certificate;
+import java.util.Base64;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,11 +32,53 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestComponent
 public class RegistrationSteps {
 
+    private static final byte[] SHA256_DIGEST_INFO_PREFIX = {
+            0x30, 0x31, 0x30, 0x0d, 0x06, 0x09, 0x60, (byte) 0x86, 0x48,
+            0x01, 0x65, 0x03, 0x04, 0x02, 0x01, 0x05, 0x00, 0x04, 0x20
+    };
+
     @Autowired private TestRestTemplate restTemplate;
     @Autowired private EmailVerificationRepository emailVerificationRepository;
     @Autowired private CompanyRepository companyRepository;
     @Autowired private DirectorRepository directorRepository;
     @Autowired private JwtService jwtService;
+
+    private record TestSigningIdentity(String certificate, KeyPair keyPair) {}
+
+    private static TestSigningIdentity testSigningIdentity() {
+        try {
+            KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
+            generator.initialize(2048);
+            KeyPair keyPair = generator.generateKeyPair();
+            X500Principal subject = new X500Principal(
+                    "CN=Test Director, GIVENNAME=Test, SURNAME=Director, SERIALNUMBER=1234567890");
+            var builder = new JcaX509v3CertificateBuilder(
+                    subject, BigInteger.ONE,
+                    new Date(System.currentTimeMillis() - 60_000L),
+                    new Date(System.currentTimeMillis() + 86_400_000L),
+                    subject, keyPair.getPublic());
+            var contentSigner = new JcaContentSignerBuilder("SHA256withRSA").build(keyPair.getPrivate());
+            X509Certificate certificate = new JcaX509CertificateConverter().getCertificate(builder.build(contentSigner));
+            return new TestSigningIdentity(Base64.getEncoder().encodeToString(certificate.getEncoded()), keyPair);
+        } catch (Exception e) {
+            throw new IllegalStateException("Unable to create test signing identity", e);
+        }
+    }
+
+    private static String signPreparedDigest(TestSigningIdentity identity, String base64Digest) {
+        try {
+            byte[] digest = Base64.getDecoder().decode(base64Digest);
+            byte[] digestInfo = new byte[SHA256_DIGEST_INFO_PREFIX.length + digest.length];
+            System.arraycopy(SHA256_DIGEST_INFO_PREFIX, 0, digestInfo, 0, SHA256_DIGEST_INFO_PREFIX.length);
+            System.arraycopy(digest, 0, digestInfo, SHA256_DIGEST_INFO_PREFIX.length, digest.length);
+            Signature signature = Signature.getInstance("NONEwithRSA");
+            signature.initSign(identity.keyPair().getPrivate());
+            signature.update(digestInfo);
+            return Base64.getEncoder().encodeToString(signature.sign());
+        } catch (Exception e) {
+            throw new IllegalStateException("Unable to sign prepared test digest", e);
+        }
+    }
 
     private HttpHeaders basicHeader(String email, String password) {
         // Build Basic header
@@ -191,17 +239,9 @@ public class RegistrationSteps {
     }
 
     void signContract(String peppolId, String email, Long directorId) {
-        // Mock certificate chain for signing using mockStatic
-        try (org.mockito.MockedStatic<CertificateUtil> mocked = Mockito.mockStatic(CertificateUtil.class)) {
-            mocked.when(() -> CertificateUtil.getCertificateChain(Mockito.anyString()))
-                    .thenReturn(new X509Certificate[] { Mockito.mock(X509Certificate.class) });
-
-            String certificate;
-            try {
-                certificate = Files.readString(Paths.get("src/test/resources/test-certificate-base64.txt")).replaceAll("\\s+", "");
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to read test certificate", e);
-            }
+        {
+            TestSigningIdentity identity = testSigningIdentity();
+            String certificate = identity.certificate();
             var signatureAlgorithm = new SignatureAlgorithm("SHA256", "PKCS1", "RSA");
             var prepareRequest = new PrepareSigningRequest(
                     peppolId,
@@ -226,7 +266,7 @@ public class RegistrationSteps {
             assertNotNull(contractResponse.getHeaders().getContentType());
             assertEquals("application/pdf", contractResponse.getHeaders().getContentType().toString());
 
-            String signature = "Pip9ksT1yiqpP6AHEshmzl8ND+oPDF6PYjizuiKbHrwv23LqrqDRwJq/b2mbsAGScxYGdzk+sHGUsKcXr9YIiFXA9AM94GptSxwdjxulc2CA4qmd4KX9TdTjQGkCCj7qE0EMYULEtfPTMNPC61CYSic2fap4nicnBKFDGptHccblQICcNDHJ5hAN9fbFIw2OXWynomFgSBohVr0bDKcZQcUX9Chg0RUZ/4i95HdwXN306k343tLKB/doY+TO70akA3mzjBya+aGaE9QPE7zRvLF4IriRBy6QxzEPSsCHYHrP3w3mPLg2+xWX1Aw5M+m8K6XMuFC5O14Det8FZP4HWQ==";
+            String signature = signPreparedDigest(identity, prepareResponse.hashToSign());
             var finalizeRequest = new FinalizeSigningRequest(
                     peppolId,
                     directorId,
@@ -249,16 +289,9 @@ public class RegistrationSteps {
     }
 
     void signContractAsLoggedIn(String jwtToken, String peppolId, Long directorId) {
-        try (org.mockito.MockedStatic<CertificateUtil> mocked = Mockito.mockStatic(CertificateUtil.class)) {
-            mocked.when(() -> CertificateUtil.getCertificateChain(Mockito.anyString()))
-                    .thenReturn(new X509Certificate[] { Mockito.mock(X509Certificate.class) });
-
-            String certificate;
-            try {
-                certificate = Files.readString(Paths.get("src/test/resources/test-certificate-base64.txt")).replaceAll("\\s+", "");
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to read test certificate", e);
-            }
+        {
+            TestSigningIdentity identity = testSigningIdentity();
+            String certificate = identity.certificate();
             var signatureAlgorithm = new SignatureAlgorithm("SHA256", "PKCS1", "RSA");
             var prepareRequest = new PrepareSigningRequest(
                     peppolId,
@@ -270,7 +303,7 @@ public class RegistrationSteps {
             PrepareSigningResponse prepareResponse = restTemplate.postForObject("/api/identity/sign/prepare", prepareRequest, PrepareSigningResponse.class);
             assertNotNull(prepareResponse);
 
-            String signature = "Pip9ksT1yiqpP6AHEshmzl8ND+oPDF6PYjizuiKbHrwv23LqrqDRwJq/b2mbsAGScxYGdzk+sHGUsKcXr9YIiFXA9AM94GptSxwdjxulc2CA4qmd4KX9TdTjQGkCCj7qE0EMYULEtfPTMNPC61CYSic2fap4nicnBKFDGptHccblQICcNDHJ5hAN9fbFIw2OXWynomFgSBohVr0bDKcZQcUX9Chg0RUZ/4i95HdwXN306k343tLKB/doY+TO70akA3mzjBya+aGaE9QPE7zRvLF4IriRBy6QxzEPSsCHYHrP3w3mPLg2+xWX1Aw5M+m8K6XMuFC5O14Det8FZP4HWQ==";
+            String signature = signPreparedDigest(identity, prepareResponse.hashToSign());
             var finalizeRequest = new FinalizeSigningRequest(
                     peppolId,
                     directorId,
@@ -289,16 +322,9 @@ public class RegistrationSteps {
     }
 
     void signContractAsRequester(String jwtToken, String peppolId, String email, Long directorId) {
-        try (org.mockito.MockedStatic<CertificateUtil> mocked = Mockito.mockStatic(CertificateUtil.class)) {
-            mocked.when(() -> CertificateUtil.getCertificateChain(Mockito.anyString()))
-                    .thenReturn(new X509Certificate[] { Mockito.mock(X509Certificate.class) });
-
-            String certificate;
-            try {
-                certificate = Files.readString(Paths.get("src/test/resources/test-certificate-base64.txt")).replaceAll("\\s+", "");
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to read test certificate", e);
-            }
+        {
+            TestSigningIdentity identity = testSigningIdentity();
+            String certificate = identity.certificate();
             var signatureAlgorithm = new SignatureAlgorithm("SHA256", "PKCS1", "RSA");
             var prepareRequest = new PrepareSigningRequest(
                     peppolId,
@@ -310,7 +336,7 @@ public class RegistrationSteps {
             PrepareSigningResponse prepareResponse = restTemplate.postForObject("/api/identity/sign/prepare", prepareRequest, PrepareSigningResponse.class);
             assertNotNull(prepareResponse);
 
-            String signature = "Pip9ksT1yiqpP6AHEshmzl8ND+oPDF6PYjizuiKbHrwv23LqrqDRwJq/b2mbsAGScxYGdzk+sHGUsKcXr9YIiFXA9AM94GptSxwdjxulc2CA4qmd4KX9TdTjQGkCCj7qE0EMYULEtfPTMNPC61CYSic2fap4nicnBKFDGptHccblQICcNDHJ5hAN9fbFIw2OXWynomFgSBohVr0bDKcZQcUX9Chg0RUZ/4i95HdwXN306k343tLKB/doY+TO70akA3mzjBya+aGaE9QPE7zRvLF4IriRBy6QxzEPSsCHYHrP3w3mPLg2+xWX1Aw5M+m8K6XMuFC5O14Det8FZP4HWQ==";
+            String signature = signPreparedDigest(identity, prepareResponse.hashToSign());
             var finalizeRequest = new FinalizeSigningRequest(
                     peppolId,
                     directorId,
