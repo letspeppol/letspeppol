@@ -59,6 +59,11 @@ public class Company {
         this.street = street;
     }
 
+    public void addDirector(Director director) {
+        directors.add(director);
+        director.setCompany(this);
+    }
+
     public boolean isPeppolActive() {
         return !suspended && registeredOnPeppol;
     }

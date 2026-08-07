@@ -14,7 +14,6 @@ import org.letspeppol.kyc.model.AccountType;
 import org.letspeppol.kyc.model.kbo.Company;
 import org.letspeppol.kyc.model.kbo.Director;
 import org.letspeppol.kyc.repository.CompanyRepository;
-import org.letspeppol.kyc.repository.DirectorRepository;
 import org.letspeppol.kyc.repository.OwnershipRepository;
 import org.letspeppol.kyc.service.kbo.KboLookupService;
 import org.springframework.data.domain.Pageable;
@@ -33,7 +32,6 @@ import java.util.stream.Collectors;
 public class CompanyService {
 
     private final CompanyRepository companyRepository;
-    private final DirectorRepository directorRepository;
     private final OwnershipRepository ownershipRepository;
     private final KboLookupService kboLookupService;
     private final JwtService jwtService;
@@ -69,12 +67,10 @@ public class CompanyService {
     private Company storeCompanyAndDirectors(String peppolId, CompanyResponse companyResponse) {
         Company company = new Company(peppolId, companyResponse.identifier(), companyResponse.vatNumber(), companyResponse.name());
         company.setAddress(companyResponse.city(),companyResponse.postalCode(), companyResponse.street());
-        companyRepository.save(company);
         for (DirectorDto director : companyResponse.directors()) {
-            Director directorToStore = new Director(director.name(), company);
-            directorRepository.save(directorToStore);
+            company.addDirector(new Director(director.name(), company));
         }
-        return company;
+        return companyRepository.save(company);
     }
 
     public RegistrationResponse registerCompany(String peppolId) {
