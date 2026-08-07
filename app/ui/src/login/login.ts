@@ -5,6 +5,7 @@ import {CompanyService} from "../services/app/company-service";
 import {InvoiceContext} from "../invoice/invoice-context";
 import {IEventAggregator} from "aurelia";
 import {SHOW_WELCOME_NOTIFICATIONS} from "../components/welcome-notification/welcome-notification-modal";
+import {toErrorResponse} from "../app/util/error-response-handler";
 
 export class Login {
     private readonly loginService = resolve(LoginService);
@@ -14,7 +15,7 @@ export class Login {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
     email: string;
     password: string;
-    error: boolean = false;
+    errorCode: string | undefined;
     rememberMe: boolean = false;
 
     attached() {
@@ -28,18 +29,22 @@ export class Login {
     }
 
     async verifyLogin() {
+        this.errorCode = undefined;
         try {
             await this.loginService.auth(this.email, this.password);
             await this.loginSuccess();
-        } catch {
-            this.error = true;
+        } catch (error) {
+            const errorResponse = await toErrorResponse(error);
+            this.errorCode = error instanceof Response
+                ? errorResponse?.errorCode ?? "login-failed"
+                : "server-updating";
         }
     }
 
     async loginSuccess() {
         this.invoiceContext.clearAccountCache();
         await this.companyService.getAndSetMyCompanyForToken().then(result => localStorage.setItem('peppolActive', String(result.peppolActive)));
-        this.error = false;
+        this.errorCode = undefined;
         if (this.rememberMe) {
             localStorage.setItem('email', this.email);
         }
@@ -51,7 +56,7 @@ export class Login {
         if (this.loginService.authenticated) {
             this.loginSuccess().catch(() => {
                 this.loginService.logout();
-                this.error = true;
+                this.errorCode = "login-failed";
             });
         }
     }

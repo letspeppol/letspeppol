@@ -21,7 +21,7 @@
                 <span t="login.remember">Remember me</span>
             </label>
         </div>
-        <p if.bind="error" class="form-error" aria-live="assertive" t="error.login-failed">Login failed</p>
+        <p if.bind="errorCode" class="form-error" aria-live="assertive" t="error.${errorCode}">Login failed</p>
         <div class="auth-actions">
             <button type="submit" class="btn primary" t="login.continue">Sign in</button>
         </div>
