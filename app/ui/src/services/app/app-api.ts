@@ -12,8 +12,9 @@ export class AppApi {
         const baseUrl = import.meta.env.VITE_APP_BASE_URL || '/app';
         this.httpClient.configure(config => config
             .withBaseUrl(baseUrl)
+            // No token at construction — LoginService.setAuthHeader() injects the bearer header once
+            // a token is obtained (tokens are held in memory, never in localStorage).
             .withDefaults({
-                headers: localStorage.getItem('token') ? {'Authorization': `Bearer ${localStorage.getItem('token')}`} : undefined,
                 credentials: "include"
             })
             .rejectErrorResponses()

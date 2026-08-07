@@ -10,13 +10,16 @@ import org.letspeppol.proxy.dto.RegistryDto;
 import org.letspeppol.proxy.model.AccessPoint;
 import org.letspeppol.proxy.service.AppLinkService;
 import org.letspeppol.proxy.service.RegistryService;
-import org.letspeppol.proxy.util.JwtUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Registry endpoints are reachable only by trusted backend services (ROLE_SERVICE). The acting
+ * user's peppolId is asserted by the caller (KYC, after its own ADMIN / contract gating) as a
+ * request parameter rather than read from the token, because the service token does not represent
+ * an individual end user.
+ */
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/sapi/registry")
@@ -28,16 +31,14 @@ public class RegistryController {
     private final RegistryService registryService;
 
     @GetMapping()
-    @Operation(summary = "Get registry state", description = "Returns the current proxy registration state for the authenticated company.")
-    public RegistryDto getById(@AuthenticationPrincipal Jwt jwt) {
-        String peppolId = JwtUtil.getUserPeppolId(jwt);
+    @Operation(summary = "Get registry state", description = "Returns the current proxy registration state for the given company.")
+    public RegistryDto getById(@RequestParam String peppolId) {
         return registryService.get(peppolId);
     }
 
     @PostMapping()
-    @Operation(summary = "Register company on access point", description = "Creates or updates proxy registration for the authenticated company using the configured access point.")
-    public ResponseEntity<RegistryDto> register(@AuthenticationPrincipal Jwt jwt, @RequestBody RegistrationRequest data) {
-        String peppolId = JwtUtil.getUserPeppolId(jwt);
+    @Operation(summary = "Register company on access point", description = "Creates or updates proxy registration for the given company using the configured access point.")
+    public ResponseEntity<RegistryDto> register(@RequestParam String peppolId, @RequestBody RegistrationRequest data) {
         return ResponseEntity.status(HttpStatus.OK).body(registryService.register(
             peppolId,
             data,
@@ -46,32 +47,28 @@ public class RegistryController {
     }
 
     @PutMapping("unregister")
-    @Operation(summary = "Unregister company from access point", description = "Disables the proxy registration for the authenticated company while preserving the stored record.")
-    public ResponseEntity<RegistryDto> unregister(@AuthenticationPrincipal Jwt jwt) {
-        String peppolId = JwtUtil.getUserPeppolId(jwt);
+    @Operation(summary = "Unregister company from access point", description = "Disables the proxy registration for the given company while preserving the stored record.")
+    public ResponseEntity<RegistryDto> unregister(@RequestParam String peppolId) {
         return ResponseEntity.status(HttpStatus.OK).body(registryService.unregister(peppolId));
     }
 
     @PutMapping("allow")
-    @Operation(summary = "Allow app link", description = "Approves an app identity so it can act on behalf of the authenticated company through the proxy.")
-    public ResponseEntity<Void> allow(@AuthenticationPrincipal Jwt jwt, @RequestBody AppLinkRequest data) {
-        String peppolId = JwtUtil.getUserPeppolId(jwt);
+    @Operation(summary = "Allow app link", description = "Approves an app identity so it can act on behalf of the given company through the proxy.")
+    public ResponseEntity<Void> allow(@RequestParam String peppolId, @RequestBody AppLinkRequest data) {
         appLinkService.add(peppolId, data.uid());
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("reject")
-    @Operation(summary = "Reject app link", description = "Revokes or rejects an app identity that should no longer act on behalf of the authenticated company.")
-    public ResponseEntity<Void> reject(@AuthenticationPrincipal Jwt jwt, @RequestBody AppLinkRequest data) {
-        String peppolId = JwtUtil.getUserPeppolId(jwt);
+    @Operation(summary = "Reject app link", description = "Revokes or rejects an app identity that should no longer act on behalf of the given company.")
+    public ResponseEntity<Void> reject(@RequestParam String peppolId, @RequestBody AppLinkRequest data) {
         appLinkService.remove(peppolId, data.uid());
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping()
-    @Operation(summary = "Delete registry record", description = "Removes the stored proxy registry entry for the authenticated company.")
-    public ResponseEntity<Void> delete(@AuthenticationPrincipal Jwt jwt) {
-        String peppolId = JwtUtil.getUserPeppolId(jwt);
+    @Operation(summary = "Delete registry record", description = "Removes the stored proxy registry entry for the given company.")
+    public ResponseEntity<Void> delete(@RequestParam String peppolId) {
         registryService.remove(peppolId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

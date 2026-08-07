@@ -16,6 +16,7 @@ import org.letspeppol.kyc.mapper.OwnershipMapper;
 import org.letspeppol.kyc.model.AccountType;
 import org.letspeppol.kyc.model.Ownership;
 import org.letspeppol.kyc.service.*;
+import org.letspeppol.kyc.service.jwt.JwtClaimExtractor;
 import org.letspeppol.kyc.service.jwt.JwtInfo;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -35,13 +36,13 @@ public class LinkedController {
     private final ActivationService activationService;
     private final OwnershipService ownershipService;
     private final IdentityVerificationService identityVerificationService;
-    private final JwtService jwtService;
+    private final JwtClaimExtractor jwtClaimExtractor;
 
     /// Retrieves linked info based on valid JWT token, used by App to show what users or services have access to this account
     @GetMapping
     @Operation(summary = "List linked access", description = "Returns the services and related access records linked to the authenticated company account. Intended for admin users.")
-    public ResponseEntity<List<OwnershipInfo>> getOwnershipsForToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
+    public ResponseEntity<List<OwnershipInfo>> getOwnershipsForToken() {
+        JwtInfo jwtInfo = jwtClaimExtractor.extract();
         if (jwtInfo.accountType() != AccountType.ADMIN) {
             throw new ForbiddenException(KycErrorCodes.NOT_ADMIN);
         }
@@ -50,8 +51,8 @@ public class LinkedController {
 
 //    /// Create a new USER account
 //    @PostMapping("/create")
-//    public ResponseEntity<?> create(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader, @Valid @RequestBody NewUserRequest request) {
-//        JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
+//    public ResponseEntity<?> create(@Valid @RequestBody NewUserRequest request) {
+//        JwtInfo jwtInfo = jwtClaimExtractor.extract();
 //        if (jwtInfo.accountType() != AccountType.ADMIN) {
 //            throw new ForbiddenException(KycErrorCodes.NOT_ADMIN);
 //        }
@@ -61,8 +62,8 @@ public class LinkedController {
     /// Registers a service for account
     @PostMapping("/register")
     @Operation(summary = "Link a service to the company", description = "Registers a service integration or linked service account for the authenticated company. Intended for admin users.")
-    public ResponseEntity<OwnershipInfo> register(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader, @Valid @RequestBody ServiceRequest request) {
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
+    public ResponseEntity<OwnershipInfo> register(@Valid @RequestBody ServiceRequest request) {
+        JwtInfo jwtInfo = jwtClaimExtractor.extract();
         if (jwtInfo.accountType() != AccountType.ADMIN) {
             throw new ForbiddenException(KycErrorCodes.NOT_ADMIN);
         }
@@ -72,8 +73,8 @@ public class LinkedController {
     /// Unregisters a service for account
     @PostMapping("/unregister")
     @Operation(summary = "Unlink a service from the company", description = "Removes a previously linked service integration from the authenticated company. Intended for admin users.")
-    public ResponseEntity<Void> unregister(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader, @Valid @RequestBody ServiceRequest request) {
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
+    public ResponseEntity<Void> unregister(@Valid @RequestBody ServiceRequest request) {
+        JwtInfo jwtInfo = jwtClaimExtractor.extract();
         if (jwtInfo.accountType() != AccountType.ADMIN) {
             throw new ForbiddenException(KycErrorCodes.NOT_ADMIN);
         }
@@ -83,8 +84,8 @@ public class LinkedController {
 
     @PostMapping("/request-company")
     @Operation(summary = "Request onboarding for another company", description = "Starts an additional company request flow based on the currently authenticated ownership context.")
-    public SimpleMessage requestCompany(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader, @RequestBody ConfirmCompanyRequest request, @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, required = false) String acceptLanguage) {
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
+    public SimpleMessage requestCompany(@RequestBody ConfirmCompanyRequest request, @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, required = false) String acceptLanguage) {
+        JwtInfo jwtInfo = jwtClaimExtractor.extract();
         Ownership ownership = ownershipService.getByAccountExternalIdPeppolIdAndType(jwtInfo.uid(), jwtInfo.peppolId(), jwtInfo.accountType());
         activationService.requestActivation(ownership, request, acceptLanguage);
         return new SimpleMessage("Request email sent");

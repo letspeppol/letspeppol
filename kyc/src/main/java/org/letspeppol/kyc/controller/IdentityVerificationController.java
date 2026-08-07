@@ -54,8 +54,8 @@ public class IdentityVerificationController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Signed contract PDF with registration status headers", content = @Content(mediaType = "application/pdf", schema = @Schema(type = "string", format = "binary")))
     })
-    public ResponseEntity<byte[]> finalize(@RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authHeader, @RequestBody FinalizeSigningRequest request) {
-        FinalizeSigningResponse finalizeSigningResponse = signingService.finalizeSign(request, authHeader);
+    public ResponseEntity<byte[]> finalize(@RequestBody FinalizeSigningRequest request) {
+        FinalizeSigningResponse finalizeSigningResponse = signingService.finalizeSign(request);
         String status;
         RegistrationResponse registrationResponse = finalizeSigningResponse.registrationResponse();
         if (registrationResponse == null) {

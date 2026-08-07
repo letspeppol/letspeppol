@@ -20,6 +20,9 @@ export class Heading {
     canAddOwnership = false;
 
     async attached() {
+        // Tokens are held in memory, so after a page reload the access token is only restored once
+        // the silent re-authorization finishes; wait for it before reading the acting ownership.
+        await this.loginService.ensureAuthenticated();
         await this.refreshOwnerships();
     }
 
@@ -27,7 +30,6 @@ export class Heading {
         this.ownerships = [];
         this.selectedOwnershipKey = '';
         this.loginService.logout();
-        this.router.load('login');
     }
 
     clearInvoice() {
@@ -71,7 +73,7 @@ export class Heading {
         }
         this.swapping = true;
         try {
-            await this.ownershipService.swapOwnership(nextOwnership);
+            await this.loginService.swapOwnership(nextOwnership);
             this.selectedOwnershipKey = this.ownershipService.getCurrentOwnershipKey() ?? '';
             this.invoiceContext.clearAccountCache();
             this.ea.publish('account:switched');

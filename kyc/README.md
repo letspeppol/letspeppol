@@ -60,3 +60,9 @@ A devenv environment is available in the `dev/kyc` directory. Make sure you have
 1. To generate a new key you can use the OpenSSL utility: `openssl rand -base64 32`
 2. Add a new key in `application.properties` with e.g. property `encryption.keys.s2=${ENCRYPTION_KEY_2}`
 3. encryption.active-key-id=s1
+
+## Oauth2 keys
+
+`openssl genrsa -out kyc/src/main/resources/kyc-private.pem 2048`
+
+`openssl rsa -in kyc/src/main/resources/kyc-private.pem -pubout -out kyc/src/main/resources/kyc-public.pem`

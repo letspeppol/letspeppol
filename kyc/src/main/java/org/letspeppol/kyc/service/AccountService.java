@@ -1,11 +1,8 @@
 package org.letspeppol.kyc.service;
 
-import io.micrometer.core.instrument.Counter;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.letspeppol.kyc.dto.ServiceRequest;
-import org.letspeppol.kyc.exception.ForbiddenException;
 import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.KycException;
 import org.letspeppol.kyc.exception.NotFoundException;
@@ -28,8 +25,6 @@ public class AccountService {
 
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
-    private final Counter authenticationCounterFailure;
-    private final RateLimiterService rateLimiterService;
 
     public Account getByExternalId(UUID externalId) {
         return accountRepository.findByExternalId(externalId).orElseThrow(() -> new NotFoundException(KycErrorCodes.ACCOUNT_NOT_FOUND));
@@ -37,37 +32,6 @@ public class AccountService {
 
     public Optional<Account> findByEmail(String email) {
         return accountRepository.findByEmail(email.toLowerCase());
-    }
-
-    public Account findAccountWithCredentials(String emailOrUuid, String password) {
-        rateLimiterService.checkLogin(emailOrUuid);
-        Account account = null;
-        if (!emailOrUuid.contains("@")) {
-            try {
-                account = accountRepository.findByExternalId(UUID.fromString(emailOrUuid)).orElse(null);
-            } catch(IllegalArgumentException e) {
-                log.warn("{} does not seem to be a valid UUID", emailOrUuid);
-            }
-        }
-        if (account == null) {
-            account = accountRepository.findByEmail(emailOrUuid.toLowerCase()).orElseThrow(() -> {
-                authenticationCounterFailure.increment();
-                return new NotFoundException(KycErrorCodes.ACCOUNT_NOT_FOUND);
-            });
-        }
-        if (account.getPasswordHash() == null || account.getPasswordHash().isBlank()) {
-            authenticationCounterFailure.increment();
-            throw new KycException(KycErrorCodes.ACCOUNT_NOT_VERIFIED);
-        }
-        if (!passwordEncoder.matches(password, account.getPasswordHash())) {
-            authenticationCounterFailure.increment();
-            throw new KycException(KycErrorCodes.WRONG_PASSWORD);
-        }
-        if (!account.isVerified()) {
-            authenticationCounterFailure.increment();
-            throw new KycException(KycErrorCodes.ACCOUNT_NOT_VERIFIED);
-        }
-        return account;
     }
 
     public void updatePassword(Account account, String rawPassword) {

@@ -3,7 +3,6 @@ import {singleton} from "aurelia";
 import {jwtDecode} from "jwt-decode";
 import {KYCApi} from "../kyc/kyc-api";
 import {CompanyService} from "./company-service";
-import {AppApi} from "./app-api";
 
 export interface OwnershipSummary {
     peppolId: string,
@@ -21,8 +20,10 @@ interface JwtClaims {
 export class OwnershipService {
     private static readonly STORAGE_KEY = 'accountOptions';
     private readonly kycApi = resolve(KYCApi);
-    private readonly appApi = resolve(AppApi);
     private readonly companyService = resolve(CompanyService);
+    // Access tokens live in memory only (see LoginService), so the acting ownership is read from the
+    // token LoginService hands us rather than from localStorage.
+    private currentToken: string | null = null;
     private loadedToken: string | null = null;
     private loadingPromise: Promise<OwnershipSummary[]> | null = null;
 
@@ -32,8 +33,18 @@ export class OwnershipService {
         this.restoreOwnershipsFromStorage();
     }
 
+    /** Called by LoginService whenever the access token changes (login, silent renewal, swap, logout). */
+    onTokenChanged(token: string | null) {
+        this.currentToken = token;
+        if (!token) {
+            this.clearOwnerships();
+            return;
+        }
+        void this.loadOwnerships(true);
+    }
+
     async loadOwnerships(forceReload = false): Promise<OwnershipSummary[]> {
-        const token = localStorage.getItem('token');
+        const token = this.currentToken;
         if (!token) {
             this.clearOwnerships();
             return [];
@@ -68,6 +79,7 @@ export class OwnershipService {
 
     clearOwnerships() {
         this.ownerships = [];
+        this.currentToken = null;
         this.loadedToken = null;
         this.loadingPromise = null;
         localStorage.removeItem(OwnershipService.STORAGE_KEY);
@@ -92,40 +104,46 @@ export class OwnershipService {
         }
     }
 
-    getCurrentOwnershipKey(): string | null {
-        const token = localStorage.getItem('token');
-        if (!token) {
+    private claims(): JwtClaims | null {
+        if (!this.currentToken) {
             return null;
         }
-        const claims = jwtDecode<JwtClaims>(token);
-        if (!claims.peppolId || !claims.accountType) {
+        try {
+            return jwtDecode<JwtClaims>(this.currentToken);
+        } catch {
+            return null;
+        }
+    }
+
+    getCurrentOwnershipKey(): string | null {
+        const claims = this.claims();
+        if (!claims?.peppolId || !claims.accountType) {
             return null;
         }
         return this.getOwnershipKey(claims.peppolId, claims.accountType);
     }
 
     getCurrentOwnershipType(): string | null {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            return null;
-        }
-        const claims = jwtDecode<JwtClaims>(token);
-        return claims.accountType ?? null;
+        return this.claims()?.accountType ?? null;
     }
 
     getOwnershipKey(peppolId: string, type: string): string {
         return `${peppolId}::${type}`;
     }
 
-    async swapOwnership(selection: OwnershipSummary): Promise<void> {
-        const response = await this.kycApi.httpClient.post(
-            `/sapi/jwt/swap`,
-            JSON.stringify({ peppolId: selection.peppolId, type: selection.type })
+    /**
+     * Records the acting company/role server-side. The current access token still carries the old
+     * claims afterwards — LoginService.swapOwnership() re-authorizes silently to refresh them.
+     */
+    async selectOwnership(selection: OwnershipSummary): Promise<void> {
+        await this.kycApi.httpClient.post(
+            `/sapi/account/ownership`,
+            JSON.stringify({peppolId: selection.peppolId, type: selection.type})
         );
-        const token = await response.text();
-        localStorage.setItem('token', token);
-        this.kycApi.httpClient.configure(config => config.withDefaults({ headers: {'Authorization': `Bearer ${token}`} }));
-        this.appApi.httpClient.configure(config => config.withDefaults({ headers: {'Authorization': `Bearer ${token}`} }));
+    }
+
+    /** Reloads the company bound to the current token (used after a swap). */
+    async refreshCompanyContext(): Promise<void> {
         const company = await this.companyService.getAndSetMyCompanyForToken();
         localStorage.setItem('peppolActive', String(company.peppolActive));
     }

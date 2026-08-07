@@ -34,9 +34,11 @@ class CompanySearchTests {
 
     @Test
     void searchCompanies() {
-        Company c1 = new Company("0208:1234567890", "1234567890", "BE1234567890", "Acme Corp");
-        Company c2 = new Company("0208:0987654321", "0987654321", "BE0987654321", "Beta Inc");
-        Company c3 = new Company("0208:1122334455", "1122334455", "BE1122334455", "Acme Limited");
+        // Identifiers deliberately unique to this test: the registration flow tests commit companies
+        // over real HTTP (no rollback), so shared numbers collide depending on execution order.
+        Company c1 = new Company("0208:9900001111", "9900001111", "BE9900001111", "Acme Corp");
+        Company c2 = new Company("0208:9900002222", "9900002222", "BE9900002222", "Beta Inc");
+        Company c3 = new Company("0208:9900003333", "9900003333", "BE9900003333", "Acme Limited");
 
         companyRepository.save(c1);
         companyRepository.save(c2);
@@ -48,12 +50,12 @@ class CompanySearchTests {
         assertThat(results).extracting(CompanySearchResponse::name).contains("Acme Corp", "Acme Limited");
 
         // Search by VAT
-        results = companyService.search(null, "BE0987654321", null, null);
+        results = companyService.search(null, "BE9900002222", null, null);
         assertThat(results).hasSize(1);
         assertThat(results.get(0).name()).isEqualTo("Beta Inc");
 
         // Search by Peppol ID
-        results = companyService.search(null, null, "0208:1122334455", null);
+        results = companyService.search(null, null, "0208:9900003333", null);
         assertThat(results).hasSize(1);
         assertThat(results.get(0).name()).isEqualTo("Acme Limited");
 

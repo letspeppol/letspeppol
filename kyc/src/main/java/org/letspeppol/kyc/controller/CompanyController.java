@@ -18,6 +18,7 @@ import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.model.AccountType;
 import org.letspeppol.kyc.model.kbo.Company;
 import org.letspeppol.kyc.service.*;
+import org.letspeppol.kyc.service.jwt.JwtClaimExtractor;
 import org.letspeppol.kyc.service.jwt.JwtInfo;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -38,14 +39,14 @@ public class CompanyController {
     private final AccountService accountService;
     private final OwnershipService ownershipService;
     private final CompanyService companyService;
-    private final JwtService jwtService;
+    private final JwtClaimExtractor jwtClaimExtractor;
     private final SigningService signingService;
 
     /// Retrieves account info based on valid JWT token, used by App when peppolId is unknown on getCompany (called by UI right after obtaining JWT token)
     @GetMapping
     @Operation(summary = "Load admin company account", description = "Returns the primary admin account and company details for the authenticated Peppol identifier.")
-    public ResponseEntity<AccountInfo> getAdminAccountForToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
+    public ResponseEntity<AccountInfo> getAdminAccountForToken() {
+        JwtInfo jwtInfo = jwtClaimExtractor.extract();
         Account account = ownershipService.getByPeppolIdAndType(jwtInfo.peppolId(), AccountType.ADMIN).getAccount();
         Company company = companyService.getByPeppolId(jwtInfo.peppolId());
         return ResponseEntity.ok(AccountMapper.toAccountInfo(account, company)); //This will be the ADMIN account and thus the one who signed the contract
@@ -54,8 +55,8 @@ public class CompanyController {
     /// Retrieves account info based on valid JWT token, used by App when peppolId is unknown on getCompany (called by UI right after obtaining JWT token)
     @GetMapping("/account")
     @Operation(summary = "Load current account details", description = "Returns the currently authenticated user account together with the related company information.")
-    public ResponseEntity<AccountInfo> getAccountForToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
+    public ResponseEntity<AccountInfo> getAccountForToken() {
+        JwtInfo jwtInfo = jwtClaimExtractor.extract();
         Account account = accountService.getByExternalId(jwtInfo.uid());
         Company company = companyService.getByPeppolId(jwtInfo.peppolId());
         return ResponseEntity.ok(AccountMapper.toAccountInfo(account, company));
@@ -82,8 +83,8 @@ public class CompanyController {
             @ApiResponse(responseCode = "424", description = "Access point registration failed", content = @Content(schema = @Schema(implementation = String.class))),
             @ApiResponse(responseCode = "503", description = "Registration temporarily unavailable")
     })
-    public ResponseEntity<?> register(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
+    public ResponseEntity<?> register() {
+        JwtInfo jwtInfo = jwtClaimExtractor.extract();
         if (jwtInfo.accountType() != AccountType.ADMIN) {
             throw new ForbiddenException(KycErrorCodes.NOT_ADMIN);
         }
@@ -95,13 +96,8 @@ public class CompanyController {
                 }
                 return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("Access Point registration failed; state unchanged.");
             }
-            String token = jwtService.generateToken(
-                    jwtInfo.accountType(),
-                    jwtInfo.peppolId(),
-                    registrationResponse.peppolActive(),
-                    jwtInfo.uid()
-            );
-            return ResponseEntity.ok(token);
+            // peppolActive state changed — client should re-authenticate to get a fresh token
+            return ResponseEntity.ok().build();
         }
         return (ResponseEntity<?>) switch (registrationResponse.errorCode()) {
             case KycErrorCodes.PROXY_REGISTRATION_FAILED,
@@ -124,8 +120,8 @@ public class CompanyController {
             @ApiResponse(responseCode = "204", description = "Company already inactive; no response body"),
             @ApiResponse(responseCode = "424", description = "Access point unregistration failed", content = @Content(schema = @Schema(implementation = String.class)))
     })
-    public ResponseEntity<?> unregister(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
+    public ResponseEntity<?> unregister() {
+        JwtInfo jwtInfo = jwtClaimExtractor.extract();
         if (jwtInfo.accountType() != AccountType.ADMIN) {
             throw new ForbiddenException(KycErrorCodes.NOT_ADMIN);
         }
@@ -136,20 +132,15 @@ public class CompanyController {
             }
             return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("Access Point unregistration failed; state unchanged.");
         }
-        String token = jwtService.generateToken(
-                jwtInfo.accountType(),
-                jwtInfo.peppolId(),
-                peppolActive,
-                jwtInfo.uid()
-        );
-        return ResponseEntity.ok(token);
+        // peppolActive state changed — client should re-authenticate to get a fresh token
+        return ResponseEntity.ok().build();
     }
 
     /// Download signed contract saved for peppolId
     @GetMapping("signed-contract")
     @Operation(summary = "Download signed contract", description = "Returns the signed onboarding contract PDF stored for the authenticated company.")
-    public ResponseEntity<?> signedContract(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
+    public ResponseEntity<?> signedContract() {
+        JwtInfo jwtInfo = jwtClaimExtractor.extract();
         if (jwtInfo.accountType() != AccountType.ADMIN) {
             throw new ForbiddenException(KycErrorCodes.NOT_ADMIN);
         }

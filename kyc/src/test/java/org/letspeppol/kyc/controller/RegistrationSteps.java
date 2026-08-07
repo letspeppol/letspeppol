@@ -6,12 +6,18 @@ import org.letspeppol.kyc.model.EmailVerification;
 import org.letspeppol.kyc.model.kbo.Company;
 import org.letspeppol.kyc.model.kbo.Director;
 import org.letspeppol.kyc.repository.*;
-import org.letspeppol.kyc.service.JwtService;
-import org.letspeppol.kyc.service.jwt.JwtInfo;
+import org.letspeppol.kyc.model.Account;
+import org.letspeppol.kyc.model.Ownership;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.boot.test.context.TestComponent;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
@@ -22,9 +28,12 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.Signature;
 import java.security.cert.X509Certificate;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -41,7 +50,14 @@ public class RegistrationSteps {
     @Autowired private EmailVerificationRepository emailVerificationRepository;
     @Autowired private CompanyRepository companyRepository;
     @Autowired private DirectorRepository directorRepository;
-    @Autowired private JwtService jwtService;
+    @Autowired private AccountRepository accountRepository;
+    @Autowired private OwnershipRepository ownershipRepository;
+    @Autowired private PasswordEncoder passwordEncoder;
+    @Autowired private JwtEncoder jwtEncoder;
+    @Autowired private JwtDecoder jwtDecoder;
+
+    @Value("${oauth2.audience:letspeppol-api}") private String audience;
+    @Value("${spring.security.oauth2.authorizationserver.issuer:}") private String issuer;
 
     private record TestSigningIdentity(String certificate, KeyPair keyPair) {}
 
@@ -105,45 +121,66 @@ public class RegistrationSteps {
         directorRepository.save(director);
     }
 
+    /**
+     * Stands in for the browser's authorization-code login: verifies the credentials the way the
+     * form-login {@code DaoAuthenticationProvider} does, then mints the access token the
+     * authorization server would have issued for the account's acting (most recently used)
+     * ownership. Driving the full PKCE redirect dance here would test Spring Security, not these
+     * registration flows.
+     */
     String login(String email, String password, String peppolId) {
-        // POST /api/jwt/auth
-        String url = "/api/jwt/auth";
-        HttpEntity<Void> request = new HttpEntity<>(basicHeader(email, password));
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo("Bearer " + response.getBody());
-        assertEquals(peppolId, jwtInfo.peppolId());
-        assertEquals(AccountType.ADMIN, jwtInfo.accountType());
-        return response.getBody();
+        return login(email, password, AccountType.ADMIN, peppolId);
     }
 
     String login(String email, String password, AccountType accountType, String peppolId) {
-        // POST /api/jwt/auth
-        String url = "/api/jwt/auth";
-        AuthRequest authRequest = new AuthRequest(accountType, peppolId);
-        HttpEntity<AuthRequest> request = new HttpEntity<>(authRequest, basicHeader(email, password));
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo("Bearer " + response.getBody());
-        assertEquals(peppolId, jwtInfo.peppolId());
-        assertEquals(accountType, jwtInfo.accountType());
-        return response.getBody();
+        Account account = accountRepository.findByEmail(email.toLowerCase()).orElseThrow();
+        assertTrue(account.isVerified(), "Account must be verified to sign in: " + email);
+        assertTrue(passwordEncoder.matches(password, account.getPasswordHash()), "Wrong password for " + email);
+
+        Ownership ownership = ownershipRepository
+                .findFirstByAccountIdAndCompanyPeppolIdAndTypeOrderByLastUsedDesc(account.getId(), peppolId, accountType)
+                .orElseThrow(() -> new AssertionError("No " + accountType + " ownership of " + peppolId + " for " + email));
+        // Selecting an ownership at sign-in is what the UI does right after login.
+        ownership.setLastUsed(Instant.now());
+        ownershipRepository.save(ownership);
+
+        return mintAccessToken(account, ownership);
     }
 
+    /**
+     * Swaps the acting company/role: hits the real selection endpoint, then mints the token the
+     * client would obtain from the follow-up silent re-authorization.
+     */
     String swap(String token, AccountType accountType, String peppolId) {
-        // POST /sapi/jwt/swap
-        String url = "/sapi/jwt/swap";
-        AuthRequest authRequest = new AuthRequest(accountType, peppolId);
-        HttpEntity<AuthRequest> request = new HttpEntity<>(authRequest, jwtHeader(token));
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo("Bearer " + response.getBody());
-        assertEquals(peppolId, jwtInfo.peppolId());
-        assertEquals(accountType, jwtInfo.accountType());
-        return response.getBody();
+        HttpEntity<AuthRequest> request = new HttpEntity<>(new AuthRequest(accountType, peppolId), jwtHeader(token));
+        ResponseEntity<Void> response = restTemplate.exchange("/sapi/account/ownership", HttpMethod.POST, request, Void.class);
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+
+        UUID uid = UUID.fromString(jwtDecoder.decode(token).getClaimAsString("uid"));
+        Account account = accountRepository.findByExternalId(uid).orElseThrow();
+        Ownership acting = ownershipRepository.findFirstByAccountIdOrderByLastUsedDesc(account.getId()).orElseThrow();
+        assertEquals(peppolId, acting.getCompany().getPeppolId());
+        assertEquals(accountType, acting.getType());
+
+        return mintAccessToken(account, acting);
+    }
+
+    /** Mints an access token with the same claim set {@code SecurityConfig#tokenCustomizer} produces. */
+    private String mintAccessToken(Account account, Ownership ownership) {
+        Instant now = Instant.now();
+        JwtClaimsSet.Builder claims = JwtClaimsSet.builder()
+                .issuedAt(now)
+                .expiresAt(now.plus(1, ChronoUnit.HOURS))
+                .subject(account.getEmail())
+                .audience(List.of(audience))
+                .claim("uid", account.getExternalId().toString())
+                .claim("accountType", ownership.getType().name())
+                .claim("peppolId", ownership.getCompany().getPeppolId())
+                .claim("peppolActive", ownership.getCompany().isPeppolActive());
+        if (issuer != null && !issuer.isBlank()) {
+            claims.issuer(issuer);
+        }
+        return jwtEncoder.encode(JwtEncoderParameters.from(claims.build())).getTokenValue();
     }
 
     CompanyResponse getCompany(String peppolId) {

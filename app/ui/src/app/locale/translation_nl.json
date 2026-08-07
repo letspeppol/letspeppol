@@ -554,6 +554,9 @@
     "continue": "Inloggen",
     "forgot": "Wachtwoord vergeten",
     "new": "Nieuw hier?",
+    "or": "of",
+    "passkey": "Inloggen met een passkey",
+    "redirecting": "Doorverwijzen naar inloggen...",
     "register": "Registreer uw bedrijf",
     "remember": "Onthoud mij",
     "title": "Meld u aan bij uw account"
@@ -674,6 +677,26 @@
     },
     "title": "Partners"
   },
+  "passkey": {
+    "add": "Passkey toevoegen",
+    "added": "Toegevoegd op",
+    "default-name": "Mijn passkey",
+    "delete-confirm": "Weet u zeker dat u de passkey \"{{name}}\" wilt verwijderen?",
+    "delete-error": "Verwijderen van passkey mislukt",
+    "delete-title": "Passkey verwijderen",
+    "deleted": "Passkey verwijderd",
+    "empty": "Nog geen passkeys geregistreerd.",
+    "last-used": "Laatst gebruikt",
+    "last-used-never": "Nooit",
+    "load-error": "Laden van passkeys mislukt",
+    "name-placeholder": "Passkey-naam (bijv. MacBook Pro)",
+    "not-supported": "Uw browser ondersteunt geen passkeys.",
+    "register-error": "Registratie van passkey mislukt",
+    "registered": "Passkey geregistreerd",
+    "registering": "Registreren...",
+    "rename-error": "Hernoemen van passkey mislukt",
+    "title": "Passkeys"
+  },
   "password-rules": {
     "length": "Minstens 12 tekens",
     "lower": "Minstens 1 kleine letter",
@@ -780,6 +803,34 @@
       "name": "Naam"
     },
     "title": "Sponsors"
+  },
+  "totp": {
+    "auth-code": "Authenticatiecode",
+    "copy": "Kopiëren",
+    "copy-error": "Kopiëren mislukt",
+    "disable": "2FA uitschakelen",
+    "disable-confirm": "Voer uw huidige authenticatiecode in om 2FA uit te schakelen:",
+    "disabled": "Tweefactorauthenticatie is niet ingeschakeld.",
+    "disabled-alert": "Tweefactorauthenticatie uitgeschakeld",
+    "disabling": "Uitschakelen...",
+    "done": "Klaar",
+    "download": "Downloaden",
+    "enable": "2FA inschakelen",
+    "enabled": "Tweefactorauthenticatie is ingeschakeld.",
+    "enabled-alert": "Tweefactorauthenticatie ingeschakeld",
+    "enter-code": "Voer de 6-cijferige code in van uw app",
+    "invalid-code": "Ongeldige code. Probeer het opnieuw.",
+    "invalid-code-short": "Ongeldige code.",
+    "load-error": "Laden van 2FA-status mislukt",
+    "loading": "Laden...",
+    "manual-entry": "Kan niet scannen? Voer deze sleutel handmatig in",
+    "recovery-copied": "Herstelcodes gekopieerd",
+    "recovery-warning": "Bewaar deze herstelcodes. U zult ze niet meer zien.",
+    "scan-qr": "Scan deze QR-code met uw authenticatie-app:",
+    "setup-error": "Starten van 2FA-configuratie mislukt",
+    "title": "Tweefactorauthenticatie",
+    "verify-enable": "Verifiëren en inschakelen",
+    "verifying": "Verifiëren..."
   },
   "welcome-notification": {
     "title": "Welkom"

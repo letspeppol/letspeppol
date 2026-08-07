@@ -8,6 +8,7 @@ import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.model.AccountType;
 import org.letspeppol.kyc.model.EmailVerification;
 import org.letspeppol.kyc.model.kbo.Director;
+import org.letspeppol.kyc.service.jwt.JwtClaimExtractor;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,20 +17,20 @@ public class SignerAccountResolverService {
 
     public record SignerResolution(Account account, AccountType requestedType) {}
 
-    private final JwtService jwtService;
+    private final JwtClaimExtractor jwtClaimExtractor;
     private final ActivationService activationService;
     private final AccountService accountService;
 
-    public SignerResolution resolveSignerAccount(FinalizeSigningRequest signingRequest, String authHeader, String name) {
-        if (authHeader != null && !authHeader.isBlank()) {
-            var jwtInfo = jwtService.validateAndGetInfo(authHeader);
-            if (jwtInfo.accountType() != AccountType.AFFILIATE) {
-                Account account = accountService.getByExternalId(jwtInfo.uid());
-                if (signingRequest.email() != null && !signingRequest.email().equalsIgnoreCase(account.getEmail())) {
-                    throw new KycException(KycErrorCodes.REQUESTER_NOT_VALID);
-                }
-                return new SignerResolution(account, AccountType.ADMIN);
+    public SignerResolution resolveSignerAccount(FinalizeSigningRequest signingRequest, String name) {
+        // Signing is reachable anonymously (an invited director completing onboarding), so a token
+        // is optional here; when one is present the signer is the authenticated account itself.
+        var jwtInfo = jwtClaimExtractor.extractOptional().orElse(null);
+        if (jwtInfo != null && jwtInfo.accountType() != AccountType.AFFILIATE) {
+            Account account = accountService.getByExternalId(jwtInfo.uid());
+            if (signingRequest.email() != null && !signingRequest.email().equalsIgnoreCase(account.getEmail())) {
+                throw new KycException(KycErrorCodes.REQUESTER_NOT_VALID);
             }
+            return new SignerResolution(account, AccountType.ADMIN);
         }
 
         if (signingRequest.email() == null || signingRequest.email().isBlank()) {

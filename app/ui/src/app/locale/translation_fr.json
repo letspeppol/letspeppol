@@ -554,6 +554,9 @@
     "continue": "Se connecter",
     "forgot": "Mot de passe oublié",
     "new": "Nouveau ici ?",
+    "or": "ou",
+    "passkey": "Se connecter avec une clé d'accès",
+    "redirecting": "Redirection vers la connexion...",
     "register": "Enregistrez votre entreprise",
     "remember": "Se souvenir de moi",
     "title": "Se connecter à votre compte"
@@ -674,6 +677,26 @@
     },
     "title": "Partenaires"
   },
+  "passkey": {
+    "add": "Ajouter une clé",
+    "added": "Ajoutée le",
+    "default-name": "Ma clé d'accès",
+    "delete-confirm": "Êtes-vous sûr de vouloir supprimer la clé d'accès \"{{name}}\" ?",
+    "delete-error": "Échec de la suppression de la clé d'accès",
+    "delete-title": "Supprimer la clé d'accès",
+    "deleted": "Clé d'accès supprimée",
+    "empty": "Aucune clé d'accès enregistrée.",
+    "last-used": "Dernière utilisation",
+    "last-used-never": "Jamais",
+    "load-error": "Échec du chargement des clés d'accès",
+    "name-placeholder": "Nom de la clé (ex. MacBook Pro)",
+    "not-supported": "Votre navigateur ne prend pas en charge les clés d'accès.",
+    "register-error": "Échec de l'enregistrement de la clé d'accès",
+    "registered": "Clé d'accès enregistrée",
+    "registering": "Enregistrement...",
+    "rename-error": "Échec du renommage de la clé d'accès",
+    "title": "Clés d'accès"
+  },
   "password-rules": {
     "length": "Au moins 12 caractères",
     "lower": "Au moins 1 minuscule",
@@ -780,6 +803,34 @@
       "name": "Nom"
     },
     "title": "Sponsors"
+  },
+  "totp": {
+    "auth-code": "Code d'authentification",
+    "copy": "Copier",
+    "copy-error": "Échec de la copie",
+    "disable": "Désactiver la 2FA",
+    "disable-confirm": "Entrez votre code d'authentification actuel pour désactiver la 2FA :",
+    "disabled": "L'authentification à deux facteurs n'est pas activée.",
+    "disabled-alert": "Authentification à deux facteurs désactivée",
+    "disabling": "Désactivation...",
+    "done": "Terminé",
+    "download": "Télécharger",
+    "enable": "Activer la 2FA",
+    "enabled": "L'authentification à deux facteurs est activée.",
+    "enabled-alert": "Authentification à deux facteurs activée",
+    "enter-code": "Entrez le code à 6 chiffres de votre application",
+    "invalid-code": "Code invalide. Veuillez réessayer.",
+    "invalid-code-short": "Code invalide.",
+    "load-error": "Échec du chargement du statut 2FA",
+    "loading": "Chargement...",
+    "manual-entry": "Impossible de scanner ? Entrez cette clé manuellement",
+    "recovery-copied": "Codes de récupération copiés",
+    "recovery-warning": "Sauvegardez ces codes de récupération. Vous ne les reverrez plus.",
+    "scan-qr": "Scannez ce QR code avec votre application d'authentification :",
+    "setup-error": "Échec du démarrage de la configuration 2FA",
+    "title": "Authentification à deux facteurs",
+    "verify-enable": "Vérifier et activer",
+    "verifying": "Vérification..."
   },
   "welcome-notification": {
     "title": "Bienvenue"

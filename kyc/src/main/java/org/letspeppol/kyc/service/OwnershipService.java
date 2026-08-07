@@ -29,7 +29,6 @@ public class OwnershipService {
     private final OwnershipRepository ownershipRepository;
     private final AccountService accountService;
     private final CompanyService companyService;
-    private final JwtService jwtService;
     private final ProxyService proxyService;
 
     public Ownership getByAccountExternalIdPeppolIdAndType(UUID uid, String peppolId, AccountType type) {
@@ -37,30 +36,17 @@ public class OwnershipService {
                 .orElseThrow(() -> new KycException(KycErrorCodes.NO_OWNERSHIP));
     }
 
-    public String generateAuthToken(Account account, AuthRequest request) {
-        Ownership ownership = (request == null)
-                ? ownershipRepository.findFirstByAccountIdOrderByLastUsedDesc(account.getId())
-                .orElseThrow(() -> new KycException(KycErrorCodes.NO_OWNERSHIP))
-                : ownershipRepository.findFirstByAccountIdAndCompanyPeppolIdAndTypeOrderByLastUsedDesc(account.getId(), request.peppolId(), request.type())
-                .orElseThrow(() -> new KycException(KycErrorCodes.NO_OWNERSHIP));
-        updateLastUsed(ownership);
-        return jwtService.generateToken(
-                ownership.getType(),
-                ownership.getCompany().getPeppolId(),
-                ownership.getCompany().isPeppolActive(),
-                account.getExternalId()
-        );
-    }
-
-    public String generateSwapToken(UUID uid, AuthRequest request) {
+    /**
+     * Makes the requested ownership the acting one for this account.
+     *
+     * <p>Access tokens resolve the acting ownership as the most recently used one at mint time, so
+     * touching {@code lastUsed} here is what a swap consists of: the caller then re-authorizes
+     * silently and receives a token carrying the new company and role.
+     */
+    public Ownership selectOwnership(UUID uid, AuthRequest request) {
         Ownership ownership = getByAccountExternalIdPeppolIdAndType(uid, request.peppolId(), request.type());
         updateLastUsed(ownership);
-        return jwtService.generateToken(
-                ownership.getType(),
-                ownership.getCompany().getPeppolId(),
-                ownership.getCompany().isPeppolActive(),
-                uid
-        );
+        return ownership;
     }
 
     public Ownership getByPeppolIdAndType(String peppolId, AccountType type) {
@@ -117,15 +103,12 @@ public class OwnershipService {
         Company company = companyService.getByPeppolId(peppolId);
         Account service = accountService.getByExternalId(request.uid());
         Ownership ownership = link(service, AccountType.APP, company);
-        String token = jwtService.generateInternalToken(company.getPeppolId(), company.isPeppolActive(), uid);
-        proxyService.allowService(token, request);
+        proxyService.allowService(company.getPeppolId(), request);
         return ownership;
     }
 
     public void unlinkServiceFromAccount(String peppolId, UUID uid, ServiceRequest request) {
-        Company company = companyService.getByPeppolId(peppolId);
         unlink(request.uid(), AccountType.APP, peppolId);
-        String token = jwtService.generateInternalToken(company.getPeppolId(), company.isPeppolActive(), uid);
-        proxyService.rejectService(token, request);
+        proxyService.rejectService(peppolId, request);
     }
 }
