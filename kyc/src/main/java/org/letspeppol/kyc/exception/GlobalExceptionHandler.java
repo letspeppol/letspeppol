@@ -40,7 +40,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleKycException(KycException ex) {
         Map<String, Object> body = new HashMap<>();
         body.put("errorCode", ex.getCode());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+        HttpStatus status = KycErrorCodes.AUTHENTCATION_FAILED.equals(ex.getCode())
+                ? HttpStatus.UNAUTHORIZED
+                : HttpStatus.BAD_REQUEST;
+        return ResponseEntity.status(status).body(body);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
