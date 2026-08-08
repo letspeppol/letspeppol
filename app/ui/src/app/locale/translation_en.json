@@ -554,6 +554,9 @@
     "continue": "Sign in",
     "forgot": "Forgot my password",
     "new": "New here?",
+    "or": "or",
+    "passkey": "Sign in with a passkey",
+    "redirecting": "Redirecting to login...",
     "register": "Register your company",
     "remember": "Remember me",
     "title": "Sign in to your account"
@@ -674,6 +677,26 @@
     },
     "title": "Partners"
   },
+  "passkey": {
+    "add": "Add passkey",
+    "added": "Added",
+    "default-name": "My passkey",
+    "delete-confirm": "Are you sure you want to delete the passkey \"{{name}}\"?",
+    "delete-error": "Failed to delete passkey",
+    "delete-title": "Delete passkey",
+    "deleted": "Passkey deleted",
+    "empty": "No passkeys registered yet.",
+    "last-used": "Last used",
+    "last-used-never": "Never",
+    "load-error": "Failed to load passkeys",
+    "name-placeholder": "Passkey name (e.g. MacBook Pro)",
+    "not-supported": "Your browser does not support passkeys.",
+    "register-error": "Failed to register passkey",
+    "registered": "Passkey registered",
+    "registering": "Registering...",
+    "rename-error": "Failed to rename passkey",
+    "title": "Passkeys"
+  },
   "password-rules": {
     "length": "At least 12 characters",
     "lower": "At least 1 lowercase letter",
@@ -780,6 +803,34 @@
       "name": "Name"
     },
     "title": "Sponsors"
+  },
+  "totp": {
+    "auth-code": "Authentication code",
+    "copy": "Copy",
+    "copy-error": "Failed to copy",
+    "disable": "Disable 2FA",
+    "disable-confirm": "Enter your current authenticator code to disable 2FA:",
+    "disabled": "Two-factor authentication is not enabled.",
+    "disabled-alert": "Two-factor authentication disabled",
+    "disabling": "Disabling...",
+    "done": "Done",
+    "download": "Download",
+    "enable": "Enable 2FA",
+    "enabled": "Two-factor authentication is enabled.",
+    "enabled-alert": "Two-factor authentication enabled",
+    "enter-code": "Enter the 6-digit code from your app",
+    "invalid-code": "Invalid code. Please try again.",
+    "invalid-code-short": "Invalid code.",
+    "load-error": "Failed to load 2FA status",
+    "loading": "Loading...",
+    "manual-entry": "Can't scan? Enter this key manually",
+    "recovery-copied": "Recovery codes copied",
+    "recovery-warning": "Save these recovery codes. You won't see them again.",
+    "scan-qr": "Scan this QR code with your authenticator app:",
+    "setup-error": "Failed to start 2FA setup",
+    "title": "Two-Factor Authentication",
+    "verify-enable": "Verify & Enable",
+    "verifying": "Verifying..."
   },
   "welcome-notification": {
     "title": "Welcome"

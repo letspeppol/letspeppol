@@ -554,6 +554,9 @@
     "continue": "Anmelden",
     "forgot": "Passwort vergessen",
     "new": "Neu hier?",
+    "or": "oder",
+    "passkey": "Mit Passkey anmelden",
+    "redirecting": "Weiterleitung zur Anmeldung...",
     "register": "Unternehmen registrieren",
     "remember": "Angemeldet bleiben",
     "title": "Bei Ihrem Konto anmelden"
@@ -674,6 +677,26 @@
     },
     "title": "Partner"
   },
+  "passkey": {
+    "add": "Passkey hinzufügen",
+    "added": "Hinzugefügt am",
+    "default-name": "Mein Passkey",
+    "delete-confirm": "Möchten Sie den Passkey \"{{name}}\" wirklich löschen?",
+    "delete-error": "Löschen des Passkeys fehlgeschlagen",
+    "delete-title": "Passkey löschen",
+    "deleted": "Passkey gelöscht",
+    "empty": "Noch keine Passkeys registriert.",
+    "last-used": "Zuletzt verwendet",
+    "last-used-never": "Nie",
+    "load-error": "Laden der Passkeys fehlgeschlagen",
+    "name-placeholder": "Passkey-Name (z.B. MacBook Pro)",
+    "not-supported": "Ihr Browser unterstützt keine Passkeys.",
+    "register-error": "Registrierung des Passkeys fehlgeschlagen",
+    "registered": "Passkey registriert",
+    "registering": "Registrierung...",
+    "rename-error": "Umbenennung des Passkeys fehlgeschlagen",
+    "title": "Passkeys"
+  },
   "password-rules": {
     "length": "Mindestens 12 Zeichen",
     "lower": "Mindestens 1 Kleinbuchstabe",
@@ -780,6 +803,34 @@
       "name": "Name"
     },
     "title": "Sponsoren"
+  },
+  "totp": {
+    "auth-code": "Authentifizierungscode",
+    "copy": "Kopieren",
+    "copy-error": "Kopieren fehlgeschlagen",
+    "disable": "2FA deaktivieren",
+    "disable-confirm": "Geben Sie Ihren aktuellen Authentifizierungscode ein, um 2FA zu deaktivieren:",
+    "disabled": "Zwei-Faktor-Authentifizierung ist nicht aktiviert.",
+    "disabled-alert": "Zwei-Faktor-Authentifizierung deaktiviert",
+    "disabling": "Deaktivierung...",
+    "done": "Fertig",
+    "download": "Herunterladen",
+    "enable": "2FA aktivieren",
+    "enabled": "Zwei-Faktor-Authentifizierung ist aktiviert.",
+    "enabled-alert": "Zwei-Faktor-Authentifizierung aktiviert",
+    "enter-code": "Geben Sie den 6-stelligen Code aus Ihrer App ein",
+    "invalid-code": "Ungültiger Code. Bitte versuchen Sie es erneut.",
+    "invalid-code-short": "Ungültiger Code.",
+    "load-error": "Laden des 2FA-Status fehlgeschlagen",
+    "loading": "Laden...",
+    "manual-entry": "Scannen nicht möglich? Geben Sie diesen Schlüssel manuell ein",
+    "recovery-copied": "Wiederherstellungscodes kopiert",
+    "recovery-warning": "Speichern Sie diese Wiederherstellungscodes. Sie werden sie nicht erneut sehen.",
+    "scan-qr": "Scannen Sie diesen QR-Code mit Ihrer Authentifizierungs-App:",
+    "setup-error": "Starten der 2FA-Einrichtung fehlgeschlagen",
+    "title": "Zwei-Faktor-Authentifizierung",
+    "verify-enable": "Überprüfen und aktivieren",
+    "verifying": "Überprüfung..."
   },
   "welcome-notification": {
     "title": "Willkommen"

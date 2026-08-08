@@ -110,32 +110,29 @@ export class RegistrationService {
     }
 
     async unregisterCompany(): Promise<boolean> {
-        const response = await this.kycApi.httpClient.fetch('/sapi/company/peppol/unregister', { method: 'POST' }); //Using fetch to expose response header
+        const response = await this.kycApi.httpClient.fetch('/sapi/company/peppol/unregister', { method: 'POST' });
         if (response.status === 204) {
             console.log("Was already unregistered");
             return false;
         }
-        const token = await response.text();
-        if (response.ok && token?.trim()) {
-            this.loginService.updateToken(token.trim());
+        if (response.ok) {
+            // peppolActive flipped, so the token's claims are stale; KYC mints tokens now, hence a
+            // silent re-authorization rather than a token handed back in the response body.
+            await this.loginService.refreshToken();
             return false;
         }
         return true;
     }
 
     async registerCompany(): Promise<boolean> {
-        const response = await this.kycApi.httpClient.fetch('/sapi/company/peppol/register', { method: 'POST' }); //Using fetch to expose response header
+        const response = await this.kycApi.httpClient.fetch('/sapi/company/peppol/register', { method: 'POST' });
         if (response.status === 204) {
             console.log("Was already registered");
             return true;
         }
         if (response.ok) {
-            const token = await response.text();
-            if (token?.trim()) {
-                this.loginService.updateToken(token.trim());
-                return true;
-            }
-            return false;
+            await this.loginService.refreshToken();
+            return true;
         }
         throw response;
     }

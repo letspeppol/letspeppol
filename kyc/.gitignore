@@ -36,3 +36,5 @@ out/
 
 ### VS Code ###
 .vscode/
+/src/main/resources/kyc-private.pem
+/src/main/resources/kyc-public.pem

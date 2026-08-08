@@ -91,7 +91,7 @@ Note over SME, Peppol: Verify email of new ADMIN requested by AFFILIATE
 Note over SME, Peppol: Accepting AFFILIATE request by ADMIN
     Note left of SME: Read requester
     SME ->> Frontend: LoginToConfirm( email, password )
-    Frontend ->> KYC: POST /api/jwt/auth <br> ( AccountType.ADMIN, peppolId )
+    Frontend ->> KYC: OAuth2 Authorization Code + PKCE (see login.md) <br> acting ownership = ( AccountType.ADMIN, peppolId )
     Note right of KYC: Validate credentials <br> Update last used ownership
     KYC ->> Frontend: JWT ( AccountType.ADMIN, peppolId, peppolActive, uid )
     opt if accepted

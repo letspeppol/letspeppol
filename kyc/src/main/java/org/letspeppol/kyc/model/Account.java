@@ -47,6 +47,16 @@ public class Account {
     private boolean verified = false;
     private Instant verifiedOn;
 
+    @Column(name = "totp_secret")
+    private String totpSecret;
+
+    @Builder.Default
+    @Column(name = "totp_enabled", nullable = false)
+    private boolean totpEnabled = false;
+
+    @Column(name = "totp_recovery_codes")
+    private String totpRecoveryCodes;
+
     @Builder.Default
     @Column(unique = true, nullable = false)
     private UUID externalId = UUID.randomUUID(); //Is an ID that is allowed to be exposed externally

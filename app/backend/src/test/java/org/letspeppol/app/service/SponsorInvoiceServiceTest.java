@@ -20,7 +20,6 @@ class SponsorInvoiceServiceTest {
             null,
             null,
             null,
-            null,
             null
     );
 

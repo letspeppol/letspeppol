@@ -326,7 +326,7 @@ public class SigningService {
         return NameMatchUtil.matches(givenName, surName, fullName);
     }
 
-    public FinalizeSigningResponse finalizeSign(FinalizeSigningRequest signingRequest, String authHeader) {
+    public FinalizeSigningResponse finalizeSign(FinalizeSigningRequest signingRequest) {
         finalizeSigningCounter.increment();
         Director director = getDirector(signingRequest.directorId(), signingRequest.peppolId());
         log.info("Finalizing contract signing for company {} and director {}", signingRequest.peppolId(), signingRequest.directorId());
@@ -371,7 +371,7 @@ public class SigningService {
                 certificates[0],
                 CertificateUtil.getX500Name(certificates)
         );
-        SignerAccountResolverService.SignerResolution signerResolution = signerAccountResolverService.resolveSignerAccount(signingRequest, authHeader, director.getName());
+        SignerAccountResolverService.SignerResolution signerResolution = signerAccountResolverService.resolveSignerAccount(signingRequest, director.getName());
         Account account = signerResolution.account();
         ownershipService.ensureAdminOwnership(account, director.getCompany());
         DirectorIdentityVerification ignored = identityVerificationService.recordDirectorSignature(account, identityVerificationRequest);
