@@ -7,12 +7,14 @@
 <import from="./components/modals/invoice-number-modal"></import>
 <import from="./components/modals/validation-result-modal"></import>
 <import from="./components/modals/invoice-delivery-modal"></import>
+<import from="./components/modals/invoice-allowance-charge-modal"></import>
 <import from="./components/tiles/customer-info"></import>
 <import from="./components/tiles/invoice-info"></import>
 <import from="./components/tiles/date-info"></import>
 <import from="./components/tiles/payment-info"></import>
 <import from="./components/tiles/attachment-info"></import>
 <import from="./components/tiles/total-info"></import>
+<import from="./components/tiles/allowance-charge-info"></import>
 <import from="./components/invoice-edit-items"></import>
 
 <invoice-modal component.ref="invoiceModal" invoice-context.bind="invoiceContext" original-document-type.two-way="selectedDocumentType"></invoice-modal>
@@ -23,6 +25,7 @@
 <invoice-number-modal component.ref="invoiceNumberModal" invoice-context.bind="invoiceContext"></invoice-number-modal>
 <validation-result-modal component.ref="validationResultModal"></validation-result-modal>
 <invoice-delivery-modal component.ref="invoiceDeliveryModal"></invoice-delivery-modal>
+<invoice-allowance-charge-modal component.ref="invoiceAllowanceChargeModal"></invoice-allowance-charge-modal>
 
 <template if.bind="invoiceContext.selectedInvoice">
 <div class="invoices-main">
@@ -70,7 +73,7 @@
     </div>
 
     <form id="invoiceForm" class="card composer-card">
-        <div  class="composer-head">
+        <div class="composer-head">
             <invoice-info read-only.bind="readOnly" show-invoice-modal.bind="() => showInvoiceModal()"></invoice-info>
 
             <date-info read-only.bind="readOnly" show-date-modal.bind="() => showDateModal()"></date-info>
@@ -88,7 +91,10 @@
 
             <payment-info read-only.bind="readOnly" show-payment-modal.bind="() => showPaymentModal()" component.ref="paymentInfo"></payment-info>
 
-            <attachment-info read-only.bind="readOnly" show-attachment-modal.bind="() => showAttachmentModal()"></attachment-info>
+            <div style="display: flex; flex-direction: column; gap: 5px">
+                <attachment-info read-only.bind="readOnly" show-attachment-modal.bind="() => showAttachmentModal()"></attachment-info>
+                <allowance-charge-info read-only.bind="readOnly" show-allowance-charge-modal.bind="() => showAllowanceChargeModal()"></allowance-charge-info>
+            </div>
 
             <total-info read-only.bind="readOnly"></total-info>
         </div>

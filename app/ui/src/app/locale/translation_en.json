@@ -308,6 +308,11 @@
       }
     },
     "all": "All",
+    "allowanceChargeModal": {
+      "title": "Discount/Costs",
+      "quantity": "Quantity/Amount"
+
+    },
     "attachmentModal": {
       "auto-pdf": "Include the auto-generated invoice PDF",
       "auto-pdf-replace": "An invoice PDF is generated automatically. Turn it off above if your uploaded file replaces it.",
@@ -354,6 +359,7 @@
     "edit": {
       "actions": "Actions",
       "add-line": "Add line",
+      "allowance-charge": "Discount/Costs",
       "amount": "Amount",
       "attachments": "Attachments",
       "buyer-reference": "Buyer Reference",

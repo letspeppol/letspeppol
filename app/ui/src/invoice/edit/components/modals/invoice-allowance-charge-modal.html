@@ -1,0 +1,70 @@
+<import from="../../../../app/value-converters/price.ts"></import>
+
+<div class="modal" role="dialog" aria-modal="true" show.bind="open">
+    <div class="modal-backdrop"></div>
+    <div class="modal-card" keydown.trigger="onKeyDown($event)">
+        <header class="modal-header">
+            <h2 t="invoice.allowanceChargeModal.title">Discount/Costs</h2>
+            <button class="icon-btn" click.trigger="cancelAllowanceCharge()" aria-label="Close dialog" t="[aria-label]common.close" title="Close" t="[title]common.close">×</button>
+        </header>
+        <div class="modal-body">
+            <div style="display: inline-grid; gap: var(--space-1)">
+                <label class="field">
+                    <span t="invoice.allowanceChargeModal.quantity">Name</span>
+                    <input type="number" name="payeeFinancialAccountName" value.bind="amount" />
+                </label>
+            </div>
+            <div style="display: flex; flex-direction: row; justify-content: space-between">
+                <div class="display-toggle">
+                    <span class="vat-toggle-label" class.bind="mode === 'percentage' ? 'active' : ''" click.trigger="mode = 'percentage'">Percentage</span>
+                    <label class="switch">
+                        <input type="checkbox" checked.to-view="mode === 'amount'" change.trigger="mode = $event.target.checked ? 'amount' : 'percentage'" />
+                        <span class="slider"></span>
+                    </label>
+                    <span class="vat-toggle-label" class.bind="mode === 'amount' ? 'active' : ''" click.trigger="mode = 'amount'">Amount</span>
+                </div>
+                <div class="display-toggle">
+                    <span class="vat-toggle-label" class.bind="reason === 'discount' ? 'active' : ''" click.trigger="reason = 'discount'">Discount</span>
+                    <label class="switch">
+                        <input type="checkbox" checked.to-view="reason === 'cost'" change.trigger="reason = $event.target.checked ? 'cost' : 'discount'" />
+                        <span class="slider"></span>
+                    </label>
+                    <span class="vat-toggle-label" class.bind="reason === 'cost' ? 'active' : ''" click.trigger="reason = 'cost'">Cost</span>
+                </div>
+                <button type="button" class="btn primary" click.trigger="addLine()" disabled.bind="!amount">+ <span t="invoice.edit.add-line">Add</span></button>
+            </div>
+            <div class="table-wrapper">
+                <table class="data-table line-table">
+                    <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Value</th>
+                        <th class="actions-col" style="width:1%" t="invoice.edit.actions">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr repeat.for="line of allowanceCharge">
+                        <td>
+                            <span t="${line.ChargeIndicator ? 'Charge' : 'Discount'}"></span>
+                            <span t="${line.ChargeIndicator ? 'Charge' : 'Discount'}"></span>
+                        </td>
+                        <td>
+                            ${line.amount.value.toFixed(2) | price:line.amount.currency}
+                        </td>
+                        <td class="actions-col">
+                            <button class="icon-btn" data-action="remove-line" title="Remove" t="[title]common.remove" click.trigger="deleteLine(line)">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-icon lucide-trash"><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <footer class="modal-footer">
+            <button type="button" class="btn" click.trigger="cancelAllowanceCharge()" title="Cancel" t="[title]common.cancel" t="common.cancel">Cancel</button>
+            <button type="button" class="btn danger" click.trigger="deleteAllowanceCharge()" title="Cancel" t="[title]common.delete" t="common.delete">Delete</button>
+            <button type="button" class="btn primary" click.trigger="confirmAllowanceCharge()" title="Confirm" t="[title]common.confirm" t="common.confirm">Confirm</button>
+        </footer>
+    </div>
+</div>
