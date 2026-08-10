@@ -16,7 +16,10 @@ export default defineConfig({
             proxyReq.removeHeader('origin');
             proxyReq.removeHeader('referer');
             proxyReq.setHeader('X-Forwarded-Prefix', '/kyc');
-            proxyReq.setHeader('X-Forwarded-Host', req.headers.host || 'localpeppol.org:3001');
+            proxyReq.setHeader(
+              'X-Forwarded-Host',
+              req.headers['x-forwarded-host'] || 'letspeppol.httpsonlan.com:3001'
+            );
             proxyReq.setHeader('X-Forwarded-Proto', 'https');
           });
         },

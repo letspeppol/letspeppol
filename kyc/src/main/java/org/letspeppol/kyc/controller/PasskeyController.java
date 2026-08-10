@@ -1,35 +1,49 @@
 package org.letspeppol.kyc.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import lombok.extern.slf4j.Slf4j;
+import jakarta.validation.Valid;
+import org.letspeppol.kyc.config.BrowserAuthenticationSupport;
 import org.letspeppol.kyc.config.SecurityContextHelper;
-import org.letspeppol.kyc.dto.*;
+import org.letspeppol.kyc.config.TotpAuthenticationSuccessHandler;
+import org.letspeppol.kyc.dto.AuthStatusResponse;
+import org.letspeppol.kyc.dto.AuthErrorResponse;
+import org.letspeppol.kyc.dto.PasskeyAuthenticationResponse;
+import org.letspeppol.kyc.dto.PasskeyDto;
+import org.letspeppol.kyc.dto.PasskeyRenameRequest;
+import org.letspeppol.kyc.dto.PasskeyVerifyRegistrationRequest;
 import org.letspeppol.kyc.model.Account;
+import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.service.PasskeyService;
 import org.letspeppol.kyc.service.jwt.JwtClaimExtractor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@Slf4j
 @RestController
 public class PasskeyController {
 
     private final PasskeyService passkeyService;
     private final JwtClaimExtractor jwtClaimExtractor;
-    private final String uiBaseUrl;
+    private final HttpSessionRequestCache requestCache;
 
-    public PasskeyController(PasskeyService passkeyService, JwtClaimExtractor jwtClaimExtractor,
-                             @Value("${UI_URL:http://localhost:9000}") String uiBaseUrl) {
+    public PasskeyController(PasskeyService passkeyService, JwtClaimExtractor jwtClaimExtractor) {
         this.passkeyService = passkeyService;
         this.jwtClaimExtractor = jwtClaimExtractor;
-        this.uiBaseUrl = uiBaseUrl;
+        this.requestCache = new HttpSessionRequestCache();
+        this.requestCache.setMatchingRequestParameterName(null);
     }
 
     @PostMapping("/sapi/passkeys/register/options")
@@ -66,25 +80,44 @@ public class PasskeyController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/api/passkeys/authenticate/options")
-    public ResponseEntity<Map<String, Object>> authenticationOptions(HttpSession session) {
+    @PostMapping("/auth/passkeys/authenticate/options")
+    public ResponseEntity<Map<String, Object>> authenticationOptions(
+            HttpSession session, HttpServletResponse response) {
+        BrowserAuthenticationSupport.preventCaching(response);
         return ResponseEntity.ok(passkeyService.generateAuthenticationOptions(session));
     }
 
-    @PostMapping("/api/passkeys/authenticate/verify")
-    public ResponseEntity<Map<String, String>> verifyAuthentication(
-            @RequestBody PasskeyAuthenticationResponse response,
-            HttpServletRequest request) {
-        Account account = passkeyService.verifyAuthentication(response, request.getSession());
+    @PostMapping("/auth/passkeys/authenticate/verify")
+    public ResponseEntity<?> verifyAuthentication(
+            @Valid @RequestBody PasskeyAuthenticationResponse response,
+            HttpServletRequest request,
+            HttpServletResponse httpResponse) {
+        BrowserAuthenticationSupport.preventCaching(httpResponse);
+        if (response == null) {
+            return ResponseEntity.badRequest().body(new AuthErrorResponse("validation_failed"));
+        }
+
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            return authenticationFailed();
+        }
+
+        Account account;
+        try {
+            account = passkeyService.verifyAuthentication(response, session);
+        } catch (IllegalArgumentException ignored) {
+            return authenticationFailed();
+        }
 
         SecurityContextHelper.establishSession(account, request);
+        request.getSession().removeAttribute(TotpAuthenticationSuccessHandler.TOTP_PENDING_ACCOUNT_ID);
+        requestCache.removeRequest(request, httpResponse);
 
-        // Redirect to the SPA login URL — the SPA will re-initiate the OAuth2 flow,
-        // and since the KYC session is now authenticated, the authorize endpoint will
-        // immediately issue an authorization code without showing the login page again.
-        String redirectUrl = uiBaseUrl + "/login";
-        log.debug("Passkey auth: redirecting to SPA login at {}", redirectUrl);
+        return ResponseEntity.ok(new AuthStatusResponse(BrowserAuthenticationSupport.STATUS_AUTHENTICATED));
+    }
 
-        return ResponseEntity.ok(Map.of("redirectUrl", redirectUrl));
+    private ResponseEntity<AuthErrorResponse> authenticationFailed() {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new AuthErrorResponse(KycErrorCodes.AUTHENTCATION_FAILED));
     }
 }

@@ -1,5 +1,6 @@
 package org.letspeppol.kyc.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
@@ -78,6 +79,9 @@ public class SecurityConfig {
     @Value("${oauth2.ui.redirect-uri:https://localpeppol.org:3001/callback}")
     private String redirectUri;
 
+    @Value("${UI_URL:http://localhost:9000}")
+    private String uiBaseUrl;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(12);
@@ -102,31 +106,38 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .with(configurer, c -> c.oidc(Customizer.withDefaults()))
                 .exceptionHandling(e -> e.defaultAuthenticationEntryPointFor(
-                        new LoginUrlAuthenticationEntryPoint("/login"),
-                        new MediaTypeRequestMatcher(MediaType.TEXT_HTML)))
-                .formLogin(form -> form.loginPage("/login").successHandler(totpAuthenticationSuccessHandler()).permitAll());
+                        new LoginUrlAuthenticationEntryPoint(uiLoginUrl()),
+                        new MediaTypeRequestMatcher(MediaType.TEXT_HTML)));
         return http.build();
     }
 
     @Bean
     @Order(2)
-    public SecurityFilterChain resourceServerSecurityFilterChain(HttpSecurity http, JwtDecoder jwtDecoder, CorsConfigurationSource corsConfigurationSource) throws Exception {
+    public SecurityFilterChain resourceServerSecurityFilterChain(
+            HttpSecurity http,
+            JwtDecoder jwtDecoder,
+            CorsConfigurationSource corsConfigurationSource,
+            TotpAuthenticationSuccessHandler authenticationSuccessHandler,
+            JsonAwareAuthenticationFailureHandler authenticationFailureHandler) throws Exception {
         HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
         requestCache.setMatchingRequestParameterName(null);
 
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
-                // CSRF guards only the cookie/session browser surface (the /login form, which carries a token).
+                // CSRF guards the cookie/session browser surface (/login and /auth/**).
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**", "/sapi/**", "/actuator/**"))
                 .requestCache(rc -> rc.requestCache(requestCache))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/totp-verify", "/error", "/css/**", "/images/**", "/js/**", "/favicon.ico").permitAll()
+                        .requestMatchers("/login", "/totp-verify", "/auth/**", "/error", "/favicon.ico").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/api/**").permitAll()
                         .requestMatchers("/sapi/**").hasAuthority(ROLE_KYC_USER)
                         .anyRequest().denyAll()
                 )
-                .formLogin(form -> form.loginPage("/login").successHandler(totpAuthenticationSuccessHandler()).permitAll())
+                .formLogin(form -> form.loginPage("/login")
+                        .successHandler(authenticationSuccessHandler)
+                        .failureHandler(authenticationFailureHandler)
+                        .permitAll())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt
                         .decoder(jwtDecoder)
                         .jwtAuthenticationConverter(jwtAuthenticationConverter())
@@ -296,8 +307,13 @@ public class SecurityConfig {
     }
 
     @Bean
-    public TotpAuthenticationSuccessHandler totpAuthenticationSuccessHandler() {
-        return new TotpAuthenticationSuccessHandler();
+    public TotpAuthenticationSuccessHandler totpAuthenticationSuccessHandler(ObjectMapper objectMapper) {
+        return new TotpAuthenticationSuccessHandler(objectMapper);
+    }
+
+    @Bean
+    public JsonAwareAuthenticationFailureHandler jsonAwareAuthenticationFailureHandler(ObjectMapper objectMapper) {
+        return new JsonAwareAuthenticationFailureHandler(objectMapper);
     }
 
     @Bean
@@ -306,7 +322,9 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of(origins));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept", "X-Requested-With"));
+        config.setAllowedHeaders(List.of(
+                "Authorization", "Content-Type", "Accept", "X-Requested-With",
+                "X-CSRF-TOKEN", "X-XSRF-TOKEN"));
         config.setExposedHeaders(List.of("Location", "Content-Disposition", "Registration-Status", "Registration-Provider"));
         config.setAllowCredentials(true);
         config.setMaxAge(3600L);
@@ -314,5 +332,9 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
+    }
+
+    private String uiLoginUrl() {
+        return uiBaseUrl.replaceAll("/+$", "") + "/login";
     }
 }

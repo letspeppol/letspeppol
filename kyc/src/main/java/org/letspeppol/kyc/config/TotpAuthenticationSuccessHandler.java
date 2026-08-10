@@ -1,5 +1,6 @@
 package org.letspeppol.kyc.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -10,6 +11,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.http.HttpStatus;
 
 import java.io.IOException;
 
@@ -17,9 +19,11 @@ public class TotpAuthenticationSuccessHandler implements AuthenticationSuccessHa
 
     public static final String TOTP_PENDING_ACCOUNT_ID = "TOTP_PENDING_ACCOUNT_ID";
 
+    private final ObjectMapper objectMapper;
     private final SavedRequestAwareAuthenticationSuccessHandler delegate;
 
-    public TotpAuthenticationSuccessHandler() {
+    public TotpAuthenticationSuccessHandler(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
         this.delegate = new SavedRequestAwareAuthenticationSuccessHandler();
         HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
         requestCache.setMatchingRequestParameterName(null);
@@ -34,11 +38,26 @@ public class TotpAuthenticationSuccessHandler implements AuthenticationSuccessHa
             HttpSession session = request.getSession(true);
             session.setAttribute(TOTP_PENDING_ACCOUNT_ID, userDetails.getAccountId());
 
-            // Clear security context — user is NOT fully authenticated until TOTP is verified
+            // Clear the security context: the user is not fully authenticated until TOTP is verified.
             SecurityContextHolder.clearContext();
             session.removeAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
 
+            if (BrowserAuthenticationSupport.requestsJson(request)) {
+                BrowserAuthenticationSupport.clearSavedRequest(request, response);
+                BrowserAuthenticationSupport.writeStatus(objectMapper, response, HttpStatus.ACCEPTED,
+                        BrowserAuthenticationSupport.STATUS_TOTP_REQUIRED);
+                return;
+            }
+
             response.sendRedirect(request.getContextPath() + "/totp-verify");
+            return;
+        }
+
+        request.getSession(true).removeAttribute(TOTP_PENDING_ACCOUNT_ID);
+        if (BrowserAuthenticationSupport.requestsJson(request)) {
+            BrowserAuthenticationSupport.clearSavedRequest(request, response);
+            BrowserAuthenticationSupport.writeStatus(objectMapper, response, HttpStatus.OK,
+                    BrowserAuthenticationSupport.STATUS_AUTHENTICATED);
             return;
         }
 

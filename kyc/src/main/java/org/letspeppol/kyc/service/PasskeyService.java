@@ -43,6 +43,8 @@ import java.util.UUID;
 public class PasskeyService {
 
     private static final String SESSION_CHALLENGE_KEY = "webauthn_challenge";
+    private static final String SESSION_CHALLENGE_ISSUED_AT_KEY = "webauthn_challenge_issued_at";
+    private static final long AUTHENTICATION_CHALLENGE_TTL_SECONDS = 300;
 
     private final PasskeyCredentialRepository passkeyRepo;
     private final AccountRepository accountRepo;
@@ -214,6 +216,7 @@ public class PasskeyService {
         byte[] challenge = new byte[32];
         secureRandom.nextBytes(challenge);
         session.setAttribute(SESSION_CHALLENGE_KEY, challenge);
+        session.setAttribute(SESSION_CHALLENGE_ISSUED_AT_KEY, Instant.now());
 
         Map<String, Object> options = new LinkedHashMap<>();
         options.put("challenge", Base64.getUrlEncoder().withoutPadding().encodeToString(challenge));
@@ -231,9 +234,12 @@ public class PasskeyService {
     @Transactional
     public Account verifyAuthentication(PasskeyAuthenticationResponse response, HttpSession session) {
         byte[] challenge = (byte[]) session.getAttribute(SESSION_CHALLENGE_KEY);
+        Instant challengeIssuedAt = (Instant) session.getAttribute(SESSION_CHALLENGE_ISSUED_AT_KEY);
         session.removeAttribute(SESSION_CHALLENGE_KEY);
-        if (challenge == null) {
-            throw new IllegalArgumentException("No challenge in session");
+        session.removeAttribute(SESSION_CHALLENGE_ISSUED_AT_KEY);
+        if (challenge == null || challengeIssuedAt == null
+                || challengeIssuedAt.plusSeconds(AUTHENTICATION_CHALLENGE_TTL_SECONDS).isBefore(Instant.now())) {
+            throw new IllegalArgumentException("Missing or expired challenge");
         }
 
         byte[] credentialId = Base64.getUrlDecoder().decode(response.id());

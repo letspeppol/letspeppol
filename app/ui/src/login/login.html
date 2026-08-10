@@ -1,3 +1,107 @@
-<div class="centered">
-    <p t="login.redirecting">Redirecting to login...</p>
-</div>
+<import from="../components/view/wizard-view"></import>
+
+<wizard-view>
+    <h1 au-slot="header" t.bind="step === 'totp' ? 'login.verification-title' : 'login.title'">Sign in to your account</h1>
+
+    <div if.bind="loadingSession" class="login-loading" role="status">
+        <span class="spinner login-spinner" aria-hidden="true"></span>
+        <span t="login.checking-session">Checking your session...</span>
+    </div>
+
+    <template else>
+    <form if.bind="step === 'credentials'" class="auth-form login-form" submit.trigger="submitCredentials()">
+        <div class="grid login-grid">
+            <label class="field full">
+                <span t="label.email">Email</span>
+                <input name="username"
+                       type="email"
+                       autocomplete="username webauthn"
+                       required
+                       autofocus
+                       value.bind="email"
+                       t="[placeholder]placeholder.email" />
+            </label>
+            <label class="field full">
+                <span class="login-field-heading">
+                    <span t="label.password">Password</span>
+                    <a load="/forgot-password" t="login.forgot">Forgot my password</a>
+                </span>
+                <input name="password"
+                       type="password"
+                       autocomplete="current-password"
+                       required
+                       value.bind="password" />
+            </label>
+            <label class="field full checkbox login-remember">
+                <input type="checkbox" checked.bind="rememberEmail" />
+                <span t="login.remember">Remember my email</span>
+            </label>
+        </div>
+
+        <p if.bind="errorKey" class="form-error" aria-live="assertive" t.bind="errorKey">Sign in failed. Please check your credentials.</p>
+
+        <div class="auth-actions">
+            <button type="submit" class="btn primary" disabled.bind="busy || !email || !password">
+                <span t.bind="busy ? 'login.signing-in' : 'login.continue'">Sign in</span>
+            </button>
+        </div>
+
+        <template if.bind="passkeyAvailable">
+            <div class="login-divider"><span t="login.or">or</span></div>
+            <button type="button" class="btn login-passkey" disabled.bind="busy" click.trigger="signInWithPasskey()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"/><path d="m21 2-9.6 9.6"/><circle cx="7.5" cy="15.5" r="5.5"/></svg>
+                <span t="login.passkey">Sign in with a passkey</span>
+            </button>
+        </template>
+
+        <div class="auth-info">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            <span t="login.new">New here?</span>
+            <a load="/registration" t="login.register">Register your company</a>
+        </div>
+    </form>
+
+    <form else class="auth-form login-form" submit.trigger="submitVerificationCode()">
+        <p if.bind="!useRecoveryCode" t="login.verification-instructions">Enter the 6-digit code from your authenticator app.</p>
+        <p else t="login.recovery-instructions">Enter one of your recovery codes.</p>
+
+        <div class="grid login-grid">
+            <label class="field full">
+                <span t.bind="useRecoveryCode ? 'login.recovery-code' : 'login.verification-code'">Authentication code</span>
+                <input if.bind="!useRecoveryCode"
+                       name="verificationCode"
+                       type="text"
+                       inputmode="numeric"
+                       pattern="[0-9]*"
+                       maxlength="6"
+                       autocomplete="one-time-code"
+                       required
+                       autofocus
+                       value.bind="verificationCode" />
+                <input else
+                       name="recoveryCode"
+                       type="text"
+                       maxlength="8"
+                       autocapitalize="characters"
+                       spellcheck="false"
+                       autocomplete="one-time-code"
+                       required
+                       autofocus
+                       value.bind="verificationCode" />
+            </label>
+        </div>
+
+        <p if.bind="errorKey" class="form-error" aria-live="assertive" t.bind="errorKey">Verification failed. Please try again.</p>
+
+        <div class="auth-actions">
+            <button type="submit" class="btn primary" disabled.bind="busy || !verificationCode">
+                <span t.bind="busy ? 'login.verifying' : 'login.verify'">Verify</span>
+            </button>
+        </div>
+
+        <p class="login-switch">
+            <a href="#" click.trigger="toggleRecoveryCode($event)" t.bind="useRecoveryCode ? 'login.use-authenticator' : 'login.use-recovery'">Use a recovery code</a>
+        </p>
+    </form>
+    </template>
+</wizard-view>
