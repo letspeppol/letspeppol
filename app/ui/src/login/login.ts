@@ -1,5 +1,4 @@
 import {resolve} from "@aurelia/kernel";
-import {Router} from "@aurelia/router";
 import {LoginService} from "../services/app/login-service";
 import {
     BrowserAuthenticationError,
@@ -13,7 +12,6 @@ type LoginStep = 'credentials' | 'totp';
 export class Login {
     private readonly loginService = resolve(LoginService);
     private readonly browserAuthentication = resolve(BrowserAuthenticationService);
-    private readonly router = resolve(Router);
 
     step: LoginStep = 'credentials';
     email = localStorage.getItem(REMEMBERED_EMAIL_KEY) ?? '';
@@ -29,7 +27,7 @@ export class Login {
 
     async attached() {
         if (this.loginService.authenticated) {
-            await this.router.load('/');
+            this.loginService.logout();
             return;
         }
 

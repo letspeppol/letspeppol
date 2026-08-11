@@ -30,7 +30,6 @@ export class Dashboard {
         this.sub = this.ea.subscribe('account:switched', () => {
             this.loadTotals();
         });
-        this.loadTotals();
     }
 
     detaching() {

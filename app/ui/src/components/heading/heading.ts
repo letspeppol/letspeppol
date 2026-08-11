@@ -23,6 +23,7 @@ export class Heading {
         // Tokens are held in memory, so after a page reload the access token is only restored once
         // the silent re-authorization finishes; wait for it before reading the acting ownership.
         await this.loginService.ensureAuthenticated();
+        await this.ownershipService.loadOwnerships();
         await this.refreshOwnerships();
     }
 
