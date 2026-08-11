@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -109,5 +110,25 @@ public class AccountUserDetails implements UserDetails {
     @Override
     public boolean isEnabled() {
         return verified;
+    }
+
+    /**
+     * Spring Authorization Server stores the principal in the JDBC authorization and
+     * deserializes it again when the authorization code is exchanged.  The OIDC session
+     * registry, however, is keyed by the principal from the live HTTP session.  Treat both
+     * representations of the same account as the same principal so the ID token receives
+     * the session's {@code sid} claim and can subsequently be used for RP-initiated logout.
+     */
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        return other instanceof AccountUserDetails that && Objects.equals(uid, that.uid);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(uid);
     }
 }
