@@ -1,8 +1,10 @@
 import {resolve} from "@aurelia/kernel";
+import {IRouter} from "@aurelia/router";
 import {LoginService} from "../services/app/login-service";
 
 export class Callback {
     private readonly loginService = resolve(LoginService);
+    private readonly router = resolve(IRouter);
     message = 'Completing login...';
 
     async attached() {
@@ -18,7 +20,10 @@ export class Callback {
 
         try {
             await this.loginService.handleCallback(code, state);
-            window.location.href = '/';
+            // Keep the access token that was just stored in memory. Do not await this navigation:
+            // the router cannot start it until the current /callback navigation (including this
+            // attached hook) has completed, so awaiting it here would deadlock both navigations.
+            void this.router.load('/');
         } catch (e) {
             console.error('Callback failed:', e);
             this.message = `Authentication failed: ${e instanceof Error ? e.message : e}`;

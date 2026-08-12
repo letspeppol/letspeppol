@@ -9,6 +9,14 @@
     </div>
 
     <template else>
+    <div if.bind="serviceUnavailable" class="login-unavailable" role="status">
+        <p t="login.unavailable">The sign-in service is still starting or currently unavailable.</p>
+        <button type="button" class="btn primary" click.trigger="retrySession()">
+            <span t="login.retry">Try again</span>
+        </button>
+    </div>
+
+    <template else>
     <form if.bind="step === 'credentials'" class="auth-form login-form" submit.trigger="submitCredentials()">
         <div class="grid login-grid">
             <label class="field full">
@@ -103,5 +111,6 @@
             <a href="#" click.trigger="toggleRecoveryCode($event)" t.bind="useRecoveryCode ? 'login.use-authenticator' : 'login.use-recovery'">Use a recovery code</a>
         </p>
     </form>
+    </template>
     </template>
 </wizard-view>

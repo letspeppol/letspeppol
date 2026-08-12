@@ -20,6 +20,7 @@ export class Login {
     verificationCode = '';
     useRecoveryCode = false;
     loadingSession = true;
+    serviceUnavailable = false;
     busy = false;
     errorKey: string | undefined;
     readonly passkeyAvailable = typeof PublicKeyCredential !== 'undefined'
@@ -31,6 +32,18 @@ export class Login {
             return;
         }
 
+        await this.loadSession();
+    }
+
+    async retrySession() {
+        if (this.loadingSession) return;
+        await this.loadSession();
+    }
+
+    private async loadSession() {
+        this.loadingSession = true;
+        this.serviceUnavailable = false;
+        this.errorKey = undefined;
         try {
             const session = await this.browserAuthentication.getSession();
             if (session.status === 'authenticated') {
@@ -39,7 +52,9 @@ export class Login {
             }
             this.step = session.status === 'totp_required' ? 'totp' : 'credentials';
         } catch {
-            this.errorKey = 'login.unavailable';
+            // This is especially common during a local compound launch, where Vite is ready before
+            // the KYC service. Keep the login form hidden until its CSRF/session endpoint is ready.
+            this.serviceUnavailable = true;
         } finally {
             this.loadingSession = false;
         }

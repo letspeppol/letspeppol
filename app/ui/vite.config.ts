@@ -4,7 +4,15 @@ import aurelia from '@aurelia/vite-plugin';
 
 export default defineConfig({
   server: {
-    open: !process.env.CI,
+    // The three Spring services take longer to become ready than Vite. Opening the browser here
+    // makes a normal debug launch look broken while KYC/app/proxy are still starting. Developers
+    // can opt back in explicitly when they are running the UI on its own.
+    open: process.env.VITE_OPEN_BROWSER === 'true',
+    // Transform the application graph while the browser is still reaching the dev server. This is
+    // especially useful behind the local TLS proxy, where a cold transform waterfall is expensive.
+    warmup: {
+      clientFiles: ['./src/**/*.{ts,html,css,json}'],
+    },
     port: 9000,
     proxy: {
       '/kyc': {
@@ -17,8 +25,8 @@ export default defineConfig({
             proxyReq.removeHeader('referer');
             proxyReq.setHeader('X-Forwarded-Prefix', '/kyc');
             proxyReq.setHeader(
-              'X-Forwarded-Host',
-              req.headers['x-forwarded-host'] || 'letspeppol.httpsonlan.com:3001'
+                'X-Forwarded-Host',
+                req.headers['x-forwarded-host'] || 'letspeppol.httpsonlan.com:3001'
             );
             proxyReq.setHeader('X-Forwarded-Proto', 'https');
           });
