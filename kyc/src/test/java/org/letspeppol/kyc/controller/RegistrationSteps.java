@@ -1,5 +1,7 @@
 package org.letspeppol.kyc.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.letspeppol.kyc.dto.*;
 import org.letspeppol.kyc.model.AccountType;
 import org.letspeppol.kyc.model.EmailVerification;
@@ -20,12 +22,21 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.boot.test.context.TestComponent;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.env.Environment;
 import org.springframework.http.*;
 import java.nio.charset.StandardCharsets;
 import javax.security.auth.x500.X500Principal;
 import java.math.BigInteger;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.MessageDigest;
 import java.security.Signature;
 import java.security.cert.X509Certificate;
 import java.time.Instant;
@@ -55,6 +66,8 @@ public class RegistrationSteps {
     @Autowired private PasswordEncoder passwordEncoder;
     @Autowired private JwtEncoder jwtEncoder;
     @Autowired private JwtDecoder jwtDecoder;
+    @Autowired private ObjectMapper objectMapper;
+    @Autowired private Environment environment;
 
     @Value("${oauth2.audience:letspeppol-api}") private String audience;
     @Value("${spring.security.oauth2.authorizationserver.issuer:}") private String issuer;
@@ -145,6 +158,213 @@ public class RegistrationSteps {
         ownershipRepository.save(ownership);
 
         return mintAccessToken(account, ownership);
+    }
+
+    /**
+     * Drives the real browser-session and OAuth2 Authorization Code + PKCE endpoints. Unlike
+     * {@link #login(String, String, AccountType, String)}, this verifies Spring Authorization
+     * Server wiring, session cookies, CSRF, the redirect, code exchange, and the resulting JWT.
+     */
+    String oauth2AuthorizationCodeWithPkce(String email, String password, String peppolId) {
+        try {
+            CookieManager cookies = new CookieManager(null, CookiePolicy.ACCEPT_ALL);
+            HttpClient browser = HttpClient.newBuilder()
+                    .cookieHandler(cookies)
+                    .followRedirects(HttpClient.Redirect.NEVER)
+                    .build();
+            String origin = "http://localhost:" + environment.getRequiredProperty("local.server.port");
+
+            HttpResponse<String> openApiResponse = browser.send(
+                    HttpRequest.newBuilder(URI.create(origin + "/v3/api-docs")).GET().build(),
+                    HttpResponse.BodyHandlers.ofString());
+            assertEquals(200, openApiResponse.statusCode(), openApiResponse.body());
+            JsonNode openApi = objectMapper.readTree(openApiResponse.body());
+            JsonNode paths = openApi.path("paths");
+            assertTrue(paths.has("/oauth2/authorize"));
+            assertTrue(paths.has("/oauth2/token"));
+            assertTrue(paths.has("/oauth2/jwks"));
+            paths.fields().forEachRemaining(pathEntry -> {
+                assertFalse(pathEntry.getKey().contains("/.well-known/"),
+                        "Discovery path leaked into OpenAPI: " + pathEntry.getKey());
+                pathEntry.getValue().fields().forEachRemaining(methodEntry -> {
+                    JsonNode operation = methodEntry.getValue();
+                    if (hasTag(operation, "authorization-server-endpoints")
+                            || hasTag(operation, "login-endpoint")) {
+                        assertFalse(operation.path("summary").asText().isBlank(),
+                                "Missing summary for " + pathEntry.getKey());
+                        assertFalse(operation.path("description").asText().isBlank(),
+                                "Missing description for " + pathEntry.getKey());
+                    }
+                });
+            });
+            JsonNode authorizationCode = openApi.path("components").path("securitySchemes")
+                    .path("oauth2").path("flows").path("authorizationCode");
+            assertEquals("/kyc/oauth2/authorize", authorizationCode.path("authorizationUrl").asText());
+            assertEquals("/kyc/oauth2/token", authorizationCode.path("tokenUrl").asText());
+
+            HttpResponse<String> sessionResponse = browser.send(
+                    HttpRequest.newBuilder(URI.create(origin + "/auth/session"))
+                            .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                            .GET()
+                            .build(),
+                    HttpResponse.BodyHandlers.ofString());
+            assertEquals(200, sessionResponse.statusCode());
+            JsonNode session = objectMapper.readTree(sessionResponse.body());
+            String csrfToken = session.path("csrfToken").asText();
+            String csrfHeaderName = session.path("csrfHeaderName").asText();
+            String csrfParameterName = session.path("csrfParameterName").asText();
+            assertFalse(csrfToken.isBlank());
+
+            String loginBody = form(
+                    "username", email,
+                    "password", password,
+                    csrfParameterName, csrfToken);
+            HttpResponse<String> loginResponse = browser.send(
+                    HttpRequest.newBuilder(URI.create(origin + "/login"))
+                            .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                            .header(csrfHeaderName, csrfToken)
+                            .POST(HttpRequest.BodyPublishers.ofString(loginBody))
+                            .build(),
+                    HttpResponse.BodyHandlers.ofString());
+            assertEquals(200, loginResponse.statusCode(), loginResponse.body());
+            assertEquals("authenticated", objectMapper.readTree(loginResponse.body()).path("status").asText());
+
+            String verifier = "registration-test-pkce-verifier-0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            String challenge = Base64.getUrlEncoder().withoutPadding()
+                    .encodeToString(MessageDigest.getInstance("SHA-256")
+                            .digest(verifier.getBytes(StandardCharsets.US_ASCII)));
+            String state = "registration-test-state";
+            String redirectUri = "http://localhost:9000/callback";
+            String authorizeQuery = form(
+                    "response_type", "code",
+                    "client_id", "letspeppol-ui",
+                    "redirect_uri", redirectUri,
+                    "code_challenge", challenge,
+                    "code_challenge_method", "S256",
+                    "state", state,
+                    "scope", "openid");
+
+            HttpResponse<String> authorizeResponse = browser.send(
+                    HttpRequest.newBuilder(URI.create(origin + "/oauth2/authorize?" + authorizeQuery))
+                            .header(HttpHeaders.ACCEPT, MediaType.TEXT_HTML_VALUE)
+                            .GET()
+                            .build(),
+                    HttpResponse.BodyHandlers.ofString());
+            assertEquals(302, authorizeResponse.statusCode(), authorizeResponse.body());
+            URI callback = URI.create(authorizeResponse.headers().firstValue(HttpHeaders.LOCATION).orElseThrow());
+            assertEquals("localhost", callback.getHost());
+            assertEquals(9000, callback.getPort());
+            var callbackParameters = splitQuery(callback.getRawQuery());
+            assertEquals(state, callbackParameters.get("state"));
+            String code = callbackParameters.get("code");
+            assertNotNull(code);
+
+            String tokenBody = form(
+                    "grant_type", "authorization_code",
+                    "client_id", "letspeppol-ui",
+                    "redirect_uri", redirectUri,
+                    "code", code,
+                    "code_verifier", verifier);
+            HttpResponse<String> tokenResponse = browser.send(
+                    HttpRequest.newBuilder(URI.create(origin + "/oauth2/token"))
+                            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                            .POST(HttpRequest.BodyPublishers.ofString(tokenBody))
+                            .build(),
+                    HttpResponse.BodyHandlers.ofString());
+            assertEquals(200, tokenResponse.statusCode(), tokenResponse.body());
+            JsonNode tokenJson = objectMapper.readTree(tokenResponse.body());
+            assertFalse(tokenJson.has("refresh_token"), "The SPA must not receive a refresh token");
+            assertTrue(tokenJson.hasNonNull("id_token"));
+            String accessToken = tokenJson.path("access_token").asText();
+            assertFalse(accessToken.isBlank());
+
+            var jwt = jwtDecoder.decode(accessToken);
+            assertEquals(peppolId, jwt.getClaimAsString("peppolId"));
+            assertEquals("ADMIN", jwt.getClaimAsString("accountType"));
+            assertTrue(jwt.getAudience().contains(audience));
+
+            HttpRequest ownershipsRequest = HttpRequest.newBuilder(URI.create(origin + "/sapi/account/ownerships"))
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                    .GET()
+                    .build();
+            HttpResponse<String> ownershipsResponse = browser.send(
+                    ownershipsRequest, HttpResponse.BodyHandlers.ofString());
+            assertEquals(200, ownershipsResponse.statusCode(), ownershipsResponse.body());
+            assertTrue(ownershipsResponse.body().contains(peppolId));
+            return accessToken;
+        } catch (Exception e) {
+            throw new AssertionError("OAuth2 Authorization Code + PKCE flow failed", e);
+        }
+    }
+
+    private static boolean hasTag(JsonNode operation, String expectedTag) {
+        for (JsonNode tag : operation.path("tags")) {
+            if (expectedTag.equals(tag.asText())) return true;
+        }
+        return false;
+    }
+
+    String clientCredentialsServiceToken() {
+        try {
+            UUID appExternalId = UUID.fromString("b095630d-1bf3-4250-bf9e-2d49e6ce505b");
+            if (accountRepository.findByExternalId(appExternalId).isEmpty()) {
+                accountRepository.save(Account.builder()
+                        .name("Test App Service")
+                        .email("service-test@letspeppol.invalid")
+                        .passwordHash(passwordEncoder.encode(UUID.randomUUID().toString()))
+                        .verified(true)
+                        .verifiedOn(Instant.now())
+                        .externalId(appExternalId)
+                        .build());
+            }
+
+            String origin = "http://localhost:" + environment.getRequiredProperty("local.server.port");
+            String body = form("grant_type", "client_credentials", "scope", "service");
+            String credentials = Base64.getEncoder().encodeToString(
+                    "kyc-service:test-secret".getBytes(StandardCharsets.UTF_8));
+            HttpResponse<String> response = HttpClient.newHttpClient().send(
+                    HttpRequest.newBuilder(URI.create(origin + "/oauth2/token"))
+                            .header(HttpHeaders.AUTHORIZATION, "Basic " + credentials)
+                            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                            .POST(HttpRequest.BodyPublishers.ofString(body))
+                            .build(),
+                    HttpResponse.BodyHandlers.ofString());
+            assertEquals(200, response.statusCode(), response.body());
+            JsonNode json = objectMapper.readTree(response.body());
+            assertFalse(json.has("refresh_token"));
+            String accessToken = json.path("access_token").asText();
+            var jwt = jwtDecoder.decode(accessToken);
+            assertEquals(appExternalId.toString(), jwt.getClaimAsString("uid"));
+            assertEquals(AccountType.APP.name(), jwt.getClaimAsString("accountType"));
+            assertTrue(jwt.getClaimAsStringList("scope").contains("service"));
+            assertTrue(jwt.getAudience().contains(audience));
+            return accessToken;
+        } catch (Exception e) {
+            throw new AssertionError("OAuth2 client-credentials flow failed", e);
+        }
+    }
+
+    private static String form(String... namesAndValues) {
+        StringBuilder body = new StringBuilder();
+        for (int i = 0; i < namesAndValues.length; i += 2) {
+            if (!body.isEmpty()) body.append('&');
+            body.append(URLEncoder.encode(namesAndValues[i], StandardCharsets.UTF_8));
+            body.append('=');
+            body.append(URLEncoder.encode(namesAndValues[i + 1], StandardCharsets.UTF_8));
+        }
+        return body.toString();
+    }
+
+    private static java.util.Map<String, String> splitQuery(String query) {
+        java.util.Map<String, String> values = new java.util.HashMap<>();
+        for (String pair : query.split("&")) {
+            String[] parts = pair.split("=", 2);
+            values.put(
+                    java.net.URLDecoder.decode(parts[0], StandardCharsets.UTF_8),
+                    java.net.URLDecoder.decode(parts.length == 2 ? parts[1] : "", StandardCharsets.UTF_8));
+        }
+        return values;
     }
 
     /**

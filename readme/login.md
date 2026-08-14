@@ -10,12 +10,16 @@ OAuth password grant is not enabled.
 The acting ownership carried in the token is the account's most recently used one; see
 [swap.md](swap.md) for changing it.
 
+Executable proof: [`RegistrationTest`](../kyc/src/test/java/org/letspeppol/kyc/controller/RegistrationTest.java), method `oauth2AuthorizationCodeWithPkce`. TOTP and passkey branches are covered by [`TotpAuthenticationSuccessHandlerTest`](../kyc/src/test/java/org/letspeppol/kyc/config/TotpAuthenticationSuccessHandlerTest.java) and [`PasskeyControllerBrowserAuthTest`](../kyc/src/test/java/org/letspeppol/kyc/controller/PasskeyControllerBrowserAuthTest.java).
+
 ```mermaid
 sequenceDiagram
     actor SME as SME
     participant Frontend as Frontend
     participant KYC as KYC
     participant App as App
+
+    Note over SME, App: Executable proof: RegistrationTest.oauth2AuthorizationCodeWithPkce
 
 Note over SME, App: Establish the KYC browser session
     SME ->> Frontend: Open app

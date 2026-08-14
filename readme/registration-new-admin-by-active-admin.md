@@ -1,5 +1,7 @@
 # Registration new ADMIN by active ADMIN
 
+Executable proof: [`RegistrationTest`](../kyc/src/test/java/org/letspeppol/kyc/controller/RegistrationTest.java), method `registrationNewAdminByActiveAdmin`.
+
 ```mermaid
 sequenceDiagram
     actor ADMIN as ADMIN
@@ -7,6 +9,8 @@ sequenceDiagram
     participant KYC as KYC
     participant Proxy as Proxy
     participant Peppol as Peppol
+
+    Note over ADMIN, Peppol: Executable proof: RegistrationTest.registrationNewAdminByActiveAdmin
 
 Note over ADMIN, Peppol: Existing ADMIN claims another company by signing as a director
     Note left of ADMIN: Already logged in as ADMIN

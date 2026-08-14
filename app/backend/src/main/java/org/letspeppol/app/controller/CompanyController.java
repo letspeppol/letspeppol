@@ -22,7 +22,7 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/sapi/company")
 @Tag(name = "App Company", description = "Endpoints for loading and maintaining the application-specific company profile used by the frontend.")
-@SecurityRequirement(name = "bearerAuth")
+@SecurityRequirement(name = "oauth2", scopes = "openid")
 public class CompanyController {
 
     private final CompanyService companyService;

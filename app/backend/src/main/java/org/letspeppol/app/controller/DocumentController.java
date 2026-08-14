@@ -40,7 +40,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/sapi/document")
 @Tag(name = "App Documents", description = "Endpoints for validating, listing, editing, sending, and rendering business documents inside the application.")
-@SecurityRequirement(name = "bearerAuth")
+@SecurityRequirement(name = "oauth2", scopes = "openid")
 public class DocumentController {
 
     private static final int MAX_PAGE_SIZE = 100;
@@ -122,6 +122,7 @@ public class DocumentController {
     }
 
     @GetMapping("{id}/details")
+    @Operation(summary = "Get document details", description = "Returns the extended UBL-derived details used by the document editor and detail view.")
     public DocumentDetailsDto getDetails(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
         String peppolId = JwtUtil.getPeppolId(jwt);
         return documentService.findDetailsById(peppolId, id, jwt.getTokenValue());
@@ -168,6 +169,7 @@ public class DocumentController {
     }
 
     @PutMapping("{id}/reschedule")
+    @Operation(summary = "Reschedule document", description = "Changes the scheduled transmission time of an outbound document and propagates it to Proxy when required.")
     public DocumentDto reschedule(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestParam(required = false) Instant schedule) {
         if (!JwtUtil.isPeppolActive(jwt)) {
             throw new PeppolException("Peppol ID is not active");
@@ -191,6 +193,7 @@ public class DocumentController {
     }
 
     @PutMapping("{id}/error-seen")
+    @Operation(summary = "Acknowledge document error", description = "Marks the current transmission error as seen so the UI no longer presents it as new.")
     public DocumentDto markErrorSeen(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
         String peppolId = JwtUtil.getPeppolId(jwt);
         return documentService.markErrorSeen(peppolId, id);

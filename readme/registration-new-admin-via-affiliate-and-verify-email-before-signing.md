@@ -1,5 +1,7 @@
 # Registration new ADMIN via AFFILIATE and verify email before signing
 
+Executable proof: [`RegistrationTest`](../kyc/src/test/java/org/letspeppol/kyc/controller/RegistrationTest.java), method `registrationNewAdminViaAffiliateAndVerifyByEmailBeforeSigning`.
+
 ```mermaid
 sequenceDiagram
     actor SME as SME
@@ -10,6 +12,8 @@ sequenceDiagram
     participant PeppolDirectory as PeppolDirectory
     participant Proxy as Proxy
     participant Peppol as Peppol
+
+    Note over SME, Peppol: Executable proof: RegistrationTest.registrationNewAdminViaAffiliateAndVerifyByEmailBeforeSigning
 
 Note over SME, Peppol: Requesting new company added to AFFILIATE
     Note left of AFFILIATE: Visit /affiliate/companies
@@ -25,9 +29,6 @@ Note over SME, Peppol: Requesting new company added to AFFILIATE
     Note right of KYC: JWT == AFFILIATE <br> PeppolID has no ADMIN <br>(= not registered) <br> Generate token (Requester = Affiliate, type = ADMIN)
     KYC ->> SME: Mail "Confirm your email and your affiliate" /email-confirmation?token={token}
     KYC ->> Frontend: "Request email sent"
-    Frontend ->> App: POST /app/sapi/affiliate/add-company <br> ( peppolId, email, name, ...? )
-    Note right of App: JWT == AFFILIATE <br> Store new company add request
-    App ->> Frontend: OK
     opt Check Peppol Directory, skip on HTTP error
         Frontend -->> App: GET /app/api/peppol-directory?participant={PeppolID}
         App -->> PeppolDirectory: GET /search/1.0/json?q={PeppolID}
@@ -90,16 +91,12 @@ Note over SME, Peppol: Activate account after contract signing
     KYC ->> Frontend: OK
     Frontend ->> SME: Show success & download signed contract <br> Registration-Status == CONFLICT ? <br> show Registration-Provider <br> Show requester
 
-Note over SME, Peppol: Accepting AFFILIATE request by ADMIN
+Note over SME, Peppol: Reviewing the requester as the new ADMIN
     Note left of SME: Read requester
     SME ->> Frontend: LoginToConfirm( email, password )
     Frontend ->> KYC: OAuth2 Authorization Code + PKCE (see login.md) <br> acting ownership = ( AccountType.ADMIN, peppolId )
     Note right of KYC: Validate credentials <br> Update last used ownership
     KYC ->> Frontend: JWT ( AccountType.ADMIN, peppolId, peppolActive, uid )
-    opt if accepted
-        Frontend -->> App: POST /app/sapi/affiliate/verify-company <br> ( requester, peppolId, ...? )
-        Note right of App: JWT == ADMIN <br> Set company as active for requester affiliate
-        App -->> Frontend: OK
-    end
-    Frontend ->> SME: Show success / Go to active connection list
+    Note right of Frontend: Current implementation can display requester context. <br> No affiliate approval mutation endpoint exists yet.
+    Frontend ->> SME: Show requester and company context
 ```

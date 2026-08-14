@@ -29,7 +29,7 @@ import java.util.List;
 @RequestMapping("/sapi/linked")
 @RequiredArgsConstructor
 @Tag(name = "KYC Linked Access", description = "Administrative endpoints for viewing and managing services or related identities linked to a company account.")
-@SecurityRequirement(name = "bearerAuth")
+@SecurityRequirement(name = "oauth2", scopes = "openid")
 public class LinkedController {
 
     private final AccountService accountService;

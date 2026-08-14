@@ -33,7 +33,8 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/sapi/document")
 @Tag(name = "Proxy Documents", description = "Service-facing document transport endpoints for polling, submitting, updating, and acknowledging UBL documents through the proxy.")
-@SecurityRequirement(name = "bearerAuth")
+@SecurityRequirement(name = "oauth2", scopes = "openid")
+@SecurityRequirement(name = "serviceAuth", scopes = "service")
 public class AppController {
 
     public static final String DEFAULT_SIZE = "100";
@@ -90,6 +91,7 @@ public class AppController {
     }
 
     @GetMapping("{id}/details")
+    @Operation(summary = "Get proxy document details", description = "Returns transport and UBL-derived details for one document visible to the authenticated company or linked app.")
     public DocumentDetailsDto getDetails(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
         String peppolId = JwtUtil.getUserPeppolId(jwt);
         return ublDocumentService.findDetailsById(id, peppolId);

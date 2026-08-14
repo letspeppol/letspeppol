@@ -3,7 +3,13 @@ package org.letspeppol.proxy;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+@SpringBootTest(properties = {
+		"e-invoice.organisation.api-key=test-api-key",
+		"scrada.company-id=test-company-id",
+		"scrada.api-key=test-api-key",
+		"scrada.password=test-password",
+		"scrada.company-key=test-company-key"
+})
 class ProxyApplicationTests {
 
 	@Test

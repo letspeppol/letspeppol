@@ -24,7 +24,7 @@ import java.util.List;
 @RequestMapping("/sapi/account")
 @RequiredArgsConstructor
 @Tag(name = "KYC Account", description = "Authenticated account endpoints for discovering which companies and roles are linked to the current identity.")
-@SecurityRequirement(name = "bearerAuth")
+@SecurityRequirement(name = "oauth2", scopes = "openid")
 public class AccountController {
 
     private final OwnershipService ownershipService;

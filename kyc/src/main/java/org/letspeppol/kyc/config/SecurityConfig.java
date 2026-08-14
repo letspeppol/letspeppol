@@ -130,6 +130,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/totp-verify", "/auth/**", "/error", "/favicon.ico").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
                         .requestMatchers("/api/**").permitAll()
                         .requestMatchers("/sapi/**").hasAuthority(ROLE_KYC_USER)
                         .anyRequest().denyAll()

@@ -1,5 +1,8 @@
 package org.letspeppol.kyc.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -29,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.UUID;
 
 @RestController
+@Tag(name = "KYC TOTP", description = "TOTP enrollment, recovery codes, status, and completion of a pending browser login.")
 public class TotpController {
 
     private final TotpService totpService;
@@ -46,18 +50,24 @@ public class TotpController {
     }
 
     @PostMapping("/sapi/totp/setup")
+    @Operation(summary = "Create TOTP enrollment", description = "Creates a secret and authenticator URI for the signed-in account. TOTP is not enabled until the code is verified.")
+    @SecurityRequirement(name = "oauth2", scopes = "openid")
     public ResponseEntity<TotpSetupResponse> setup() {
         UUID uid = jwtClaimExtractor.extract().uid();
         return ResponseEntity.ok(totpService.generateSetup(uid));
     }
 
     @PostMapping("/sapi/totp/enable")
+    @Operation(summary = "Enable TOTP", description = "Verifies the first authenticator code, enables TOTP, and returns one-time recovery codes.")
+    @SecurityRequirement(name = "oauth2", scopes = "openid")
     public ResponseEntity<TotpEnableResponse> enable(@RequestBody TotpVerifyRequest request) {
         UUID uid = jwtClaimExtractor.extract().uid();
         return ResponseEntity.ok(totpService.verifyAndEnable(uid, request.code()));
     }
 
     @PostMapping("/sapi/totp/disable")
+    @Operation(summary = "Disable TOTP", description = "Disables TOTP after validating a current authenticator or recovery code.")
+    @SecurityRequirement(name = "oauth2", scopes = "openid")
     public ResponseEntity<Void> disable(@RequestBody TotpVerifyRequest request) {
         UUID uid = jwtClaimExtractor.extract().uid();
         totpService.disable(uid, request.code());
@@ -65,12 +75,15 @@ public class TotpController {
     }
 
     @GetMapping("/sapi/totp/status")
+    @Operation(summary = "Get TOTP status", description = "Reports whether TOTP is enabled and how many unused recovery codes remain.")
+    @SecurityRequirement(name = "oauth2", scopes = "openid")
     public ResponseEntity<TotpStatusResponse> status() {
         UUID uid = jwtClaimExtractor.extract().uid();
         return ResponseEntity.ok(totpService.getStatus(uid));
     }
 
     @PostMapping("/auth/totp")
+    @Operation(summary = "Complete browser login with TOTP", description = "Completes the cookie-session login started by password authentication. Accepts an authenticator or recovery code and requires the CSRF token returned by `/auth/session`.")
     public ResponseEntity<?> verifyLogin(@Valid @RequestBody TotpVerifyRequest request,
                                          HttpServletRequest httpRequest,
                                          HttpServletResponse httpResponse) {

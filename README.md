@@ -11,6 +11,19 @@ This repo will contain all the code involved in running the Let’s Peppol proje
 * a [kyc](./kyc/) folder that contains the Know-Your-Customer component (initially only for Belgian VAT numbers)
 * an [app](./app/) folder that contains our web interface
 
+Architecture and API documentation:
+
+* [KYC and registration flows](./readme/kyc.md) guides users through the onboarding scenarios and
+  their matching `RegistrationTest` examples.
+* [API network flows](./readme/api-network-flows.md) groups every implemented API by caller,
+  authentication mechanism, and downstream service, with focused diagrams and executable proof.
+* Interactive Swagger UI: [KYC](https://be.letspeppol.org/kyc/swagger-ui.html),
+  [App](https://be.letspeppol.org/app/swagger-ui.html), and
+  [Proxy](https://be.letspeppol.org/proxy/swagger-ui.html).
+* Raw OpenAPI JSON: [KYC](https://be.letspeppol.org/kyc/v3/api-docs),
+  [App](https://be.letspeppol.org/app/v3/api-docs), and
+  [Proxy](https://be.letspeppol.org/proxy/v3/api-docs).
+
 # KYC
 The main challenge of giving free-of-charge access to the Peppol e-invoicing network is authentication of legal entities. For this, we:
 * implemented a KYC component that gives our JWT tokens, that the API proxy from milestone 5a can check and trust

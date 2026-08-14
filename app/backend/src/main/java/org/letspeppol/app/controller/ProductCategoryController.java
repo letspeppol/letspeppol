@@ -19,7 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/sapi/product-category")
 @Tag(name = "App Product Categories", description = "Endpoints for maintaining the product category tree used to organize products in the application.")
-@SecurityRequirement(name = "bearerAuth")
+@SecurityRequirement(name = "oauth2", scopes = "openid")
 public class ProductCategoryController {
 
     private final ProductCategoryService categoryService;

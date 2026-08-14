@@ -1,5 +1,6 @@
 package org.letspeppol.proxy.controller;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/lapi/monitor")
+@Hidden
 @Tag(name = "Proxy Monitoring", description = "Lightweight operational endpoints used for health checks and simple balance top-up monitoring during proxy operations.")
 public class MonitoringController {
 

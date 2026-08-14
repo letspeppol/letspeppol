@@ -1,5 +1,7 @@
 # Registration new ADMIN
 
+Executable proof: [`RegistrationTest`](../kyc/src/test/java/org/letspeppol/kyc/controller/RegistrationTest.java), method `registrationNewAdmin`.
+
 ```mermaid
 sequenceDiagram
     actor SME as SME
@@ -9,6 +11,8 @@ sequenceDiagram
     participant PeppolDirectory as PeppolDirectory
     participant Proxy as Proxy
     participant Peppol as Peppol
+
+    Note over SME, Peppol: Executable proof: RegistrationTest.registrationNewAdmin
 
 Note over SME, Peppol: Requesting registration for new ADMIN
     Note left of SME: Visit /registration

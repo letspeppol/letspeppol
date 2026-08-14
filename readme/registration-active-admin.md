@@ -1,10 +1,14 @@
 # Registration active ADMIN
 
+Executable proof: [`RegistrationTest`](../kyc/src/test/java/org/letspeppol/kyc/controller/RegistrationTest.java), method `registrationActiveAdmin`.
+
 ```mermaid
 sequenceDiagram
     actor SME as SME
     participant Frontend as Frontend
     participant KYC as KYC
+
+    Note over SME, KYC: Executable proof: RegistrationTest.registrationActiveAdmin
 
 Note over SME, KYC: Requesting registration for active ADMIN
     Note left of SME: Visit /registration

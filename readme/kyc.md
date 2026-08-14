@@ -52,6 +52,10 @@ The KYC API is organized as a sequence of steps. Each step represents part of th
 
 The pages below should be read in the same order as the scenarios covered by `RegistrationTest` in the KYC project.
 
+For the cross-service API catalogue, authentication boundaries, and App/Proxy traffic, see
+[API network flows](./api-network-flows.md). The generated OpenAPI documents provide the detailed
+request/response schemas; the Mermaid pages explain scenario order and trust boundaries.
+
 ## Flow documentation
 
 1. [Registration new ADMIN](./registration-new-admin.md)

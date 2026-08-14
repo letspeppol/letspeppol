@@ -19,7 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/sapi/product")
 @Tag(name = "App Products", description = "Product catalog endpoints used to manage reusable invoice and catalog items in the application.")
-@SecurityRequirement(name = "bearerAuth")
+@SecurityRequirement(name = "oauth2", scopes = "openid")
 public class ProductController {
 
     private final ProductService productService;

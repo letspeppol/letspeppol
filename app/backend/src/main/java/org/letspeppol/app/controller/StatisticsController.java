@@ -34,7 +34,7 @@ public class StatisticsController {
 
     @GetMapping("/sapi/stats/account")
     @Operation(summary = "Get account dashboard totals", description = "Returns authenticated dashboard totals for the current company account.")
-    @SecurityRequirement(name = "bearerAuth")
+    @SecurityRequirement(name = "oauth2", scopes = "openid")
     public TotalsDto getAccountTotals(@AuthenticationPrincipal Jwt jwt) {
         String peppolId = JwtUtil.getPeppolId(jwt);
         return statisticsService.getTotals(peppolId);

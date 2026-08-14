@@ -1,10 +1,14 @@
 # Registration active AFFILIATE
 
+Executable proof: [`RegistrationTest`](../kyc/src/test/java/org/letspeppol/kyc/controller/RegistrationTest.java), method `registrationActiveAffiliate`.
+
 ```mermaid
 sequenceDiagram
     actor AFFILIATE as AFFILIATE
     participant Frontend as Frontend
     participant KYC as KYC
+
+    Note over AFFILIATE, KYC: Executable proof: RegistrationTest.registrationActiveAffiliate
 
 Note over AFFILIATE, KYC: Requesting registration for active AFFILIATE
     Note left of AFFILIATE: Visit /affiliate/registration

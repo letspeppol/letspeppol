@@ -1,5 +1,8 @@
 package org.letspeppol.kyc.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -33,6 +36,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
+@Tag(name = "KYC Passkeys", description = "WebAuthn passkey enrollment, management, and browser-session authentication.")
 public class PasskeyController {
 
     private final PasskeyService passkeyService;
@@ -47,6 +51,8 @@ public class PasskeyController {
     }
 
     @PostMapping("/sapi/passkeys/register/options")
+    @Operation(summary = "Create passkey registration options", description = "Starts WebAuthn registration for the currently authenticated account and returns a short-lived challenge.")
+    @SecurityRequirement(name = "oauth2", scopes = "openid")
     public ResponseEntity<Map<String, Object>> registrationOptions() {
         UUID uid = jwtClaimExtractor.extract().uid();
         Map<String, Object> options = passkeyService.generateRegistrationOptions(uid);
@@ -54,6 +60,8 @@ public class PasskeyController {
     }
 
     @PostMapping("/sapi/passkeys/register/verify")
+    @Operation(summary = "Verify passkey registration", description = "Verifies the WebAuthn attestation response and stores the new credential for the current account.")
+    @SecurityRequirement(name = "oauth2", scopes = "openid")
     public ResponseEntity<Void> verifyRegistration(@RequestBody PasskeyVerifyRegistrationRequest request) {
         UUID uid = jwtClaimExtractor.extract().uid();
         passkeyService.verifyRegistration(uid, request.credential(), request.challengeToken(), request.displayName());
@@ -61,12 +69,16 @@ public class PasskeyController {
     }
 
     @GetMapping("/sapi/passkeys")
+    @Operation(summary = "List passkeys", description = "Lists passkey credentials registered by the current account without exposing credential secrets.")
+    @SecurityRequirement(name = "oauth2", scopes = "openid")
     public ResponseEntity<List<PasskeyDto>> listPasskeys() {
         UUID uid = jwtClaimExtractor.extract().uid();
         return ResponseEntity.ok(passkeyService.listCredentials(uid));
     }
 
     @DeleteMapping("/sapi/passkeys/{id}")
+    @Operation(summary = "Delete passkey", description = "Deletes one passkey owned by the current account.")
+    @SecurityRequirement(name = "oauth2", scopes = "openid")
     public ResponseEntity<Void> deletePasskey(@PathVariable Long id) {
         UUID uid = jwtClaimExtractor.extract().uid();
         passkeyService.deleteCredential(uid, id);
@@ -74,6 +86,8 @@ public class PasskeyController {
     }
 
     @PutMapping("/sapi/passkeys/{id}/name")
+    @Operation(summary = "Rename passkey", description = "Changes the user-visible name of a passkey owned by the current account.")
+    @SecurityRequirement(name = "oauth2", scopes = "openid")
     public ResponseEntity<Void> renamePasskey(@PathVariable Long id, @RequestBody PasskeyRenameRequest request) {
         UUID uid = jwtClaimExtractor.extract().uid();
         passkeyService.renameCredential(uid, id, request.displayName());
@@ -81,6 +95,7 @@ public class PasskeyController {
     }
 
     @PostMapping("/auth/passkeys/authenticate/options")
+    @Operation(summary = "Create passkey authentication options", description = "Starts passwordless browser authentication and stores a short-lived challenge in the cookie session. Requires CSRF protection.")
     public ResponseEntity<Map<String, Object>> authenticationOptions(
             HttpSession session, HttpServletResponse response) {
         BrowserAuthenticationSupport.preventCaching(response);
@@ -88,6 +103,7 @@ public class PasskeyController {
     }
 
     @PostMapping("/auth/passkeys/authenticate/verify")
+    @Operation(summary = "Verify passkey authentication", description = "Verifies the WebAuthn assertion and establishes the authenticated KYC browser session used by the following OAuth2 authorization request. Requires CSRF protection.")
     public ResponseEntity<?> verifyAuthentication(
             @Valid @RequestBody PasskeyAuthenticationResponse response,
             HttpServletRequest request,

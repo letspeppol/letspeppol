@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/sapi/registry")
 @Tag(name = "Proxy Registry", description = "Service-facing endpoints for managing a company's proxy registration and access-point level app links.")
-@SecurityRequirement(name = "bearerAuth")
+@SecurityRequirement(name = "serviceAuth", scopes = "service")
 public class RegistryController {
 
     private final AppLinkService appLinkService;

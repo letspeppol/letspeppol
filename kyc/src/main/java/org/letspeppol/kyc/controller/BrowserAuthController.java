@@ -1,5 +1,7 @@
 package org.letspeppol.kyc.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -16,9 +18,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@Tag(name = "KYC Browser Authentication", description = "Cookie-session and CSRF bootstrap used before the OAuth2 Authorization Code + PKCE exchange.")
 public class BrowserAuthController {
 
     @GetMapping("/auth/session")
+    @Operation(summary = "Inspect browser authentication session", description = "Returns anonymous, TOTP-required, or authenticated status together with the CSRF token required by browser authentication POSTs. This endpoint does not issue an OAuth access token.")
     public ResponseEntity<AuthSessionResponse> session(CsrfToken csrfToken,
                                                        Authentication authentication,
                                                        HttpServletRequest request,

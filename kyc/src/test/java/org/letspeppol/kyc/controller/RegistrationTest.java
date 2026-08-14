@@ -202,6 +202,26 @@ class RegistrationTest {
 
     @Test
     @Order(6)
+    void oauth2AuthorizationCodeWithPkce() {
+        if (!accountRepository.existsByEmail(adminEmail)) {
+            registrationNewAdmin();
+        }
+        String accessToken = registrationSteps.oauth2AuthorizationCodeWithPkce(
+                adminEmail, adminPassword, adminPeppolId);
+        assertNotNull(accessToken);
+        assertFalse(accessToken.isBlank());
+    }
+
+    @Test
+    @Order(6)
+    void oauth2ClientCredentialsForServiceTraffic() {
+        String accessToken = registrationSteps.clientCredentialsServiceToken();
+        assertNotNull(accessToken);
+        assertFalse(accessToken.isBlank());
+    }
+
+    @Test
+    @Order(7)
     void swapAffiliateToAffiliate() {
         if (affiliateToken == null) {
             loginAffiliateAsAdmin();
@@ -210,7 +230,7 @@ class RegistrationTest {
     }
 
     @Test
-    @Order(7)
+    @Order(8)
     void registrationActiveAdminViaAffiliateAndVerifyByEmail() {
         if (!accountRepository.existsByEmail(adminEmail)) {
             registrationNewAdmin();
@@ -252,7 +272,7 @@ class RegistrationTest {
     }
 
     @Test
-    @Order(8)
+    @Order(9)
     void registrationNewAdminViaAffiliateAndVerifyByEmailBeforeSigning() {
         registrationSteps.prepareDatabase(bobPeppolId, bobCompany);
 
@@ -300,7 +320,7 @@ class RegistrationTest {
     }
 
     @Test
-    @Order(9)
+    @Order(10)
     void registrationNewAdminViaAffiliateAndSignBeforeEmailVerification() {
         registrationSteps.prepareDatabase(charliePeppolId, charlieCompany);
 
@@ -347,7 +367,7 @@ class RegistrationTest {
     }
 
     @Test
-    @Order(10)
+    @Order(11)
     void registrationNewAdminByActiveAdmin() {
         if (adminToken == null) {
             loginAdminAsAdmin();

@@ -20,7 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/sapi/partner")
 @Tag(name = "App Partners", description = "Partner master-data endpoints used to manage customers, suppliers, and counterparties inside the app.")
-@SecurityRequirement(name = "bearerAuth")
+@SecurityRequirement(name = "oauth2", scopes = "openid")
 public class PartnerController {
 
     private final PartnerService partnerService;

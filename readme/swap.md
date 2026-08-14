@@ -7,6 +7,8 @@ selection, then re-authorizes silently to obtain a token carrying the new contex
 The acting ownership is resolved at token-mint time as the account's most recently used one, so
 selecting an ownership is simply an update of `lastUsed`.
 
+Executable proof: [`RegistrationTest`](../kyc/src/test/java/org/letspeppol/kyc/controller/RegistrationTest.java), method `swapAffiliateToAffiliate`; the PKCE re-authorization is also exercised by `oauth2AuthorizationCodeWithPkce`.
+
 ```mermaid
 sequenceDiagram
     actor SME as SME
@@ -14,9 +16,11 @@ sequenceDiagram
     participant KYC as KYC
     participant App as App
 
+    Note over SME, App: Executable proof: RegistrationTest.swapAffiliateToAffiliate
+
 Note over SME, App: Swap active ownership
     SME ->> Frontend: Select ownership( AccountType, peppolId )
-    Frontend ->> KYC: POST /sapi/account/ownership <br> ( AccountType, peppolId )
+    Frontend ->> KYC: POST /kyc/sapi/account/ownership <br> Authorization: Bearer USER_JWT <br> ( AccountType, peppolId )
     Note right of KYC: Validate access token <br> Validate ownership AccountType for peppolId <br> Update last used ownership
     KYC ->> Frontend: 204 No Content
     Frontend ->> KYC: GET /kyc/oauth2/authorize ( prompt=none ) + POST /kyc/oauth2/token

@@ -1,5 +1,7 @@
 # Registration new AFFILIATE
 
+Executable proof: [`RegistrationTest`](../kyc/src/test/java/org/letspeppol/kyc/controller/RegistrationTest.java), method `registrationNewAffiliate`.
+
 ```mermaid
 sequenceDiagram
     actor AFFILIATE as AFFILIATE
@@ -7,6 +9,8 @@ sequenceDiagram
     participant KYC as KYC
     participant App as App
     participant PeppolDirectory as PeppolDirectory
+
+    Note over AFFILIATE, PeppolDirectory: Executable proof: RegistrationTest.registrationNewAffiliate
 
 Note over AFFILIATE, PeppolDirectory: Requesting registration for new AFFILIATE
     Note left of AFFILIATE: Visit /affiliate/registration

@@ -26,7 +26,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/sapi/accountant")
 @Tag(name = "App Accountant", description = "Endpoints that support accountant-to-customer linking and access to customer document views.")
-@SecurityRequirement(name = "bearerAuth")
+@SecurityRequirement(name = "oauth2", scopes = "openid")
 public class AccountantController {
 
     private final AccountantService accountantService;

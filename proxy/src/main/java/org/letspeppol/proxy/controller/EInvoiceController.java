@@ -1,5 +1,6 @@
 package org.letspeppol.proxy.controller;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/e-invoice")
 @Tag(name = "Proxy E-Invoice", description = "Inbound webhook-style endpoints reserved for receiving documents from external e-invoicing providers.")
+@Hidden
 public class EInvoiceController {
 
     private final UblDocumentService ublDocumentService;

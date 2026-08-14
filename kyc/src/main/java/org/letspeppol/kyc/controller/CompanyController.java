@@ -33,7 +33,7 @@ import java.util.UUID;
 @RequestMapping("/sapi/company")
 @RequiredArgsConstructor
 @Tag(name = "KYC Company Management", description = "Authenticated company endpoints for loading account context, searching companies, and activating or deactivating Peppol registration.")
-@SecurityRequirement(name = "bearerAuth")
+@SecurityRequirement(name = "oauth2", scopes = "openid")
 public class CompanyController {
 
     private final AccountService accountService;
