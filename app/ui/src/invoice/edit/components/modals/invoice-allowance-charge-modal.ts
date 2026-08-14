@@ -14,6 +14,7 @@ export class InvoiceAllowanceChargeModal {
     parent: UBLBase | UBLBaseLine;
     amount: number;
     showModal(parent: UBLBase | UBLBaseLine) {
+        this.parent = parent;
         if (parent.AllowanceCharge) {
             this.allowanceCharge = structuredClone(parent.AllowanceCharge);
         } else {
@@ -35,7 +36,8 @@ export class InvoiceAllowanceChargeModal {
                 Amount: {
                     value: baseAmount * this.amount / 100,
                     __currencyID: "EUR"
-                }
+                },
+                MultiplierFactorNumeric: this.amount
             });
         } else {
             this.allowanceCharge.push({

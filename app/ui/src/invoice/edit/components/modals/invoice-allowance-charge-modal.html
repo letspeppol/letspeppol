@@ -46,10 +46,10 @@
                     <tr repeat.for="line of allowanceCharge">
                         <td>
                             <span t="${line.ChargeIndicator ? 'Charge' : 'Discount'}"></span>
-                            <span t="${line.ChargeIndicator ? 'Charge' : 'Discount'}"></span>
                         </td>
                         <td>
-                            ${line.amount.value.toFixed(2) | price:line.amount.currency}
+                            <span if.bind="line.MultiplierFactorNumeric">${line.MultiplierFactorNumeric}% ( ${line.Amount.value.toFixed(2) | price:line.Amount.__currencyID} )</span>
+                            <span else> ${line.Amount.value.toFixed(2) | price:line.Amount.__currencyID}</span>
                         </td>
                         <td class="actions-col">
                             <button class="icon-btn" data-action="remove-line" title="Remove" t="[title]common.remove" click.trigger="deleteLine(line)">
