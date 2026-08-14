@@ -1,12 +1,9 @@
-import {resolve} from "@aurelia/kernel";
-import {InvoiceContext} from "../../../invoice-context";
 import {AllowanceCharge, UBLBase, UBLBaseLine} from "../../../../services/peppol/ubl";
 
 export type AllowanceChargeMode = 'percentage' | 'amount';
 export type AllowanceChargeReason = 'discount' | 'cost';
 
 export class InvoiceAllowanceChargeModal {
-    private invoiceContext = resolve(InvoiceContext);
     open = false;
     mode: AllowanceChargeMode = 'percentage';
     reason: AllowanceChargeReason = 'discount';
@@ -55,7 +52,10 @@ export class InvoiceAllowanceChargeModal {
     }
 
     deleteLine(line: AllowanceCharge) {
-        this.allowanceCharge.splice(this.invoiceContext.lines.findIndex(item => item === line), 1);
+        const index = this.allowanceCharge.findIndex(item => item === line);
+        if (index >= 0) {
+            this.allowanceCharge.splice(index, 1);
+        }
     }
 
     cancelAllowanceCharge() {

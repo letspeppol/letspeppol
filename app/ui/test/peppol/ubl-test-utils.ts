@@ -287,6 +287,14 @@ export const sampleInvoiceXml = `
   <cac:PaymentTerms>
     <cbc:Note>Payment within 10 days, 2% discount</cbc:Note>
   </cac:PaymentTerms>
+  <cac:AllowanceCharge>
+    <cbc:ChargeIndicator>false</cbc:ChargeIndicator>
+    <cbc:AllowanceChargeReasonCode>95</cbc:AllowanceChargeReasonCode>
+    <cbc:AllowanceChargeReason>Discount</cbc:AllowanceChargeReason>
+    <cbc:MultiplierFactorNumeric>10</cbc:MultiplierFactorNumeric>
+    <cbc:Amount currencyID="EUR">40</cbc:Amount>
+    <cbc:BaseAmount currencyID="EUR">400</cbc:BaseAmount>
+  </cac:AllowanceCharge>
   <cac:TaxTotal>
     <cbc:TaxAmount currencyID="EUR">331.25</cbc:TaxAmount>
     <cac:TaxSubtotal>

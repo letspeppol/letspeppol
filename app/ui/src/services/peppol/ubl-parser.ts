@@ -104,6 +104,8 @@ const numberFields = [
     "TaxAmount",
     "TaxableAmount",
     "Amount",
+    "BaseAmount",
+    "MultiplierFactorNumeric",
     "value",       // for Amounts and Quantities
 ];
 
