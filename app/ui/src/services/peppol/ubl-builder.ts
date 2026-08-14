@@ -298,6 +298,7 @@ function buildMonetaryTotal(mt: MonetaryTotal): string {
         buildAmount('cbc:LineExtensionAmount', mt.LineExtensionAmount),
         buildAmount('cbc:TaxExclusiveAmount', mt.TaxExclusiveAmount),
         buildAmount('cbc:TaxInclusiveAmount', mt.TaxInclusiveAmount),
+        buildAmount('cbc:AllowanceTotalAmount', mt.AllowanceTotalAmount),
         buildAmount('cbc:ChargeTotalAmount', mt.ChargeTotalAmount),
         buildAmount('cbc:PayableAmount', mt.PayableAmount),
         '</cac:LegalMonetaryTotal>',

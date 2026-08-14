@@ -313,6 +313,7 @@ export const sampleInvoiceXml = `
   <cbc:LineExtensionAmount currencyID="EUR">1300</cbc:LineExtensionAmount>
     <cbc:TaxExclusiveAmount currencyID="EUR">1325</cbc:TaxExclusiveAmount>
     <cbc:TaxInclusiveAmount currencyID="EUR">1656.25</cbc:TaxInclusiveAmount>
+    <cbc:AllowanceTotalAmount currencyID="EUR">40</cbc:AllowanceTotalAmount>
     <cbc:ChargeTotalAmount currencyID="EUR">25</cbc:ChargeTotalAmount>
     <cbc:PayableAmount currencyID="EUR">1656.25</cbc:PayableAmount>
   </cac:LegalMonetaryTotal>

@@ -215,6 +215,7 @@ export interface MonetaryTotal {
     LineExtensionAmount?: Amount;
     TaxExclusiveAmount?: Amount;
     TaxInclusiveAmount?: Amount;
+    AllowanceTotalAmount?: Amount;
     ChargeTotalAmount?: Amount;
     PayableAmount: Amount;
 }

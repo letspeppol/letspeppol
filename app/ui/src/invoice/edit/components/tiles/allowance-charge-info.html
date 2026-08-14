@@ -1,3 +1,5 @@
+<import from="../../../../app/value-converters/price.ts"></import>
+
 <div class="composer-info">
     <div style="display: flex; flex-direction: row; margin-bottom: var(--space-025)" click.trigger="showAllowanceChargeModal()">
         <div class="card-header">
@@ -8,4 +10,11 @@
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pen-icon lucide-pen"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>
         </button>
     </div>
+
+    <div repeat.for="line of invoiceContext.selectedInvoice.AllowanceCharge">
+        <span t="${line.ChargeIndicator ? 'Charge' : 'Discount'}"></span>
+        <span if.bind="line.MultiplierFactorNumeric">${line.MultiplierFactorNumeric}% ( ${line.Amount.value.toFixed(2) | price:line.Amount.__currencyID} )</span>
+        <span else> ${line.Amount.value.toFixed(2) | price:line.Amount.__currencyID}</span>
+    </div>
+
 </div>

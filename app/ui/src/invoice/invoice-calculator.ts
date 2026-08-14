@@ -44,7 +44,24 @@ export class InvoiceCalculator {
         taxSubtotals.forEach(item => {
             item.TaxableAmount.value = roundTwoDecimals(item.TaxableAmount.value);
             item.TaxAmount.value = roundTwoDecimals(item.TaxAmount.value);
-        })
+        });
+
+        let chargeTotalAmount = 0;
+        let allowanceTotalAmount = 0;
+
+        if (doc.AllowanceCharge && doc.AllowanceCharge.length) {
+            for (const allowanceCharge of doc.AllowanceCharge) {
+                if (allowanceCharge.ChargeIndicator) {
+                    chargeTotalAmount += allowanceCharge.Amount.value;
+                } else {
+                    allowanceTotalAmount += allowanceCharge.Amount.value;
+                }
+            }
+        }
+
+        if (chargeTotalAmount > 0) {
+
+        }
 
         doc.TaxTotal = [{
             TaxAmount: {

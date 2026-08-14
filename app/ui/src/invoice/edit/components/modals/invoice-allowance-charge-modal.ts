@@ -21,6 +21,7 @@ export class InvoiceAllowanceChargeModal {
     }
 
     addLine() {
+        const amount = Number(this.amount);
         if (this.mode === 'percentage') {
             let baseAmount: number;
             if (this.isUBLBaseLine(this.parent)) {
@@ -31,16 +32,16 @@ export class InvoiceAllowanceChargeModal {
             this.allowanceCharge.push({
                 ChargeIndicator: this.reason === 'cost',
                 Amount: {
-                    value: baseAmount * this.amount / 100,
+                    value: baseAmount * amount / 100,
                     __currencyID: "EUR"
                 },
-                MultiplierFactorNumeric: this.amount
+                MultiplierFactorNumeric: amount
             });
         } else {
             this.allowanceCharge.push({
                 ChargeIndicator: this.reason === 'cost',
                 Amount: {
-                    value: this.amount,
+                    value: amount,
                     __currencyID: "EUR"
                 }
             });
