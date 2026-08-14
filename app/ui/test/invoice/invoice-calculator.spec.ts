@@ -121,4 +121,35 @@ describe('InvoiceCalculator', () => {
         expect(invoice.TaxTotal?.[0]?.TaxSubtotal?.[0]?.TaxCategory?.TaxExemptionReason).toBe(NOT_SUBJECT_TO_VAT_REASON_TEXT);
         expect(invoice.TaxTotal?.[0]?.TaxSubtotal?.[0]?.TaxAmount.value).toBe(0);
     });
+
+    test('includes document allowances and charges in VAT and monetary totals', () => {
+        const invoice = createInvoice([
+            createLine('1', 100, { ID: 'S', Percent: 21, TaxScheme: { ID: 'VAT' } }),
+        ]);
+        invoice.AllowanceCharge = [
+            {
+                ChargeIndicator: true,
+                Amount: { __currencyID: 'EUR', value: 10 },
+                TaxCategory: { ID: 'S', Percent: 21, TaxScheme: { ID: 'VAT' } },
+            },
+            {
+                ChargeIndicator: false,
+                Amount: { __currencyID: 'EUR', value: 5 },
+                TaxCategory: { ID: 'S', Percent: 21, TaxScheme: { ID: 'VAT' } },
+            },
+        ];
+
+        new InvoiceCalculator().calculateTaxAndTotals(invoice);
+
+        expect(invoice.TaxTotal?.[0]?.TaxAmount.value).toBe(22.05);
+        expect(invoice.TaxTotal?.[0]?.TaxSubtotal?.[0]?.TaxableAmount.value).toBe(105);
+        expect(invoice.LegalMonetaryTotal).toMatchObject({
+            LineExtensionAmount: { value: 100 },
+            TaxExclusiveAmount: { value: 105 },
+            TaxInclusiveAmount: { value: 127.05 },
+            AllowanceTotalAmount: { value: 5 },
+            ChargeTotalAmount: { value: 10 },
+            PayableAmount: { value: 127.05 },
+        });
+    });
 });

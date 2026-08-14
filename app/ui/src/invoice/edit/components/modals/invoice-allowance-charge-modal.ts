@@ -1,12 +1,20 @@
+import {resolve} from "@aurelia/kernel";
+import {InvoiceCalculator} from "../../../invoice-calculator";
+import {InvoiceContext} from "../../../invoice-context";
 import {AllowanceCharge, UBLBase, UBLBaseLine} from "../../../../services/peppol/ubl";
+import {VAT_RATE_OPTIONS} from "../../../../services/app/vat-rules";
 
 export type AllowanceChargeMode = 'percentage' | 'amount';
 export type AllowanceChargeReason = 'discount' | 'cost';
 
 export class InvoiceAllowanceChargeModal {
+    private invoiceContext = resolve(InvoiceContext);
+    private invoiceCalculator = resolve(InvoiceCalculator);
     open = false;
     mode: AllowanceChargeMode = 'percentage';
     reason: AllowanceChargeReason = 'discount';
+    vatRateOptions = VAT_RATE_OPTIONS;
+    vatRate = 21;
     allowanceCharge: AllowanceCharge[];
     parent: UBLBase | UBLBaseLine;
     amount: number;
@@ -22,6 +30,12 @@ export class InvoiceAllowanceChargeModal {
 
     addLine() {
         const amount = Number(this.amount);
+        const vatRate = Number(this.vatRate);
+        const taxCategory = this.isUBLBaseLine(this.parent) ? undefined : {
+            ID: vatRate === 0 ? 'Z' : 'S',
+            Percent: vatRate,
+            TaxScheme: {ID: 'VAT'},
+        };
         if (this.mode === 'percentage') {
             let baseAmount: number;
             if (this.isUBLBaseLine(this.parent)) {
@@ -35,7 +49,8 @@ export class InvoiceAllowanceChargeModal {
                     value: baseAmount * amount / 100,
                     __currencyID: "EUR"
                 },
-                MultiplierFactorNumeric: amount
+                MultiplierFactorNumeric: amount,
+                ...(taxCategory ? {TaxCategory: taxCategory} : {}),
             });
         } else {
             this.allowanceCharge.push({
@@ -43,13 +58,21 @@ export class InvoiceAllowanceChargeModal {
                 Amount: {
                     value: amount,
                     __currencyID: "EUR"
-                }
+                },
+                ...(taxCategory ? {TaxCategory: taxCategory} : {}),
             });
         }
     }
 
-    isUBLBaseLine(parent: UBLBase | UBLBaseLine): parent is UBLBaseLine {
-        return "LineExtensionAmount" in parent;
+    vatRateChanged(value: number | string) {
+        const vatRate = Number(value);
+        if (!Number.isNaN(vatRate)) {
+            this.vatRate = vatRate;
+        }
+    }
+
+    isUBLBaseLine(parent: UBLBase | UBLBaseLine | undefined): parent is UBLBaseLine {
+        return !!parent && "LineExtensionAmount" in parent;
     }
 
     deleteLine(line: AllowanceCharge) {
@@ -64,12 +87,18 @@ export class InvoiceAllowanceChargeModal {
     }
 
     deleteAllowanceCharge() {
-        delete this.parent.AllowanceCharge
+        delete this.parent.AllowanceCharge;
+        if (this.invoiceContext.selectedInvoice) {
+            this.invoiceCalculator.calculateTaxAndTotals(this.invoiceContext.selectedInvoice);
+        }
         this.open = false;
     }
 
     confirmAllowanceCharge() {
         this.parent.AllowanceCharge = this.allowanceCharge;
+        if (this.invoiceContext.selectedInvoice) {
+            this.invoiceCalculator.calculateTaxAndTotals(this.invoiceContext.selectedInvoice);
+        }
         this.open = false;
     }
 

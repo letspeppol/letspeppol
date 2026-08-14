@@ -10,7 +10,7 @@ export class InvoiceCalculator {
         const previousTaxCategories = collectExistingTaxCategories(doc);
 
         let taxTotal = 0;
-        let totalWithoutTax = 0;
+        let lineExtensionTotal = 0;
         const taxSubtotals: TaxSubtotal[] = [];
         for (const line of lines) {
             const normalizedTaxCategory = normalizeTaxCategory(line.Item.ClassifiedTaxCategory);
@@ -33,35 +33,61 @@ export class InvoiceCalculator {
             taxSubtotal.TaxCategory = mergeTaxCategoryDetails(taxSubtotal.TaxCategory, normalizedTaxCategory);
             taxSubtotal.TaxCategory = preserveExistingTaxCategoryDetails(taxSubtotal.TaxCategory, previousTaxCategory);
             taxSubtotal.TaxableAmount.value += line.LineExtensionAmount.value;
-            totalWithoutTax += line.LineExtensionAmount.value;
-            const tax = roundTwoDecimals(line.LineExtensionAmount.value * ((normalizedTaxCategory.Percent ?? 0) / 100.0));
+            lineExtensionTotal += line.LineExtensionAmount.value;
+            const tax = roundTwoDecimals(line.LineExtensionAmount.value * ((normalizedTaxCategory?.Percent ?? 0) / 100.0));
             taxSubtotal.TaxAmount.value += tax;
             taxTotal += tax;
         }
+
+        let chargeTotalAmount = 0;
+        let allowanceTotalAmount = 0;
+        for (const allowanceCharge of doc.AllowanceCharge ?? []) {
+            const amount = allowanceCharge.Amount.value;
+            const taxableAmount = allowanceCharge.ChargeIndicator ? amount : -amount;
+            if (allowanceCharge.ChargeIndicator) {
+                chargeTotalAmount += amount;
+            } else {
+                allowanceTotalAmount += amount;
+            }
+
+            const normalizedTaxCategory = normalizeTaxCategory(allowanceCharge.TaxCategory);
+            if (!normalizedTaxCategory) {
+                continue;
+            }
+            const previousTaxCategory = previousTaxCategories.get(taxBreakdownKey(normalizedTaxCategory) ?? '');
+            let taxSubtotal = taxSubtotals.find(item => matchesTaxBreakdownKey(item.TaxCategory, normalizedTaxCategory));
+            if (!taxSubtotal) {
+                taxSubtotal = {
+                    TaxableAmount: {
+                        value: 0,
+                        __currencyID: "EUR"
+                    },
+                    TaxAmount: {
+                        value: 0,
+                        __currencyID: "EUR"
+                    },
+                    TaxCategory: {...normalizedTaxCategory}
+                };
+                taxSubtotals.push(taxSubtotal);
+            }
+            taxSubtotal.TaxCategory = mergeTaxCategoryDetails(taxSubtotal.TaxCategory, normalizedTaxCategory);
+            taxSubtotal.TaxCategory = preserveExistingTaxCategoryDetails(taxSubtotal.TaxCategory, previousTaxCategory);
+            taxSubtotal.TaxableAmount.value += taxableAmount;
+            const tax = roundTwoDecimals(taxableAmount * ((normalizedTaxCategory.Percent ?? 0) / 100.0));
+            taxSubtotal.TaxAmount.value += tax;
+            taxTotal += tax;
+        }
+
         taxTotal = roundTwoDecimals(taxTotal);
-        totalWithoutTax = roundTwoDecimals(totalWithoutTax);
-        const totalWithTax = roundTwoDecimals(totalWithoutTax + taxTotal);
+        lineExtensionTotal = roundTwoDecimals(lineExtensionTotal);
+        chargeTotalAmount = roundTwoDecimals(chargeTotalAmount);
+        allowanceTotalAmount = roundTwoDecimals(allowanceTotalAmount);
+        const taxExclusiveAmount = roundTwoDecimals(lineExtensionTotal + chargeTotalAmount - allowanceTotalAmount);
+        const taxInclusiveAmount = roundTwoDecimals(taxExclusiveAmount + taxTotal);
         taxSubtotals.forEach(item => {
             item.TaxableAmount.value = roundTwoDecimals(item.TaxableAmount.value);
             item.TaxAmount.value = roundTwoDecimals(item.TaxAmount.value);
         });
-
-        let chargeTotalAmount = 0;
-        let allowanceTotalAmount = 0;
-
-        if (doc.AllowanceCharge && doc.AllowanceCharge.length) {
-            for (const allowanceCharge of doc.AllowanceCharge) {
-                if (allowanceCharge.ChargeIndicator) {
-                    chargeTotalAmount += allowanceCharge.Amount.value;
-                } else {
-                    allowanceTotalAmount += allowanceCharge.Amount.value;
-                }
-            }
-        }
-
-        if (chargeTotalAmount > 0) {
-
-        }
 
         doc.TaxTotal = [{
             TaxAmount: {
@@ -74,19 +100,27 @@ export class InvoiceCalculator {
         doc.LegalMonetaryTotal = {
             LineExtensionAmount: {
                 __currencyID: "EUR",
-                value: totalWithoutTax
+                value: lineExtensionTotal
             },
             TaxExclusiveAmount: {
                 __currencyID: "EUR",
-                value: totalWithoutTax
+                value: taxExclusiveAmount
             },
             TaxInclusiveAmount: {
                 __currencyID: "EUR",
-                value: totalWithTax
+                value: taxInclusiveAmount
             },
+            AllowanceTotalAmount: allowanceTotalAmount > 0 ? {
+                __currencyID: "EUR",
+                value: allowanceTotalAmount
+            } : undefined,
+            ChargeTotalAmount: chargeTotalAmount > 0 ? {
+                __currencyID: "EUR",
+                value: chargeTotalAmount
+            } : undefined,
             PayableAmount: {
                 __currencyID: "EUR",
-                value: totalWithTax
+                value: taxInclusiveAmount
             }
         };
     }
@@ -96,11 +130,14 @@ export function roundTwoDecimals(value: number): number {
     return Math.round((value + Number.EPSILON) * 100) / 100;
 }
 
-function normalizeTaxCategory(category: ClassifiedTaxCategory | undefined): ClassifiedTaxCategory | undefined {
+function normalizeTaxCategory(category: TaxCategory | ClassifiedTaxCategory | undefined): TaxCategory | undefined {
     if (!category) {
         return undefined;
     }
-    const categoryId = category.ID.trim();
+    const categoryId = category.ID?.trim();
+    if (!categoryId) {
+        return undefined;
+    }
 
     if (categoryId === 'Z') {
         return {
@@ -150,8 +187,8 @@ function taxBreakdownKey(category: TaxCategory | ClassifiedTaxCategory | undefin
 }
 
 function matchesTaxBreakdownKey(
-    left: TaxCategory,
-    right: ClassifiedTaxCategory | undefined,
+    left: TaxCategory | undefined,
+    right: TaxCategory | undefined,
 ): boolean {
     if (!left || !right) {
         return left === right;
@@ -160,10 +197,9 @@ function matchesTaxBreakdownKey(
     return left.Percent === right.Percent
         && left.ID === right.ID;
 }
-
 function mergeTaxCategoryDetails(
     current: TaxCategory | undefined,
-    incoming: ClassifiedTaxCategory | undefined,
+    incoming: TaxCategory | undefined,
 ): TaxCategory | undefined {
     if (!current) {
         return incoming ? {...incoming} : undefined;

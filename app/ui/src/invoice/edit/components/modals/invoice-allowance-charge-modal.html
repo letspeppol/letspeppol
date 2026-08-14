@@ -8,13 +8,19 @@
             <button class="icon-btn" click.trigger="cancelAllowanceCharge()" aria-label="Close dialog" t="[aria-label]common.close" title="Close" t="[title]common.close">×</button>
         </header>
         <div class="modal-body">
-            <div style="display: inline-grid; gap: var(--space-1)">
+            <div style="display: flex; gap: var(--space-1); align-items: flex-end">
                 <label class="field">
                     <span t="invoice.allowanceChargeModal.quantity">Name</span>
                     <input type="number" name="payeeFinancialAccountName" value.bind="amount" />
                 </label>
+                <label class="field" if.bind="!isUBLBaseLine(parent)">
+                    <span>VAT</span>
+                    <select change.trigger="vatRateChanged($event.target.value)">
+                        <option repeat.for="taxRate of vatRateOptions" value.bind="taxRate" selected.bind="taxRate === vatRate">${taxRate}%</option>
+                    </select>
+                </label>
             </div>
-            <div style="display: flex; flex-direction: row; justify-content: space-between">
+            <div style="display: flex; gap: var(--space-1); align-items: center; margin-top: var(--space-1)">
                 <div class="display-toggle">
                     <span class="vat-toggle-label" class.bind="mode === 'percentage' ? 'active' : ''" click.trigger="mode = 'percentage'">Percentage</span>
                     <label class="switch">
@@ -31,6 +37,8 @@
                     </label>
                     <span class="vat-toggle-label" class.bind="reason === 'cost' ? 'active' : ''" click.trigger="reason = 'cost'">Cost</span>
                 </div>
+            </div>
+            <div style="margin-top: var(--space-1)">
                 <button type="button" class="btn primary" click.trigger="addLine()" disabled.bind="!amount">+ <span t="invoice.edit.add-line">Add</span></button>
             </div>
             <div class="table-wrapper">

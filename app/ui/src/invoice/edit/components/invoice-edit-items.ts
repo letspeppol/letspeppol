@@ -14,6 +14,7 @@ import {
     getReadonlyDisplayedVatRatePercent,
     getSharedVatReasonText,
     isVatExemptRuleset,
+    VAT_RATE_OPTIONS,
     ZeroVatReasonId,
 } from "../../../services/app/vat-rules";
 import {InvoiceZeroVatReasonModal} from "./modals/invoice-zero-vat-reason-modal";
@@ -35,7 +36,7 @@ export class InvoiceEditItems {
         { ID: "S", Percent: 6, TaxScheme: { ID: 'VAT' } },
         { ID: "Z", Percent: 0, TaxScheme: { ID: 'VAT' } },
     ];
-    vatRateOptions = [21, 12, 6, 0];
+    vatRateOptions = VAT_RATE_OPTIONS;
     zeroVatReasonModal: InvoiceZeroVatReasonModal;
 
     getDisplayedVatRate(taxCategory: ClassifiedTaxCategory): number | undefined {
