@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "KYC Browser Authentication", description = "Cookie-session and CSRF bootstrap used before the OAuth2 Authorization Code + PKCE exchange.")
 public class BrowserAuthController {
 
-    @GetMapping("/auth/session")
+    @GetMapping("/auth/browser/session")
     @Operation(summary = "Inspect browser authentication session", description = "Returns anonymous, TOTP-required, or authenticated status together with the CSRF token required by browser authentication POSTs. This endpoint does not issue an OAuth access token.")
     public ResponseEntity<AuthSessionResponse> session(CsrfToken csrfToken,
                                                        Authentication authentication,

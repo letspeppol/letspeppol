@@ -49,7 +49,7 @@ public class TotpAuthenticationSuccessHandler implements AuthenticationSuccessHa
                 return;
             }
 
-            response.sendRedirect(request.getContextPath() + "/totp-verify");
+            response.sendRedirect(request.getContextPath() + "/auth/browser/totp-verify");
             return;
         }
 

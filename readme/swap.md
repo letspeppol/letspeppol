@@ -23,7 +23,7 @@ Note over SME, App: Swap active ownership
     Frontend ->> KYC: POST /kyc/sapi/account/ownership <br> Authorization: Bearer USER_JWT <br> ( AccountType, peppolId )
     Note right of KYC: Validate access token <br> Validate ownership AccountType for peppolId <br> Update last used ownership
     KYC ->> Frontend: 204 No Content
-    Frontend ->> KYC: GET /kyc/oauth2/authorize ( prompt=none ) + POST /kyc/oauth2/token
+    Frontend ->> KYC: GET /kyc/auth/oauth2/authorize ( prompt=none ) + POST /kyc/auth/oauth2/token
     Note right of KYC: Resolve last used ownership <br> Add claims to the access token
     KYC ->> Frontend: access_token ( AccountType, peppolId, peppolActive, uid )
     Frontend ->> App: GET /app/sapi/company

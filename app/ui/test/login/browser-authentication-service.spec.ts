@@ -36,7 +36,7 @@ describe('BrowserAuthenticationService', () => {
         expect(await service.authenticateWithPassword('user@example.com', 'secret')).toBe('totp_required');
 
         const [loginUrl, loginInit] = fetchMock.mock.calls[1];
-        expect(loginUrl).toBe('/kyc/login');
+        expect(loginUrl).toBe('/kyc/auth/browser/login');
         expect(loginInit.credentials).toBe('include');
         expect(loginInit.headers['Accept']).toBe('application/json');
         expect(loginInit.headers['Content-Type']).toBe('application/x-www-form-urlencoded');
@@ -47,11 +47,11 @@ describe('BrowserAuthenticationService', () => {
             _csrf: 'csrf-before',
         }));
 
-        expect(fetchMock.mock.calls[2][0]).toBe('/kyc/auth/session');
+        expect(fetchMock.mock.calls[2][0]).toBe('/kyc/auth/browser/session');
         expect(await service.verifyTotp('123456')).toBe('authenticated');
 
         const [totpUrl, totpInit] = fetchMock.mock.calls[3];
-        expect(totpUrl).toBe('/kyc/auth/totp');
+        expect(totpUrl).toBe('/kyc/auth/browser/totp');
         expect(totpInit.credentials).toBe('include');
         expect(totpInit.headers['X-CSRF-TOKEN']).toBe('csrf-after');
         expect(JSON.parse(totpInit.body)).toEqual({code: '123456'});
@@ -93,7 +93,7 @@ describe('BrowserAuthenticationService', () => {
 
         expect(Array.from(new Uint8Array(options.challenge))).toEqual([1, 2, 3]);
         const [url, init] = fetchMock.mock.calls[1];
-        expect(url).toBe('/kyc/auth/passkeys/authenticate/options');
+        expect(url).toBe('/kyc/auth/browser/passkeys/authenticate/options');
         expect(init.credentials).toBe('include');
         expect(init.headers['X-CSRF-TOKEN']).toBe('csrf-token');
         expect(init.body).toBe('{}');

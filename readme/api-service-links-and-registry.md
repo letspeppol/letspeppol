@@ -24,14 +24,14 @@ sequenceDiagram
         App->>KYC: POST /kyc/sapi/linked/register (forward user token)
         App->>KYC: POST /kyc/sapi/linked/unregister (forward user token)
     end
-    KYC->>KYC: POST /kyc/oauth2/token (client_credentials, service)
+    KYC->>KYC: POST /kyc/auth/oauth2/token (client_credentials, service)
     KYC->>Proxy: GET or POST /proxy/sapi/registry
     KYC->>Proxy: PUT /proxy/sapi/registry/unregister, /allow, or /reject
     KYC->>Proxy: DELETE /proxy/sapi/registry
     Proxy->>AP: apply registry operation
     opt Authenticated sponsor invoice
         UI->>App: POST /app/sapi/sponsors (user token)
-        App->>KYC: POST /kyc/oauth2/token (client_credentials, service)
+        App->>KYC: POST /kyc/auth/oauth2/token (client_credentials, service)
         App->>Proxy: POST /proxy/sapi/document<br/>Bearer service token + X-Acting-User-Authorization
     end
 ```

@@ -45,7 +45,7 @@ services:
       DB_PORT: ${DB_PORT}
       DB_USER: ${PROXY_USER}
       DB_PASS: ${PROXY_PASS}
-      KYC_JWKS_URI: http://kyc:8084/oauth2/jwks
+      KYC_JWKS_URI: http://kyc:8084/auth/oauth2/jwks
       OAUTH2_AUDIENCE: ${OAUTH2_AUDIENCE:-letspeppol-api}
       KYC_ISSUER_URI: ${ISSUER_URI}
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
@@ -80,11 +80,11 @@ services:
       DB_PORT: ${DB_PORT}
       DB_USER: ${APP_USER}
       DB_PASS: ${APP_PASS}
-      KYC_JWKS_URI: http://kyc:8084/oauth2/jwks
+      KYC_JWKS_URI: http://kyc:8084/auth/oauth2/jwks
       OAUTH2_AUDIENCE: ${OAUTH2_AUDIENCE:-letspeppol-api}
       KYC_ISSUER_URI: ${ISSUER_URI}
       SERVICE_CLIENT_SECRET: ${SERVICE_CLIENT_SECRET}
-      KYC_TOKEN_URI: http://kyc:8084/oauth2/token
+      KYC_TOKEN_URI: http://kyc:8084/auth/oauth2/token
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
       KYC_API_URL: ${KYC_API_URL}
       KYC_AUTH_APP_EXTERNAL_ID: ${KYC_AUTH_APP_EXTERNAL_ID}

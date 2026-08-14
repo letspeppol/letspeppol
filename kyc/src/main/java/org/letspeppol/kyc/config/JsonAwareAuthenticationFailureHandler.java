@@ -18,7 +18,7 @@ public class JsonAwareAuthenticationFailureHandler implements AuthenticationFail
 
     private final ObjectMapper objectMapper;
     private final AuthenticationFailureHandler redirectDelegate =
-            new SimpleUrlAuthenticationFailureHandler("/login?error");
+            new SimpleUrlAuthenticationFailureHandler("/auth/browser/login?error");
 
     public JsonAwareAuthenticationFailureHandler(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;

@@ -42,7 +42,7 @@ class OpenApiDocumentationTest {
                 .containsKeys("oauth2", "serviceAuth", "bearerAuth");
         assertThat(api.getServers()).extracting(server -> server.getUrl()).containsExactly("/kyc");
         assertThat(api.getComponents().getSecuritySchemes().get("oauth2")
-                .getFlows().getAuthorizationCode().getAuthorizationUrl()).isEqualTo("/kyc/oauth2/authorize");
+                .getFlows().getAuthorizationCode().getAuthorizationUrl()).isEqualTo("/kyc/auth/oauth2/authorize");
     }
 
     private static void assertDocumentedControllers(String packageName, String externalPrefix) throws Exception {

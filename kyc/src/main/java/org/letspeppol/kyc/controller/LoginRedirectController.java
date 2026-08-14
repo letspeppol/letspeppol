@@ -17,7 +17,7 @@ public class LoginRedirectController {
         this.uiLoginUrl = uiBaseUrl.replaceAll("/+$", "") + "/login";
     }
 
-    @GetMapping({"/login", "/totp-verify"})
+    @GetMapping({"/auth/browser/login", "/auth/browser/totp-verify"})
     public RedirectView login(@RequestParam(value = "error", required = false) String error) {
         String target = error == null ? uiLoginUrl : uiLoginUrl + "?error";
         RedirectView redirect = new RedirectView(target);

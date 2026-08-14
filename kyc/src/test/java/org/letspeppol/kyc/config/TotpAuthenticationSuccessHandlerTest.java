@@ -74,7 +74,7 @@ class TotpAuthenticationSuccessHandlerTest {
 
         handler.onAuthenticationSuccess(request, response, authentication(true));
 
-        assertThat(response.getRedirectedUrl()).isEqualTo("/totp-verify");
+        assertThat(response.getRedirectedUrl()).isEqualTo("/auth/browser/totp-verify");
     }
 
     private MockHttpServletRequest jsonRequest() {

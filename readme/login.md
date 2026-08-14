@@ -23,28 +23,28 @@ sequenceDiagram
 
 Note over SME, App: Establish the KYC browser session
     SME ->> Frontend: Open app
-    Frontend ->> KYC: GET /kyc/auth/session
+    Frontend ->> KYC: GET /kyc/auth/browser/session
     KYC -->> Frontend: anonymous + CSRF token
     alt Password login
         SME ->> Frontend: Enter email and password
-        Frontend ->> KYC: POST /kyc/login + CSRF
+        Frontend ->> KYC: POST /kyc/auth/browser/login + CSRF
         Note right of KYC: Validate credentials <br> Reject unverified or locked accounts
         opt TOTP is enabled
             KYC -->> Frontend: totp_required
             SME ->> Frontend: Enter TOTP or recovery code
-            Frontend ->> KYC: POST /kyc/auth/totp + CSRF
+            Frontend ->> KYC: POST /kyc/auth/browser/totp + CSRF
         end
     else Passkey login
-        Frontend ->> KYC: POST /kyc/auth/passkeys/authenticate/options + CSRF
+        Frontend ->> KYC: POST /kyc/auth/browser/passkeys/authenticate/options + CSRF
         SME ->> Frontend: Verify with authenticator
-        Frontend ->> KYC: POST /kyc/auth/passkeys/authenticate/verify + CSRF
+        Frontend ->> KYC: POST /kyc/auth/browser/passkeys/authenticate/verify + CSRF
     end
     KYC -->> Frontend: authenticated KYC session
 
 Note over SME, App: Obtain an access token with Authorization Code + PKCE
-    Frontend ->> KYC: GET /kyc/oauth2/authorize <br> ( client_id, redirect_uri, code_challenge, state )
+    Frontend ->> KYC: GET /kyc/auth/oauth2/authorize <br> ( client_id, redirect_uri, code_challenge, state )
     KYC ->> Frontend: Redirect to /callback?code=...&state=...
-    Frontend ->> KYC: POST /kyc/oauth2/token <br> ( code, code_verifier )
+    Frontend ->> KYC: POST /kyc/auth/oauth2/token <br> ( code, code_verifier )
     Note right of KYC: Resolve last used ownership for the account <br> Add claims to the access token
     KYC ->> Frontend: access_token ( accountType, peppolId, peppolActive, uid ) + id_token
     Frontend ->> App: GET /app/sapi/company

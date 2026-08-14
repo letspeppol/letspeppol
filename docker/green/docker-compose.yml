@@ -10,7 +10,7 @@ services:
       DB_PORT: ${DB_PORT}
       DB_USER: ${PROXY_USER}
       DB_PASS: ${PROXY_PASS}
-      KYC_JWKS_URI: http://kyc:8084/oauth2/jwks
+      KYC_JWKS_URI: http://kyc:8084/auth/oauth2/jwks
       OAUTH2_AUDIENCE: ${OAUTH2_AUDIENCE:-letspeppol-api}
       KYC_ISSUER_URI: ${ISSUER_URI}
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
@@ -57,11 +57,11 @@ services:
       MAIL_USER: ${MAIL_USER}
       MAIL_PASS: ${MAIL_PASS}
       MAIL_FROM: ${MAIL_NOTIFICATION_FROM}
-      KYC_JWKS_URI: http://kyc:8084/oauth2/jwks
+      KYC_JWKS_URI: http://kyc:8084/auth/oauth2/jwks
       OAUTH2_AUDIENCE: ${OAUTH2_AUDIENCE:-letspeppol-api}
       KYC_ISSUER_URI: ${ISSUER_URI}
       SERVICE_CLIENT_SECRET: ${SERVICE_CLIENT_SECRET}
-      KYC_TOKEN_URI: http://kyc:8084/oauth2/token
+      KYC_TOKEN_URI: http://kyc:8084/auth/oauth2/token
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
       KYC_API_URL: ${KYC_API_URL}
       KYC_AUTH_APP_EXTERNAL_ID: ${KYC_AUTH_APP_EXTERNAL_ID}
@@ -171,6 +171,35 @@ services:
       - "traefik.http.routers.green-api.middlewares=api-limit"
       - "traefik.http.routers.green-api.service=nginx"
       - "traefik.http.routers.green-api.tls.certresolver=${CERT_RESOLVER_GREEN}"
+
+      # Browser authentication router. Spring owns staged session authentication and CSRF.
+      - "traefik.http.routers.green-auth-browser.rule=Host(`${ACTIVE_DOMAIN_GREEN}`) && PathPrefix(`/kyc/auth/browser/`)"
+      - "traefik.http.routers.green-auth-browser.entryPoints=websecure"
+      - "traefik.http.routers.green-auth-browser.middlewares=api-limit"
+      - "traefik.http.routers.green-auth-browser.service=nginx"
+      - "traefik.http.routers.green-auth-browser.tls.certresolver=${CERT_RESOLVER_GREEN}"
+
+      # OAuth2 protocol router. Do not require a blanket JWT/forward-auth middleware here:
+      # Spring Authorization Server applies session, PKCE, or client auth per endpoint.
+      - "traefik.http.routers.green-auth-oauth2.rule=Host(`${ACTIVE_DOMAIN_GREEN}`) && PathPrefix(`/kyc/auth/oauth2/`)"
+      - "traefik.http.routers.green-auth-oauth2.entryPoints=websecure"
+      - "traefik.http.routers.green-auth-oauth2.middlewares=api-limit"
+      - "traefik.http.routers.green-auth-oauth2.service=nginx"
+      - "traefik.http.routers.green-auth-oauth2.tls.certresolver=${CERT_RESOLVER_GREEN}"
+
+      # OIDC bearer endpoints are kept separate so policy can be tightened independently.
+      - "traefik.http.routers.green-auth-oidc.rule=Host(`${ACTIVE_DOMAIN_GREEN}`) && PathPrefix(`/kyc/auth/oidc/`)"
+      - "traefik.http.routers.green-auth-oidc.entryPoints=websecure"
+      - "traefik.http.routers.green-auth-oidc.middlewares=api-limit"
+      - "traefik.http.routers.green-auth-oidc.service=nginx"
+      - "traefik.http.routers.green-auth-oidc.tls.certresolver=${CERT_RESOLVER_GREEN}"
+
+      # Discovery stays at its issuer-derived well-known location and must remain public.
+      - "traefik.http.routers.green-auth-discovery.rule=Host(`${ACTIVE_DOMAIN_GREEN}`) && PathPrefix(`/kyc/.well-known/`)"
+      - "traefik.http.routers.green-auth-discovery.entryPoints=websecure"
+      - "traefik.http.routers.green-auth-discovery.middlewares=api-limit"
+      - "traefik.http.routers.green-auth-discovery.service=nginx"
+      - "traefik.http.routers.green-auth-discovery.tls.certresolver=${CERT_RESOLVER_GREEN}"
 
       # Protected API router
       - "traefik.http.routers.green-sapi.rule=Host(`${ACTIVE_DOMAIN_GREEN}`) && (PathPrefix(`/proxy/sapi/`) || PathPrefix(`/app/sapi/`) || PathPrefix(`/kyc/sapi/`))"

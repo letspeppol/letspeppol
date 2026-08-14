@@ -52,7 +52,7 @@ class JsonAwareAuthenticationFailureHandlerTest {
 
         handler.onAuthenticationFailure(request, response, new BadCredentialsException("wrong password"));
 
-        assertThat(response.getRedirectedUrl()).isEqualTo("/login?error");
+        assertThat(response.getRedirectedUrl()).isEqualTo("/auth/browser/login?error");
     }
 
     private MockHttpServletRequest jsonRequest() {

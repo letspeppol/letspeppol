@@ -124,18 +124,20 @@ public class SecurityConfig {
 
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
-                // CSRF guards the cookie/session browser surface (/login and /auth/**).
+                // CSRF guards the cookie/session browser surface (/auth/browser/**).
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**", "/sapi/**", "/actuator/**"))
                 .requestCache(rc -> rc.requestCache(requestCache))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/totp-verify", "/auth/**", "/error", "/favicon.ico").permitAll()
+                        .requestMatchers("/auth/browser/**", "/error", "/favicon.ico").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
                         .requestMatchers("/api/**").permitAll()
                         .requestMatchers("/sapi/**").hasAuthority(ROLE_KYC_USER)
                         .anyRequest().denyAll()
                 )
-                .formLogin(form -> form.loginPage("/login")
+                .formLogin(form -> form
+                        .loginPage("/auth/browser/login")
+                        .loginProcessingUrl("/auth/browser/login")
                         .successHandler(authenticationSuccessHandler)
                         .failureHandler(authenticationFailureHandler)
                         .permitAll())
@@ -253,7 +255,18 @@ public class SecurityConfig {
     @Bean
     public AuthorizationServerSettings authorizationServerSettings(
             @Value("${spring.security.oauth2.authorizationserver.issuer:}") String issuer) {
-        AuthorizationServerSettings.Builder builder = AuthorizationServerSettings.builder();
+        AuthorizationServerSettings.Builder builder = AuthorizationServerSettings.builder()
+                .authorizationEndpoint("/auth/oauth2/authorize")
+                .pushedAuthorizationRequestEndpoint("/auth/oauth2/par")
+                .deviceAuthorizationEndpoint("/auth/oauth2/device-authorization")
+                .deviceVerificationEndpoint("/auth/oauth2/device-verification")
+                .tokenEndpoint("/auth/oauth2/token")
+                .tokenIntrospectionEndpoint("/auth/oauth2/introspect")
+                .tokenRevocationEndpoint("/auth/oauth2/revoke")
+                .jwkSetEndpoint("/auth/oauth2/jwks")
+                .oidcLogoutEndpoint("/auth/browser/logout")
+                .oidcUserInfoEndpoint("/auth/oidc/userinfo")
+                .oidcClientRegistrationEndpoint("/auth/oidc/register");
         if (issuer != null && !issuer.isBlank()) {
             builder.issuer(issuer);
         }

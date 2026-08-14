@@ -27,7 +27,7 @@ sequenceDiagram
     UI->>KYC: GET /kyc/api/identity/contract/{peppolId}/{directorId}
     UI->>KYC: POST /kyc/api/identity/sign/finalize
     opt ADMIN company is eligible for Peppol activation
-        KYC->>KYC: POST /kyc/oauth2/token (client_credentials, service)
+        KYC->>KYC: POST /kyc/auth/oauth2/token (client_credentials, service)
         KYC->>Proxy: POST /proxy/sapi/registry
         Proxy->>AP: register participant
     end

@@ -17,7 +17,7 @@ public class JwtClaimExtractor {
 
     /**
      * Claims of the acting user's access token, or empty when the request is anonymous or
-     * session-authenticated (the /login form) rather than bearer-authenticated. Endpoints under
+     * session-authenticated (the /auth/browser/login form) rather than bearer-authenticated. Endpoints under
      * {@code /api/**} are public, so callers there must treat the token as optional.
      */
     public Optional<JwtInfo> extractOptional() {

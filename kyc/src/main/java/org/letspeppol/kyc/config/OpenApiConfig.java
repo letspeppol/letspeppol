@@ -36,15 +36,16 @@ public class OpenApiConfig {
                         .description("""
                                 KYC, registration, authentication, and identity-verification endpoints.
 
-                                Browser authentication has two layers. `/auth/**` establishes a server-side
+                                Browser authentication has two layers. `/auth/browser/**` establishes a server-side
                                 browser session (password plus optional TOTP/recovery code, or a passkey). The
-                                SPA then uses OAuth 2.0 Authorization Code with PKCE at `/oauth2/authorize` and
-                                `/oauth2/token`. The public SPA is `letspeppol-ui`; it has no client secret and
+                                SPA then uses OAuth 2.0 Authorization Code with PKCE at `/auth/oauth2/authorize` and
+                                `/auth/oauth2/token`. The public SPA is `letspeppol-ui`; it has no client secret and
                                 receives no refresh token. Token renewal and ownership changes use silent
                                 re-authorization (`prompt=none`).
 
-                                Path families: `/api/**` is public, `/auth/**` is the cookie/CSRF browser
-                                surface, and `/sapi/**` requires an OAuth access token with company context.
+                                Path families: `/api/**` is public, `/auth/browser/**` is the cookie/CSRF browser
+                                surface, `/auth/oauth2/**` and `/auth/oidc/**` are protocol surfaces, and
+                                `/sapi/**` requires an OAuth access token with company context.
                                 Local-control APIs are intentionally omitted from this OpenAPI document. KYC
                                 also issues `service` scoped client-credentials tokens to trusted backends.
                                 Protected APIs validate
@@ -64,14 +65,14 @@ public class OpenApiConfig {
                                 .type(SecurityScheme.Type.OAUTH2)
                                 .description("Browser Authorization Code flow. PKCE (S256) is mandatory.")
                                 .flows(new OAuthFlows().authorizationCode(new OAuthFlow()
-                                        .authorizationUrl("/kyc/oauth2/authorize")
-                                        .tokenUrl("/kyc/oauth2/token")
+                                        .authorizationUrl("/kyc/auth/oauth2/authorize")
+                                        .tokenUrl("/kyc/auth/oauth2/token")
                                         .scopes(new Scopes().addString("openid", "OpenID Connect sign-in")))))
                         .addSecuritySchemes("serviceAuth", new SecurityScheme()
                                 .type(SecurityScheme.Type.OAUTH2)
                                 .description("Trusted backend client-credentials flow; never expose its secret to a browser.")
                                 .flows(new OAuthFlows().clientCredentials(new OAuthFlow()
-                                        .tokenUrl("/kyc/oauth2/token")
+                                        .tokenUrl("/kyc/auth/oauth2/token")
                                         .scopes(new Scopes().addString("service", "Service-to-service API access")))))
                         .addSecuritySchemes("bearerAuth", new SecurityScheme()
                                 .type(SecurityScheme.Type.HTTP)
@@ -100,7 +101,7 @@ public class OpenApiConfig {
         credentials.addProperty("username", new StringSchema());
         credentials.addProperty("password", new StringSchema().format("password"));
         credentials.addProperty("_csrf",
-                new StringSchema().description("CSRF token obtained from GET /auth/session."));
+                new StringSchema().description("CSRF token obtained from GET /auth/browser/session."));
         RequestBody requestBody = new RequestBody()
                 .required(true)
                 .content(new Content().addMediaType(
@@ -113,7 +114,7 @@ public class OpenApiConfig {
                 .addTagsItem("login-endpoint")
                 .requestBody(requestBody)
                 .responses(responses);
-        openApi.getPaths().addPathItem("/login", new PathItem().post(operation));
+        openApi.getPaths().addPathItem("/auth/browser/login", new PathItem().post(operation));
     }
 
     private static void describeGeneratedSecurityOperations(OpenAPI openApi) {
@@ -130,29 +131,29 @@ public class OpenApiConfig {
 
     private static String generatedEndpointSummary(String path) {
         return switch (path) {
-            case "/login" -> "Authenticate the browser session";
-            case "/oauth2/authorize" -> "Start OAuth2 authorization";
-            case "/oauth2/token" -> "Issue OAuth2 tokens";
-            case "/oauth2/jwks" -> "Read JWT verification keys";
-            case "/oauth2/introspect" -> "Inspect an OAuth2 token";
-            case "/oauth2/revoke" -> "Revoke an OAuth2 token";
-            case "/userinfo" -> "Read OpenID Connect user information";
+            case "/auth/browser/login" -> "Authenticate the browser session";
+            case "/auth/oauth2/authorize" -> "Start OAuth2 authorization";
+            case "/auth/oauth2/token" -> "Issue OAuth2 tokens";
+            case "/auth/oauth2/jwks" -> "Read JWT verification keys";
+            case "/auth/oauth2/introspect" -> "Inspect an OAuth2 token";
+            case "/auth/oauth2/revoke" -> "Revoke an OAuth2 token";
+            case "/auth/oidc/userinfo" -> "Read OpenID Connect user information";
             default -> "OAuth2 authorization-server operation";
         };
     }
 
     private static String generatedEndpointDescription(String path) {
         return switch (path) {
-            case "/login" -> "Accepts the user's credentials and establishes the server-side browser "
+            case "/auth/browser/login" -> "Accepts the user's credentials and establishes the server-side browser "
                     + "session required before Authorization Code with PKCE. Browser submissions require CSRF protection.";
-            case "/oauth2/authorize" -> "Validates the OAuth2 authorization request and PKCE challenge using the "
+            case "/auth/oauth2/authorize" -> "Validates the OAuth2 authorization request and PKCE challenge using the "
                     + "authenticated browser session, then redirects the client with an authorization code and state.";
-            case "/oauth2/token" -> "Exchanges an authorization code plus PKCE verifier for user tokens, or accepts "
+            case "/auth/oauth2/token" -> "Exchanges an authorization code plus PKCE verifier for user tokens, or accepts "
                     + "client credentials from a trusted backend to issue a service-scoped access token.";
-            case "/oauth2/jwks" -> "Returns the public JSON Web Keys used by App and Proxy to verify KYC-issued JWT signatures.";
-            case "/oauth2/introspect" -> "Returns metadata describing a token to an authenticated OAuth2 client.";
-            case "/oauth2/revoke" -> "Invalidates a token submitted by an authenticated OAuth2 client.";
-            case "/userinfo" -> "Returns OpenID Connect claims for the subject represented by a valid access token.";
+            case "/auth/oauth2/jwks" -> "Returns the public JSON Web Keys used by App and Proxy to verify KYC-issued JWT signatures.";
+            case "/auth/oauth2/introspect" -> "Returns metadata describing a token to an authenticated OAuth2 client.";
+            case "/auth/oauth2/revoke" -> "Invalidates a token submitted by an authenticated OAuth2 client.";
+            case "/auth/oidc/userinfo" -> "Returns OpenID Connect claims for the subject represented by a valid access token.";
             default -> "Protocol operation supplied by the KYC OAuth2 authorization server.";
         };
     }

@@ -38,7 +38,7 @@ export class BrowserAuthenticationService {
     private session: BrowserAuthenticationSession | null = null;
 
     async getSession(): Promise<BrowserAuthenticationSession> {
-        const response = await fetch(`${KYC_BASE}/auth/session`, {
+        const response = await fetch(`${KYC_BASE}/auth/browser/session`, {
             method: 'GET',
             headers: {'Accept': 'application/json'},
             credentials: 'include',
@@ -58,7 +58,7 @@ export class BrowserAuthenticationService {
         const body = new URLSearchParams({username, password});
         body.set(session.csrfParameterName || '_csrf', session.csrfToken);
 
-        const response = await fetch(`${KYC_BASE}/login`, {
+        const response = await fetch(`${KYC_BASE}/auth/browser/login`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -82,20 +82,20 @@ export class BrowserAuthenticationService {
     }
 
     async verifyTotp(code: string): Promise<BrowserAuthenticationStatus> {
-        const response = await this.postJson('/auth/totp', {code});
+        const response = await this.postJson('/auth/browser/totp', {code});
         const status = await this.readStatus(response);
         if (this.session) this.session.status = status;
         return status;
     }
 
     async getPasskeyAuthenticationOptions(): Promise<PublicKeyCredentialRequestOptions> {
-        const response = await this.postJson('/auth/passkeys/authenticate/options', {});
+        const response = await this.postJson('/auth/browser/passkeys/authenticate/options', {});
         return deserializeRequestOptions(await response.json());
     }
 
     async verifyPasskey(credential: PublicKeyCredential): Promise<BrowserAuthenticationStatus> {
         const response = await this.postJson(
-            '/auth/passkeys/authenticate/verify',
+            '/auth/browser/passkeys/authenticate/verify',
             serializeAuthenticationCredential(credential),
         );
         const status = await this.readStatus(response);

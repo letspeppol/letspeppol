@@ -14,23 +14,23 @@ sequenceDiagram
     participant API as App or Proxy
 
     Note over User,API: Proof: RegistrationTest.oauth2AuthorizationCodeWithPkce<br/>TotpAuthenticationSuccessHandlerTest<br/>PasskeyControllerBrowserAuthTest<br/>PasswordResetServiceTests<br/>KYC OpenApiDocumentationTest
-    UI->>KYC: GET /kyc/auth/session
+    UI->>KYC: GET /kyc/auth/browser/session
     KYC-->>UI: session status + CSRF token
     alt Password, then optional TOTP
-        UI->>KYC: POST /kyc/login (form + CSRF)
+        UI->>KYC: POST /kyc/auth/browser/login (form + CSRF)
         opt TOTP or recovery code required
-            UI->>KYC: POST /kyc/auth/totp
+            UI->>KYC: POST /kyc/auth/browser/totp
         end
     else Passkey
-        UI->>KYC: POST /kyc/auth/passkeys/authenticate/options
-        UI->>KYC: POST /kyc/auth/passkeys/authenticate/verify
+        UI->>KYC: POST /kyc/auth/browser/passkeys/authenticate/options
+        UI->>KYC: POST /kyc/auth/browser/passkeys/authenticate/verify
     end
-    UI->>KYC: GET /kyc/oauth2/authorize (code challenge S256)
+    UI->>KYC: GET /kyc/auth/oauth2/authorize (code challenge S256)
     KYC-->>UI: redirect_uri?code=...&state=...
-    UI->>KYC: POST /kyc/oauth2/token (code verifier)
+    UI->>KYC: POST /kyc/auth/oauth2/token (code verifier)
     KYC-->>UI: access_token + id_token, no refresh token
     UI->>API: /sapi/** with Bearer access_token
-    API->>KYC: GET /kyc/oauth2/jwks (cached key discovery)
+    API->>KYC: GET /kyc/auth/oauth2/jwks (cached key discovery)
 
     opt Manage authenticated account security
         UI->>KYC: GET /kyc/sapi/account/ownerships
@@ -50,9 +50,17 @@ sequenceDiagram
         UI->>KYC: POST /kyc/api/password/forgot
         UI->>KYC: POST /kyc/api/password/reset
     end
+    opt End the OpenID Connect browser session
+        UI->>KYC: GET /kyc/auth/browser/logout (id_token_hint)
+    end
 ```
 
 `POST /kyc/sapi/account/ownership` only records `lastUsed`. The new company/role claims appear after
 the frontend repeats the PKCE authorization flow with `prompt=none`; see [Swap](./swap.md).
+
+OAuth2 and OpenID Connect discovery remain at their standardized, issuer-derived
+`/.well-known/**` locations rather than moving under `/auth/**`; the public KYC reverse proxy must
+continue routing those locations to the authorization server. Their metadata advertises the grouped
+authorization, token, JWKS, UserInfo, and logout endpoints.
 
 Return to the [API network flow guide](./api-network-flows.md).

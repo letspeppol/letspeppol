@@ -98,7 +98,7 @@ export class LoginService {
 
         this.clearCachedData();
         this.clearSeenNotificationFlag();
-        window.location.href = `${KYC_BASE}/oauth2/authorize?${params.toString()}`;
+        window.location.href = `${KYC_BASE}/auth/oauth2/authorize?${params.toString()}`;
     }
 
     async handleCallback(code: string, state: string): Promise<void> {
@@ -139,7 +139,7 @@ export class LoginService {
                 prompt: 'none',
             });
 
-            const response = await fetch(`${KYC_BASE}/oauth2/authorize?${params.toString()}`, {
+            const response = await fetch(`${KYC_BASE}/auth/oauth2/authorize?${params.toString()}`, {
                 method: 'GET',
                 credentials: 'same-origin',
                 redirect: 'follow',
@@ -189,7 +189,7 @@ export class LoginService {
             code_verifier: verifier,
         });
 
-        const response = await fetch(`${KYC_BASE}/oauth2/token`, {
+        const response = await fetch(`${KYC_BASE}/auth/oauth2/token`, {
             method: 'POST',
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
             body: body.toString(),
@@ -246,7 +246,7 @@ export class LoginService {
 
         if (redirectToAuthServer && idToken) {
             const postLogoutRedirect = encodeURIComponent(window.location.origin + '/login');
-            window.location.href = `${KYC_BASE}/connect/logout?id_token_hint=${encodeURIComponent(idToken)}&post_logout_redirect_uri=${postLogoutRedirect}&client_id=${CLIENT_ID}`;
+            window.location.href = `${KYC_BASE}/auth/browser/logout?id_token_hint=${encodeURIComponent(idToken)}&post_logout_redirect_uri=${postLogoutRedirect}&client_id=${CLIENT_ID}`;
         }
     }
 

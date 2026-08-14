@@ -82,8 +82,8 @@ public class TotpController {
         return ResponseEntity.ok(totpService.getStatus(uid));
     }
 
-    @PostMapping("/auth/totp")
-    @Operation(summary = "Complete browser login with TOTP", description = "Completes the cookie-session login started by password authentication. Accepts an authenticator or recovery code and requires the CSRF token returned by `/auth/session`.")
+    @PostMapping("/auth/browser/totp")
+    @Operation(summary = "Complete browser login with TOTP", description = "Completes the cookie-session login started by password authentication. Accepts an authenticator or recovery code and requires the CSRF token returned by `/auth/browser/session`.")
     public ResponseEntity<?> verifyLogin(@Valid @RequestBody TotpVerifyRequest request,
                                          HttpServletRequest httpRequest,
                                          HttpServletResponse httpResponse) {

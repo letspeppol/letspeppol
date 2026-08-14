@@ -180,9 +180,9 @@ public class RegistrationSteps {
             assertEquals(200, openApiResponse.statusCode(), openApiResponse.body());
             JsonNode openApi = objectMapper.readTree(openApiResponse.body());
             JsonNode paths = openApi.path("paths");
-            assertTrue(paths.has("/oauth2/authorize"));
-            assertTrue(paths.has("/oauth2/token"));
-            assertTrue(paths.has("/oauth2/jwks"));
+            assertTrue(paths.has("/auth/oauth2/authorize"));
+            assertTrue(paths.has("/auth/oauth2/token"));
+            assertTrue(paths.has("/auth/oauth2/jwks"));
             paths.fields().forEachRemaining(pathEntry -> {
                 assertFalse(pathEntry.getKey().contains("/.well-known/"),
                         "Discovery path leaked into OpenAPI: " + pathEntry.getKey());
@@ -199,11 +199,37 @@ public class RegistrationSteps {
             });
             JsonNode authorizationCode = openApi.path("components").path("securitySchemes")
                     .path("oauth2").path("flows").path("authorizationCode");
-            assertEquals("/kyc/oauth2/authorize", authorizationCode.path("authorizationUrl").asText());
-            assertEquals("/kyc/oauth2/token", authorizationCode.path("tokenUrl").asText());
+            assertEquals("/kyc/auth/oauth2/authorize", authorizationCode.path("authorizationUrl").asText());
+            assertEquals("/kyc/auth/oauth2/token", authorizationCode.path("tokenUrl").asText());
+
+            HttpResponse<String> discoveryResponse = browser.send(
+                    HttpRequest.newBuilder(URI.create(origin + "/.well-known/openid-configuration"))
+                            .GET()
+                            .build(),
+                    HttpResponse.BodyHandlers.ofString());
+            assertEquals(200, discoveryResponse.statusCode(), discoveryResponse.body());
+            JsonNode discovery = objectMapper.readTree(discoveryResponse.body());
+            assertEquals("http://localhost:8084/auth/oauth2/authorize",
+                    discovery.path("authorization_endpoint").asText());
+            assertEquals("http://localhost:8084/auth/oauth2/token",
+                    discovery.path("token_endpoint").asText());
+            assertEquals("http://localhost:8084/auth/oauth2/jwks",
+                    discovery.path("jwks_uri").asText());
+            assertEquals("http://localhost:8084/auth/oidc/userinfo",
+                    discovery.path("userinfo_endpoint").asText());
+            assertEquals("http://localhost:8084/auth/browser/logout",
+                    discovery.path("end_session_endpoint").asText());
+
+            HttpResponse<String> jwksResponse = browser.send(
+                    HttpRequest.newBuilder(URI.create(origin + "/auth/oauth2/jwks"))
+                            .GET()
+                            .build(),
+                    HttpResponse.BodyHandlers.ofString());
+            assertEquals(200, jwksResponse.statusCode(), jwksResponse.body());
+            assertFalse(objectMapper.readTree(jwksResponse.body()).path("keys").isEmpty());
 
             HttpResponse<String> sessionResponse = browser.send(
-                    HttpRequest.newBuilder(URI.create(origin + "/auth/session"))
+                    HttpRequest.newBuilder(URI.create(origin + "/auth/browser/session"))
                             .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                             .GET()
                             .build(),
@@ -220,7 +246,7 @@ public class RegistrationSteps {
                     "password", password,
                     csrfParameterName, csrfToken);
             HttpResponse<String> loginResponse = browser.send(
-                    HttpRequest.newBuilder(URI.create(origin + "/login"))
+                    HttpRequest.newBuilder(URI.create(origin + "/auth/browser/login"))
                             .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                             .header(csrfHeaderName, csrfToken)
@@ -246,7 +272,7 @@ public class RegistrationSteps {
                     "scope", "openid");
 
             HttpResponse<String> authorizeResponse = browser.send(
-                    HttpRequest.newBuilder(URI.create(origin + "/oauth2/authorize?" + authorizeQuery))
+                    HttpRequest.newBuilder(URI.create(origin + "/auth/oauth2/authorize?" + authorizeQuery))
                             .header(HttpHeaders.ACCEPT, MediaType.TEXT_HTML_VALUE)
                             .GET()
                             .build(),
@@ -267,7 +293,7 @@ public class RegistrationSteps {
                     "code", code,
                     "code_verifier", verifier);
             HttpResponse<String> tokenResponse = browser.send(
-                    HttpRequest.newBuilder(URI.create(origin + "/oauth2/token"))
+                    HttpRequest.newBuilder(URI.create(origin + "/auth/oauth2/token"))
                             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                             .POST(HttpRequest.BodyPublishers.ofString(tokenBody))
                             .build(),
@@ -283,6 +309,15 @@ public class RegistrationSteps {
             assertEquals(peppolId, jwt.getClaimAsString("peppolId"));
             assertEquals("ADMIN", jwt.getClaimAsString("accountType"));
             assertTrue(jwt.getAudience().contains(audience));
+
+            HttpResponse<String> userInfoResponse = browser.send(
+                    HttpRequest.newBuilder(URI.create(origin + "/auth/oidc/userinfo"))
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                            .GET()
+                            .build(),
+                    HttpResponse.BodyHandlers.ofString());
+            assertEquals(200, userInfoResponse.statusCode(), userInfoResponse.body());
+            assertFalse(objectMapper.readTree(userInfoResponse.body()).path("sub").asText().isBlank());
 
             HttpRequest ownershipsRequest = HttpRequest.newBuilder(URI.create(origin + "/sapi/account/ownerships"))
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
@@ -324,7 +359,7 @@ public class RegistrationSteps {
             String credentials = Base64.getEncoder().encodeToString(
                     "kyc-service:test-secret".getBytes(StandardCharsets.UTF_8));
             HttpResponse<String> response = HttpClient.newHttpClient().send(
-                    HttpRequest.newBuilder(URI.create(origin + "/oauth2/token"))
+                    HttpRequest.newBuilder(URI.create(origin + "/auth/oauth2/token"))
                             .header(HttpHeaders.AUTHORIZATION, "Basic " + credentials)
                             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                             .POST(HttpRequest.BodyPublishers.ofString(body))

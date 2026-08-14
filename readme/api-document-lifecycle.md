@@ -26,7 +26,7 @@ sequenceDiagram
     UI->>App: DELETE /app/sapi/document/{id}
     App->>Proxy: DELETE /proxy/sapi/document/{id} when transport cancellation is needed
     loop User refresh or background synchronization
-        App->>KYC: POST /kyc/oauth2/token (client_credentials for background jobs)
+        App->>KYC: POST /kyc/auth/oauth2/token (client_credentials for background jobs)
         App->>Proxy: GET /proxy/sapi/document and /{id}, /{id}/details
         App->>Proxy: POST /proxy/sapi/document/status
         App->>Proxy: PUT /proxy/sapi/document/{id}/downloaded or /downloaded

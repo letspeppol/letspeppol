@@ -94,7 +94,7 @@ public class PasskeyController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/auth/passkeys/authenticate/options")
+    @PostMapping("/auth/browser/passkeys/authenticate/options")
     @Operation(summary = "Create passkey authentication options", description = "Starts passwordless browser authentication and stores a short-lived challenge in the cookie session. Requires CSRF protection.")
     public ResponseEntity<Map<String, Object>> authenticationOptions(
             HttpSession session, HttpServletResponse response) {
@@ -102,7 +102,7 @@ public class PasskeyController {
         return ResponseEntity.ok(passkeyService.generateAuthenticationOptions(session));
     }
 
-    @PostMapping("/auth/passkeys/authenticate/verify")
+    @PostMapping("/auth/browser/passkeys/authenticate/verify")
     @Operation(summary = "Verify passkey authentication", description = "Verifies the WebAuthn assertion and establishes the authenticated KYC browser session used by the following OAuth2 authorization request. Requires CSRF protection.")
     public ResponseEntity<?> verifyAuthentication(
             @Valid @RequestBody PasskeyAuthenticationResponse response,

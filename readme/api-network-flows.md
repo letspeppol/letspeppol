@@ -17,13 +17,16 @@ For the detailed KYC onboarding scenarios, see [KYC and registration flows](./ky
 | Family | Exposure | Authentication |
 | --- | --- | --- |
 | `/api/**` | Public | None |
-| `/auth/**` | Public browser surface | KYC session cookie and CSRF on mutations |
-| `/oauth2/**` | OAuth2 protocol surface | Browser session or OAuth2 client authentication |
+| `/auth/browser/**` | Browser authentication surface | Anonymous/session cookie depending on login stage; CSRF on mutations |
+| `/auth/oauth2/**` | OAuth2 protocol surface | Endpoint-specific browser session, PKCE, or OAuth2 client authentication |
+| `/auth/oidc/**` | OpenID Connect protocol surface | Bearer access token |
+| `/.well-known/**` | OAuth2/OIDC discovery | Public; location is derived from the configured issuer |
 | `/sapi/**` | Protected API | KYC JWT; endpoint determines user or `service` scope |
 
-All KYC JWT consumers validate the signature through `/kyc/oauth2/jwks`, expiry, audience
+All KYC JWT consumers validate the signature through `/kyc/auth/oauth2/jwks`, expiry, audience
 `letspeppol-api`, and the configured issuer. The OAuth password and refresh-token grants are not
-enabled for the SPA.
+enabled for the SPA. Traefik may route and rate-limit each `/kyc/auth/*` subgroup independently,
+while Spring Security retains the endpoint-specific authentication decisions.
 
 ## Flow documentation
 
