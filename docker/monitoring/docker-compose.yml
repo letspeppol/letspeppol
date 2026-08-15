@@ -85,6 +85,7 @@ services:
       - mimir
     networks:
       - observability
+      - web
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.grafana.rule=Host(`${GRAFANA_DOMAIN}`)"
