@@ -7,9 +7,10 @@ services:
         condition: service_healthy
     networks:
       - web
-      - default
+      - database
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=web"
       - "traefik.http.routers.adminer.rule=Host(`${ADMINER_DOMAIN}`)"
       - "traefik.http.routers.adminer.entrypoints=internal"
       - "traefik.http.routers.adminer.tls.certresolver=${CERT_RESOLVER}"
@@ -38,8 +39,7 @@ services:
       retries: 12
       start_period: 10s
     networks:
-      - web
-      - default
+      - database
 
   backup:
     build:
@@ -59,7 +59,7 @@ services:
     volumes:
       - /mnt/data/db:/opt/data/db
     networks:
-      - default
+      - database
 
 volumes:
   db-data:
@@ -67,3 +67,8 @@ volumes:
 networks:
   web:
     external: true
+    name: web
+  database:
+    name: database
+    driver: bridge
+    internal: true

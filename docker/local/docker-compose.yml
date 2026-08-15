@@ -154,7 +154,7 @@ volumes:
 
 networks:
   default:
-    name: lp-network
+    name: local
   observability:
     external: true
     name: observability
