@@ -642,7 +642,15 @@
     "title": "Onboarding-Schritte"
   },
   "overlay": {
-    "saving-account": "Konto wird gespeichert, bitte warten"
+    "creating-draft": "Entwurf wird erstellt, bitte warten",
+    "saving": "Konto wird gespeichert, bitte warten",
+    "saving-account": "Konto wird gespeichert, bitte warten",
+    "searching-company": "Unternehmen wird gesucht, bitte warten",
+    "sending": {
+      "CREDIT_NOTE": "Gutschrift wird gesendet, bitte warten",
+      "INVOICE": "Rechnung wird gesendet, bitte warten"
+    },
+    "validating": "Dokument wird validiert, bitte warten"
   },
   "ownershipAdd": {
     "account-info-body": "Dieses Unternehmen wird dem oben angezeigten bestehenden Konto hinzugefügt. Das Passwort für dieses Konto bleibt unverändert.",

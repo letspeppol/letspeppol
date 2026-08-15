@@ -642,7 +642,15 @@
     "title": "Onboardingstappen"
   },
   "overlay": {
-    "saving-account": "Account opslaan, een moment geduld"
+    "creating-draft": "Concept aanmaken, een moment geduld",
+    "saving": "Account opslaan, een moment geduld",
+    "saving-account": "Account opslaan, een moment geduld",
+    "searching-company": "Bedrijf zoeken, een moment geduld",
+    "sending": {
+      "CREDIT_NOTE": "Creditnota verzenden, een moment geduld",
+      "INVOICE": "Factuur verzenden, een moment geduld"
+    },
+    "validating": "Document valideren, een moment geduld"
   },
   "ownershipAdd": {
     "account-info-body": "Dit bedrijf wordt toegevoegd aan het bestaande account hierboven. Het wachtwoord van dat account blijft hetzelfde.",

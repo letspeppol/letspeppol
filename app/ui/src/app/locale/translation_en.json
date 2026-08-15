@@ -642,7 +642,15 @@
     "title": "Onboarding steps"
   },
   "overlay": {
-    "saving-account": "Saving account, please wait"
+    "creating-draft": "Creating draft, please wait",
+    "saving": "Saving account, please wait",
+    "saving-account": "Saving account, please wait",
+    "searching-company": "Searching for company, please wait",
+    "sending": {
+      "CREDIT_NOTE": "Sending credit note, please wait",
+      "INVOICE": "Sending invoice, please wait"
+    },
+    "validating": "Validating document, please wait"
   },
   "ownershipAdd": {
     "account-info-body": "This company will be added to the existing account shown above. The password for that account will stay the same.",

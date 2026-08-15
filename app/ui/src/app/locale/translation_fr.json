@@ -642,7 +642,15 @@
     "title": "Étapes d’onboarding"
   },
   "overlay": {
-    "saving-account": "Sauvegarde du compte, veuillez patienter"
+    "creating-draft": "Création du brouillon, veuillez patienter",
+    "saving": "Sauvegarde du compte, veuillez patienter",
+    "saving-account": "Sauvegarde du compte, veuillez patienter",
+    "searching-company": "Recherche de l’entreprise, veuillez patienter",
+    "sending": {
+      "CREDIT_NOTE": "Envoi de la note de crédit, veuillez patienter",
+      "INVOICE": "Envoi de la facture, veuillez patienter"
+    },
+    "validating": "Validation du document, veuillez patienter"
   },
   "ownershipAdd": {
     "account-info-body": "Cette entreprise sera ajoutée au compte existant affiché ci-dessus. Le mot de passe de ce compte restera inchangé.",
