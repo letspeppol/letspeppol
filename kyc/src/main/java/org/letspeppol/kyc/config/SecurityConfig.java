@@ -296,7 +296,8 @@ public class SecurityConfig {
     @Bean
     public AuthorizationServerSettings authorizationServerSettings(
             @Value("${spring.security.oauth2.authorizationserver.issuer:}") String issuer) {
-        AuthorizationServerSettings.Builder builder = AuthorizationServerSettings.builder()
+        return AuthorizationServerSettings.builder()
+                .issuer(JwtValidationSupport.requireValidIssuer(issuer))
                 .authorizationEndpoint("/auth/oauth2/authorize")
                 .pushedAuthorizationRequestEndpoint("/auth/oauth2/par")
                 .deviceAuthorizationEndpoint("/auth/oauth2/device-authorization")
@@ -307,11 +308,8 @@ public class SecurityConfig {
                 .jwkSetEndpoint("/auth/oauth2/jwks")
                 .oidcLogoutEndpoint("/auth/browser/logout")
                 .oidcUserInfoEndpoint("/auth/oidc/userinfo")
-                .oidcClientRegistrationEndpoint("/auth/oidc/register");
-        if (issuer != null && !issuer.isBlank()) {
-            builder.issuer(issuer);
-        }
-        return builder.build();
+                .oidcClientRegistrationEndpoint("/auth/oidc/register")
+                .build();
     }
 
     @Bean

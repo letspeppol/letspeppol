@@ -79,8 +79,9 @@ public class SecurityConfig {
             @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}") String jwkSetUri,
             @Value("${oauth2.audience:letspeppol-api}") String audience,
             @Value("${oauth2.issuer:}") String issuer,
+            @Value("${oauth2.allow-loopback-jwks:false}") boolean allowLoopbackJwks,
             Environment environment) {
-        requireTrustworthyJwkSetUri(jwkSetUri, environment);
+        requireTrustworthyJwkSetUri(jwkSetUri, environment, allowLoopbackJwks);
         NimbusJwtDecoder decoder = NimbusJwtDecoder.withJwkSetUri(jwkSetUri).build();
         decoder.setJwtValidator(JwtValidationSupport.build(audience, issuer));
         return decoder;
@@ -88,8 +89,9 @@ public class SecurityConfig {
 
     // The JWKS endpoint is the JWT signature trust anchor, so in a deployed profile refuse to start
     // on the loopback default (it means KYC_JWKS_URI was left unset). Internal HTTP to KYC is fine.
-    private static void requireTrustworthyJwkSetUri(String jwkSetUri, Environment environment) {
-        if (!environment.matchesProfiles("postgres")) {
+    static void requireTrustworthyJwkSetUri(
+            String jwkSetUri, Environment environment, boolean allowLoopbackJwks) {
+        if (!environment.matchesProfiles("postgres") || allowLoopbackJwks) {
             return;
         }
         String host = jwkSetUri == null ? null : URI.create(jwkSetUri).getHost();

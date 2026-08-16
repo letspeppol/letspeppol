@@ -209,6 +209,7 @@ public class RegistrationSteps {
                     HttpResponse.BodyHandlers.ofString());
             assertEquals(200, discoveryResponse.statusCode(), discoveryResponse.body());
             JsonNode discovery = objectMapper.readTree(discoveryResponse.body());
+            assertEquals(issuer, discovery.path("issuer").asText());
             assertEquals("http://localhost:8084/auth/oauth2/authorize",
                     discovery.path("authorization_endpoint").asText());
             assertEquals("http://localhost:8084/auth/oauth2/token",
@@ -308,6 +309,7 @@ public class RegistrationSteps {
             assertFalse(accessToken.isBlank());
 
             var jwt = jwtDecoder.decode(accessToken);
+            assertEquals(issuer, jwt.getIssuer().toString());
             assertEquals(peppolId, jwt.getClaimAsString("peppolId"));
             assertEquals("ADMIN", jwt.getClaimAsString("accountType"));
             assertTrue(jwt.getAudience().contains(audience));
@@ -372,6 +374,7 @@ public class RegistrationSteps {
             assertFalse(json.has("refresh_token"));
             String accessToken = json.path("access_token").asText();
             var jwt = jwtDecoder.decode(accessToken);
+            assertEquals(issuer, jwt.getIssuer().toString());
             assertEquals(appExternalId.toString(), jwt.getClaimAsString("uid"));
             assertEquals(AccountType.APP.name(), jwt.getClaimAsString("accountType"));
             assertTrue(jwt.getClaimAsStringList("scope").contains("service"));

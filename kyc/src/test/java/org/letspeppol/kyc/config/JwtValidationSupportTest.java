@@ -9,19 +9,20 @@ import java.time.Instant;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class JwtValidationSupportTest {
 
     private static final String AUDIENCE = "letspeppol-api";
-    private static final String ISSUER = "https://login.letspeppol.org";
+    private static final String ISSUER = "https://example.org/kyc";
 
     private static Jwt.Builder baseJwt() {
-        return Jwt.withTokenValue("token").header("alg", "RS256").subject("user");
+        return Jwt.withTokenValue("token").header("alg", "RS256").subject("user").issuer(ISSUER);
     }
 
     @Test
     void acceptsTokenWithRequiredAudience() {
-        OAuth2TokenValidator<Jwt> validator = JwtValidationSupport.build(AUDIENCE, "");
+        OAuth2TokenValidator<Jwt> validator = JwtValidationSupport.build(AUDIENCE, ISSUER);
         Jwt jwt = baseJwt().audience(List.of(AUDIENCE)).build();
 
         assertThat(validator.validate(jwt).hasErrors()).isFalse();
@@ -29,7 +30,7 @@ class JwtValidationSupportTest {
 
     @Test
     void rejectsTokenWithWrongAudience() {
-        OAuth2TokenValidator<Jwt> validator = JwtValidationSupport.build(AUDIENCE, "");
+        OAuth2TokenValidator<Jwt> validator = JwtValidationSupport.build(AUDIENCE, ISSUER);
         Jwt jwt = baseJwt().audience(List.of("some-other-api")).build();
 
         OAuth2TokenValidatorResult result = validator.validate(jwt);
@@ -38,7 +39,7 @@ class JwtValidationSupportTest {
 
     @Test
     void rejectsTokenWithNoAudienceWhenAudienceRequired() {
-        OAuth2TokenValidator<Jwt> validator = JwtValidationSupport.build(AUDIENCE, "");
+        OAuth2TokenValidator<Jwt> validator = JwtValidationSupport.build(AUDIENCE, ISSUER);
         Jwt jwt = baseJwt().build();
 
         assertThat(validator.validate(jwt).hasErrors()).isTrue();
@@ -46,7 +47,7 @@ class JwtValidationSupportTest {
 
     @Test
     void skipsAudienceCheckWhenNotConfigured() {
-        OAuth2TokenValidator<Jwt> validator = JwtValidationSupport.build("", "");
+        OAuth2TokenValidator<Jwt> validator = JwtValidationSupport.build("", ISSUER);
         Jwt jwt = baseJwt().build();
 
         assertThat(validator.validate(jwt).hasErrors()).isFalse();
@@ -54,10 +55,10 @@ class JwtValidationSupportTest {
 
     @Test
     void rejectsExpiredToken() {
-        OAuth2TokenValidator<Jwt> validator = JwtValidationSupport.build("", "");
+        OAuth2TokenValidator<Jwt> validator = JwtValidationSupport.build("", ISSUER);
         Jwt jwt = baseJwt()
                 .issuedAt(Instant.now().minusSeconds(3600))
-                .expiresAt(Instant.now().minusSeconds(60))
+                .expiresAt(Instant.now().minusSeconds(120))
                 .build();
 
         assertThat(validator.validate(jwt).hasErrors()).isTrue();
@@ -77,5 +78,26 @@ class JwtValidationSupportTest {
         Jwt jwt = baseJwt().audience(List.of(AUDIENCE)).issuer("https://evil.example.com").build();
 
         assertThat(validator.validate(jwt).hasErrors()).isTrue();
+    }
+
+    @Test
+    void rejectsTokenWithNoIssuer() {
+        OAuth2TokenValidator<Jwt> validator = JwtValidationSupport.build(AUDIENCE, ISSUER);
+        Jwt jwt = Jwt.withTokenValue("token").header("alg", "RS256").subject("user")
+                .audience(List.of(AUDIENCE)).build();
+
+        assertThat(validator.validate(jwt).hasErrors()).isTrue();
+    }
+
+    @Test
+    void failsFastWithoutValidIssuerConfiguration() {
+        assertThatThrownBy(() -> JwtValidationSupport.build(AUDIENCE, " "))
+                .isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> JwtValidationSupport.build(AUDIENCE, "not a URL"))
+                .isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> JwtValidationSupport.build(AUDIENCE, "relative/path"))
+                .isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> JwtValidationSupport.build(AUDIENCE, "http://example.org/kyc"))
+                .isInstanceOf(IllegalStateException.class);
     }
 }
