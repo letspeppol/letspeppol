@@ -45,7 +45,8 @@ public class OpenApiConfig {
 
                                 Path families: `/api/**` is public, `/auth/browser/**` is the cookie/CSRF browser
                                 surface, `/auth/oauth2/**` and `/auth/oidc/**` are protocol surfaces, and
-                                `/sapi/**` requires an OAuth access token with company context.
+                                `/sapi/**` is stateless and requires a bearer access token with company context;
+                                a browser session cookie is never sufficient for these endpoints.
                                 Local-control APIs are intentionally omitted from this OpenAPI document. KYC
                                 also issues `service` scoped client-credentials tokens to trusted backends.
                                 Protected APIs validate

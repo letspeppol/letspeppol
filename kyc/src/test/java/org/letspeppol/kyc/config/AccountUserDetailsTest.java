@@ -30,6 +30,11 @@ class AccountUserDetailsTest {
                 .isNotEqualTo(principal("person@example.com", UUID.randomUUID()));
     }
 
+    @Test
+    void browserPrincipalHasNoApiAuthority() {
+        assertThat(principal("person@example.com", UUID.randomUUID()).getAuthorities()).isEmpty();
+    }
+
     private static AccountUserDetails principal(String username, UUID uid) {
         return new AccountUserDetails(username, "password", uid, false, 1L, false, true);
     }

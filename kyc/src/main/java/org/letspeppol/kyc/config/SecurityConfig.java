@@ -17,7 +17,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -122,7 +124,27 @@ public class SecurityConfig {
 
     @Bean
     @Order(2)
-    public SecurityFilterChain resourceServerSecurityFilterChain(
+    public SecurityFilterChain sapiSecurityFilterChain(
+            HttpSecurity http,
+            JwtDecoder jwtDecoder,
+            CorsConfigurationSource corsConfigurationSource) throws Exception {
+        http
+                .securityMatcher("/sapi/**")
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
+                .csrf(AbstractHttpConfigurer::disable)
+                .requestCache(AbstractHttpConfigurer::disable)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth.anyRequest().hasAuthority(ROLE_KYC_USER))
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt
+                        .decoder(jwtDecoder)
+                        .jwtAuthenticationConverter(jwtAuthenticationConverter())
+                ));
+        return http.build();
+    }
+
+    @Bean
+    @Order(3)
+    public SecurityFilterChain browserAndPublicSecurityFilterChain(
             HttpSecurity http,
             JwtDecoder jwtDecoder,
             CorsConfigurationSource corsConfigurationSource,
@@ -134,14 +156,16 @@ public class SecurityConfig {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 // CSRF guards the cookie/session browser surface (/auth/browser/**).
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**", "/sapi/**", "/actuator/**"))
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**", "/actuator/**"))
                 .requestCache(rc -> rc.requestCache(requestCache))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/browser/**", "/error", "/favicon.ico").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
+                        // Local-control API: intentionally unauthenticated at the application layer.
+                        // Deployment must restrict it to localhost/internal traffic and Traefik must not expose /lapi/** through any public router.
+                        .requestMatchers("/lapi/**").permitAll()
                         .requestMatchers("/api/**").permitAll()
-                        .requestMatchers("/sapi/**").hasAuthority(ROLE_KYC_USER)
                         .anyRequest().denyAll()
                 )
                 .formLogin(form -> form
@@ -150,6 +174,8 @@ public class SecurityConfig {
                         .successHandler(authenticationSuccessHandler)
                         .failureHandler(authenticationFailureHandler)
                         .permitAll())
+                // Some public onboarding endpoints accept an optional bearer token for the
+                // authenticated add-ownership variant. /sapi/** never reaches this chain.
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt
                         .decoder(jwtDecoder)
                         .jwtAuthenticationConverter(jwtAuthenticationConverter())
