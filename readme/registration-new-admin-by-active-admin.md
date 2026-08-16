@@ -26,15 +26,15 @@ Note over ADMIN, Peppol: Existing ADMIN claims another company by signing as a d
     ADMIN ->> Frontend: Confirm( eID )
     Frontend ->> KYC: POST /kyc/api/identity/sign/prepare <br> ( peppolId, directorId, certificate, <br> supportedSignatureAlgorithms, language )
     Note right of KYC: Validate director belongs to peppolId <br> Generate contract hashes
-    KYC ->> Frontend: PrepareSigningResponse
+    KYC ->> Frontend: PrepareSigningResponse <br> ( digest + short-lived signingSessionToken )
 
-    Frontend ->> KYC: GET /kyc/api/identity/contract/{peppolId}/{directorId}
-    Note right of KYC: Validate director belongs to peppolId <br> Generate contract for director
+    Frontend ->> KYC: GET /kyc/api/identity/contract/{peppolId}/{directorId} <br> X-Signing-Session
+    Note right of KYC: Validate hashed session capability <br> Return its bound prepared PDF
     KYC ->> Frontend: PDF prepared contract
     Frontend ->> ADMIN: Show contract
 
     ADMIN ->> Frontend: Sign( eID )
-    Frontend ->> KYC: POST /kyc/api/identity/sign/finalize <br> Authorization: Bearer ADMIN_JWT <br> ( peppolId, directorId, email=null, certificate, <br> signature, signatureAlgorithm, <br> hashToSign, hashToFinalize )
+    Frontend ->> KYC: POST /kyc/api/identity/sign/finalize <br> Authorization: Bearer ADMIN_JWT <br> X-Signing-Session <br> ( peppolId, directorId, email=null, certificate, <br> signature, signatureAlgorithm, <br> hashToSign, hashToFinalize )
     Note right of KYC: Validate JWT <br> Use logged-in account as signer <br> Link account as ADMIN to company <br> Record director signature
     opt Company != suspended
         KYC -->> Proxy: POST /proxy/sapi/registry <br> KYC_JWT ( name, language, country )

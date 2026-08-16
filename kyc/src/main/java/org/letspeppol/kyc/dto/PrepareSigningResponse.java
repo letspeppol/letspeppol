@@ -4,5 +4,6 @@ public record PrepareSigningResponse(
         String hashToSign,
         String hashToFinalize,
         String hashFunction,
-        boolean allowedToSign
+        boolean allowedToSign,
+        String signingSessionToken
 ) {}

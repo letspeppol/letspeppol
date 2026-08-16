@@ -2,6 +2,7 @@ import {resolve} from "@aurelia/kernel";
 import {SignatureAlgorithm} from "@web-eid/web-eid-library/models/SignatureAlgorithm";
 import {KYCApi} from "./kyc-api";
 import {LoginService} from "../app/login-service";
+import {retrieveContractBlob, SIGNING_SESSION_HEADER} from "../../registration/contract-document";
 
 export type RegistrationAccountType = 'ADMIN' | 'AFFILIATE';
 
@@ -42,10 +43,11 @@ export interface PrepareSigningRequest {
 }
 
 export interface PrepareSigningResponse {
-    hashToSign: string,
-    hashToFinalize: string,
+    hashToSign: string | null,
+    hashToFinalize: string | null,
     hashFunction: string,
-    allowedToSign: boolean
+    allowedToSign: boolean,
+    signingSessionToken: string | null
 }
 
 export interface FinalizeSigningRequest {
@@ -97,12 +99,19 @@ export class RegistrationService {
         return response.json();
     }
 
-    getContractUrl(peppolId: string, directorId: number): string {
-        return `${this.kycApi.httpClient.baseUrl}/api/identity/contract/${encodeURIComponent(peppolId)}/${directorId}`;
+    async getContractBlob(peppolId: string, directorId: number, signingSessionToken: string): Promise<Blob> {
+        return retrieveContractBlob(
+            (path, init) => this.kycApi.httpClient.fetch(path, init),
+            peppolId,
+            directorId,
+            signingSessionToken,
+        );
     }
 
-    async finalizeSign(request: FinalizeSigningRequest) : Promise<Response> {
-        return await this.kycApi.httpClient.post(`/api/identity/sign/finalize`, JSON.stringify(request));
+    async finalizeSign(request: FinalizeSigningRequest, signingSessionToken: string) : Promise<Response> {
+        return await this.kycApi.httpClient.post(`/api/identity/sign/finalize`, JSON.stringify(request), {
+            headers: {[SIGNING_SESSION_HEADER]: signingSessionToken},
+        });
     }
 
     async verifyAccount(request: VerifyAccountRequest): Promise<Response> {

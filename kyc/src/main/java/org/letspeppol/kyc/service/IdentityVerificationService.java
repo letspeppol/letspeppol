@@ -55,9 +55,11 @@ public class IdentityVerificationService {
         directorRepository.save(req.director());
 
         if (!isAllowedToSign(req.x500Name(), req.director())) {
-            companyService.suspendCompany(req.director().getCompany());
-            log.warn("Peppol not activated for email={} director={} signer={} {} serial={}", account.getEmail(), req.director().getName(), getRDNName(req.x500Name(), BCStyle.GIVENNAME), getRDNName(req.x500Name(), BCStyle.SURNAME), req.x509Certificate().getSerialNumber());
-            sendManualVerificationEmail(account.getEmail(), req.director().getCompany().getPeppolId(), req.director().getCompany().getName(), req.director().getName(), getRDNName(req.x500Name(), BCStyle.GIVENNAME), getRDNName(req.x500Name(), BCStyle.SURNAME)); //TODO : check, mail does not work !
+            log.info("Delegated signature recorded for email={} director={} signer={} {} serial={}",
+                    account.getEmail(), req.director().getName(),
+                    getRDNName(req.x500Name(), BCStyle.GIVENNAME),
+                    getRDNName(req.x500Name(), BCStyle.SURNAME),
+                    req.x509Certificate().getSerialNumber());
         }
 
         log.info("Identity verified for email={} director={} serial={}", account.getEmail(), req.director().getName(), req.x509Certificate().getSerialNumber());

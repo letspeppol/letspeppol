@@ -16,7 +16,7 @@ For the detailed KYC onboarding scenarios, see [KYC and registration flows](./ky
 
 | Family | Exposure | Authentication |
 | --- | --- | --- |
-| `/api/**` | Public | None |
+| `/api/**` | Public | None, except prepared contract view/finalize require the short-lived `X-Signing-Session` capability created by successful eID preparation |
 | `/auth/browser/**` | Browser authentication surface | Anonymous/session cookie depending on login stage; CSRF on mutations |
 | `/auth/oauth2/**` | OAuth2 protocol surface | Endpoint-specific browser session, PKCE, or OAuth2 client authentication |
 | `/auth/oidc/**` | OpenID Connect protocol surface | Bearer access token |

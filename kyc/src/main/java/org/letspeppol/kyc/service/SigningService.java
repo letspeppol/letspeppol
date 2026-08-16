@@ -43,17 +43,20 @@ import org.letspeppol.kyc.util.NameMatchUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.cert.X509Certificate;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Date;
 import java.util.regex.Pattern;
-import java.util.concurrent.ConcurrentHashMap;
 import java.security.KeyStore;
 import java.security.cert.CertPathBuilder;
 import java.security.cert.CertPathValidator;
@@ -93,6 +96,7 @@ public class SigningService {
     private final OwnershipService ownershipService;
     private final SignerAccountResolverService signerAccountResolverService;
     private final DirectorRepository directorRepository;
+    private final SigningSessionService signingSessionService;
     private final Counter prepareSigningCounter;
     private final Counter finalizeSigningCounter;
 
@@ -102,9 +106,7 @@ public class SigningService {
     private String workingDirectory;
     private String contractDirectory;
 
-    // Maps a prepared-signing id (hashToFinalize) to the exact digest the server prepared for signing.
-    // Binds the eID signature to OUR contract and makes a prepared signing single-use (anti-replay).
-    private final ConcurrentHashMap<String, String> preparedHashes = new ConcurrentHashMap<>();
+    private final SecureRandom secureRandom = new SecureRandom();
 
     @Value("${webeid.trusted-ca-truststore:#{null}}")
     private String trustedCaTruststore;
@@ -231,18 +233,29 @@ public class SigningService {
         Director director = getDirector(request.directorId(), request.peppolId());
         log.info("Preparing contract signing for company {} and director {}", request.peppolId(), request.directorId());
 
+        X509Certificate[] chain;
+        try {
+            chain = CertificateUtil.getCertificateChain(request.certificate());
+        } catch (Exception e) {
+            throw new KycException(KycErrorCodes.INVALID_CERTIFICATE);
+        }
+        X500Name x500Name = CertificateUtil.getX500Name(chain);
+        if (!isAllowedToSign(x500Name, director)) {
+            // Delegated signing is allowed: the eID holder signs on behalf of the selected
+            // director/company. The certificate holder and selected director are both retained
+            // in the signed PDF and verification audit record.
+            log.info("Preparing delegated contract signing for company {} and director {}",
+                    request.peppolId(), request.directorId());
+        }
+
         byte[] generatedPdf = generateFilledContract(director);
         byte[] preparedPdfBytes;
-        String hashToFinalize = request.sha256();
+        String hashToFinalize = generatePreparedFileIdentifier();
         File preparedPdf = getGeneratedContractFileName(hashToFinalize);
-        X500Name x500Name;
         try (InputStream resource = new ByteArrayInputStream(generatedPdf);
              PdfReader pdfReader = new PdfReader(resource);
              OutputStream outputStream = new FileOutputStream(preparedPdf)) {
-
-            X509Certificate[] chain = CertificateUtil.getCertificateChain(request.certificate());
             log.debug("Certificate chain loaded with {} certificates", chain.length);
-            x500Name = CertificateUtil.getX500Name(chain);
 
             PdfSigner signer = new PdfSigner(pdfReader, outputStream, new StampingProperties().useAppendMode());
 
@@ -254,14 +267,34 @@ public class SigningService {
             signer.signExternalContainer(external, 16000);
             preparedPdfBytes = external.getHash();
         } catch (Exception e) {
+            deletePreparedContract(hashToFinalize);
             log.error("Error preparing contract for signing: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to prepare contract for signing", e);
         }
 
         String hash = Base64.getEncoder().encodeToString(preparedPdfBytes);
         log.info("Contract prepared for signing, hash length: {}", hash.length());
-        preparedHashes.put(safeHashName(hashToFinalize), hash);
-        return new PrepareSigningResponse(hash, hashToFinalize, HASH_ALGORITHM, isAllowedToSign(x500Name, director));
+        SigningSessionService.CreatedSigningSession session = signingSessionService.create(
+                request.peppolId(), request.directorId(), certificateFingerprint(chain[0]),
+                hash, hashToFinalize);
+        return new PrepareSigningResponse(hash, hashToFinalize, HASH_ALGORITHM, true, session.token());
+    }
+
+    private String generatePreparedFileIdentifier() {
+        byte[] bytes = new byte[24];
+        secureRandom.nextBytes(bytes);
+        return Base64.getEncoder().encodeToString(bytes);
+    }
+
+    private static String certificateFingerprint(X509Certificate certificate) {
+        try {
+            return Base64.getEncoder().encodeToString(
+                    MessageDigest.getInstance("SHA-256").digest(certificate.getEncoded()));
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-256 is unavailable", e);
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to fingerprint signing certificate", e);
+        }
     }
 
     public static SignerProperties getSignerProperties(String signatureContent) throws IOException {
@@ -326,10 +359,13 @@ public class SigningService {
         return NameMatchUtil.matches(givenName, surName, fullName);
     }
 
-    public FinalizeSigningResponse finalizeSign(FinalizeSigningRequest signingRequest) {
+    public FinalizeSigningResponse finalizeSign(FinalizeSigningRequest signingRequest, String signingSessionToken) {
         finalizeSigningCounter.increment();
-        Director director = getDirector(signingRequest.directorId(), signingRequest.peppolId());
         log.info("Finalizing contract signing for company {} and director {}", signingRequest.peppolId(), signingRequest.directorId());
+        // Fail missing, unknown, expired, and path-mismatched capabilities before parsing attacker-controlled
+        // signature material. Full certificate/digest/file binding is checked atomically below.
+        signingSessionService.requireFinalizable(
+                signingSessionToken, signingRequest.peppolId(), signingRequest.directorId());
 
         X509Certificate[] certificates;
         try {
@@ -354,13 +390,18 @@ public class SigningService {
                     signingRequest.peppolId(), signingRequest.directorId());
             throw new RuntimeException("eID signature verification failed");
         }
-        String expectedDigest = preparedHashes.remove(safeHashName(signingRequest.hashToFinalize()));
-        if (expectedDigest == null || !expectedDigest.equals(signingRequest.hashToSign())) {
-            log.error("eID prepared-digest mismatch / replay for company {}", signingRequest.peppolId());
-            throw new RuntimeException("eID signature does not match a freshly prepared contract");
-        }
+        SigningSessionService.SigningSession session = signingSessionService.consumeForFinalization(
+                signingSessionToken, signingRequest.peppolId(), signingRequest.directorId(),
+                certificateFingerprint(certificates[0]), signingRequest.hashToSign(),
+                signingRequest.hashToFinalize());
+        Director director = getDirector(signingRequest.directorId(), signingRequest.peppolId());
 
-        byte[] finalPdfBytes = createFinalContract(certificates, signingRequest, signingRequest.peppolId());
+        byte[] finalPdfBytes;
+        try {
+            finalPdfBytes = createFinalContract(certificates, signingRequest, signingRequest.peppolId());
+        } finally {
+            deletePreparedContract(session.hashToFinalize());
+        }
 
         IdentityVerificationRequest identityVerificationRequest = new IdentityVerificationRequest(
                 director,
@@ -385,6 +426,32 @@ public class SigningService {
             }
         }
         return new FinalizeSigningResponse(writeContractToFile(signingRequest.peppolId(), account, finalPdfBytes), registrationResponse);
+    }
+
+    public byte[] getPreparedContract(String peppolId, Long directorId, String signingSessionToken) {
+        SigningSessionService.SigningSession session = signingSessionService.requireForContract(
+                signingSessionToken, peppolId, directorId);
+        try {
+            byte[] bytes = Files.readAllBytes(getGeneratedContractFileName(session.hashToFinalize()).toPath());
+            if (bytes.length == 0) throw new IOException("Prepared contract is empty");
+            return bytes;
+        } catch (IOException e) {
+            throw new org.letspeppol.kyc.exception.NotFoundException(KycErrorCodes.CONTRACT_NOT_FOUND);
+        }
+    }
+
+    @Scheduled(fixedRateString = "${signing.session.cleanup-interval-ms:60000}")
+    public void cleanupExpiredSigningSessions() {
+        signingSessionService.removeExpiredSessions()
+                .forEach(session -> deletePreparedContract(session.hashToFinalize()));
+    }
+
+    private void deletePreparedContract(String hashToFinalize) {
+        try {
+            Files.deleteIfExists(getGeneratedContractFileName(hashToFinalize).toPath());
+        } catch (IOException e) {
+            log.warn("Unable to remove expired prepared contract {}", safeHashName(hashToFinalize));
+        }
     }
 
     public byte[] getContract(String peppolId, Long accountId) {

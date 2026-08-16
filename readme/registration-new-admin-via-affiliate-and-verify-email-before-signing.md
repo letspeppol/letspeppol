@@ -60,9 +60,9 @@ Note over SME, Peppol: Signing contract for new ADMIN requested by AFFILIATE
     SME ->> Frontend: Confirm( eID )
     Frontend ->> KYC: POST /kyc/api/identity/sign/prepare <br> ( peppolId, directorId, certificate, <br> supportedSignatureAlgorithms, language )
     Note right of KYC: Validate director belongs to peppolId <br> Generate contract hashes <br> with given eID certificate
-    KYC ->> Frontend: PrepareSigningResponse
-    Frontend ->> KYC: GET /kyc/api/identity/contract/{peppolId}/{directorId}
-    Note right of KYC: Validate director belongs to peppolId <br> Generate contract for director
+    KYC ->> Frontend: PrepareSigningResponse <br> ( digest + short-lived signingSessionToken )
+    Frontend ->> KYC: GET /kyc/api/identity/contract/{peppolId}/{directorId} <br> X-Signing-Session
+    Note right of KYC: Validate hashed session capability <br> Return its bound prepared PDF
     KYC ->> Frontend: PDF prepared contract
     Frontend ->> SME: Show contract
 
@@ -72,7 +72,7 @@ Note over SME, Peppol: Signing contract for new ADMIN requested by AFFILIATE
 
     Note left of SME: Sign as director with eID & PIN
     SME ->> Frontend: Sign( eID )
-    Frontend ->> KYC: POST /kyc/api/identity/sign/finalize <br> ( peppolId, directorId, email, certificate, <br> signature, signatureAlgorithm, <br> hashToSign, hashToFinalize )
+    Frontend ->> KYC: POST /kyc/api/identity/sign/finalize <br> X-Signing-Session <br> ( peppolId, directorId, email, certificate, <br> signature, signatureAlgorithm, <br> hashToSign, hashToFinalize )
     Note right of KYC: Resolve pending email verification <br> Type == ADMIN <br> Generate signed contract <br> Create pending Account if needed <br> Link as ADMIN to Company <br> Record director signature <br> eID != Director ? <br> Set Company as suspended
     opt Type == ADMIN && Company != suspended
         KYC -->> Proxy: POST /proxy/sapi/registry <br> KYC_JWT ( name, language, country )

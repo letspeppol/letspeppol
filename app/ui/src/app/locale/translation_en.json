@@ -208,6 +208,7 @@
     "manual-confirmation-needed": "Your contract requires manual review, which can take up to 10 business days. <br /> Please keep an eye on your email for any additional actions. <br /> Reason: the eID does not fully match the selected director.",
     "minimize-button": "Minimize",
     "no-directors": "No directors found.",
+    "open-contract": "Open contract in a new tab",
     "read-contract-agree": "I have read the contract and agree to the terms",
     "read-contract-info": "You will receive a signed copy when the registration flow is complete.",
     "read-contract-title": "1. Read the Contract",

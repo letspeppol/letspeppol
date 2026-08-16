@@ -75,12 +75,17 @@ public class RegistrationSteps {
     private record TestSigningIdentity(String certificate, KeyPair keyPair) {}
 
     private static TestSigningIdentity testSigningIdentity() {
+        return testSigningIdentity("Test", "Director");
+    }
+
+    private static TestSigningIdentity testSigningIdentity(String givenName, String surname) {
         try {
             KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
             generator.initialize(2048);
             KeyPair keyPair = generator.generateKeyPair();
             X500Principal subject = new X500Principal(
-                    "CN=Test Director, GIVENNAME=Test, SURNAME=Director, SERIALNUMBER=1234567890");
+                    "CN=" + givenName + " " + surname + ", GIVENNAME=" + givenName
+                            + ", SURNAME=" + surname + ", SERIALNUMBER=1234567890");
             var builder = new JcaX509v3CertificateBuilder(
                     subject, BigInteger.ONE,
                     new Date(System.currentTimeMillis() - 60_000L),
@@ -120,6 +125,18 @@ public class RegistrationSteps {
         // Build JWT header
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(token);
+        return headers;
+    }
+
+    private HttpHeaders signingSessionHeader(String signingSessionToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("X-Signing-Session", signingSessionToken);
+        return headers;
+    }
+
+    private HttpHeaders jwtAndSigningSessionHeader(String jwtToken, String signingSessionToken) {
+        HttpHeaders headers = jwtHeader(jwtToken);
+        headers.set("X-Signing-Session", signingSessionToken);
         return headers;
     }
 
@@ -453,9 +470,10 @@ public class RegistrationSteps {
         return companyResponse.directors();
     }
 
-    void companyIsActiveCompany(String peppolId) {
+    CompanyResponse companyIsActiveCompany(String peppolId) {
         CompanyResponse companyResponse = getCompany(peppolId);
         assertTrue(companyResponse.hasAdmin());
+        return companyResponse;
     }
 
     String confirmCompany(AccountType accountType, String peppolId, String email, String city, String postCode, String street) {
@@ -549,9 +567,25 @@ public class RegistrationSteps {
             assertNotNull(prepareResponse.hashToFinalize());
             assertEquals("SHA-256", prepareResponse.hashFunction());
             assertTrue(prepareResponse.allowedToSign());
+            assertNotNull(prepareResponse.signingSessionToken());
 
             String contractUrl = "/api/identity/contract/" + peppolId + "/" + directorId;
-            ResponseEntity<byte[]> contractResponse = restTemplate.getForEntity(contractUrl, byte[].class);
+            ResponseEntity<byte[]> missingSessionResponse = restTemplate.getForEntity(contractUrl, byte[].class);
+            assertEquals(404, missingSessionResponse.getStatusCode().value());
+
+            HttpEntity<Void> unknownSessionRequest = new HttpEntity<>(signingSessionHeader("random-unknown-token"));
+            ResponseEntity<byte[]> unknownExistingDirector = restTemplate.exchange(
+                    contractUrl, HttpMethod.GET, unknownSessionRequest, byte[].class);
+            ResponseEntity<byte[]> unknownMissingDirector = restTemplate.exchange(
+                    "/api/identity/contract/" + peppolId + "/9223372036854775807",
+                    HttpMethod.GET, unknownSessionRequest, byte[].class);
+            assertEquals(404, unknownExistingDirector.getStatusCode().value());
+            assertEquals(unknownExistingDirector.getStatusCode(), unknownMissingDirector.getStatusCode());
+            assertArrayEquals(unknownExistingDirector.getBody(), unknownMissingDirector.getBody());
+
+            HttpEntity<Void> contractRequest = new HttpEntity<>(signingSessionHeader(prepareResponse.signingSessionToken()));
+            ResponseEntity<byte[]> contractResponse = restTemplate.exchange(
+                    contractUrl, HttpMethod.GET, contractRequest, byte[].class);
             assertEquals(200, contractResponse.getStatusCode().value());
             assertNotNull(contractResponse.getBody());
             assertTrue(contractResponse.getBody().length > 0);
@@ -570,14 +604,79 @@ public class RegistrationSteps {
                     prepareResponse.hashToFinalize()
             );
             String finalizeUrl = "/api/identity/sign/finalize";
-            ResponseEntity<byte[]> finalizeResponse = restTemplate.postForEntity(finalizeUrl, finalizeRequest, byte[].class);
+            HttpEntity<FinalizeSigningRequest> finalizeEntity = new HttpEntity<>(
+                    finalizeRequest, signingSessionHeader(prepareResponse.signingSessionToken()));
+            ResponseEntity<byte[]> finalizeResponse = restTemplate.exchange(
+                    finalizeUrl, HttpMethod.POST, finalizeEntity, byte[].class);
             assertEquals(200, finalizeResponse.getStatusCode().value());
             assertNotNull(finalizeResponse.getBody());
             assertTrue(finalizeResponse.getBody().length > 0);
             assertNotNull(finalizeResponse.getHeaders().getContentType());
             assertEquals("application/pdf", finalizeResponse.getHeaders().getContentType().toString());
             assertNotNull(finalizeResponse.getHeaders().get("Registration-Status"));
+
+            ResponseEntity<byte[]> replayResponse = restTemplate.exchange(
+                    finalizeUrl, HttpMethod.POST, finalizeEntity, byte[].class);
+            assertEquals(404, replayResponse.getStatusCode().value());
         }
+    }
+
+    void delegatedSignerCanSignForDirector(String peppolId, Long directorId, String email) {
+        TestSigningIdentity identity = testSigningIdentity("Different", "Person");
+        var signatureAlgorithm = new SignatureAlgorithm("SHA256", "PKCS1", "RSA");
+        var prepareRequest = new PrepareSigningRequest(
+                peppolId,
+                directorId,
+                identity.certificate(),
+                java.util.List.of(signatureAlgorithm),
+                "en"
+        );
+
+        PrepareSigningResponse response = restTemplate.postForObject(
+                "/api/identity/sign/prepare", prepareRequest, PrepareSigningResponse.class);
+
+        assertNotNull(response);
+        assertTrue(response.allowedToSign());
+        assertNotNull(response.signingSessionToken());
+        assertNotNull(response.hashToSign());
+        assertNotNull(response.hashToFinalize());
+
+        String contractUrl = "/api/identity/contract/" + peppolId + "/" + directorId;
+        HttpEntity<Void> contractRequest = new HttpEntity<>(signingSessionHeader(response.signingSessionToken()));
+        ResponseEntity<byte[]> contractResponse = restTemplate.exchange(
+                contractUrl, HttpMethod.GET, contractRequest, byte[].class);
+        assertEquals(200, contractResponse.getStatusCode().value());
+        assertNotNull(contractResponse.getBody());
+        assertTrue(contractResponse.getBody().length > 0);
+        assertEquals(MediaType.APPLICATION_PDF, contractResponse.getHeaders().getContentType());
+
+        String signature = signPreparedDigest(identity, response.hashToSign());
+        var finalizeRequest = new FinalizeSigningRequest(
+                peppolId,
+                directorId,
+                email,
+                identity.certificate(),
+                signature,
+                signatureAlgorithm,
+                response.hashToSign(),
+                response.hashToFinalize()
+        );
+        HttpEntity<FinalizeSigningRequest> finalizeRequestEntity = new HttpEntity<>(
+                finalizeRequest, signingSessionHeader(response.signingSessionToken()));
+        ResponseEntity<byte[]> finalizeResponse = restTemplate.exchange(
+                "/api/identity/sign/finalize", HttpMethod.POST, finalizeRequestEntity, byte[].class);
+        assertEquals(200, finalizeResponse.getStatusCode().value());
+        assertNotNull(finalizeResponse.getBody());
+        assertTrue(finalizeResponse.getBody().length > 0);
+        assertEquals(MediaType.APPLICATION_PDF, finalizeResponse.getHeaders().getContentType());
+
+        // Delegated signing sessions retain the same single-use replay protection.
+        ResponseEntity<byte[]> replayResponse = restTemplate.exchange(
+                "/api/identity/sign/finalize", HttpMethod.POST, finalizeRequestEntity, byte[].class);
+        assertEquals(404, replayResponse.getStatusCode().value());
+        ResponseEntity<byte[]> consumedContractResponse = restTemplate.exchange(
+                contractUrl, HttpMethod.GET, contractRequest, byte[].class);
+        assertEquals(404, consumedContractResponse.getStatusCode().value());
     }
 
     void signContractAsLoggedIn(String jwtToken, String peppolId, Long directorId) {
@@ -606,7 +705,8 @@ public class RegistrationSteps {
                     prepareResponse.hashToSign(),
                     prepareResponse.hashToFinalize()
             );
-            HttpEntity<FinalizeSigningRequest> request = new HttpEntity<>(finalizeRequest, jwtHeader(jwtToken));
+            HttpEntity<FinalizeSigningRequest> request = new HttpEntity<>(finalizeRequest,
+                    jwtAndSigningSessionHeader(jwtToken, prepareResponse.signingSessionToken()));
             ResponseEntity<byte[]> finalizeResponse = restTemplate.exchange("/api/identity/sign/finalize", HttpMethod.POST, request, byte[].class);
             assertEquals(200, finalizeResponse.getStatusCode().value());
             assertNotNull(finalizeResponse.getBody());
@@ -639,7 +739,8 @@ public class RegistrationSteps {
                     prepareResponse.hashToSign(),
                     prepareResponse.hashToFinalize()
             );
-            HttpEntity<FinalizeSigningRequest> request = new HttpEntity<>(finalizeRequest, jwtHeader(jwtToken));
+            HttpEntity<FinalizeSigningRequest> request = new HttpEntity<>(finalizeRequest,
+                    jwtAndSigningSessionHeader(jwtToken, prepareResponse.signingSessionToken()));
             ResponseEntity<byte[]> finalizeResponse = restTemplate.exchange("/api/identity/sign/finalize", HttpMethod.POST, request, byte[].class);
             assertEquals(200, finalizeResponse.getStatusCode().value());
             assertNotNull(finalizeResponse.getBody());

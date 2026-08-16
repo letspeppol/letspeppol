@@ -57,7 +57,9 @@ class JwtValidationSupportTest {
         OAuth2TokenValidator<Jwt> validator = JwtValidationSupport.build("", "");
         Jwt jwt = baseJwt()
                 .issuedAt(Instant.now().minusSeconds(3600))
-                .expiresAt(Instant.now().minusSeconds(60))
+                // JwtTimestampValidator permits 60 seconds of clock skew by default, so keep this
+                // comfortably outside that tolerance instead of testing the boundary.
+                .expiresAt(Instant.now().minusSeconds(120))
                 .build();
 
         assertThat(validator.validate(jwt).hasErrors()).isTrue();

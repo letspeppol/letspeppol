@@ -16,6 +16,7 @@ import {LibrarySignResponse} from "@web-eid/web-eid-library/models/message/Libra
 import {I18N} from "@aurelia/i18n";
 import {ChoosePassword} from "../components/choose-password/choose-password";
 import {clearTokenFromUrl} from "../services/util/url";
+import {ContractDocumentUrl} from "./contract-document";
 
 export class EmailConfirmation {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -39,6 +40,8 @@ export class EmailConfirmation {
     private warningKey;
     private alreadyRegisteredProvider = '';
     private choosePassword: ChoosePassword;
+    contractUrl = '';
+    private readonly contractDocument = new ContractDocumentUrl();
 
     public loading(params: Params, next: RouteNode) {
         this.emailToken = next.queryParams.get('token');
@@ -56,9 +59,13 @@ export class EmailConfirmation {
         });
     }
 
-    getContractUrl() {
-        const contractUrl = this.registrationService.getContractUrl(this.tokenVerificationResponse.company.peppolId, this.confirmedDirector.id);
-        return `${contractUrl}#page=1&view=FitH,300`;
+    detaching() {
+        this.clearContractDocument();
+    }
+
+    private clearContractDocument() {
+        this.contractDocument.clear();
+        this.contractUrl = '';
     }
 
     public async checkPeppolDirectory(peppolId: string) {
@@ -69,6 +76,11 @@ export class EmailConfirmation {
     }
 
     public async confirmContract() {
+        if (!this.certificate || !this.signatureAlgorithm || !this.prepareSigningResponse?.signingSessionToken
+            || !this.prepareSigningResponse.hashToSign
+            || !this.prepareSigningResponse.hashToFinalize) {
+            return;
+        }
         this.confirmInProgress = true;
         try {
 //             const {
@@ -90,6 +102,7 @@ export class EmailConfirmation {
                 signatureAlgorithm.hashFunction
             );
             const finalizeSigningResponse = await this.finalizeSigning(certificate, signResponse, prepareSigningResponse);
+            this.clearContractDocument();
             await this.registrationService.verifyAccount({
                 token: this.emailToken,
                 newPassword: this.password
@@ -155,10 +168,13 @@ export class EmailConfirmation {
             certificate: certificate,
             signature: signResponse.signature,
             signatureAlgorithm: signResponse.signatureAlgorithm,
-            hashToSign: prepareSigningResponse.hashToSign,
-            hashToFinalize: prepareSigningResponse.hashToFinalize
+            hashToSign: prepareSigningResponse.hashToSign!,
+            hashToFinalize: prepareSigningResponse.hashToFinalize!
         };
-        return await this.registrationService.finalizeSign(finalizeSigningRequest);
+        return await this.registrationService.finalizeSign(
+            finalizeSigningRequest,
+            prepareSigningResponse.signingSessionToken!,
+        );
     }
 
     async downloadFile(response: Response) {
@@ -191,6 +207,15 @@ export class EmailConfirmation {
             this.certificate = certificate;
             this.signatureAlgorithm = signatureAlgorithm;
             this.prepareSigningResponse = prepareSigningResponse;
+            if (prepareSigningResponse.signingSessionToken) {
+                const contract = await this.registrationService.getContractBlob(
+                    this.tokenVerificationResponse.company.peppolId,
+                    this.confirmedDirector.id,
+                    prepareSigningResponse.signingSessionToken,
+                );
+                this.contractDocument.setBlob(contract);
+                this.contractUrl = this.contractDocument.value;
+            }
             this.step = 2;
         } catch (error) {
             let text = "Confirming Identity failed";

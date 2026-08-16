@@ -201,6 +201,16 @@ class RegistrationTest {
     }
 
     @Test
+    @Order(2)
+    void delegatedSignerCanSignForDirector() {
+        if (!accountRepository.existsByEmail(adminEmail)) {
+            registrationNewAdmin();
+        }
+        Long directorId = registrationSteps.companyIsActiveCompany(adminPeppolId).directors().getFirst().id();
+        registrationSteps.delegatedSignerCanSignForDirector(adminPeppolId, directorId, adminEmail);
+    }
+
+    @Test
     @Order(6)
     void oauth2AuthorizationCodeWithPkce() {
         if (!accountRepository.existsByEmail(adminEmail)) {

@@ -208,6 +208,7 @@
     "manual-confirmation-needed": "Votre contrat nécessite une vérification manuelle, ce qui peut prendre jusqu’à 10 jours ouvrables. <br /> Veuillez surveiller votre e-mail pour d’éventuelles actions supplémentaires. <br /> Raison : l’eID ne correspond pas entièrement à l’administrateur sélectionné.",
     "minimize-button": "Réduire",
     "no-directors": "Aucun directeur trouvé.",
+    "open-contract": "Ouvrir le contrat dans un nouvel onglet",
     "read-contract-agree": "J'ai lu le contrat et j'accepte les conditions",
     "read-contract-info": "Vous recevrez une copie signée lorsque l'inscription sera terminée.",
     "read-contract-title": "1. Lire le contrat",

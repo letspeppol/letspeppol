@@ -24,8 +24,9 @@ sequenceDiagram
         UI->>Directory: via GET /app/api/peppol-directory
     end
     UI->>KYC: POST /kyc/api/identity/sign/prepare
-    UI->>KYC: GET /kyc/api/identity/contract/{peppolId}/{directorId}
-    UI->>KYC: POST /kyc/api/identity/sign/finalize
+    KYC-->>UI: digest + short-lived signing session
+    UI->>KYC: GET /kyc/api/identity/contract/{peppolId}/{directorId}<br/>X-Signing-Session
+    UI->>KYC: POST /kyc/api/identity/sign/finalize<br/>X-Signing-Session
     opt ADMIN company is eligible for Peppol activation
         KYC->>KYC: POST /kyc/auth/oauth2/token (client_credentials, service)
         KYC->>Proxy: POST /proxy/sapi/registry
@@ -45,5 +46,14 @@ sequenceDiagram
 An affiliate-originated request uses `POST /kyc/sapi/linked/request-company`. The verification
 response includes its requester, but there is currently no affiliate approval mutation API; the
 older diagrams' nonexistent `/app/sapi/affiliate/**` calls have therefore been removed.
+
+Contract preparation creates a signing session only when the Web eID certificate name matches the
+selected director. Its 256-bit opaque token is returned once, kept in UI memory, and sent in the
+`X-Signing-Session` header; KYC stores only its SHA-256 hash. The default TTL is ten minutes
+(`signing.session.ttl-seconds=600`). The session binds the company, director, certificate
+fingerprint, prepared digest, and prepared file identifier. The UI may read that exact prepared PDF
+more than once before expiry, but successful finalization consumes the session and deletes the
+temporary PDF, so finalization cannot be replayed. Missing, expired, unknown, and mismatched
+sessions all receive the same `404 contract_not_found` response.
 
 Return to the [API network flow guide](./api-network-flows.md).

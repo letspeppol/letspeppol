@@ -13,6 +13,7 @@ import {LibrarySignResponse} from "@web-eid/web-eid-library/models/message/Libra
 import {SignatureAlgorithm} from "@web-eid/web-eid-library/models/SignatureAlgorithm";
 import {OwnershipService} from "../services/app/ownership-service";
 import {CompanyService} from "../services/app/company-service";
+import {ContractDocumentUrl} from "./contract-document";
 
 export class AddOwnership {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -34,6 +35,8 @@ export class AddOwnership {
     prepareSigningResponse: PrepareSigningResponse | null = null;
     private certificate: string | null = null;
     private signatureAlgorithm: SignatureAlgorithm | null = null;
+    contractUrl = '';
+    private readonly contractDocument = new ContractDocumentUrl();
 
     attached() {
         if (this.ownershipService.getCurrentOwnershipType() !== 'ADMIN') {
@@ -78,6 +81,7 @@ export class AddOwnership {
     }
 
     restart(event?: Event) {
+        this.clearContractDocument();
         this.errorCode = undefined;
         this.warningKey = undefined;
         this.vatNumber = undefined;
@@ -92,12 +96,13 @@ export class AddOwnership {
         event?.preventDefault();
     }
 
-    getContractUrl() {
-        if (!this.company || !this.confirmedDirector) {
-            return '';
-        }
-        const contractUrl = this.registrationService.getContractUrl(this.company.peppolId, this.confirmedDirector.id);
-        return `${contractUrl}#page=1&view=FitH,300`;
+    detaching() {
+        this.clearContractDocument();
+    }
+
+    private clearContractDocument() {
+        this.contractDocument.clear();
+        this.contractUrl = '';
     }
 
     async confirmDirector(director: Director) {
@@ -128,6 +133,15 @@ export class AddOwnership {
             this.certificate = certificate;
             this.signatureAlgorithm = signatureAlgorithm;
             this.prepareSigningResponse = prepareSigningResponse;
+            if (prepareSigningResponse.signingSessionToken) {
+                const contract = await this.registrationService.getContractBlob(
+                    this.company.peppolId,
+                    director.id,
+                    prepareSigningResponse.signingSessionToken,
+                );
+                this.contractDocument.setBlob(contract);
+                this.contractUrl = this.contractDocument.value;
+            }
             this.step = 2;
         } catch (error) {
             let text = "Confirming identity failed";
@@ -147,7 +161,9 @@ export class AddOwnership {
     }
 
     async confirmContract() {
-        if (!this.company || !this.confirmedDirector || !this.certificate || !this.signatureAlgorithm || !this.prepareSigningResponse) {
+        if (!this.company || !this.confirmedDirector || !this.certificate || !this.signatureAlgorithm
+            || !this.prepareSigningResponse?.signingSessionToken
+            || !this.prepareSigningResponse.hashToSign || !this.prepareSigningResponse.hashToFinalize) {
             return;
         }
 
@@ -159,6 +175,7 @@ export class AddOwnership {
                 this.signatureAlgorithm.hashFunction
             );
             const finalizeSigningResponse = await this.finalizeSigning(signResponse);
+            this.clearContractDocument();
             const registrationStatus = finalizeSigningResponse.headers.get('Registration-Status');
             switch (registrationStatus) {
                 case 'UNKNOWN':
@@ -211,9 +228,9 @@ export class AddOwnership {
             certificate,
             signature: signResponse.signature,
             signatureAlgorithm: signResponse.signatureAlgorithm,
-            hashToSign: prepareSigningResponse.hashToSign,
-            hashToFinalize: prepareSigningResponse.hashToFinalize
-        });
+            hashToSign: prepareSigningResponse.hashToSign!,
+            hashToFinalize: prepareSigningResponse.hashToFinalize!
+        }, prepareSigningResponse.signingSessionToken!);
     }
 
     async downloadFile(response: Response) {
