@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   traefik:
     image: traefik:v3.6
@@ -36,7 +34,7 @@ services:
       - "--log.level=INFO"
 
     environment:
-      - HETZNER_API_TOKEN=${HETZNER_API_TOKEN}
+      - HETZNER_API_TOKEN=${HETZNER_API_TOKEN:?HETZNER_API_TOKEN must be set}
 
     ports:
       - "80:80"
