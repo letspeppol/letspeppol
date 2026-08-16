@@ -10,12 +10,12 @@ export class Onboarding {
     private certificate = null;
     private signatureAlgorithm = null;
     registrationType: RegistrationAccountType = 'ADMIN';
-    registrationUrl = '/registration';
+    registrationUrl = '../registration';
     registrationLinkTextKey = 'onboarding.step.register-company';
 
     loading(params: Params, next: RouteNode) {
         this.registrationType = next.queryParams.get('flow') === 'affiliate' ? 'AFFILIATE' : 'ADMIN';
-        this.registrationUrl = this.registrationType === 'AFFILIATE' ? '/affiliate/registration' : '/registration';
+        this.registrationUrl = this.registrationType === 'AFFILIATE' ? '../affiliate/registration' : '../registration';
         this.registrationLinkTextKey = this.registrationType === 'AFFILIATE'
             ? 'onboarding.step.register-affiliate'
             : 'onboarding.step.register-company';
