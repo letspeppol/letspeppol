@@ -24,6 +24,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.OAuth2Error;
+import org.springframework.security.oauth2.core.OAuth2ErrorCodes;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -91,7 +95,8 @@ public class SecurityConfig {
     @Order(1)
     public SecurityFilterChain authorizationServerSecurityFilterChain(
             HttpSecurity http,
-            CorsConfigurationSource corsConfigurationSource) throws Exception {
+            CorsConfigurationSource corsConfigurationSource,
+            ActingOwnershipAuthorizationRequestConverter actingOwnershipAuthorizationRequestConverter) throws Exception {
 
         OAuth2AuthorizationServerConfigurer configurer = new OAuth2AuthorizationServerConfigurer();
 
@@ -104,7 +109,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(a -> a.anyRequest().authenticated())
                 .csrf(csrf -> csrf.ignoringRequestMatchers(configurer.getEndpointsMatcher()))
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
-                .with(configurer, c -> c.oidc(Customizer.withDefaults()))
+                .with(configurer, c -> {
+                    c.oidc(Customizer.withDefaults());
+                    c.authorizationEndpoint(endpoint -> endpoint
+                            .authorizationRequestConverter(actingOwnershipAuthorizationRequestConverter));
+                })
                 .exceptionHandling(e -> e.defaultAuthenticationEntryPointFor(
                         new LoginUrlAuthenticationEntryPoint(uiLoginUrl()),
                         new MediaTypeRequestMatcher(MediaType.TEXT_HTML)));
@@ -191,6 +200,12 @@ public class SecurityConfig {
     @Bean
     public JwtEncoder jwtEncoder(JWKSource<SecurityContext> jwkSource) {
         return new NimbusJwtEncoder(jwkSource);
+    }
+
+    @Bean
+    public ActingOwnershipAuthorizationRequestConverter actingOwnershipAuthorizationRequestConverter(
+            OwnershipRepository ownershipRepository) {
+        return new ActingOwnershipAuthorizationRequestConverter(ownershipRepository);
     }
 
     @Bean
@@ -288,12 +303,11 @@ public class SecurityConfig {
 
             if (context.getPrincipal().getPrincipal() instanceof AccountUserDetails userDetails) {
                 claims.claim("uid", userDetails.getUid().toString());
-                // An account can own several companies under several roles. The acting ownership is
-                // resolved here, at mint time, as the most recently used one — which is what makes a
-                // swap (POST /sapi/account/ownership, which only touches lastUsed) take effect on the
-                // next silent re-authorization. It also keeps peppolActive fresh after a (de)registration.
-                ownershipRepository.findFirstByAccountIdOrderByLastUsedDesc(userDetails.getAccountId())
-                        .ifPresent(ownership -> addOwnershipClaims(claims, ownership));
+                OAuth2AuthorizationRequest authorizationRequest = context.getAuthorization() == null
+                        ? null
+                        : context.getAuthorization().getAttribute(OAuth2AuthorizationRequest.class.getName());
+                addOwnershipClaims(claims, resolveAuthorizedOwnership(
+                        userDetails.getAccountId(), authorizationRequest, ownershipRepository));
             } else if (AuthorizationGrantType.CLIENT_CREDENTIALS.equals(context.getAuthorizationGrantType())
                     && "kyc-service".equals(context.getRegisteredClient().getClientId())) {
                 // Service-to-service token for the App backend's scheduled document sync:
@@ -318,6 +332,41 @@ public class SecurityConfig {
             claims.claim("peppolId", ownership.getCompany().getPeppolId());
             claims.claim("peppolActive", ownership.getCompany().isPeppolActive());
         }
+    }
+
+    private static OAuth2AuthenticationException invalidOwnershipGrant() {
+        return new OAuth2AuthenticationException(new OAuth2Error(
+                OAuth2ErrorCodes.INVALID_GRANT,
+                "The acting ownership selected by the authorization is no longer available",
+                null));
+    }
+
+    static Ownership resolveAuthorizedOwnership(
+            Long accountId,
+            OAuth2AuthorizationRequest authorizationRequest,
+            OwnershipRepository ownershipRepository) {
+        if (authorizationRequest == null) {
+            throw invalidOwnershipGrant();
+        }
+        Object peppolId = authorizationRequest.getAdditionalParameters()
+                .get(ActingOwnershipAuthorizationRequestConverter.PEPPOL_ID_PARAMETER);
+        Object accountType = authorizationRequest.getAdditionalParameters()
+                .get(ActingOwnershipAuthorizationRequestConverter.ACCOUNT_TYPE_PARAMETER);
+        if (!(peppolId instanceof String selectedPeppolId)
+                || !(accountType instanceof String selectedAccountType)) {
+            throw invalidOwnershipGrant();
+        }
+
+        AccountType selectedType;
+        try {
+            selectedType = AccountType.valueOf(selectedAccountType);
+        } catch (IllegalArgumentException exception) {
+            throw invalidOwnershipGrant();
+        }
+        return ownershipRepository
+                .findFirstByAccountIdAndCompanyPeppolIdAndTypeOrderByLastUsedDesc(
+                        accountId, selectedPeppolId, selectedType)
+                .orElseThrow(SecurityConfig::invalidOwnershipGrant);
     }
 
     @Bean

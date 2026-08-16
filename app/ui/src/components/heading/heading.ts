@@ -60,6 +60,12 @@ export class Heading {
         return this.ownershipService.getOwnershipKey(ownership.peppolId, ownership.type);
     }
 
+    get dashboardPath() { return this.loginService.getCurrentOwnershipRoute('/dashboard'); }
+    get invoicesPath() { return this.loginService.getCurrentOwnershipRoute('/invoices'); }
+    get partnersPath() { return this.loginService.getCurrentOwnershipRoute('/partners'); }
+    get productsPath() { return this.loginService.getCurrentOwnershipRoute('/products'); }
+    get accountPath() { return this.loginService.getCurrentOwnershipRoute('/account'); }
+
     async changeOwnership() {
         if (this.swapping) {
             return;
@@ -78,7 +84,7 @@ export class Heading {
             this.selectedOwnershipKey = this.ownershipService.getCurrentOwnershipKey() ?? '';
             this.invoiceContext.clearAccountCache();
             this.ea.publish('account:switched');
-            await this.router.load('dashboard');
+            await this.router.load(this.loginService.getCurrentOwnershipRoute('/dashboard'));
         } catch (error) {
             console.error(error);
             this.selectedOwnershipKey = currentOwnershipKey ?? '';
@@ -90,6 +96,6 @@ export class Heading {
 
     async goToAddOwnership() {
         this.clearInvoice();
-        await this.router.load('/add-ownership');
+        await this.router.load(this.loginService.getCurrentOwnershipRoute('/add-ownership'));
     }
 }

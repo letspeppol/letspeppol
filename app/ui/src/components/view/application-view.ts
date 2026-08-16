@@ -3,6 +3,7 @@ import {IRouter, ICurrentRoute} from "@aurelia/router";
 import {IEventAggregator, IDisposable} from 'aurelia';
 import {LoginService} from "../../services/app/login-service";
 import {OwnershipService} from "../../services/app/ownership-service";
+import {currentOwnershipRoute} from "../../services/app/ownership-route";
 
 export class ApplicationView {
     private readonly router: IRouter = resolve(IRouter);
@@ -42,15 +43,15 @@ export class ApplicationView {
     }
 
     goHome() {
-        this.router.load('/');
+        this.router.load(currentOwnershipRoute('/dashboard'));
     }
 
     notPeppolActiveAction() {
-        if (this.currentRoute.path.startsWith('account')) {
+        if (this.currentRoute.path.endsWith('/account')) {
             this.ea.publish('account:register');
             return;
         }
         history.replaceState({ ...(history.state ?? {}), runRegister: true }, '');
-        this.router.load('/account');
+        this.router.load(currentOwnershipRoute('/account'));
     }
 }

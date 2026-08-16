@@ -13,6 +13,7 @@ import {LibrarySignResponse} from "@web-eid/web-eid-library/models/message/Libra
 import {SignatureAlgorithm} from "@web-eid/web-eid-library/models/SignatureAlgorithm";
 import {OwnershipService} from "../services/app/ownership-service";
 import {CompanyService} from "../services/app/company-service";
+import {currentOwnershipRoute} from "../services/app/ownership-route";
 
 export class AddOwnership {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -38,7 +39,7 @@ export class AddOwnership {
     attached() {
         if (this.ownershipService.getCurrentOwnershipType() !== 'ADMIN') {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: "Only an admin can add another account"});
-            void this.router.load('/dashboard');
+            void this.router.load(currentOwnershipRoute('/dashboard'));
             return;
         }
         void this.loadCurrentAccountInfo();
@@ -229,6 +230,6 @@ export class AddOwnership {
     }
 
     async goToDashboard() {
-        await this.router.load('/dashboard');
+        await this.router.load(currentOwnershipRoute('/dashboard'));
     }
 }

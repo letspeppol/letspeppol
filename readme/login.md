@@ -7,8 +7,11 @@ TOTP/recovery-code, or passkey request. It then starts the OAuth flow and exchan
 code for an access token. Passwords and MFA codes are never exchanged directly for a JWT, and the
 OAuth password grant is not enabled.
 
-The acting ownership carried in the token is the account's most recently used one; see
-[swap.md](swap.md) for changing it.
+Protected application URLs start with the active Peppol ID, for example
+`/0208:0123456789/invoices/17`. The UI sends that Peppol ID and the tab's remembered account type as
+`peppol_id` and `account_type` on the authorization request. KYC validates the ownership, stores the
+exact selection with the authorization code, and revalidates it during token exchange. `lastUsed` is
+only the default when login or a context-free `/dashboard` request supplies no selection.
 
 Executable proof: [`RegistrationTest`](../kyc/src/test/java/org/letspeppol/kyc/controller/RegistrationTest.java), method `oauth2AuthorizationCodeWithPkce`. TOTP and passkey branches are covered by [`TotpAuthenticationSuccessHandlerTest`](../kyc/src/test/java/org/letspeppol/kyc/config/TotpAuthenticationSuccessHandlerTest.java) and [`PasskeyControllerBrowserAuthTest`](../kyc/src/test/java/org/letspeppol/kyc/controller/PasskeyControllerBrowserAuthTest.java).
 
@@ -42,10 +45,11 @@ Note over SME, App: Establish the KYC browser session
     KYC -->> Frontend: authenticated KYC session
 
 Note over SME, App: Obtain an access token with Authorization Code + PKCE
-    Frontend ->> KYC: GET /kyc/auth/oauth2/authorize <br> ( client_id, redirect_uri, code_challenge, state )
+    Frontend ->> KYC: GET /kyc/auth/oauth2/authorize <br> ( client_id, redirect_uri, code_challenge, state, peppol_id, account_type )
+    Note right of KYC: Validate ownership belongs to account <br> Store exact selection with authorization code
     KYC ->> Frontend: Redirect to /callback?code=...&state=...
     Frontend ->> KYC: POST /kyc/auth/oauth2/token <br> ( code, code_verifier )
-    Note right of KYC: Resolve last used ownership for the account <br> Add claims to the access token
+    Note right of KYC: Revalidate stored ownership selection <br> Add claims to the access token
     KYC ->> Frontend: access_token ( accountType, peppolId, peppolActive, uid ) + id_token
     Frontend ->> App: GET /app/sapi/company
     Note right of App: Get company by JWT.peppolId
@@ -61,5 +65,9 @@ Note over SME, App: Obtain an access token with Authorization Code + PKCE
 
 The SPA keeps tokens in memory only. On reload, or when the access token expires, it re-authorizes
 silently (`prompt=none`) against the HttpOnly KYC session cookie instead of storing a refresh token.
+Every contextual renewal gets its Peppol ID from the URL and its role from `sessionStorage`, so tabs
+can renew different ownerships independently. A pending relative URL is also kept in
+`sessionStorage` during interactive login and restored after `/callback`, including its query and
+fragment.
 The login page's "remember my email" option remembers only the email address; it does not persist an access
 token or bypass KYC authentication.

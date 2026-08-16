@@ -17,9 +17,9 @@ import java.util.UUID;
  * Authenticated KYC principal.
  *
  * <p>Deliberately carries no company/ownership context: an account can own several companies
- * (and hold several roles), and the acting ownership is resolved from the database when an access
- * token is minted (see {@code SecurityConfig#tokenCustomizer}). Freezing an ownership into the
- * session principal would make a swap invisible until the user logged out and back in.
+ * (and hold several roles). The acting ownership is validated from the authorization request and
+ * stored with its code (see {@code SecurityConfig#tokenCustomizer}). Freezing an ownership into the
+ * browser-session principal would make independent tab contexts impossible.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AccountUserDetails implements UserDetails {

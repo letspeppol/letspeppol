@@ -37,11 +37,10 @@ public class OwnershipService {
     }
 
     /**
-     * Makes the requested ownership the acting one for this account.
+     * Remembers the requested ownership as this account's default.
      *
-     * <p>Access tokens resolve the acting ownership as the most recently used one at mint time, so
-     * touching {@code lastUsed} here is what a swap consists of: the caller then re-authorizes
-     * silently and receives a token carrying the new company and role.
+     * <p>The caller separately sends this exact ownership on its next authorization request.
+     * Touching {@code lastUsed} here only changes the default for a later context-free login.</p>
      */
     public Ownership selectOwnership(UUID uid, AuthRequest request) {
         Ownership ownership = getByAccountExternalIdPeppolIdAndType(uid, request.peppolId(), request.type());

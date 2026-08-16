@@ -341,7 +341,7 @@ input[type=checkbox] {
     color: var(--text);
 }
 
-.tab.active {
+.tab.active-route {
     color: var(--text-strong);
     background: linear-gradient(180deg, color-mix(in hsl, var(--panel) 88%, transparent), var(--panel));
     border-color: var(--border-soft);

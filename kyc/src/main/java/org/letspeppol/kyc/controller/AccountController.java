@@ -37,13 +37,12 @@ public class AccountController {
         return ResponseEntity.ok(ownershipService.getOwnershipSummaries(jwtInfo.uid()));
     }
 
-    /// Switches the acting company/role. Replaces the former POST /sapi/jwt/swap: tokens are now
-    /// issued by the authorization server, so the client re-authorizes silently after this call to
-    /// receive a token for the selected ownership.
+    /// Changes the default company/role. The client then silently re-authorizes with this explicit
+    /// ownership selection to receive a token for it.
     @PostMapping("/ownership")
     @Operation(summary = "Select acting ownership",
-            description = "Marks the given company and role as the acting ownership for this account. "
-                    + "The caller must then re-authorize (silently) to obtain an access token carrying the new context.")
+            description = "Remembers the given company and role as the default ownership for this account. "
+                    + "The caller must then re-authorize (silently) with the same explicit selection.")
     @ApiResponse(responseCode = "204", description = "Ownership selected; re-authorize to receive an updated token")
     public ResponseEntity<Void> selectOwnership(@Valid @RequestBody AuthRequest request) {
         JwtInfo jwtInfo = jwtClaimExtractor.extract();

@@ -269,7 +269,9 @@ public class RegistrationSteps {
                     "code_challenge", challenge,
                     "code_challenge_method", "S256",
                     "state", state,
-                    "scope", "openid");
+                    "scope", "openid",
+                    "peppol_id", peppolId,
+                    "account_type", AccountType.ADMIN.name());
 
             HttpResponse<String> authorizeResponse = browser.send(
                     HttpRequest.newBuilder(URI.create(origin + "/auth/oauth2/authorize?" + authorizeQuery))

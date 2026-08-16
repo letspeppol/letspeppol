@@ -3,6 +3,7 @@ import {resolve} from "@aurelia/kernel";
 import {SponsorDto, SponsorService} from "../../services/app/sponsor-service";
 import {SponsorPaymentModal} from "./sponsor-payment-modal";
 import {IRouter} from "@aurelia/router";
+import {currentOwnershipRoute} from "../../services/app/ownership-route";
 
 export class Donations {
     private statisticsService = resolve(StatisticsService);
@@ -67,7 +68,7 @@ export class Donations {
     }
 
     showSponsors() {
-        this.router.load('/sponsors');
+        this.router.load(currentOwnershipRoute('/sponsors'));
     }
 
     get totalSponsorTransactions() {

@@ -3,6 +3,11 @@ import {singleton} from "aurelia";
 import {jwtDecode} from "jwt-decode";
 import {KYCApi} from "../kyc/kyc-api";
 import {CompanyService} from "./company-service";
+import {
+    clearRememberedOwnership,
+    getRememberedOwnershipType,
+    rememberActingOwnership,
+} from "./ownership-route";
 
 export interface OwnershipSummary {
     peppolId: string,
@@ -37,8 +42,13 @@ export class OwnershipService {
     onTokenChanged(token: string | null) {
         this.currentToken = token;
         if (!token) {
+            clearRememberedOwnership();
             this.clearOwnerships();
             return;
+        }
+        const claims = this.claims();
+        if (claims?.peppolId && claims.accountType) {
+            rememberActingOwnership(claims.peppolId, claims.accountType);
         }
         void this.loadOwnerships(true);
     }
@@ -127,13 +137,29 @@ export class OwnershipService {
         return this.claims()?.accountType ?? null;
     }
 
+    getCurrentPeppolId(): string | null {
+        return this.claims()?.peppolId ?? null;
+    }
+
+    getRememberedOwnershipType(peppolId: string): string | null {
+        const claims = this.claims();
+        if (claims?.peppolId === peppolId && claims.accountType) {
+            return claims.accountType;
+        }
+        return getRememberedOwnershipType(peppolId);
+    }
+
+    rememberOwnership(selection: Pick<OwnershipSummary, 'peppolId' | 'type'>): void {
+        rememberActingOwnership(selection.peppolId, selection.type);
+    }
+
     getOwnershipKey(peppolId: string, type: string): string {
         return `${peppolId}::${type}`;
     }
 
     /**
-     * Records the acting company/role server-side. The current access token still carries the old
-     * claims afterwards — LoginService.swapOwnership() re-authorizes silently to refresh them.
+     * Records the company/role as the server-side default. LoginService.swapOwnership() also sends
+     * this exact selection on its silent authorization request; lastUsed is not the token input.
      */
     async selectOwnership(selection: OwnershipSummary): Promise<void> {
         await this.kycApi.httpClient.post(

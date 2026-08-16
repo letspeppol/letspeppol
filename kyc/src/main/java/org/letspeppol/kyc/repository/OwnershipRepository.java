@@ -17,6 +17,9 @@ public interface OwnershipRepository extends JpaRepository<Ownership, Long> {
     Optional<Ownership> findFirstByAccountIdAndCompanyPeppolIdAndTypeOrderByLastUsedDesc(Long accountId, String peppolId, AccountType type);
 
     @EntityGraph(attributePaths = {"account", "company"})
+    Optional<Ownership> findFirstByAccountIdAndCompanyPeppolIdOrderByLastUsedDesc(Long accountId, String peppolId);
+
+    @EntityGraph(attributePaths = {"account", "company"})
     Optional<Ownership> findFirstByAccountExternalIdAndCompanyPeppolIdAndTypeOrderByLastUsedDesc(UUID externalId, String peppolId, AccountType type);
 
     @EntityGraph(attributePaths = {"account", "company"})

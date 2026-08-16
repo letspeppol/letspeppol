@@ -23,7 +23,7 @@ export class Callback {
             // Keep the access token that was just stored in memory. Do not await this navigation:
             // the router cannot start it until the current /callback navigation (including this
             // attached hook) has completed, so awaiting it here would deadlock both navigations.
-            void this.router.load('/');
+            void this.router.load(this.loginService.getPostLoginPath());
         } catch (e) {
             console.error('Callback failed:', e);
             this.message = `Authentication failed: ${e instanceof Error ? e.message : e}`;

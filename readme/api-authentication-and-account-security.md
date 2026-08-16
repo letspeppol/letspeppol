@@ -25,7 +25,8 @@ sequenceDiagram
         UI->>KYC: POST /kyc/auth/browser/passkeys/authenticate/options
         UI->>KYC: POST /kyc/auth/browser/passkeys/authenticate/verify
     end
-    UI->>KYC: GET /kyc/auth/oauth2/authorize (code challenge S256)
+    UI->>KYC: GET /kyc/auth/oauth2/authorize (S256 + peppol_id + account_type)
+    KYC->>KYC: Validate and persist exact ownership selection
     KYC-->>UI: redirect_uri?code=...&state=...
     UI->>KYC: POST /kyc/auth/oauth2/token (code verifier)
     KYC-->>UI: access_token + id_token, no refresh token
@@ -55,8 +56,10 @@ sequenceDiagram
     end
 ```
 
-`POST /kyc/sapi/account/ownership` only records `lastUsed`. The new company/role claims appear after
-the frontend repeats the PKCE authorization flow with `prompt=none`; see [Swap](./swap.md).
+`POST /kyc/sapi/account/ownership` records `lastUsed` only as a future default. The new company/role
+claims come from the explicit ownership selector on the PKCE authorization request. KYC stores that
+selector with the authorization code and revalidates it at exchange, so another tab changing
+`lastUsed` cannot alter the resulting token; see [Swap](./swap.md).
 
 OAuth2 and OpenID Connect discovery remain at their standardized, issuer-derived
 `/.well-known/**` locations rather than moving under `/auth/**`; the public KYC reverse proxy must

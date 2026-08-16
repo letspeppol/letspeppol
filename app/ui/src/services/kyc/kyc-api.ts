@@ -2,6 +2,7 @@ import {resolve} from "@aurelia/kernel";
 import {newInstanceOf, singleton} from "aurelia";
 import {IHttpClient} from "@aurelia/fetch-client";
 import {Router} from "@aurelia/router";
+import {rememberCurrentNavigation} from "../app/ownership-route";
 
 @singleton()
 export class KYCApi {
@@ -19,9 +20,10 @@ export class KYCApi {
             .withInterceptor({
                 responseError: (error: Response) => {
                     if (error.status === 401) {
+                        rememberCurrentNavigation();
                         localStorage.removeItem('token');
                         localStorage.removeItem('peppolActive');
-                        this.router.load('login');
+                        this.router.load('/login');
                     }
                     throw error;
                 }

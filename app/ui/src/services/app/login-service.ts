@@ -9,6 +9,13 @@ import {PartnerService} from "./partner-service";
 import {SponsorService} from "./sponsor-service";
 import {StatisticsService} from "./statistics-service";
 import {SEEN_NOTIFICATION_KEY} from "./welcome-notification-service";
+import {
+    consumePendingNavigation,
+    getPeppolIdFromPath,
+    ownershipRoute,
+    peekPendingNavigation,
+    rememberCurrentNavigation,
+} from "./ownership-route";
 
 const KYC_BASE = '/kyc';
 const CLIENT_ID = 'letspeppol-ui';
@@ -18,10 +25,17 @@ const PEPPOL_ACTIVE_KEY = 'peppolActive';
 // Non-sensitive marker (not a token) that this browser has had a session, so eager silent re-auth
 // only runs when there's plausibly a KYC session to ride.
 const SESSION_HINT_KEY = 'session_hint';
+const PEPPOL_ID_PARAMETER = 'peppol_id';
+const ACCOUNT_TYPE_PARAMETER = 'account_type';
 
 interface TokenResponse {
     access_token: string;
     id_token?: string;
+}
+
+interface OwnershipSelector {
+    peppolId: string;
+    type?: string;
 }
 
 @singleton()
@@ -39,6 +53,7 @@ export class LoginService {
     private accessToken: string | null = null;
     private idToken: string | null = null;
     private silentLoginInFlight: Promise<boolean> | null = null;
+    private silentLoginSelectorKey: string | null = null;
 
     constructor() {
         // Fresh page load: in-memory tokens are gone, so restore silently — but skip the callback (it
@@ -46,7 +61,7 @@ export class LoginService {
         // routes still restore via ensureAuthenticated() in the router hook.
         const path = window.location.pathname;
         if (path !== CALLBACK_PATH && path !== LOGIN_PATH && localStorage.getItem(SESSION_HINT_KEY)) {
-            void this.silentLogin();
+            void this.silentLogin(this.selectorForPath(path));
         }
     }
 
@@ -75,9 +90,16 @@ export class LoginService {
     }
 
     /** True if a usable access token is available (restoring it via silent login if needed). */
-    async ensureAuthenticated(): Promise<boolean> {
-        if (this.accessToken && !this.isExpired(this.accessToken)) return true;
-        return this.silentLogin();
+    async ensureAuthenticated(requestedPeppolId?: string): Promise<boolean> {
+        if (this.accessToken && !this.isExpired(this.accessToken)
+            && (!requestedPeppolId || this.ownershipService.getCurrentPeppolId() === requestedPeppolId)) {
+            return true;
+        }
+        const selector = requestedPeppolId
+            ? {peppolId: requestedPeppolId, type: this.ownershipService.getRememberedOwnershipType(requestedPeppolId) ?? undefined}
+            : this.selectorForPath(window.location.pathname);
+        const restored = await this.silentLogin(selector);
+        return restored && (!requestedPeppolId || this.ownershipService.getCurrentPeppolId() === requestedPeppolId);
     }
 
     async initiateLogin(): Promise<void> {
@@ -95,6 +117,7 @@ export class LoginService {
             state: state,
             scope: 'openid',
         });
+        this.addOwnershipSelector(params, this.selectorForPendingNavigation() ?? this.selectorForPath(window.location.pathname));
 
         this.clearCachedData();
         this.clearSeenNotificationFlag();
@@ -114,15 +137,22 @@ export class LoginService {
      * (prompt=none). We follow the same-origin redirect and read the code off the final URL; with no
      * valid session there's no code, so we report failure and the caller falls back to interactive login.
      */
-    async silentLogin(): Promise<boolean> {
-        if (this.silentLoginInFlight) return this.silentLoginInFlight;
-        this.silentLoginInFlight = this.doSilentLogin().finally(() => {
+    async silentLogin(selector: OwnershipSelector | null = this.selectorForPath(window.location.pathname)): Promise<boolean> {
+        const selectorKey = selector ? `${selector.peppolId}::${selector.type ?? ''}` : '';
+        if (this.silentLoginInFlight) {
+            if (this.silentLoginSelectorKey === selectorKey) return this.silentLoginInFlight;
+            await this.silentLoginInFlight;
+            return this.silentLogin(selector);
+        }
+        this.silentLoginSelectorKey = selectorKey;
+        this.silentLoginInFlight = this.doSilentLogin(selector).finally(() => {
             this.silentLoginInFlight = null;
+            this.silentLoginSelectorKey = null;
         });
         return this.silentLoginInFlight;
     }
 
-    private async doSilentLogin(): Promise<boolean> {
+    private async doSilentLogin(selector: OwnershipSelector | null): Promise<boolean> {
         try {
             const verifier = generateCodeVerifier();
             const challenge = await generateCodeChallenge(verifier);
@@ -138,6 +168,7 @@ export class LoginService {
                 scope: 'openid',
                 prompt: 'none',
             });
+            this.addOwnershipSelector(params, selector);
 
             const response = await fetch(`${KYC_BASE}/auth/oauth2/authorize?${params.toString()}`, {
                 method: 'GET',
@@ -164,20 +195,22 @@ export class LoginService {
 
     /**
      * Switches the acting company/role. The access token's peppolId/accountType claims are minted by
-     * KYC, so a swap is: record the selection server-side, then silently re-authorize to receive a
-     * token carrying the new context.
+     * KYC, so a swap records the future default and explicitly sends this selection while silently
+     * re-authorizing for a token carrying the new context.
      */
     async swapOwnership(selection: OwnershipSummary): Promise<void> {
         await this.ownershipService.selectOwnership(selection);
-        if (!await this.silentLogin()) {
+        this.ownershipService.rememberOwnership(selection);
+        if (!await this.silentLogin(selection)) {
+            if (this.accessToken) this.ownershipService.onTokenChanged(this.accessToken);
             throw new Error('Could not re-authorize after switching ownership');
         }
         await this.ownershipService.refreshCompanyContext();
     }
 
     async refreshToken(): Promise<boolean> {
-        // Renewal now rides the KYC session instead of a stored refresh token.
-        return this.silentLogin();
+        // The URL's company plus this tab's remembered role is sent on every renewal.
+        return this.silentLogin(this.selectorForPath(window.location.pathname));
     }
 
     private async exchangeCode(code: string, verifier: string): Promise<void> {
@@ -247,6 +280,51 @@ export class LoginService {
         if (redirectToAuthServer && idToken) {
             const postLogoutRedirect = encodeURIComponent(window.location.origin + '/login');
             window.location.href = `${KYC_BASE}/auth/browser/logout?id_token_hint=${encodeURIComponent(idToken)}&post_logout_redirect_uri=${postLogoutRedirect}&client_id=${CLIENT_ID}`;
+        }
+    }
+
+    rememberCurrentNavigation(): void {
+        rememberCurrentNavigation();
+    }
+
+    getPostLoginPath(): string {
+        const pendingNavigation = consumePendingNavigation();
+        if (pendingNavigation) {
+            const pendingPath = new URL(pendingNavigation, window.location.origin).pathname;
+            if (getPeppolIdFromPath(pendingPath)) {
+                return pendingNavigation;
+            }
+        }
+        const peppolId = this.ownershipService.getCurrentPeppolId();
+        return peppolId ? ownershipRoute(peppolId, '/dashboard') : '/dashboard';
+    }
+
+    getCurrentOwnershipRoute(target: string): string {
+        const peppolId = this.ownershipService.getCurrentPeppolId();
+        return peppolId ? ownershipRoute(peppolId, target) : '/dashboard';
+    }
+
+    private selectorForPendingNavigation(): OwnershipSelector | null {
+        const pendingNavigation = peekPendingNavigation();
+        if (!pendingNavigation) return null;
+        const pathname = new URL(pendingNavigation, window.location.origin).pathname;
+        return this.selectorForPath(pathname);
+    }
+
+    private selectorForPath(pathname: string): OwnershipSelector | null {
+        const peppolId = getPeppolIdFromPath(pathname);
+        if (!peppolId) return null;
+        return {
+            peppolId,
+            type: this.ownershipService.getRememberedOwnershipType(peppolId) ?? undefined,
+        };
+    }
+
+    private addOwnershipSelector(params: URLSearchParams, selector: OwnershipSelector | null): void {
+        if (!selector) return;
+        params.set(PEPPOL_ID_PARAMETER, selector.peppolId);
+        if (selector.type) {
+            params.set(ACCOUNT_TYPE_PARAMETER, selector.type);
         }
     }
 
