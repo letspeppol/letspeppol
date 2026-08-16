@@ -1,7 +1,7 @@
 import {resolve} from "@aurelia/kernel";
 import {InvoiceCalculator} from "../../../invoice-calculator";
 import {InvoiceContext} from "../../../invoice-context";
-import {AllowanceCharge, UBLBase, UBLBaseLine} from "../../../../services/peppol/ubl";
+import {AllowanceCharge, getAmount, normalizeLinePrice, UBLBase, UBLBaseLine} from "../../../../services/peppol/ubl";
 import {VAT_RATE_OPTIONS} from "../../../../services/app/vat-rules";
 
 export type AllowanceChargeMode = 'percentage' | 'amount';
@@ -39,7 +39,8 @@ export class InvoiceAllowanceChargeModal {
         if (this.mode === 'percentage') {
             let baseAmount: number;
             if (this.isUBLBaseLine(this.parent)) {
-                baseAmount = this.parent.Price?.PriceAmount.value;
+                const quantity = getAmount(this.parent)?.value ?? 0;
+                baseAmount = normalizeLinePrice(this.parent) * quantity;
             } else {
                 baseAmount = this.parent.LegalMonetaryTotal.LineExtensionAmount.value;
             }
@@ -82,12 +83,17 @@ export class InvoiceAllowanceChargeModal {
         }
     }
 
+
     cancelAllowanceCharge() {
         this.open = false;
     }
 
     deleteAllowanceCharge() {
         delete this.parent.AllowanceCharge;
+        this.allowanceCharge = [];
+        if (this.isUBLBaseLine(this.parent)) {
+            this.invoiceCalculator.recalculateLineExtensionAmount(this.parent);
+        }
         if (this.invoiceContext.selectedInvoice) {
             this.invoiceCalculator.calculateTaxAndTotals(this.invoiceContext.selectedInvoice);
         }
@@ -96,6 +102,9 @@ export class InvoiceAllowanceChargeModal {
 
     confirmAllowanceCharge() {
         this.parent.AllowanceCharge = this.allowanceCharge;
+        if (this.isUBLBaseLine(this.parent)) {
+            this.invoiceCalculator.recalculateLineExtensionAmount(this.parent);
+        }
         if (this.invoiceContext.selectedInvoice) {
             this.invoiceCalculator.calculateTaxAndTotals(this.invoiceContext.selectedInvoice);
         }

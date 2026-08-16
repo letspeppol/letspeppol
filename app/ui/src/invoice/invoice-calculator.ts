@@ -1,5 +1,5 @@
 import {singleton} from "aurelia";
-import {ClassifiedTaxCategory, getLines, TaxCategory, TaxSubtotal, UBLDoc} from "../services/peppol/ubl";
+import {ClassifiedTaxCategory, getAmount, getLines, normalizeLinePrice, TaxCategory, TaxSubtotal, UBLBaseLine, UBLDoc} from "../services/peppol/ubl";
 import {getZeroVatReasonCode, NOT_SUBJECT_TO_VAT_REASON_TEXT, type ZeroVatReasonId} from "../services/app/vat-rules";
 
 @singleton
@@ -123,6 +123,15 @@ export class InvoiceCalculator {
                 value: taxInclusiveAmount
             }
         };
+    }
+    public recalculateLineExtensionAmount(line: UBLBaseLine) {
+        const quantity = getAmount(line)?.value ?? 0;
+        const baseAmount = normalizeLinePrice(line) * quantity;
+        const adjustmentAmount = (line.AllowanceCharge ?? []).reduce(
+            (total, allowanceCharge) => total + (allowanceCharge.ChargeIndicator ? allowanceCharge.Amount.value : -allowanceCharge.Amount.value),
+            0,
+        );
+        line.LineExtensionAmount.value = roundTwoDecimals(baseAmount + adjustmentAmount);
     }
 }
 
