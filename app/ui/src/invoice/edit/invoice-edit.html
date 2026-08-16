@@ -99,7 +99,10 @@
             <total-info read-only.bind="readOnly"></total-info>
         </div>
 
-        <invoice-edit-items read-only.bind="readOnly" auto-save.bind="() => autoSave()"></invoice-edit-items>
+        <invoice-edit-items read-only.bind="readOnly"
+                            auto-save.bind="() => autoSave()"
+                            invoice-allowance-charge-modal.bind="invoiceAllowanceChargeModal">
+        </invoice-edit-items>
 
         <button if.bind="!readOnly" type="button" class="btn primary" click.trigger="addLine()">+ <span t="invoice.edit.add-line">Add line</span></button>
         <div if.bind="invoiceContext.selectedInvoice.Note" style="margin-top: 20px">

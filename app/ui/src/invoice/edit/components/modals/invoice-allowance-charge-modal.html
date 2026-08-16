@@ -47,6 +47,7 @@
                     <tr>
                         <th>Description</th>
                         <th>Value</th>
+                        <th if.bind="!isUBLBaseLine(parent)">Tax</th>
                         <th class="actions-col" style="width:1%" t="invoice.edit.actions">Actions</th>
                     </tr>
                     </thead>
@@ -58,6 +59,9 @@
                         <td>
                             <span if.bind="line.MultiplierFactorNumeric">${line.MultiplierFactorNumeric}% ( ${line.Amount.value.toFixed(2) | price:line.Amount.__currencyID} )</span>
                             <span else> ${line.Amount.value.toFixed(2) | price:line.Amount.__currencyID}</span>
+                        </td>
+                        <td if.bind="!isUBLBaseLine(parent)">
+                            ${line.TaxCategory.Percent}%
                         </td>
                         <td class="actions-col">
                             <button class="icon-btn" data-action="remove-line" title="Remove" t="[title]common.remove" click.trigger="deleteLine(line)">

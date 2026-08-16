@@ -29,6 +29,7 @@ export class InvoiceEditItems {
 
     @bindable readOnly;
     @bindable autoSave;
+    @bindable invoiceAllowanceChargeModal;
 
     taxCategories: ClassifiedTaxCategory[] = [
         { ID: "S", Percent: 21, TaxScheme: { ID: 'VAT' } },
@@ -266,5 +267,13 @@ export class InvoiceEditItems {
 
     syncSharedVatReasonText(reasonId: ZeroVatReasonId, reasonText: string, line?: UBLLine) {
         applySharedVatReasonText(this.invoiceContext.selectedInvoice, reasonId, reasonText, line);
+    }
+
+    toggleAllowanceCharge() {
+        this.invoiceContext.showAllowanceChargeForLines = !this.invoiceContext.showAllowanceChargeForLines;
+    }
+
+    showAllowanceChargeModal(line) {
+        this.invoiceAllowanceChargeModal.showModal(line);
     }
 }

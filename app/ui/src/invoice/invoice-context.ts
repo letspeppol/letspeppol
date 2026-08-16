@@ -33,6 +33,7 @@ export class InvoiceContext {
     readOnly: boolean = false;
     partnerMissing: boolean = false;
     addPdfToSendingInvoice: boolean = false;
+    showAllowanceChargeForLines: boolean = false;
 
     clearSelectedInvoice() {
         this.selectedInvoice = undefined;
