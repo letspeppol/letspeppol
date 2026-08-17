@@ -213,6 +213,29 @@ describe('InvoiceCalculator', () => {
         expect(invoice.LegalMonetaryTotal.PayableAmount.value).toBe(326.7);
     });
 
+    test('calculates a 10% line discount before VAT and the payable amount', () => {
+        const line = createLine('1', 100, { ID: 'S', Percent: 21, TaxScheme: { ID: 'VAT' } });
+        line.AllowanceCharge = [{
+            ChargeIndicator: false,
+            MultiplierFactorNumeric: 10,
+            Amount: { __currencyID: 'EUR', value: 10 },
+        }];
+        const invoice = createInvoice([line]);
+        const calculator = new InvoiceCalculator();
+
+        calculator.recalculateLineExtensionAmount(line);
+        calculator.calculateTaxAndTotals(invoice);
+
+        expect(line.LineExtensionAmount.value).toBe(90);
+        expect(invoice.TaxTotal?.[0]?.TaxAmount.value).toBe(18.9);
+        expect(invoice.LegalMonetaryTotal).toMatchObject({
+            LineExtensionAmount: { value: 90 },
+            TaxExclusiveAmount: { value: 90 },
+            TaxInclusiveAmount: { value: 108.9 },
+            PayableAmount: { value: 108.9 },
+        });
+    });
+
     test('keeps header allowance charges in their respective VAT-rate breakdowns', () => {
         const standardRateLine = createLine('1', 100, { ID: 'S', Percent: 21, TaxScheme: { ID: 'VAT' } });
         standardRateLine.AllowanceCharge = [{
