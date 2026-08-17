@@ -3,7 +3,7 @@ import {InvoiceContext} from "../../invoice-context";
 import {ClassifiedTaxCategory, CreditNoteLine, getAmount, InvoiceLine, normalizeLinePrice, UBLLine} from "../../../services/peppol/ubl";
 import {InvoiceCalculator, roundTwoDecimals} from "../../invoice-calculator";
 import {DocumentType, InvoiceService} from "../../../services/app/invoice-service";
-import {bindable} from "aurelia";
+import {bindable, IEventAggregator} from "aurelia";
 import {ProductDto} from "../../../services/app/product-service";
 import {CompanyService} from "../../../services/app/company-service";
 import {
@@ -19,12 +19,14 @@ import {
 } from "../../../services/app/vat-rules";
 import {InvoiceZeroVatReasonModal} from "./modals/invoice-zero-vat-reason-modal";
 import {I18N} from "@aurelia/i18n";
+import {AlertType} from "../../../components/alert/alert";
 
 export class InvoiceEditItems {
     private invoiceContext = resolve(InvoiceContext);
     private invoiceCalculator = resolve(InvoiceCalculator);
     private invoiceService = resolve(InvoiceService);
     private companyService = resolve(CompanyService);
+    private ea: IEventAggregator = resolve(IEventAggregator);
     private i18n = resolve(I18N);
 
     @bindable readOnly;
@@ -270,6 +272,11 @@ export class InvoiceEditItems {
     }
 
     toggleAllowanceCharge() {
+        if (this.invoiceContext.showAllowanceChargeForLines &&
+            this.invoiceContext.lines.some(line => (line.AllowanceCharge?.length ?? 0) > 0)) {
+            this.ea.publish('alert', {alertType: AlertType.Warning, text: this.i18n.tr('alert.invoice.allowance-charge-items-hide-notallowed')});
+            return;
+        }
         this.invoiceContext.showAllowanceChargeForLines = !this.invoiceContext.showAllowanceChargeForLines;
     }
 

@@ -307,6 +307,10 @@
       }
     },
     "all": "Tous",
+    "allowanceChargeModal": {
+      "charge": "Frais",
+      "discount": "Remise"
+    },
     "attachmentModal": {
       "auto-pdf": "Inclure le PDF de facture généré automatiquement",
       "auto-pdf-replace": "Un PDF de facture est généré automatiquement. Désactivez-le ci-dessus si votre fichier importé le remplace.",

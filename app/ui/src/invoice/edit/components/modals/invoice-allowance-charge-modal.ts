@@ -63,6 +63,7 @@ export class InvoiceAllowanceChargeModal {
                 ...(taxCategory ? {TaxCategory: taxCategory} : {}),
             });
         }
+        this.amount = undefined;
     }
 
     vatRateChanged(value: number | string) {
@@ -83,13 +84,12 @@ export class InvoiceAllowanceChargeModal {
         }
     }
 
-
     cancelAllowanceCharge() {
         this.open = false;
     }
 
     deleteAllowanceCharge() {
-        delete this.parent.AllowanceCharge;
+        this.parent.AllowanceCharge = undefined;
         this.allowanceCharge = [];
         if (this.isUBLBaseLine(this.parent)) {
             this.invoiceCalculator.recalculateLineExtensionAmount(this.parent);

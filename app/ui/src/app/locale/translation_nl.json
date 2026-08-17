@@ -307,6 +307,10 @@
       }
     },
     "all": "Alle",
+    "allowanceChargeModal": {
+      "charge": "Toeslag",
+      "discount": "Korting"
+    },
     "attachmentModal": {
       "auto-pdf": "Voeg de automatisch gegenereerde factuur-PDF toe",
       "auto-pdf-replace": "Er wordt automatisch een factuur-PDF gegenereerd. Schakel deze hierboven uit als uw geüploade bestand deze vervangt.",

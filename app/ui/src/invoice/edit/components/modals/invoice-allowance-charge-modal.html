@@ -54,7 +54,7 @@
                     <tbody>
                     <tr repeat.for="line of allowanceCharge">
                         <td>
-                            <span t="${line.ChargeIndicator ? 'Charge' : 'Discount'}"></span>
+                            <span t="${line.ChargeIndicator ? 'invoice.allowanceChargeModal.charge' : 'invoice.allowanceChargeModal.discount'}"></span>
                         </td>
                         <td>
                             <span if.bind="line.MultiplierFactorNumeric">${line.MultiplierFactorNumeric}% ( ${line.Amount.value.toFixed(2) | price:line.Amount.__currencyID} )</span>

@@ -73,6 +73,7 @@
     },
     "info": "Info",
     "invoice": {
+      "allowance-charge-items-hide-notallowed" : "Unable to hide Discount/Charge column, please first remove all line discounts",
       "draft-created": {
         "CREDIT_NOTE": "Credit note draft created successfully",
         "INVOICE": "Invoice draft created successfully"
@@ -309,6 +310,8 @@
     },
     "all": "All",
     "allowanceChargeModal": {
+      "charge": "Charge",
+      "discount": "Discount",
       "title": "Discount/Costs",
       "quantity": "Quantity/Amount"
 
