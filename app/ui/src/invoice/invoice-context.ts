@@ -54,9 +54,12 @@ export class InvoiceContext {
 
     selectedInvoiceChanged(newValue: UBLDoc) {
         if (!newValue) {
+            this.lines = undefined;
+            this.showAllowanceChargeForLines = false;
             return;
         }
         this.lines = getLines(newValue);
+        this.showAllowanceChargeForLines = this.lines.some(line => (line.AllowanceCharge?.length ?? 0) > 0);
     }
 
     selectInvoice(item: DocumentDto) {
