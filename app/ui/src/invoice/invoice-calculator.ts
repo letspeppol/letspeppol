@@ -1,5 +1,8 @@
 import {singleton} from "aurelia";
-import {ClassifiedTaxCategory, getAmount, getLines, normalizeLinePrice, TaxCategory, TaxSubtotal, UBLBaseLine, UBLDoc} from "../services/peppol/ubl";
+import {
+    AllowanceCharge,
+    ClassifiedTaxCategory, getAmount, getLines, normalizeLinePrice, TaxCategory, TaxSubtotal, UBLBaseLine, UBLDoc
+} from "../services/peppol/ubl";
 import {getZeroVatReasonCode, NOT_SUBJECT_TO_VAT_REASON_TEXT, type ZeroVatReasonId} from "../services/app/vat-rules";
 
 @singleton
@@ -39,6 +42,7 @@ export class InvoiceCalculator {
             taxTotal += tax;
         }
 
+        this.recalculateDocumentAllowanceChargeAmounts(doc, lineExtensionTotal);
         let chargeTotalAmount = 0;
         let allowanceTotalAmount = 0;
         for (const allowanceCharge of doc.AllowanceCharge ?? []) {
@@ -127,11 +131,31 @@ export class InvoiceCalculator {
     public recalculateLineExtensionAmount(line: UBLBaseLine) {
         const quantity = getAmount(line)?.value ?? 0;
         const baseAmount = normalizeLinePrice(line) * quantity;
+        this.recalculatePercentageAllowanceChargeAmounts(line.AllowanceCharge, baseAmount);
         const adjustmentAmount = (line.AllowanceCharge ?? []).reduce(
             (total, allowanceCharge) => total + (allowanceCharge.ChargeIndicator ? allowanceCharge.Amount.value : -allowanceCharge.Amount.value),
             0,
         );
         line.LineExtensionAmount.value = roundTwoDecimals(baseAmount + adjustmentAmount);
+    }
+
+    private recalculateDocumentAllowanceChargeAmounts(doc: UBLDoc, lineExtensionTotal: number) {
+        this.recalculatePercentageAllowanceChargeAmounts(doc.AllowanceCharge, lineExtensionTotal);
+    }
+
+    private recalculatePercentageAllowanceChargeAmounts(allowanceCharges: AllowanceCharge[], baseAmount: number) {
+        for (const allowanceCharge of allowanceCharges ?? []) {
+            const multiplier = Number(allowanceCharge.MultiplierFactorNumeric);
+            if (!Number.isFinite(multiplier)) {
+                continue;
+            }
+
+            allowanceCharge.BaseAmount = {
+                __currencyID: allowanceCharge.Amount.__currencyID,
+                value: roundTwoDecimals(baseAmount),
+            };
+            allowanceCharge.Amount.value = roundTwoDecimals(baseAmount * multiplier / 100);
+        }
     }
 }
 

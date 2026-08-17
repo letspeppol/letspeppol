@@ -32,11 +32,13 @@
                 <th class="num" style="width:120px" t="invoice.edit.amount">Amount</th>
                 <th class="num" style="width:140px" t="invoice.edit.unit-price">Unit price</th>
                 <th if.bind="hasVatNumber()" class="num" style="width:140px" t="invoice.edit.tax">Tax</th>
-                <th style="display:flex; flex-direction: row">
-                    <span if.bind="invoiceContext.showAllowanceChargeForLines" t="invoice.edit.allowance-charge">Discount/Costs</span>
-                    <button if.bind="!readOnly" class="icon-btn" title="Edit" t="[title]common.edit" click.trigger="toggleAllowanceCharge()">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-tag-icon lucide-tag"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>
-                    </button>
+                <th>
+                    <div style="display:flex; flex-direction: row">
+                        <span if.bind="invoiceContext.showAllowanceChargeForLines" t="invoice.edit.allowance-charge">Discount/Costs</span>
+                        <button if.bind="!readOnly" class="icon-btn" title="Edit" t="[title]common.edit" click.trigger="toggleAllowanceCharge()">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-tag-icon lucide-tag"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>
+                        </button>
+                    </div>
                 </th>
                 <th class="num" style="width:140px">
                     <span t="invoice.edit.total">Total</span>

@@ -46,8 +46,13 @@ export class InvoiceAllowanceChargeModal {
             }
             this.allowanceCharge.push({
                 ChargeIndicator: this.reason === 'cost',
+                AllowanceChargeReason: this.reason,
                 Amount: {
                     value: baseAmount * amount / 100,
+                    __currencyID: "EUR"
+                },
+                BaseAmount: {
+                    value: baseAmount,
                     __currencyID: "EUR"
                 },
                 MultiplierFactorNumeric: amount,
@@ -56,6 +61,7 @@ export class InvoiceAllowanceChargeModal {
         } else {
             this.allowanceCharge.push({
                 ChargeIndicator: this.reason === 'cost',
+                AllowanceChargeReason: this.reason,
                 Amount: {
                     value: amount,
                     __currencyID: "EUR"

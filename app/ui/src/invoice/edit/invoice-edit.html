@@ -63,7 +63,7 @@
                 <span t="invoice.edit.download-pdf">PDF</span>
             </button>
             <button if.bind="readOnly && invoiceContext.partnerMissing" type="button" class="btn" click.trigger="savePartner()">Save Partner</button>
-<!--            <button type="button" class="btn" click.trigger="validate()" t="invoice.edit.validate">Validate</button>-->
+            <button type="button" class="btn" click.trigger="validate()" t="invoice.edit.validate">Validate</button>
             <button if.bind="invoiceContext.selectedDraft && !readOnly" type="button" class="btn" click.trigger="deleteDraft()">
                 <span t="invoice.edit.delete-draft">Delete draft</span>
             </button>

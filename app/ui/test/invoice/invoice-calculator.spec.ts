@@ -236,6 +236,50 @@ describe('InvoiceCalculator', () => {
         });
     });
 
+    test('refreshes a percentage-based line discount when its unit price changes', () => {
+        const line = createLine('1', 100, { ID: 'S', Percent: 21, TaxScheme: { ID: 'VAT' } });
+        line.InvoicedQuantity!.value = 3;
+        line.AllowanceCharge = [{
+            ChargeIndicator: false,
+            MultiplierFactorNumeric: 10,
+            Amount: { __currencyID: 'EUR', value: 10 },
+        }];
+        const calculator = new InvoiceCalculator();
+
+        line.Price.PriceAmount.value = 120;
+        calculator.recalculateLineExtensionAmount(line);
+
+        expect(line.AllowanceCharge[0]).toMatchObject({
+            BaseAmount: { value: 360 },
+            Amount: { value: 36 },
+        });
+        expect(line.LineExtensionAmount.value).toBe(324);
+    });
+
+    test('refreshes percentage-based document allowances from the line extension total', () => {
+        const invoice = createInvoice([
+            createLine('1', 200, { ID: 'S', Percent: 21, TaxScheme: { ID: 'VAT' } }),
+        ]);
+        invoice.AllowanceCharge = [{
+            ChargeIndicator: false,
+            MultiplierFactorNumeric: 10,
+            Amount: { __currencyID: 'EUR', value: 0 },
+            TaxCategory: { ID: 'S', Percent: 21, TaxScheme: { ID: 'VAT' } },
+        }];
+
+        new InvoiceCalculator().calculateTaxAndTotals(invoice);
+
+        expect(invoice.AllowanceCharge[0]).toMatchObject({
+            BaseAmount: { value: 200 },
+            Amount: { value: 20 },
+        });
+        expect(invoice.LegalMonetaryTotal).toMatchObject({
+            TaxExclusiveAmount: { value: 180 },
+            TaxInclusiveAmount: { value: 217.8 },
+            PayableAmount: { value: 217.8 },
+        });
+    });
+
     test('keeps header allowance charges in their respective VAT-rate breakdowns', () => {
         const standardRateLine = createLine('1', 100, { ID: 'S', Percent: 21, TaxScheme: { ID: 'VAT' } });
         standardRateLine.AllowanceCharge = [{
