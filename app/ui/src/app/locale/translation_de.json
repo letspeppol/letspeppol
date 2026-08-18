@@ -310,7 +310,12 @@
     "all": "Alle",
     "allowanceChargeModal": {
       "charge": "Zuschlag",
-      "discount": "Rabatt"
+      "discount": "Rabatt",
+      "title": "Rabatte/Kosten",
+      "quantity": "Menge/Betrag",
+      "percentage": "Prozentsatz",
+      "amount": "Betrag",
+      "cost": "Kosten"
     },
     "attachmentModal": {
       "auto-pdf": "Automatisch generiertes Rechnungs-PDF einschließen",

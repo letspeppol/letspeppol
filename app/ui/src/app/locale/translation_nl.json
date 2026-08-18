@@ -309,7 +309,12 @@
     "all": "Alle",
     "allowanceChargeModal": {
       "charge": "Toeslag",
-      "discount": "Korting"
+      "discount": "Korting",
+      "title": "Kortingen/Kosten",
+      "quantity": "Aantal/Bedrag",
+      "percentage": "Percentage",
+      "amount": "Bedrag",
+      "cost": "Kosten"
     },
     "attachmentModal": {
       "auto-pdf": "Voeg de automatisch gegenereerde factuur-PDF toe",

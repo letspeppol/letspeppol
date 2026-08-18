@@ -312,8 +312,11 @@
     "allowanceChargeModal": {
       "charge": "Charge",
       "discount": "Discount",
-      "title": "Discount/Costs",
-      "quantity": "Quantity/Amount"
+      "title": "Discounts/Costs",
+      "quantity": "Quantity/Amount",
+      "percentage": "Percentage",
+      "amount": "Amount",
+      "cost": "Cost"
 
     },
     "attachmentModal": {
