@@ -326,4 +326,53 @@ describe('InvoiceCalculator', () => {
             PayableAmount: {value: 157.97},
         });
     });
+
+    test('distributes a header allowance pro rata over mixed VAT rates', () => {
+        const standardRateLine = createLine('1', 100, { ID: 'S', Percent: 21, TaxScheme: { ID: 'VAT' } });
+        standardRateLine.AllowanceCharge = [{
+            ChargeIndicator: false,
+            Amount: { __currencyID: 'EUR', value: 10 },
+        }];
+        const reducedRateLine = createLine('2', 30, { ID: 'S', Percent: 9, TaxScheme: { ID: 'VAT' } });
+        const invoice = createInvoice([standardRateLine, reducedRateLine]);
+        invoice.AllowanceCharge = [
+            // €12 header allowance split by net line value: 75% at 21%, 25% at 9%.
+            {
+                ChargeIndicator: false,
+                Amount: { __currencyID: 'EUR', value: 9 },
+                TaxCategory: { ID: 'S', Percent: 21, TaxScheme: { ID: 'VAT' } },
+            },
+            {
+                ChargeIndicator: false,
+                Amount: { __currencyID: 'EUR', value: 3 },
+                TaxCategory: { ID: 'S', Percent: 9, TaxScheme: { ID: 'VAT' } },
+            },
+        ];
+        const calculator = new InvoiceCalculator();
+
+        calculator.recalculateLineExtensionAmount(standardRateLine);
+        calculator.calculateTaxAndTotals(invoice);
+
+        const subtotals = invoice.TaxTotal?.[0]?.TaxSubtotal ?? [];
+        const byRate = Object.fromEntries(subtotals.map(item => [item.TaxCategory?.Percent ?? 0, item]));
+        expect(standardRateLine.LineExtensionAmount.value).toBe(90);
+        expect(reducedRateLine.LineExtensionAmount.value).toBe(30);
+        expect(byRate[21]).toMatchObject({
+            TaxableAmount: {value: 81},
+            TaxAmount: {value: 17.01},
+        });
+        expect(byRate[9]).toMatchObject({
+            TaxableAmount: {value: 27},
+            TaxAmount: {value: 2.43},
+        });
+        expect(invoice.TaxTotal?.[0]?.TaxAmount.value).toBe(19.44);
+        expect(subtotals.reduce((total, subtotal) => total + subtotal.TaxableAmount.value, 0)).toBe(108);
+        expect(invoice.LegalMonetaryTotal).toMatchObject({
+            LineExtensionAmount: {value: 120},
+            AllowanceTotalAmount: {value: 12},
+            TaxExclusiveAmount: {value: 108},
+            TaxInclusiveAmount: {value: 127.44},
+            PayableAmount: {value: 127.44},
+        });
+    });
 });
