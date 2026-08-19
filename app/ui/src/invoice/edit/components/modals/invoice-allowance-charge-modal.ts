@@ -18,6 +18,7 @@ export class InvoiceAllowanceChargeModal {
     allowanceCharge: AllowanceCharge[];
     parent: UBLBase | UBLBaseLine;
     amount: number;
+    description: string;
     showModal(parent: UBLBase | UBLBaseLine) {
         this.parent = parent;
         if (parent.AllowanceCharge) {
@@ -46,7 +47,7 @@ export class InvoiceAllowanceChargeModal {
             }
             this.allowanceCharge.push({
                 ChargeIndicator: this.reason === 'cost',
-                AllowanceChargeReason: this.reason,
+                AllowanceChargeReason: this.description ?? this.reason,
                 Amount: {
                     value: baseAmount * amount / 100,
                     __currencyID: "EUR"
@@ -61,7 +62,7 @@ export class InvoiceAllowanceChargeModal {
         } else {
             this.allowanceCharge.push({
                 ChargeIndicator: this.reason === 'cost',
-                AllowanceChargeReason: this.reason,
+                AllowanceChargeReason: this.description ?? this.reason,
                 Amount: {
                     value: amount,
                     __currencyID: "EUR"
@@ -69,6 +70,7 @@ export class InvoiceAllowanceChargeModal {
                 ...(taxCategory ? {TaxCategory: taxCategory} : {}),
             });
         }
+        this.description = undefined;
         this.amount = undefined;
     }
 

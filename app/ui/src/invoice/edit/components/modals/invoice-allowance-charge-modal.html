@@ -9,9 +9,13 @@
         </header>
         <div class="modal-body">
             <div style="display: flex; gap: var(--space-1); align-items: flex-end">
-                <label class="field">
+                <label class="field" style="width: 250px">
+                    <span t="label.description">Description</span>
+                    <input type="text" value.bind="description" />
+                </label>
+                <label class="field" style="width: 120px">
                     <span t="invoice.allowanceChargeModal.quantity">Quantity/Amount</span>
-                    <input type="number" name="payeeFinancialAccountName" value.bind="amount" />
+                    <input type="number" value.bind="amount" />
                 </label>
                 <label class="field" if.bind="!isUBLBaseLine(parent)">
                     <span t="invoice.edit.tax">VAT</span>
@@ -54,7 +58,8 @@
                     <tbody>
                     <tr repeat.for="line of allowanceCharge">
                         <td>
-                            <span t="${line.ChargeIndicator ? 'invoice.allowanceChargeModal.charge' : 'invoice.allowanceChargeModal.discount'}"></span>
+                            <span if.bind="line.AllowanceChargeReason">${line.AllowanceChargeReason}</span>
+                            <span else t="${line.ChargeIndicator ? 'invoice.allowanceChargeModal.charge' : 'invoice.allowanceChargeModal.discount'}"></span>
                         </td>
                         <td>
                             <span if.bind="line.MultiplierFactorNumeric">${line.MultiplierFactorNumeric}% ( ${line.Amount.value.toFixed(2) | price:line.Amount.__currencyID} )</span>
