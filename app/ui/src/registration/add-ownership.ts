@@ -179,7 +179,7 @@ export class AddOwnership {
                     break;
             }
             await this.downloadFile(finalizeSigningResponse);
-            await this.ownershipService.loadOwnerships();
+            await this.ownershipService.loadOwnerships(true);
             this.step = 3;
             this.ea.publish('alert', {alertType: AlertType.Success, text: "Account added successfully"});
         } catch (error) {
