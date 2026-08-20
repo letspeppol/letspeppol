@@ -21,7 +21,7 @@ public class SignerAccountResolverService {
     private final ActivationService activationService;
     private final AccountService accountService;
 
-    public SignerResolution resolveSignerAccount(FinalizeSigningRequest signingRequest, String name) {
+    public SignerResolution resolveSignerAccount(FinalizeSigningRequest signingRequest, String fullName) {
         // Signing is reachable anonymously (an invited director completing onboarding), so a token
         // is optional here; when one is present the signer is the authenticated account itself.
         var jwtInfo = jwtClaimExtractor.extractOptional().orElse(null);
@@ -38,7 +38,7 @@ public class SignerAccountResolverService {
         }
 
         EmailVerification emailVerification = activationService.getPendingVerification(signingRequest.email(), signingRequest.peppolId());
-        Account account = accountService.findByEmail(emailVerification.getEmail()).orElseGet(() -> accountService.createPendingAccount(emailVerification.getEmail(), name));
+        Account account = accountService.findByEmail(emailVerification.getEmail()).orElseGet(() -> accountService.createPendingAccount(emailVerification.getEmail(), fullName));
         return new SignerResolution(account, emailVerification.getType());
     }
 }

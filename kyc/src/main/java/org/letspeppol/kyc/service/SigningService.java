@@ -67,6 +67,7 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.letspeppol.kyc.service.signing.CertificateUtil.getFullName;
 import static org.letspeppol.kyc.service.signing.CertificateUtil.getRDNName;
 
 @Transactional
@@ -301,16 +302,10 @@ public class SigningService {
     }
 
     private static String getSignatureContent(X500Name x500Name, Director director) {
-        String cn = getRDNName(x500Name, BCStyle.CN);
         String serialNumber = getRDNName(x500Name, BCStyle.SERIALNUMBER);
-        String givenName = getRDNName(x500Name, BCStyle.GIVENNAME);
-        String surName = getRDNName(x500Name, BCStyle.SURNAME);
-        String name = cn;
-        if (givenName != null && surName != null) {
-            name = givenName + " " + surName;
-        }
+        String fullName = getFullName(x500Name);
         return SIGNATURE_CONTENT.formatted(
-                name,
+                fullName,
                 serialNumber,
                 sdf.format(new Date()),
                 director.getCompany().getName(),
@@ -371,7 +366,7 @@ public class SigningService {
                 certificates[0],
                 CertificateUtil.getX500Name(certificates)
         );
-        SignerAccountResolverService.SignerResolution signerResolution = signerAccountResolverService.resolveSignerAccount(signingRequest, director.getName());
+        SignerAccountResolverService.SignerResolution signerResolution = signerAccountResolverService.resolveSignerAccount(signingRequest, getFullName(identityVerificationRequest.x500Name()));
         Account account = signerResolution.account();
         ownershipService.ensureAdminOwnership(account, director.getCompany());
         DirectorIdentityVerification ignored = identityVerificationService.recordDirectorSignature(account, identityVerificationRequest);

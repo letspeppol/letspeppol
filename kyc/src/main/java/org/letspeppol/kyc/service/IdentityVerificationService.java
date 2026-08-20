@@ -23,6 +23,7 @@ import java.security.cert.X509Certificate;
 import java.time.Instant;
 
 import static org.letspeppol.kyc.service.SigningService.isAllowedToSign;
+import static org.letspeppol.kyc.service.signing.CertificateUtil.getFullName;
 import static org.letspeppol.kyc.service.signing.CertificateUtil.getRDNName;
 
 @Transactional
@@ -56,8 +57,8 @@ public class IdentityVerificationService {
 
         if (!isAllowedToSign(req.x500Name(), req.director())) {
             companyService.suspendCompany(req.director().getCompany());
-            log.warn("Peppol not activated for email={} director={} signer={} {} serial={}", account.getEmail(), req.director().getName(), getRDNName(req.x500Name(), BCStyle.GIVENNAME), getRDNName(req.x500Name(), BCStyle.SURNAME), req.x509Certificate().getSerialNumber());
-            sendManualVerificationEmail(account.getEmail(), req.director().getCompany().getPeppolId(), req.director().getCompany().getName(), req.director().getName(), getRDNName(req.x500Name(), BCStyle.GIVENNAME), getRDNName(req.x500Name(), BCStyle.SURNAME)); //TODO : check, mail does not work !
+            log.warn("Peppol not activated for email={} director={} signer={} serial={}", account.getEmail(), req.director().getName(), getFullName(req.x500Name()), req.x509Certificate().getSerialNumber());
+            sendManualVerificationEmail(account.getEmail(), req.director().getCompany().getPeppolId(), req.director().getCompany().getName(), req.director().getName(), getFullName(req.x500Name())); //TODO : check, mail does not work !
         }
 
         log.info("Identity verified for email={} director={} serial={}", account.getEmail(), req.director().getName(), req.x509Certificate().getSerialNumber());
@@ -144,7 +145,7 @@ public class IdentityVerificationService {
         return getRDNName(x500Name, BCStyle.CN);
     }
 
-    private void sendManualVerificationEmail(String email, String peppolId, String companyName, String directorName, String signerGivenName, String signerSurName) {
+    private void sendManualVerificationEmail(String email, String peppolId, String companyName, String directorName, String signerFullName) {
         log.info("Sending manual verification email to intervention@letspeppol.org for company {} {} for account {}", peppolId, companyName, email);
         try {
             MimeMessage message = mailSender.createMimeMessage();
@@ -153,8 +154,8 @@ public class IdentityVerificationService {
             helper.setFrom("kyc@letspeppol.org", "Let’s Peppol");
             helper.setReplyTo("support@letspeppol.org");
             helper.setSubject("Activation on hold for " + peppolId);
-            helper.setText(String.format("User %s %s with account %s requested Peppol access for company %s with PeppolId %s and should be represented by %s.",
-                    signerGivenName, signerSurName, companyName, peppolId, directorName), false);
+            helper.setText(String.format("User %s with email %s requested Peppol access for company %s with PeppolId %s and should be represented by %s.",
+                    signerFullName, email, companyName, peppolId, directorName), false);
             mailSender.send(message);
             log.info("Sent manual verification email to intervention@letspeppol.org for company {} {} for account {}", peppolId, companyName, email);
         } catch (Exception e) {
