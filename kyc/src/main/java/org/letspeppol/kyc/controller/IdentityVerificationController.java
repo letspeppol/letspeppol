@@ -45,6 +45,7 @@ public class IdentityVerificationController {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
                 .header(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.inline().filename("contract_en.pdf", StandardCharsets.UTF_8).build().toString())
+                .header("X-Frame-Options", "SAMEORIGIN")
                 .body(preparedPdf);
     }
 

@@ -562,6 +562,7 @@ public class RegistrationSteps {
             assertTrue(contractResponse.getBody().length > 0);
             assertNotNull(contractResponse.getHeaders().getContentType());
             assertEquals("application/pdf", contractResponse.getHeaders().getContentType().toString());
+            assertEquals("SAMEORIGIN", contractResponse.getHeaders().getFirst("X-Frame-Options"));
 
             String signature = signPreparedDigest(identity, prepareResponse.hashToSign());
             var finalizeRequest = new FinalizeSigningRequest(

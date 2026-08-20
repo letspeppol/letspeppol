@@ -155,6 +155,11 @@ public class SecurityConfig {
 
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
+                // The UI previews generated contracts from /api/identity/contract/** in a
+                // same-origin iframe (the public reverse proxy exposes KYC under /kyc).
+                // Spring Security defaults this header to DENY and otherwise overwrites the
+                // controller's SAMEORIGIN header after the response has been created.
+                .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()))
                 // CSRF guards the cookie/session browser surface (/auth/browser/**).
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**", "/actuator/**"))
                 .requestCache(rc -> rc.requestCache(requestCache))
