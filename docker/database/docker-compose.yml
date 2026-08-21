@@ -5,6 +5,9 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      - web
+      - default
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.adminer.rule=Host(`${ADMINER_DOMAIN:?ADMINER_DOMAIN must be set}`)"

@@ -150,6 +150,9 @@ services:
       NODE_ENV: production
     expose:
       - "80"
+    networks:
+      - web
+      - default
     labels:
       - "traefik.enable=true"
 
