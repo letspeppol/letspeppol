@@ -421,6 +421,11 @@
       "apply": "Appliquer",
       "clear": "Effacer",
       "from": "De",
+      "status": {
+        "all": "Tous les statuts",
+        "paid": "Payée",
+        "unpaid": "Impayée"
+      },
       "to": "À"
     },
     "incoming": "Entrant",

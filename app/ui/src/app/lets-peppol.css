@@ -467,6 +467,8 @@ main.container {
     display: inline-flex;
     gap: var(--space-05);
     align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
 }
 
 .actions {
@@ -480,6 +482,11 @@ main.container {
     display: flex;
     align-items: center;
     gap: var(--space-05);
+}
+
+.toolbar-filters {
+    flex-wrap: wrap;
+    margin-bottom: var(--space-075);
 }
 
 .select {
@@ -719,10 +726,48 @@ main.container {
 .table-card {
     padding: 0;
     overflow: hidden;
+    position: relative;
+}
+
+.table-loading-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    overflow: hidden;
+    background: var(--border-soft);
+    z-index: 2;
+}
+
+.table-loading-bar::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 40%;
+    background: var(--primary);
+    animation: indeterminate-slide 1.1s ease-in-out infinite;
 }
 
 .table-wrapper {
     overflow-x: auto;
+    transition: opacity .15s ease;
+}
+
+.table-wrapper.is-loading {
+    opacity: .45;
+    pointer-events: none;
+}
+
+.empty-spinner {
+    width: 28px;
+    height: 28px;
+    margin: 0 auto var(--space-025);
+    border-radius: 50%;
+    border: 3px solid var(--border-soft);
+    border-top-color: var(--primary);
+    animation: spin 1s linear infinite;
 }
 
 .data-table {
@@ -939,6 +984,13 @@ main.container .data-table tbody td {
     font-size: 1.15rem;
 }
 
+.status-cell {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-035);
+}
+
 .pill {
     display: inline-flex;
     align-items: center;
@@ -948,6 +1000,7 @@ main.container .data-table tbody td {
     font-size: .78rem;
     font-weight: 700;
     border: 1px solid currentcolor;
+    white-space: nowrap;
 }
 
 .pill.sent, .pill.scheduled {
@@ -1615,10 +1668,30 @@ table, tr, td {
         animation: none;
         border: 4px solid var(--primary, #5b8fff);
     }
+
+    .empty-spinner {
+        animation: none;
+        border: 3px solid var(--primary);
+    }
+
+    .table-loading-bar::after {
+        animation: none;
+        width: 100%;
+    }
 }
 
 @keyframes spin {
     to {
         transform: rotate(360deg);
+    }
+}
+
+@keyframes indeterminate-slide {
+    from {
+        transform: translateX(-100%);
+    }
+
+    to {
+        transform: translateX(250%);
     }
 }

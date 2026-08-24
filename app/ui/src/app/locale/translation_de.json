@@ -421,6 +421,11 @@
       "apply": "Anwenden",
       "clear": "Leeren",
       "from": "Von",
+      "status": {
+        "all": "Alle Status",
+        "paid": "Bezahlt",
+        "unpaid": "Unbezahlt"
+      },
       "to": "Bis"
     },
     "incoming": "Eingehend",

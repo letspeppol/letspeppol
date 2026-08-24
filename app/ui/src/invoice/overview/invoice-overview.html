@@ -28,54 +28,61 @@
         <div>
             <div class="section-header">
                 <h1 t="invoice.title">Invoices</h1>
-                <div class="actions" style="justify-content: space-between">
-                    <div class="filters">
-                        <label class="select" style="position: relative">
-                            <select change.trigger="changeDocType($event.target.value)">
-                                <option value="" t="invoice.all">All</option>
-                                <option value="INVOICE" t="documentType.INVOICE">Invoice</option>
-                                <option value="CREDIT_NOTE" t="documentType.CREDIT_NOTE">Credit note</option>
-                            </select>
-                        </label>
-                        <label class="search">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.5"/>
-                            </svg>
-                            <input type="search" value.bind="query.invoiceReference & debounce:300" placeholder="Search customer or reference" t="[placeholder]placeholder.invoice-search.doc" />
-                        </label>
-                        <label class="search">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.5"/>
-                            </svg>
-                            <input type="search" value.bind="query.partnerName & debounce:300" placeholder="Search customer or reference" t="[placeholder]placeholder.invoice-search.customer" />
-                        </label>
-                    </div>
-                    <div>
-                        <button class="btn primary" click.trigger="newCreditNote()" title="New invoice" t="[title]invoice.new.CREDIT_NOTE">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                            </svg>
-                            <span t="invoice.new.CREDIT_NOTE">New Credit Note</span>
-                        </button>
-                        <button class="btn primary" click.trigger="newInvoice()" title="New invoice" t="[title]invoice.new.INVOICE">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                            </svg>
-                            <span t="invoice.new.INVOICE">New invoice</span>
-                        </button>
-                        <button class="btn primary" click.trigger="showUploadUblModal()" title="Upload UBL">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-up-icon lucide-file-up">
-                                <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M12 12v6"/><path d="m15 15-3-3-3 3"/>
-                            </svg>
-                        </button>
-                    </div>
+                <div class="editor-header-actions">
+                    <button class="btn primary" click.trigger="newCreditNote()" title="New invoice" t="[title]invoice.new.CREDIT_NOTE">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                        <span t="invoice.new.CREDIT_NOTE">New Credit Note</span>
+                    </button>
+                    <button class="btn primary" click.trigger="newInvoice()" title="New invoice" t="[title]invoice.new.INVOICE">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                        <span t="invoice.new.INVOICE">New invoice</span>
+                    </button>
+                    <button class="btn primary" click.trigger="showUploadUblModal()" title="Upload UBL">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-up-icon lucide-file-up">
+                            <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M12 12v6"/><path d="m15 15-3-3-3 3"/>
+                        </svg>
+                    </button>
                 </div>
             </div>
 
+            <div class="filters toolbar-filters">
+                <label class="select" style="position: relative">
+                    <select change.trigger="changeDocType($event.target.value)" aria-label="Type" t="[aria-label]invoice.table.type">
+                        <option value="" t="invoice.all">All</option>
+                        <option value="INVOICE" t="documentType.INVOICE">Invoice</option>
+                        <option value="CREDIT_NOTE" t="documentType.CREDIT_NOTE">Credit note</option>
+                    </select>
+                </label>
+                <label class="select" style="position: relative">
+                    <select change.trigger="changeStatus($event.target.value)" aria-label="Status" t="[aria-label]invoice.table.status">
+                        <option value="ALL" t="invoice.filter.status.all">All statuses</option>
+                        <option value="UNPAID" t="invoice.filter.status.unpaid">Unpaid</option>
+                        <option value="PAID" t="invoice.filter.status.paid">Paid</option>
+                    </select>
+                </label>
+                <label class="search">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.5"/>
+                    </svg>
+                    <input type="search" value.bind="query.invoiceReference & debounce:300" placeholder="Search customer or reference" t="[placeholder]placeholder.invoice-search.doc" />
+                </label>
+                <label class="search">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.5"/>
+                    </svg>
+                    <input type="search" value.bind="query.partnerName & debounce:300" placeholder="Search customer or reference" t="[placeholder]placeholder.invoice-search.customer" />
+                </label>
+            </div>
+
             <div class="card table-card">
-                <div class="table-wrapper">
+                <div class="table-loading-bar" if.bind="invoiceContext.loadingInvoices" aria-hidden="true"></div>
+                <div class="table-wrapper" is-loading.class="invoiceContext.loadingInvoices" aria-busy.bind="invoiceContext.loadingInvoices">
                     <table class="data-table" aria-describedby="invoices-title">
                         <thead>
                         <tr>
@@ -164,12 +171,14 @@
                                 <td>${item.partnerName}</td>
                                 <td>${totalAmount(item) | price:item.currency}</td>
                                 <td>
-                                    <span class="pill" if.bind="item.draftedOn" t="invoice.status.draft" title="${item.draftedOn | dateTimeFormat}">Drafted</span>
-                                    <span class="pill scheduled" if.bind="item.scheduledOn && !item.processedOn" t="invoice.status.scheduled" title="${item.scheduledOn | dateTimeFormat}">Scheduled</span>
-                                    <span class="pill processed" if.bind="item.processedOn && !item.processedStatus" t="invoice.status.processed" title="${item.processedOn | dateTimeFormat}">Processed</span>
-                                    <span class="pill error" if.bind="item.processedStatus" t="invoice.status.error" title.bind="item.processedStatus">Error</span>
-                                    <span class="pill paid" if.bind="item.paidOn" t="invoice.status.paid" title="${item.paidOn | dateFormat}">Paid</span>
-                                    <span class="pill overdue" if.bind="!item.paidOn && !item.draftedOn && !item.processedStatus && isOverdue(item)" t="invoice.status.overdue">Overdue</span>
+                                    <div class="status-cell">
+                                        <span class="pill" if.bind="item.draftedOn" t="invoice.status.draft" title="${item.draftedOn | dateTimeFormat}">Drafted</span>
+                                        <span class="pill scheduled" if.bind="item.scheduledOn && !item.processedOn" t="invoice.status.scheduled" title="${item.scheduledOn | dateTimeFormat}">Scheduled</span>
+                                        <span class="pill processed" if.bind="item.processedOn && !item.processedStatus" t="invoice.status.processed" title="${item.processedOn | dateTimeFormat}">Processed</span>
+                                        <span class="pill error" if.bind="item.processedStatus" t="invoice.status.error" title.bind="item.processedStatus">Error</span>
+                                        <span class="pill paid" if.bind="item.paidOn" t="invoice.status.paid" title="${item.paidOn | dateFormat}">Paid</span>
+                                        <span class="pill overdue" if.bind="!item.paidOn && !item.draftedOn && !item.processedStatus && isOverdue(item)" t="invoice.status.overdue">Overdue</span>
+                                    </div>
                                 </td>
                                 <td class="actions-col">
                                     <button if.bind="invoiceContext.activeBox === 'DRAFTS'" class="icon-btn" title="Remove" t="[title]common.remove" click.trigger="deleteDraft($event, item)">
@@ -193,19 +202,20 @@
                     </table>
                 </div>
                 <div if.bind="!invoiceContext.invoicePage.content || invoiceContext.invoicePage.content.length === 0" class="empty-state" >
-                    <div class="empty-icon" aria-hidden="true">
+                    <div class="empty-spinner" if.bind="invoiceContext.loadingInvoices" aria-hidden="true"></div>
+                    <div else class="empty-icon" aria-hidden="true">
                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                             <path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
                             <path d="M14 3v5h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </div>
-                    <p if.bind="invoiceContext.loadingInvoices" t="invoice.loading">Loading invoices...</p>
+                    <p if.bind="invoiceContext.loadingInvoices" role="status" t="invoice.loading">Loading invoices...</p>
                     <p else t="invoice.empty">No invoices match your filters.</p>
                 </div>
                 <div class="table-footer pager">
-                    <button type="button" class="btn ghost" click.trigger="previousPage()" disabled.bind="query.pageable.page <= 0" t="invoice.pager.previous">← Previous</button>
+                    <button type="button" class="btn ghost" click.trigger="previousPage()" disabled.bind="invoiceContext.loadingInvoices || query.pageable.page <= 0" t="invoice.pager.previous">← Previous</button>
                     <span class="pager-range">${pageStart} - ${pageEnd} / ${invoiceContext.invoicePage?.totalElements ?? 0}</span>
-                    <button type="button" class="btn ghost" click.trigger="nextPage()" disabled.bind="invoiceContext.invoicePage.last" t="invoice.pager.next">Next →</button>
+                    <button type="button" class="btn ghost" click.trigger="nextPage()" disabled.bind="invoiceContext.loadingInvoices || invoiceContext.invoicePage.last" t="invoice.pager.next">Next →</button>
                 </div>
             </div>
         </div>
