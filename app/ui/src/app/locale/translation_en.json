@@ -97,6 +97,10 @@
         "CREDIT_NOTE": "Credit note draft saved",
         "INVOICE": "Invoice draft saved"
       },
+      "duplicate-failed": {
+        "CREDIT_NOTE": "Failed to duplicate the credit note",
+        "INVOICE": "Failed to duplicate the invoice"
+      },
       "load-failed": "Failed to get invoice",
       "mark-seen-failed": "Failed to mark invoice as seen",
       "marked-paid": {
@@ -317,6 +321,10 @@
   },
   "invoice": {
     "action": {
+      "duplicate": {
+        "CREDIT_NOTE": "Duplicate credit note",
+        "INVOICE": "Duplicate invoice"
+      },
       "mark-paid": {
         "CREDIT_NOTE": "Mark credit note as paid",
         "INVOICE": "Mark invoice as paid"
@@ -397,6 +405,7 @@
       "delivery": "Delivery proof",
       "download-pdf": "PDF",
       "download-ubl": "UBL",
+      "duplicate": "Duplicate",
       "invoice-lines": "Invoice lines",
       "loading": "Loading",
       "method": "Method",

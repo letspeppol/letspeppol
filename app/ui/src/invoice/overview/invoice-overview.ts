@@ -15,6 +15,7 @@ import {UploadUblModal} from "./components/upload-ubl-modal";
 import {I18N} from "@aurelia/i18n";
 import {CompanyService} from "../../services/app/company-service";
 import {currentOwnershipRoute} from "../../services/app/ownership-route";
+import {parseCreditNote, parseInvoice} from "../../services/peppol/ubl-parser";
 
 type SortDirection = "asc" | "desc";
 
@@ -233,6 +234,22 @@ export class InvoiceOverview {
             this.router.load(currentOwnershipRoute(`/invoices/${draft.id}`));
         } catch {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr(`alert.invoice.resend-failed.${item.type}`)});
+        }
+    }
+
+    async duplicate(event: Event, item: DocumentDto) {
+        event.stopPropagation();
+        try {
+            const ubl = item.ubl ?? (await this.invoiceService.getDocument(item.id)).ubl;
+            if (!ubl) {
+                this.ea.publish('alert', {alertType: AlertType.Warning, text: this.i18n.tr('alert.invoice.no-ubl-data')});
+                return;
+            }
+            const type = item.type === DocumentType.CREDIT_NOTE ? DocumentType.CREDIT_NOTE : DocumentType.INVOICE;
+            const source = type === DocumentType.CREDIT_NOTE ? parseCreditNote(ubl) : parseInvoice(ubl);
+            this.invoiceContext.duplicateDocument(source, type);
+        } catch {
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr(`alert.invoice.duplicate-failed.${item.type}`)});
         }
     }
 

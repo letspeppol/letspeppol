@@ -96,6 +96,10 @@
         "CREDIT_NOTE": "Gutschriftsentwurf gespeichert",
         "INVOICE": "Rechnungsentwurf gespeichert"
       },
+      "duplicate-failed": {
+        "CREDIT_NOTE": "Duplizieren der Gutschrift fehlgeschlagen",
+        "INVOICE": "Duplizieren der Rechnung fehlgeschlagen"
+      },
       "load-failed": "Rechnung konnte nicht geladen werden",
       "mark-seen-failed": "Rechnung konnte nicht als gesehen markiert werden",
       "marked-paid": {
@@ -316,6 +320,10 @@
   },
   "invoice": {
     "action": {
+      "duplicate": {
+        "CREDIT_NOTE": "Gutschrift duplizieren",
+        "INVOICE": "Rechnung duplizieren"
+      },
       "mark-paid": {
         "CREDIT_NOTE": "Gutschrift als bezahlt markieren",
         "INVOICE": "Rechnung als bezahlt markieren"
@@ -394,6 +402,7 @@
       "delivery": "Zustellnachweis",
       "download-pdf": "PDF",
       "download-ubl": "UBL",
+      "duplicate": "Duplizieren",
       "invoice-lines": "Rechnungspositionen",
       "loading": "Wird geladen",
       "method": "Methode",

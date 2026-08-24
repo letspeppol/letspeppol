@@ -8,6 +8,7 @@ import {
     PaymentMeansCode,
     PaymentTerms,
     UBLBaseLine,
+    UBLDoc,
 } from "../services/peppol/ubl";
 import moment from "moment/moment";
 import {singleton} from "aurelia";
@@ -386,6 +387,41 @@ export class InvoiceComposer {
                 Price: line.Price,
             })),
         } as Invoice;
+    }
+
+    duplicate(source: UBLDoc, documentType: DocumentType): UBLDoc {
+        const copy = structuredClone(source) as UBLDoc;
+        const issueDate = moment().format('YYYY-MM-DD');
+        copy.ID = '';
+        if (documentType === DocumentType.INVOICE) {
+            copy.DueDate = this.shiftDueDate(source.IssueDate, source.DueDate, issueDate);
+        }
+        copy.IssueDate = issueDate;
+        if (copy.PaymentMeans) {
+            copy.PaymentMeans.PaymentID = undefined;
+        }
+        copy.AdditionalDocumentReference = this.resetGeneratedInvoiceReference(copy.AdditionalDocumentReference);
+        return copy;
+    }
+
+    private shiftDueDate(sourceIssueDate: string, sourceDueDate: string, issueDate: string): string {
+        if (!sourceIssueDate || !sourceDueDate) {
+            return this.getDueDateForCompany();
+        }
+        const days = moment(sourceDueDate).diff(moment(sourceIssueDate), 'days');
+        if (!Number.isFinite(days) || days < 0) {
+            return this.getDueDateForCompany();
+        }
+        return moment(issueDate).add(days, 'day').format('YYYY-MM-DD');
+    }
+
+    private resetGeneratedInvoiceReference(references: AdditionalDocumentReference[]): AdditionalDocumentReference[] {
+        if (!references?.length) {
+            return references;
+        }
+        return references.map(reference => reference.ID === GENERATED_INVOICE
+            ? this.getGeneratedInvoiceDocumentReference()
+            : reference);
     }
 
     public getGeneratedInvoiceDocumentReference(): AdditionalDocumentReference {

@@ -96,6 +96,10 @@
         "CREDIT_NOTE": "Creditnotaconcept opgeslagen",
         "INVOICE": "Factuurconcept opgeslagen"
       },
+      "duplicate-failed": {
+        "CREDIT_NOTE": "Dupliceren van de creditnota mislukt",
+        "INVOICE": "Dupliceren van de factuur mislukt"
+      },
       "load-failed": "Factuur ophalen mislukt",
       "mark-seen-failed": "Markeren van factuur als gezien mislukt",
       "marked-paid": {
@@ -316,6 +320,10 @@
   },
   "invoice": {
     "action": {
+      "duplicate": {
+        "CREDIT_NOTE": "Creditnota dupliceren",
+        "INVOICE": "Factuur dupliceren"
+      },
       "mark-paid": {
         "CREDIT_NOTE": "Creditnota markeren als betaald",
         "INVOICE": "Factuur markeren als betaald"
@@ -394,6 +402,7 @@
       "delivery": "Leveringsbewijs",
       "download-pdf": "PDF",
       "download-ubl": "UBL",
+      "duplicate": "Dupliceren",
       "invoice-lines": "Factuurlijnen",
       "loading": "Laden",
       "method": "Methode",
