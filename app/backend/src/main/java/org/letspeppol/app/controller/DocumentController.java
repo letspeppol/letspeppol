@@ -213,7 +213,7 @@ public class DocumentController {
                                          @RequestParam(required = false, defaultValue = "FINAL") UblInvoicePdfService.RenderMode mode) { // Will be used later for proforma
         String peppolId = JwtUtil.getPeppolId(jwt);
         DocumentDto doc = documentService.findById(peppolId, id);
-        UblInvoicePdfService.RenderMode renderMode = doc.scheduledOn() == null ? UblInvoicePdfService.RenderMode.DRAFT : UblInvoicePdfService.RenderMode.FINAL;
+        UblInvoicePdfService.RenderMode renderMode = doc.draftedOn() != null ? UblInvoicePdfService.RenderMode.DRAFT : UblInvoicePdfService.RenderMode.FINAL;
         byte[] pdf = ublInvoicePdfService.toPdf(doc.ubl(), renderMode);
 
         return ResponseEntity.ok()

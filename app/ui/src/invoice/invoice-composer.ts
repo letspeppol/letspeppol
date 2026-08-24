@@ -18,6 +18,20 @@ import {I18N} from "@aurelia/i18n";
 import {createNotSubjectToVatCategory, createVatExemptCategory, isVatExemptRuleset} from "../services/app/vat-rules";
 
 export const GENERATED_INVOICE = 'generated_invoice';
+export const GENERATED_INVOICE_PLACEHOLDER = 'ZW1wdHk=';
+export const PDF_MIME_CODE = 'application/pdf';
+
+export function isPdfAttachment(additionalDocumentReference: AdditionalDocumentReference): boolean {
+    return additionalDocumentReference?.Attachment?.EmbeddedDocumentBinaryObject?.__mimeCode === PDF_MIME_CODE;
+}
+
+export function isGeneratedInvoicePlaceholder(additionalDocumentReference: AdditionalDocumentReference): boolean {
+    if (additionalDocumentReference?.ID !== GENERATED_INVOICE) {
+        return false;
+    }
+    const value = additionalDocumentReference.Attachment?.EmbeddedDocumentBinaryObject?.value;
+    return !value || value === GENERATED_INVOICE_PLACEHOLDER;
+}
 
 @singleton()
 export class InvoiceComposer {
@@ -394,9 +408,9 @@ export class InvoiceComposer {
             DocumentDescription: 'Generated Invoice PDF',
             Attachment: {
                 EmbeddedDocumentBinaryObject: {
-                    __mimeCode: 'application/pdf',
+                    __mimeCode: PDF_MIME_CODE,
                     __filename: `${GENERATED_INVOICE}.pdf`,
-                    value: 'ZW1wdHk='
+                    value: GENERATED_INVOICE_PLACEHOLDER
                 }
             }
         } as AdditionalDocumentReference;
