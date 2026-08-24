@@ -766,10 +766,23 @@
     "upper": "Mindestens 1 Großbuchstabe"
   },
   "paymentTerms": {
-    "15_DAYS": "15 Tage",
-    "30_DAYS": "30 Tage",
-    "60_DAYS": "60 Tage",
-    "END_OF_NEXT_MONTH": "Ende des Monats"
+    "basis": {
+      "END_OF_MONTH": "nach Monatsende",
+      "END_OF_NEXT_MONTH": "nach Ende des Folgemonats",
+      "INVOICE_DATE": "nach Rechnungsdatum"
+    },
+    "basis-label": "Gezählt ab",
+    "days-label": "Tage",
+    "end-of-month": "Monatsende",
+    "end-of-month-days_one": "{{days}} Tag nach Monatsende",
+    "end-of-month-days_other": "{{days}} Tage nach Monatsende",
+    "end-of-next-month": "Ende des Folgemonats",
+    "end-of-next-month-days_one": "{{days}} Tag nach Ende des Folgemonats",
+    "end-of-next-month-days_other": "{{days}} Tage nach Ende des Folgemonats",
+    "net_one": "{{days}} Tag",
+    "net_other": "{{days}} Tage",
+    "on-receipt": "Zahlbar bei Erhalt",
+    "partner-hint": "Leer lassen, um Ihre eigenen Zahlungsbedingungen zu verwenden."
   },
   "placeholder": {
     "customer-search": "Suche nach Name oder USt-IdNr.",

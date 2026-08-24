@@ -11,15 +11,13 @@
                     <span t="invoice.dateModal.issue-date">Issue Date</span>
                     <input type="date" name="issueDate" value.bind="issueDate" required />
                 </label>
-                <label class="field full">
+                <div class="field full">
                     <span t="invoice.dateModal.payment-terms">Payment Terms</span>
-                    <select value.bind="selectedPaymentTerm">
-                        <option repeat.for="term of possiblePaymentTerms" value.bind="term.key">${term.translation}</option>
-                    </select>
-                </label>
+                    <payment-terms-field value.two-way="selectedPaymentTerm"></payment-terms-field>
+                </div>
                 <label class="field" if.bind="documentType === 'INVOICE'">
                     <span t="invoice.dateModal.due-date">Due Date</span>
-                    <input type="date" name="dueDate" value.bind="dueDate" disabled />
+                    <input type="date" name="dueDate" value.bind="dueDate" />
                 </label>
                 <template if.bind="requiresDeliveryDetails">
                     <label class="field">

@@ -13,6 +13,7 @@ import {
 } from "./components/new-feature";
 import {VatDisplayRegistration} from "./services/app/vat-display-service";
 import {captureLoginError} from "./login/pending-login-error";
+import {PaymentTermsField} from "./components/payment-terms/payment-terms-field";
 import "./components/new-feature/rainbow-border.css";
 import en from "./app/locale/translation_en.json";
 import fr from "./app/locale/translation_fr.json";
@@ -47,7 +48,8 @@ Aurelia
         NewFeatureCustomAttribute,
         NewFeatureSectionCustomAttribute,
         DateFormatConverter,
-        DateTimeFormatConverter
+        DateTimeFormatConverter,
+        PaymentTermsField
     )
     .app(LetsPeppol)
     .start();

@@ -1,0 +1,6 @@
+.payment-terms-field {
+    display: grid;
+    grid-template-columns: 5rem minmax(0, 1fr);
+    gap: var(--space-05);
+    align-items: center;
+}
