@@ -5,6 +5,7 @@ import {IEventAggregator} from "aurelia";
 import {toErrorResponse, toLocalizedErrorMessage} from "../../../app/util/error-response-handler";
 import {InvoiceContext} from "../../invoice-context";
 import {I18N} from "@aurelia/i18n";
+import {detectUblDocumentKind} from "../../../services/peppol/ubl-parser";
 
 
 export class UploadUblModal {
@@ -59,11 +60,18 @@ export class UploadUblModal {
         }
 
         const allowedTypes: string[] = ['application/xml', 'text/xml'];
-        if (!allowedTypes.includes(file.type as string)) {
+        if (!allowedTypes.includes(file.type as string) && !file.name?.toLowerCase().endsWith('.xml')) {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.upload.type-unsupported')});
             return;
         }
         const xml: string = await this.readXmlAsString(file);
+
+        const kind = detectUblDocumentKind(xml);
+        if (!kind) {
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.upload.not-ubl')});
+            return;
+        }
+        const type = kind === 'CreditNote' ? DocumentType.CREDIT_NOTE : DocumentType.INVOICE;
 
         this.ea.publish('showOverlay', this.i18n.tr('overlay.validating'));
         try {
@@ -82,11 +90,9 @@ export class UploadUblModal {
             this.invoiceContext.draftPage.content.unshift(documentDraftDto);
             this.invoiceContext.draftPage.totalElements++;
             this.invoiceContext.selectInvoice(documentDraftDto);
-            const type = this.invoiceContext.selectedDocumentType;
             this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(`alert.invoice.draft-created.${type}`)});
             this.closeModal();
         } catch (e: unknown) {
-            const type = this.invoiceContext.selectedDocumentType;
             const errorResponse = await toErrorResponse(e);
             const fallback = this.i18n.tr(`alert.invoice.send-failed.${type}`);
             const text = toLocalizedErrorMessage(errorResponse, this.i18n, fallback, {

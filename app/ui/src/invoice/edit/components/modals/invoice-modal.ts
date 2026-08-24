@@ -1,4 +1,4 @@
-import {bindable} from "aurelia";
+import {bindable, observable} from "aurelia";
 import {DocumentDirection, DocumentDto, DocumentType, InvoiceService} from "../../../../services/app/invoice-service";
 import {CreditNote, Invoice} from "../../../../services/peppol/ubl";
 import {resolve} from "@aurelia/kernel";
@@ -14,19 +14,27 @@ export class InvoiceModal {
     @bindable originalDocumentType: DocumentType;
     open = false;
     id: string;
-    selectedDocumentType: DocumentType;
+    @observable selectedDocumentType: DocumentType = undefined;
     buyerReference: string;
     orderReference: string;
     note: string;
     referenceableInvoices: DocumentDto[] = [];
     selectedInvoiceReferenceId: string | undefined;
+    private referenceLoadToken = 0;
+    private opening = false;
 
     get isCreditNote(): boolean {
         return this.selectedDocumentType === DocumentType.CREDIT_NOTE;
     }
 
+    get hasReference(): boolean {
+        return !!this.buyerReference?.trim() || !!this.orderReference?.trim();
+    }
+
     showModal() {
+        this.opening = true;
         this.selectedDocumentType = JSON.parse(JSON.stringify(this.originalDocumentType));
+        this.opening = false;
         this.id = undefined;
         this.buyerReference = undefined;
         this.orderReference = undefined;
@@ -43,12 +51,16 @@ export class InvoiceModal {
         if (this.invoiceContext.selectedInvoice.Note) {
             this.note = JSON.parse(JSON.stringify(this.invoiceContext.selectedInvoice.Note));
         }
+        this.referenceableInvoices = [];
         this.selectedInvoiceReferenceId = undefined;
         this.open = true;
         setTimeout(() => window.document.getElementById('docNumber')?.focus(), 50);
         const existingRef = this.invoiceContext.selectedInvoice?.BillingReference?.[0]?.InvoiceDocumentReference?.ID;
-        this.loadReferenceableInvoices().then(() => {
-            this.selectedInvoiceReferenceId = existingRef;
+        const token = ++this.referenceLoadToken;
+        this.loadReferenceableInvoices(token).then(() => {
+            if (token === this.referenceLoadToken) {
+                this.selectedInvoiceReferenceId = existingRef;
+            }
         });
     }
 
@@ -57,9 +69,11 @@ export class InvoiceModal {
     }
 
     saveInvoiceInfo() {
-        if (!this.buyerReference && !this.orderReference) {
+        if (!this.hasReference) {
             return;
         }
+        const buyerReference = this.buyerReference?.trim();
+        const orderReference = this.orderReference?.trim();
         this.open = false;
         if (this.selectedDocumentType !== this.originalDocumentType) {
             this.originalDocumentType = this.selectedDocumentType;
@@ -70,12 +84,8 @@ export class InvoiceModal {
             }
         }
         this.invoiceContext.selectedInvoice.ID = this.id;
-        this.invoiceContext.selectedInvoice.BuyerReference = this.buyerReference;
-        if (this.orderReference) {
-            this.invoiceContext.selectedInvoice.OrderReference = {ID: this.orderReference};
-        } else {
-            this.invoiceContext.selectedInvoice.OrderReference = undefined;
-        }
+        this.invoiceContext.selectedInvoice.BuyerReference = buyerReference || undefined;
+        this.invoiceContext.selectedInvoice.OrderReference = orderReference ? {ID: orderReference} : undefined;
         if (this.isCreditNote) {
             const vatNote = this.i18n.tr('invoice.modal.credit-note-vat-note');
             if (!this.note || !this.note.trim()) {
@@ -106,9 +116,11 @@ export class InvoiceModal {
         }];
     }
 
-    private async loadReferenceableInvoices() {
+    private async loadReferenceableInvoices(token: number) {
         if (!this.isCreditNote) {
-            this.referenceableInvoices = [];
+            if (token === this.referenceLoadToken) {
+                this.referenceableInvoices = [];
+            }
             return;
         }
         try {
@@ -116,12 +128,38 @@ export class InvoiceModal {
                 type: DocumentType.INVOICE,
                 direction: DocumentDirection.OUTGOING,
                 partnerPeppolId: this.customerPeppolId(),
+                draft: false,
                 pageable: {page: 0, size: 100, sort: [{property: 'issueDate', direction: 'desc'}]},
             });
-            this.referenceableInvoices = page.content.filter(d => !!d.invoiceReference);
+            if (token !== this.referenceLoadToken) {
+                return;
+            }
+            this.referenceableInvoices = this.selectableInvoices(page.content);
         } catch {
-            this.referenceableInvoices = [];
+            if (token === this.referenceLoadToken) {
+                this.referenceableInvoices = [];
+            }
         }
+    }
+
+    private selectableInvoices(documents: DocumentDto[]): DocumentDto[] {
+        const byInvoiceReference = new Map<string, DocumentDto>();
+        for (const document of documents) {
+            if (!document.invoiceReference || !document.processedOn || document.processedStatus) {
+                continue;
+            }
+            if (!byInvoiceReference.has(document.invoiceReference)) {
+                byInvoiceReference.set(document.invoiceReference, document);
+            }
+        }
+        const referenced = this.invoiceContext.selectedInvoice?.BillingReference?.[0]?.InvoiceDocumentReference;
+        if (referenced?.ID && !byInvoiceReference.has(referenced.ID)) {
+            byInvoiceReference.set(referenced.ID, {
+                invoiceReference: referenced.ID,
+                issueDate: referenced.IssueDate,
+            } as DocumentDto);
+        }
+        return [...byInvoiceReference.values()];
     }
 
     private customerPeppolId(): string | undefined {
@@ -133,7 +171,10 @@ export class InvoiceModal {
     }
 
     selectedDocumentTypeChanged() {
-        this.loadReferenceableInvoices();
+        if (this.opening) {
+            return;
+        }
+        void this.loadReferenceableInvoices(++this.referenceLoadToken);
     }
 
     onKeyDown(e: KeyboardEvent) {

@@ -50,6 +50,24 @@ describe('InvoiceDateModal payment terms', () => {
         expect(modal.selectedPaymentTerm).toBe('30_DAYS');
     });
 
+    it('recalculates the due date when the issue date changes', () => {
+        const modal = new InvoiceDateModal();
+        modal.documentType = DocumentType.INVOICE;
+        modal.invoiceContext = {
+            selectedInvoice: {
+                IssueDate: '2026-07-05',
+                DueDate: '2026-08-04',
+                PaymentTerms: undefined,
+            },
+        };
+        modal.showModal();
+        expect(modal.selectedPaymentTerm).toBe('30_DAYS');
+
+        modal.issueDate = '2026-09-01';
+
+        expect(modal.dueDate).toBe('2026-09-01');
+    });
+
     it('leaves unmatched due dates unchanged when no payment term is set', () => {
         const modal = new InvoiceDateModal();
         modal.documentType = DocumentType.INVOICE;
@@ -65,5 +83,48 @@ describe('InvoiceDateModal payment terms', () => {
 
         expect(modal.dueDate).toBe('2026-07-31');
         expect(modal.selectedPaymentTerm).toBeUndefined();
+    });
+});
+
+describe('InvoiceDateModal saving', () => {
+    function save(modal: InvoiceDateModal) {
+        (modal as unknown as {saveDate(): void}).saveDate();
+    }
+
+    it('keeps the payment arrangement a credit note carries for a switch back to an invoice', () => {
+        const selectedInvoice = {
+            IssueDate: '2026-07-05',
+            DueDate: '2026-08-04',
+            PaymentTerms: {Note: '30 days'},
+        };
+        const modal = new InvoiceDateModal();
+        modal.documentType = DocumentType.CREDIT_NOTE;
+        modal.invoiceContext = {selectedInvoice};
+
+        modal.showModal();
+        modal.issueDate = '2026-07-06';
+        save(modal);
+
+        expect(selectedInvoice.IssueDate).toBe('2026-07-06');
+        expect(selectedInvoice.DueDate).toBe('2026-08-04');
+        expect(selectedInvoice.PaymentTerms).toEqual({Note: '30 days'});
+    });
+
+    it('writes the due date and payment terms of an invoice', () => {
+        const selectedInvoice = {
+            IssueDate: '2026-07-05',
+            DueDate: '2026-08-04',
+            PaymentTerms: undefined,
+        };
+        const modal = new InvoiceDateModal();
+        modal.documentType = DocumentType.INVOICE;
+        modal.invoiceContext = {selectedInvoice};
+
+        modal.showModal();
+        modal.selectedPaymentTerm = '15_DAYS';
+        save(modal);
+
+        expect(selectedInvoice.DueDate).toBe('2026-07-20');
+        expect(selectedInvoice.PaymentTerms).toEqual({Note: '15 days'});
     });
 });

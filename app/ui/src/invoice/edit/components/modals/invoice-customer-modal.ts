@@ -58,6 +58,7 @@ export class InvoiceCustomerModal {
         this.saveAsPartner = false;
         this.open = true;
         this.customerSearch.resetSearch();
+        void this.customerSearch.getPartners();
         this.customerSearch.focusInput();
         this.customerSavedFunction = customerSavedFunction;
     }

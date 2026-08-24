@@ -36,12 +36,14 @@ export class InvoiceContext {
     loadingDrafts = false;
     // Current invoice
     lines : undefined | InvoiceLine[] | CreditNoteLine[];
-    @observable selectedInvoice:  undefined | Invoice | CreditNote;
+    @observable selectedInvoice:  undefined | Invoice | CreditNote = undefined;
     selectedDocument: DocumentDto;
     selectedRouteId: string = undefined;
     selectedDocumentType: DocumentType = DocumentType.INVOICE;
     lastReference: string = undefined;
     nextReference: string = undefined;
+    referenceRequest: Promise<void> = Promise.resolve();
+    private referenceToken = 0;
     readOnly: boolean = false;
     partnerMissing: boolean = false;
     addPdfToSendingInvoice: boolean = false;
@@ -68,13 +70,19 @@ export class InvoiceContext {
         this.clearSelectedInvoice();
         this.draftPage = this.createEmptyPage();
         this.invoicePage = this.createEmptyPage();
+        this.activeBox = 'ALL';
         this.loadingInvoices = false;
         this.loadingDrafts = false;
         this.lines = undefined;
-        this.lastInvoiceReference = undefined;
-        this.nextInvoiceReference = undefined;
+        this.selectedRouteId = undefined;
+        this.selectedDocumentType = DocumentType.INVOICE;
+        this.referenceToken++;
+        this.referenceRequest = Promise.resolve();
+        this.lastReference = undefined;
+        this.nextReference = undefined;
         this.readOnly = false;
         this.partnerMissing = false;
+        this.addPdfToSendingInvoice = false;
     }
 
     selectedInvoiceChanged(newValue: UBLDoc) {
@@ -90,15 +98,15 @@ export class InvoiceContext {
     selectInvoice(item: DocumentDto) {
         this.readOnly = (item.direction === DocumentDirection.INCOMING || item.proxyOn != null || item.createdExternally);
         this.selectedDocument = item;
-        if (item.draftedOn) {
-            this.getLastInvoiceReference();
-        }
         if (item.type === DocumentType.CREDIT_NOTE) {
             this.selectedDocumentType = DocumentType.CREDIT_NOTE;
             this.selectedInvoice = parseCreditNote(item.ubl);
         } else {
             this.selectedDocumentType = DocumentType.INVOICE;
             this.selectedInvoice = parseInvoice(item.ubl);
+        }
+        if (item.draftedOn) {
+            this.getLastInvoiceReference();
         }
         if (this.readOnly) {
             this.partnerMissing = true;
@@ -119,6 +127,7 @@ export class InvoiceContext {
     }
 
     newUBLDocument(documentType : DocumentType = DocumentType.INVOICE) {
+        this.selectedDocumentType = documentType;
         if (documentType === DocumentType.INVOICE) {
             this.selectedInvoice = this.invoiceComposer.createInvoice();
         } else {
@@ -126,6 +135,16 @@ export class InvoiceContext {
         }
         this.invoiceCalculator.calculateTaxAndTotals(this.selectedInvoice);
         this.readOnly = false;
+    }
+
+    newCreditNoteFromInvoice(invoice: Invoice) {
+        this.selectedDocument = undefined;
+        this.selectedDocumentType = DocumentType.CREDIT_NOTE;
+        this.readOnly = false;
+        this.partnerMissing = false;
+        this.selectedInvoice = this.invoiceComposer.creditNoteFromInvoice(invoice);
+        this.invoiceCalculator.calculateTaxAndTotals(this.selectedInvoice);
+        this.getLastInvoiceReference();
     }
 
     getNextPosition(): string {
@@ -138,18 +157,27 @@ export class InvoiceContext {
         return "1";
     }
 
-    getLastInvoiceReference() {
-        this.companyService.getAndSetMyCompanyForToken().then(company => {
-            if (this.selectedDocumentType === DocumentType.CREDIT_NOTE) {
-                this.lastReference = company.lastCreditNoteReference;
-            } else {
-                this.lastReference = company.lastInvoiceReference;
+    getLastInvoiceReference(): Promise<void> {
+        const token = ++this.referenceToken;
+        const documentType = this.selectedDocumentType;
+        this.lastReference = undefined;
+        this.nextReference = undefined;
+        this.referenceRequest = this.companyService.getAndSetMyCompanyForToken().then(company => {
+            if (token !== this.referenceToken) {
+                return;
             }
-            this.nextReference = this.computeNextInvoiceReference(this.selectedDocumentType, this.lastReference);
+            this.lastReference = documentType === DocumentType.CREDIT_NOTE
+                ? company.lastCreditNoteReference
+                : company.lastInvoiceReference;
+            this.nextReference = this.computeNextInvoiceReference(documentType, this.lastReference);
         }).catch(() => {
+            if (token !== this.referenceToken) {
+                return;
+            }
             this.lastReference = undefined;
             this.nextReference = undefined;
         });
+        return this.referenceRequest;
     }
 
     private computeNextInvoiceReference(documentType: DocumentType, lastRef?: string): string {

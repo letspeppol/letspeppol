@@ -170,6 +170,7 @@
     },
     "success": "Erfolg",
     "upload": {
+      "not-ubl": "Diese Datei ist keine UBL-Rechnung und keine UBL-Gutschrift",
       "size-too-large": "Die Gesamtgröße aller Dateien darf 10 MB nicht überschreiten",
       "type-unsupported": "Dateityp nicht unterstützt",
       "upload-error": "Fehler beim Hochladen der Datei"
@@ -316,6 +317,7 @@
   },
   "invoice": {
     "action": {
+      "credit-this-invoice": "Eine Gutschrift für diese Rechnung erstellen",
       "mark-paid": {
         "CREDIT_NOTE": "Gutschrift als bezahlt markieren",
         "INVOICE": "Rechnung als bezahlt markieren"
@@ -509,6 +511,11 @@
       "vat": "MwSt."
     },
     "title": "Rechnungen",
+    "uploadModal": {
+      "drop": "UBL-Datei hier ablegen",
+      "hint": "Eine Rechnung oder eine Gutschrift: Der Dokumenttyp wird aus der Datei gelesen.",
+      "title": "UBL hochladen"
+    },
     "validationModal": {
       "error-count": "Anzahl der Fehler",
       "title": "Validierung"

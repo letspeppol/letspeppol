@@ -5,6 +5,7 @@ import {ThemeService} from '../../services/app/theme-service';
 import {LoginService} from "../../services/app/login-service";
 import {InvoiceContext} from "../../invoice/invoice-context";
 import {OwnershipService, OwnershipSummary} from "../../services/app/ownership-service";
+import {AccountCacheService} from "../../services/app/account-cache-service";
 import {AlertType} from "../alert/alert";
 
 export class Heading {
@@ -13,6 +14,7 @@ export class Heading {
     private router = resolve(Router);
     private theme = resolve(ThemeService);
     private readonly ownershipService = resolve(OwnershipService);
+    private readonly accountCache = resolve(AccountCacheService);
     private readonly ea = resolve(IEventAggregator);
     ownerships: OwnershipSummary[] = [];
     selectedOwnershipKey = '';
@@ -20,8 +22,6 @@ export class Heading {
     canAddOwnership = false;
 
     async attached() {
-        // Tokens are held in memory, so after a page reload the access token is only restored once
-        // the silent re-authorization finishes; wait for it before reading the acting ownership.
         await this.loginService.ensureAuthenticated();
         await this.ownershipService.loadOwnerships();
         await this.refreshOwnerships();
@@ -99,7 +99,7 @@ export class Heading {
         if (!actingOwnershipKey || actingOwnershipKey === previousOwnershipKey) {
             return;
         }
-        this.invoiceContext.clearAccountCache();
+        this.accountCache.clearAll();
         this.ea.publish('account:switched');
         await this.router.load(this.loginService.getCurrentOwnershipRoute('/dashboard'));
     }

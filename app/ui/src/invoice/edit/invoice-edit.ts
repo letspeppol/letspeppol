@@ -88,6 +88,25 @@ export class InvoiceEdit {
         this.showCustomerModal();
     }
 
+    async newCreditNoteFromInvoice() {
+        const invoice = this.invoiceContext.selectedInvoice as Invoice;
+        if (!invoice) {
+            return;
+        }
+        this.selectedDocumentType = DocumentType.CREDIT_NOTE;
+        await this.router.load(currentOwnershipRoute('/invoices'));
+        this.invoiceContext.newCreditNoteFromInvoice(invoice);
+    }
+
+    get canCreateCreditNoteFromInvoice(): boolean {
+        const document = this.invoiceContext.selectedDocument;
+        return !!document?.id
+            && document.type === DocumentType.INVOICE
+            && document.direction === DocumentDirection.OUTGOING
+            && !!document.processedOn
+            && !document.processedStatus;
+    }
+
     addLine() {
         let line: UBLLine;
         const pos = this.invoiceContext.getNextPosition();

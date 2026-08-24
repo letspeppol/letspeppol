@@ -17,8 +17,8 @@ export class InvoiceDateModal {
     countryList = countryListAlpha2;
     @bindable invoiceContext;
     @bindable documentType: DocumentType;
-    @observable issueDate;
-    @observable selectedPaymentTerm;
+    @observable issueDate = undefined;
+    @observable selectedPaymentTerm = undefined;
     dueDate;
     actualDeliveryDate;
     deliveryCountryCode;
@@ -38,6 +38,10 @@ export class InvoiceDateModal {
         this.open = true;
     }
 
+    get isCreditNote(): boolean {
+        return this.documentType === DocumentType.CREDIT_NOTE;
+    }
+
     get requiresDeliveryDetails(): boolean {
         return this.invoiceContext.lines?.some(line => requiresDeliveryDetails(line.Item?.ClassifiedTaxCategory?.ID)) ?? false;
     }
@@ -51,7 +55,7 @@ export class InvoiceDateModal {
     }
 
     private recalculateDueDate() {
-        if (this.documentType === DocumentType.CREDIT_NOTE) {
+        if (this.isCreditNote) {
             return;
         }
         if (!this.issueDate || !this.selectedPaymentTerm) {
@@ -70,11 +74,13 @@ export class InvoiceDateModal {
         }
         this.open = false;
         this.invoiceContext.selectedInvoice.IssueDate = this.issueDate;
-        this.invoiceContext.selectedInvoice.DueDate = this.dueDate;
-        if (this.selectedPaymentTerm) {
-            this.invoiceContext.selectedInvoice.PaymentTerms = {
-                Note: this.invoiceComposer.translatePaymentTerm(this.selectedPaymentTerm)
-            };
+        if (!this.isCreditNote) {
+            this.invoiceContext.selectedInvoice.DueDate = this.dueDate;
+            if (this.selectedPaymentTerm) {
+                this.invoiceContext.selectedInvoice.PaymentTerms = {
+                    Note: this.invoiceComposer.translatePaymentTerm(this.selectedPaymentTerm)
+                };
+            }
         }
         if (this.actualDeliveryDate || this.deliveryCountryCode) {
             if (!this.invoiceContext.selectedInvoice.Delivery) {
@@ -96,6 +102,11 @@ export class InvoiceDateModal {
     }
 
     private loadPossiblePaymentTerms() {
+        if (this.isCreditNote) {
+            this.possiblePaymentTerms = [];
+            this.selectedPaymentTerm = undefined;
+            return;
+        }
         let selectedPaymentTerm: string = undefined;
         const paymentTermNote = this.invoiceContext.selectedInvoice.PaymentTerms?.Note;
         this.possiblePaymentTerms = [];
