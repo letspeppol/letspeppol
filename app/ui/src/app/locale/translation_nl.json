@@ -173,6 +173,7 @@
   "common": {
     "apply": "Toepassen",
     "cancel": "Annuleren",
+            "retry": "Opnieuw",
     "clear": "Wissen",
     "close": "Sluiten",
     "confirm": "Bevestigen",
@@ -473,6 +474,8 @@
     },
     "title": "Facturen",
     "validationModal": {
+            "upload-title": "UBL uploaden",
+            "drop-ubl": "Sleep UBL hierheen",
       "error-count": "Aantal fouten",
       "title": "Validatie"
     },

@@ -174,6 +174,7 @@
   "common": {
     "apply": "Anwenden",
     "cancel": "Abbrechen",
+            "retry": "Erneut versuchen",
     "clear": "Leeren",
     "close": "Schließen",
     "confirm": "Bestätigen",
@@ -476,6 +477,8 @@
     },
     "title": "Rechnungen",
     "validationModal": {
+            "upload-title": "UBL hochladen",
+            "drop-ubl": "UBL hier ablegen",
       "error-count": "Anzahl der Fehler",
       "title": "Validierung"
     },

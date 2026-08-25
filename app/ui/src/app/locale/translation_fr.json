@@ -173,6 +173,7 @@
   "common": {
     "apply": "Appliquer",
     "cancel": "Annuler",
+            "retry": "R\u00e9essayer",
     "clear": "Effacer",
     "close": "Fermer",
     "confirm": "Confirmer",
@@ -473,6 +474,8 @@
     },
     "title": "Factures",
     "validationModal": {
+            "upload-title": "T\u00e9l\u00e9verser UBL",
+            "drop-ubl": "D\u00e9posez le fichier UBL ici",
       "error-count": "Nombre d'erreurs",
       "title": "Validation"
     },
