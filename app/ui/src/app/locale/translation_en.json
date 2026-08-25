@@ -1,5 +1,6 @@
 {
   "account": {
+        "change-password-failed": "Change password failed",
     "account-name": "Account Name",
     "activate-on-peppol": "Activate On Peppol",
     "add-attachment-to-notification": "Add attachment to notification",

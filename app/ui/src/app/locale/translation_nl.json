@@ -1,5 +1,6 @@
 {
   "account": {
+        "change-password-failed": "Wijzigen van wachtwoord mislukt",
     "account-name": "Accountnaam",
     "activate-on-peppol": "Activeren op Peppol",
     "add-attachment-to-notification": "Bijlage toevoegen aan de melding",

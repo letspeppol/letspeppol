@@ -1,5 +1,6 @@
 {
   "account": {
+        "change-password-failed": "\u00c9chec du changement de mot de passe",
     "account-name": "Nom du compte",
     "activate-on-peppol": "Activer sur Peppol",
     "add-attachment-to-notification": "Ajouter une pièce jointe à la notification",
