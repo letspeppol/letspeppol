@@ -14,6 +14,7 @@ import org.apache.pdfbox.pdmodel.interactive.form.PDTextField;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.letspeppol.kyc.service.SigningService.SIGNATURE_CONTENT;
@@ -24,7 +25,7 @@ public class PdfSignatureAppearanceTest {
 
     @Test
     public void fillPdf() throws Exception {
-        File filledPdf = Path.of("contract_en_filled.pdf").toFile(); //System.getProperty("java.io.tmpdir"),
+        File filledPdf = debugOutput("contract_en_filled.pdf");
         try (InputStream resource = getClass().getResourceAsStream("/docs/LetsPeppol_contract_template.pdf")) {
             if (resource == null) throw new FileNotFoundException("Classpath resource not found: /docs/LetsPeppol_contract_template.pdf");
             byte[] bytes = resource.readAllBytes();
@@ -52,9 +53,15 @@ public class PdfSignatureAppearanceTest {
         }
     }
 
+    private static File debugOutput(String fileName) throws IOException {
+        Path dir = Path.of("build", "debug");
+        Files.createDirectories(dir);
+        return dir.resolve(fileName).toFile();
+    }
+
     @Test
     public void generatePdf() throws Exception {
-        File preparedPdf = Path.of("contract_en_prepared.pdf").toFile(); //System.getProperty("java.io.tmpdir"),
+        File preparedPdf = debugOutput("contract_en_prepared.pdf");
         try (InputStream resource = getClass().getResourceAsStream("/docs/LetsPeppol_contract_template.pdf");
              PdfReader pdfReader = new PdfReader(resource);
              OutputStream outputStream = new FileOutputStream(preparedPdf)) {

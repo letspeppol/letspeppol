@@ -1,8 +1,5 @@
 package org.letspeppol.app.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +30,11 @@ import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.xml.sax.SAXException;
 import reactor.core.publisher.Mono;
+
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
@@ -446,7 +448,7 @@ public class DocumentService {
             String errorCode = readText(root, "errorCode");
             String message = readText(root, "message");
             return new ProxyRequestException(statusCode, errorCode, message == null ? body : message);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             log.warn("Proxy returned an unstructured error response (status={}): {}", statusCode.value(), body, e);
         }
         return new ProxyRequestException(statusCode, body);
@@ -454,10 +456,10 @@ public class DocumentService {
 
     private String readText(JsonNode root, String fieldName) {
         JsonNode node = root.get(fieldName);
-        if (node == null || node.asText().isBlank()) {
+        if (node == null || !node.isValueNode() || node.asString().isBlank()) {
             return null;
         }
-        return node.asText();
+        return node.asString();
     }
 
     private Document rescheduleAtProxy(Document document, String tokenValue) { //TODO : use boolean noArchive from Company

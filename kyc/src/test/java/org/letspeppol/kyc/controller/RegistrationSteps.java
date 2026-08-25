@@ -1,7 +1,5 @@
 package org.letspeppol.kyc.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.letspeppol.kyc.dto.*;
 import org.letspeppol.kyc.model.AccountType;
 import org.letspeppol.kyc.model.EmailVerification;
@@ -21,9 +19,13 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.boot.test.context.TestComponent;
-import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.core.env.Environment;
 import org.springframework.http.*;
+
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+
 import java.nio.charset.StandardCharsets;
 import javax.security.auth.x500.X500Principal;
 import java.math.BigInteger;
@@ -183,24 +185,23 @@ public class RegistrationSteps {
             assertTrue(paths.has("/auth/oauth2/authorize"));
             assertTrue(paths.has("/auth/oauth2/token"));
             assertTrue(paths.has("/auth/oauth2/jwks"));
-            paths.fields().forEachRemaining(pathEntry -> {
-                assertFalse(pathEntry.getKey().contains("/.well-known/"),
-                        "Discovery path leaked into OpenAPI: " + pathEntry.getKey());
-                pathEntry.getValue().fields().forEachRemaining(methodEntry -> {
-                    JsonNode operation = methodEntry.getValue();
+            paths.forEachEntry((path, pathItem) -> {
+                assertFalse(path.contains("/.well-known/"),
+                        "Discovery path leaked into OpenAPI: " + path);
+                pathItem.forEachEntry((method, operation) -> {
                     if (hasTag(operation, "authorization-server-endpoints")
                             || hasTag(operation, "login-endpoint")) {
-                        assertFalse(operation.path("summary").asText().isBlank(),
-                                "Missing summary for " + pathEntry.getKey());
-                        assertFalse(operation.path("description").asText().isBlank(),
-                                "Missing description for " + pathEntry.getKey());
+                        assertFalse(operation.path("summary").asString().isBlank(),
+                                "Missing summary for " + path);
+                        assertFalse(operation.path("description").asString().isBlank(),
+                                "Missing description for " + path);
                     }
                 });
             });
             JsonNode authorizationCode = openApi.path("components").path("securitySchemes")
                     .path("oauth2").path("flows").path("authorizationCode");
-            assertEquals("/kyc/auth/oauth2/authorize", authorizationCode.path("authorizationUrl").asText());
-            assertEquals("/kyc/auth/oauth2/token", authorizationCode.path("tokenUrl").asText());
+            assertEquals("/kyc/auth/oauth2/authorize", authorizationCode.path("authorizationUrl").asString());
+            assertEquals("/kyc/auth/oauth2/token", authorizationCode.path("tokenUrl").asString());
 
             HttpResponse<String> discoveryResponse = browser.send(
                     HttpRequest.newBuilder(URI.create(origin + "/.well-known/openid-configuration"))
@@ -209,17 +210,17 @@ public class RegistrationSteps {
                     HttpResponse.BodyHandlers.ofString());
             assertEquals(200, discoveryResponse.statusCode(), discoveryResponse.body());
             JsonNode discovery = objectMapper.readTree(discoveryResponse.body());
-            assertEquals(issuer, discovery.path("issuer").asText());
+            assertEquals(issuer, discovery.path("issuer").asString());
             assertEquals("http://localhost:8084/auth/oauth2/authorize",
-                    discovery.path("authorization_endpoint").asText());
+                    discovery.path("authorization_endpoint").asString());
             assertEquals("http://localhost:8084/auth/oauth2/token",
-                    discovery.path("token_endpoint").asText());
+                    discovery.path("token_endpoint").asString());
             assertEquals("http://localhost:8084/auth/oauth2/jwks",
-                    discovery.path("jwks_uri").asText());
+                    discovery.path("jwks_uri").asString());
             assertEquals("http://localhost:8084/auth/oidc/userinfo",
-                    discovery.path("userinfo_endpoint").asText());
+                    discovery.path("userinfo_endpoint").asString());
             assertEquals("http://localhost:8084/auth/browser/logout",
-                    discovery.path("end_session_endpoint").asText());
+                    discovery.path("end_session_endpoint").asString());
 
             HttpResponse<String> jwksResponse = browser.send(
                     HttpRequest.newBuilder(URI.create(origin + "/auth/oauth2/jwks"))
@@ -237,9 +238,9 @@ public class RegistrationSteps {
                     HttpResponse.BodyHandlers.ofString());
             assertEquals(200, sessionResponse.statusCode());
             JsonNode session = objectMapper.readTree(sessionResponse.body());
-            String csrfToken = session.path("csrfToken").asText();
-            String csrfHeaderName = session.path("csrfHeaderName").asText();
-            String csrfParameterName = session.path("csrfParameterName").asText();
+            String csrfToken = session.path("csrfToken").asString();
+            String csrfHeaderName = session.path("csrfHeaderName").asString();
+            String csrfParameterName = session.path("csrfParameterName").asString();
             assertFalse(csrfToken.isBlank());
 
             String loginBody = form(
@@ -255,7 +256,7 @@ public class RegistrationSteps {
                             .build(),
                     HttpResponse.BodyHandlers.ofString());
             assertEquals(200, loginResponse.statusCode(), loginResponse.body());
-            assertEquals("authenticated", objectMapper.readTree(loginResponse.body()).path("status").asText());
+            assertEquals("authenticated", objectMapper.readTree(loginResponse.body()).path("status").asString());
 
             String verifier = "registration-test-pkce-verifier-0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             String challenge = Base64.getUrlEncoder().withoutPadding()
@@ -305,7 +306,7 @@ public class RegistrationSteps {
             JsonNode tokenJson = objectMapper.readTree(tokenResponse.body());
             assertFalse(tokenJson.has("refresh_token"), "The SPA must not receive a refresh token");
             assertTrue(tokenJson.hasNonNull("id_token"));
-            String accessToken = tokenJson.path("access_token").asText();
+            String accessToken = tokenJson.path("access_token").asString();
             assertFalse(accessToken.isBlank());
 
             var jwt = jwtDecoder.decode(accessToken);
@@ -321,7 +322,7 @@ public class RegistrationSteps {
                             .build(),
                     HttpResponse.BodyHandlers.ofString());
             assertEquals(200, userInfoResponse.statusCode(), userInfoResponse.body());
-            assertFalse(objectMapper.readTree(userInfoResponse.body()).path("sub").asText().isBlank());
+            assertFalse(objectMapper.readTree(userInfoResponse.body()).path("sub").asString().isBlank());
 
             HttpRequest ownershipsRequest = HttpRequest.newBuilder(URI.create(origin + "/sapi/account/ownerships"))
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
@@ -339,7 +340,7 @@ public class RegistrationSteps {
 
     private static boolean hasTag(JsonNode operation, String expectedTag) {
         for (JsonNode tag : operation.path("tags")) {
-            if (expectedTag.equals(tag.asText())) return true;
+            if (expectedTag.equals(tag.asString())) return true;
         }
         return false;
     }
@@ -372,7 +373,7 @@ public class RegistrationSteps {
             assertEquals(200, response.statusCode(), response.body());
             JsonNode json = objectMapper.readTree(response.body());
             assertFalse(json.has("refresh_token"));
-            String accessToken = json.path("access_token").asText();
+            String accessToken = json.path("access_token").asString();
             var jwt = jwtDecoder.decode(accessToken);
             assertEquals(issuer, jwt.getIssuer().toString());
             assertEquals(appExternalId.toString(), jwt.getClaimAsString("uid"));

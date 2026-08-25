@@ -1,7 +1,5 @@
 package org.letspeppol.app.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.app.dto.DocumentNotificationEmailDto;
 import org.letspeppol.app.dto.SponsorContributionDto;
@@ -30,6 +28,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -210,7 +211,7 @@ public class SponsorInvoiceService {
                     .payload(objectMapper.writeValueAsString(emailDto))
                     .build());
             eventPublisher.publishEvent(new EmailJobCreatedEvent(saved.getId()));
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             log.error("Failed to create sponsor package request email", e);
             throw new IllegalStateException("Could not create sponsor package request email", e);
         }

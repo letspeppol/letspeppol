@@ -1,7 +1,5 @@
 package org.letspeppol.app.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.app.config.SponsorProperties;
 import org.letspeppol.app.dto.DocumentNotificationEmailDto;
@@ -15,6 +13,9 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.HtmlUtils;
+
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -118,7 +119,7 @@ public class NotificationService {
                     .build();
             EmailJob saved = emailJobRepository.save(emailJob);
             eventPublisher.publishEvent(new EmailJobCreatedEvent(saved.getId()));
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             log.error("Failed to convert email object to json");
         } catch (Exception e) {
             log.error("Unable to create email notification");
@@ -180,7 +181,7 @@ public class NotificationService {
                     .build();
             EmailJob saved = emailJobRepository.save(emailJob);
             eventPublisher.publishEvent(new EmailJobCreatedEvent(saved.getId()));
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             log.error("Failed to convert error email object to json");
         } catch (Exception e) {
             log.error("Unable to create error email notification for document {}", document.getId(), e);

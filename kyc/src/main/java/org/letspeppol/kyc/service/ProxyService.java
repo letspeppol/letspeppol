@@ -49,7 +49,7 @@ public class ProxyService {
 
             return new RegistrationResponse(registryDto.peppolActive(), null, null);
         } catch (WebClientResponseException e) {
-            int status = e.getRawStatusCode();
+            int status = e.getStatusCode().value();
             String body = e.getResponseBodyAsString();
             log.warn("Registering company to proxy could not succeed {}: {}", status, body, e);
             return switch (status) {
