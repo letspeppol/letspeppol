@@ -1,4 +1,9 @@
 {
+    "webeid": {
+        "native-unavailable": "Web eID-applicatie niet gevonden. Installeer of start de Web eID-applicatie en herstart uw browser.",
+        "extension-unavailable": "Web eID-browserextensie niet beschikbaar. Installeer en activeer de Web eID-extensie in uw browser.",
+        "version-mismatch": "Web eID-software is verouderd. Werk zowel de Web eID-applicatie als de browserextensie bij."
+    },
   "account": {
     "account-name": "Accountnaam",
     "activate-on-peppol": "Activeren op Peppol",

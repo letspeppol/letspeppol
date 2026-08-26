@@ -16,6 +16,7 @@ import {LibrarySignResponse} from "@web-eid/web-eid-library/models/message/Libra
 import {I18N} from "@aurelia/i18n";
 import {ChoosePassword} from "../components/choose-password/choose-password";
 import {clearTokenFromUrl} from "../services/util/url";
+import {toLocalizedWebEidErrorMessage} from "../app/util/webeid-error-handler";
 
 export class EmailConfirmation {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -121,8 +122,13 @@ export class EmailConfirmation {
                 } catch {
                     text = `${error.status} ${error.statusText}`;
                 }
-            } else if (error && typeof error === "object" && "message" in error) {
-                text = String((error as any).message);
+            } else {
+                const webeidText = toLocalizedWebEidErrorMessage(error, this.i18n);
+                if (webeidText) {
+                    text = webeidText;
+                } else if (error && typeof error === "object" && "message" in error) {
+                    text = String((error as any).message);
+                }
             }
             this.ea.publish('alert', { alertType: AlertType.Danger, text });
             this.confirmInProgress = false;
@@ -197,8 +203,13 @@ export class EmailConfirmation {
                 } catch {
                     text = `${error.status} ${error.statusText}`;
                 }
-            } else if (error && typeof error === "object" && "message" in error) {
-                text = String((error as any).message);
+            } else {
+                const webeidText = toLocalizedWebEidErrorMessage(error, this.i18n);
+                if (webeidText) {
+                    text = webeidText;
+                } else if (error && typeof error === "object" && "message" in error) {
+                    text = String((error as any).message);
+                }
             }
             this.ea.publish('alert', { alertType: AlertType.Danger, text });
             this.confirmedDirector = undefined;
