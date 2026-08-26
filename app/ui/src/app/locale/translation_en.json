@@ -1,4 +1,9 @@
 {
+    "not-found": {
+        "title": "Page not found",
+        "message": "The page you are looking for does not exist or has been moved.",
+        "back-home": "Back to home"
+    },
   "account": {
     "account-name": "Account Name",
     "activate-on-peppol": "Activate On Peppol",

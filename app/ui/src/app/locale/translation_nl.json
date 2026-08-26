@@ -1,4 +1,9 @@
 {
+    "not-found": {
+        "title": "Pagina niet gevonden",
+        "message": "De pagina die u zoekt bestaat niet of is verplaatst.",
+        "back-home": "Terug naar home"
+    },
   "account": {
     "account-name": "Accountnaam",
     "activate-on-peppol": "Activeren op Peppol",

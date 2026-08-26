@@ -1,4 +1,9 @@
 {
+    "not-found": {
+        "title": "Page introuvable",
+        "message": "La page que vous recherchez n’existe pas ou a été déplacée.",
+        "back-home": "Retour à l’accueil"
+    },
   "account": {
     "account-name": "Nom du compte",
     "activate-on-peppol": "Activer sur Peppol",
