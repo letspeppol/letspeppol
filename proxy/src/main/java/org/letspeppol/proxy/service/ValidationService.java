@@ -104,7 +104,7 @@ public class ValidationService {
                 if (latestActiveVersion != null) {
                     return latestActiveVersion.getID();
                 }
-            } catch (Exception ignored) {
+            } catch (Exception _) {
                 return null;
             }
         }

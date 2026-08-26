@@ -85,20 +85,20 @@ public class EmbeddableSignatureUtil {
     }
 
     private static String cmsSignatureAlgorithm(PublicKey publicKey) {
-        if (publicKey instanceof RSAPublicKey) {
-            return "SHA256withRSA";
-        }
-        if (publicKey instanceof ECPublicKey) {
-            return "SHA256withECDSA";
-        }
-        throw new IllegalArgumentException("Unsupported Web-eID public key algorithm: " + publicKey.getAlgorithm());
+        return switch (publicKey) {
+            case RSAPublicKey _ -> "SHA256withRSA";
+            case ECPublicKey _ -> "SHA256withECDSA";
+            default -> throw new IllegalArgumentException(
+                    "Unsupported Web-eID public key algorithm: " + publicKey.getAlgorithm());
+        };
     }
 
     private static byte[] cmsSignatureValue(PublicKey publicKey, byte[] extSignature) throws Exception {
-        if (publicKey instanceof ECPublicKey) {
-            return ecdsaP1363ToDer(extSignature);
-        }
-        return extSignature;
+        return switch (publicKey) {
+            // Web-eID returns ECDSA signatures in P1363 form; CMS expects DER.
+            case ECPublicKey _ -> ecdsaP1363ToDer(extSignature);
+            default -> extSignature;
+        };
     }
 
     private static byte[] ecdsaP1363ToDer(byte[] signature) throws Exception {

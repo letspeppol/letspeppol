@@ -108,7 +108,7 @@ public class AccountantService {
                     .build();
             EmailJob saved = emailJobRepository.save(emailJob);
             eventPublisher.publishEvent(new EmailJobCreatedEvent(saved.getId()));
-        } catch (JacksonException e) {
+        } catch (JacksonException _) {
             throw new ServiceException("Could you create email json");
         }
     }

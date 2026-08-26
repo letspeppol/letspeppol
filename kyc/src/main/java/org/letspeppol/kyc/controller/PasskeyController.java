@@ -121,7 +121,7 @@ public class PasskeyController {
         Account account;
         try {
             account = passkeyService.verifyAuthentication(response, session);
-        } catch (IllegalArgumentException ignored) {
+        } catch (IllegalArgumentException _) {
             return authenticationFailed();
         }
 

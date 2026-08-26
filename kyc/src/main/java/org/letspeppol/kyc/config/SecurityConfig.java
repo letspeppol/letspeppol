@@ -396,7 +396,7 @@ public class SecurityConfig {
         AccountType selectedType;
         try {
             selectedType = AccountType.valueOf(selectedAccountType);
-        } catch (IllegalArgumentException exception) {
+        } catch (IllegalArgumentException _) {
             throw invalidOwnershipGrant();
         }
         return ownershipRepository

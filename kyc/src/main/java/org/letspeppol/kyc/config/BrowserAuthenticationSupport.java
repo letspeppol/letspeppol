@@ -36,7 +36,7 @@ public final class BrowserAuthenticationSupport {
                             && "application".equalsIgnoreCase(mediaType.getType())
                             && ("json".equalsIgnoreCase(mediaType.getSubtype())
                             || mediaType.getSubtype().toLowerCase(Locale.ROOT).endsWith("+json")));
-        } catch (InvalidMediaTypeException ignored) {
+        } catch (InvalidMediaTypeException _) {
             return false;
         }
     }

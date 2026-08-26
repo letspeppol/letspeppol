@@ -66,7 +66,7 @@ class PasswordResetServiceTests {
     void requestResetCreatesTokenForExistingAccount() {
         passwordResetService.requestReset(account.getEmail());
         assertThat(tokenRepository.findAll()).hasSize(1);
-        PasswordResetToken token = tokenRepository.findAll().get(0);
+        PasswordResetToken token = tokenRepository.findAll().getFirst();
         assertThat(token.getAccount().getId()).isEqualTo(account.getId());
     }
 
@@ -79,7 +79,7 @@ class PasswordResetServiceTests {
     @Test
     void resetPasswordHappyPathMarksTokenUsedAndChangesPassword() {
         passwordResetService.requestReset(account.getEmail());
-        PasswordResetToken token = tokenRepository.findAll().get(0);
+        PasswordResetToken token = tokenRepository.findAll().getFirst();
         passwordResetService.resetPassword(token.getToken(), "newStrongPassword!");
         PasswordResetToken updated = tokenRepository.findById(token.getId()).orElseThrow();
         assertThat(updated.getUsedOn()).isNotNull();
@@ -90,7 +90,7 @@ class PasswordResetServiceTests {
     @Test
     void resetPasswordRejectsExpiredToken() {
         passwordResetService.requestReset(account.getEmail());
-        PasswordResetToken token = tokenRepository.findAll().get(0);
+        PasswordResetToken token = tokenRepository.findAll().getFirst();
         token.setExpiresOn(Instant.now().minus(2, ChronoUnit.HOURS));
         tokenRepository.save(token);
         assertThatThrownBy(() -> passwordResetService.resetPassword(token.getToken(), "anotherPassword123"))
@@ -101,7 +101,7 @@ class PasswordResetServiceTests {
     @Test
     void resetPasswordRejectsUsedToken() {
         passwordResetService.requestReset(account.getEmail());
-        PasswordResetToken token = tokenRepository.findAll().get(0);
+        PasswordResetToken token = tokenRepository.findAll().getFirst();
         passwordResetService.resetPassword(token.getToken(), "newStrongPassword!");
         assertThatThrownBy(() -> passwordResetService.resetPassword(token.getToken(), "secondTryPassword"))
                 .isInstanceOf(KycException.class)
@@ -111,7 +111,7 @@ class PasswordResetServiceTests {
     @Test
     void resetPasswordRejectsWeakPassword() {
         passwordResetService.requestReset(account.getEmail());
-        PasswordResetToken token = tokenRepository.findAll().get(0);
+        PasswordResetToken token = tokenRepository.findAll().getFirst();
         assertThatThrownBy(() -> passwordResetService.resetPassword(token.getToken(), "123"))
                 .isInstanceOf(KycException.class)
                 .hasMessage(KycErrorCodes.INVALID_PASSWORD);
@@ -120,7 +120,7 @@ class PasswordResetServiceTests {
     @Test
     void purgeExpiredRemovesExpiredUnusedTokens() {
         passwordResetService.requestReset(account.getEmail());
-        PasswordResetToken token1 = tokenRepository.findAll().get(0);
+        PasswordResetToken token1 = tokenRepository.findAll().getFirst();
         token1.setExpiresOn(Instant.now().minus(90, ChronoUnit.MINUTES));
         tokenRepository.save(token1);
         passwordResetService.requestReset(account.getEmail());

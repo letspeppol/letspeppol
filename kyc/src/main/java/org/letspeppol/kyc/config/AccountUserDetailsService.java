@@ -26,7 +26,7 @@ public class AccountUserDetailsService implements UserDetailsService {
         if (!username.contains("@")) {
             try {
                 account = accountRepository.findByExternalId(UUID.fromString(username));
-            } catch (IllegalArgumentException ignored) {
+            } catch (IllegalArgumentException _) {
             }
         }
 

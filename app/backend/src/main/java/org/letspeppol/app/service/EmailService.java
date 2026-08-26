@@ -281,7 +281,7 @@ public class EmailService {
             if (remaining > 0) {
                 try {
                     Thread.sleep(Duration.ofNanos(remaining).toMillis());
-                } catch (InterruptedException ie) {
+                } catch (InterruptedException _) {
                     Thread.currentThread().interrupt();
                 }
             }

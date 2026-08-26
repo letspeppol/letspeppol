@@ -49,28 +49,30 @@ public class SignatureUtil {
             sig.initVerify(publicKey);
             sig.update(webEidSignedBytes(publicKey, pdfDigest));
             return sig.verify(signature);
-        } catch (Exception e) {
+        } catch (Exception _) {
             return false;
         }
     }
 
     private static Signature webEidSignature(PublicKey publicKey) throws GeneralSecurityException {
-        if (publicKey instanceof RSAPublicKey) {
-            return Signature.getInstance(RAW_RSA);
-        }
-        if (publicKey instanceof ECPublicKey) {
-            return Signature.getInstance(RAW_ECDSA_P1363);
-        }
-        throw new InvalidKeyException("Unsupported Web-eID public key algorithm: " + publicKey.getAlgorithm());
+        return switch (publicKey) {
+            case RSAPublicKey _ -> Signature.getInstance(RAW_RSA);
+            case ECPublicKey _ -> Signature.getInstance(RAW_ECDSA_P1363);
+            default -> throw new InvalidKeyException(
+                    "Unsupported Web-eID public key algorithm: " + publicKey.getAlgorithm());
+        };
     }
 
     private static byte[] webEidSignedBytes(PublicKey publicKey, byte[] pdfDigest) {
-        if (publicKey instanceof RSAPublicKey) {
-            byte[] digestInfo = new byte[SHA256_DIGESTINFO_PREFIX.length + pdfDigest.length];
-            System.arraycopy(SHA256_DIGESTINFO_PREFIX, 0, digestInfo, 0, SHA256_DIGESTINFO_PREFIX.length);
-            System.arraycopy(pdfDigest, 0, digestInfo, SHA256_DIGESTINFO_PREFIX.length, pdfDigest.length);
-            return digestInfo;
-        }
-        return pdfDigest;
+        return switch (publicKey) {
+            // RSA signs the SHA-256 DigestInfo structure, ECDSA signs the bare digest.
+            case RSAPublicKey _ -> {
+                byte[] digestInfo = new byte[SHA256_DIGESTINFO_PREFIX.length + pdfDigest.length];
+                System.arraycopy(SHA256_DIGESTINFO_PREFIX, 0, digestInfo, 0, SHA256_DIGESTINFO_PREFIX.length);
+                System.arraycopy(pdfDigest, 0, digestInfo, SHA256_DIGESTINFO_PREFIX.length, pdfDigest.length);
+                yield digestInfo;
+            }
+            default -> pdfDigest;
+        };
     }
 }

@@ -119,9 +119,9 @@ public class NotificationService {
                     .build();
             EmailJob saved = emailJobRepository.save(emailJob);
             eventPublisher.publishEvent(new EmailJobCreatedEvent(saved.getId()));
-        } catch (JacksonException e) {
+        } catch (JacksonException _) {
             log.error("Failed to convert email object to json");
-        } catch (Exception e) {
+        } catch (Exception _) {
             log.error("Unable to create email notification");
         }
     }
@@ -181,7 +181,7 @@ public class NotificationService {
                     .build();
             EmailJob saved = emailJobRepository.save(emailJob);
             eventPublisher.publishEvent(new EmailJobCreatedEvent(saved.getId()));
-        } catch (JacksonException e) {
+        } catch (JacksonException _) {
             log.error("Failed to convert error email object to json");
         } catch (Exception e) {
             log.error("Unable to create error email notification for document {}", document.getId(), e);
