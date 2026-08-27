@@ -272,6 +272,19 @@
     "sponsors": "sponsors tiers",
     "sponsors-title": "Sponsors Bronze, Argent et Or réunis"
   },
+  "nav": {
+    "account": "Account",
+    "logout": "Log out",
+    "products": "Products",
+    "home": "Home",
+    "invoices": "Invoices",
+    "partners": "Partners"
+  },
+  "not-found": {
+    "title": "Page not found",
+    "message": "The page you are looking for does not exist or has been moved.",
+    "back-home": "Back to home"
+  },
   "error": {
     "DUPLICATE_REQUEST": "Cette demande a déjà été traitée.",
     "UBL_DOCUMENT_ALREADY_CREATED": "Ce document a déjà été soumis pour envoi. Modifiez le document existant.",
