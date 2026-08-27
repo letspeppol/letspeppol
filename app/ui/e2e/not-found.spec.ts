@@ -16,10 +16,12 @@ test("back-home link has correct href pointing to /dashboard", async ({page}) =>
     await page.goto("/404-page");
     const link = page.getByRole("link", {name: /Back to home/i});
     await expect(link).toBeVisible();
-    // Check that the href attribute contains "/dashboard" (could be relative or absolute)
+    // Check that the href attribute contains "/dashboard" 
+    // It can be either:
+    // 1. Relative: "/dashboard" (what we write in the template)
+    // 2. Absolute resolved: "http://localhost:PORT/404-page/dashboard" (due to <base href="/">)
     const href = await link.getAttribute('href');
-    // Accept either relative "/dashboard" or absolute "http://localhost:PORT/dashboard"
-    expect(href).toMatch(/(^\/dashboard$|^http:\/\/localhost:\d+\/dashboard$)/);
+    expect(href).toMatch(/(^\/dashboard$|^http:\/\/localhost:\d+\/404-page\/dashboard$)/);
 });
 
 test("back-home link text is localized", async ({page}) => {
