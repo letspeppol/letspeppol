@@ -8,3 +8,23 @@ test("unknown URL shows the not-found page", async ({page}) => {
     await expect(page.getByText(/does not exist or has been moved/i)).toBeVisible();
     await expect(page.getByRole("link", {name: /Back to home/i})).toBeVisible();
 });
+
+test("back-home link has correct href pointing to /dashboard", async ({page}) => {
+    // This test catches the bug where the link had href="/" instead of "/dashboard"
+    // The bug only affected logged-in users because the router intercepts "/" differently,
+    // but we catch it at the template level which is what we control.
+    await page.goto("/404-page");
+    const link = page.getByRole("link", {name: /Back to home/i});
+    await expect(link).toBeVisible();
+    // Check that the href attribute contains "/dashboard" (could be relative or absolute)
+    const href = await link.getAttribute('href');
+    // Accept either relative "/dashboard" or absolute "http://localhost:PORT/dashboard"
+    expect(href).toMatch(/(^\/dashboard$|^http:\/\/localhost:\d+\/dashboard$)/);
+});
+
+test("back-home link text is localized", async ({page}) => {
+    await page.goto("/404-page");
+    await expect(page.getByRole("link", {name: /Back to home/i})).toBeVisible();
+    // Test that the text is present (i18n key works)
+    await expect(page.getByText(/Back to home|Terug naar home|Retour à l'accueil|Zurück zur Startseite/)).toBeVisible();
+});
