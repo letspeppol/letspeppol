@@ -132,7 +132,7 @@ services:
       context: ../../app/ui
       dockerfile: Dockerfile
       args:
-        ENVIRONMENT: local
+        ENVIRONMENT: prod
     image: lp-ui:latest
     depends_on:
       - app
@@ -141,8 +141,6 @@ services:
     ports:
       - "${UI_BIND_IP:-0.0.0.0}:${UI_PORT:-3010}:80"
 #      - "443:443"
-    volumes:
-      - ./var/lib/acme/:/etc/nginx/ssl/:ro
 volumes:
   db-data:
 networks:
