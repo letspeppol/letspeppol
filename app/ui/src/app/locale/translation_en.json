@@ -273,6 +273,19 @@
     "sponsors": "tier sponsors",
     "sponsors-title": "Bronze, Silver and Gold sponsors combined"
   },
+  "nav": {
+    "account": "Account",
+    "logout": "Log out",
+    "products": "Products",
+    "home": "Home",
+    "invoices": "Invoices",
+    "partners": "Partners"
+  },
+  "not-found": {
+    "title": "Page not found",
+    "message": "The page you are looking for does not exist or has been moved.",
+    "back-home": "Back to home"
+  },
   "error": {
     "DUPLICATE_REQUEST": "This request was already processed.",
     "UBL_DOCUMENT_ALREADY_CREATED": "This document was already submitted for delivery. Update the existing document instead.",
