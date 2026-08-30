@@ -181,8 +181,12 @@
                         <span t="account.add-attachment-to-notification">Add attachment to notification</span>
                     </label>
                     <label class="field full">
-                        <span t="account.email-notification-cc-list">Email notification CC list</span>
-                        <textarea value.bind="company.emailNotificationCCList" change.trigger="validateEmailNotificationCCList()"></textarea>
+                        <span t="account.email-notification-cc-list-incoming">Incoming documents: email CC list</span>
+                        <textarea value.bind="company.emailNotificationCcListIncoming" change.trigger="validateEmailNotificationCcList('incoming')"></textarea>
+                    </label>
+                    <label class="field full">
+                        <span t="account.email-notification-cc-list-outgoing">Outgoing documents: email CC list</span>
+                        <textarea value.bind="company.emailNotificationCcListOutgoing" change.trigger="validateEmailNotificationCcList('outgoing')"></textarea>
                     </label>
                 </div>
             </div>
@@ -190,4 +194,3 @@
         </div>
     </section>
 </application-view>
-
