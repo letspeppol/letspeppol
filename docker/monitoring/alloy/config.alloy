@@ -98,7 +98,8 @@ loki.write "loki_writer" {
 
 prometheus.scrape "kyc_metrics" {
   targets = [
-    {"__address__" = "kyc:8084"}, // 172.17.0.1:8084 for local KYC
+    {"__address__" = "green-kyc:8084", "deployment" = "green"},
+    {"__address__" = "blue-kyc:8084", "deployment" = "blue"},
   ]
 
   scrape_interval = "15s"
@@ -108,7 +109,8 @@ prometheus.scrape "kyc_metrics" {
 
 prometheus.scrape "app_metrics" {
   targets = [
-    {"__address__" = "app:8085"}, // 172.17.0.1:8085 for local App
+    {"__address__" = "green-app:8085", "deployment" = "green"},
+    {"__address__" = "blue-app:8085", "deployment" = "blue"},
   ]
 
   scrape_interval = "15s"
@@ -118,7 +120,8 @@ prometheus.scrape "app_metrics" {
 
 prometheus.scrape "proxy_metrics" {
   targets = [
-    {"__address__" = "proxy:8086"}, // 172.17.0.1:8086 for local Proxy
+    {"__address__" = "green-proxy:8086", "deployment" = "green"},
+    {"__address__" = "blue-proxy:8086", "deployment" = "blue"},
   ]
 
   scrape_interval = "15s"

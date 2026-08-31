@@ -4,13 +4,8 @@ services:
     image: minio/minio
     command: "minio server --address ':9000' --console-address ':9001' /data"
     environment:
-      # NOTE: mimir/config.yml and loki/config.yml authenticate to MinIO with these SAME credentials but
-      # read them from their own (bind-mounted) config files. Rotating MINIO_ROOT_PASSWORD therefore
-      # requires updating those two files in lockstep (or running mimir/loki with -config.expand-env=true).
-      # The default below keeps all three consumers in sync out of the box; MinIO is only reachable on the
-      # internal observability network (no published port), so this is not an externally-exposed secret.
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-mimir}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-supersecret}
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?MINIO_ROOT_USER must be set in .env}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?MINIO_ROOT_PASSWORD must be set in .env}
       MINIO_DEFAULT_BUCKETS: mimir
     volumes:
       - minio_data:/data
@@ -24,9 +19,9 @@ services:
     entrypoint: >
       /bin/sh -c "
       sleep 3;
-      /usr/bin/mc alias set myminio http://minio:9000 ${MINIO_ROOT_USER:-mimir} ${MINIO_ROOT_PASSWORD:-supersecret};
-      /usr/bin/mc mb myminio/mimir myminio/mimir-blocks myminio/mimir-alertmanager myminio/mimir-ruler 
-      /usr/bin/mc mb myminio/loki-data myminio/loki-ruler;
+      /usr/bin/mc alias set myminio http://minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD};
+      /usr/bin/mc mb --ignore-existing myminio/mimir myminio/mimir-blocks myminio/mimir-alertmanager myminio/mimir-ruler;
+      /usr/bin/mc mb --ignore-existing myminio/loki-data myminio/loki-ruler;
       #/usr/bin/mc policy set public mimir mimir-blocks mimir-alertmanager mimir-ruler loki-data loki-ruler;
       exit 0;
       "
@@ -35,7 +30,10 @@ services:
 
   mimir:
     image: grafana/mimir:latest
-    command: ["-config.file=/etc/mimir.yaml"]
+    command: ["-config.file=/etc/mimir.yaml", "-config.expand-env=true"]
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?MINIO_ROOT_USER must be set in .env}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?MINIO_ROOT_PASSWORD must be set in .env}
     hostname: mimir
     depends_on:
       - minio
@@ -51,21 +49,22 @@ services:
       SERVER_NAME: ${SERVER_NAME}
     volumes:
       - ./alloy/config.alloy:/etc/alloy/config.alloy
-      - /var/run/docker.sock:/var/run/docker.sock:ro
     command: [ "run", "/etc/alloy/config.alloy", "--server.http.listen-addr=0.0.0.0:12345" ]
     depends_on:
       - loki
       - mimir
     networks:
       - observability
-      - web
 
   loki:
     image: grafana/loki:latest
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?MINIO_ROOT_USER must be set in .env}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?MINIO_ROOT_PASSWORD must be set in .env}
     volumes:
       - ./loki/config.yml:/etc/loki/config.yml
       - loki_data:/loki
-    command: -config.file=/etc/loki/config.yml
+    command: ["-config.file=/etc/loki/config.yml", "-config.expand-env=true"]
     networks:
       - observability
 
@@ -74,7 +73,7 @@ services:
     environment:
       GF_SECURITY_ADMIN_USER: ${GRAFANA_USER:-admin}
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASS:?GRAFANA_PASS must be set in .env}
-      GF_SERVER_ROOT_URL: https://${GRAFANA_DOMAIN}/
+      GF_SERVER_ROOT_URL: https://${GRAFANA_DOMAIN}:8443/
       DISCORD_WEBHOOK_URL: ${DISCORD_WEBHOOK_URL}
     volumes:
       - grafana_data:/var/lib/grafana
@@ -88,6 +87,7 @@ services:
       - web
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=web"
       - "traefik.http.routers.grafana.rule=Host(`${GRAFANA_DOMAIN}`)"
       - "traefik.http.routers.grafana.entrypoints=internal"
       - "traefik.http.routers.grafana.tls.certresolver=${CERT_RESOLVER}"
@@ -125,8 +125,10 @@ networks:
   observability:
     name: observability
     driver: bridge
+    internal: true
   web:
     external: true
+    name: web
 
 volumes:
   minio_data:

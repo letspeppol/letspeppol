@@ -27,7 +27,7 @@ services:
       SCRADA_COMPANY_KEY: ${SCRADA_COMPANY_KEY}
       BACKUP_DATA_DIR: /opt/data/proxy
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -h $DB_HOST -p $DB_PORT -U $DB_USER"]
+      test: ["CMD-SHELL", "pg_isready -h $${DB_HOST} -p $${DB_PORT} -U $${DB_USER}"]
       interval: 5s
       timeout: 5s
       retries: 12
@@ -35,9 +35,11 @@ services:
     volumes:
       - /mnt/data/proxy:/opt/data/proxy
     networks:
-      - web
-      - default
-      - observability
+      default:
+      database:
+      observability:
+        aliases:
+          - blue-proxy
 
   app:
     build:
@@ -67,7 +69,7 @@ services:
       OPEN_COLLECTIVE_API_KEY: ${OPEN_COLLECTIVE_API_KEY}
       DOCUMENT_PRICE: ${DOCUMENT_PRICE}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -h $DB_HOST -p $DB_PORT -U $DB_USER"]
+      test: ["CMD-SHELL", "pg_isready -h $${DB_HOST} -p $${DB_PORT} -U $${DB_USER}"]
       interval: 5s
       timeout: 5s
       retries: 12
@@ -75,8 +77,11 @@ services:
     volumes:
       - /mnt/data/app:/opt/data/app
     networks:
-      - web
-      - default
+      default:
+      database:
+      observability:
+        aliases:
+          - blue-app
 
   kyc:
     build:
@@ -112,7 +117,7 @@ services:
       WEBEID_TRUSTED_CA_TRUSTSTORE: /kyc/truststore/belgian-eid.jks
       WEBEID_TRUSTED_CA_TRUSTSTORE_PASSWORD: changeit
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -h $DB_HOST -p $DB_PORT -U $DB_USER"]
+      test: ["CMD-SHELL", "pg_isready -h $${DB_HOST} -p $${DB_PORT} -U $${DB_USER}"]
       interval: 5s
       timeout: 5s
       retries: 12
@@ -120,8 +125,11 @@ services:
     volumes:
       - /mnt/data/kyc:/opt/data/kyc
     networks:
-      - web
-      - default
+      default:
+      database:
+      observability:
+        aliases:
+          - blue-kyc
 
   ui:
     build:
@@ -139,48 +147,53 @@ services:
       - default
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=web"
 
       # JWT middleware
-      - "traefik.http.middlewares.jwt-auth.plugin.jwt-token.secret=${ACCESS_TOKEN_KEY}"
+      - "traefik.http.middlewares.blue-jwt-auth.plugin.jwt-token.secret=${ACCESS_TOKEN_KEY}"
 
       # API rate limit middleware
-      - "traefik.http.middlewares.api-limit.ratelimit.average=20"
-      - "traefik.http.middlewares.api-limit.ratelimit.burst=75"
-      - "traefik.http.middlewares.api-limit.ratelimit.period=1s"
-      - "traefik.http.middlewares.api-limit.ratelimit.sourceCriterion.ipStrategy.depth=1"
+      - "traefik.http.middlewares.blue-api-limit.ratelimit.average=20"
+      - "traefik.http.middlewares.blue-api-limit.ratelimit.burst=75"
+      - "traefik.http.middlewares.blue-api-limit.ratelimit.period=1s"
+      - "traefik.http.middlewares.blue-api-limit.ratelimit.sourceCriterion.ipStrategy.depth=1"
 
       # Public router
       - "traefik.http.routers.blue.rule=Host(`${ACTIVE_DOMAIN_BLUE}`)"
       - "traefik.http.routers.blue.entrypoints=websecure"
-      - "traefik.http.routers.blue.service=nginx"
+      - "traefik.http.routers.blue.service=blue-ui"
       - "traefik.http.routers.blue.tls.certresolver=${CERT_RESOLVER_BLUE}"
 
       # API router
       - "traefik.http.routers.blue-api.rule=Host(`${ACTIVE_DOMAIN_BLUE}`) && (PathPrefix(`/proxy/api/`) || PathPrefix(`/app/api/`) || PathPrefix(`/kyc/api/`))"
       - "traefik.http.routers.blue-api.entryPoints=websecure"
-      - "traefik.http.routers.blue-api.middlewares=api-limit"
-      - "traefik.http.routers.blue-api.service=nginx"
+      - "traefik.http.routers.blue-api.middlewares=blue-api-limit"
+      - "traefik.http.routers.blue-api.service=blue-ui"
       - "traefik.http.routers.blue-api.tls.certresolver=${CERT_RESOLVER_BLUE}"
 
       # Protected API router
       - "traefik.http.routers.blue-sapi.rule=Host(`${ACTIVE_DOMAIN_BLUE}`) && (PathPrefix(`/proxy/sapi/`) || PathPrefix(`/app/sapi/`) || PathPrefix(`/kyc/sapi/`))"
       - "traefik.http.routers.blue-sapi.entryPoints=websecure"
-      - "traefik.http.routers.blue-sapi.middlewares=jwt-auth,api-limit"
-      - "traefik.http.routers.blue-sapi.service=nginx"
+      - "traefik.http.routers.blue-sapi.middlewares=blue-jwt-auth,blue-api-limit"
+      - "traefik.http.routers.blue-sapi.service=blue-ui"
       - "traefik.http.routers.blue-sapi.tls.certresolver=${CERT_RESOLVER_BLUE}"
 
       # Local API router
       - "traefik.http.routers.blue-lapi.rule=Host(`localhost`) && (PathPrefix(`/proxy/lapi/`) || PathPrefix(`/app/lapi/`) || PathPrefix(`/kyc/lapi/`))"
       - "traefik.http.routers.blue-lapi.entrypoints=internal"
-      - "traefik.http.routers.blue-lapi.middlewares=api-limit"
-      - "traefik.http.routers.blue-lapi.service=nginx"
+      - "traefik.http.routers.blue-lapi.middlewares=blue-api-limit"
+      - "traefik.http.routers.blue-lapi.service=blue-ui"
 
       # Service definition
-      - "traefik.http.services.nginx.loadbalancer.server.port=80"
+      - "traefik.http.services.blue-ui.loadbalancer.server.port=80"
 
 networks:
   web:
     external: true
+    name: web
+  database:
+    external: true
+    name: database
   observability:
     external: true
     name: observability
