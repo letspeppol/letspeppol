@@ -5,7 +5,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-
   db:
     image: postgres:16-alpine
     restart: unless-stopped
@@ -30,7 +29,6 @@ services:
       start_period: 10s
     ports:
       - "127.0.0.1:${DB_PORT:-5432}:5432"
-
   proxy:
     build:
       context: ../../proxy
@@ -63,7 +61,6 @@ services:
       BACKUP_DATA_DIR: /opt/data/proxy
     volumes:
       - ./opt/data/proxy:/opt/data/proxy
-
   app:
     build:
       context: ../../app/backend
@@ -89,7 +86,6 @@ services:
       DOCUMENT_PRICE: ${DOCUMENT_PRICE}
     volumes:
       - ./opt/data/app:/opt/data/app
-
   kyc:
     build:
       context: ../../kyc
@@ -131,27 +127,22 @@ services:
     networks:
       - default
       - observability
-
   ui:
     build:
       context: ../../app/ui
       dockerfile: Dockerfile
       args:
-        ENVIRONMENT: local
+        ENVIRONMENT: prod
     image: lp-ui:latest
     depends_on:
       - app
     environment:
       NODE_ENV: production
     ports:
-      - "${UI_PORT:-3000}:80"
-      - "443:443"
-    volumes:
-      - ./var/lib/acme/:/etc/nginx/ssl/:ro
-
+      - "${UI_BIND_IP:-0.0.0.0}:${UI_PORT:-3010}:80"
+#      - "443:443"
 volumes:
   db-data:
-
 networks:
   default:
     name: lp-network

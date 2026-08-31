@@ -13,6 +13,7 @@ import {ResetPassword} from "../login/reset-password";
 import {ForgotPassword} from "../login/forgot-password";
 import {Dashboard} from "../dashboard/dashboard";
 import {Sponsors} from "../sponsor/sponsors";
+import {NotFound} from "./not-found";
 
 @route({
     routes: [
@@ -29,6 +30,7 @@ import {Sponsors} from "../sponsor/sponsors";
         { path: '/account',                                 component: Account,              title: 'Account',               },
         { path: ['', '/dashboard'],                         component: Dashboard,            title: 'Dashboard',             },
     ],
+    fallback: NotFound,
 })
 export class LetsPeppol {
     private alert = resolve(Alert);
