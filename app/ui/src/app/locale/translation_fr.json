@@ -1,4 +1,9 @@
 {
+    "webeid": {
+        "native-unavailable": "Application Web eID introuvable. Installez ou lancez l’application Web eID, puis redémarrez votre navigateur.",
+        "extension-unavailable": "Extension de navigateur Web eID indisponible. Installez et activez l’extension Web eID dans votre navigateur.",
+        "version-mismatch": "Le logiciel Web eID est obsolète. Veuillez mettre à jour l’application Web eID et l’extension de navigateur."
+    },
   "account": {
     "account-name": "Nom du compte",
     "activate-on-peppol": "Activer sur Peppol",

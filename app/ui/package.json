@@ -22,6 +22,7 @@
   "devDependencies": {
     "@aurelia/testing": "^2.0.0-rc.1",
     "@aurelia/vite-plugin": "^2.0.0-rc.1",
+    "@playwright/test": "^1.62.1",
     "@types/node": "^22.10.2",
     "eslint": "^9.17.0",
     "globals": "^15.14.0",
