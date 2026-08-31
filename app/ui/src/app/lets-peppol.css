@@ -1574,3 +1574,45 @@ table, tr, td {
         transform: rotate(360deg);
     }
 }
+
+/* ============================================================================
+   16. 404 Not Found Page
+   ============================================================================ */
+.not-found-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: var(--space-16);
+}
+
+.not-found-content {
+    text-align: center;
+    max-width: 500px;
+    width: 100%;
+}
+
+.not-found-content h1 {
+    font-size: var(--font-size-3xl);
+    margin-bottom: var(--space-8);
+    color: var(--text);
+    font-weight: 700;
+}
+
+.not-found-content p {
+    font-size: var(--font-size-lg);
+    color: var(--muted);
+    margin-bottom: var(--space-12);
+    line-height: 1.6;
+}
+
+.not-found-actions {
+    display: flex;
+    justify-content: center;
+}
+
+.not-found-actions .btn {
+    padding: var(--space-06) var(--space-12);
+    font-size: var(--font-size-base);
+}

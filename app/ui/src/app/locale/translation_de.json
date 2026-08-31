@@ -273,6 +273,19 @@
     "sponsors": "Stufensponsoren",
     "sponsors-title": "Bronze-, Silber- und Gold-Sponsoren zusammen"
   },
+  "nav": {
+    "account": "Account",
+    "logout": "Log out",
+    "products": "Products",
+    "home": "Home",
+    "invoices": "Invoices",
+    "partners": "Partners"
+  },
+  "not-found": {
+    "title": "Page not found",
+    "message": "The page you are looking for does not exist or has been moved.",
+    "back-home": "Back to home"
+  },
   "error": {
     "DUPLICATE_REQUEST": "Diese Anfrage wurde bereits verarbeitet.",
     "UBL_DOCUMENT_ALREADY_CREATED": "Dieses Dokument wurde bereits zur Zustellung eingereicht. Aktualisieren Sie das vorhandene Dokument.",
