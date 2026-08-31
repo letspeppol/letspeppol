@@ -1,5 +1,6 @@
 {
   "account": {
+        "change-password-failed": "Passwort \u00e4ndern fehlgeschlagen",
     "account-name": "Kontoname",
     "activate-on-peppol": "Auf Peppol aktivieren",
     "add-attachment-to-notification": "Anhang zur Benachrichtigung hinzufügen",
@@ -173,6 +174,7 @@
   "common": {
     "apply": "Anwenden",
     "cancel": "Abbrechen",
+            "retry": "Erneut versuchen",
     "clear": "Leeren",
     "close": "Schließen",
     "confirm": "Bestätigen",
@@ -475,6 +477,8 @@
     },
     "title": "Rechnungen",
     "validationModal": {
+            "upload-title": "UBL hochladen",
+            "drop-ubl": "UBL hier ablegen",
       "error-count": "Anzahl der Fehler",
       "title": "Validierung"
     },

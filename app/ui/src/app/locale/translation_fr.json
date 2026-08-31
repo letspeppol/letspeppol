@@ -1,5 +1,6 @@
 {
   "account": {
+        "change-password-failed": "\u00c9chec du changement de mot de passe",
     "account-name": "Nom du compte",
     "activate-on-peppol": "Activer sur Peppol",
     "add-attachment-to-notification": "Ajouter une pièce jointe à la notification",
@@ -172,6 +173,7 @@
   "common": {
     "apply": "Appliquer",
     "cancel": "Annuler",
+            "retry": "R\u00e9essayer",
     "clear": "Effacer",
     "close": "Fermer",
     "confirm": "Confirmer",
@@ -472,6 +474,8 @@
     },
     "title": "Factures",
     "validationModal": {
+            "upload-title": "T\u00e9l\u00e9verser UBL",
+            "drop-ubl": "D\u00e9posez le fichier UBL ici",
       "error-count": "Nombre d'erreurs",
       "title": "Validation"
     },

@@ -1,5 +1,6 @@
 {
   "account": {
+        "change-password-failed": "Change password failed",
     "account-name": "Account Name",
     "activate-on-peppol": "Activate On Peppol",
     "add-attachment-to-notification": "Add attachment to notification",
@@ -173,6 +174,7 @@
   "common": {
     "apply": "Apply",
     "cancel": "Cancel",
+            "retry": "Retry",
     "clear": "Clear",
     "close": "Close",
     "confirm": "Confirm",
@@ -475,6 +477,8 @@
     },
     "title": "Invoices",
     "validationModal": {
+            "upload-title": "Upload UBL",
+            "drop-ubl": "Drop UBL here",
       "error-count": "Error count",
       "title": "Validation"
     },
