@@ -307,6 +307,15 @@
       }
     },
     "all": "Tous",
+    "allowanceChargeModal": {
+      "charge": "Frais",
+      "discount": "Remise",
+      "title": "Remises/Frais",
+      "quantity": "Quantité/Montant",
+      "percentage": "Pourcentage",
+      "amount": "Montant",
+      "cost": "Frais"
+    },
     "attachmentModal": {
       "auto-pdf": "Inclure le PDF de facture généré automatiquement",
       "auto-pdf-replace": "Un PDF de facture est généré automatiquement. Désactivez-le ci-dessus si votre fichier importé le remplace.",

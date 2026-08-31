@@ -1,9 +1,9 @@
 import {resolve} from "@aurelia/kernel";
 import {InvoiceContext} from "../../invoice-context";
-import {ClassifiedTaxCategory, CreditNoteLine, getAmount, InvoiceLine, normalizeLinePrice, UBLLine} from "../../../services/peppol/ubl";
+import {ClassifiedTaxCategory, CreditNoteLine, InvoiceLine, UBLLine} from "../../../services/peppol/ubl";
 import {InvoiceCalculator, roundTwoDecimals} from "../../invoice-calculator";
 import {DocumentType, InvoiceService} from "../../../services/app/invoice-service";
-import {bindable} from "aurelia";
+import {bindable, IEventAggregator} from "aurelia";
 import {ProductDto} from "../../../services/app/product-service";
 import {CompanyService} from "../../../services/app/company-service";
 import {
@@ -14,20 +14,24 @@ import {
     getReadonlyDisplayedVatRatePercent,
     getSharedVatReasonText,
     isVatExemptRuleset,
+    VAT_RATE_OPTIONS,
     ZeroVatReasonId,
 } from "../../../services/app/vat-rules";
 import {InvoiceZeroVatReasonModal} from "./modals/invoice-zero-vat-reason-modal";
 import {I18N} from "@aurelia/i18n";
+import {AlertType} from "../../../components/alert/alert";
 
 export class InvoiceEditItems {
     private invoiceContext = resolve(InvoiceContext);
     private invoiceCalculator = resolve(InvoiceCalculator);
     private invoiceService = resolve(InvoiceService);
     private companyService = resolve(CompanyService);
+    private ea: IEventAggregator = resolve(IEventAggregator);
     private i18n = resolve(I18N);
 
     @bindable readOnly;
     @bindable autoSave;
+    @bindable invoiceAllowanceChargeModal;
 
     taxCategories: ClassifiedTaxCategory[] = [
         { ID: "S", Percent: 21, TaxScheme: { ID: 'VAT' } },
@@ -35,7 +39,7 @@ export class InvoiceEditItems {
         { ID: "S", Percent: 6, TaxScheme: { ID: 'VAT' } },
         { ID: "Z", Percent: 0, TaxScheme: { ID: 'VAT' } },
     ];
-    vatRateOptions = [21, 12, 6, 0];
+    vatRateOptions = VAT_RATE_OPTIONS;
     zeroVatReasonModal: InvoiceZeroVatReasonModal;
 
     getDisplayedVatRate(taxCategory: ClassifiedTaxCategory): number | undefined {
@@ -114,9 +118,7 @@ export class InvoiceEditItems {
     }
 
     calcLineTotal(line: UBLLine, autoSave: boolean = true) {
-        const quantity = getAmount(line);
-        const unitPrice = normalizeLinePrice(line);
-        line.LineExtensionAmount.value = roundTwoDecimals(unitPrice * quantity.value);
+        this.invoiceCalculator.recalculateLineExtensionAmount(line);
         this.invoiceCalculator.calculateTaxAndTotals(this.invoiceContext.selectedInvoice);
         this.syncAutomaticHeaderVatReason(line);
         if (autoSave) {
@@ -265,5 +267,18 @@ export class InvoiceEditItems {
 
     syncSharedVatReasonText(reasonId: ZeroVatReasonId, reasonText: string, line?: UBLLine) {
         applySharedVatReasonText(this.invoiceContext.selectedInvoice, reasonId, reasonText, line);
+    }
+
+    toggleAllowanceCharge() {
+        if (this.invoiceContext.showAllowanceChargeForLines &&
+            this.invoiceContext.lines.some(line => (line.AllowanceCharge?.length ?? 0) > 0)) {
+            this.ea.publish('alert', {alertType: AlertType.Warning, text: this.i18n.tr('alert.invoice.allowance-charge-items-hide-notallowed')});
+            return;
+        }
+        this.invoiceContext.showAllowanceChargeForLines = !this.invoiceContext.showAllowanceChargeForLines;
+    }
+
+    showAllowanceChargeModal(line) {
+        this.invoiceAllowanceChargeModal.showModal(line);
     }
 }

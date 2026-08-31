@@ -121,4 +121,258 @@ describe('InvoiceCalculator', () => {
         expect(invoice.TaxTotal?.[0]?.TaxSubtotal?.[0]?.TaxCategory?.TaxExemptionReason).toBe(NOT_SUBJECT_TO_VAT_REASON_TEXT);
         expect(invoice.TaxTotal?.[0]?.TaxSubtotal?.[0]?.TaxAmount.value).toBe(0);
     });
+
+    test('includes document allowances and charges in VAT and monetary totals', () => {
+        const invoice = createInvoice([
+            createLine('1', 100, { ID: 'S', Percent: 21, TaxScheme: { ID: 'VAT' } }),
+        ]);
+        invoice.AllowanceCharge = [
+            {
+                ChargeIndicator: true,
+                Amount: { __currencyID: 'EUR', value: 10 },
+                TaxCategory: { ID: 'S', Percent: 21, TaxScheme: { ID: 'VAT' } },
+            },
+            {
+                ChargeIndicator: false,
+                Amount: { __currencyID: 'EUR', value: 5 },
+                TaxCategory: { ID: 'S', Percent: 21, TaxScheme: { ID: 'VAT' } },
+            },
+        ];
+
+        new InvoiceCalculator().calculateTaxAndTotals(invoice);
+
+        expect(invoice.TaxTotal?.[0]?.TaxAmount.value).toBe(22.05);
+        expect(invoice.TaxTotal?.[0]?.TaxSubtotal?.[0]?.TaxableAmount.value).toBe(105);
+        expect(invoice.LegalMonetaryTotal).toMatchObject({
+            LineExtensionAmount: { value: 100 },
+            TaxExclusiveAmount: { value: 105 },
+            TaxInclusiveAmount: { value: 127.05 },
+            AllowanceTotalAmount: { value: 5 },
+            ChargeTotalAmount: { value: 10 },
+            PayableAmount: { value: 127.05 },
+        });
+    });
+    test('calculates line allowances with header discounts and charges in the VAT breakdown', () => {
+        const line = createLine('1', 100, { ID: 'S', Percent: 21, TaxScheme: { ID: 'VAT' } });
+        line.AllowanceCharge = [{
+            ChargeIndicator: false,
+            Amount: { __currencyID: 'EUR', value: 10 },
+        }];
+        const invoice = createInvoice([line]);
+        invoice.AllowanceCharge = [
+            {
+                ChargeIndicator: false,
+                Amount: { __currencyID: 'EUR', value: 5 },
+                TaxCategory: { ID: 'S', Percent: 21, TaxScheme: { ID: 'VAT' } },
+            },
+            {
+                ChargeIndicator: true,
+                Amount: { __currencyID: 'EUR', value: 8 },
+                TaxCategory: { ID: 'S', Percent: 21, TaxScheme: { ID: 'VAT' } },
+            },
+        ];
+        const calculator = new InvoiceCalculator();
+
+        calculator.recalculateLineExtensionAmount(line);
+        calculator.calculateTaxAndTotals(invoice);
+
+        expect(line.LineExtensionAmount.value).toBe(90);
+        expect(invoice.TaxTotal?.[0]?.TaxSubtotal?.[0]).toMatchObject({
+            TaxableAmount: {value: 93},
+            TaxAmount: {value: 19.53},
+        });
+        expect(invoice.LegalMonetaryTotal).toMatchObject({
+            LineExtensionAmount: {value: 90},
+            TaxExclusiveAmount: {value: 93},
+            TaxInclusiveAmount: {value: 112.53},
+            AllowanceTotalAmount: {value: 5},
+            ChargeTotalAmount: {value: 8},
+            PayableAmount: {value: 112.53},
+        });
+    });
+
+    test('applies percentage-based line discounts to the full quantity-priced amount', () => {
+        const line = createLine('1', 100, { ID: 'S', Percent: 21, TaxScheme: { ID: 'VAT' } });
+        line.InvoicedQuantity!.value = 3;
+        line.AllowanceCharge = [{
+            ChargeIndicator: false,
+            MultiplierFactorNumeric: 10,
+            Amount: { __currencyID: 'EUR', value: 30 },
+        }];
+        const invoice = createInvoice([line]);
+        const calculator = new InvoiceCalculator();
+
+        calculator.recalculateLineExtensionAmount(line);
+        calculator.calculateTaxAndTotals(invoice);
+
+        expect(line.LineExtensionAmount.value).toBe(270);
+        expect(invoice.TaxTotal?.[0]?.TaxSubtotal?.[0]).toMatchObject({
+            TaxableAmount: {value: 270},
+            TaxAmount: {value: 56.7},
+        });
+        expect(invoice.LegalMonetaryTotal.PayableAmount.value).toBe(326.7);
+    });
+
+    test('calculates a 10% line discount before VAT and the payable amount', () => {
+        const line = createLine('1', 100, { ID: 'S', Percent: 21, TaxScheme: { ID: 'VAT' } });
+        line.AllowanceCharge = [{
+            ChargeIndicator: false,
+            MultiplierFactorNumeric: 10,
+            Amount: { __currencyID: 'EUR', value: 10 },
+        }];
+        const invoice = createInvoice([line]);
+        const calculator = new InvoiceCalculator();
+
+        calculator.recalculateLineExtensionAmount(line);
+        calculator.calculateTaxAndTotals(invoice);
+
+        expect(line.LineExtensionAmount.value).toBe(90);
+        expect(invoice.TaxTotal?.[0]?.TaxAmount.value).toBe(18.9);
+        expect(invoice.LegalMonetaryTotal).toMatchObject({
+            LineExtensionAmount: { value: 90 },
+            TaxExclusiveAmount: { value: 90 },
+            TaxInclusiveAmount: { value: 108.9 },
+            PayableAmount: { value: 108.9 },
+        });
+    });
+
+    test('refreshes a percentage-based line discount when its unit price changes', () => {
+        const line = createLine('1', 100, { ID: 'S', Percent: 21, TaxScheme: { ID: 'VAT' } });
+        line.InvoicedQuantity!.value = 3;
+        line.AllowanceCharge = [{
+            ChargeIndicator: false,
+            MultiplierFactorNumeric: 10,
+            Amount: { __currencyID: 'EUR', value: 10 },
+        }];
+        const calculator = new InvoiceCalculator();
+
+        line.Price.PriceAmount.value = 120;
+        calculator.recalculateLineExtensionAmount(line);
+
+        expect(line.AllowanceCharge[0]).toMatchObject({
+            BaseAmount: { value: 360 },
+            Amount: { value: 36 },
+        });
+        expect(line.LineExtensionAmount.value).toBe(324);
+    });
+
+    test('refreshes percentage-based document allowances from the line extension total', () => {
+        const invoice = createInvoice([
+            createLine('1', 200, { ID: 'S', Percent: 21, TaxScheme: { ID: 'VAT' } }),
+        ]);
+        invoice.AllowanceCharge = [{
+            ChargeIndicator: false,
+            MultiplierFactorNumeric: 10,
+            Amount: { __currencyID: 'EUR', value: 0 },
+            TaxCategory: { ID: 'S', Percent: 21, TaxScheme: { ID: 'VAT' } },
+        }];
+
+        new InvoiceCalculator().calculateTaxAndTotals(invoice);
+
+        expect(invoice.AllowanceCharge[0]).toMatchObject({
+            BaseAmount: { value: 200 },
+            Amount: { value: 20 },
+        });
+        expect(invoice.LegalMonetaryTotal).toMatchObject({
+            TaxExclusiveAmount: { value: 180 },
+            TaxInclusiveAmount: { value: 217.8 },
+            PayableAmount: { value: 217.8 },
+        });
+    });
+
+    test('keeps header allowance charges in their respective VAT-rate breakdowns', () => {
+        const standardRateLine = createLine('1', 100, { ID: 'S', Percent: 21, TaxScheme: { ID: 'VAT' } });
+        standardRateLine.AllowanceCharge = [{
+            ChargeIndicator: false,
+            MultiplierFactorNumeric: 10,
+            Amount: { __currencyID: 'EUR', value: 10 },
+        }];
+        const reducedRateLine = createLine('2', 50, { ID: 'S', Percent: 6, TaxScheme: { ID: 'VAT' } });
+        const invoice = createInvoice([standardRateLine, reducedRateLine]);
+        invoice.AllowanceCharge = [
+            {
+                ChargeIndicator: false,
+                Amount: { __currencyID: 'EUR', value: 5 },
+                TaxCategory: { ID: 'S', Percent: 21, TaxScheme: { ID: 'VAT' } },
+            },
+            {
+                ChargeIndicator: true,
+                Amount: { __currencyID: 'EUR', value: 2 },
+                TaxCategory: { ID: 'S', Percent: 6, TaxScheme: { ID: 'VAT' } },
+            },
+        ];
+        const calculator = new InvoiceCalculator();
+
+        calculator.recalculateLineExtensionAmount(standardRateLine);
+        calculator.calculateTaxAndTotals(invoice);
+
+        const subtotals = invoice.TaxTotal?.[0]?.TaxSubtotal ?? [];
+        const byRate = Object.fromEntries(subtotals.map(item => [item.TaxCategory?.Percent ?? 0, item]));
+        expect(standardRateLine.LineExtensionAmount.value).toBe(90);
+        expect(byRate[21]).toMatchObject({
+            TaxableAmount: {value: 85},
+            TaxAmount: {value: 17.85},
+        });
+        expect(byRate[6]).toMatchObject({
+            TaxableAmount: {value: 52},
+            TaxAmount: {value: 3.12},
+        });
+        expect(invoice.LegalMonetaryTotal).toMatchObject({
+            LineExtensionAmount: {value: 140},
+            TaxExclusiveAmount: {value: 137},
+            TaxInclusiveAmount: {value: 157.97},
+            AllowanceTotalAmount: {value: 5},
+            ChargeTotalAmount: {value: 2},
+            PayableAmount: {value: 157.97},
+        });
+    });
+
+    test('distributes a header allowance pro rata over mixed VAT rates', () => {
+        const standardRateLine = createLine('1', 100, { ID: 'S', Percent: 21, TaxScheme: { ID: 'VAT' } });
+        standardRateLine.AllowanceCharge = [{
+            ChargeIndicator: false,
+            Amount: { __currencyID: 'EUR', value: 10 },
+        }];
+        const reducedRateLine = createLine('2', 30, { ID: 'S', Percent: 9, TaxScheme: { ID: 'VAT' } });
+        const invoice = createInvoice([standardRateLine, reducedRateLine]);
+        invoice.AllowanceCharge = [
+            // €12 header allowance split by net line value: 75% at 21%, 25% at 9%.
+            {
+                ChargeIndicator: false,
+                Amount: { __currencyID: 'EUR', value: 9 },
+                TaxCategory: { ID: 'S', Percent: 21, TaxScheme: { ID: 'VAT' } },
+            },
+            {
+                ChargeIndicator: false,
+                Amount: { __currencyID: 'EUR', value: 3 },
+                TaxCategory: { ID: 'S', Percent: 9, TaxScheme: { ID: 'VAT' } },
+            },
+        ];
+        const calculator = new InvoiceCalculator();
+
+        calculator.recalculateLineExtensionAmount(standardRateLine);
+        calculator.calculateTaxAndTotals(invoice);
+
+        const subtotals = invoice.TaxTotal?.[0]?.TaxSubtotal ?? [];
+        const byRate = Object.fromEntries(subtotals.map(item => [item.TaxCategory?.Percent ?? 0, item]));
+        expect(standardRateLine.LineExtensionAmount.value).toBe(90);
+        expect(reducedRateLine.LineExtensionAmount.value).toBe(30);
+        expect(byRate[21]).toMatchObject({
+            TaxableAmount: {value: 81},
+            TaxAmount: {value: 17.01},
+        });
+        expect(byRate[9]).toMatchObject({
+            TaxableAmount: {value: 27},
+            TaxAmount: {value: 2.43},
+        });
+        expect(invoice.TaxTotal?.[0]?.TaxAmount.value).toBe(19.44);
+        expect(subtotals.reduce((total, subtotal) => total + subtotal.TaxableAmount.value, 0)).toBe(108);
+        expect(invoice.LegalMonetaryTotal).toMatchObject({
+            LineExtensionAmount: {value: 120},
+            AllowanceTotalAmount: {value: 12},
+            TaxExclusiveAmount: {value: 108},
+            TaxInclusiveAmount: {value: 127.44},
+            PayableAmount: {value: 127.44},
+        });
+    });
 });

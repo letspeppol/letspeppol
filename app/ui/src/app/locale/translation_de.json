@@ -308,6 +308,15 @@
       }
     },
     "all": "Alle",
+    "allowanceChargeModal": {
+      "charge": "Zuschlag",
+      "discount": "Rabatt",
+      "title": "Rabatte/Kosten",
+      "quantity": "Menge/Betrag",
+      "percentage": "Prozentsatz",
+      "amount": "Betrag",
+      "cost": "Kosten"
+    },
     "attachmentModal": {
       "auto-pdf": "Automatisch generiertes Rechnungs-PDF einschließen",
       "auto-pdf-replace": "Ein Rechnungs-PDF wird automatisch generiert. Schalten Sie es oben aus, wenn Ihre hochgeladene Datei es ersetzt.",

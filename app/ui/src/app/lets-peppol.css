@@ -1330,7 +1330,7 @@ main.container .data-table tbody td {
 }
 
 /* iOS-style toggle for the VAT-display setting on the Account page. */
-.vat-display-toggle {
+.display-toggle {
     display: flex;
     align-items: center;
     gap: var(--space-08);

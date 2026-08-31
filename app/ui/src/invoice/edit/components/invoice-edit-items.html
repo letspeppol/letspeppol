@@ -8,7 +8,9 @@
     calc-line-total.bind="(line, autoSave) => calcLineTotal(line, autoSave)"
     record-vat-reason-selection.bind="(reasonId, reasonText) => recordVatReasonSelection(reasonId, reasonText)"
     get-suggested-vat-reason-text.bind="(reasonId, line) => getSuggestedVatReasonText(reasonId, line)"
-    sync-shared-vat-reason-text.bind="(reasonId, reasonText, line) => syncSharedVatReasonText(reasonId, reasonText, line)"></invoice-zero-vat-reason-modal>
+    sync-shared-vat-reason-text.bind="(reasonId, reasonText, line) => syncSharedVatReasonText(reasonId, reasonText, line)">
+</invoice-zero-vat-reason-modal>
+
 <div class="line-items">
     <div class="line-items-head">
         <h3 t="invoice.edit.invoice-lines">Invoice lines</h3>
@@ -30,7 +32,17 @@
                 <th class="num" style="width:120px" t="invoice.edit.amount">Amount</th>
                 <th class="num" style="width:140px" t="invoice.edit.unit-price">Unit price</th>
                 <th if.bind="hasVatNumber()" class="num" style="width:140px" t="invoice.edit.tax">Tax</th>
-                <th class="num" style="width:140px" t="invoice.edit.total">Total</th>
+                <th>
+                    <div style="display:flex; flex-direction: row">
+                        <span if.bind="invoiceContext.showAllowanceChargeForLines" t="invoice.allowanceChargeModal.title">Discount/Costs</span>
+                        <button if.bind="!readOnly" class="icon-btn" title="Edit" t="[title]common.edit" click.trigger="toggleAllowanceCharge()">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-tag-icon lucide-tag"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>
+                        </button>
+                    </div>
+                </th>
+                <th class="num" style="width:140px">
+                    <span t="invoice.edit.total">Total</span>
+                </th>
                 <th if.bind="!readOnly" class="actions-col" style="width:1%" t="invoice.edit.actions">Actions</th>
             </tr>
             </thead>
@@ -92,6 +104,24 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-badge-percent-icon lucide-badge-percent"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m15 9-6 6"/><path d="M9 9h.01"/><path d="M15 15h.01"/></svg>
                             </button>
                         </span>
+                    </div>
+                </td>
+                <td>
+                    <div if.bind="invoiceContext.showAllowanceChargeForLines" style="display: flex; flex-direction: row; min-width: 200px">
+                        <div>
+                            <div repeat.for="acLine of line.AllowanceCharge" style="display: flex; align-items: center; gap: var(--space-025)">
+                                <small if.bind="acLine.AllowanceChargeReason">${acLine.AllowanceChargeReason}</small>
+                                <small else t="${acLine.ChargeIndicator ? 'invoice.allowanceChargeModal.charge' : 'invoice.allowanceChargeModal.discount'}"></small>
+                                <small if.bind="acLine.AllowanceChargeReason" title.bind="acLine.AllowanceChargeReason" style="display: flex;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-info-icon lucide-info"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                                </small>
+                                <small if.bind="acLine.MultiplierFactorNumeric">${acLine.MultiplierFactorNumeric}% ( ${acLine.Amount.value.toFixed(2) | price:acLine.Amount.__currencyID} )</small>
+                                <small else> ${acLine.Amount.value.toFixed(2) | price:acLine.Amount.__currencyID}</small>
+                            </div>
+                        </div>
+                        <button if.bind="!readOnly" class="icon-btn" title="Edit" t="[title]common.edit" click.trigger="showAllowanceChargeModal(line)">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pen-icon lucide-pen"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>
+                        </button>
                     </div>
                 </td>
                 <td class="num"><span class="line-total">${lineTotalAmount(line?.LineExtensionAmount?.value, line?.Item?.ClassifiedTaxCategory) | price:item.currency}</span></td>

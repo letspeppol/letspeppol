@@ -94,6 +94,7 @@ export interface UBLBaseLine {
     LineExtensionAmount: Amount;
     AccountingCost?: string;
     OrderLineReference?: OrderLineReference;
+    AllowanceCharge?: AllowanceCharge[];
     Item: Item;
     Price: Price;
 }
@@ -202,8 +203,11 @@ export interface TaxTotal {
 
 export interface AllowanceCharge {
     ChargeIndicator: boolean;
+    AllowanceChargeReasonCode?: string;
     AllowanceChargeReason?: string;
+    MultiplierFactorNumeric?: number;
     Amount: Amount;
+    BaseAmount?: Amount;
     TaxCategory?: TaxCategory;
 }
 
@@ -211,6 +215,7 @@ export interface MonetaryTotal {
     LineExtensionAmount?: Amount;
     TaxExclusiveAmount?: Amount;
     TaxInclusiveAmount?: Amount;
+    AllowanceTotalAmount?: Amount;
     ChargeTotalAmount?: Amount;
     PayableAmount: Amount;
 }
