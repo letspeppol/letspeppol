@@ -1,5 +1,6 @@
 import {route} from "@aurelia/router";
 import {Login} from "../login/login";
+import {NotFound} from "./not-found";
 import {Registration} from "../registration/registration";
 import {Invoices} from "../invoice/invoices";
 import {Partners} from "../partner/partners";
@@ -29,6 +30,9 @@ import {Sponsors} from "../sponsor/sponsors";
         { path: '/account',                                 component: Account,              title: 'Account',               },
         { path: ['', '/dashboard'],                         component: Dashboard,            title: 'Dashboard',             },
     ],
+    fallback: NotFound,
+    // Fallback route data is inherited by the NotFound view: it must be
+    // reachable without authentication, like the other public pages.
 })
 export class LetsPeppol {
     private alert = resolve(Alert);

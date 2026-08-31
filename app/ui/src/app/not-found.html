@@ -1,0 +1,11 @@
+<import from="../components/view/wizard-view"></import>
+
+<wizard-view>
+    <h1 au-slot="header" t="not-found.title">Page not found</h1>
+    <div class="auth-form" style="text-align: center">
+        <p t="not-found.message">The page you are looking for does not exist or has been moved.</p>
+        <div class="auth-actions" style="justify-content: center">
+            <a href="/dashboard" class="btn primary" t="not-found.back-home">Back to home</a>
+        </div>
+    </div>
+</wizard-view>

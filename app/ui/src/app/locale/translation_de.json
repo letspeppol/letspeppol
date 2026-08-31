@@ -1,4 +1,9 @@
 {
+    "not-found": {
+        "title": "Seite nicht gefunden",
+        "message": "Die gesuchte Seite existiert nicht oder wurde verschoben.",
+        "back-home": "Zurück zur Startseite"
+    },
   "account": {
     "account-name": "Kontoname",
     "activate-on-peppol": "Auf Peppol aktivieren",
