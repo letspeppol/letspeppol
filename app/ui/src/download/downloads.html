@@ -1,0 +1,79 @@
+<import from="../components/view/application-view"></import>
+<import from="../app/value-converters/date-format"></import>
+<import from="../app/value-converters/date-time-format"></import>
+<import from="./downloads.css"></import>
+
+<application-view>
+    <div class="downloads-page">
+        <div class="section-header">
+            <div>
+                <h1 t="download.title">UBL downloads</h1>
+                <p class="download-intro" t="download.description">Create a ZIP with finalized invoices and credit notes. Both dates are included.</p>
+            </div>
+            <span class="download-limit">${activeJobCount} / 5 <span t="download.active-links">active archives</span></span>
+        </div>
+
+        <form class="card download-form" submit.trigger="createJob()">
+            <label class="select">
+                <span t="download.from-date">From date</span>
+                <input type="date" required value.bind="fromDate" max.bind="toDate || dateMaximum" />
+            </label>
+            <label class="select">
+                <span t="download.to-date">To date</span>
+                <input type="date" required value.bind="toDate" min.bind="fromDate || dateMinimum" />
+            </label>
+            <button type="submit" class="btn primary" disabled.bind="!canCreate">
+                <span if.bind="!submitting" t="download.create">Create archive</span>
+                <span else t="download.creating">Creating…</span>
+            </button>
+            <p if.bind="validationKey" class="form-error download-validation" t.bind="validationKey"></p>
+            <p if.bind="!validationKey && activeJobCount >= 5" class="form-error download-validation" t="download.validation.limit"></p>
+        </form>
+
+        <div class="card table-card download-table-card">
+            <div class="table-wrapper">
+                <table class="data-table" aria-describedby="downloads-title">
+                    <thead>
+                    <tr>
+                        <th t="download.table.period">Period</th>
+                        <th t="download.table.file">File</th>
+                        <th t="download.table.status">Status</th>
+                        <th t="download.table.created">Created</th>
+                        <th t="download.table.completed">Completed</th>
+                        <th t="download.table.expires">Expires</th>
+                        <th t="download.table.downloads">Downloads</th>
+                        <th class="actions-col" t="download.table.actions">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr repeat.for="job of jobs">
+                        <td>${job.fromDate | dateFormat} – ${job.toDate | dateFormat}</td>
+                        <td>${job.filename || '—'}</td>
+                        <td>
+                            <span class="download-status status-${job.status.toLowerCase()}" t.bind="'download.status.' + job.status">${job.status}</span>
+                            <span if.bind="job.status === 'FAILED'" class="download-failure" t="download.generation-failed">Archive generation failed</span>
+                        </td>
+                        <td>${job.createdOn | dateTimeFormat}</td>
+                        <td>${job.completedOn ? (job.completedOn | dateTimeFormat) : '—'}</td>
+                        <td>${job.expiresOn ? (job.expiresOn | dateTimeFormat) : '—'}</td>
+                        <td>${job.downloadCount} / 3</td>
+                        <td class="actions-col download-actions">
+                            <button if.bind="job.status === 'READY'" type="button" class="btn primary" click.trigger="download(job)" t="download.action.download">Download</button>
+                            <button if.bind="job.status === 'FAILED'" type="button" class="btn" disabled.bind="activeJobCount >= 5" click.trigger="retryJob(job)" t="download.action.retry">Retry</button>
+                            <button type="button" class="icon-btn" click.trigger="deleteJob(job)" title="Delete" t="[title]common.delete">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div if.bind="!loading && jobs.length === 0" class="empty-state">
+                <p t="download.empty">No archives have been created yet.</p>
+            </div>
+            <div if.bind="loading && jobs.length === 0" class="empty-state">
+                <p t="download.loading">Loading archives…</p>
+            </div>
+        </div>
+    </div>
+</application-view>

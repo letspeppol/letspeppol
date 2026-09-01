@@ -134,6 +134,11 @@
         }
       }
     },
+    "download": {
+      "create-failed": "Archief aanmaken mislukt", "created": "Archiefopdracht aangemaakt", "delete-failed": "Archief verwijderen mislukt", "deleted": "Archief verwijderd",
+      "download-failed": "Archief downloaden mislukt", "empty-period": "Er zijn geen definitieve documenten met UBL-gegevens in deze periode", "limit-reached": "Er zijn maximaal vijf actieve archieven toegestaan",
+      "load-failed": "Archieven laden mislukt", "retried": "Archiefgeneratie opnieuw gestart", "retry-failed": "Archiefgeneratie opnieuw proberen mislukt", "validation-failed": "De gekozen periode is ongeldig"
+    },
     "neutral": "Bericht",
     "partner": {
       "create-failed": "Partner aanmaken mislukt",
@@ -224,6 +229,14 @@
       "excl": "excl. btw",
       "incl": "incl. btw"
     }
+  },
+  "download": {
+    "action": {"download": "Downloaden", "retry": "Opnieuw proberen"}, "active-links": "actieve archieven", "create": "Archief aanmaken", "creating": "Aanmaken…",
+    "description": "Maak een ZIP met definitieve facturen en creditnota’s. Beide datums zijn inbegrepen.", "empty": "Er zijn nog geen archieven aangemaakt.", "from-date": "Van datum", "generation-failed": "Archiefgeneratie mislukt", "loading": "Archieven laden…",
+    "status": {"FAILED": "Mislukt", "PENDING": "In afwachting", "PROCESSING": "Bezig", "READY": "Klaar"},
+    "table": {"actions": "Acties", "completed": "Voltooid", "created": "Aangemaakt", "downloads": "Downloads", "expires": "Vervalt", "file": "Bestand", "period": "Periode", "status": "Status"},
+    "title": "UBL-downloads", "to-date": "Tot datum",
+    "validation": {"limit": "Verwijder een archief voordat u een nieuw aanmaakt.", "order": "De begindatum mag niet na de einddatum liggen.", "required": "Beide datums zijn verplicht.", "same-year": "Beide datums moeten in hetzelfde jaar liggen."}
   },
   "documentDirection": {
     "INCOMING": "Inkomend",
@@ -552,6 +565,7 @@
     "account": "Account",
     "brand-alt": "Let’s Peppol",
     "dashboard": "Dashboard",
+    "downloads": "Downloads",
     "invoices": "Facturen",
     "language": "Taal",
     "partners": "Partners",

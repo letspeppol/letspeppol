@@ -135,6 +135,11 @@
         }
       }
     },
+    "download": {
+      "create-failed": "Archiv konnte nicht erstellt werden", "created": "Archivauftrag erstellt", "delete-failed": "Archiv konnte nicht gelöscht werden", "deleted": "Archiv gelöscht",
+      "download-failed": "Archiv konnte nicht heruntergeladen werden", "empty-period": "In diesem Zeitraum gibt es keine endgültigen Dokumente mit UBL-Daten", "limit-reached": "Es sind höchstens fünf aktive Archive erlaubt",
+      "load-failed": "Archive konnten nicht geladen werden", "retried": "Archiverstellung erneut gestartet", "retry-failed": "Archiverstellung konnte nicht erneut gestartet werden", "validation-failed": "Der ausgewählte Zeitraum ist ungültig"
+    },
     "neutral": "Nachricht",
     "partner": {
       "create-failed": "Partner konnte nicht angelegt werden",
@@ -225,6 +230,14 @@
       "excl": "exkl. MwSt.",
       "incl": "inkl. MwSt."
     }
+  },
+  "download": {
+    "action": {"download": "Herunterladen", "retry": "Erneut versuchen"}, "active-links": "aktive Archive", "create": "Archiv erstellen", "creating": "Wird erstellt…",
+    "description": "Erstellen Sie eine ZIP-Datei mit endgültigen Rechnungen und Gutschriften. Beide Daten sind eingeschlossen.", "empty": "Es wurden noch keine Archive erstellt.", "from-date": "Von", "generation-failed": "Archiverstellung fehlgeschlagen", "loading": "Archive werden geladen…",
+    "status": {"FAILED": "Fehlgeschlagen", "PENDING": "Ausstehend", "PROCESSING": "In Bearbeitung", "READY": "Bereit"},
+    "table": {"actions": "Aktionen", "completed": "Fertiggestellt", "created": "Erstellt", "downloads": "Downloads", "expires": "Läuft ab", "file": "Datei", "period": "Zeitraum", "status": "Status"},
+    "title": "UBL-Downloads", "to-date": "Bis",
+    "validation": {"limit": "Löschen Sie ein Archiv, bevor Sie ein neues erstellen.", "order": "Das Von-Datum darf nicht nach dem Bis-Datum liegen.", "required": "Beide Daten sind erforderlich.", "same-year": "Beide Daten müssen im selben Jahr liegen."}
   },
   "documentDirection": {
     "INCOMING": "Eingehend",
@@ -555,6 +568,7 @@
     "account": "Konto",
     "brand-alt": "Let’s Peppol",
     "dashboard": "Dashboard",
+    "downloads": "Downloads",
     "invoices": "Rechnungen",
     "language": "Sprache",
     "partners": "Partner",

@@ -13,6 +13,7 @@ import {ResetPassword} from "../login/reset-password";
 import {ForgotPassword} from "../login/forgot-password";
 import {Dashboard} from "../dashboard/dashboard";
 import {Sponsors} from "../sponsor/sponsors";
+import {Downloads} from "../download/downloads";
 
 @route({
     routes: [
@@ -26,6 +27,7 @@ import {Sponsors} from "../sponsor/sponsors";
         { path: '/partners',                                component: Partners,             title: 'Partners',              },
         { path: '/products',                                component: Products,             title: 'Products',              },
         { path: '/sponsors',                                component: Sponsors,             title: 'Sponsors',              },
+        { path: '/downloads',                               component: Downloads,            title: 'Downloads',             },
         { path: '/account',                                 component: Account,              title: 'Account',               },
         { path: ['', '/dashboard'],                         component: Dashboard,            title: 'Dashboard',             },
     ],

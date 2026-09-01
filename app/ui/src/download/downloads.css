@@ -1,0 +1,85 @@
+.downloads-page {
+    display: grid;
+    gap: var(--space-125);
+}
+
+.download-intro {
+    color: var(--muted);
+    margin: var(--space-035) 0 0;
+}
+
+.download-limit {
+    color: var(--muted);
+    white-space: nowrap;
+}
+
+.download-form {
+    display: flex;
+    align-items: end;
+    flex-wrap: wrap;
+    gap: var(--space-075);
+    padding: var(--space-1);
+}
+
+.download-form .btn {
+    min-height: 2.5rem;
+}
+
+.download-validation {
+    flex-basis: 100%;
+    margin: 0;
+}
+
+.download-table-card {
+    overflow: hidden;
+}
+
+.download-status {
+    display: inline-flex;
+    border-radius: 999px;
+    padding: var(--space-02) var(--space-05);
+    font-size: .8rem;
+    font-weight: 700;
+    background: color-mix(in hsl, var(--muted) 12%, var(--panel));
+}
+
+.status-ready {
+    color: var(--status-ok);
+    background: color-mix(in hsl, var(--status-ok) 12%, var(--panel));
+}
+
+.status-failed {
+    color: var(--status-overdue);
+    background: color-mix(in hsl, var(--status-overdue) 12%, var(--panel));
+}
+
+.status-pending,
+.status-processing {
+    color: var(--primary);
+    background: color-mix(in hsl, var(--primary) 12%, var(--panel));
+}
+
+.download-failure {
+    display: block;
+    max-width: 18rem;
+    overflow: hidden;
+    color: var(--muted);
+    font-size: .8rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.download-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--space-035);
+}
+
+@media (width <= 700px) {
+    .download-form .select,
+    .download-form .select input,
+    .download-form .btn {
+        width: 100%;
+    }
+}
