@@ -205,19 +205,23 @@ export class Account {
         }
     }
 
-    validateEmailNotificationCCList() {
-        if (this.company.emailNotificationCCList) {
+    validateEmailNotificationCcList(direction: 'incoming' | 'outgoing') {
+        const property = direction === 'incoming'
+            ? 'emailNotificationCcListIncoming'
+            : 'emailNotificationCcListOutgoing';
+        const ccList = this.company[property];
+        if (ccList) {
             const validEmails = [];
-            const emails = this.company.emailNotificationCCList.replace('\n', '').replace(' ', '').split(',');
+            const emails = ccList.replace('\n', '').replace(' ', '').split(',');
             for (const email of emails) {
                 if (validateEmail(email)) {
                     validEmails.push(email);
                 }
             }
             if (validEmails.length) {
-                this.company.emailNotificationCCList = validEmails.join(',');
+                this.company[property] = validEmails.join(',');
             } else {
-                this.company.emailNotificationCCList = undefined;
+                this.company[property] = undefined;
             }
         }
     }

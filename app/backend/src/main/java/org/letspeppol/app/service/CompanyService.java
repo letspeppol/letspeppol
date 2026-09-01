@@ -112,7 +112,8 @@ public class CompanyService {
         company.setVatRuleset(companyDto.vatRuleset() == null ? VatRuleset.VAT_REGISTERED : companyDto.vatRuleset());
         company.setEnableEmailNotification(companyDto.enableEmailNotification());
         company.setAddAttachmentToNotification(companyDto.addAttachmentToNotification());
-        company.setEmailNotificationCcList(sanitizeCcList(companyDto.emailNotificationCCList()));
+        company.setEmailNotificationCcListIncoming(sanitizeCcList(companyDto.emailNotificationCcListIncoming()));
+        company.setEmailNotificationCcListOutgoing(sanitizeCcList(companyDto.emailNotificationCcListOutgoing()));
         company.setAddPdfToSendingInvoice(companyDto.addPdfToSendingInvoice());
         // TODO        company.setNoArchive(companyDto.noArchive());
         company.getRegisteredOffice().setCity(companyDto.registeredOffice().city());
