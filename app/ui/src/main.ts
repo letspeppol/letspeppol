@@ -12,11 +12,14 @@ import {
     NewFeatureSectionCustomAttribute,
 } from "./components/new-feature";
 import {VatDisplayRegistration} from "./services/app/vat-display-service";
+import {captureLoginError} from "./login/pending-login-error";
 import "./components/new-feature/rainbow-border.css";
 import en from "./app/locale/translation_en.json";
 import fr from "./app/locale/translation_fr.json";
 import nl from "./app/locale/translation_nl.json";
 import de from "./app/locale/translation_de.json";
+
+captureLoginError();
 
 Aurelia
     .register(RouterConfiguration.customize({

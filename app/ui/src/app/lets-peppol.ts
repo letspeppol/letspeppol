@@ -9,7 +9,7 @@ const lazy = (load: () => Promise<Record<string, unknown>>) => new NavigationStr
 @route({
     routes: [
         { path: ['/login'],                component: lazy(() => import('../login/login')),                       title: 'Login',                  data: { allowEveryone: true }},
-        { path: '/callback',               component: lazy(() => import('../login/callback')),                    title: 'Callback',               data: { allowEveryone: true }},
+        { path: '/callback',               redirectTo: '/login' },
         { path: '/forgot-password',        component: lazy(() => import('../login/forgot-password')),             title: 'Forgot Password',        data: { allowEveryone: true }},
         { path: '/reset-password',         component: lazy(() => import('../login/reset-password')),              title: 'Reset Password',         data: { allowEveryone: true }},
         { path: '/onboarding',             component: lazy(() => import('../registration/onboarding')),           title: 'Onboarding',             data: { allowEveryone: true }},

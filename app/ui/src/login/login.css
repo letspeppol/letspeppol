@@ -26,10 +26,6 @@
     text-decoration: underline;
 }
 
-.login-remember {
-    justify-content: flex-start;
-}
-
 .login-divider {
     display: flex;
     align-items: center;

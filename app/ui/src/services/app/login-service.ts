@@ -3,7 +3,7 @@ import {singleton} from "aurelia";
 import {jwtDecode} from "jwt-decode";
 import {KYCApi} from "../kyc/kyc-api";
 import {AppApi} from "./app-api";
-import {generateCodeVerifier, generateCodeChallenge, generateState, storePkce, retrievePkce} from "./pkce";
+import {generateCodeVerifier, generateCodeChallenge, generateState} from "./pkce";
 import {OwnershipService, OwnershipSummary} from "./ownership-service";
 import {PartnerService} from "./partner-service";
 import {SponsorService} from "./sponsor-service";
@@ -38,6 +38,11 @@ interface OwnershipSelector {
     type?: string;
 }
 
+export interface AuthorizationResult {
+    authorized: boolean;
+    reason?: string;
+}
+
 @singleton()
 export class LoginService {
     public kycApi = resolve(KYCApi);
@@ -52,13 +57,13 @@ export class LoginService {
     // session continuity rides the HttpOnly KYC cookie via silent re-authorization (see silentLogin()).
     private accessToken: string | null = null;
     private idToken: string | null = null;
-    private silentLoginInFlight: Promise<boolean> | null = null;
+    private silentLoginInFlight: Promise<AuthorizationResult> | null = null;
     private silentLoginSelectorKey: string | null = null;
 
     constructor() {
-        // Fresh page load: in-memory tokens are gone, so restore silently — but skip the callback (it
-        // runs its own exchange), the login page, and anonymous visitors (no session hint). Protected
-        // routes still restore via ensureAuthenticated() in the router hook.
+        // Fresh page load: in-memory tokens are gone, so restore silently — but skip the callback and
+        // login pages, which authorize on their own, and anonymous visitors (no session hint).
+        // Protected routes still restore via ensureAuthenticated() in the router hook.
         const path = window.location.pathname;
         if (path !== CALLBACK_PATH && path !== LOGIN_PATH && localStorage.getItem(SESSION_HINT_KEY)) {
             void this.silentLogin(this.selectorForPath(path));
@@ -98,46 +103,22 @@ export class LoginService {
         const selector = requestedPeppolId
             ? {peppolId: requestedPeppolId, type: this.ownershipService.getRememberedOwnershipType(requestedPeppolId) ?? undefined}
             : this.selectorForPath(window.location.pathname);
-        const restored = await this.silentLogin(selector);
-        return restored && (!requestedPeppolId || this.ownershipService.getCurrentPeppolId() === requestedPeppolId);
+        const {authorized} = await this.silentLogin(selector);
+        return authorized && (!requestedPeppolId || this.ownershipService.getCurrentPeppolId() === requestedPeppolId);
     }
 
-    async initiateLogin(): Promise<void> {
-        const verifier = generateCodeVerifier();
-        const challenge = await generateCodeChallenge(verifier);
-        const state = generateState();
-        storePkce(verifier, state);
-
-        const params = new URLSearchParams({
-            response_type: 'code',
-            client_id: CLIENT_ID,
-            redirect_uri: this.redirectUri,
-            code_challenge: challenge,
-            code_challenge_method: 'S256',
-            state: state,
-            scope: 'openid',
-        });
-        this.addOwnershipSelector(params, this.selectorForPendingNavigation() ?? this.selectorForPath(window.location.pathname));
-
+    async completeLogin(): Promise<AuthorizationResult> {
         this.clearCachedData();
         this.clearSeenNotificationFlag();
-        window.location.href = `${KYC_BASE}/auth/oauth2/authorize?${params.toString()}`;
-    }
-
-    async handleCallback(code: string, state: string): Promise<void> {
-        const pkce = retrievePkce();
-        if (!pkce || pkce.state !== state) {
-            throw new Error('Invalid state parameter');
-        }
-        await this.exchangeCode(code, pkce.verifier);
+        return this.silentLogin(this.selectorForPendingNavigation() ?? this.selectorForPath(window.location.pathname));
     }
 
     /**
      * Silent re-authorization: ride the HttpOnly KYC session to mint a fresh code with no UI
      * (prompt=none). We follow the same-origin redirect and read the code off the final URL; with no
-     * valid session there's no code, so we report failure and the caller falls back to interactive login.
+     * valid session there's no code, so we report failure along with the reason the server gave.
      */
-    async silentLogin(selector: OwnershipSelector | null = this.selectorForPath(window.location.pathname)): Promise<boolean> {
+    async silentLogin(selector: OwnershipSelector | null = this.selectorForPath(window.location.pathname)): Promise<AuthorizationResult> {
         const selectorKey = selector ? `${selector.peppolId}::${selector.type ?? ''}` : '';
         if (this.silentLoginInFlight) {
             if (this.silentLoginSelectorKey === selectorKey) return this.silentLoginInFlight;
@@ -152,7 +133,7 @@ export class LoginService {
         return this.silentLoginInFlight;
     }
 
-    private async doSilentLogin(selector: OwnershipSelector | null): Promise<boolean> {
+    private async doSilentLogin(selector: OwnershipSelector | null): Promise<AuthorizationResult> {
         try {
             const verifier = generateCodeVerifier();
             const challenge = await generateCodeChallenge(verifier);
@@ -179,17 +160,17 @@ export class LoginService {
             const finalUrl = new URL(response.url, window.location.origin);
             // Only trust a code from a same-origin final URL (redirect_uri is same-origin by construction).
             if (finalUrl.origin !== window.location.origin) {
-                return false;
+                return {authorized: false};
             }
             const code = finalUrl.searchParams.get('code');
             const returnedState = finalUrl.searchParams.get('state');
             if (!code || returnedState !== state) {
-                return false;
+                return {authorized: false, reason: await refusalReason(response, finalUrl)};
             }
             await this.exchangeCode(code, verifier);
-            return true;
+            return {authorized: true};
         } catch {
-            return false;
+            return {authorized: false};
         }
     }
 
@@ -201,7 +182,7 @@ export class LoginService {
     async swapOwnership(selection: OwnershipSummary): Promise<void> {
         await this.ownershipService.selectOwnership(selection);
         this.ownershipService.rememberOwnership(selection);
-        if (!await this.silentLogin(selection)) {
+        if (!(await this.silentLogin(selection)).authorized) {
             if (this.accessToken) this.ownershipService.onTokenChanged(this.accessToken);
             throw new Error('Could not re-authorize after switching ownership');
         }
@@ -210,7 +191,7 @@ export class LoginService {
 
     async refreshToken(): Promise<boolean> {
         // The URL's company plus this tab's remembered role is sent on every renewal.
-        return this.silentLogin(this.selectorForPath(window.location.pathname));
+        return (await this.silentLogin(this.selectorForPath(window.location.pathname))).authorized;
     }
 
     private async exchangeCode(code: string, verifier: string): Promise<void> {
@@ -336,5 +317,17 @@ export class LoginService {
 
     private clearSeenNotificationFlag() {
         localStorage.removeItem(SEEN_NOTIFICATION_KEY);
+    }
+}
+
+export async function refusalReason(response: Response, finalUrl: URL): Promise<string | undefined> {
+    const redirectedError = finalUrl.searchParams.get('error');
+    if (redirectedError) return redirectedError;
+    if (response.ok) return undefined;
+    try {
+        const body = await response.json() as {error?: string};
+        return body.error;
+    } catch {
+        return undefined;
     }
 }

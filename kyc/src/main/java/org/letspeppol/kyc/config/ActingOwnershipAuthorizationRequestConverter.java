@@ -24,6 +24,8 @@ public class ActingOwnershipAuthorizationRequestConverter implements Authenticat
     public static final String PEPPOL_ID_PARAMETER = "peppol_id";
     public static final String ACCOUNT_TYPE_PARAMETER = "account_type";
 
+    static final String OWNERSHIP_UNAVAILABLE_DESCRIPTION = "The requested acting ownership is not available";
+
     private final OwnershipRepository ownershipRepository;
     private final AuthenticationConverter delegate;
 
@@ -104,10 +106,15 @@ public class ActingOwnershipAuthorizationRequestConverter implements Authenticat
         return stringValue;
     }
 
+    static boolean isOwnershipUnavailable(OAuth2Error error) {
+        return OAuth2ErrorCodes.INVALID_REQUEST.equals(error.getErrorCode())
+                && OWNERSHIP_UNAVAILABLE_DESCRIPTION.equals(error.getDescription());
+    }
+
     private static OAuth2AuthorizationCodeRequestAuthenticationException invalidSelection() {
         OAuth2Error error = new OAuth2Error(
                 OAuth2ErrorCodes.INVALID_REQUEST,
-                "The requested acting ownership is not available",
+                OWNERSHIP_UNAVAILABLE_DESCRIPTION,
                 null);
         // The standard provider has not validated redirect_uri yet, so do not attach the request.
         return new OAuth2AuthorizationCodeRequestAuthenticationException(error, null);

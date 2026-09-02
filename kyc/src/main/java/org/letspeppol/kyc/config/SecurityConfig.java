@@ -114,7 +114,8 @@ public class SecurityConfig {
                 .with(configurer, c -> {
                     c.oidc(Customizer.withDefaults());
                     c.authorizationEndpoint(endpoint -> endpoint
-                            .authorizationRequestConverter(actingOwnershipAuthorizationRequestConverter));
+                            .authorizationRequestConverter(actingOwnershipAuthorizationRequestConverter)
+                            .errorResponseHandler(new BrowserAuthorizationErrorHandler(uiLoginUrl())));
                 })
                 .exceptionHandling(e -> e.defaultAuthenticationEntryPointFor(
                         new LoginUrlAuthenticationEntryPoint(uiLoginUrl()),

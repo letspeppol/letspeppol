@@ -23,7 +23,10 @@
                 <span t="label.email">Email</span>
                 <input name="username"
                        type="email"
+                       inputmode="email"
                        autocomplete="username webauthn"
+                       autocapitalize="none"
+                       spellcheck="false"
                        required
                        autofocus
                        value.bind="email"
@@ -40,16 +43,12 @@
                        required
                        value.bind="password" />
             </label>
-            <label class="field full checkbox login-remember">
-                <input type="checkbox" checked.bind="rememberEmail" />
-                <span t="login.remember">Remember my email</span>
-            </label>
         </div>
 
         <p if.bind="errorKey" class="form-error" aria-live="assertive" t.bind="errorKey">Sign in failed. Please check your credentials.</p>
 
         <div class="auth-actions">
-            <button type="submit" class="btn primary" disabled.bind="busy || !email || !password">
+            <button type="submit" class="btn primary" disabled.bind="busy">
                 <span t.bind="busy ? 'login.signing-in' : 'login.continue'">Sign in</span>
             </button>
         </div>
@@ -85,7 +84,8 @@
                        autocomplete="one-time-code"
                        required
                        autofocus
-                       value.bind="verificationCode" />
+                       value.bind="verificationCode"
+                       input.trigger="onVerificationCodeInput($event)" />
                 <input else
                        name="recoveryCode"
                        type="text"
@@ -95,14 +95,15 @@
                        autocomplete="one-time-code"
                        required
                        autofocus
-                       value.bind="verificationCode" />
+                       value.bind="verificationCode"
+                       input.trigger="onRecoveryCodeInput($event)" />
             </label>
         </div>
 
         <p if.bind="errorKey" class="form-error" aria-live="assertive" t.bind="errorKey">Verification failed. Please try again.</p>
 
         <div class="auth-actions">
-            <button type="submit" class="btn primary" disabled.bind="busy || !verificationCode">
+            <button type="submit" class="btn primary" disabled.bind="busy">
                 <span t.bind="busy ? 'login.verifying' : 'login.verify'">Verify</span>
             </button>
         </div>

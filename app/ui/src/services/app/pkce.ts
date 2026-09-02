@@ -30,17 +30,3 @@ export async function generateCodeChallenge(verifier: string): Promise<string> {
 export function generateState(): string {
     return randomString(32);
 }
-
-export function storePkce(verifier: string, state: string): void {
-    sessionStorage.setItem('pkce_verifier', verifier);
-    sessionStorage.setItem('pkce_state', state);
-}
-
-export function retrievePkce(): { verifier: string; state: string } | null {
-    const verifier = sessionStorage.getItem('pkce_verifier');
-    const state = sessionStorage.getItem('pkce_state');
-    if (!verifier || !state) return null;
-    sessionStorage.removeItem('pkce_verifier');
-    sessionStorage.removeItem('pkce_state');
-    return { verifier, state };
-}
