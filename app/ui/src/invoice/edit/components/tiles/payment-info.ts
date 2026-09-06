@@ -7,6 +7,7 @@ import {AlertType} from "../../../../components/alert/alert";
 import moment from "moment";
 import {I18N} from "@aurelia/i18n";
 import {formatBelgianStructuredCommunication} from "../../../belgian-structured-communication";
+import {isPaymentInfoComplete} from "../../invoice-validation";
 
 export class PaymentInfo {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -26,9 +27,7 @@ export class PaymentInfo {
         ] })
     get isPaymentInfoComplete(): boolean {
         const inv = this.invoiceContext.selectedInvoice;
-        return !inv?.PaymentMeans
-            || (inv?.PaymentMeans.PaymentMeansCode.value != 30
-                || (inv?.PaymentMeans.PaymentMeansCode.value === 30 && !!inv?.PaymentMeans.PayeeFinancialAccount.ID));
+        return isPaymentInfoComplete(inv?.PaymentMeans);
     }
 
     get shouldShowPaymentQrAction(): boolean {
