@@ -9,9 +9,9 @@ export class CustomerInfo {
     @bindable readOnly: boolean;
     @bindable showCustomerModal;
 
-    @computed('invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PartyName.Name')
+    @computed('invoiceContext.selectedInvoice.AccountingCustomerParty.Party.PartyLegalEntity.RegistrationName')
     get isCustomerInfoComplete(): boolean {
-        return !!this.invoiceContext.selectedInvoice?.AccountingCustomerParty?.Party?.PartyName?.Name;
+        return !!this.invoiceContext.selectedInvoice?.AccountingCustomerParty?.Party?.PartyLegalEntity?.RegistrationName;
     }
 
 }
