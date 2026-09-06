@@ -40,7 +40,7 @@ public class SecurityConfig {
                 .cors(cors -> {})
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/**").permitAll()
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**").permitAll()
                         .requestMatchers("/lapi/monitor/**").permitAll() // Secured by Traefik
                         // Public usage/donation stats rendered on the public site; the app backend calls
                         // /api/stats without a bearer token, so this endpoint must stay public.

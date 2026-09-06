@@ -167,7 +167,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/browser/**", "/error", "/favicon.ico").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**").permitAll()
                         // Local-control API: intentionally unauthenticated at the application layer.
                         // Deployment must restrict it to localhost/internal traffic and Traefik must not expose /lapi/** through any public router.
                         .requestMatchers("/lapi/**").permitAll()
@@ -256,6 +256,7 @@ public class SecurityConfig {
                 // No REFRESH_TOKEN grant: the SPA holds tokens in memory and renews via silent
                 // re-authorization, so no refresh token is issued to the browser.
                 .redirectUri(redirectUri)
+                .redirectUri(redirectUri.replace("/callback", "/oauth2-redirect.html"))
                 .postLogoutRedirectUri(redirectUri.replace("/callback", "/login"))
                 .scope(OidcScopes.OPENID)
                 .clientSettings(ClientSettings.builder()

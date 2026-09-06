@@ -3,6 +3,15 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import aurelia from '@aurelia/vite-plugin';
 
 export default defineConfig({
+  build: {
+    rollupOptions: {
+      input: {
+        app: new URL('./index.html', import.meta.url).pathname,
+        apiDocs: new URL('./api-docs.html', import.meta.url).pathname,
+        oauth2Redirect: new URL('./oauth2-redirect.html', import.meta.url).pathname,
+      },
+    },
+  },
   server: {
     // The three Spring services take longer to become ready than Vite. Opening the browser here
     // makes a normal debug launch look broken while KYC/app/proxy are still starting. Developers

@@ -17,9 +17,8 @@ Architecture and API documentation:
   their matching `RegistrationTest` examples.
 * [API network flows](./readme/api-network-flows.md) groups every implemented API by caller,
   authentication mechanism, and downstream service, with focused diagrams and executable proof.
-* Interactive Swagger UI: [KYC](https://be.letspeppol.org/kyc/swagger-ui.html),
-  [App](https://be.letspeppol.org/app/swagger-ui.html), and
-  [Proxy](https://be.letspeppol.org/proxy/swagger-ui.html).
+* Unified interactive [Swagger UI](https://be.letspeppol.org/api-docs.html) for the KYC, App, and
+  Proxy APIs.
 * Raw OpenAPI JSON: [KYC](https://be.letspeppol.org/kyc/v3/api-docs),
   [App](https://be.letspeppol.org/app/v3/api-docs), and
   [Proxy](https://be.letspeppol.org/proxy/v3/api-docs).
