@@ -129,12 +129,10 @@ export class Account {
 
     async registerOnPeppol() {
         try {
-            this.company.peppolActive = await this.registrationService.registerCompany();
-            localStorage.setItem('peppolActive', String(this.company.peppolActive));
+            this.setPeppolActive(await this.registrationService.registerCompany());
             this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.account.peppol-activated')});
-            window.location.reload();
-        } catch (response: unknown) {
-            if (!(response instanceof Response)) {
+        } catch (error: unknown) {
+            if (!(error instanceof Response)) {
                 this.ea.publish('alert', { alertType: AlertType.Danger, text: this.i18n.tr('alert.account.peppol-activation-request-failed') });
                 return;
             }
@@ -173,13 +171,20 @@ export class Account {
 
     async unregisterFromPeppol() {
         try {
-            this.company.peppolActive = await this.registrationService.unregisterCompany()
-            localStorage.setItem('peppolActive', String(this.company.peppolActive));
+            this.setPeppolActive(await this.registrationService.unregisterCompany());
             this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.account.peppol-removed')});
-            window.location.reload();
         } catch {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.account.peppol-remove-failed')});
         }
+    }
+
+    private setPeppolActive(peppolActive: boolean) {
+        this.company.peppolActive = peppolActive;
+        if (this.companyService.myCompany) {
+            this.companyService.myCompany.peppolActive = peppolActive;
+        }
+        localStorage.setItem('peppolActive', String(peppolActive));
+        this.ea.publish('account:peppol-status-changed', peppolActive);
     }
 
     showChangePasswordModal() {
