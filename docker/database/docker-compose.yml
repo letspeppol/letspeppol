@@ -10,6 +10,7 @@ services:
       - default
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=web"
       - "traefik.http.routers.adminer.rule=Host(`${ADMINER_DOMAIN:?ADMINER_DOMAIN must be set}`)"
       - "traefik.http.routers.adminer.entrypoints=internal"
       - "traefik.http.routers.adminer.tls.certresolver=${CERT_RESOLVER:?CERT_RESOLVER must be set}"
