@@ -135,6 +135,11 @@
         }
       }
     },
+    "download": {
+      "create-failed": "Failed to create archive", "created": "Archive job created", "delete-failed": "Failed to delete archive", "deleted": "Archive deleted",
+      "download-failed": "Failed to download archive", "empty-period": "No finalized documents with UBL data exist in this period", "limit-reached": "At most five active archives are allowed",
+      "load-failed": "Failed to load archives", "retried": "Archive generation restarted", "retry-failed": "Failed to retry archive generation", "validation-failed": "The selected date range is invalid"
+    },
     "neutral": "Message",
     "partner": {
       "create-failed": "Partner creation failed",
@@ -225,6 +230,14 @@
       "excl": "excl. VAT",
       "incl": "incl. VAT"
     }
+  },
+  "download": {
+    "action": {"download": "Download", "retry": "Retry"}, "active-links": "active archives", "create": "Create archive", "creating": "Creating…",
+    "description": "Create a ZIP with finalized invoices and credit notes. Both dates are included.", "empty": "No archives have been created yet.", "from-date": "From date", "generation-failed": "Archive generation failed", "loading": "Loading archives…",
+    "status": {"FAILED": "Failed", "PENDING": "Pending", "PROCESSING": "Processing", "READY": "Ready"},
+    "table": {"actions": "Actions", "completed": "Completed", "created": "Created", "downloads": "Downloads", "expires": "Expires", "file": "File", "period": "Period", "status": "Status"},
+    "title": "UBL downloads", "to-date": "To date",
+    "validation": {"limit": "Delete an archive before creating another one.", "order": "The from date must not be after the to date.", "required": "Both dates are required.", "same-year": "Both dates must be in the same year."}
   },
   "documentDirection": {
     "INCOMING": "Incoming",
@@ -555,6 +568,7 @@
     "account": "Account",
     "brand-alt": "Let’s Peppol",
     "dashboard": "Dashboard",
+    "downloads": "Downloads",
     "invoices": "Invoices",
     "language": "Language",
     "partners": "Partners",

@@ -66,6 +66,7 @@ services:
       OPEN_COLLECTIVE_URL: ${OPEN_COLLECTIVE_URL}
       OPEN_COLLECTIVE_API_KEY: ${OPEN_COLLECTIVE_API_KEY}
       DOCUMENT_PRICE: ${DOCUMENT_PRICE}
+      DOWNLOAD_ARCHIVE_DIR: ${DOWNLOAD_ARCHIVE_DIR:-/opt/data/app/downloads}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -h $DB_HOST -p $DB_PORT -U $DB_USER"]
       interval: 5s
