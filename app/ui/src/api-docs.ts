@@ -6,11 +6,11 @@ window.addEventListener('load', () => {
   const ui = SwaggerUIBundle({
     dom_id: '#swagger-ui',
     urls: [
-      { url: '/kyc/v3/api-docs', name: 'KYC API' },
       { url: '/app/v3/api-docs', name: 'App API' },
+      { url: '/kyc/v3/api-docs', name: 'KYC API' },
       { url: '/proxy/v3/api-docs', name: 'Proxy API' },
     ],
-    'urls.primaryName': 'App API',
+    'urls.primaryName': 'KYC API',
     presets: [
       SwaggerUIBundle.presets.apis,
       SwaggerUIStandalonePreset,
@@ -27,7 +27,7 @@ window.addEventListener('load', () => {
 
   ui.initOAuth({
     clientId: 'letspeppol-ui',
-    appName: "Let's Peppol API Docs",
+    appName: "Let’s Peppol API Docs",
     usePkceWithAuthorizationCodeGrant: true,
   });
 });
