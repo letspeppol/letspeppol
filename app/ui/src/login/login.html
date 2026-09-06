@@ -43,6 +43,10 @@
                        required
                        value.bind="password" />
             </label>
+            <label class="field full checkbox login-remember">
+                <input name="rememberEmail" type="checkbox" checked.bind="rememberEmail" />
+                <span t="login.remember">Remember my email</span>
+            </label>
         </div>
 
         <p if.bind="errorKey" class="form-error" aria-live="assertive" t.bind="errorKey">Sign in failed. Please check your credentials.</p>

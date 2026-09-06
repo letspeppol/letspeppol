@@ -6,6 +6,7 @@ import {
     BrowserAuthenticationService,
 } from "../services/kyc/browser-authentication-service";
 import {consumeLoginError, loginErrorKeyFor} from "./pending-login-error";
+import {getRememberedEmail, updateRememberedEmail} from "./remembered-email";
 
 const VERIFICATION_CODE_LENGTH = 6;
 
@@ -17,7 +18,8 @@ export class Login {
     private readonly router = resolve(IRouter);
 
     step: LoginStep = 'credentials';
-    email = '';
+    email = getRememberedEmail() ?? '';
+    rememberEmail = this.email !== '';
     password = '';
     verificationCode = '';
     useRecoveryCode = false;
@@ -83,6 +85,7 @@ export class Login {
         this.busy = true;
         this.cancelPasskeyAutofill();
         this.clearErrors();
+        if (!this.rememberEmail) updateRememberedEmail(email, false);
 
         try {
             const status = await this.browserAuthentication.authenticateWithPassword(email, this.password);
@@ -90,6 +93,7 @@ export class Login {
                 throw new BrowserAuthenticationError(401);
             }
 
+            if (this.rememberEmail) updateRememberedEmail(email, true);
             this.password = '';
 
             if (status === 'totp_required') {
