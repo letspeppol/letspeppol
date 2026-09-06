@@ -155,6 +155,7 @@ services:
       - default
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=web"
 
       # API rate limit middleware
       - "traefik.http.middlewares.api-limit.ratelimit.average=20"
