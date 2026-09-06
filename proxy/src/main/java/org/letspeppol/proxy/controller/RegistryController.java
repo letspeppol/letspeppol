@@ -10,6 +10,7 @@ import org.letspeppol.proxy.dto.RegistryDto;
 import org.letspeppol.proxy.model.AccessPoint;
 import org.letspeppol.proxy.service.AppLinkService;
 import org.letspeppol.proxy.service.RegistryService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,9 @@ public class RegistryController {
     private final AppLinkService appLinkService;
     private final RegistryService registryService;
 
+    @Value("${proxy.access-point:RECOMMAND}")
+    private AccessPoint accessPoint;
+
     @GetMapping()
     @Operation(summary = "Get registry state", description = "Returns the current proxy registration state for the given company.")
     public RegistryDto getById(@RequestParam String peppolId) {
@@ -42,7 +46,7 @@ public class RegistryController {
         return ResponseEntity.status(HttpStatus.OK).body(registryService.register(
             peppolId,
             data,
-            AccessPoint.SCRADA
+            accessPoint
         ));
     }
 

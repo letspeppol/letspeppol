@@ -86,7 +86,14 @@ public class CompanyService {
             log.info("Will skip registration for already registered company {}", company.getName());
             return new RegistrationResponse(true, KycErrorCodes.PROXY_REGISTRATION_NOT_NEEDED, "Account is already registered");
         }
-        RegistrationResponse registrationResponse = proxyService.registerCompany(company.getPeppolId(), company.getName());
+        RegistrationResponse registrationResponse = proxyService.registerCompany(
+                company.getPeppolId(),
+                company.getName(),
+                company.getStreet(),
+                company.getPostalCode(),
+                company.getCity(),
+                company.getVatNumber()
+        );
         log.info("Registering company for {} has Peppol active = {}", company.getPeppolId(), registrationResponse.peppolActive());
         company.setRegisteredOnPeppol(registrationResponse.peppolActive());
         companyRepository.save(company);
