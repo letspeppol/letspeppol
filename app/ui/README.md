@@ -17,6 +17,9 @@ Make sure you have the following tools installed:
 * `npm run build` which produces a build in the `dist/` folder
 * `npm run test` to run unit tests
 * `npm run test:watch` to run unit tests in watch mode
+* `npm run lint` before committing to validate TypeScript, CSS, and translations
+* `npm run lint:translations` to check that source translation keys exist in every locale and that locale keys are sorted
+* `npm run translations:sort` to sort all locale keys recursively
 
 ## Web-eID
 * Install the web-eid plugin via https://www.id.ee/en/article/install-id-software

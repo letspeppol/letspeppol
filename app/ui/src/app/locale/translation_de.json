@@ -60,7 +60,8 @@
     "attachment": {
       "document-not-saved": "Dokument nicht gespeichert. PDF-Vorschau nicht verfügbar.",
       "downloaded": "Datei '{{filename}}' heruntergeladen",
-      "size-too-large-3mb": "Datei darf nicht größer als 3 MB sein"
+      "size-too-large-3mb": "Datei darf nicht größer als 3 MB sein",
+      "unsafe-link": "Dieser Link kann nicht geöffnet werden, da seine Adresse ungültig oder unsicher ist."
     },
     "company": {
       "info-failed": "Unternehmensinformationen konnten nicht geladen werden",
@@ -274,23 +275,23 @@
     "sponsors-title": "Bronze-, Silber- und Gold-Sponsoren zusammen"
   },
   "error": {
-    "DUPLICATE_REQUEST": "Diese Anfrage wurde bereits verarbeitet.",
     "account_not_found": "Für diese E-Mail-Adresse wurde kein Konto gefunden.",
     "account_not_verified": "Ihr Konto wurde noch nicht bestätigt. Bitte bestätigen Sie Ihre E-Mail-Adresse, bevor Sie sich anmelden.",
+    "DUPLICATE_REQUEST": "Diese Anfrage wurde bereits verarbeitet.",
     "login-failed": "Anmeldung fehlgeschlagen",
     "no_ownership": "Dieses Konto ist mit keinem Unternehmen verknüpft.",
-    "server-updating": "Der Server wird gerade aktualisiert. Bitte warten Sie und versuchen Sie es erneut.",
-    "too_many_requests": "Zu viele Anmeldeversuche. Bitte warten Sie, bevor Sie es erneut versuchen.",
-    "unexpected_error": "Ein unerwarteter Serverfehler ist aufgetreten. Bitte versuchen Sie es später erneut.",
-    "wrong_password": "Das eingegebene Passwort ist falsch.",
     "not-peppol-active": "Sie sind derzeit nicht bei Peppol registriert",
     "not-peppol-active-action": "Jetzt lösen",
     "registration-company-affiliate-contact-admin": "Dieses Unternehmen hat bereits einen Administrator. Bitte wenden Sie sich an Ihren Administrator, um das Affiliate-Onboarding fortzusetzen.",
     "registration-company-already-registered": "Unternehmen bereits registriert",
     "registration-company-already-registered-on-peppol": "Diese Peppol-ID ist offenbar bereits bei einem anderen Anbieter registriert. Um sie hier zu aktivieren, muss sie dort zuerst abgemeldet werden. Sie können den Signaturprozess trotzdem abschließen und das anschließend erledigen.",
     "registration-company-not-found": "Unternehmen nicht gefunden",
+    "server-updating": "Der Server wird gerade aktualisiert. Bitte warten Sie und versuchen Sie es erneut.",
+    "too_many_requests": "Zu viele Anmeldeversuche. Bitte warten Sie, bevor Sie es erneut versuchen.",
     "UBL_DOCUMENT_ALREADY_CREATED": "Dieses Dokument wurde bereits zur Zustellung eingereicht. Aktualisieren Sie das vorhandene Dokument.",
-    "UBL_DOCUMENT_CONTENT_ALREADY_SENT": "Dieses identische Dokument wurde bereits eingereicht. Ändern Sie den Inhalt, bevor Sie es erneut senden."
+    "UBL_DOCUMENT_CONTENT_ALREADY_SENT": "Dieses identische Dokument wurde bereits eingereicht. Ändern Sie den Inhalt, bevor Sie es erneut senden.",
+    "unexpected_error": "Ein unerwarteter Serverfehler ist aufgetreten. Bitte versuchen Sie es später erneut.",
+    "wrong_password": "Das eingegebene Passwort ist falsch."
   },
   "forgot": {
     "enter-email": "Geben Sie Ihre E-Mail-Adresse ein, um Ihr Passwort zurückzusetzen.",
@@ -367,9 +368,11 @@
       "buyer-reference": "Käuferreferenz",
       "cancel": "Abbrechen",
       "delete-draft": "Entwurf löschen",
+      "delivery": "Zustellnachweis",
       "download-pdf": "PDF",
       "download-ubl": "UBL",
       "invoice-lines": "Rechnungspositionen",
+      "loading": "Wird geladen",
       "method": "Methode",
       "note": "Notiz",
       "number": "Nummer",
@@ -698,6 +701,7 @@
       "address": "Adresse",
       "city": "Ort",
       "country": "Land",
+      "kbo": "Unternehmensnummer",
       "name": "Name",
       "postal-code": "Postleitzahl",
       "type": "Typ",
