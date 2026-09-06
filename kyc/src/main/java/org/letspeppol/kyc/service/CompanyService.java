@@ -10,10 +10,11 @@ import org.letspeppol.kyc.dto.RegistrationResponse;
 import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.KycException;
 import org.letspeppol.kyc.mapper.CompanyMapper;
+import org.letspeppol.kyc.model.AccountType;
 import org.letspeppol.kyc.model.kbo.Company;
 import org.letspeppol.kyc.model.kbo.Director;
 import org.letspeppol.kyc.repository.CompanyRepository;
-import org.letspeppol.kyc.repository.DirectorRepository;
+import org.letspeppol.kyc.repository.OwnershipRepository;
 import org.letspeppol.kyc.service.kbo.KboLookupService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -31,9 +32,8 @@ import java.util.stream.Collectors;
 public class CompanyService {
 
     private final CompanyRepository companyRepository;
-    private final DirectorRepository directorRepository;
+    private final OwnershipRepository ownershipRepository;
     private final KboLookupService kboLookupService;
-    private final JwtService jwtService;
     private final ProxyService proxyService;
     private final Counter companyUnregistrationCounter;
 
@@ -43,16 +43,21 @@ public class CompanyService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<CompanyResponse> getByPeppolId(String peppolId) {
+    public Company getByPeppolId(String peppolId) {
+        return companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new KycException(KycErrorCodes.COMPANY_NOT_FOUND));
+    }
+
+    public Optional<CompanyResponse> getResponseByPeppolId(String peppolId) {
         Optional<Company> company = companyRepository.findByPeppolId(peppolId);
         if (company.isPresent()) {
-            return Optional.of(CompanyMapper.toResponse(company.get()));
+            boolean hasAdmin = ownershipRepository.existsByTypeAndCompanyPeppolId(AccountType.ADMIN, peppolId);
+            return Optional.of(CompanyMapper.toResponse(company.get(), hasAdmin)); //TODO : maybe not returning directors, but only when request originates from AFFILIATE ?
         }
 
-        Optional<CompanyResponse> companyLookup = kboLookupService.findCompany(peppolId);
+        Optional<CompanyResponse> companyLookup = kboLookupService.findCompany(peppolId); //TODO: what with inactive ?
         if (companyLookup.isPresent()) {
             Company companyToStore = storeCompanyAndDirectors(peppolId, companyLookup.get());
-            return Optional.of(CompanyMapper.toResponse(companyToStore));
+            return Optional.of(CompanyMapper.toResponse(companyToStore, false)); //TODO : maybe not returning directors, but only when request originates from AFFILIATE ?
         }
 
         return Optional.empty();
@@ -61,16 +66,14 @@ public class CompanyService {
     private Company storeCompanyAndDirectors(String peppolId, CompanyResponse companyResponse) {
         Company company = new Company(peppolId, companyResponse.identifier(), companyResponse.vatNumber(), companyResponse.name());
         company.setAddress(companyResponse.city(),companyResponse.postalCode(), companyResponse.street());
-        companyRepository.save(company);
         for (DirectorDto director : companyResponse.directors()) {
-            Director directorToStore = new Director(director.name(), company);
-            directorRepository.save(directorToStore);
+            company.addDirector(new Director(director.name(), company));
         }
-        return company;
+        return companyRepository.save(company);
     }
 
     public RegistrationResponse registerCompany(String peppolId) {
-        Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new KycException(KycErrorCodes.COMPANY_NOT_FOUND));
+        Company company = getByPeppolId(peppolId);
         return registerCompany(company);
     }
 
@@ -83,8 +86,7 @@ public class CompanyService {
             log.info("Will skip registration for already registered company {}", company.getName());
             return new RegistrationResponse(true, KycErrorCodes.PROXY_REGISTRATION_NOT_NEEDED, "Account is already registered");
         }
-        String token = jwtService.generateInternalToken(company.getPeppolId(), company.isPeppolActive(), null);
-        RegistrationResponse registrationResponse = proxyService.registerCompany(token, company.getName());
+        RegistrationResponse registrationResponse = proxyService.registerCompany(company.getPeppolId(), company.getName());
         log.info("Registering company for {} has Peppol active = {}", company.getPeppolId(), registrationResponse.peppolActive());
         company.setRegisteredOnPeppol(registrationResponse.peppolActive());
         companyRepository.save(company);
@@ -92,13 +94,12 @@ public class CompanyService {
     }
 
     public boolean unregisterCompany(String peppolId) {
-        Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new KycException(KycErrorCodes.COMPANY_NOT_FOUND));
+        Company company = getByPeppolId(peppolId);
         return unregisterCompany(company);
     }
 
     public boolean unregisterCompany(Company company) {
-        String token = jwtService.generateInternalToken(company.getPeppolId(), company.isPeppolActive(), null);
-        boolean peppolActive = proxyService.unregisterCompany(token);
+        boolean peppolActive = proxyService.unregisterCompany(company.getPeppolId());
         log.info("Unregistering company for {} has Peppol active = {}", company.getPeppolId(), peppolActive);
         company.setRegisteredOnPeppol(peppolActive);
         companyRepository.save(company);

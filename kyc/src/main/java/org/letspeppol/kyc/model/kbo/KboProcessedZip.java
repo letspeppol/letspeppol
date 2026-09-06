@@ -8,7 +8,7 @@ import lombok.Setter;
 import java.time.Instant;
 
 @Entity
-@Table(name = "kbo_processed_zip", schema = "kyc")
+@Table(name = "kbo_processed_zip")
 @Getter
 @Setter
 @NoArgsConstructor

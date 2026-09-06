@@ -61,7 +61,7 @@
       "document-not-saved": "Dokument nicht gespeichert. PDF-Vorschau nicht verfügbar.",
       "downloaded": "Datei '{{filename}}' heruntergeladen",
       "size-too-large-3mb": "Datei darf nicht größer als 3 MB sein",
-      "unsafe-link": "Dieser Anhang-Link konnte nicht geöffnet werden, da es sich nicht um eine sichere Webadresse handelt."
+      "unsafe-link": "Dieser Link kann nicht geöffnet werden, da seine Adresse ungültig oder unsicher ist."
     },
     "company": {
       "info-failed": "Unternehmensinformationen konnten nicht geladen werden",
@@ -187,6 +187,7 @@
     "remove": "Entfernen",
     "save": "Speichern",
     "search": "Suchen",
+    "switch-account": "Konto wechseln",
     "view-more": "mehr anzeigen…",
     "yes": "Ja"
   },
@@ -274,15 +275,23 @@
     "sponsors-title": "Bronze-, Silber- und Gold-Sponsoren zusammen"
   },
   "error": {
+    "account_not_found": "Für diese E-Mail-Adresse wurde kein Konto gefunden.",
+    "account_not_verified": "Ihr Konto wurde noch nicht bestätigt. Bitte bestätigen Sie Ihre E-Mail-Adresse, bevor Sie sich anmelden.",
     "DUPLICATE_REQUEST": "Diese Anfrage wurde bereits verarbeitet.",
-    "UBL_DOCUMENT_ALREADY_CREATED": "Dieses Dokument wurde bereits zur Zustellung eingereicht. Aktualisieren Sie das vorhandene Dokument.",
-    "UBL_DOCUMENT_CONTENT_ALREADY_SENT": "Dieses identische Dokument wurde bereits eingereicht. Ändern Sie den Inhalt, bevor Sie es erneut senden.",
     "login-failed": "Anmeldung fehlgeschlagen",
+    "no_ownership": "Dieses Konto ist mit keinem Unternehmen verknüpft.",
     "not-peppol-active": "Sie sind derzeit nicht bei Peppol registriert",
     "not-peppol-active-action": "Jetzt lösen",
+    "registration-company-affiliate-contact-admin": "Dieses Unternehmen hat bereits einen Administrator. Bitte wenden Sie sich an Ihren Administrator, um das Affiliate-Onboarding fortzusetzen.",
     "registration-company-already-registered": "Unternehmen bereits registriert",
-    "registration-company-already-registered-on-peppol": "Diese Peppol-ID ist offenbar bereits aktiv. Wir empfehlen Ihnen, zunächst den Signaturprozess abzuschließen. Anschließend können wir feststellen, bei welchem Anbieter Ihre Peppol-ID aktiv ist, und Sie unterstützen, falls Sie wechseln möchten.",
-    "registration-company-not-found": "Unternehmen nicht gefunden"
+    "registration-company-already-registered-on-peppol": "Diese Peppol-ID ist offenbar bereits bei einem anderen Anbieter registriert. Um sie hier zu aktivieren, muss sie dort zuerst abgemeldet werden. Sie können den Signaturprozess trotzdem abschließen und das anschließend erledigen.",
+    "registration-company-not-found": "Unternehmen nicht gefunden",
+    "server-updating": "Der Server wird gerade aktualisiert. Bitte warten Sie und versuchen Sie es erneut.",
+    "too_many_requests": "Zu viele Anmeldeversuche. Bitte warten Sie, bevor Sie es erneut versuchen.",
+    "UBL_DOCUMENT_ALREADY_CREATED": "Dieses Dokument wurde bereits zur Zustellung eingereicht. Aktualisieren Sie das vorhandene Dokument.",
+    "UBL_DOCUMENT_CONTENT_ALREADY_SENT": "Dieses identische Dokument wurde bereits eingereicht. Ändern Sie den Inhalt, bevor Sie es erneut senden.",
+    "unexpected_error": "Ein unerwarteter Serverfehler ist aufgetreten. Bitte versuchen Sie es später erneut.",
+    "wrong_password": "Das eingegebene Passwort ist falsch."
   },
   "forgot": {
     "enter-email": "Geben Sie Ihre E-Mail-Adresse ein, um Ihr Passwort zurückzusetzen.",
@@ -363,7 +372,7 @@
       "download-pdf": "PDF",
       "download-ubl": "UBL",
       "invoice-lines": "Rechnungspositionen",
-      "loading": "Laden",
+      "loading": "Wird geladen",
       "method": "Methode",
       "note": "Notiz",
       "number": "Nummer",
@@ -392,6 +401,7 @@
     "incoming": "Eingehend",
     "invoice-reference": "Rechnungsreferenz",
     "invoice-reference-date": "Rechnungsdatum",
+    "loading": "Rechnungen werden geladen...",
     "modal": {
       "credit-note-note-placeholder": "Zusätzliche Notizen zu dieser Gutschrift",
       "credit-note-number": "Gutschriftsnummer",
@@ -421,7 +431,7 @@
       "bic": "BIC",
       "iban": "IBAN",
       "name": "Name",
-      "reference": "Verwendungszweck",
+      "reference": "Referenz",
       "store-iban": "IBAN im Konto speichern",
       "title": "Zahlung",
       "type": "Typ"
@@ -544,16 +554,40 @@
   },
   "login": {
     "action": "Anmelden",
+    "authorization-denied": "Die Anmeldeanfrage wurde abgelehnt. Bitte versuchen Sie es erneut.",
+    "authorization-error": "Ihre Anmeldung konnte nicht abgeschlossen werden. Bitte versuchen Sie es erneut.",
+    "authorization-expired": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
+    "authorization-no-ownership": "Dieses Konto ist mit keinem Unternehmen verknüpft. Bitten Sie Ihren Administrator um eine Einladung oder registrieren Sie zuerst Ihr Unternehmen.",
+    "authorization-unavailable": "Der Anmeldedienst ist vorübergehend nicht verfügbar. Bitte versuchen Sie es gleich erneut.",
+    "checking-session": "Sitzung wird überprüft...",
     "continue": "Anmelden",
+    "error": "Anmeldung fehlgeschlagen. Bitte überprüfen Sie Ihre Anmeldedaten.",
     "forgot": "Passwort vergessen",
     "new": "Neu hier?",
+    "or": "oder",
+    "passkey": "Mit Passkey anmelden",
+    "passkey-error": "Die Anmeldung mit Ihrem Passkey ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
+    "recovery-code": "Wiederherstellungscode",
+    "recovery-instructions": "Geben Sie einen Ihrer Wiederherstellungscodes ein.",
+    "redirecting": "Weiterleitung zur Anmeldung...",
     "register": "Unternehmen registrieren",
-    "remember": "Angemeldet bleiben",
-    "title": "Bei Ihrem Konto anmelden"
+    "remember": "Meine E-Mail-Adresse speichern",
+    "retry": "Erneut versuchen",
+    "signing-in": "Anmeldung läuft...",
+    "title": "Bei Ihrem Konto anmelden",
+    "unavailable": "Der Anmeldedienst wird noch gestartet oder ist derzeit nicht verfügbar.",
+    "use-authenticator": "Stattdessen einen Authentifizierungscode verwenden",
+    "use-recovery": "Stattdessen einen Wiederherstellungscode verwenden",
+    "verification-code": "Authentifizierungscode",
+    "verification-error": "Ungültiger Code. Bitte versuchen Sie es erneut.",
+    "verification-instructions": "Geben Sie den 6-stelligen Code aus Ihrer Authentifizierungs-App ein.",
+    "verification-title": "Zwei-Faktor-Authentifizierung",
+    "verify": "Überprüfen",
+    "verifying": "Überprüfung läuft..."
   },
   "navigation": {
     "account": "Konto",
-    "brand-alt": "Let’s Peppol",
+    "brand-alt": "Let's Peppol",
     "dashboard": "Dashboard",
     "invoices": "Rechnungen",
     "language": "Sprache",
@@ -562,7 +596,7 @@
     "toggle-theme": "Theme umschalten"
   },
   "new-feature": {
-    "click-to-dismiss": "Hinweis bestätigen",
+    "click-to-dismiss": "Zum Schließen klicken",
     "label": "Neu"
   },
   "onboarding": {
@@ -607,6 +641,7 @@
           "usb": "Verwenden Sie eine direkte USB-Verbindung (Hubs/Dongles vermeiden)."
         }
       },
+      "register-affiliate": "Als Affiliate registrieren",
       "register-company": "Unternehmen registrieren",
       "sign-contract": "Unterschreiben Sie den Vertrag, um KYC (Know Your Customer) abzuschließen.",
       "verify-director": "Bestätigen Sie Ihre Identität als Unternehmensleitung.",
@@ -615,16 +650,30 @@
     "title": "Onboarding-Schritte"
   },
   "overlay": {
-    "confirming-registration": "Registrierungsanfrage wird bestätigt",
-    "creating-draft": "Entwurf wird erstellt",
-    "saving": "Wird gespeichert...",
+    "creating-draft": "Entwurf wird erstellt, bitte warten",
+    "saving": "Konto wird gespeichert, bitte warten",
     "saving-account": "Konto wird gespeichert, bitte warten",
-    "searching-company": "Unternehmen wird gesucht",
+    "searching-company": "Unternehmen wird gesucht, bitte warten",
     "sending": {
-      "CREDIT_NOTE": "Gutschrift wird gesendet",
-      "INVOICE": "Rechnung wird gesendet"
+      "CREDIT_NOTE": "Gutschrift wird gesendet, bitte warten",
+      "INVOICE": "Rechnung wird gesendet, bitte warten"
     },
-    "validating": "Validierung"
+    "validating": "Dokument wird validiert, bitte warten"
+  },
+  "ownershipAdd": {
+    "account-info-body": "Dieses Unternehmen wird dem oben angezeigten bestehenden Konto hinzugefügt. Das Passwort für dieses Konto bleibt unverändert.",
+    "account-info-title": "2. Konto bestätigen",
+    "action": "Konto hinzufügen",
+    "back-dashboard": "Zurück zum Dashboard",
+    "cancel": "Zurück zum Dashboard",
+    "company-has-admin": "Dieses Unternehmen hat bereits ein Admin-Konto. Der aktuelle Ablauf unterstützt nur Unternehmen ohne bestehenden Admin.",
+    "intro": "Fügen Sie ein weiteres Konto für ein Unternehmen hinzu, indem Sie als einer seiner Direktoren unterschreiben.",
+    "lookup": "Unternehmen suchen",
+    "read-contract-info": "Sie erhalten eine unterschriebene Kopie, sobald dieses Konto hinzugefügt wurde.",
+    "sign-button": "Konto hinzufügen",
+    "success-body": "Der unterschriebene Vertrag wurde heruntergeladen und das neue Unternehmen ist jetzt in Ihrer Konto-Auswahl verfügbar.",
+    "success-title": "Konto hinzugefügt",
+    "title": "Konto hinzufügen"
   },
   "partner": {
     "all": "Alle",
@@ -633,7 +682,6 @@
     "edit": {
       "account-name": "Kontoname",
       "address": "Adresse",
-      "bic": "BIC",
       "cancel": "Abbrechen",
       "company-info": "Unternehmensinformationen",
       "customer": "Kunde",
@@ -654,13 +702,33 @@
       "address": "Adresse",
       "city": "Ort",
       "country": "Land",
-      "kbo": "KBO",
+      "kbo": "Unternehmensnummer",
       "name": "Name",
       "postal-code": "Postleitzahl",
       "type": "Typ",
       "vat": "USt-IdNr."
     },
     "title": "Partner"
+  },
+  "passkey": {
+    "add": "Passkey hinzufügen",
+    "added": "Hinzugefügt am",
+    "default-name": "Mein Passkey",
+    "delete-confirm": "Möchten Sie den Passkey \"{{name}}\" wirklich löschen?",
+    "delete-error": "Löschen des Passkeys fehlgeschlagen",
+    "delete-title": "Passkey löschen",
+    "deleted": "Passkey gelöscht",
+    "empty": "Noch keine Passkeys registriert.",
+    "last-used": "Zuletzt verwendet",
+    "last-used-never": "Nie",
+    "load-error": "Laden der Passkeys fehlgeschlagen",
+    "name-placeholder": "Passkey-Name (z.B. MacBook Pro)",
+    "not-supported": "Ihr Browser unterstützt keine Passkeys.",
+    "register-error": "Registrierung des Passkeys fehlgeschlagen",
+    "registered": "Passkey registriert",
+    "registering": "Registrierung...",
+    "rename-error": "Umbenennung des Passkeys fehlgeschlagen",
+    "title": "Passkeys"
   },
   "password-rules": {
     "length": "Mindestens 12 Zeichen",
@@ -729,6 +797,11 @@
     "title": "Produkte"
   },
   "registration": {
+    "affiliate-already-registered": "Bereits Affiliate?",
+    "affiliate-create-account": "Affiliate-Konto erstellen",
+    "affiliate-intro": "Registrieren Sie sich als Affiliate für Ihr eigenes belgisches Unternehmen.<br />Wenn Ihr Unternehmen bereits von einem Administrator verwaltet wird,<br />bitten Sie diesen, Ihren Zugang hinzuzufügen oder freizugeben.",
+    "affiliate-title-step0": "Als Affiliate registrieren",
+    "affiliate-title-step1": "Bestätigen Sie Ihr Affiliate-Unternehmen",
     "already-registered": "Bereits registriert?",
     "back": "Zurück",
     "confirm-company": "Bestätigen",
@@ -763,6 +836,34 @@
       "name": "Name"
     },
     "title": "Sponsoren"
+  },
+  "totp": {
+    "auth-code": "Authentifizierungscode",
+    "copy": "Kopieren",
+    "copy-error": "Kopieren fehlgeschlagen",
+    "disable": "2FA deaktivieren",
+    "disable-confirm": "Geben Sie Ihren aktuellen Authentifizierungscode ein, um 2FA zu deaktivieren:",
+    "disabled": "Zwei-Faktor-Authentifizierung ist nicht aktiviert.",
+    "disabled-alert": "Zwei-Faktor-Authentifizierung deaktiviert",
+    "disabling": "Deaktivierung...",
+    "done": "Fertig",
+    "download": "Herunterladen",
+    "enable": "2FA aktivieren",
+    "enabled": "Zwei-Faktor-Authentifizierung ist aktiviert.",
+    "enabled-alert": "Zwei-Faktor-Authentifizierung aktiviert",
+    "enter-code": "Geben Sie den 6-stelligen Code aus Ihrer App ein",
+    "invalid-code": "Ungültiger Code. Bitte versuchen Sie es erneut.",
+    "invalid-code-short": "Ungültiger Code.",
+    "load-error": "Laden des 2FA-Status fehlgeschlagen",
+    "loading": "Laden...",
+    "manual-entry": "Scannen nicht möglich? Geben Sie diesen Schlüssel manuell ein",
+    "recovery-copied": "Wiederherstellungscodes kopiert",
+    "recovery-warning": "Speichern Sie diese Wiederherstellungscodes. Sie werden sie nicht erneut sehen.",
+    "scan-qr": "Scannen Sie diesen QR-Code mit Ihrer Authentifizierungs-App:",
+    "setup-error": "Starten der 2FA-Einrichtung fehlgeschlagen",
+    "title": "Zwei-Faktor-Authentifizierung",
+    "verify-enable": "Überprüfen und aktivieren",
+    "verifying": "Überprüfung..."
   },
   "welcome-notification": {
     "title": "Willkommen"

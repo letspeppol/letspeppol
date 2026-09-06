@@ -60,7 +60,8 @@
     "attachment": {
       "document-not-saved": "Document niet opgeslagen. PDF-weergave niet beschikbaar.",
       "downloaded": "Bestand '{{filename}}' gedownload",
-      "size-too-large-3mb": "Bestand mag niet groter zijn dan 3 MB"
+      "size-too-large-3mb": "Bestand mag niet groter zijn dan 3 MB",
+      "unsafe-link": "Deze link kan niet worden geopend omdat het adres ongeldig of onveilig is."
     },
     "company": {
       "info-failed": "Bedrijfsinformatie ophalen mislukt",
@@ -186,6 +187,7 @@
     "remove": "Verwijderen",
     "save": "Opslaan",
     "search": "Zoeken",
+    "switch-account": "Account wisselen",
     "view-more": "meer bekijken…",
     "yes": "Ja"
   },
@@ -273,15 +275,23 @@
     "sponsors-title": "Bronzen, zilveren en gouden sponsors samen"
   },
   "error": {
+    "account_not_found": "Er is geen account gevonden voor dit e-mailadres.",
+    "account_not_verified": "Uw account is nog niet geverifieerd. Verifieer uw e-mailadres voordat u inlogt.",
     "DUPLICATE_REQUEST": "Deze aanvraag is al verwerkt.",
-    "UBL_DOCUMENT_ALREADY_CREATED": "Dit document is al ingediend voor verzending. Werk het bestaande document bij.",
-    "UBL_DOCUMENT_CONTENT_ALREADY_SENT": "Dit identieke document is al ingediend. Wijzig de inhoud voordat u het opnieuw verzendt.",
     "login-failed": "Inloggen mislukt",
+    "no_ownership": "Dit account is niet aan een bedrijf gekoppeld.",
     "not-peppol-active": "U bent momenteel niet geregistreerd op Peppol",
     "not-peppol-active-action": "Los dit nu op",
+    "registration-company-affiliate-contact-admin": "Dit bedrijf heeft al een administrator. Neem contact op met uw administrator om de affiliate-onboarding voort te zetten.",
     "registration-company-already-registered": "Bedrijf al geregistreerd",
-    "registration-company-already-registered-on-peppol": "Het lijkt erop dat deze Peppol-ID al actief is. We raden u aan om eerst het ondertekenproces af te ronden. Daarna kunnen we nagaan bij welke provider uw Peppol-ID actief is en u helpen als u wilt overstappen.",
-    "registration-company-not-found": "Bedrijf niet gevonden"
+    "registration-company-already-registered-on-peppol": "Het lijkt erop dat deze Peppol-ID al bij een andere provider is geregistreerd. Activering hier vereist dat u zich daar eerst uitschrijft. U kunt het ondertekenproces wel afronden en dit daarna regelen.",
+    "registration-company-not-found": "Bedrijf niet gevonden",
+    "server-updating": "De server wordt bijgewerkt. Even geduld en probeer het daarna opnieuw.",
+    "too_many_requests": "Te veel inlogpogingen. Wacht even voordat u het opnieuw probeert.",
+    "UBL_DOCUMENT_ALREADY_CREATED": "Dit document is al ingediend voor verzending. Werk het bestaande document bij.",
+    "UBL_DOCUMENT_CONTENT_ALREADY_SENT": "Dit identieke document is al ingediend. Wijzig de inhoud voordat u het opnieuw verzendt.",
+    "unexpected_error": "Er is een onverwachte serverfout opgetreden. Probeer het later opnieuw.",
+    "wrong_password": "Het ingevoerde wachtwoord is onjuist."
   },
   "forgot": {
     "enter-email": "Voer uw e-mailadres in om uw wachtwoord te resetten.",
@@ -358,9 +368,11 @@
       "buyer-reference": "Referentie koper",
       "cancel": "Annuleren",
       "delete-draft": "Concept verwijderen",
+      "delivery": "Leveringsbewijs",
       "download-pdf": "PDF",
       "download-ubl": "UBL",
       "invoice-lines": "Factuurlijnen",
+      "loading": "Laden",
       "method": "Methode",
       "note": "Notitie",
       "number": "Nummer",
@@ -389,6 +401,7 @@
     "incoming": "Inkomend",
     "invoice-reference": "Factuurreferentie",
     "invoice-reference-date": "Factuurdatum",
+    "loading": "Facturen laden...",
     "modal": {
       "credit-note-note-placeholder": "Extra notities voor deze creditnota",
       "credit-note-number": "Creditnotanummer",
@@ -418,7 +431,7 @@
       "bic": "BIC",
       "iban": "IBAN",
       "name": "Naam",
-      "reference": "Mededeling",
+      "reference": "Referentie",
       "store-iban": "IBAN opslaan in account",
       "title": "Betaling",
       "type": "Type"
@@ -541,16 +554,40 @@
   },
   "login": {
     "action": "Inloggen",
+    "authorization-denied": "De aanmeldaanvraag werd geweigerd. Probeer het opnieuw.",
+    "authorization-error": "We konden uw aanmelding niet voltooien. Probeer het opnieuw.",
+    "authorization-expired": "Uw sessie is verlopen. Meld u opnieuw aan.",
+    "authorization-no-ownership": "Dit account is niet aan een bedrijf gekoppeld. Vraag uw beheerder om een uitnodiging of registreer eerst uw bedrijf.",
+    "authorization-unavailable": "De aanmeldservice is tijdelijk niet beschikbaar. Probeer het zo dadelijk opnieuw.",
+    "checking-session": "Uw sessie controleren...",
     "continue": "Inloggen",
+    "error": "Inloggen mislukt. Controleer uw gegevens.",
     "forgot": "Wachtwoord vergeten",
     "new": "Nieuw hier?",
+    "or": "of",
+    "passkey": "Inloggen met een passkey",
+    "passkey-error": "Inloggen met uw passkey is mislukt. Probeer het opnieuw.",
+    "recovery-code": "Herstelcode",
+    "recovery-instructions": "Voer een van uw herstelcodes in.",
+    "redirecting": "Doorverwijzen naar inloggen...",
     "register": "Registreer uw bedrijf",
-    "remember": "Onthoud mij",
-    "title": "Meld u aan bij uw account"
+    "remember": "Mijn e-mailadres onthouden",
+    "retry": "Opnieuw proberen",
+    "signing-in": "Bezig met inloggen...",
+    "title": "Meld u aan bij uw account",
+    "unavailable": "De aanmeldservice wordt nog gestart of is momenteel niet beschikbaar.",
+    "use-authenticator": "Een authenticatiecode gebruiken",
+    "use-recovery": "Een herstelcode gebruiken",
+    "verification-code": "Authenticatiecode",
+    "verification-error": "Ongeldige code. Probeer het opnieuw.",
+    "verification-instructions": "Voer de 6-cijferige code uit uw authenticator-app in.",
+    "verification-title": "Tweefactorauthenticatie",
+    "verify": "Verifiëren",
+    "verifying": "Bezig met verifiëren..."
   },
   "navigation": {
     "account": "Account",
-    "brand-alt": "Let’s Peppol",
+    "brand-alt": "Let's Peppol",
     "dashboard": "Dashboard",
     "invoices": "Facturen",
     "language": "Taal",
@@ -559,7 +596,7 @@
     "toggle-theme": "Thema wisselen"
   },
   "new-feature": {
-    "click-to-dismiss": "Melding bevestigen",
+    "click-to-dismiss": "Klik om te sluiten",
     "label": "Nieuw"
   },
   "onboarding": {
@@ -604,6 +641,7 @@
           "usb": "Gebruik een directe USB-verbinding (vermijd hubs/dongles)."
         }
       },
+      "register-affiliate": "Registreer als affiliate",
       "register-company": "Registreer uw bedrijf",
       "sign-contract": "Onderteken het contract om KYC (Know Your Customer) te voltooien.",
       "verify-director": "Verifieer uw identiteit als bestuurder van het bedrijf.",
@@ -612,16 +650,30 @@
     "title": "Onboardingstappen"
   },
   "overlay": {
-    "confirming-registration": "Registratieverzoek bevestigen",
-    "creating-draft": "Concept aanmaken",
-    "saving": "Opslaan...",
+    "creating-draft": "Concept aanmaken, een moment geduld",
+    "saving": "Account opslaan, een moment geduld",
     "saving-account": "Account opslaan, een moment geduld",
-    "searching-company": "Bedrijf zoeken",
+    "searching-company": "Bedrijf zoeken, een moment geduld",
     "sending": {
-      "CREDIT_NOTE": "Creditnota verzenden",
-      "INVOICE": "Factuur verzenden"
+      "CREDIT_NOTE": "Creditnota verzenden, een moment geduld",
+      "INVOICE": "Factuur verzenden, een moment geduld"
     },
-    "validating": "Valideren"
+    "validating": "Document valideren, een moment geduld"
+  },
+  "ownershipAdd": {
+    "account-info-body": "Dit bedrijf wordt toegevoegd aan het bestaande account hierboven. Het wachtwoord van dat account blijft hetzelfde.",
+    "account-info-title": "2. Bevestig het account",
+    "action": "Account toevoegen",
+    "back-dashboard": "Terug naar dashboard",
+    "cancel": "Terug naar dashboard",
+    "company-has-admin": "Dit bedrijf heeft al een admin-account. De huidige flow ondersteunt alleen bedrijven zonder bestaande admin.",
+    "intro": "Voeg een extra account toe voor een bedrijf door te tekenen als een van de bestuurders.",
+    "lookup": "Bedrijf zoeken",
+    "read-contract-info": "U ontvangt een ondertekend exemplaar zodra dit account is toegevoegd.",
+    "sign-button": "Account toevoegen",
+    "success-body": "Het ondertekende contract werd gedownload en het nieuwe bedrijf is nu beschikbaar in uw accountkeuzelijst.",
+    "success-title": "Account toegevoegd",
+    "title": "Account toevoegen"
   },
   "partner": {
     "all": "Alle",
@@ -630,7 +682,6 @@
     "edit": {
       "account-name": "Accountnaam",
       "address": "Adres",
-      "bic": "BIC",
       "cancel": "Annuleren",
       "company-info": "Bedrijfsinfo",
       "customer": "Klant",
@@ -651,13 +702,33 @@
       "address": "Adres",
       "city": "Stad",
       "country": "Land",
-      "kbo": "KBO",
+      "kbo": "Ondernemingsnummer",
       "name": "Naam",
       "postal-code": "Postcode",
       "type": "Type",
       "vat": "BTW"
     },
     "title": "Partners"
+  },
+  "passkey": {
+    "add": "Passkey toevoegen",
+    "added": "Toegevoegd op",
+    "default-name": "Mijn passkey",
+    "delete-confirm": "Weet u zeker dat u de passkey \"{{name}}\" wilt verwijderen?",
+    "delete-error": "Verwijderen van passkey mislukt",
+    "delete-title": "Passkey verwijderen",
+    "deleted": "Passkey verwijderd",
+    "empty": "Nog geen passkeys geregistreerd.",
+    "last-used": "Laatst gebruikt",
+    "last-used-never": "Nooit",
+    "load-error": "Laden van passkeys mislukt",
+    "name-placeholder": "Passkey-naam (bijv. MacBook Pro)",
+    "not-supported": "Uw browser ondersteunt geen passkeys.",
+    "register-error": "Registratie van passkey mislukt",
+    "registered": "Passkey geregistreerd",
+    "registering": "Registreren...",
+    "rename-error": "Hernoemen van passkey mislukt",
+    "title": "Passkeys"
   },
   "password-rules": {
     "length": "Minstens 12 tekens",
@@ -726,6 +797,11 @@
     "title": "Producten"
   },
   "registration": {
+    "affiliate-already-registered": "Al affiliate?",
+    "affiliate-create-account": "Affiliate-account aanmaken",
+    "affiliate-intro": "Registreer als affiliate voor uw eigen Belgische onderneming.<br />Als uw bedrijf al door een administrator wordt beheerd,<br />vraag die administrator om uw toegang toe te voegen of goed te keuren.",
+    "affiliate-title-step0": "Registreer als affiliate",
+    "affiliate-title-step1": "Bevestig uw affiliatebedrijf",
     "already-registered": "Al geregistreerd?",
     "back": "Terug",
     "confirm-company": "Bevestigen",
@@ -760,6 +836,34 @@
       "name": "Naam"
     },
     "title": "Sponsors"
+  },
+  "totp": {
+    "auth-code": "Authenticatiecode",
+    "copy": "Kopiëren",
+    "copy-error": "Kopiëren mislukt",
+    "disable": "2FA uitschakelen",
+    "disable-confirm": "Voer uw huidige authenticatiecode in om 2FA uit te schakelen:",
+    "disabled": "Tweefactorauthenticatie is niet ingeschakeld.",
+    "disabled-alert": "Tweefactorauthenticatie uitgeschakeld",
+    "disabling": "Uitschakelen...",
+    "done": "Klaar",
+    "download": "Downloaden",
+    "enable": "2FA inschakelen",
+    "enabled": "Tweefactorauthenticatie is ingeschakeld.",
+    "enabled-alert": "Tweefactorauthenticatie ingeschakeld",
+    "enter-code": "Voer de 6-cijferige code in van uw app",
+    "invalid-code": "Ongeldige code. Probeer het opnieuw.",
+    "invalid-code-short": "Ongeldige code.",
+    "load-error": "Laden van 2FA-status mislukt",
+    "loading": "Laden...",
+    "manual-entry": "Kan niet scannen? Voer deze sleutel handmatig in",
+    "recovery-copied": "Herstelcodes gekopieerd",
+    "recovery-warning": "Bewaar deze herstelcodes. U zult ze niet meer zien.",
+    "scan-qr": "Scan deze QR-code met uw authenticatie-app:",
+    "setup-error": "Starten van 2FA-configuratie mislukt",
+    "title": "Tweefactorauthenticatie",
+    "verify-enable": "Verifiëren en inschakelen",
+    "verifying": "Verifiëren..."
   },
   "welcome-notification": {
     "title": "Welkom"

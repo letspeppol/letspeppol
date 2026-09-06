@@ -60,7 +60,8 @@
     "attachment": {
       "document-not-saved": "Document non enregistré. Rendu PDF non disponible.",
       "downloaded": "Fichier '{{filename}}' téléchargé",
-      "size-too-large-3mb": "Le fichier ne peut pas dépasser 3 Mo"
+      "size-too-large-3mb": "Le fichier ne peut pas dépasser 3 Mo",
+      "unsafe-link": "Ce lien ne peut pas être ouvert car son adresse est invalide ou non sécurisée."
     },
     "company": {
       "info-failed": "Échec de la récupération des informations de l'entreprise",
@@ -186,6 +187,7 @@
     "remove": "Retirer",
     "save": "Enregistrer",
     "search": "Rechercher",
+    "switch-account": "Changer de compte",
     "view-more": "voir plus…",
     "yes": "Oui"
   },
@@ -273,15 +275,23 @@
     "sponsors-title": "Sponsors Bronze, Argent et Or réunis"
   },
   "error": {
+    "account_not_found": "Aucun compte n’a été trouvé pour cette adresse e-mail.",
+    "account_not_verified": "Votre compte n’a pas encore été vérifié. Vérifiez votre adresse e-mail avant de vous connecter.",
     "DUPLICATE_REQUEST": "Cette demande a déjà été traitée.",
-    "UBL_DOCUMENT_ALREADY_CREATED": "Ce document a déjà été soumis pour envoi. Modifiez le document existant.",
-    "UBL_DOCUMENT_CONTENT_ALREADY_SENT": "Ce document identique a déjà été soumis. Modifiez son contenu avant de le renvoyer.",
     "login-failed": "Échec de la connexion",
+    "no_ownership": "Ce compte n’est lié à aucune entreprise.",
     "not-peppol-active": "Vous n'êtes actuellement pas enregistré sur Peppol",
     "not-peppol-active-action": "Résoudre cela maintenant",
+    "registration-company-affiliate-contact-admin": "Cette entreprise a déjà un administrateur. Veuillez contacter votre administrateur pour poursuivre l’onboarding affilié.",
     "registration-company-already-registered": "Entreprise déjà enregistrée",
-    "registration-company-already-registered-on-peppol": "Il semble que cet identifiant Peppol soit déjà actif. Nous vous recommandons de finaliser d’abord le processus de signature. Nous pourrons ensuite déterminer auprès de quel fournisseur votre identifiant Peppol est actif et vous aider si vous souhaitez en changer.",
-    "registration-company-not-found": "Entreprise introuvable"
+    "registration-company-already-registered-on-peppol": "Il semble que cet identifiant Peppol soit déjà enregistré auprès d’un autre fournisseur. L’activation ici nécessite que vous vous désinscriviez d’abord là-bas. Vous pouvez tout de même finaliser le processus de signature et vous en occuper ensuite.",
+    "registration-company-not-found": "Entreprise introuvable",
+    "server-updating": "Le serveur est en cours de mise à jour. Veuillez patienter puis réessayer.",
+    "too_many_requests": "Trop de tentatives de connexion. Veuillez patienter avant de réessayer.",
+    "UBL_DOCUMENT_ALREADY_CREATED": "Ce document a déjà été soumis pour envoi. Modifiez le document existant.",
+    "UBL_DOCUMENT_CONTENT_ALREADY_SENT": "Ce document identique a déjà été soumis. Modifiez son contenu avant de le renvoyer.",
+    "unexpected_error": "Une erreur inattendue du serveur s’est produite. Veuillez réessayer plus tard.",
+    "wrong_password": "Le mot de passe saisi est incorrect."
   },
   "forgot": {
     "enter-email": "Entrez votre adresse e-mail pour réinitialiser votre mot de passe.",
@@ -358,9 +368,11 @@
       "buyer-reference": "Référence acheteur",
       "cancel": "Annuler",
       "delete-draft": "Supprimer brouillon",
+      "delivery": "Preuve de livraison",
       "download-pdf": "PDF",
       "download-ubl": "UBL",
       "invoice-lines": "Lignes de facture",
+      "loading": "Chargement",
       "method": "Méthode",
       "note": "Note",
       "number": "Numéro",
@@ -389,6 +401,7 @@
     "incoming": "Entrant",
     "invoice-reference": "Référence de facture",
     "invoice-reference-date": "Date de facture",
+    "loading": "Chargement des factures...",
     "modal": {
       "credit-note-note-placeholder": "Notes supplémentaires pour cette note de crédit",
       "credit-note-number": "Numéro de note de crédit",
@@ -418,7 +431,7 @@
       "bic": "BIC",
       "iban": "IBAN",
       "name": "Nom",
-      "reference": "Communication",
+      "reference": "Référence",
       "store-iban": "Enregistrer l’IBAN dans le compte",
       "title": "Paiement",
       "type": "Type"
@@ -541,16 +554,40 @@
   },
   "login": {
     "action": "Se connecter",
+    "authorization-denied": "La demande de connexion a été refusée. Veuillez réessayer.",
+    "authorization-error": "Nous n'avons pas pu finaliser votre connexion. Veuillez réessayer.",
+    "authorization-expired": "Votre session a expiré. Veuillez vous reconnecter.",
+    "authorization-no-ownership": "Ce compte n'est lié à aucune entreprise. Demandez une invitation à votre administrateur ou enregistrez d'abord votre entreprise.",
+    "authorization-unavailable": "Le service de connexion est temporairement indisponible. Veuillez réessayer dans un instant.",
+    "checking-session": "Vérification de votre session...",
     "continue": "Se connecter",
+    "error": "Échec de la connexion. Vérifiez vos identifiants.",
     "forgot": "Mot de passe oublié",
     "new": "Nouveau ici ?",
+    "or": "ou",
+    "passkey": "Se connecter avec une clé d'accès",
+    "passkey-error": "La connexion avec votre clé d'accès a échoué. Veuillez réessayer.",
+    "recovery-code": "Code de récupération",
+    "recovery-instructions": "Saisissez l'un de vos codes de récupération.",
+    "redirecting": "Redirection vers la connexion...",
     "register": "Enregistrez votre entreprise",
-    "remember": "Se souvenir de moi",
-    "title": "Se connecter à votre compte"
+    "remember": "Mémoriser mon adresse e-mail",
+    "retry": "Réessayer",
+    "signing-in": "Connexion en cours...",
+    "title": "Se connecter à votre compte",
+    "unavailable": "Le service de connexion est encore en cours de démarrage ou est actuellement indisponible.",
+    "use-authenticator": "Utiliser un code d'authentification",
+    "use-recovery": "Utiliser un code de récupération",
+    "verification-code": "Code d'authentification",
+    "verification-error": "Code invalide. Veuillez réessayer.",
+    "verification-instructions": "Saisissez le code à 6 chiffres de votre application d'authentification.",
+    "verification-title": "Authentification à deux facteurs",
+    "verify": "Vérifier",
+    "verifying": "Vérification en cours..."
   },
   "navigation": {
     "account": "Compte",
-    "brand-alt": "Let’s Peppol",
+    "brand-alt": "Let's Peppol",
     "dashboard": "Tableau de bord",
     "invoices": "Factures",
     "language": "Langue",
@@ -559,7 +596,7 @@
     "toggle-theme": "Changer de thème"
   },
   "new-feature": {
-    "click-to-dismiss": "Valider le message",
+    "click-to-dismiss": "Cliquer pour fermer",
     "label": "Nouveau"
   },
   "onboarding": {
@@ -604,6 +641,7 @@
           "usb": "Utilisez une connexion USB directe (évitez les hubs/dongles)."
         }
       },
+      "register-affiliate": "S’inscrire comme affilié",
       "register-company": "Enregistrez votre entreprise",
       "sign-contract": "Signez le contrat pour finaliser le KYC (Know Your Customer).",
       "verify-director": "Vérifiez votre identité en tant que dirigeant de l’entreprise.",
@@ -612,16 +650,30 @@
     "title": "Étapes d’onboarding"
   },
   "overlay": {
-    "confirming-registration": "Confirmation de la demande d'inscription",
-    "creating-draft": "Création du brouillon",
-    "saving": "Enregistrement...",
+    "creating-draft": "Création du brouillon, veuillez patienter",
+    "saving": "Sauvegarde du compte, veuillez patienter",
     "saving-account": "Sauvegarde du compte, veuillez patienter",
-    "searching-company": "Recherche de l'entreprise",
+    "searching-company": "Recherche de l’entreprise, veuillez patienter",
     "sending": {
-      "CREDIT_NOTE": "Envoi de la note de crédit",
-      "INVOICE": "Envoi de la facture"
+      "CREDIT_NOTE": "Envoi de la note de crédit, veuillez patienter",
+      "INVOICE": "Envoi de la facture, veuillez patienter"
     },
-    "validating": "Validation"
+    "validating": "Validation du document, veuillez patienter"
+  },
+  "ownershipAdd": {
+    "account-info-body": "Cette entreprise sera ajoutée au compte existant affiché ci-dessus. Le mot de passe de ce compte restera inchangé.",
+    "account-info-title": "2. Confirmer le compte",
+    "action": "Ajouter un compte",
+    "back-dashboard": "Retour au tableau de bord",
+    "cancel": "Retour au tableau de bord",
+    "company-has-admin": "Cette entreprise a déjà un compte admin. Le flux actuel ne prend en charge que les entreprises sans admin existant.",
+    "intro": "Ajoutez un compte supplémentaire pour une entreprise en signant comme l’un de ses directeurs.",
+    "lookup": "Rechercher l’entreprise",
+    "read-contract-info": "Vous recevrez une copie signée une fois ce compte ajouté.",
+    "sign-button": "Ajouter le compte",
+    "success-body": "Le contrat signé a été téléchargé et la nouvelle entreprise est maintenant disponible dans votre sélecteur de comptes.",
+    "success-title": "Compte ajouté",
+    "title": "Ajouter un compte"
   },
   "partner": {
     "all": "Tous",
@@ -630,7 +682,6 @@
     "edit": {
       "account-name": "Nom du compte",
       "address": "Adresse",
-      "bic": "BIC",
       "cancel": "Annuler",
       "company-info": "Informations société",
       "customer": "Client",
@@ -651,13 +702,33 @@
       "address": "Adresse",
       "city": "Ville",
       "country": "Pays",
-      "kbo": "BCE",
+      "kbo": "Numéro d’entreprise",
       "name": "Nom",
       "postal-code": "Code postal",
       "type": "Type",
       "vat": "TVA"
     },
     "title": "Partenaires"
+  },
+  "passkey": {
+    "add": "Ajouter une clé",
+    "added": "Ajoutée le",
+    "default-name": "Ma clé d'accès",
+    "delete-confirm": "Êtes-vous sûr de vouloir supprimer la clé d'accès \"{{name}}\" ?",
+    "delete-error": "Échec de la suppression de la clé d'accès",
+    "delete-title": "Supprimer la clé d'accès",
+    "deleted": "Clé d'accès supprimée",
+    "empty": "Aucune clé d'accès enregistrée.",
+    "last-used": "Dernière utilisation",
+    "last-used-never": "Jamais",
+    "load-error": "Échec du chargement des clés d'accès",
+    "name-placeholder": "Nom de la clé (ex. MacBook Pro)",
+    "not-supported": "Votre navigateur ne prend pas en charge les clés d'accès.",
+    "register-error": "Échec de l'enregistrement de la clé d'accès",
+    "registered": "Clé d'accès enregistrée",
+    "registering": "Enregistrement...",
+    "rename-error": "Échec du renommage de la clé d'accès",
+    "title": "Clés d'accès"
   },
   "password-rules": {
     "length": "Au moins 12 caractères",
@@ -726,6 +797,11 @@
     "title": "Produits"
   },
   "registration": {
+    "affiliate-already-registered": "Déjà affilié ?",
+    "affiliate-create-account": "Créer un compte affilié",
+    "affiliate-intro": "Inscrivez-vous comme affilié pour votre propre entreprise belge.<br />Si votre entreprise est déjà gérée par un administrateur,<br />demandez-lui d’ajouter ou d’approuver votre accès.",
+    "affiliate-title-step0": "S’inscrire comme affilié",
+    "affiliate-title-step1": "Confirmez votre entreprise affiliée",
     "already-registered": "Déjà enregistré ?",
     "back": "Retour",
     "confirm-company": "Confirmer",
@@ -760,6 +836,34 @@
       "name": "Nom"
     },
     "title": "Sponsors"
+  },
+  "totp": {
+    "auth-code": "Code d'authentification",
+    "copy": "Copier",
+    "copy-error": "Échec de la copie",
+    "disable": "Désactiver la 2FA",
+    "disable-confirm": "Entrez votre code d'authentification actuel pour désactiver la 2FA :",
+    "disabled": "L'authentification à deux facteurs n'est pas activée.",
+    "disabled-alert": "Authentification à deux facteurs désactivée",
+    "disabling": "Désactivation...",
+    "done": "Terminé",
+    "download": "Télécharger",
+    "enable": "Activer la 2FA",
+    "enabled": "L'authentification à deux facteurs est activée.",
+    "enabled-alert": "Authentification à deux facteurs activée",
+    "enter-code": "Entrez le code à 6 chiffres de votre application",
+    "invalid-code": "Code invalide. Veuillez réessayer.",
+    "invalid-code-short": "Code invalide.",
+    "load-error": "Échec du chargement du statut 2FA",
+    "loading": "Chargement...",
+    "manual-entry": "Impossible de scanner ? Entrez cette clé manuellement",
+    "recovery-copied": "Codes de récupération copiés",
+    "recovery-warning": "Sauvegardez ces codes de récupération. Vous ne les reverrez plus.",
+    "scan-qr": "Scannez ce QR code avec votre application d'authentification :",
+    "setup-error": "Échec du démarrage de la configuration 2FA",
+    "title": "Authentification à deux facteurs",
+    "verify-enable": "Vérifier et activer",
+    "verifying": "Vérification..."
   },
   "welcome-notification": {
     "title": "Bienvenue"

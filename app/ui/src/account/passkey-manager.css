@@ -1,0 +1,89 @@
+.passkey-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-065);
+    padding: var(--space-065) var(--space-07);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-sm);
+    background: var(--bg-input);
+}
+
+.passkey-info {
+    display: flex;
+    align-items: center;
+    gap: var(--space-065);
+    min-width: 0;
+    flex: 1;
+}
+
+.passkey-icon {
+    flex-shrink: 0;
+    color: var(--muted);
+}
+
+.passkey-name {
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.passkey-meta {
+    font-size: .8rem;
+    color: var(--muted);
+}
+
+.passkey-actions {
+    display: flex;
+    gap: var(--space-035);
+    flex-shrink: 0;
+}
+
+.passkey-actions .btn,
+.passkey-info .btn {
+    padding: var(--space-035) var(--space-05);
+    font-size: .8rem;
+}
+
+.passkey-rename-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-05);
+    flex: 1;
+    min-width: 0;
+}
+
+.passkey-rename-row input {
+    flex: 1;
+    min-width: 0;
+    border: 1px solid var(--border-input);
+    border-radius: var(--radius-input);
+    background: var(--bg-input);
+    box-shadow: rgb(31 41 55 / 6%) 0 1px 1px 0;
+    color: var(--text);
+    padding: var(--space-05) var(--space-065);
+}
+
+.passkey-rename-row input:focus {
+    outline: 2px solid color-mix(in hsl, var(--primary) 40%, var(--border-soft));
+    outline-offset: 1px;
+}
+
+.passkey-empty {
+    color: var(--muted);
+    font-size: .9rem;
+    padding: var(--space-05) 0;
+}
+
+.passkey-add {
+    display: flex;
+    gap: var(--space-05);
+    align-items: center;
+}
+
+.passkey-add input {
+    flex: 1;
+    min-width: 0;
+}

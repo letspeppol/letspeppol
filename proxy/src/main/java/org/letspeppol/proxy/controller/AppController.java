@@ -1,5 +1,8 @@
 package org.letspeppol.proxy.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.proxy.dto.DocumentDetailsDto;
@@ -29,6 +32,9 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/sapi/document")
+@Tag(name = "Proxy Documents", description = "Service-facing document transport endpoints for polling, submitting, updating, and acknowledging UBL documents through the proxy.")
+@SecurityRequirement(name = "oauth2", scopes = "openid")
+@SecurityRequirement(name = "serviceAuth", scopes = "service")
 public class AppController {
 
     public static final String DEFAULT_SIZE = "100";
@@ -42,6 +48,7 @@ public class AppController {
     private final JwtDecoder jwtDecoder;
 
     @GetMapping()
+    @Operation(summary = "Poll new inbound documents", description = "Returns newly available inbound documents for the authenticated user or linked app context.")
     public List<UblDocumentDto> getAllNew(@AuthenticationPrincipal Jwt jwt, @RequestParam(defaultValue = DEFAULT_SIZE) int size) {
         AccountType accountType = JwtUtil.getAccountType(jwt);
         if (accountType.isUser()) {
@@ -54,6 +61,7 @@ public class AppController {
     }
 
     @PostMapping("status")
+    @Operation(summary = "Fetch document status updates", description = "Returns the latest known status for the provided proxy document identifiers.")
     public List<UblDocumentDto> getStatusUpdates(@AuthenticationPrincipal Jwt jwt, @RequestBody List<UUID> ids) {
         String peppolId = JwtUtil.getUserPeppolId(jwt);
         return ublDocumentService.findByIds(ids, peppolId); //TODO : map to statusDto !
@@ -76,18 +84,21 @@ public class AppController {
     * */
 
     @GetMapping("{id}")
+    @Operation(summary = "Get proxy document by id", description = "Loads a single document visible to the authenticated company context.")
     public UblDocumentDto getById(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
         String peppolId = JwtUtil.getUserPeppolId(jwt);
         return ublDocumentService.findById(id, peppolId);
     }
 
     @GetMapping("{id}/details")
+    @Operation(summary = "Get proxy document details", description = "Returns transport and UBL-derived details for one document visible to the authenticated company or linked app.")
     public DocumentDetailsDto getDetails(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
         String peppolId = JwtUtil.getUserPeppolId(jwt);
         return ublDocumentService.findDetailsById(id, peppolId);
     }
 
     @PostMapping()
+    @Operation(summary = "Create outbound proxy document", description = "Stores a new outbound UBL document for later transmission through the configured access point.")
     public ResponseEntity<UblDocumentDto> createToSend(@AuthenticationPrincipal Jwt jwt,
                                                        @RequestBody UblDocumentDto ublDocumentDto,
                                                        @RequestHeader(name = ACTING_USER_AUTHORIZATION_HEADER, required = false) String actingUserAuthorization,
@@ -97,6 +108,7 @@ public class AppController {
     }
 
     @PutMapping("{id}")
+    @Operation(summary = "Update outbound proxy document", description = "Replaces the contents or metadata of an outbound document that has not completed sending yet.")
     public ResponseEntity<UblDocumentDto> update(@AuthenticationPrincipal Jwt jwt,
                                                  @PathVariable UUID id,
                                                  @RequestBody UblDocumentDto ublDocumentDto,
@@ -107,6 +119,7 @@ public class AppController {
     }
 
     @PutMapping("{id}/reschedule")
+    @Operation(summary = "Schedule or resend outbound document", description = "Queues an outbound document for sending immediately or at a later scheduled time.")
     public ResponseEntity<UblDocumentDto> reschedule(@AuthenticationPrincipal Jwt jwt,
                                                      @PathVariable UUID id,
                                                      @RequestBody UblDocumentDto ublDocumentDto,
@@ -116,7 +129,8 @@ public class AppController {
     }
 
     @PutMapping("{id}/downloaded")
-    public ResponseEntity<Object> downloaded(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestParam(defaultValue = "false") boolean noArchive) {
+    @Operation(summary = "Acknowledge one downloaded document", description = "Marks a single inbound document as downloaded by the authenticated user or linked app.")
+    public ResponseEntity<Void> downloaded(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestParam(defaultValue = "false") boolean noArchive) {
         AccountType accountType = JwtUtil.getAccountType(jwt);
         if (accountType.isUser()) {
             ublDocumentReceiverService.downloaded(List.of(id), JwtUtil.getUserPeppolId(jwt), noArchive);
@@ -129,7 +143,8 @@ public class AppController {
     }
 
     @PutMapping("downloaded")
-    public ResponseEntity<Object> downloadedBatch(@AuthenticationPrincipal Jwt jwt, @RequestBody List<UUID> ids, @RequestParam(defaultValue = "false") boolean noArchive) {
+    @Operation(summary = "Acknowledge multiple downloaded documents", description = "Marks a batch of inbound documents as downloaded by the authenticated user or linked app.")
+    public ResponseEntity<Void> downloadedBatch(@AuthenticationPrincipal Jwt jwt, @RequestBody List<UUID> ids, @RequestParam(defaultValue = "false") boolean noArchive) {
         AccountType accountType = JwtUtil.getAccountType(jwt);
         if (accountType.isUser()) {
             ublDocumentReceiverService.downloaded(ids, JwtUtil.getUserPeppolId(jwt), noArchive);
@@ -142,7 +157,8 @@ public class AppController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Object> delete(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestParam(defaultValue = "false") boolean noArchive) {
+    @Operation(summary = "Cancel outbound proxy document", description = "Cancels an outbound document that should no longer be sent through the proxy.")
+    public ResponseEntity<Void> delete(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestParam(defaultValue = "false") boolean noArchive) {
         String peppolId = JwtUtil.getUserPeppolId(jwt);
         ublDocumentSenderService.cancel(id, peppolId, noArchive);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

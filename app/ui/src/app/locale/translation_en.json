@@ -61,7 +61,7 @@
       "document-not-saved": "Document not saved. PDF render not available.",
       "downloaded": "File '{{filename}}' downloaded",
       "size-too-large-3mb": "File can not be more than 3MB",
-      "unsafe-link": "This attachment link could not be opened because it is not a safe web address."
+      "unsafe-link": "This link cannot be opened because its address is invalid or unsafe."
     },
     "company": {
       "info-failed": "Failed to get company info",
@@ -187,6 +187,7 @@
     "remove": "Remove",
     "save": "Save",
     "search": "Search",
+    "switch-account": "Switch account",
     "view-more": "view more…",
     "yes": "Yes"
   },
@@ -274,15 +275,23 @@
     "sponsors-title": "Bronze, Silver and Gold sponsors combined"
   },
   "error": {
+    "account_not_found": "No account was found for this email address.",
+    "account_not_verified": "Your account has not been verified yet. Please verify your email before signing in.",
     "DUPLICATE_REQUEST": "This request was already processed.",
-    "UBL_DOCUMENT_ALREADY_CREATED": "This document was already submitted for delivery. Update the existing document instead.",
-    "UBL_DOCUMENT_CONTENT_ALREADY_SENT": "This exact document was already submitted. Change the content before sending again.",
     "login-failed": "Login failed",
+    "no_ownership": "This account is not linked to a company.",
     "not-peppol-active": "You are currently not registered on Peppol",
     "not-peppol-active-action": "Solve this now",
+    "registration-company-affiliate-contact-admin": "This company already has an administrator. Please contact your administrator to continue affiliate onboarding.",
     "registration-company-already-registered": "Company already registered",
-    "registration-company-already-registered-on-peppol": "It looks like this Peppol ID is already active. We recommend completing the signing process first. Afterward, we can determine which provider your Peppol ID is active with and help you if you would like to switch.",
-    "registration-company-not-found": "Company not found"
+    "registration-company-already-registered-on-peppol": "It looks like this Peppol ID is already registered with another provider. Activation here requires unregistering there first. You can still complete the signing process and handle this afterward.",
+    "registration-company-not-found": "Company not found",
+    "server-updating": "The server is updating. Please wait and try again.",
+    "too_many_requests": "Too many login attempts. Please wait before trying again.",
+    "UBL_DOCUMENT_ALREADY_CREATED": "This document was already submitted for delivery. Update the existing document instead.",
+    "UBL_DOCUMENT_CONTENT_ALREADY_SENT": "This exact document was already submitted. Change the content before sending again.",
+    "unexpected_error": "An unexpected server error occurred. Please try again later.",
+    "wrong_password": "The password you entered is incorrect."
   },
   "forgot": {
     "enter-email": "Enter your e-mail address to reset your password.",
@@ -392,6 +401,7 @@
     "incoming": "Incoming",
     "invoice-reference": "Invoice Reference",
     "invoice-reference-date": "Invoice Date",
+    "loading": "Loading invoices...",
     "modal": {
       "credit-note-note-placeholder": "Additional notes for this credit note",
       "credit-note-number": "Credit note number",
@@ -421,7 +431,7 @@
       "bic": "BIC",
       "iban": "IBAN",
       "name": "Name",
-      "reference": "Remittance information",
+      "reference": "Reference",
       "store-iban": "Save IBAN in account",
       "title": "Payment",
       "type": "Type"
@@ -544,16 +554,40 @@
   },
   "login": {
     "action": "Log in",
+    "authorization-denied": "The sign-in request was declined. Please try again.",
+    "authorization-error": "We couldn't complete your sign-in. Please try again.",
+    "authorization-expired": "Your session has expired. Please sign in again.",
+    "authorization-no-ownership": "This account is not linked to a company. Ask your administrator for an invitation, or register your company first.",
+    "authorization-unavailable": "The sign-in service is temporarily unavailable. Please try again in a moment.",
+    "checking-session": "Checking your session...",
     "continue": "Sign in",
+    "error": "Sign in failed. Please check your credentials.",
     "forgot": "Forgot my password",
     "new": "New here?",
+    "or": "or",
+    "passkey": "Sign in with a passkey",
+    "passkey-error": "Passkey sign-in failed. Please try again.",
+    "recovery-code": "Recovery code",
+    "recovery-instructions": "Enter one of your recovery codes.",
+    "redirecting": "Redirecting to login...",
     "register": "Register your company",
-    "remember": "Remember me",
-    "title": "Sign in to your account"
+    "remember": "Remember my email",
+    "retry": "Try again",
+    "signing-in": "Signing in...",
+    "title": "Sign in to your account",
+    "unavailable": "The sign-in service is still starting or currently unavailable.",
+    "use-authenticator": "Use an authenticator code instead",
+    "use-recovery": "Use a recovery code instead",
+    "verification-code": "Authentication code",
+    "verification-error": "Invalid code. Please try again.",
+    "verification-instructions": "Enter the 6-digit code from your authenticator app.",
+    "verification-title": "Two-factor authentication",
+    "verify": "Verify",
+    "verifying": "Verifying..."
   },
   "navigation": {
     "account": "Account",
-    "brand-alt": "Let’s Peppol",
+    "brand-alt": "Let's Peppol",
     "dashboard": "Dashboard",
     "invoices": "Invoices",
     "language": "Language",
@@ -607,6 +641,7 @@
           "usb": "Use a direct USB connection (avoid hubs/dongles)."
         }
       },
+      "register-affiliate": "Register as affiliate",
       "register-company": "Register your company",
       "sign-contract": "Sign the contract to complete KYC (Know Your Customer).",
       "verify-director": "Verify your identity as a company director.",
@@ -615,16 +650,30 @@
     "title": "Onboarding steps"
   },
   "overlay": {
-    "confirming-registration": "Confirming registration request",
-    "creating-draft": "Creating draft",
-    "saving": "Saving...",
+    "creating-draft": "Creating draft, please wait",
+    "saving": "Saving account, please wait",
     "saving-account": "Saving account, please wait",
-    "searching-company": "Searching company",
+    "searching-company": "Searching for company, please wait",
     "sending": {
-      "CREDIT_NOTE": "Sending credit note",
-      "INVOICE": "Sending invoice"
+      "CREDIT_NOTE": "Sending credit note, please wait",
+      "INVOICE": "Sending invoice, please wait"
     },
-    "validating": "Validating"
+    "validating": "Validating document, please wait"
+  },
+  "ownershipAdd": {
+    "account-info-body": "This company will be added to the existing account shown above. The password for that account will stay the same.",
+    "account-info-title": "2. Confirm the account",
+    "action": "Add account",
+    "back-dashboard": "Back to dashboard",
+    "cancel": "Back to dashboard",
+    "company-has-admin": "This company already has an admin account. The current flow only supports claiming companies that do not already have an admin.",
+    "intro": "Add another account for a company by signing as one of its directors.",
+    "lookup": "Find company",
+    "read-contract-info": "You will receive a signed copy when this account is added.",
+    "sign-button": "Add account",
+    "success-body": "The signed contract has been downloaded and the new company is now available in your account switcher.",
+    "success-title": "Account added",
+    "title": "Add account"
   },
   "partner": {
     "all": "All",
@@ -633,7 +682,6 @@
     "edit": {
       "account-name": "Account Name",
       "address": "Address",
-      "bic": "BIC",
       "cancel": "Cancel",
       "company-info": "Company Info",
       "customer": "Customer",
@@ -654,13 +702,33 @@
       "address": "Address",
       "city": "City",
       "country": "Country",
-      "kbo": "KBO",
+      "kbo": "Enterprise number",
       "name": "Name",
       "postal-code": "Postal code",
       "type": "Type",
       "vat": "VAT"
     },
     "title": "Partners"
+  },
+  "passkey": {
+    "add": "Add passkey",
+    "added": "Added",
+    "default-name": "My passkey",
+    "delete-confirm": "Are you sure you want to delete the passkey \"{{name}}\"?",
+    "delete-error": "Failed to delete passkey",
+    "delete-title": "Delete passkey",
+    "deleted": "Passkey deleted",
+    "empty": "No passkeys registered yet.",
+    "last-used": "Last used",
+    "last-used-never": "Never",
+    "load-error": "Failed to load passkeys",
+    "name-placeholder": "Passkey name (e.g. MacBook Pro)",
+    "not-supported": "Your browser does not support passkeys.",
+    "register-error": "Failed to register passkey",
+    "registered": "Passkey registered",
+    "registering": "Registering...",
+    "rename-error": "Failed to rename passkey",
+    "title": "Passkeys"
   },
   "password-rules": {
     "length": "At least 12 characters",
@@ -729,6 +797,11 @@
     "title": "Products"
   },
   "registration": {
+    "affiliate-already-registered": "Already an affiliate?",
+    "affiliate-create-account": "Create affiliate account",
+    "affiliate-intro": "Register as an affiliate for your own Belgian company.<br />If your company is already managed by an administrator,<br />ask that administrator to add or approve your access.",
+    "affiliate-title-step0": "Register as affiliate",
+    "affiliate-title-step1": "Confirm your affiliate company",
     "already-registered": "Already registered?",
     "back": "Back",
     "confirm-company": "Confirm",
@@ -763,6 +836,34 @@
       "name": "Name"
     },
     "title": "Sponsors"
+  },
+  "totp": {
+    "auth-code": "Authentication code",
+    "copy": "Copy",
+    "copy-error": "Failed to copy",
+    "disable": "Disable 2FA",
+    "disable-confirm": "Enter your current authenticator code to disable 2FA:",
+    "disabled": "Two-factor authentication is not enabled.",
+    "disabled-alert": "Two-factor authentication disabled",
+    "disabling": "Disabling...",
+    "done": "Done",
+    "download": "Download",
+    "enable": "Enable 2FA",
+    "enabled": "Two-factor authentication is enabled.",
+    "enabled-alert": "Two-factor authentication enabled",
+    "enter-code": "Enter the 6-digit code from your app",
+    "invalid-code": "Invalid code. Please try again.",
+    "invalid-code-short": "Invalid code.",
+    "load-error": "Failed to load 2FA status",
+    "loading": "Loading...",
+    "manual-entry": "Can't scan? Enter this key manually",
+    "recovery-copied": "Recovery codes copied",
+    "recovery-warning": "Save these recovery codes. You won't see them again.",
+    "scan-qr": "Scan this QR code with your authenticator app:",
+    "setup-error": "Failed to start 2FA setup",
+    "title": "Two-Factor Authentication",
+    "verify-enable": "Verify & Enable",
+    "verifying": "Verifying..."
   },
   "welcome-notification": {
     "title": "Welcome"

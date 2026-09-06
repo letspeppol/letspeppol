@@ -49,6 +49,7 @@ public interface UblDocumentRepository extends JpaRepository<UblDocument, UUID> 
         where d.ownerPeppolId = :ownerPeppolId
           and d.downloadCount = :downloadCount
           and d.direction in :directions
+          and d.accessPoint is not null
         order by d.createdOn asc
     """)
     List<UblDocument> findAllNewByOwnerPeppolId(
@@ -65,6 +66,7 @@ public interface UblDocumentRepository extends JpaRepository<UblDocument, UUID> 
           and l.id.peppolId = d.ownerPeppolId
           and d.downloadCount = :downloadCount
           and d.direction in :directions
+          and d.accessPoint is not null
         order by d.createdOn desc
     """)
     List<UblDocument> findAllNewByLinkedUid(

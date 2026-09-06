@@ -1,70 +1,94 @@
 package org.letspeppol.kyc.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.letspeppol.kyc.dto.NewUserRequest;
+import org.letspeppol.kyc.dto.ConfirmCompanyRequest;
+import org.letspeppol.kyc.dto.OwnershipInfo;
 import org.letspeppol.kyc.dto.ServiceRequest;
+import org.letspeppol.kyc.dto.SimpleMessage;
 import org.letspeppol.kyc.exception.ForbiddenException;
 import org.letspeppol.kyc.exception.KycErrorCodes;
-import org.letspeppol.kyc.mapper.AccountMapper;
+import org.letspeppol.kyc.mapper.OwnershipMapper;
 import org.letspeppol.kyc.model.AccountType;
-import org.letspeppol.kyc.service.AccountService;
-import org.letspeppol.kyc.service.IdentityVerificationService;
-import org.letspeppol.kyc.service.JwtService;
+import org.letspeppol.kyc.model.Ownership;
+import org.letspeppol.kyc.service.*;
+import org.letspeppol.kyc.service.jwt.JwtClaimExtractor;
 import org.letspeppol.kyc.service.jwt.JwtInfo;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/sapi/linked")
 @RequiredArgsConstructor
+@Tag(name = "KYC Linked Access", description = "Administrative endpoints for viewing and managing services or related identities linked to a company account.")
+@SecurityRequirement(name = "oauth2", scopes = "openid")
 public class LinkedController {
 
     private final AccountService accountService;
+    private final ActivationService activationService;
+    private final OwnershipService ownershipService;
     private final IdentityVerificationService identityVerificationService;
-    private final JwtService jwtService;
+    private final JwtClaimExtractor jwtClaimExtractor;
 
     /// Retrieves linked info based on valid JWT token, used by App to show what users or services have access to this account
     @GetMapping
-    public ResponseEntity<?> getLinkedForToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
+    @Operation(summary = "List linked access", description = "Returns the services and related access records linked to the authenticated company account. Intended for admin users.")
+    public ResponseEntity<List<OwnershipInfo>> getOwnershipsForToken() {
+        JwtInfo jwtInfo = jwtClaimExtractor.extract();
         if (jwtInfo.accountType() != AccountType.ADMIN) {
             throw new ForbiddenException(KycErrorCodes.NOT_ADMIN);
         }
-        return ResponseEntity.ok(accountService.getAdminByExternalId(jwtInfo.uid()).getLinkedAccounts().stream().map(AccountMapper::toLinkedInfo).toList());
+        return ResponseEntity.ok(ownershipService.getByPeppolId(jwtInfo.peppolId()).stream().map(OwnershipMapper::toOwnershipInfo).toList());
     }
 
-    /// Create a new USER account
-    @PostMapping("/create")
-    public ResponseEntity<?> create(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader, @Valid @RequestBody NewUserRequest request) {
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
-        if (jwtInfo.accountType() != AccountType.ADMIN) {
-            throw new ForbiddenException(KycErrorCodes.NOT_ADMIN);
-        }
-        return ResponseEntity.ok(AccountMapper.toLinkedInfo(identityVerificationService.createUser(jwtInfo.uid(), request)));
-    }
+//    /// Create a new USER account
+//    @PostMapping("/create")
+//    public ResponseEntity<?> create(@Valid @RequestBody NewUserRequest request) {
+//        JwtInfo jwtInfo = jwtClaimExtractor.extract();
+//        if (jwtInfo.accountType() != AccountType.ADMIN) {
+//            throw new ForbiddenException(KycErrorCodes.NOT_ADMIN);
+//        }
+//        return ResponseEntity.ok(AccountMapper.toLinkedInfo(identityVerificationService.createUser(jwtInfo.uid(), request)));
+//    }
 
     /// Registers a service for account
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader, @Valid @RequestBody ServiceRequest request) {
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
+    @Operation(summary = "Link a service to the company", description = "Registers a service integration or linked service account for the authenticated company. Intended for admin users.")
+    public ResponseEntity<OwnershipInfo> register(@Valid @RequestBody ServiceRequest request) {
+        JwtInfo jwtInfo = jwtClaimExtractor.extract();
         if (jwtInfo.accountType() != AccountType.ADMIN) {
             throw new ForbiddenException(KycErrorCodes.NOT_ADMIN);
         }
-        return ResponseEntity.ok(AccountMapper.toLinkedInfo(accountService.linkServiceToAccount(jwtInfo.uid(), request)));
+        return ResponseEntity.ok(OwnershipMapper.toOwnershipInfo(ownershipService.linkServiceToAccount(jwtInfo.peppolId(), jwtInfo.uid(), request)));
     }
 
     /// Unregisters a service for account
     @PostMapping("/unregister")
-    public ResponseEntity<?> unregister(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader, @Valid @RequestBody ServiceRequest request) {
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
+    @Operation(summary = "Unlink a service from the company", description = "Removes a previously linked service integration from the authenticated company. Intended for admin users.")
+    public ResponseEntity<Void> unregister(@Valid @RequestBody ServiceRequest request) {
+        JwtInfo jwtInfo = jwtClaimExtractor.extract();
         if (jwtInfo.accountType() != AccountType.ADMIN) {
             throw new ForbiddenException(KycErrorCodes.NOT_ADMIN);
         }
-        accountService.unlinkServiceFromAccount(jwtInfo.uid(), request);
+        ownershipService.unlinkServiceFromAccount(jwtInfo.peppolId(), jwtInfo.uid(), request);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/request-company")
+    @Operation(summary = "Request onboarding for another company", description = "Starts an additional company request flow based on the currently authenticated ownership context.")
+    public SimpleMessage requestCompany(@RequestBody ConfirmCompanyRequest request, @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, required = false) String acceptLanguage) {
+        JwtInfo jwtInfo = jwtClaimExtractor.extract();
+        Ownership ownership = ownershipService.getByAccountExternalIdPeppolIdAndType(jwtInfo.uid(), jwtInfo.peppolId(), jwtInfo.accountType());
+        activationService.requestActivation(ownership, request, acceptLanguage);
+        return new SimpleMessage("Request email sent");
+    }
+
 }
