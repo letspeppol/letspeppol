@@ -54,8 +54,13 @@
                             <span if.bind="job.status === 'FAILED'" class="download-failure" t="download.generation-failed">Archive generation failed</span>
                         </td>
                         <td>${job.createdOn | dateTimeFormat}</td>
-                        <td>${job.completedOn ? (job.completedOn | dateTimeFormat) : '—'}</td>
-                        <td>${job.expiresOn ? (job.expiresOn | dateTimeFormat) : '—'}</td>
+                        <td>
+                            <span if.bind="job.completedOn">${job.completedOn | dateTimeFormat}</span>
+                            <span else>'—'</span>
+                        <td>
+                            <span if.bind="job.expiresOn">${job.expiresOn | dateTimeFormat}</span>
+                            <span else>'—'</span>
+                        </td>
                         <td>${job.downloadCount} / 3</td>
                         <td class="actions-col download-actions">
                             <button if.bind="job.status === 'READY'" type="button" class="btn primary" click.trigger="download(job)" t="download.action.download">Download</button>
@@ -68,10 +73,10 @@
                     </tbody>
                 </table>
             </div>
-            <div if.bind="!loading && jobs.length === 0" class="empty-state">
+            <div if.bind="!isLoading && jobs.length === 0" class="empty-state">
                 <p t="download.empty">No archives have been created yet.</p>
             </div>
-            <div if.bind="loading && jobs.length === 0" class="empty-state">
+            <div if.bind="isLoading && jobs.length === 0" class="empty-state">
                 <p t="download.loading">Loading archives…</p>
             </div>
         </div>

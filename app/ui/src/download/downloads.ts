@@ -27,7 +27,7 @@ export class Downloads {
     jobs: DownloadJobDto[] = [];
     fromDate = moment().startOf("year").format("YYYY-MM-DD");
     toDate = moment().format("YYYY-MM-DD");
-    loading = false;
+    isLoading = false;
     submitting = false;
 
     async attached() {
@@ -116,7 +116,7 @@ export class Downloads {
     }
 
     private async loadJobs(showError = false) {
-        this.loading = true;
+        this.isLoading = true;
         try {
             this.jobs = await this.downloadJobService.getJobs();
         } catch {
@@ -124,7 +124,7 @@ export class Downloads {
                 this.publish(AlertType.Danger, "alert.download.load-failed");
             }
         } finally {
-            this.loading = false;
+            this.isLoading = false;
             this.schedulePolling();
         }
     }

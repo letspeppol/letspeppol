@@ -44,7 +44,7 @@ class DocumentRepositoryArchiveTest extends PostgresIntegrationTest {
     }
 
     @Test
-    void selectsInclusiveFinalizedTenantDocumentsWithAvailableUbl() {
+    void selectsIncomingAndSuccessfullyProcessedOutgoingDocumentsWithAvailableUbl() {
         UUID incomingInvoice = persist(owner, OWNER, DocumentDirection.INCOMING, DocumentType.INVOICE,
                 "2026-06-01", null, "<Invoice/>");
         UUID outgoingInvoice = persist(owner, OWNER, DocumentDirection.OUTGOING, DocumentType.INVOICE,
@@ -53,9 +53,16 @@ class DocumentRepositoryArchiveTest extends PostgresIntegrationTest {
                 "2026-06-20", null, "<CreditNote/>");
         UUID outgoingCreditNote = persist(owner, OWNER, DocumentDirection.OUTGOING, DocumentType.CREDIT_NOTE,
                 "2026-06-30", null, "<CreditNote/>");
+        markSuccessfullyProcessed(outgoingInvoice);
+        markSuccessfullyProcessed(outgoingCreditNote);
 
         persist(owner, OWNER, DocumentDirection.OUTGOING, DocumentType.INVOICE,
                 "2026-06-15", Instant.now(), "<Draft/>");
+        persist(owner, OWNER, DocumentDirection.OUTGOING, DocumentType.INVOICE,
+                "2026-06-16", null, "<NotProcessed/>");
+        UUID failedOutgoing = persist(owner, OWNER, DocumentDirection.OUTGOING, DocumentType.CREDIT_NOTE,
+                "2026-06-17", null, "<Failed/>");
+        markFailed(failedOutgoing);
         persist(owner, OWNER, DocumentDirection.INCOMING, DocumentType.INVOICE,
                 "2026-06-15", null, null);
         persist(owner, OWNER, DocumentDirection.INCOMING, DocumentType.INVOICE,
@@ -72,6 +79,20 @@ class DocumentRepositoryArchiveTest extends PostgresIntegrationTest {
 
         assertThat(ids).containsExactly(incomingInvoice, outgoingInvoice, incomingCreditNote, outgoingCreditNote);
         assertThat(documentRepository.existsForArchive(OWNER, start, endExclusive)).isTrue();
+        assertThat(documentRepository.existsForArchive(OWNER,
+                LocalDate.parse("2026-08-01").atStartOfDay(ZoneOffset.UTC).toInstant(),
+                LocalDate.parse("2026-09-01").atStartOfDay(ZoneOffset.UTC).toInstant())).isFalse();
+    }
+
+    @Test
+    void unsuccessfulOutgoingDocumentsDoNotMakeAnArchivePeriodEligible() {
+        persist(owner, OWNER, DocumentDirection.OUTGOING, DocumentType.INVOICE,
+                "2026-08-01", null, "<NotProcessed/>");
+        UUID failedOutgoing = persist(owner, OWNER, DocumentDirection.OUTGOING, DocumentType.CREDIT_NOTE,
+                "2026-08-02", null, "<Failed/>");
+        markFailed(failedOutgoing);
+        entityManager.flush();
+
         assertThat(documentRepository.existsForArchive(OWNER,
                 LocalDate.parse("2026-08-01").atStartOfDay(ZoneOffset.UTC).toInstant(),
                 LocalDate.parse("2026-09-01").atStartOfDay(ZoneOffset.UTC).toInstant())).isFalse();
@@ -102,5 +123,15 @@ class DocumentRepositoryArchiveTest extends PostgresIntegrationTest {
         document.setUbl(ubl);
         entityManager.persist(document);
         return document.getId();
+    }
+
+    private void markSuccessfullyProcessed(UUID documentId) {
+        entityManager.find(Document.class, documentId).setProcessedOn(Instant.now());
+    }
+
+    private void markFailed(UUID documentId) {
+        Document document = entityManager.find(Document.class, documentId);
+        document.setProcessedOn(Instant.now());
+        document.setProcessedStatus("Rejected by access point");
     }
 }

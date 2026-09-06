@@ -86,6 +86,10 @@ public interface DocumentRepository extends JpaRepository<Document, UUID>, JpaSp
           AND document.issueDate < :endExclusive
           AND document.draftedOn IS NULL
           AND document.ubl IS NOT NULL
+          AND (document.direction = 'INCOMING'
+               OR (document.direction = 'OUTGOING'
+                   AND document.processedOn IS NOT NULL
+                   AND document.processedStatus IS NULL))
         ORDER BY document.issueDate, document.id
         """)
     List<Document> findAllForArchive(@Param("ownerPeppolId") String ownerPeppolId,
@@ -99,6 +103,10 @@ public interface DocumentRepository extends JpaRepository<Document, UUID>, JpaSp
           AND document.issueDate < :endExclusive
           AND document.draftedOn IS NULL
           AND document.ubl IS NOT NULL
+          AND (document.direction = 'INCOMING'
+               OR (document.direction = 'OUTGOING'
+                   AND document.processedOn IS NOT NULL
+                   AND document.processedStatus IS NULL))
         """)
     boolean existsForArchive(@Param("ownerPeppolId") String ownerPeppolId,
                              @Param("startInclusive") Instant startInclusive,
