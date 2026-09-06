@@ -60,7 +60,8 @@
     "attachment": {
       "document-not-saved": "Document not saved. PDF render not available.",
       "downloaded": "File '{{filename}}' downloaded",
-      "size-too-large-3mb": "File can not be more than 3MB"
+      "size-too-large-3mb": "File can not be more than 3MB",
+      "unsafe-link": "This link cannot be opened because its address is invalid or unsafe."
     },
     "company": {
       "info-failed": "Failed to get company info",
@@ -274,23 +275,23 @@
     "sponsors-title": "Bronze, Silver and Gold sponsors combined"
   },
   "error": {
-    "DUPLICATE_REQUEST": "This request was already processed.",
     "account_not_found": "No account was found for this email address.",
     "account_not_verified": "Your account has not been verified yet. Please verify your email before signing in.",
+    "DUPLICATE_REQUEST": "This request was already processed.",
     "login-failed": "Login failed",
     "no_ownership": "This account is not linked to a company.",
-    "server-updating": "The server is updating. Please wait and try again.",
-    "too_many_requests": "Too many login attempts. Please wait before trying again.",
-    "unexpected_error": "An unexpected server error occurred. Please try again later.",
-    "wrong_password": "The password you entered is incorrect.",
     "not-peppol-active": "You are currently not registered on Peppol",
     "not-peppol-active-action": "Solve this now",
     "registration-company-affiliate-contact-admin": "This company already has an administrator. Please contact your administrator to continue affiliate onboarding.",
     "registration-company-already-registered": "Company already registered",
     "registration-company-already-registered-on-peppol": "It looks like this Peppol ID is already registered with another provider. Activation here requires unregistering there first. You can still complete the signing process and handle this afterward.",
     "registration-company-not-found": "Company not found",
+    "server-updating": "The server is updating. Please wait and try again.",
+    "too_many_requests": "Too many login attempts. Please wait before trying again.",
     "UBL_DOCUMENT_ALREADY_CREATED": "This document was already submitted for delivery. Update the existing document instead.",
-    "UBL_DOCUMENT_CONTENT_ALREADY_SENT": "This exact document was already submitted. Change the content before sending again."
+    "UBL_DOCUMENT_CONTENT_ALREADY_SENT": "This exact document was already submitted. Change the content before sending again.",
+    "unexpected_error": "An unexpected server error occurred. Please try again later.",
+    "wrong_password": "The password you entered is incorrect."
   },
   "forgot": {
     "enter-email": "Enter your e-mail address to reset your password.",
@@ -367,9 +368,11 @@
       "buyer-reference": "Buyer Reference",
       "cancel": "Cancel",
       "delete-draft": "Delete draft",
+      "delivery": "Delivery proof",
       "download-pdf": "PDF",
       "download-ubl": "UBL",
       "invoice-lines": "Invoice lines",
+      "loading": "Loading",
       "method": "Method",
       "note": "Note",
       "number": "Number",
@@ -698,6 +701,7 @@
       "address": "Address",
       "city": "City",
       "country": "Country",
+      "kbo": "Enterprise number",
       "name": "Name",
       "postal-code": "Postal code",
       "type": "Type",

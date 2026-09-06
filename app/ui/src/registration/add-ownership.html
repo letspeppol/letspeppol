@@ -23,7 +23,7 @@
                 <button type="button" class="btn primary" click.trigger="checkVatNumber()" disabled.bind="!vatNumber" t="ownershipAdd.lookup">Find company</button>
             </div>
             <template if.bind="errorCode">
-                <div class="alert error" t.bind="errorCode"></div>
+                <div class="alert error" t="error.${errorCode}"></div>
             </template>
         </div>
 

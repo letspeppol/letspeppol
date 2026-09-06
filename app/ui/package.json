@@ -39,7 +39,9 @@
   "scripts": {
     "lint:js": "eslint src test",
     "lint:css": "stylelint \"src/**/*.css\"",
-    "lint": "npm run lint:js && npm run lint:css",
+    "lint:translations": "node scripts/check-translations.mjs",
+    "translations:sort": "node scripts/check-translations.mjs --fix",
+    "lint": "npm run lint:translations && npm run lint:js && npm run lint:css",
     "pretest": "npm run lint",
     "start": "vite",
     "build": "vite build",

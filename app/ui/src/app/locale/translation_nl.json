@@ -60,7 +60,8 @@
     "attachment": {
       "document-not-saved": "Document niet opgeslagen. PDF-weergave niet beschikbaar.",
       "downloaded": "Bestand '{{filename}}' gedownload",
-      "size-too-large-3mb": "Bestand mag niet groter zijn dan 3 MB"
+      "size-too-large-3mb": "Bestand mag niet groter zijn dan 3 MB",
+      "unsafe-link": "Deze link kan niet worden geopend omdat het adres ongeldig of onveilig is."
     },
     "company": {
       "info-failed": "Bedrijfsinformatie ophalen mislukt",
@@ -274,23 +275,23 @@
     "sponsors-title": "Bronzen, zilveren en gouden sponsors samen"
   },
   "error": {
-    "DUPLICATE_REQUEST": "Deze aanvraag is al verwerkt.",
     "account_not_found": "Er is geen account gevonden voor dit e-mailadres.",
     "account_not_verified": "Uw account is nog niet geverifieerd. Verifieer uw e-mailadres voordat u inlogt.",
+    "DUPLICATE_REQUEST": "Deze aanvraag is al verwerkt.",
     "login-failed": "Inloggen mislukt",
     "no_ownership": "Dit account is niet aan een bedrijf gekoppeld.",
-    "server-updating": "De server wordt bijgewerkt. Even geduld en probeer het daarna opnieuw.",
-    "too_many_requests": "Te veel inlogpogingen. Wacht even voordat u het opnieuw probeert.",
-    "unexpected_error": "Er is een onverwachte serverfout opgetreden. Probeer het later opnieuw.",
-    "wrong_password": "Het ingevoerde wachtwoord is onjuist.",
     "not-peppol-active": "U bent momenteel niet geregistreerd op Peppol",
     "not-peppol-active-action": "Los dit nu op",
     "registration-company-affiliate-contact-admin": "Dit bedrijf heeft al een administrator. Neem contact op met uw administrator om de affiliate-onboarding voort te zetten.",
     "registration-company-already-registered": "Bedrijf al geregistreerd",
     "registration-company-already-registered-on-peppol": "Het lijkt erop dat deze Peppol-ID al bij een andere provider is geregistreerd. Activering hier vereist dat u zich daar eerst uitschrijft. U kunt het ondertekenproces wel afronden en dit daarna regelen.",
     "registration-company-not-found": "Bedrijf niet gevonden",
+    "server-updating": "De server wordt bijgewerkt. Even geduld en probeer het daarna opnieuw.",
+    "too_many_requests": "Te veel inlogpogingen. Wacht even voordat u het opnieuw probeert.",
     "UBL_DOCUMENT_ALREADY_CREATED": "Dit document is al ingediend voor verzending. Werk het bestaande document bij.",
-    "UBL_DOCUMENT_CONTENT_ALREADY_SENT": "Dit identieke document is al ingediend. Wijzig de inhoud voordat u het opnieuw verzendt."
+    "UBL_DOCUMENT_CONTENT_ALREADY_SENT": "Dit identieke document is al ingediend. Wijzig de inhoud voordat u het opnieuw verzendt.",
+    "unexpected_error": "Er is een onverwachte serverfout opgetreden. Probeer het later opnieuw.",
+    "wrong_password": "Het ingevoerde wachtwoord is onjuist."
   },
   "forgot": {
     "enter-email": "Voer uw e-mailadres in om uw wachtwoord te resetten.",
@@ -367,9 +368,11 @@
       "buyer-reference": "Referentie koper",
       "cancel": "Annuleren",
       "delete-draft": "Concept verwijderen",
+      "delivery": "Leveringsbewijs",
       "download-pdf": "PDF",
       "download-ubl": "UBL",
       "invoice-lines": "Factuurlijnen",
+      "loading": "Laden",
       "method": "Methode",
       "note": "Notitie",
       "number": "Nummer",
@@ -698,6 +701,7 @@
       "address": "Adres",
       "city": "Stad",
       "country": "Land",
+      "kbo": "Ondernemingsnummer",
       "name": "Naam",
       "postal-code": "Postcode",
       "type": "Type",

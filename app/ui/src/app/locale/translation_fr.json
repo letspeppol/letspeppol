@@ -60,7 +60,8 @@
     "attachment": {
       "document-not-saved": "Document non enregistré. Rendu PDF non disponible.",
       "downloaded": "Fichier '{{filename}}' téléchargé",
-      "size-too-large-3mb": "Le fichier ne peut pas dépasser 3 Mo"
+      "size-too-large-3mb": "Le fichier ne peut pas dépasser 3 Mo",
+      "unsafe-link": "Ce lien ne peut pas être ouvert car son adresse est invalide ou non sécurisée."
     },
     "company": {
       "info-failed": "Échec de la récupération des informations de l'entreprise",
@@ -274,23 +275,23 @@
     "sponsors-title": "Sponsors Bronze, Argent et Or réunis"
   },
   "error": {
-    "DUPLICATE_REQUEST": "Cette demande a déjà été traitée.",
     "account_not_found": "Aucun compte n’a été trouvé pour cette adresse e-mail.",
     "account_not_verified": "Votre compte n’a pas encore été vérifié. Vérifiez votre adresse e-mail avant de vous connecter.",
+    "DUPLICATE_REQUEST": "Cette demande a déjà été traitée.",
     "login-failed": "Échec de la connexion",
     "no_ownership": "Ce compte n’est lié à aucune entreprise.",
-    "server-updating": "Le serveur est en cours de mise à jour. Veuillez patienter puis réessayer.",
-    "too_many_requests": "Trop de tentatives de connexion. Veuillez patienter avant de réessayer.",
-    "unexpected_error": "Une erreur inattendue du serveur s’est produite. Veuillez réessayer plus tard.",
-    "wrong_password": "Le mot de passe saisi est incorrect.",
     "not-peppol-active": "Vous n'êtes actuellement pas enregistré sur Peppol",
     "not-peppol-active-action": "Résoudre cela maintenant",
     "registration-company-affiliate-contact-admin": "Cette entreprise a déjà un administrateur. Veuillez contacter votre administrateur pour poursuivre l’onboarding affilié.",
     "registration-company-already-registered": "Entreprise déjà enregistrée",
     "registration-company-already-registered-on-peppol": "Il semble que cet identifiant Peppol soit déjà enregistré auprès d’un autre fournisseur. L’activation ici nécessite que vous vous désinscriviez d’abord là-bas. Vous pouvez tout de même finaliser le processus de signature et vous en occuper ensuite.",
     "registration-company-not-found": "Entreprise introuvable",
+    "server-updating": "Le serveur est en cours de mise à jour. Veuillez patienter puis réessayer.",
+    "too_many_requests": "Trop de tentatives de connexion. Veuillez patienter avant de réessayer.",
     "UBL_DOCUMENT_ALREADY_CREATED": "Ce document a déjà été soumis pour envoi. Modifiez le document existant.",
-    "UBL_DOCUMENT_CONTENT_ALREADY_SENT": "Ce document identique a déjà été soumis. Modifiez son contenu avant de le renvoyer."
+    "UBL_DOCUMENT_CONTENT_ALREADY_SENT": "Ce document identique a déjà été soumis. Modifiez son contenu avant de le renvoyer.",
+    "unexpected_error": "Une erreur inattendue du serveur s’est produite. Veuillez réessayer plus tard.",
+    "wrong_password": "Le mot de passe saisi est incorrect."
   },
   "forgot": {
     "enter-email": "Entrez votre adresse e-mail pour réinitialiser votre mot de passe.",
@@ -367,9 +368,11 @@
       "buyer-reference": "Référence acheteur",
       "cancel": "Annuler",
       "delete-draft": "Supprimer brouillon",
+      "delivery": "Preuve de livraison",
       "download-pdf": "PDF",
       "download-ubl": "UBL",
       "invoice-lines": "Lignes de facture",
+      "loading": "Chargement",
       "method": "Méthode",
       "note": "Note",
       "number": "Numéro",
@@ -698,6 +701,7 @@
       "address": "Adresse",
       "city": "Ville",
       "country": "Pays",
+      "kbo": "Numéro d’entreprise",
       "name": "Nom",
       "postal-code": "Code postal",
       "type": "Type",
