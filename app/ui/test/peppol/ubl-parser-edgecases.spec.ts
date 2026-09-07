@@ -157,6 +157,72 @@ describe('UBL parser edge cases', () => {
         expect(edo.__filename).toBe('x.txt');
     });
 
+    test('optional attributes do not change scalar UI field shapes', () => {
+        const xml = wrapInvoice(`
+          <cbc:InvoiceTypeCode listAgencyID="6" listID="UNCL1001">380</cbc:InvoiceTypeCode>
+          <cbc:DocumentCurrencyCode listAgencyID="6" listID="ISO4217">EUR</cbc:DocumentCurrencyCode>
+          <cac:AccountingSupplierParty><cac:Party/></cac:AccountingSupplierParty>
+          <cac:AccountingCustomerParty>
+            <cac:Party>
+              <cac:PostalAddress>
+                <cac:Country>
+                  <cbc:IdentificationCode listAgencyID="6" listID="ISO3166-1:Alpha2">BE</cbc:IdentificationCode>
+                </cac:Country>
+              </cac:PostalAddress>
+            </cac:Party>
+          </cac:AccountingCustomerParty>
+          <cac:PaymentMeans>
+            <cbc:PaymentMeansCode>30</cbc:PaymentMeansCode>
+          </cac:PaymentMeans>
+          <cac:TaxTotal>
+            <cbc:TaxAmount currencyID="EUR">21</cbc:TaxAmount>
+            <cac:TaxSubtotal>
+              <cbc:TaxableAmount currencyID="EUR">100</cbc:TaxableAmount>
+              <cbc:TaxAmount currencyID="EUR">21</cbc:TaxAmount>
+              <cac:TaxCategory>
+                <cbc:ID schemeAgencyID="6" schemeID="UNCL5305">S</cbc:ID>
+                <cbc:Percent>21</cbc:Percent>
+                <cac:TaxScheme>
+                  <cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</cbc:ID>
+                </cac:TaxScheme>
+              </cac:TaxCategory>
+            </cac:TaxSubtotal>
+          </cac:TaxTotal>
+          <cac:InvoiceLine>
+            <cbc:ID>1</cbc:ID>
+            <cbc:InvoicedQuantity unitCode="C62">1</cbc:InvoicedQuantity>
+            <cbc:LineExtensionAmount currencyID="EUR">100</cbc:LineExtensionAmount>
+            <cac:Item>
+              <cbc:Name>Item</cbc:Name>
+              <cac:ClassifiedTaxCategory>
+                <cbc:ID schemeAgencyID="6" schemeID="UNCL5305">S</cbc:ID>
+                <cbc:Percent>21</cbc:Percent>
+                <cac:TaxScheme>
+                  <cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</cbc:ID>
+                </cac:TaxScheme>
+              </cac:ClassifiedTaxCategory>
+            </cac:Item>
+            <cac:Price><cbc:PriceAmount currencyID="EUR">100</cbc:PriceAmount></cac:Price>
+          </cac:InvoiceLine>
+          <cbc:CustomizationID>c</cbc:CustomizationID>
+          <cbc:ProfileID>p</cbc:ProfileID>
+          <cbc:ID>id</cbc:ID>
+          <cbc:IssueDate>2020-01-01</cbc:IssueDate>
+          <cac:LegalMonetaryTotal><cbc:PayableAmount currencyID="EUR">121</cbc:PayableAmount></cac:LegalMonetaryTotal>
+        `);
+
+        const invoice = parseInvoice(xml);
+        expect(invoice.InvoiceTypeCode).toBe(380);
+        expect(invoice.DocumentCurrencyCode).toBe('EUR');
+        expect(invoice.AccountingCustomerParty.Party.PostalAddress.Country.IdentificationCode).toBe('BE');
+        expect(invoice.PaymentMeans.PaymentMeansCode).toEqual({value: 30});
+        expect(invoice.TaxTotal[0].TaxSubtotal[0].TaxCategory.ID).toBe('S');
+        expect(invoice.TaxTotal[0].TaxSubtotal[0].TaxCategory.TaxScheme.ID).toBe('VAT');
+        expect(invoice.InvoiceLine[0].Item.ClassifiedTaxCategory.ID).toBe('S');
+        expect(invoice.InvoiceLine[0].Item.ClassifiedTaxCategory.TaxScheme.ID).toBe('VAT');
+        expect(() => invoice.InvoiceLine[0].Item.ClassifiedTaxCategory.ID.trim()).not.toThrow();
+    });
+
     test('non-numeric value remains string', () => {
         const creditNoteXml = wrapCreditNote(`
           <cac:CreditNoteLine>
