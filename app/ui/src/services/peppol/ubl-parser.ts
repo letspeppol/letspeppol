@@ -45,48 +45,92 @@ export function parseCreditNote(xml: string): CreditNote {
 function parseUblDocument<T>(xml: string, rootTag: "Invoice" | "CreditNote"): T {
     const obj = parser.parse(xml);
     const root = obj[rootTag];
-    const stripped = stripPrefixes(root);
+    const stripped = normalizeParsedValue(root, rootTag);
     return stripped as T;
 }
 
-function stripPrefixes(obj: unknown): unknown {
+/**
+ * fast-xml-parser represents a leaf element with attributes as an object, while
+ * the UI model uses objects only for identifiers, amounts, quantities and a few
+ * other value types. Normalize both attributed and non-attributed leaves to the
+ * model's stable shape so optional UBL metadata does not change runtime types.
+ */
+function normalizeParsedValue(obj: unknown, key?: string, parentKey?: string): unknown {
     if (obj === null || obj === undefined) return obj;
 
     if (Array.isArray(obj)) {
-        return obj.map(stripPrefixes);
+        return obj.map(item => normalizeParsedValue(item, key, parentKey));
     }
 
     if (typeof obj === "object") {
         const input = obj as Record<string, unknown>;
         const result: Record<string, unknown> = {};
-        for (const key of Object.keys(input)) {
-            if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+        for (const childKey of Object.keys(input)) {
+            if (childKey === '__proto__' || childKey === 'constructor' || childKey === 'prototype') {
                 continue;
             }
-            result[key] = stripPrefixes(input[key]);
+            result[childKey] = normalizeParsedValue(input[childKey], childKey, key);
         }
 
-        if (result.PartyLegalEntity) {
-            const ple = result.PartyLegalEntity as Record<string, unknown>;
-            const rawCompany = ple.CompanyID as unknown;
-            if (typeof rawCompany === 'string') {
-                ple.CompanyID = { value: rawCompany };
-            }
-        }
-
-        if (result.PartyTaxScheme) {
-            const pts = result.PartyTaxScheme as Record<string, unknown>;
-            const rawCompany = pts.CompanyID as unknown;
-            if (typeof rawCompany === 'string') {
-                pts.CompanyID = { value: rawCompany };
-            }
+        if (isAttributedLeaf(result) && !usesValueObject(key, parentKey)) {
+            return result.value;
         }
 
         return result;
     }
 
+    if (usesValueObject(key, parentKey)) {
+        return {value: obj};
+    }
+
     return obj; // primitive
 }
+
+function isAttributedLeaf(value: Record<string, unknown>): boolean {
+    return Object.hasOwn(value, 'value')
+        && Object.keys(value).every(key => key === 'value' || key.startsWith('__'));
+}
+
+function usesValueObject(key?: string, parentKey?: string): boolean {
+    if (!key) return false;
+
+    if (VALUE_OBJECT_FIELDS.has(key)) {
+        return true;
+    }
+
+    return key === 'ID' && IDENTIFIER_ID_PARENTS.has(parentKey ?? '');
+}
+
+const VALUE_OBJECT_FIELDS = new Set([
+    // Identifiers
+    'EndpointID',
+    'CompanyID',
+    'ItemClassificationCode',
+
+    // Amounts
+    'Amount',
+    'ChargeTotalAmount',
+    'LineExtensionAmount',
+    'PayableAmount',
+    'PriceAmount',
+    'TaxAmount',
+    'TaxableAmount',
+    'TaxExclusiveAmount',
+    'TaxInclusiveAmount',
+
+    // Quantities and other modeled value objects
+    'BaseQuantity',
+    'CreditedQuantity',
+    'InvoicedQuantity',
+    'PaymentMeansCode',
+    'EmbeddedDocumentBinaryObject',
+]);
+
+const IDENTIFIER_ID_PARENTS = new Set([
+    'DeliveryLocation',
+    'PartyIdentification',
+    'StandardItemIdentification',
+]);
 
 const numberFields = [
     "ChargeTotalAmount",
