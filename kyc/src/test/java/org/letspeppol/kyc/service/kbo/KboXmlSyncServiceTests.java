@@ -80,8 +80,6 @@ class KboXmlSyncServiceTests {
             return null;
         }).when(kboSftpClient).downloadFile(anyString(), any(Path.class));
 
-        doNothing().when(kboXmlParserService).importEnterprises(any(InputStream.class));
-
         kboXmlSyncService.syncDelta();
 
         verify(kboSftpClient, never()).downloadFile(contains("A.ZIP"), any(Path.class));

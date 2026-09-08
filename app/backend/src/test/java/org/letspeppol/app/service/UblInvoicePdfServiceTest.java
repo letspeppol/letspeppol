@@ -11,7 +11,7 @@ import org.letspeppol.app.util.InvoiceUBLBuilder;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,9 +28,9 @@ class UblInvoicePdfServiceTest {
         UblInvoicePdfService sut = new UblInvoicePdfService(null);
         byte[] pdf = sut.toPdf(byteArrayOutputStream.toString(StandardCharsets.UTF_8));
 
-        Files.createDirectories(Paths.get("build", "debug"));
-        Files.write(Paths.get("build", "debug", "invoice.pdf"), pdf);
-        Files.write(Paths.get("build", "debug", "invoice.xml"), byteArrayOutputStream.toByteArray());
+        Files.createDirectories(Path.of("build", "debug"));
+        Files.write(Path.of("build", "debug", "invoice.pdf"), pdf);
+        Files.write(Path.of("build", "debug", "invoice.xml"), byteArrayOutputStream.toByteArray());
     }
 
     @SneakyThrows
@@ -42,8 +42,8 @@ class UblInvoicePdfServiceTest {
         assertNotNull(pdf);
         assertTrue(pdf.length > 500);
 
-        Files.createDirectories(Paths.get("build", "debug"));
-        Files.write(Paths.get("build", "debug", "invoice-draft.pdf"), pdf);
+        Files.createDirectories(Path.of("build", "debug"));
+        Files.write(Path.of("build", "debug", "invoice-draft.pdf"), pdf);
 
         String pdfText = extractText(pdf);
         assertTrue(pdfText.contains("DRAFT"), "PDF should contain watermark text 'DRAFT'");
@@ -59,8 +59,8 @@ class UblInvoicePdfServiceTest {
         assertNotNull(pdf);
         assertTrue(pdf.length > 500);
 
-        Files.createDirectories(Paths.get("build", "debug"));
-        Files.write(Paths.get("build", "debug", "invoice-proforma.pdf"), pdf);
+        Files.createDirectories(Path.of("build", "debug"));
+        Files.write(Path.of("build", "debug", "invoice-proforma.pdf"), pdf);
 
         String pdfText = extractText(pdf);
         assertTrue(pdfText.contains("PROFORMA"), "PDF should contain watermark text 'PROFORMA'");
@@ -132,8 +132,8 @@ class UblInvoicePdfServiceTest {
         UblInvoicePdfService sut = new UblInvoicePdfService(null);
         byte[] pdf = sut.toPdf(xml);
 
-        Files.createDirectories(Paths.get("build", "debug"));
-        Files.write(Paths.get("build", "debug", "invoice-zero-vat-footnote.pdf"), pdf);
+        Files.createDirectories(Path.of("build", "debug"));
+        Files.write(Path.of("build", "debug", "invoice-zero-vat-footnote.pdf"), pdf);
 
         String pdfText = extractText(pdf);
         assertTrue(pdfText.contains("0% VAT notes"), pdfText);

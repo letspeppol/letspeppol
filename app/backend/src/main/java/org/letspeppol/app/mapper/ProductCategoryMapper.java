@@ -4,7 +4,6 @@ import org.letspeppol.app.dto.ProductCategoryDto;
 import org.letspeppol.app.model.ProductCategory;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ProductCategoryMapper {
 
@@ -18,7 +17,7 @@ public class ProductCategoryMapper {
         if (deep && category.getSubcategories() != null && !category.getSubcategories().isEmpty()) {
             children = category.getSubcategories().stream()
                     .map(c -> toDto(c, true))
-                    .collect(Collectors.toList());
+                    .toList();
         }
         return new ProductCategoryDto(
                 category.getId(),

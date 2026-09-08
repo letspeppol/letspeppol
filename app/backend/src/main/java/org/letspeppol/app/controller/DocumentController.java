@@ -103,7 +103,7 @@ public class DocumentController {
 
     private void rejectIfUblTooLarge(String ublXml) {
         if (ublXml != null && ublXml.getBytes(StandardCharsets.UTF_8).length > MAX_UBL_BYTES) {
-            throw new ResponseStatusException(HttpStatus.PAYLOAD_TOO_LARGE, "UBL XML exceeds the maximum allowed size");
+            throw new ResponseStatusException(HttpStatus.CONTENT_TOO_LARGE, "UBL XML exceeds the maximum allowed size");
         }
     }
 

@@ -1,8 +1,5 @@
 package org.letspeppol.kyc.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.samstevens.totp.code.CodeVerifier;
 import dev.samstevens.totp.code.DefaultCodeGenerator;
 import dev.samstevens.totp.code.DefaultCodeVerifier;
@@ -22,6 +19,10 @@ import org.letspeppol.kyc.repository.AccountRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -203,7 +204,7 @@ public class TotpService {
     private String serializeList(List<String> list) {
         try {
             return objectMapper.writeValueAsString(list);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new IllegalStateException("Failed to serialize", e);
         }
     }
@@ -211,7 +212,7 @@ public class TotpService {
     private List<String> deserializeList(String json) {
         try {
             return objectMapper.readValue(json, new TypeReference<>() {});
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new IllegalStateException("Failed to deserialize", e);
         }
     }

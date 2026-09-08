@@ -1,6 +1,5 @@
 package org.letspeppol.app.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.helger.ubl21.UBL21Marshaller;
 import com.helger.xml.serialize.read.DOMReader;
 import com.helger.xml.serialize.read.DOMReaderSettings;
@@ -26,6 +25,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
@@ -280,7 +281,7 @@ public class EmailService {
             if (remaining > 0) {
                 try {
                     Thread.sleep(Duration.ofNanos(remaining).toMillis());
-                } catch (InterruptedException ie) {
+                } catch (InterruptedException _) {
                     Thread.currentThread().interrupt();
                 }
             }

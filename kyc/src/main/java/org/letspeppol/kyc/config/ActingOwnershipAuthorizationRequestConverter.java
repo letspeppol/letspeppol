@@ -72,7 +72,7 @@ public class ActingOwnershipAuthorizationRequestConverter implements Authenticat
                 AccountType accountType;
                 try {
                     accountType = AccountType.valueOf(requestedAccountType);
-                } catch (IllegalArgumentException exception) {
+                } catch (IllegalArgumentException _) {
                     throw invalidSelection();
                 }
                 selectedOwnership = ownershipRepository

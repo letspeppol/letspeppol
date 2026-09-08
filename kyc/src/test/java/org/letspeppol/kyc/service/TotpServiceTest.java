@@ -1,6 +1,5 @@
 package org.letspeppol.kyc.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.samstevens.totp.code.CodeGenerator;
 import dev.samstevens.totp.code.DefaultCodeGenerator;
 import dev.samstevens.totp.secret.DefaultSecretGenerator;
@@ -12,6 +11,9 @@ import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.repository.AccountRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +33,7 @@ class TotpServiceTest {
     private AccountRepository accountRepository;
     private EncryptionService encryptionService;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new JsonMapper();
     private TotpService service;
 
     @BeforeEach

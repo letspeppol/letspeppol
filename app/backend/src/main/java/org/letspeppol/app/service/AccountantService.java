@@ -1,7 +1,5 @@
 package org.letspeppol.app.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.service.spi.ServiceException;
@@ -26,6 +24,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -107,7 +108,7 @@ public class AccountantService {
                     .build();
             EmailJob saved = emailJobRepository.save(emailJob);
             eventPublisher.publishEvent(new EmailJobCreatedEvent(saved.getId()));
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException _) {
             throw new ServiceException("Could you create email json");
         }
     }
