@@ -3,29 +3,34 @@ package org.letspeppol.kyc.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.samstevens.totp.code.CodeVerifier;
+import dev.samstevens.totp.code.CodeGenerator;
 import dev.samstevens.totp.code.DefaultCodeGenerator;
-import dev.samstevens.totp.code.DefaultCodeVerifier;
 import dev.samstevens.totp.code.HashingAlgorithm;
+import dev.samstevens.totp.exceptions.CodeGenerationException;
 import dev.samstevens.totp.qr.QrData;
 import dev.samstevens.totp.qr.QrGenerator;
 import dev.samstevens.totp.qr.ZxingPngQrGenerator;
 import dev.samstevens.totp.secret.DefaultSecretGenerator;
 import dev.samstevens.totp.secret.SecretGenerator;
 import dev.samstevens.totp.time.SystemTimeProvider;
+import dev.samstevens.totp.time.TimeProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.kyc.dto.TotpEnableResponse;
 import org.letspeppol.kyc.dto.TotpSetupResponse;
 import org.letspeppol.kyc.dto.TotpStatusResponse;
 import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.repository.AccountRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.OptionalLong;
 import java.util.UUID;
 
 import static dev.samstevens.totp.util.Utils.getDataUriForImage;
@@ -37,27 +42,32 @@ public class TotpService {
     private static final String ISSUER = "Let's Peppol";
     private static final int RECOVERY_CODE_COUNT = 8;
     private static final int RECOVERY_CODE_LENGTH = 8;
+    private static final int TIME_PERIOD_SECONDS = 30;
+    private static final int ALLOWED_TIME_PERIOD_DISCREPANCY = 1;
 
     private final AccountRepository accountRepository;
     private final EncryptionService encryptionService;
     private final PasswordEncoder passwordEncoder;
     private final ObjectMapper objectMapper;
     private final SecretGenerator secretGenerator = new DefaultSecretGenerator();
-    private final CodeVerifier codeVerifier;
+    private final CodeGenerator codeGenerator = new DefaultCodeGenerator(HashingAlgorithm.SHA1);
+    private final TimeProvider timeProvider;
     private final QrGenerator qrGenerator = new ZxingPngQrGenerator();
     private final SecureRandom secureRandom = new SecureRandom();
 
+    @Autowired
     public TotpService(AccountRepository accountRepository, EncryptionService encryptionService,
                        PasswordEncoder passwordEncoder, ObjectMapper objectMapper) {
+        this(accountRepository, encryptionService, passwordEncoder, objectMapper, new SystemTimeProvider());
+    }
+
+    TotpService(AccountRepository accountRepository, EncryptionService encryptionService,
+                PasswordEncoder passwordEncoder, ObjectMapper objectMapper, TimeProvider timeProvider) {
         this.accountRepository = accountRepository;
         this.encryptionService = encryptionService;
         this.passwordEncoder = passwordEncoder;
         this.objectMapper = objectMapper;
-        this.codeVerifier = new DefaultCodeVerifier(
-                new DefaultCodeGenerator(HashingAlgorithm.SHA1),
-                new SystemTimeProvider()
-        );
-        ((DefaultCodeVerifier) this.codeVerifier).setAllowedTimePeriodDiscrepancy(1);
+        this.timeProvider = timeProvider;
     }
 
     @Transactional
@@ -102,7 +112,7 @@ public class TotpService {
             throw new IllegalStateException("TOTP setup not initiated");
         }
 
-        if (!codeVerifier.isValidCode(secret, code)) {
+        if (!claimTimeStep(account, secret, code)) {
             throw new IllegalArgumentException("Invalid TOTP code");
         }
 
@@ -127,22 +137,22 @@ public class TotpService {
     public boolean verify(Account account, String code) {
         String secret = decryptSecret(account);
         if (secret == null) return false;
-        return codeVerifier.isValidCode(secret, code);
+        return claimTimeStep(account, secret, code);
     }
 
-    @Transactional
     public boolean verifyRecoveryCode(Account account, String code) {
-
         String encryptedCodes = account.getTotpRecoveryCodes();
-        if (encryptedCodes == null) return false;
+        if (encryptedCodes == null || code == null) return false;
 
         List<String> hashedCodes = new ArrayList<>(deserializeList(encryptionService.decrypt(encryptedCodes)));
 
         for (int i = 0; i < hashedCodes.size(); i++) {
             if (passwordEncoder.matches(code, hashedCodes.get(i))) {
                 hashedCodes.remove(i);
-                account.setTotpRecoveryCodes(encryptionService.encrypt(serializeList(hashedCodes)));
-                accountRepository.save(account);
+                String remainingCodes = encryptionService.encrypt(serializeList(hashedCodes));
+                if (accountRepository.replaceTotpRecoveryCodes(account.getId(), encryptedCodes, remainingCodes) != 1) {
+                    return false;
+                }
                 log.info("Recovery code used for account id {}, {} codes remaining", account.getId(), hashedCodes.size());
                 return true;
             }
@@ -150,25 +160,18 @@ public class TotpService {
         return false;
     }
 
-    @Transactional
-    public void disable(UUID uid, String code) {
-        Account account = findByExternalId(uid);
-
+    public void disable(Account account, String code) {
         if (!account.isTotpEnabled()) {
             throw new IllegalStateException("TOTP is not enabled");
         }
 
-        String secret = decryptSecret(account);
-        if (!codeVerifier.isValidCode(secret, code)) {
+        if (!verify(account, code) && !verifyRecoveryCode(account, code)) {
             throw new IllegalArgumentException("Invalid TOTP code");
         }
 
-        account.setTotpSecret(null);
-        account.setTotpEnabled(false);
-        account.setTotpRecoveryCodes(null);
-        accountRepository.save(account);
+        accountRepository.disableTotp(account.getId());
 
-        log.info("TOTP disabled for account {}", uid);
+        log.info("TOTP disabled for account {}", account.getExternalId());
     }
 
     public TotpStatusResponse getStatus(UUID uid) {
@@ -176,9 +179,34 @@ public class TotpService {
         return new TotpStatusResponse(account.isTotpEnabled());
     }
 
-    private Account findByExternalId(UUID uid) {
+    public Account findByExternalId(UUID uid) {
         return accountRepository.findByExternalId(uid)
                 .orElseThrow(() -> new IllegalArgumentException("Account not found"));
+    }
+
+    private boolean claimTimeStep(Account account, String secret, String code) {
+        OptionalLong timeStep = matchingTimeStep(secret, code);
+        return timeStep.isPresent() && accountRepository.claimTotpStep(account.getId(), timeStep.getAsLong()) == 1;
+    }
+
+    private OptionalLong matchingTimeStep(String secret, String code) {
+        if (secret == null || code == null) return OptionalLong.empty();
+        byte[] submitted = code.getBytes(StandardCharsets.UTF_8);
+        long currentStep = Math.floorDiv(timeProvider.getTime(), TIME_PERIOD_SECONDS);
+        for (long step = currentStep + ALLOWED_TIME_PERIOD_DISCREPANCY; step >= currentStep - ALLOWED_TIME_PERIOD_DISCREPANCY; step--) {
+            if (MessageDigest.isEqual(generateCode(secret, step).getBytes(StandardCharsets.UTF_8), submitted)) {
+                return OptionalLong.of(step);
+            }
+        }
+        return OptionalLong.empty();
+    }
+
+    private String generateCode(String secret, long step) {
+        try {
+            return codeGenerator.generate(secret, step);
+        } catch (CodeGenerationException e) {
+            throw new IllegalStateException("Failed to generate TOTP code", e);
+        }
     }
 
     private String decryptSecret(Account account) {

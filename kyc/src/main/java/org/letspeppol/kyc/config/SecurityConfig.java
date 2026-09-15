@@ -68,7 +68,6 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Configuration
@@ -194,7 +193,7 @@ public class SecurityConfig {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
         converter.setJwtGrantedAuthoritiesConverter(jwt -> {
             Collection<GrantedAuthority> authorities = new ArrayList<>();
-            if (jwt.hasClaim("peppolId")) {
+            if (jwt.hasClaim("peppolId") && !AccountType.APP.name().equals(jwt.getClaimAsString("accountType"))) {
                 authorities.add(new SimpleGrantedAuthority(ROLE_KYC_USER));
             }
             return authorities;
@@ -324,7 +323,8 @@ public class SecurityConfig {
             AccountRepository accountRepository,
             OwnershipRepository ownershipRepository,
             @Value("${oauth2.audience:letspeppol-api}") String audience,
-            @Value("${oauth2.app-client.account-external-id:b095630d-1bf3-4250-bf9e-2d49e6ce505b}") String appAccountExternalId) {
+            @Value("${oauth2.app-client.account-external-id:b095630d-1bf3-4250-bf9e-2d49e6ce505b}") String appAccountExternalId,
+            @Value("${oauth2.app-client.peppol-id:0208:1029545627}") String appPeppolId) {
         return context -> {
             JwtClaimsSet.Builder claims = context.getClaims();
 
@@ -347,12 +347,8 @@ public class SecurityConfig {
                         .findByExternalId(UUID.fromString(appAccountExternalId))
                         .orElseThrow(() -> new IllegalStateException("App service account not found: " + appAccountExternalId));
                 claims.claim("uid", app.getExternalId().toString());
-                // The seeded APP account normally holds no ownership; fall back to the APP role so the
-                // claim set stays well-formed for consumers that read accountType.
-                Optional<Ownership> appOwnership = ownershipRepository.findFirstByAccountIdOrderByLastUsedDesc(app.getId());
-                appOwnership.ifPresentOrElse(
-                        ownership -> addOwnershipClaims(claims, ownership),
-                        () -> claims.claim("accountType", AccountType.APP.name()));
+                claims.claim("accountType", AccountType.APP.name());
+                claims.claim("peppolId", appPeppolId);
             }
         };
     }

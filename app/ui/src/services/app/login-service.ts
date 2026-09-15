@@ -180,13 +180,32 @@ export class LoginService {
      * re-authorizing for a token carrying the new context.
      */
     async swapOwnership(selection: OwnershipSummary): Promise<void> {
+        const previousSelection = this.actingOwnershipSelector();
         await this.ownershipService.selectOwnership(selection);
         this.ownershipService.rememberOwnership(selection);
         if (!(await this.silentLogin(selection)).authorized) {
             if (this.accessToken) this.ownershipService.onTokenChanged(this.accessToken);
             throw new Error('Could not re-authorize after switching ownership');
         }
-        await this.ownershipService.refreshCompanyContext();
+        try {
+            await this.ownershipService.refreshCompanyContext();
+        } catch (error) {
+            await this.restoreOwnership(previousSelection);
+            throw error;
+        }
+    }
+
+    private async restoreOwnership(selection: OwnershipSelector | null): Promise<void> {
+        if (selection && (await this.silentLogin(selection)).authorized) {
+            return;
+        }
+        this.logout();
+    }
+
+    private actingOwnershipSelector(): OwnershipSelector | null {
+        const peppolId = this.ownershipService.getCurrentPeppolId();
+        if (!peppolId) return null;
+        return {peppolId, type: this.ownershipService.getCurrentOwnershipType() ?? undefined};
     }
 
     async refreshToken(): Promise<boolean> {

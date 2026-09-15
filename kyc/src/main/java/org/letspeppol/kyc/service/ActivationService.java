@@ -12,6 +12,7 @@ import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.KycException;
 import org.letspeppol.kyc.exception.NotFoundException;
 import org.letspeppol.kyc.mapper.OwnershipMapper;
+import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.model.EmailVerification;
 import org.letspeppol.kyc.model.Ownership;
 import org.letspeppol.kyc.model.AccountType;
@@ -119,7 +120,7 @@ public class ActivationService {
                 .orElseThrow(() -> new NotFoundException(KycErrorCodes.COMPANY_NOT_FOUND));
         var account = accountService.findByEmail(emailVerification.getEmail());
         boolean accountExists = account.isPresent();
-        boolean accountVerified = account.map(org.letspeppol.kyc.model.Account::isVerified).orElse(false);
+        boolean accountVerified = account.map(Account::isVerified).orElse(false);
         boolean directorSigned = account
                 .map(existingAccount -> directorIdentityVerificationRepository.existsByAccountIdAndDirectorCompanyPeppolId(existingAccount.getId(), emailVerification.getPeppolId()))
                 .orElse(false);
@@ -138,13 +139,14 @@ public class ActivationService {
     @Transactional
     public EmailVerification verifyAccount(String token, String newPassword) {
         EmailVerification emailVerification = getValidTokenInformation(token);
-        Ownership ownership = ownershipService.getByAccountEmailAndPeppolIdAndType(emailVerification.getEmail(), emailVerification.getPeppolId(), AccountType.ADMIN);
-        if (!directorIdentityVerificationRepository.existsByAccountId(ownership.getAccount().getId())) {
+        Account account = accountService.findByEmail(emailVerification.getEmail())
+                .orElseThrow(() -> new KycException(KycErrorCodes.ACCOUNT_NOT_FOUND));
+        if (!directorIdentityVerificationRepository.existsByAccountIdAndDirectorCompanyPeppolId(account.getId(), emailVerification.getPeppolId())) {
             throw new KycException(KycErrorCodes.ACCOUNT_NOT_VERIFIED);
         }
-        if (!ownership.getAccount().isVerified()) {
-            passwordResetService.setPassword(ownership.getAccount(), newPassword);
-            accountService.verify(ownership.getAccount());
+        if (!account.isVerified()) {
+            passwordResetService.setPassword(account, newPassword);
+            accountService.verify(account);
         }
         tokenVerificationCounter.increment();
         return emailVerification;
@@ -152,8 +154,8 @@ public class ActivationService {
 
     @Transactional
     public void linkAffiliateOwnership(EmailVerification emailVerification) {
-        Ownership ownership = ownershipService.getByAccountEmailAndPeppolIdAndType(emailVerification.getEmail(), emailVerification.getPeppolId(), AccountType.ADMIN);
-        ownershipService.ensureOwnership(ownership.getAccount(), AccountType.AFFILIATE, ownership.getCompany());
+        ownershipService.findByAccountEmailAndPeppolIdAndType(emailVerification.getEmail(), emailVerification.getPeppolId(), AccountType.ADMIN)
+                .ifPresent(ownership -> ownershipService.ensureOwnership(ownership.getAccount(), AccountType.AFFILIATE, ownership.getCompany()));
     }
 
     @Transactional

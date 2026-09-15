@@ -72,13 +72,16 @@ export class BrowserAuthenticationService {
         const status = await this.readStatus(response);
 
         // Spring rotates the session and CSRF token after password authentication. Refresh it
-        // before the second factor is submitted.
+        // before the next browser request is submitted.
+        this.invalidateSession();
         if (status === 'totp_required') {
             await this.getSession();
-        } else if (this.session) {
-            this.session.status = status;
         }
         return status;
+    }
+
+    invalidateSession(): void {
+        this.session = null;
     }
 
     async verifyTotp(code: string): Promise<BrowserAuthenticationStatus> {

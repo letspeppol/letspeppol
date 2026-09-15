@@ -36,9 +36,8 @@ public class IdentityVerificationService {
     private final DirectorRepository directorRepository;
     private final JavaMailSender mailSender;
     private final EncryptionService encryptionService;
-    private final CompanyService companyService;
 
-    public DirectorIdentityVerification recordDirectorSignature(Account account, IdentityVerificationRequest req) {
+    public boolean recordDirectorSignature(Account account, IdentityVerificationRequest req) {
         DirectorIdentityVerification directorIdentityVerification = new DirectorIdentityVerification(
                 account,
                 req.director(),
@@ -52,17 +51,17 @@ public class IdentityVerificationService {
         );
         accountIdentityVerificationRepository.save(directorIdentityVerification);
 
+        if (!isAllowedToSign(req.x500Name(), req.director())) {
+            log.warn("Peppol not activated for email={} director={} signer={} serial={}", account.getEmail(), req.director().getName(), getFullName(req.x500Name()), req.x509Certificate().getSerialNumber());
+            sendManualVerificationEmail(account.getEmail(), req.director().getCompany().getPeppolId(), req.director().getCompany().getName(), req.director().getName(), getFullName(req.x500Name())); //TODO : check, mail does not work !
+            return false;
+        }
+
         req.director().setRegistered(true);
         directorRepository.save(req.director());
 
-        if (!isAllowedToSign(req.x500Name(), req.director())) {
-            companyService.suspendCompany(req.director().getCompany());
-            log.warn("Peppol not activated for email={} director={} signer={} serial={}", account.getEmail(), req.director().getName(), getFullName(req.x500Name()), req.x509Certificate().getSerialNumber());
-            sendManualVerificationEmail(account.getEmail(), req.director().getCompany().getPeppolId(), req.director().getCompany().getName(), req.director().getName(), getFullName(req.x500Name())); //TODO : check, mail does not work !
-        }
-
         log.info("Identity verified for email={} director={} serial={}", account.getEmail(), req.director().getName(), req.x509Certificate().getSerialNumber());
-        return directorIdentityVerification;
+        return true;
     }
 
     //TODO : check use if this !

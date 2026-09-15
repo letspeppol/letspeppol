@@ -843,6 +843,7 @@
     "copy-error": "Échec de la copie",
     "disable": "Désactiver la 2FA",
     "disable-confirm": "Entrez votre code d'authentification actuel pour désactiver la 2FA :",
+    "disable-confirm-recovery": "Saisissez l'un de vos codes de récupération pour désactiver la 2FA :",
     "disabled": "L'authentification à deux facteurs n'est pas activée.",
     "disabled-alert": "Authentification à deux facteurs désactivée",
     "disabling": "Désactivation...",

@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public interface AccountantCustomerRepository extends JpaRepository<AccountantCustomer, Long> {
 
-    Optional<AccountantCustomer> findByCustomerEmail(String customerEmail);
+    boolean existsByAccountantExternalIdAndCustomerPeppolId(UUID accountantExternalId, String customerPeppolId);
 
     Optional<AccountantCustomer> findByToken(String customerPeppolId);
 

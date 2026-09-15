@@ -17,6 +17,7 @@ import org.letspeppol.kyc.dto.TotpSetupResponse;
 import org.letspeppol.kyc.dto.TotpStatusResponse;
 import org.letspeppol.kyc.dto.TotpVerifyRequest;
 import org.letspeppol.kyc.exception.KycErrorCodes;
+import org.letspeppol.kyc.exception.TooManyRequestsException;
 import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.service.LoginAttemptService;
 import org.letspeppol.kyc.service.TotpService;
@@ -69,8 +70,13 @@ public class TotpController {
     @Operation(summary = "Disable TOTP", description = "Disables TOTP after validating a current authenticator or recovery code.")
     @SecurityRequirement(name = "oauth2", scopes = "openid")
     public ResponseEntity<Void> disable(@RequestBody TotpVerifyRequest request) {
-        UUID uid = jwtClaimExtractor.extract().uid();
-        totpService.disable(uid, request.code());
+        Account account = totpService.findByExternalId(jwtClaimExtractor.extract().uid());
+        String attemptKey = attemptKey(account.getId());
+        if (!loginAttemptService.tryAttempt(attemptKey)) {
+            throw new TooManyRequestsException(KycErrorCodes.TOO_MANY_REQUESTS);
+        }
+        totpService.disable(account, request.code());
+        loginAttemptService.recordSuccess(attemptKey);
         return ResponseEntity.noContent().build();
     }
 
@@ -102,21 +108,15 @@ public class TotpController {
             return ResponseEntity.badRequest().body(new AuthErrorResponse("validation_failed"));
         }
 
-        String attemptKey = "totp:" + accountId;
-        if (loginAttemptService.isBlocked(attemptKey)) {
+        String attemptKey = attemptKey(accountId);
+        if (!loginAttemptService.tryAttempt(attemptKey)) {
             return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
                     .body(new AuthErrorResponse(KycErrorCodes.TOO_MANY_REQUESTS));
         }
 
         Account account = totpService.findById(accountId);
         String code = request.code().trim();
-        boolean valid = totpService.verify(account, code);
-        if (!valid) {
-            valid = totpService.verifyRecoveryCode(account, code);
-        }
-
-        if (!valid) {
-            loginAttemptService.recordFailure(attemptKey);
+        if (!totpService.verify(account, code) && !totpService.verifyRecoveryCode(account, code)) {
             return authenticationFailed();
         }
 
@@ -126,6 +126,10 @@ public class TotpController {
         requestCache.removeRequest(httpRequest, httpResponse);
 
         return ResponseEntity.ok(new AuthStatusResponse(BrowserAuthenticationSupport.STATUS_AUTHENTICATED));
+    }
+
+    private static String attemptKey(Long accountId) {
+        return "totp:" + accountId;
     }
 
     private ResponseEntity<AuthErrorResponse> authenticationFailed() {

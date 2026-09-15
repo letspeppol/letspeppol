@@ -843,6 +843,7 @@
     "copy-error": "Kopiëren mislukt",
     "disable": "2FA uitschakelen",
     "disable-confirm": "Voer uw huidige authenticatiecode in om 2FA uit te schakelen:",
+    "disable-confirm-recovery": "Voer een van uw herstelcodes in om 2FA uit te schakelen:",
     "disabled": "Tweefactorauthenticatie is niet ingeschakeld.",
     "disabled-alert": "Tweefactorauthenticatie uitgeschakeld",
     "disabling": "Uitschakelen...",
