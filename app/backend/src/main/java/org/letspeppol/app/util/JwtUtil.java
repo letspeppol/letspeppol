@@ -5,6 +5,7 @@ import org.letspeppol.app.exception.AppErrorCodes;
 import org.letspeppol.app.exception.SecurityException;
 import org.springframework.security.oauth2.jwt.Jwt;
 
+import java.time.Instant;
 import java.util.UUID;
 
 public class JwtUtil {
@@ -31,6 +32,20 @@ public class JwtUtil {
             throw new SecurityException(AppErrorCodes.PEPPOL_ACTIVE_NOT_PRESENT);
         }
         return peppolActive;
+    }
+
+    public static Instant getCompanyLastUpdated(Jwt jwt) {
+        Object claim = jwt.getClaim(SecurityConfig.COMPANY_LAST_UPDATED);
+        if (claim == null) {
+            return null;
+        }
+        if (claim instanceof Instant instant) {
+            return instant;
+        }
+        if (claim instanceof Number epochSeconds) {
+            return Instant.ofEpochSecond(epochSeconds.longValue());
+        }
+        return Instant.parse(claim.toString());
     }
 
 }
