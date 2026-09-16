@@ -76,16 +76,26 @@
 
     <!-- Disabling: confirm with code -->
     <div if.bind="state === 'disabling'">
-        <p class="totp-status" t="totp.disable-confirm">Enter your current authenticator code to disable 2FA:</p>
+        <p class="totp-status" t.bind="useRecoveryCode ? 'totp.disable-confirm-recovery' : 'totp.disable-confirm'">Enter your current authenticator code to disable 2FA:</p>
         <div class="totp-verify-input">
             <label class="field">
-                <span t="totp.auth-code">Authentication code</span>
-                <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6"
+                <span t.bind="useRecoveryCode ? 'login.recovery-code' : 'totp.auth-code'">Authentication code</span>
+                <input if.bind="!useRecoveryCode"
+                       type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6"
                        value.bind="disableCode" placeholder="000000"
+                       keyup.trigger="$event.key === 'Enter' ? confirmDisable() : undefined"
+                       style="text-align: center; font-size: 1.25rem; letter-spacing: 0.3rem;">
+                <input else
+                       type="text" maxlength="8" autocapitalize="characters" spellcheck="false"
+                       value.bind="disableCode"
+                       input.trigger="onRecoveryCodeInput($event)"
                        keyup.trigger="$event.key === 'Enter' ? confirmDisable() : undefined"
                        style="text-align: center; font-size: 1.25rem; letter-spacing: 0.3rem;">
             </label>
             <p if.bind="disableError" class="form-error" t="totp.invalid-code-short">Invalid code.</p>
+            <p>
+                <a href="#" click.trigger="toggleRecoveryCode($event)" t.bind="useRecoveryCode ? 'login.use-authenticator' : 'login.use-recovery'">Use a recovery code instead</a>
+            </p>
             <div class="totp-setup-actions">
                 <button type="button" class="btn" click.trigger="cancelDisable()" t="common.cancel">Cancel</button>
                 <button type="button" class="btn danger" click.trigger="confirmDisable()" disabled.bind="busy || !disableCode.trim()">

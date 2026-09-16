@@ -31,7 +31,6 @@ import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.KycException;
 import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.model.AccountType;
-import org.letspeppol.kyc.model.DirectorIdentityVerification;
 import org.letspeppol.kyc.model.kbo.Director;
 import org.letspeppol.kyc.repository.DirectorRepository;
 import org.letspeppol.kyc.service.signing.CertificateUtil;
@@ -368,8 +367,11 @@ public class SigningService {
         );
         SignerAccountResolverService.SignerResolution signerResolution = signerAccountResolverService.resolveSignerAccount(signingRequest, getFullName(identityVerificationRequest.x500Name()));
         Account account = signerResolution.account();
+        boolean signerIsDirector = identityVerificationService.recordDirectorSignature(account, identityVerificationRequest);
+        if (!signerIsDirector) {
+            return new FinalizeSigningResponse(writeContractToFile(signingRequest.peppolId(), account, finalPdfBytes), null, true);
+        }
         ownershipService.ensureAdminOwnership(account, director.getCompany());
-        DirectorIdentityVerification ignored = identityVerificationService.recordDirectorSignature(account, identityVerificationRequest);
         RegistrationResponse registrationResponse = null;
         if (signerResolution.requestedType() == AccountType.ADMIN && !director.getCompany().isSuspended()) {
             registrationResponse = companyService.registerCompany(director.getCompany());
@@ -379,7 +381,7 @@ public class SigningService {
                 companyRegistrationCounterFailure.increment();
             }
         }
-        return new FinalizeSigningResponse(writeContractToFile(signingRequest.peppolId(), account, finalPdfBytes), registrationResponse);
+        return new FinalizeSigningResponse(writeContractToFile(signingRequest.peppolId(), account, finalPdfBytes), registrationResponse, false);
     }
 
     public byte[] getContract(String peppolId, Long accountId) {

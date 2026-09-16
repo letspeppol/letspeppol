@@ -64,8 +64,8 @@ public class SecurityConfig {
             if (scopes != null && scopes.contains("service")) {
                 authorities.add(new SimpleGrantedAuthority(ROLE_SERVICE));
             }
-            // Both end-user tokens and the APP service token carry a uid; APP accounts have no
-            // peppolId, so uid (not peppolId) is the correct discriminator for ROLE_KYC_USER here.
+            // Both end-user tokens and the APP service token carry a uid; the APP service token's
+            // peppolId is its sending company, so uid (not peppolId) is the correct discriminator for ROLE_KYC_USER here.
             if (jwt.hasClaim(UID)) {
                 authorities.add(new SimpleGrantedAuthority(ROLE_KYC_USER));
             }

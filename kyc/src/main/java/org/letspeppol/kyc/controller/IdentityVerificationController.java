@@ -59,7 +59,9 @@ public class IdentityVerificationController {
         FinalizeSigningResponse finalizeSigningResponse = signingService.finalizeSign(request);
         String status;
         RegistrationResponse registrationResponse = finalizeSigningResponse.registrationResponse();
-        if (registrationResponse == null) {
+        if (finalizeSigningResponse.manualReviewRequired()) {
+            status = "MANUAL_REVIEW";
+        } else if (registrationResponse == null) {
             status = "UNKNOWN";
         } else if (!registrationResponse.peppolActive()) {
             status = switch (registrationResponse.errorCode()) {
