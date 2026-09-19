@@ -90,7 +90,10 @@
 
             <attachment-info read-only.bind="readOnly" show-attachment-modal.bind="() => showAttachmentModal()"></attachment-info>
 
-            <total-info read-only.bind="readOnly"></total-info>
+            <total-info
+                read-only.bind="readOnly"
+                tax-total.bind="invoiceContext.selectedInvoice.TaxTotal[0]">
+            </total-info>
         </div>
 
         <invoice-edit-items read-only.bind="readOnly" auto-save.bind="() => autoSave()"></invoice-edit-items>

@@ -376,8 +376,10 @@
       "method": "Methode",
       "note": "Notitie",
       "number": "Nummer",
+      "payable-amount": "Te betalen bedrag",
       "payment": "Betaling",
       "pos": "Pos",
+      "prepaid-amount": "Vooruitbetaald bedrag",
       "recreate-positions": "Lijnposities opnieuw aanmaken",
       "save-draft": "Concept opslaan",
       "send": {

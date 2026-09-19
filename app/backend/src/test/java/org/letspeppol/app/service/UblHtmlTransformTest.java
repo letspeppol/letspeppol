@@ -19,6 +19,54 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class UblHtmlTransformTest {
 
     @Test
+    void invoiceTransformShowsGroupedVatAndConditionalTotals() throws Exception {
+        String html = transform("pdf/ubl-invoice-to-html.xsl", documentWithDetailedTotals("Invoice"));
+
+        assertEquals(1, countOccurrences(html, "Tax 21%"), html);
+        assertEquals(1, countOccurrences(html, "Tax 6%"), html);
+        assertInOrder(html, "Tax 21%", "€15.00");
+        assertInOrder(html, "Tax 6%", "€3.00");
+        assertTrue(html.contains("<strong>Tax inclusive</strong>"), html);
+        assertTrue(html.contains("€118.00"), html);
+        assertTrue(html.contains("Prepaid amount"), html);
+        assertTrue(html.contains("€20.00"), html);
+        assertTrue(html.contains("<strong>Payable amount</strong>"), html);
+        assertTrue(html.contains("€98.00"), html);
+    }
+
+    @Test
+    void creditNoteTransformShowsGroupedVatAndConditionalTotals() throws Exception {
+        String html = transform("pdf/ubl-creditnote-to-html.xsl", documentWithDetailedTotals("CreditNote"));
+
+        assertEquals(1, countOccurrences(html, "Tax 21%"), html);
+        assertEquals(1, countOccurrences(html, "Tax 6%"), html);
+        assertTrue(html.contains("<strong>Tax inclusive</strong>"), html);
+        assertTrue(html.contains("Prepaid amount"), html);
+        assertTrue(html.contains("<strong>Payable amount</strong>"), html);
+    }
+
+    @Test
+    void transformsHideOptionalRowsForSingleRateEqualOrMissingTotals() throws Exception {
+        String equalTotals = transform(
+                "pdf/ubl-invoice-to-html.xsl",
+                documentWithSimpleTotals("Invoice", true)
+        );
+
+        assertFalse(equalTotals.contains("Tax 21%"), equalTotals);
+        assertTrue(equalTotals.contains("<strong>Tax inclusive</strong>"), equalTotals);
+        assertFalse(equalTotals.contains("Prepaid amount"), equalTotals);
+        assertFalse(equalTotals.contains("<strong>Payable amount</strong>"), equalTotals);
+
+        String missingTaxInclusive = transform(
+                "pdf/ubl-creditnote-to-html.xsl",
+                documentWithSimpleTotals("CreditNote", false)
+        );
+
+        assertFalse(missingTaxInclusive.contains("<strong>Tax inclusive</strong>"), missingTaxInclusive);
+        assertFalse(missingTaxInclusive.contains("<strong>Payable amount</strong>"), missingTaxInclusive);
+    }
+
+    @Test
     void invoiceTransformAddsZeroVatFootnoteMarkerAndText() throws Exception {
         String html = transform(
                 "pdf/ubl-invoice-to-html.xsl",
@@ -622,6 +670,65 @@ class UblHtmlTransformTest {
         StringWriter output = new StringWriter();
         transformer.transform(new StreamSource(new StringReader(ublXml)), new StreamResult(output));
         return output.toString();
+    }
+
+    private String documentWithDetailedTotals(String rootName) {
+        return """
+                <%1$s xmlns="urn:oasis:names:specification:ubl:schema:xsd:%1$s-2"
+                      xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+                      xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+                    <cac:TaxTotal>
+                        <cbc:TaxAmount currencyID="EUR">18.00</cbc:TaxAmount>
+                        <cac:TaxSubtotal>
+                            <cbc:TaxableAmount currencyID="EUR">47.62</cbc:TaxableAmount>
+                            <cbc:TaxAmount currencyID="EUR">10.00</cbc:TaxAmount>
+                            <cac:TaxCategory><cbc:ID>S</cbc:ID><cbc:Percent>21</cbc:Percent></cac:TaxCategory>
+                        </cac:TaxSubtotal>
+                        <cac:TaxSubtotal>
+                            <cbc:TaxableAmount currencyID="EUR">50.00</cbc:TaxableAmount>
+                            <cbc:TaxAmount currencyID="EUR">3.00</cbc:TaxAmount>
+                            <cac:TaxCategory><cbc:ID>S</cbc:ID><cbc:Percent>6</cbc:Percent></cac:TaxCategory>
+                        </cac:TaxSubtotal>
+                        <cac:TaxSubtotal>
+                            <cbc:TaxableAmount currencyID="EUR">23.81</cbc:TaxableAmount>
+                            <cbc:TaxAmount currencyID="EUR">5.00</cbc:TaxAmount>
+                            <cac:TaxCategory><cbc:ID>AA</cbc:ID><cbc:Percent>21.0</cbc:Percent></cac:TaxCategory>
+                        </cac:TaxSubtotal>
+                    </cac:TaxTotal>
+                    <cac:LegalMonetaryTotal>
+                        <cbc:TaxExclusiveAmount currencyID="EUR">100.00</cbc:TaxExclusiveAmount>
+                        <cbc:TaxInclusiveAmount currencyID="EUR">118.00</cbc:TaxInclusiveAmount>
+                        <cbc:PrepaidAmount currencyID="EUR">20.00</cbc:PrepaidAmount>
+                        <cbc:PayableAmount currencyID="EUR">98.00</cbc:PayableAmount>
+                    </cac:LegalMonetaryTotal>
+                </%1$s>
+                """.formatted(rootName);
+    }
+
+    private String documentWithSimpleTotals(String rootName, boolean includeTaxInclusive) {
+        String taxInclusive = includeTaxInclusive
+                ? "<cbc:TaxInclusiveAmount currencyID=\"EUR\">121.00</cbc:TaxInclusiveAmount>"
+                : "";
+        return """
+                <%1$s xmlns="urn:oasis:names:specification:ubl:schema:xsd:%1$s-2"
+                      xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+                      xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+                    <cac:TaxTotal>
+                        <cbc:TaxAmount currencyID="EUR">21.00</cbc:TaxAmount>
+                        <cac:TaxSubtotal>
+                            <cbc:TaxableAmount currencyID="EUR">100.00</cbc:TaxableAmount>
+                            <cbc:TaxAmount currencyID="EUR">21.00</cbc:TaxAmount>
+                            <cac:TaxCategory><cbc:ID>S</cbc:ID><cbc:Percent>21</cbc:Percent></cac:TaxCategory>
+                        </cac:TaxSubtotal>
+                    </cac:TaxTotal>
+                    <cac:LegalMonetaryTotal>
+                        <cbc:TaxExclusiveAmount currencyID="EUR">100.00</cbc:TaxExclusiveAmount>
+                        %2$s
+                        <cbc:PrepaidAmount currencyID="EUR">0.00</cbc:PrepaidAmount>
+                        <cbc:PayableAmount currencyID="EUR">121.00</cbc:PayableAmount>
+                    </cac:LegalMonetaryTotal>
+                </%1$s>
+                """.formatted(rootName, taxInclusive);
     }
 
     private int countOccurrences(String text, String needle) {

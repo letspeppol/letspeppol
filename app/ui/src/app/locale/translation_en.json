@@ -376,8 +376,10 @@
       "method": "Method",
       "note": "Note",
       "number": "Number",
+      "payable-amount": "Payable amount",
       "payment": "Payment",
       "pos": "Pos",
+      "prepaid-amount": "Prepaid amount",
       "recreate-positions": "Recreate line positions",
       "save-draft": "Save draft",
       "send": {
