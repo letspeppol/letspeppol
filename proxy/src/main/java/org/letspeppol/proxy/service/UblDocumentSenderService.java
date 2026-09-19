@@ -44,7 +44,7 @@ public class UblDocumentSenderService {
         if (ublDocumentRepository.findById(uuid).isPresent()) {
             throw new DuplicateRequestException("UBL_DOCUMENT_ALREADY_CREATED", "Document " + uuid + " is already created, please use the update call");
         }
-        if (!ublDocumentRepository.findAllByHash(hash).isEmpty()) {
+        if (ublDocumentRepository.findByHashAndOwnerPeppolId(hash, ublDocumentDto.ownerPeppolId()).isPresent()) {
             log.warn("Duplicate outgoing UBL request with hash {}", hash);
             throw new DuplicateRequestException("UBL_DOCUMENT_CONTENT_ALREADY_SENT", "Document as-is has been send before. Content must be unique to send.");
         }
