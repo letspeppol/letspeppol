@@ -24,7 +24,6 @@ import org.letspeppol.proxy.model.Registry;
 import org.letspeppol.proxy.model.UblDocument;
 import org.letspeppol.proxy.repository.RegistryRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,9 +54,6 @@ public class RecommandService implements AccessPointServiceInterface {
     private final Counter registerCounter;
     private final Counter unregisterCounter;
     private final Counter documentSendCounter;
-
-    @Value("${recommand.receive-enabled:false}")
-    private boolean receiveEnabled;
 
     @Override
     public AccessPoint getType() {
@@ -232,9 +228,6 @@ public class RecommandService implements AccessPointServiceInterface {
     /// and POST /api/v1/documents/{documentId}/mark-as-read
     @Override
     public void receiveDocuments() {
-        if (!receiveEnabled) {
-            return;
-        }
         try {
             InboxResponse inbox = recommandWebClient
                     .get()

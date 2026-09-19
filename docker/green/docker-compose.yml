@@ -31,7 +31,6 @@ services:
       RECOMMAND_API_URL: ${RECOMMAND_API_URL:-https://app.recommand.eu}
       RECOMMAND_API_KEY: ${RECOMMAND_API_KEY:-}
       RECOMMAND_API_SECRET: ${RECOMMAND_API_SECRET:-}
-      RECOMMAND_RECEIVE_ENABLED: ${RECOMMAND_RECEIVE_ENABLED:-false}
       BACKUP_DATA_DIR: /opt/data/proxy
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -h $$DB_HOST -p $$DB_PORT -U $$DB_USER"]

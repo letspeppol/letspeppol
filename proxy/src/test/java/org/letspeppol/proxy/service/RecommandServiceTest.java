@@ -17,7 +17,6 @@ import org.letspeppol.proxy.model.DocumentType;
 import org.letspeppol.proxy.model.Registry;
 import org.letspeppol.proxy.model.UblDocument;
 import org.letspeppol.proxy.repository.RegistryRepository;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -150,7 +149,6 @@ class RecommandServiceTest {
 
     @Test
     void receivesUnreadDocumentsAndMarksThemAsReadAfterStorage() {
-        ReflectionTestUtils.setField(service, "receiveEnabled", true);
         respond(200, """
                 {"success":true,"documents":[{"id":"incoming-1","direction":"incoming",
                 "senderId":"0208:0123456789","receiverId":"0208:0685912734","type":"invoice","readAt":null}]}
