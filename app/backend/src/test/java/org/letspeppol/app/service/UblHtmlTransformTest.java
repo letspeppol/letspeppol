@@ -24,6 +24,7 @@ class UblHtmlTransformTest {
 
         assertEquals(1, countOccurrences(html, "Tax 21%"), html);
         assertEquals(1, countOccurrences(html, "Tax 6%"), html);
+        assertFalse(html.contains("Tax amount"), html);
         assertInOrder(html, "Tax 21%", "€15.00");
         assertInOrder(html, "Tax 6%", "€3.00");
         assertTrue(html.contains("<strong>Tax inclusive</strong>"), html);
@@ -40,19 +41,21 @@ class UblHtmlTransformTest {
 
         assertEquals(1, countOccurrences(html, "Tax 21%"), html);
         assertEquals(1, countOccurrences(html, "Tax 6%"), html);
+        assertFalse(html.contains("Tax amount"), html);
         assertTrue(html.contains("<strong>Tax inclusive</strong>"), html);
         assertTrue(html.contains("Prepaid amount"), html);
         assertTrue(html.contains("<strong>Payable amount</strong>"), html);
     }
 
     @Test
-    void transformsHideOptionalRowsForSingleRateEqualOrMissingTotals() throws Exception {
+    void transformsShowSingleRateVatAndHideOptionalRowsForEqualOrMissingTotals() throws Exception {
         String equalTotals = transform(
                 "pdf/ubl-invoice-to-html.xsl",
                 documentWithSimpleTotals("Invoice", true)
         );
 
-        assertFalse(equalTotals.contains("Tax 21%"), equalTotals);
+        assertEquals(1, countOccurrences(equalTotals, "Tax 21%"), equalTotals);
+        assertFalse(equalTotals.contains("Tax amount"), equalTotals);
         assertTrue(equalTotals.contains("<strong>Tax inclusive</strong>"), equalTotals);
         assertFalse(equalTotals.contains("Prepaid amount"), equalTotals);
         assertFalse(equalTotals.contains("<strong>Payable amount</strong>"), equalTotals);
@@ -62,6 +65,8 @@ class UblHtmlTransformTest {
                 documentWithSimpleTotals("CreditNote", false)
         );
 
+        assertEquals(1, countOccurrences(missingTaxInclusive, "Tax 21%"), missingTaxInclusive);
+        assertFalse(missingTaxInclusive.contains("Tax amount"), missingTaxInclusive);
         assertFalse(missingTaxInclusive.contains("<strong>Tax inclusive</strong>"), missingTaxInclusive);
         assertFalse(missingTaxInclusive.contains("<strong>Payable amount</strong>"), missingTaxInclusive);
     }

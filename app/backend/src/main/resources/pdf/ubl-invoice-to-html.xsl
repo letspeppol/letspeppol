@@ -401,28 +401,18 @@
             </xsl:call-template>
           </td>
         </tr>
-        <tr>
-          <td>Tax amount</td>
-          <td class="amount">
-            <xsl:call-template name="format-eur">
-              <xsl:with-param name="value" select="normalize-space((/*/*[local-name()='TaxTotal']/*[local-name()='TaxAmount'])[1])"/>
-            </xsl:call-template>
-          </td>
-        </tr>
-        <xsl:if test="count($uniqueTaxPercentSubtotals) &gt; 1">
-          <xsl:for-each select="$uniqueTaxPercentSubtotals">
-            <xsl:variable name="taxPercent"
-                          select="string(number(normalize-space((./*[local-name()='TaxCategory']/*[local-name()='Percent'])[1])))"/>
-            <tr>
-              <td>Tax <xsl:value-of select="format-number(number($taxPercent), '0.##')"/>%</td>
-              <td class="amount">
-                <xsl:call-template name="format-eur">
-                  <xsl:with-param name="value" select="sum(key('tax-subtotal-by-percent', $taxPercent)/*[local-name()='TaxAmount'])"/>
-                </xsl:call-template>
-              </td>
-            </tr>
-          </xsl:for-each>
-        </xsl:if>
+        <xsl:for-each select="$uniqueTaxPercentSubtotals">
+          <xsl:variable name="taxPercent"
+                        select="string(number(normalize-space((./*[local-name()='TaxCategory']/*[local-name()='Percent'])[1])))"/>
+          <tr>
+            <td>Tax <xsl:value-of select="format-number(number($taxPercent), '0.##')"/>%</td>
+            <td class="amount">
+              <xsl:call-template name="format-eur">
+                <xsl:with-param name="value" select="sum(key('tax-subtotal-by-percent', $taxPercent)/*[local-name()='TaxAmount'])"/>
+              </xsl:call-template>
+            </td>
+          </tr>
+        </xsl:for-each>
         <xsl:if test="string-length($taxInclusiveAmount) &gt; 0">
           <tr>
             <td><strong>Tax inclusive</strong></td>
