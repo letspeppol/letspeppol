@@ -3,6 +3,7 @@ package org.letspeppol.kyc.service.signing;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.asn1.x500.style.IETFUtils;
 import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.KycException;
@@ -53,5 +54,16 @@ public class CertificateUtil {
             return IETFUtils.valueToString(rdn.getFirst().getValue());
         }
         return null;
+    }
+
+    public static String getFullName(X500Name x500Name) {
+        String cn = getRDNName(x500Name, BCStyle.CN);
+        String givenName = getRDNName(x500Name, BCStyle.GIVENNAME);
+        String surName = getRDNName(x500Name, BCStyle.SURNAME);
+        String name = cn;
+        if (givenName != null && surName != null) {
+            name = givenName + " " + surName;
+        }
+        return name;
     }
 }

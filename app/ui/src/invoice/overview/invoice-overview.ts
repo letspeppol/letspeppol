@@ -14,6 +14,7 @@ import {IRouter} from "@aurelia/router";
 import {UploadUblModal} from "./components/upload-ubl-modal";
 import {I18N} from "@aurelia/i18n";
 import {CompanyService} from "../../services/app/company-service";
+import {currentOwnershipRoute} from "../../services/app/ownership-route";
 
 type SortDirection = "asc" | "desc";
 
@@ -49,9 +50,14 @@ export class InvoiceOverview {
     }
 
     async loadDrafts() {
-        this.invoiceContext.draftPage = await this.invoiceService.getDocuments({...this.query, draft: true });
-        if (this.invoiceContext.activeBox === 'DRAFTS') {
-            this.invoiceContext.invoicePage = this.invoiceContext.draftPage;
+        this.invoiceContext.loadingDrafts = true;
+        try {
+            this.invoiceContext.draftPage = await this.invoiceService.getDocuments({...this.query, draft: true });
+            if (this.invoiceContext.activeBox === 'DRAFTS') {
+                this.invoiceContext.invoicePage = this.invoiceContext.draftPage;
+            }
+        } finally {
+            this.invoiceContext.loadingDrafts = false;
         }
     }
 
@@ -62,10 +68,12 @@ export class InvoiceOverview {
     }
 
     loadInvoices() {
+        this.invoiceContext.loadingInvoices = true;
         this.invoiceService.getDocuments({
             ...this.query,
             draft: this.invoiceContext.activeBox === 'DRAFTS'
-        }).then(page => this.invoiceContext.invoicePage = page);
+        }).then(page => this.invoiceContext.invoicePage = page)
+        .finally(() => this.invoiceContext.loadingInvoices = false);
     }
 
     changeDocType(value: DocumentType) {
@@ -91,6 +99,7 @@ export class InvoiceOverview {
             case 'DRAFTS':
                 this.query.pageable.page = 0;
                 this.loadDrafts();
+                this.invoiceContext.loadingInvoices = this.invoiceContext.loadingDrafts;
                 break;
         }
     }
@@ -104,7 +113,7 @@ export class InvoiceOverview {
     }
 
     selectItem(item: DocumentDto) {
-        this.router.load(`/invoices/${item.id}`);
+        this.router.load(currentOwnershipRoute(`/invoices/${item.id}`));
     }
 
     nextPage() {
@@ -201,7 +210,7 @@ export class InvoiceOverview {
             const updated = await this.invoiceService.markErrorSeenDocument(item.id);
             item.errorSeenOn = updated.errorSeenOn;
             this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.invoice.marked-seen')});
-        } catch (e) {
+        } catch {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.invoice.mark-seen-failed')});
         }
     }
@@ -221,8 +230,8 @@ export class InvoiceOverview {
             if (this.invoiceContext.draftPage) {
                 this.invoiceContext.draftPage.totalElements++;
             }
-            this.router.load(`/invoices/${draft.id}`);
-        } catch (e) {
+            this.router.load(currentOwnershipRoute(`/invoices/${draft.id}`));
+        } catch {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr(`alert.invoice.resend-failed.${item.type}`)});
         }
     }
