@@ -6,6 +6,7 @@ export const VAT_RULESET_OPTIONS = [
  ] as const;
 export type VatRuleset = typeof VAT_RULESET_OPTIONS[number];
 
+export const VAT_RATE_OPTIONS = [21, 12, 6, 0] as const;
 export const ZERO_VAT_REASON_OPTIONS = [
     'E',
     'K',

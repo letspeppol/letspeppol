@@ -28,6 +28,7 @@ import {IRouter} from "@aurelia/router";
 import {I18N} from "@aurelia/i18n";
 import {collectVatReasonSelections, requiresDeliveryDetails} from "../../services/app/vat-rules";
 import {currentOwnershipRoute} from "../../services/app/ownership-route";
+import {InvoiceAllowanceChargeModal} from "./components/modals/invoice-allowance-charge-modal";
 
 export class InvoiceEdit {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -51,6 +52,7 @@ export class InvoiceEdit {
     @bindable invoiceNumberModal: InvoiceNumberModal;
     @bindable validationResultModal: ValidationResultModal;
     @bindable invoiceDeliveryModal: InvoiceDeliveryModal;
+    @bindable invoiceAllowanceChargeModal: InvoiceAllowanceChargeModal;
     @bindable paymentInfo: PaymentInfo;
     deliveryDetailsLoading = false;
 
@@ -379,6 +381,13 @@ export class InvoiceEdit {
             return;
         }
         this.invoiceAttachmentModal.showModal();
+    }
+
+    showAllowanceChargeModal() {
+        if (this.readOnly) {
+            return;
+        }
+        this.invoiceAllowanceChargeModal.showModal(this.invoiceContext.selectedInvoice);
     }
 
     private invoiceRequiresDeliveryDetails(): boolean {

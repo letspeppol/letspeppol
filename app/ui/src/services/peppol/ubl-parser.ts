@@ -89,6 +89,7 @@ function stripPrefixes(obj: unknown): unknown {
 }
 
 const numberFields = [
+    "AllowanceTotalAmount",
     "ChargeTotalAmount",
     "CreditedQuantity",
     "InvoiceTypeCode",
@@ -104,6 +105,8 @@ const numberFields = [
     "TaxAmount",
     "TaxableAmount",
     "Amount",
+    "BaseAmount",
+    "MultiplierFactorNumeric",
     "value",       // for Amounts and Quantities
 ];
 
