@@ -1,6 +1,14 @@
 package org.letspeppol.kyc.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.letspeppol.kyc.dto.AccountInfo;
 import org.letspeppol.kyc.dto.CompanySearchResponse;
 import org.letspeppol.kyc.dto.RegistrationResponse;
 import org.letspeppol.kyc.exception.ForbiddenException;
@@ -8,10 +16,9 @@ import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.mapper.AccountMapper;
 import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.model.AccountType;
-import org.letspeppol.kyc.service.AccountService;
-import org.letspeppol.kyc.service.CompanyService;
-import org.letspeppol.kyc.service.JwtService;
-import org.letspeppol.kyc.service.SigningService;
+import org.letspeppol.kyc.model.kbo.Company;
+import org.letspeppol.kyc.service.*;
+import org.letspeppol.kyc.service.jwt.JwtClaimExtractor;
 import org.letspeppol.kyc.service.jwt.JwtInfo;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -25,22 +32,38 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/sapi/company")
 @RequiredArgsConstructor
+@Tag(name = "KYC Company Management", description = "Authenticated company endpoints for loading account context, searching companies, and activating or deactivating Peppol registration.")
+@SecurityRequirement(name = "oauth2", scopes = "openid")
 public class CompanyController {
 
     private final AccountService accountService;
+    private final OwnershipService ownershipService;
     private final CompanyService companyService;
-    private final JwtService jwtService;
+    private final JwtClaimExtractor jwtClaimExtractor;
     private final SigningService signingService;
 
     /// Retrieves account info based on valid JWT token, used by App when peppolId is unknown on getCompany (called by UI right after obtaining JWT token)
     @GetMapping
-    public ResponseEntity<?> getAccountForToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
-        Account account = (jwtInfo.accountType() == AccountType.ADMIN) ? accountService.getAdminByExternalId(jwtInfo.uid()) : accountService.getAdminByPeppolId(jwtInfo.peppolId());
-        return ResponseEntity.ok(AccountMapper.toAccountInfo(account));  //This will be the ADMIN account and thus the one who signed the contract
+    @Operation(summary = "Load admin company account", description = "Returns the primary admin account and company details for the authenticated Peppol identifier.")
+    public ResponseEntity<AccountInfo> getAdminAccountForToken() {
+        JwtInfo jwtInfo = jwtClaimExtractor.extract();
+        Account account = ownershipService.getByPeppolIdAndType(jwtInfo.peppolId(), AccountType.ADMIN).getAccount();
+        Company company = companyService.getByPeppolId(jwtInfo.peppolId());
+        return ResponseEntity.ok(AccountMapper.toAccountInfo(account, company)); //This will be the ADMIN account and thus the one who signed the contract
+    }
+
+    /// Retrieves account info based on valid JWT token, used by App when peppolId is unknown on getCompany (called by UI right after obtaining JWT token)
+    @GetMapping("/account")
+    @Operation(summary = "Load current account details", description = "Returns the currently authenticated user account together with the related company information.")
+    public ResponseEntity<AccountInfo> getAccountForToken() {
+        JwtInfo jwtInfo = jwtClaimExtractor.extract();
+        Account account = accountService.getByExternalId(jwtInfo.uid());
+        Company company = companyService.getByPeppolId(jwtInfo.peppolId());
+        return ResponseEntity.ok(AccountMapper.toAccountInfo(account, company));
     }
 
     @GetMapping("/search")
+    @Operation(summary = "Search companies", description = "Searches company records by VAT number, Peppol identifier, or company name for onboarding and administrative workflows.")
     public ResponseEntity<List<CompanySearchResponse>> search(
             @RequestParam(value = "identifier", required = false) String identifier,
             @RequestParam(value = "vatNumber", required = false) String vatNumber,
@@ -51,8 +74,17 @@ public class CompanyController {
 
     /// Registers peppolId on the Peppol Directory, must call Proxy to register on AP
     @PostMapping("/peppol/register")
-    public ResponseEntity<?> register(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
+    @Operation(summary = "Activate Peppol registration", description = "Registers the authenticated company on the access point and updates the Peppol activation state reflected in the JWT.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Updated JWT token with refreshed activation state", content = @Content(schema = @Schema(implementation = String.class))),
+            @ApiResponse(responseCode = "204", description = "Company already active; no response body"),
+            @ApiResponse(responseCode = "403", description = "Registration suspended", content = @Content(schema = @Schema(implementation = String.class))),
+            @ApiResponse(responseCode = "409", description = "Registration conflict with existing provider", content = @Content(schema = @Schema(implementation = String.class))),
+            @ApiResponse(responseCode = "424", description = "Access point registration failed", content = @Content(schema = @Schema(implementation = String.class))),
+            @ApiResponse(responseCode = "503", description = "Registration temporarily unavailable")
+    })
+    public ResponseEntity<?> register() {
+        JwtInfo jwtInfo = jwtClaimExtractor.extract();
         if (jwtInfo.accountType() != AccountType.ADMIN) {
             throw new ForbiddenException(KycErrorCodes.NOT_ADMIN);
         }
@@ -64,13 +96,8 @@ public class CompanyController {
                 }
                 return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("Access Point registration failed; state unchanged.");
             }
-            String token = jwtService.generateToken(
-                    jwtInfo.accountType(),
-                    jwtInfo.peppolId(),
-                    registrationResponse.peppolActive(),
-                    jwtInfo.uid()
-            );
-            return ResponseEntity.ok(token);
+            // peppolActive state changed — client should re-authenticate to get a fresh token
+            return ResponseEntity.ok().build();
         }
         return (ResponseEntity<?>) switch (registrationResponse.errorCode()) {
             case KycErrorCodes.PROXY_REGISTRATION_FAILED,
@@ -87,8 +114,14 @@ public class CompanyController {
 
     /// Unregisters (not deleting) peppolId from the Peppol Directory, must call Proxy to unregister from AP
     @PostMapping("/peppol/unregister")
-    public ResponseEntity<?> unregister(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
+    @Operation(summary = "Deactivate Peppol registration", description = "Unregisters the authenticated company from the access point while keeping the company account itself intact.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Updated JWT token with refreshed activation state", content = @Content(schema = @Schema(implementation = String.class))),
+            @ApiResponse(responseCode = "204", description = "Company already inactive; no response body"),
+            @ApiResponse(responseCode = "424", description = "Access point unregistration failed", content = @Content(schema = @Schema(implementation = String.class)))
+    })
+    public ResponseEntity<?> unregister() {
+        JwtInfo jwtInfo = jwtClaimExtractor.extract();
         if (jwtInfo.accountType() != AccountType.ADMIN) {
             throw new ForbiddenException(KycErrorCodes.NOT_ADMIN);
         }
@@ -99,25 +132,21 @@ public class CompanyController {
             }
             return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("Access Point unregistration failed; state unchanged.");
         }
-        String token = jwtService.generateToken(
-                jwtInfo.accountType(),
-                jwtInfo.peppolId(),
-                peppolActive,
-                jwtInfo.uid()
-        );
-        return ResponseEntity.ok(token);
+        // peppolActive state changed — client should re-authenticate to get a fresh token
+        return ResponseEntity.ok().build();
     }
 
     /// Download signed contract saved for peppolId
     @GetMapping("signed-contract")
-    public ResponseEntity<?> signedContract(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        JwtInfo jwtInfo = jwtService.validateAndGetInfo(authHeader);
+    @Operation(summary = "Download signed contract", description = "Returns the signed onboarding contract PDF stored for the authenticated company.")
+    public ResponseEntity<?> signedContract() {
+        JwtInfo jwtInfo = jwtClaimExtractor.extract();
         if (jwtInfo.accountType() != AccountType.ADMIN) {
             throw new ForbiddenException(KycErrorCodes.NOT_ADMIN);
         }
         String peppolId = jwtInfo.peppolId();
         UUID externalId = jwtInfo.uid();
-        Account account = accountService.getAdminByExternalId(externalId);
+        Account account = accountService.getByExternalId(externalId);
         byte[] data = signingService.getContract(peppolId, account.getId());
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=contract_signed.pdf")
