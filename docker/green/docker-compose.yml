@@ -29,7 +29,7 @@ services:
       SCRADA_COMPANY_KEY: ${SCRADA_COMPANY_KEY:?SCRADA_COMPANY_KEY must be set}
       BACKUP_DATA_DIR: /opt/data/proxy
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -h $$DB_HOST -p $$DB_PORT -U $$DB_USER"]
+      test: ["CMD-SHELL", "pg_isready -h $${DB_HOST} -p $${DB_PORT} -U $${DB_USER}"]
       interval: 5s
       timeout: 5s
       retries: 12
@@ -37,9 +37,11 @@ services:
     volumes:
       - /mnt/data/proxy:/opt/data/proxy
     networks:
-      - web
-      - default
-      - observability
+      default:
+      database:
+      observability:
+        aliases:
+          - green-proxy
 
   app:
     build:
@@ -72,7 +74,7 @@ services:
       OPEN_COLLECTIVE_API_KEY: ${OPEN_COLLECTIVE_API_KEY:?OPEN_COLLECTIVE_API_KEY must be set}
       DOCUMENT_PRICE: ${DOCUMENT_PRICE:?DOCUMENT_PRICE must be set}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -h $$DB_HOST -p $$DB_PORT -U $$DB_USER"]
+      test: ["CMD-SHELL", "pg_isready -h $${DB_HOST} -p $${DB_PORT} -U $${DB_USER}"]
       interval: 5s
       timeout: 5s
       retries: 12
@@ -80,8 +82,11 @@ services:
     volumes:
       - /mnt/data/app:/opt/data/app
     networks:
-      - web
-      - default
+      default:
+      database:
+      observability:
+        aliases:
+          - green-app
 
   kyc:
     build:
@@ -127,7 +132,7 @@ services:
       WEBEID_TRUSTED_CA_TRUSTSTORE: /kyc/truststore/belgian-eid.jks
       WEBEID_TRUSTED_CA_TRUSTSTORE_PASSWORD: changeit
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -h $$DB_HOST -p $$DB_PORT -U $$DB_USER"]
+      test: ["CMD-SHELL", "pg_isready -h $${DB_HOST} -p $${DB_PORT} -U $${DB_USER}"]
       interval: 5s
       timeout: 5s
       retries: 12
@@ -137,8 +142,11 @@ services:
       # RSA signing keys mounted read-only; provision them on the host out of band.
       - ${KYC_KEYS_DIR:-/opt/keys/kyc}:/run/secrets:ro
     networks:
-      - web
-      - default
+      default:
+      database:
+      observability:
+        aliases:
+          - green-kyc
 
   ui:
     build:
@@ -159,72 +167,78 @@ services:
       - "traefik.docker.network=web"
 
       # API rate limit middleware
-      - "traefik.http.middlewares.api-limit.ratelimit.average=20"
-      - "traefik.http.middlewares.api-limit.ratelimit.burst=75"
-      - "traefik.http.middlewares.api-limit.ratelimit.period=1s"
-      - "traefik.http.middlewares.api-limit.ratelimit.sourceCriterion.ipStrategy.depth=1"
+      - "traefik.http.middlewares.green-api-limit.ratelimit.average=20"
+      - "traefik.http.middlewares.green-api-limit.ratelimit.burst=75"
+      - "traefik.http.middlewares.green-api-limit.ratelimit.period=1s"
+      - "traefik.http.middlewares.green-api-limit.ratelimit.sourceCriterion.ipStrategy.depth=1"
 
       # Public router
       - "traefik.http.routers.green.rule=Host(`${ACTIVE_DOMAIN_GREEN:?ACTIVE_DOMAIN_GREEN must be set}`)"
       - "traefik.http.routers.green.entrypoints=websecure"
-      - "traefik.http.routers.green.service=nginx"
+      - "traefik.http.routers.green.service=green-ui"
       - "traefik.http.routers.green.tls.certresolver=${CERT_RESOLVER_GREEN:?CERT_RESOLVER_GREEN must be set}"
 
       # API router
       - "traefik.http.routers.green-api.rule=Host(`${ACTIVE_DOMAIN_GREEN:?ACTIVE_DOMAIN_GREEN must be set}`) && (PathPrefix(`/proxy/api/`) || PathPrefix(`/app/api/`) || PathPrefix(`/kyc/api/`))"
       - "traefik.http.routers.green-api.entryPoints=websecure"
-      - "traefik.http.routers.green-api.middlewares=api-limit"
-      - "traefik.http.routers.green-api.service=nginx"
+      - "traefik.http.routers.green-api.middlewares=green-api-limit"
+      - "traefik.http.routers.green-api.service=green-ui"
       - "traefik.http.routers.green-api.tls.certresolver=${CERT_RESOLVER_GREEN:?CERT_RESOLVER_GREEN must be set}"
 
       # Browser authentication router. Spring owns staged session authentication and CSRF.
       - "traefik.http.routers.green-auth-browser.rule=Host(`${ACTIVE_DOMAIN_GREEN:?ACTIVE_DOMAIN_GREEN must be set}`) && PathPrefix(`/kyc/auth/browser/`)"
       - "traefik.http.routers.green-auth-browser.entryPoints=websecure"
-      - "traefik.http.routers.green-auth-browser.middlewares=api-limit"
-      - "traefik.http.routers.green-auth-browser.service=nginx"
+      - "traefik.http.routers.green-auth-browser.middlewares=green-api-limit"
+      - "traefik.http.routers.green-auth-browser.service=green-ui"
       - "traefik.http.routers.green-auth-browser.tls.certresolver=${CERT_RESOLVER_GREEN:?CERT_RESOLVER_GREEN must be set}"
 
       # OAuth2 protocol router. Do not require a blanket JWT/forward-auth middleware here:
       # Spring Authorization Server applies session, PKCE, or client auth per endpoint.
       - "traefik.http.routers.green-auth-oauth2.rule=Host(`${ACTIVE_DOMAIN_GREEN:?ACTIVE_DOMAIN_GREEN must be set}`) && PathPrefix(`/kyc/auth/oauth2/`)"
       - "traefik.http.routers.green-auth-oauth2.entryPoints=websecure"
-      - "traefik.http.routers.green-auth-oauth2.middlewares=api-limit"
-      - "traefik.http.routers.green-auth-oauth2.service=nginx"
+      - "traefik.http.routers.green-auth-oauth2.middlewares=green-api-limit"
+      - "traefik.http.routers.green-auth-oauth2.service=green-ui"
       - "traefik.http.routers.green-auth-oauth2.tls.certresolver=${CERT_RESOLVER_GREEN:?CERT_RESOLVER_GREEN must be set}"
 
       # OIDC bearer endpoints are kept separate so policy can be tightened independently.
       - "traefik.http.routers.green-auth-oidc.rule=Host(`${ACTIVE_DOMAIN_GREEN:?ACTIVE_DOMAIN_GREEN must be set}`) && PathPrefix(`/kyc/auth/oidc/`)"
       - "traefik.http.routers.green-auth-oidc.entryPoints=websecure"
-      - "traefik.http.routers.green-auth-oidc.middlewares=api-limit"
-      - "traefik.http.routers.green-auth-oidc.service=nginx"
+      - "traefik.http.routers.green-auth-oidc.middlewares=green-api-limit"
+      - "traefik.http.routers.green-auth-oidc.service=green-ui"
       - "traefik.http.routers.green-auth-oidc.tls.certresolver=${CERT_RESOLVER_GREEN:?CERT_RESOLVER_GREEN must be set}"
 
       # Discovery stays at its issuer-derived well-known location and must remain public.
       - "traefik.http.routers.green-auth-discovery.rule=Host(`${ACTIVE_DOMAIN_GREEN:?ACTIVE_DOMAIN_GREEN must be set}`) && PathPrefix(`/kyc/.well-known/`)"
       - "traefik.http.routers.green-auth-discovery.entryPoints=websecure"
-      - "traefik.http.routers.green-auth-discovery.middlewares=api-limit"
-      - "traefik.http.routers.green-auth-discovery.service=nginx"
+      - "traefik.http.routers.green-auth-discovery.middlewares=green-api-limit"
+      - "traefik.http.routers.green-auth-discovery.service=green-ui"
       - "traefik.http.routers.green-auth-discovery.tls.certresolver=${CERT_RESOLVER_GREEN:?CERT_RESOLVER_GREEN must be set}"
 
       # Protected API router
+      # JWT is validated by the services themselves (JWKS from the KYC auth server),
+      # so no traefik jwt middleware here.
       - "traefik.http.routers.green-sapi.rule=Host(`${ACTIVE_DOMAIN_GREEN:?ACTIVE_DOMAIN_GREEN must be set}`) && (PathPrefix(`/proxy/sapi/`) || PathPrefix(`/app/sapi/`) || PathPrefix(`/kyc/sapi/`))"
       - "traefik.http.routers.green-sapi.entryPoints=websecure"
-      - "traefik.http.routers.green-sapi.middlewares=api-limit"
-      - "traefik.http.routers.green-sapi.service=nginx"
+      - "traefik.http.routers.green-sapi.middlewares=green-api-limit"
+      - "traefik.http.routers.green-sapi.service=green-ui"
       - "traefik.http.routers.green-sapi.tls.certresolver=${CERT_RESOLVER_GREEN:?CERT_RESOLVER_GREEN must be set}"
 
       # Local API router
       - "traefik.http.routers.green-lapi.rule=Host(`localhost`) && (PathPrefix(`/proxy/lapi/`) || PathPrefix(`/app/lapi/`) || PathPrefix(`/kyc/lapi/`))"
       - "traefik.http.routers.green-lapi.entrypoints=internal"
-      - "traefik.http.routers.green-lapi.middlewares=api-limit"
-      - "traefik.http.routers.green-lapi.service=nginx"
+      - "traefik.http.routers.green-lapi.middlewares=green-api-limit"
+      - "traefik.http.routers.green-lapi.service=green-ui"
 
       # Service definition
-      - "traefik.http.services.nginx.loadbalancer.server.port=80"
+      - "traefik.http.services.green-ui.loadbalancer.server.port=80"
 
 networks:
   web:
     external: true
+    name: web
+  database:
+    external: true
+    name: database
   observability:
     external: true
     name: observability
