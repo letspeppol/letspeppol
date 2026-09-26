@@ -32,7 +32,11 @@ public class CompanyController {
     @Operation(summary = "Get company profile", description = "Loads the company profile displayed in the app immediately after authentication.")
     public ResponseEntity<CompanyDto> getCompany(@AuthenticationPrincipal Jwt jwt) {
         String peppolId = JwtUtil.getPeppolId(jwt);
-        return ResponseEntity.ok(companyService.get(peppolId, jwt.getTokenValue(), JwtUtil.isPeppolActive(jwt)));
+        return ResponseEntity.ok(companyService.get(
+                peppolId,
+                jwt.getTokenValue(),
+                JwtUtil.isPeppolActive(jwt),
+                JwtUtil.getCompanyLastUpdated(jwt)));
     }
 
     /// Updates Company info by UI (only stored in App)

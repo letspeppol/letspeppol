@@ -43,7 +43,12 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
                          Pageable pageable);
 
     @Modifying
-    @Query("UPDATE Company c SET c.inactive = :inactiveDate WHERE c.peppolId = :peppolId")
+    @Query("""
+            UPDATE Company c
+            SET c.inactive = :inactiveDate,
+                c.lastUpdatedTimestamp = CURRENT_TIMESTAMP
+            WHERE c.peppolId = :peppolId
+            """)
     int deactivateCompany(
             @Param("peppolId") String peppolId,
             @Param("inactiveDate") LocalDate inactiveDate

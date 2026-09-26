@@ -16,7 +16,9 @@ public class AccountMapper {
                 company.getCity(),
                 company.getPostalCode(),
                 account.getName(),
-                account.getEmail()
+                account.getEmail(),
+                company.getInactive() == null,
+                company.getLastUpdatedTimestamp()
         );
     }
 

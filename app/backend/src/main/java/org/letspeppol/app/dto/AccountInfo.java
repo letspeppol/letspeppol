@@ -1,5 +1,7 @@
 package org.letspeppol.app.dto;
 
+import java.time.Instant;
+
 public record AccountInfo(
         String peppolId,
         String identifier,
@@ -9,5 +11,7 @@ public record AccountInfo(
         String city,
         String postalCode,
         String directorName,
-        String directorEmail
+        String directorEmail,
+        boolean active,
+        Instant lastUpdatedTimestamp
 ) {}

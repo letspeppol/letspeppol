@@ -27,6 +27,7 @@ public class SecurityConfig {
 
     public static final String PEPPOL_ID = "peppolId";
     public static final String PEPPOL_ACTIVE = "peppolActive";
+    public static final String COMPANY_LAST_UPDATED = "companyLastUpdated";
     public static final String UID = "uid";
     public static final String ACCOUNT_TYPE = "accountType";
     public static final String ROLE_SERVICE = "service";

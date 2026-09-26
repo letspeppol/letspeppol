@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -41,7 +42,9 @@ public class DataInitializer implements CommandLineRunner {
                     "Hasselt",
                     "3500",
                     "Michiel Wouters",
-                    "letspeppol@itaa.be"
+                    "letspeppol@itaa.be",
+                    true,
+                    Instant.now()
             );
             companyService.add(accountInfo);
             PartnerDto partner = new PartnerDto(

@@ -7,6 +7,8 @@ import lombok.Setter;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
+import java.time.Instant;
+
 @Entity
 @Table(name = "company", indexes = {
         @Index(name = "uk_company_number", columnList = "peppolId", unique = true)
@@ -27,6 +29,7 @@ public class Company extends GenericEntity{
 
     private String subscriber; // Director name
     private String subscriberEmail;
+    private Instant lastKycSyncTimestamp;
 
     private String paymentTerms;
     private String iban;
@@ -74,5 +77,9 @@ public class Company extends GenericEntity{
         this.vatRuleset = VatRuleset.VAT_REGISTERED;
 // TODO        this.noArchive = false;
         this.registeredOffice = new Address(city, postalCode, street, countryCode);
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }
