@@ -46,7 +46,7 @@ services:
   alloy:
     image: grafana/alloy:latest
     environment:
-      SERVER_NAME: ${SERVER_NAME}
+      SERVER_NAME: ${SERVER_NAME:?SERVER_NAME must be set}
     volumes:
       - ./alloy/config.alloy:/etc/alloy/config.alloy
     command: [ "run", "/etc/alloy/config.alloy", "--server.http.listen-addr=0.0.0.0:12345" ]
@@ -73,8 +73,9 @@ services:
     environment:
       GF_SECURITY_ADMIN_USER: ${GRAFANA_USER:-admin}
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASS:?GRAFANA_PASS must be set in .env}
-      GF_SERVER_ROOT_URL: https://${GRAFANA_DOMAIN}:8443/
-      DISCORD_WEBHOOK_URL: ${DISCORD_WEBHOOK_URL}
+      GF_SERVER_ROOT_URL: https://${GRAFANA_DOMAIN:?GRAFANA_DOMAIN must be set}:8443/
+      DISCORD_WEBHOOK_URL: ${DISCORD_WEBHOOK_URL:-}
+      DISCORD_CHANNEL: ${DISCORD_CHANNEL:-}
     volumes:
       - grafana_data:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning
@@ -88,9 +89,9 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=web"
-      - "traefik.http.routers.grafana.rule=Host(`${GRAFANA_DOMAIN}`)"
+      - "traefik.http.routers.grafana.rule=Host(`${GRAFANA_DOMAIN:?GRAFANA_DOMAIN must be set}`)"
       - "traefik.http.routers.grafana.entrypoints=internal"
-      - "traefik.http.routers.grafana.tls.certresolver=${CERT_RESOLVER}"
+      - "traefik.http.routers.grafana.tls.certresolver=${CERT_RESOLVER:?CERT_RESOLVER must be set}"
       - "traefik.http.services.grafana.loadbalancer.server.port=3000"
 
   node_exporter:

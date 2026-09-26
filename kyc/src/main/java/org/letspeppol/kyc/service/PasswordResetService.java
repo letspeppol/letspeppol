@@ -74,9 +74,8 @@ public class PasswordResetService {
         if (token.isExpired()) {
             throw new KycException(KycErrorCodes.PASSWORD_RESET_TOKEN_EXPIRED);
         }
-        validatePassword(newPassword);
         Account account = token.getAccount();
-        accountService.updatePassword(account, newPassword);
+        setPassword(account, newPassword);
         token.markUsed();
         tokenRepository.save(token);
     }
@@ -92,6 +91,11 @@ public class PasswordResetService {
         if (pwd == null || pwd.length() < 8) {
             throw new KycException(KycErrorCodes.INVALID_PASSWORD);
         }
+    }
+
+    public void setPassword(Account account, String newPassword) {
+        validatePassword(newPassword);
+        accountService.updatePassword(account, newPassword);
     }
 
     private String generateToken() {

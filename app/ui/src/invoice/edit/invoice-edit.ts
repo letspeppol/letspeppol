@@ -27,6 +27,7 @@ import moment, {Moment} from "moment";
 import {IRouter} from "@aurelia/router";
 import {I18N} from "@aurelia/i18n";
 import {collectVatReasonSelections, requiresDeliveryDetails} from "../../services/app/vat-rules";
+import {currentOwnershipRoute} from "../../services/app/ownership-route";
 
 export class InvoiceEdit {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -57,7 +58,7 @@ export class InvoiceEdit {
         this.invoiceContext.setActiveBoxFromDocument(this.invoiceContext.selectedDocument);
         this.invoiceContext.clearSelectedInvoice();
         this.ea.publish('invoicesReset');
-        this.router.load('/invoices');
+        this.router.load(currentOwnershipRoute('/invoices'));
     }
 
     bound() {
