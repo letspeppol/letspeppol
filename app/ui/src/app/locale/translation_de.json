@@ -376,8 +376,10 @@
       "method": "Methode",
       "note": "Notiz",
       "number": "Nummer",
+      "payable-amount": "Zahlbetrag",
       "payment": "Zahlung",
       "pos": "Pos.",
+      "prepaid-amount": "Vorausbezahlter Betrag",
       "recreate-positions": "Positionen neu erstellen",
       "save-draft": "Entwurf speichern",
       "send": {

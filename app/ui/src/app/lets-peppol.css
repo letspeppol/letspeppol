@@ -1171,6 +1171,16 @@ main.container .data-table tbody td {
     font-size: var(--space-09);
 }
 
+.card-header {
+    display: inline-flex;
+    gap: var(--space-025);
+    align-items: center;
+}
+
+.card-header svg {
+    flex-shrink: 0;
+}
+
 .total-display {
     display: grid;
     align-content: center;
@@ -1193,6 +1203,24 @@ main.container .data-table tbody td {
 .total-display strong,
 .composer-info strong {
     font-size: 1.25rem;
+}
+
+.vat-breakdown-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-075);
+    justify-content: flex-end;
+}
+
+.vat-breakdown-item {
+    display: grid;
+    gap: var(--space-025);
+    justify-items: end;
+}
+
+.vat-breakdown-item b {
+    color: var(--muted);
+    font-size: .8rem;
 }
 
 .composer-actions-top {

@@ -96,6 +96,7 @@ const numberFields = [
     "InvoicedQuantity",
     "LineExtensionAmount",
     "PayableAmount",
+    "PrepaidAmount",
     "PaymentMeansCode",
     "Percent",
     "PriceAmount",

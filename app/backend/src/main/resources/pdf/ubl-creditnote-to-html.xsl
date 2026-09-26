@@ -47,6 +47,11 @@
              '|',
              normalize-space((*[local-name()='Percent'])[1])
            )"/>
+  <xsl:key name="tax-subtotal-by-percent"
+           match="*[local-name()='TaxTotal']/*[local-name()='TaxSubtotal'][
+             string-length(normalize-space((./*[local-name()='TaxCategory']/*[local-name()='Percent'])[1])) &gt; 0
+           ]"
+           use="string(number(normalize-space((./*[local-name()='TaxCategory']/*[local-name()='Percent'])[1])))"/>
 
   <xsl:template match="/">
     <html xmlns="http://www.w3.org/1999/xhtml">
@@ -373,6 +378,24 @@
         </tbody>
       </table>
 
+      <xsl:variable name="taxSubtotalsWithPercent"
+                    select="/*/*[local-name()='TaxTotal']/*[local-name()='TaxSubtotal'][
+                      string-length(normalize-space((./*[local-name()='TaxCategory']/*[local-name()='Percent'])[1])) &gt; 0
+                    ]"/>
+      <xsl:variable name="uniqueTaxPercentSubtotals"
+                    select="$taxSubtotalsWithPercent[
+                      generate-id() = generate-id(key(
+                        'tax-subtotal-by-percent',
+                        string(number(normalize-space((./*[local-name()='TaxCategory']/*[local-name()='Percent'])[1])))
+                      )[1])
+                    ]"/>
+      <xsl:variable name="taxInclusiveAmount"
+                    select="normalize-space((/*/*[local-name()='LegalMonetaryTotal']/*[local-name()='TaxInclusiveAmount'])[1])"/>
+      <xsl:variable name="prepaidAmount"
+                    select="normalize-space((/*/*[local-name()='LegalMonetaryTotal']/*[local-name()='PrepaidAmount'])[1])"/>
+      <xsl:variable name="payableAmount"
+                    select="normalize-space((/*/*[local-name()='LegalMonetaryTotal']/*[local-name()='PayableAmount'])[1])"/>
+
       <table class="totals">
         <tr>
           <td>Tax exclusive</td>
@@ -382,22 +405,51 @@
             </xsl:call-template>
           </td>
         </tr>
-        <tr>
-          <td>Tax amount</td>
-          <td class="amount">
-            <xsl:call-template name="format-eur">
-              <xsl:with-param name="value" select="normalize-space((/*/*[local-name()='TaxTotal']/*[local-name()='TaxAmount'])[1])"/>
-            </xsl:call-template>
-          </td>
-        </tr>
-        <tr>
-          <td><strong>Payable amount</strong></td>
-          <td class="amount"><strong>
-            <xsl:call-template name="format-eur">
-              <xsl:with-param name="value" select="normalize-space((/*/*[local-name()='LegalMonetaryTotal']/*[local-name()='PayableAmount'])[1])"/>
-            </xsl:call-template>
-          </strong></td>
-        </tr>
+        <xsl:for-each select="$uniqueTaxPercentSubtotals">
+          <xsl:variable name="taxPercent"
+                        select="string(number(normalize-space((./*[local-name()='TaxCategory']/*[local-name()='Percent'])[1])))"/>
+          <tr>
+            <td>Tax <xsl:value-of select="format-number(number($taxPercent), '0.##')"/>%</td>
+            <td class="amount">
+              <xsl:call-template name="format-eur">
+                <xsl:with-param name="value" select="sum(key('tax-subtotal-by-percent', $taxPercent)/*[local-name()='TaxAmount'])"/>
+              </xsl:call-template>
+            </td>
+          </tr>
+        </xsl:for-each>
+        <xsl:if test="string-length($taxInclusiveAmount) &gt; 0">
+          <tr>
+            <td><strong>Tax inclusive</strong></td>
+            <td class="amount"><strong>
+              <xsl:call-template name="format-eur">
+                <xsl:with-param name="value" select="$taxInclusiveAmount"/>
+              </xsl:call-template>
+            </strong></td>
+          </tr>
+        </xsl:if>
+        <xsl:if test="string-length($prepaidAmount) &gt; 0 and number($prepaidAmount) &gt; 0">
+          <tr>
+            <td>Prepaid amount</td>
+            <td class="amount">
+              <xsl:call-template name="format-eur">
+                <xsl:with-param name="value" select="$prepaidAmount"/>
+              </xsl:call-template>
+            </td>
+          </tr>
+        </xsl:if>
+        <xsl:if test="string-length($taxInclusiveAmount) &gt; 0
+                      and string-length($payableAmount) &gt; 0
+                      and number($payableAmount) &gt; 0
+                      and number($payableAmount) != number($taxInclusiveAmount)">
+          <tr>
+            <td><strong>Payable amount</strong></td>
+            <td class="amount"><strong>
+              <xsl:call-template name="format-eur">
+                <xsl:with-param name="value" select="$payableAmount"/>
+              </xsl:call-template>
+            </strong></td>
+          </tr>
+        </xsl:if>
       </table>
 
       <xsl:variable name="note" select="./*/*[local-name()='Note'][1]"/>
@@ -631,4 +683,3 @@
   </xsl:template>
 
 </xsl:stylesheet>
-

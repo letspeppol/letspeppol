@@ -376,8 +376,10 @@
       "method": "Méthode",
       "note": "Note",
       "number": "Numéro",
+      "payable-amount": "Montant à payer",
       "payment": "Paiement",
       "pos": "Pos",
+      "prepaid-amount": "Montant prépayé",
       "recreate-positions": "Recréer les positions de lignes",
       "save-draft": "Enregistrer brouillon",
       "send": {

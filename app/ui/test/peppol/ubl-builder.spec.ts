@@ -35,6 +35,34 @@ describe('UBL string builder - CreditNote', () => {
     });
 });
 
+describe('UBL string builder - PrepaidAmount', () => {
+    test('parses and rebuilds invoice prepaid amounts as numbers', () => {
+        const invoiceObj = parseInvoice(sampleInvoiceXml);
+        invoiceObj.LegalMonetaryTotal.PrepaidAmount = {__currencyID: 'EUR', value: 25};
+
+        const rebuilt = buildInvoiceXml(invoiceObj);
+        const reparsed = parseInvoice(rebuilt);
+
+        expect(rebuilt).toContain(
+            '<cbc:PrepaidAmount currencyID="EUR">25</cbc:PrepaidAmount><cbc:PayableAmount',
+        );
+        expect(reparsed.LegalMonetaryTotal.PrepaidAmount?.value).toBe(25);
+    });
+
+    test('parses and rebuilds credit-note prepaid amounts as numbers', () => {
+        const creditNoteObj = parseCreditNote(sampleCreditNoteXml);
+        creditNoteObj.LegalMonetaryTotal.PrepaidAmount = {__currencyID: 'EUR', value: 10};
+
+        const rebuilt = buildCreditNoteXml(creditNoteObj);
+        const reparsed = parseCreditNote(rebuilt);
+
+        expect(rebuilt).toContain(
+            '<cbc:PrepaidAmount currencyID="EUR">10</cbc:PrepaidAmount><cbc:PayableAmount',
+        );
+        expect(reparsed.LegalMonetaryTotal.PrepaidAmount?.value).toBe(10);
+    });
+});
+
 describe('UBL string builder - OrderReference omission', () => {
     test('buildInvoiceXml should not include cac:OrderReference when both ID and SalesOrderID are missing', () => {
         const invoiceObj = parseInvoice(sampleInvoiceXml);
