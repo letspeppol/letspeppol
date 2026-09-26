@@ -30,6 +30,7 @@ public final class SecurityContextHelper {
         AccountUserDetails userDetails = new AccountUserDetails(account);
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        authentication.eraseCredentials();
         SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
         securityContext.setAuthentication(authentication);
         SecurityContextHolder.setContext(securityContext);

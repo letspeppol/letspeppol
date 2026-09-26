@@ -31,7 +31,6 @@ import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.KycException;
 import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.model.AccountType;
-import org.letspeppol.kyc.model.DirectorIdentityVerification;
 import org.letspeppol.kyc.model.kbo.Director;
 import org.letspeppol.kyc.repository.DirectorRepository;
 import org.letspeppol.kyc.service.signing.CertificateUtil;
@@ -179,7 +178,7 @@ public class SigningService {
         return new File(workingDirectory, "contract_en_" + safeHashName(hashToFinalize) + "_prepare.pdf");
     }
 
-    public static String beVatPretty(String s) {
+    public static String beCBEPretty(String s) {
         if (s == null) return null;
         s = s.toUpperCase().replaceFirst("^BE", "").replaceAll("\\D", "");
         if (s.length() == 9) s = "0" + s;
@@ -189,7 +188,7 @@ public class SigningService {
     public byte[] generateFilledContract(Director director) {
         String company = director.getCompany().getName();
         String address = director.getCompany().getStreet() + ", " + director.getCompany().getPostalCode() + " " + director.getCompany().getCity();
-        String companyNumber = beVatPretty(director.getCompany().getVatNumber());
+        String companyNumber = beCBEPretty(director.getCompany().getIdentifier());
         String title = "Director";
         String representative = director.getName();
 
@@ -368,8 +367,11 @@ public class SigningService {
         );
         SignerAccountResolverService.SignerResolution signerResolution = signerAccountResolverService.resolveSignerAccount(signingRequest, getFullName(identityVerificationRequest.x500Name()));
         Account account = signerResolution.account();
+        boolean signerIsDirector = identityVerificationService.recordDirectorSignature(account, identityVerificationRequest);
+        if (!signerIsDirector) {
+            return new FinalizeSigningResponse(writeContractToFile(signingRequest.peppolId(), account, finalPdfBytes), null, true);
+        }
         ownershipService.ensureAdminOwnership(account, director.getCompany());
-        DirectorIdentityVerification ignored = identityVerificationService.recordDirectorSignature(account, identityVerificationRequest);
         RegistrationResponse registrationResponse = null;
         if (signerResolution.requestedType() == AccountType.ADMIN && !director.getCompany().isSuspended()) {
             registrationResponse = companyService.registerCompany(director.getCompany());
@@ -379,7 +381,7 @@ public class SigningService {
                 companyRegistrationCounterFailure.increment();
             }
         }
-        return new FinalizeSigningResponse(writeContractToFile(signingRequest.peppolId(), account, finalPdfBytes), registrationResponse);
+        return new FinalizeSigningResponse(writeContractToFile(signingRequest.peppolId(), account, finalPdfBytes), registrationResponse, false);
     }
 
     public byte[] getContract(String peppolId, Long accountId) {

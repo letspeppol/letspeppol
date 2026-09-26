@@ -58,8 +58,10 @@ public class AccountantService {
         if (!StringUtils.hasText(linkCustomerDto.customerEmail())) {
             throw new ServiceException("Customer email missing");
         }
-        Optional<AccountantCustomer> existingAccountCompany = accountantCustomerRepository.findByCustomerEmail(linkCustomerDto.customerEmail());
-        if (existingAccountCompany.isPresent()) {
+        if (!StringUtils.hasText(linkCustomerDto.customerPeppolId())) {
+            throw new ServiceException("Customer Peppol ID missing");
+        }
+        if (accountantCustomerRepository.existsByAccountantExternalIdAndCustomerPeppolId(accountantExternalId, linkCustomerDto.customerPeppolId())) {
             throw new ServiceException("Customer link already exists");
         }
         AccountantCustomer accountantCustomer = new AccountantCustomer(

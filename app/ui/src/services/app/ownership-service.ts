@@ -68,19 +68,25 @@ export class OwnershipService {
             return this.loadingPromise;
         }
 
-        this.loadingPromise = this.kycApi.httpClient.get(`/sapi/account/ownerships`)
+        const request: Promise<OwnershipSummary[]> = this.kycApi.httpClient.get(`/sapi/account/ownerships`)
             .then(response => response.json())
             .then((ownerships: OwnershipSummary[]) => {
+                if (this.currentToken !== token) {
+                    return this.ownerships;
+                }
                 this.ownerships = ownerships;
                 this.loadedToken = token;
                 this.persistOwnershipsToStorage();
                 return ownerships;
             })
             .finally(() => {
-                this.loadingPromise = null;
+                if (this.loadingPromise === request) {
+                    this.loadingPromise = null;
+                }
             });
+        this.loadingPromise = request;
 
-        return this.loadingPromise;
+        return request;
     }
 
     getCachedOwnerships(): OwnershipSummary[] {

@@ -1,5 +1,6 @@
 package org.letspeppol.app.config;
 
+import org.letspeppol.app.dto.AccountType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +29,7 @@ public class SecurityConfig {
     public static final String PEPPOL_ACTIVE = "peppolActive";
     public static final String COMPANY_LAST_UPDATED = "companyLastUpdated";
     public static final String UID = "uid";
+    public static final String ACCOUNT_TYPE = "accountType";
     public static final String ROLE_SERVICE = "service";
     public static final String ROLE_KYC_USER = "kyc_user";
 
@@ -87,7 +89,7 @@ public class SecurityConfig {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
         converter.setJwtGrantedAuthoritiesConverter(jwt -> {
             Collection<GrantedAuthority> authorities = new ArrayList<>();
-            if (jwt.hasClaim(PEPPOL_ID)) {
+            if (jwt.hasClaim(PEPPOL_ID) && !AccountType.APP.name().equals(jwt.getClaimAsString(ACCOUNT_TYPE))) {
                 authorities.add(new SimpleGrantedAuthority(ROLE_KYC_USER));
             }
             return authorities;

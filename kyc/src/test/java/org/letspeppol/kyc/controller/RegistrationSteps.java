@@ -378,6 +378,7 @@ public class RegistrationSteps {
             assertEquals(issuer, jwt.getIssuer().toString());
             assertEquals(appExternalId.toString(), jwt.getClaimAsString("uid"));
             assertEquals(AccountType.APP.name(), jwt.getClaimAsString("accountType"));
+            assertEquals("0208:1029545627", jwt.getClaimAsString("peppolId"));
             assertTrue(jwt.getClaimAsStringList("scope").contains("service"));
             assertTrue(jwt.getAudience().contains(audience));
             return accessToken;

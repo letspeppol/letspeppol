@@ -843,6 +843,7 @@
     "copy-error": "Failed to copy",
     "disable": "Disable 2FA",
     "disable-confirm": "Enter your current authenticator code to disable 2FA:",
+    "disable-confirm-recovery": "Enter one of your recovery codes to disable 2FA:",
     "disabled": "Two-factor authentication is not enabled.",
     "disabled-alert": "Two-factor authentication disabled",
     "disabling": "Disabling...",
