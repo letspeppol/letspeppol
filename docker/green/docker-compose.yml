@@ -71,6 +71,7 @@ services:
       OPEN_COLLECTIVE_URL: ${OPEN_COLLECTIVE_URL:-https://api.opencollective.com/graphql/v2/}
       OPEN_COLLECTIVE_API_KEY: ${OPEN_COLLECTIVE_API_KEY:?OPEN_COLLECTIVE_API_KEY must be set}
       DOCUMENT_PRICE: ${DOCUMENT_PRICE:?DOCUMENT_PRICE must be set}
+      DOWNLOAD_ARCHIVE_DIR: ${DOWNLOAD_ARCHIVE_DIR:-/opt/data/app/downloads}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -h $$DB_HOST -p $$DB_PORT -U $$DB_USER"]
       interval: 5s
