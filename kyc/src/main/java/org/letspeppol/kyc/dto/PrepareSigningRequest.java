@@ -5,7 +5,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import java.util.List;
 
 public record PrepareSigningRequest(
-        String emailToken,
+        String peppolId,
         Long directorId,
         String certificate,
         List<SignatureAlgorithm> supportedSignatureAlgorithms,
@@ -13,7 +13,7 @@ public record PrepareSigningRequest(
 ) {
 
     public String sha256() {
-        String stringToHash = certificate + emailToken + directorId;
+        String stringToHash = certificate + peppolId + directorId;
         return DigestUtils.sha256Hex(stringToHash);
     }
 }
