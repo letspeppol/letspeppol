@@ -7,11 +7,14 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface CompanyRepository extends JpaRepository<Company, Long> {
 
     Optional<Company> findByPeppolId(String peppolId);
+
+    List<Company> findAllByPeppolIdIn(List<String> peppolIds);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT company FROM Company company WHERE company.peppolId = :peppolId")
