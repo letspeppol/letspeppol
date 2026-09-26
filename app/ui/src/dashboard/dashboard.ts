@@ -2,16 +2,20 @@ import {DirectionTotals, StatisticsService, Totals} from "../services/app/statis
 import {resolve} from "@aurelia/kernel";
 import {CompanyService} from "../services/app/company-service";
 import {getVatDisplayMode, IVatDisplay, VatDisplayMode} from "../services/app/vat-display-service";
+import {IEventAggregator, IDisposable} from "aurelia";
 
 const EMPTY_TOTALS: DirectionTotals = {
     payableOpen: 0, payableOverdue: 0, payableThisYear: 0,
     receivableOpen: 0, receivableOverdue: 0, receivableThisYear: 0,
 };
 
+
 export class Dashboard {
     private statisticsService = resolve(StatisticsService);
     private companyService = resolve(CompanyService);
     private vatDisplay = resolve(IVatDisplay);
+    private readonly ea = resolve(IEventAggregator);
+    private sub?: IDisposable;
     totals: Totals;
     vatMode: VatDisplayMode = getVatDisplayMode(this.companyService.myCompany?.vatNumber, this.vatDisplay.mode);
     activeTotals: DirectionTotals = EMPTY_TOTALS;
@@ -23,6 +27,9 @@ export class Dashboard {
             this.refreshActive();
         });
         void this.load();
+        this.sub = this.ea.subscribe('account:switched', () => {
+            this.loadTotals();
+        });
     }
 
     detaching() {
@@ -34,6 +41,10 @@ export class Dashboard {
             this.loadCompany(),
             this.loadTotals(),
         ]);
+    }
+
+    unbinding() {
+        this.sub?.dispose();
     }
 
     private async loadCompany() {
