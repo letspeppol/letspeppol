@@ -125,6 +125,7 @@ services:
       JWT_PRIVATE_KEY: ${JWT_PRIVATE_KEY:-classpath:kyc-private.pem}
       JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY:-classpath:kyc-public.pem}
       KYC_AUTH_APP_EXTERNAL_ID: ${KYC_AUTH_APP_EXTERNAL_ID:-b095630d-1bf3-4250-bf9e-2d49e6ce505b}
+      KYC_TOKEN_URI: ${KYC_TOKEN_URI:-http://kyc:8084/auth/oauth2/token}
       SERVICE_CLIENT_SECRET: ${SERVICE_CLIENT_SECRET:?SERVICE_CLIENT_SECRET must be set}
       KYC_TOKEN_URI: ${KYC_TOKEN_URI:-http://kyc:8084/auth/oauth2/token}
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:?CORS_ALLOWED_ORIGINS must be set}
