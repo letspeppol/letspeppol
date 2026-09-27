@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
@@ -41,7 +42,7 @@ public class CompanyService {
 
     public Company add(AccountInfo request) {
         companyCreateCounter.increment();
-        Company account = new Company(
+        Company company = new Company(
                 request.peppolId(),
                 request.identifier(),
                 request.vatNumber(),
@@ -53,28 +54,58 @@ public class CompanyService {
                 request.street(),
                 "BE"
         );
-        return companyRepository.save(account);
+        company.setActive(request.active());
+        company.setLastKycSyncTimestamp(request.lastUpdatedTimestamp());
+        return companyRepository.save(company);
     }
 
-    public CompanyDto get(String peppolId, String tokenValue, boolean isPeppolActive) {
+    public CompanyDto get(String peppolId, String tokenValue, boolean isPeppolActive, Instant companyLastUpdated) {
         Optional<Company> optionalCompany = companyRepository.findByPeppolId(peppolId);
         if (optionalCompany.isPresent()) {
-            return CompanyMapper.toDto(optionalCompany.get(), isPeppolActive);
+            Company company = optionalCompany.get();
+            if (needsKycSync(company, companyLastUpdated)) {
+                company = syncFromKyc(company, tokenValue, companyLastUpdated);
+            }
+            return CompanyMapper.toDto(company, isPeppolActive);
         }
         try {
-            AccountInfo accountInfo = kycWebClient.get()
-                    .uri("/sapi/company")
-                    .headers(headers -> headers.setBearerAuth(tokenValue))
-                    .retrieve()
-                    .bodyToMono(AccountInfo.class)
-                    .blockOptional()
-                    .orElseThrow(() -> new IllegalStateException("Account was not know at KYC"));
-
-            return CompanyMapper.toDto(add(accountInfo), isPeppolActive);
+            return CompanyMapper.toDto(add(fetchFromKyc(tokenValue)), isPeppolActive);
         } catch (Exception ex) {
             log.error("Call to KYC /sapi/company failed", ex);
             throw new AppException(AppErrorCodes.KYC_REST_ERROR);
         }
+    }
+
+    private boolean needsKycSync(Company company, Instant companyLastUpdated) {
+        return companyLastUpdated != null
+                && (company.getLastKycSyncTimestamp() == null
+                || company.getLastKycSyncTimestamp().isBefore(companyLastUpdated));
+    }
+
+    private Company syncFromKyc(Company company, String tokenValue, Instant companyLastUpdated) {
+        try {
+            AccountInfo accountInfo = fetchFromKyc(tokenValue);
+            company.setVatNumber(accountInfo.vatNumber());
+            company.setActive(accountInfo.active());
+            company.setLastKycSyncTimestamp(
+                    accountInfo.lastUpdatedTimestamp() != null
+                            ? accountInfo.lastUpdatedTimestamp()
+                            : companyLastUpdated);
+            return companyRepository.save(company);
+        } catch (Exception ex) {
+            log.error("Call to KYC /sapi/company failed", ex);
+            throw new AppException(AppErrorCodes.KYC_REST_ERROR);
+        }
+    }
+
+    private AccountInfo fetchFromKyc(String tokenValue) {
+        return kycWebClient.get()
+                .uri("/sapi/company")
+                .headers(headers -> headers.setBearerAuth(tokenValue))
+                .retrieve()
+                .bodyToMono(AccountInfo.class)
+                .blockOptional()
+                .orElseThrow(() -> new IllegalStateException("Account was not known at KYC"));
     }
 
     public CompanyDto update(CompanyDto companyDto, boolean isPeppolActive, String tokenValue) {

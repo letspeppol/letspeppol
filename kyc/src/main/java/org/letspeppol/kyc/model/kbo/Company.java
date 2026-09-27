@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +41,10 @@ public class Company {
     private boolean suspended = false;
 
     private LocalDate inactive;
+
+    @UpdateTimestamp
+    @Column(nullable = false)
+    private Instant lastUpdatedTimestamp;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Director> directors = new ArrayList<>();
