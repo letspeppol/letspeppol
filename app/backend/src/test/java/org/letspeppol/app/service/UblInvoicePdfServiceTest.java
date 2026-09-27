@@ -190,13 +190,19 @@ class UblInvoicePdfServiceTest {
                 """;
 
         String pdfText = extractText(new UblInvoicePdfService(null).toPdf(xml));
-        assertTrue(pdfText.contains("Discount — Line promotion (20%): -€20.00"), pdfText);
+        assertTrue(pdfText.contains("Line promotion (20%): -€20.00"), pdfText);
         assertTrue(pdfText.contains("Charge: +€5.00"), pdfText);
         assertTrue(pdfText.contains("Lines subtotal"), pdfText);
-        assertTrue(pdfText.contains("Discount — Loyalty discount (10%)"), pdfText);
+        assertTrue(pdfText.contains("Loyalty discount (10%)"), pdfText);
         assertTrue(pdfText.contains("-€8.00"), pdfText);
-        assertTrue(pdfText.contains("Charge — Delivery"), pdfText);
+        assertTrue(pdfText.contains("Delivery"), pdfText);
+        assertFalse(pdfText.contains("Discount - Line promotion"), pdfText);
+        assertFalse(pdfText.contains("Charge - Delivery"), pdfText);
         assertTrue(pdfText.contains("+€3.00"), pdfText);
+
+        String pdfWithoutReason = extractText(new UblInvoicePdfService(null).toPdf(
+                xml.replace("<cbc:AllowanceChargeReason>Line promotion</cbc:AllowanceChargeReason>", "")));
+        assertTrue(pdfWithoutReason.contains("Discount (20%): -€20.00"), pdfWithoutReason);
     }
 
     private static String extractText(byte[] pdf) throws java.io.IOException {

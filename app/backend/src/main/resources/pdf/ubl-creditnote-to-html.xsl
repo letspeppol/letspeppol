@@ -643,14 +643,12 @@
   </xsl:template>
 
   <xsl:template name="allowance-charge-label">
+    <xsl:variable name="reason" select="normalize-space((./*[local-name()='AllowanceChargeReason'])[1])"/>
     <xsl:choose>
+      <xsl:when test="string-length($reason) &gt; 0"><xsl:value-of select="$reason"/></xsl:when>
       <xsl:when test="translate(normalize-space((./*[local-name()='ChargeIndicator'])[1]), 'TRUE', 'true') = 'true' or normalize-space((./*[local-name()='ChargeIndicator'])[1]) = '1'">Charge</xsl:when>
       <xsl:otherwise>Discount</xsl:otherwise>
     </xsl:choose>
-    <xsl:variable name="reason" select="normalize-space((./*[local-name()='AllowanceChargeReason'])[1])"/>
-    <xsl:if test="string-length($reason) &gt; 0">
-      <xsl:text> - </xsl:text><xsl:value-of select="$reason"/>
-    </xsl:if>
     <xsl:variable name="percent" select="normalize-space((./*[local-name()='MultiplierFactorNumeric'])[1])"/>
     <xsl:if test="string-length($percent) &gt; 0">
       <xsl:text> (</xsl:text><xsl:value-of select="$percent"/><xsl:text>%)</xsl:text>
