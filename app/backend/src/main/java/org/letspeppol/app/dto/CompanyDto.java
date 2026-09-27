@@ -23,7 +23,8 @@ public record CompanyDto(
         boolean enableEmailNotification,
         boolean addAttachmentToNotification,
         boolean addPdfToSendingInvoice,
-        String emailNotificationCCList,
+        String emailNotificationCcListIncoming,
+        String emailNotificationCcListOutgoing,
         NotificationGroup companyGroup,
         AddressDto registeredOffice
 )

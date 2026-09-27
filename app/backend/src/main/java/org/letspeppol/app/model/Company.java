@@ -42,7 +42,8 @@ public class Company extends GenericEntity{
     private boolean enableEmailNotification;
     private boolean addAttachmentToNotification;
     private boolean addPdfToSendingInvoice;
-    private String emailNotificationCcList; // comma-separated list
+    private String emailNotificationCcListIncoming; // comma-separated list
+    private String emailNotificationCcListOutgoing; // comma-separated list
 
     @Enumerated(EnumType.STRING)
     @JdbcType(PostgreSQLEnumJdbcType.class)
