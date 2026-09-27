@@ -138,8 +138,8 @@ export class Account {
                 this.ea.publish('alert', { alertType: AlertType.Danger, text: this.i18n.tr('alert.account.peppol-activation-request-failed') });
                 return;
             }
-            const status = response.status;
-            const body = await response.text().catch(() => "");
+            const status = error.status;
+            const body = await error.text().catch(() => "");
             switch (status) {
                 case 403:
                     this.warningKey = 'account.registration-failed.contact-us';

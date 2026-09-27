@@ -1,0 +1,36 @@
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: #f4f6f8;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.site-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 16px;
+  background: linear-gradient(90deg, #0d3b66, #2a6f97);
+  color: #fff;
+}
+
+.site-header h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.site-header a {
+  color: #d9f0ff;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.site-header .links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-left: auto;
+}

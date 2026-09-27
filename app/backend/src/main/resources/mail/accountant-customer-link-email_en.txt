@@ -1,0 +1,7 @@
+Hello,
+
+We received a request from accountant {{accountantName}} to grant access to your invoices.
+I you wish to confirm this request, click the following link: {{accountantCustomerLink}}
+
+Kind regards,
+Let’s Peppol Team

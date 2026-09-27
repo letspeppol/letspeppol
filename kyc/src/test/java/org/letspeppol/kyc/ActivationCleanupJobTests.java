@@ -1,6 +1,7 @@
 package org.letspeppol.kyc;
 
 import org.junit.jupiter.api.Test;
+import org.letspeppol.kyc.model.AccountType;
 import org.letspeppol.kyc.model.EmailVerification;
 import org.letspeppol.kyc.repository.EmailVerificationRepository;
 import org.letspeppol.kyc.service.ActivationService;
@@ -23,11 +24,11 @@ class ActivationCleanupJobTests {
     @Test
     void purgeExpiredRemovesOnlyExpiredUnverified() {
         // expired & unverified (should be removed)
-        repository.save(new EmailVerification("a@example.com", "BE0123456789", "tok-expired-unverified", Instant.now().minus(3, ChronoUnit.HOURS)));
+        repository.save(new EmailVerification(null, AccountType.ADMIN, "a@example.com", "BE0123456789", "tok-expired-unverified", Instant.now().minus(3, ChronoUnit.HOURS)));
         // future & unverified (should stay)
-        repository.save(new EmailVerification("b@example.com", "BE0123456789", "tok-future-unverified", Instant.now().plus(1, ChronoUnit.HOURS)));
+        repository.save(new EmailVerification(null, AccountType.ADMIN,"b@example.com", "BE0123456789", "tok-future-unverified", Instant.now().plus(1, ChronoUnit.HOURS)));
         // expired & verified (should stay)
-        EmailVerification verifiedExpired = new EmailVerification("c@example.com", "BE0123456789", "tok-expired-verified", Instant.now().minus(4, ChronoUnit.HOURS));
+        EmailVerification verifiedExpired = new EmailVerification(null, AccountType.ADMIN,"c@example.com", "BE0123456789", "tok-expired-verified", Instant.now().minus(4, ChronoUnit.HOURS));
         verifiedExpired.setVerified(true);
         repository.save(verifiedExpired);
 

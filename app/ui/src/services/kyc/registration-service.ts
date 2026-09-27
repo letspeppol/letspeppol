@@ -3,9 +3,16 @@ import {SignatureAlgorithm} from "@web-eid/web-eid-library/models/SignatureAlgor
 import {KYCApi} from "./kyc-api";
 import {LoginService} from "../app/login-service";
 
+export type RegistrationAccountType = 'ADMIN' | 'AFFILIATE';
+
 export interface TokenVerificationResponse {
     email: string;
+    accountExists: boolean;
+    accountVerified: boolean;
+    directorSigned: boolean;
+    requestedType: string;
     company: KycCompanyResponse;
+    requester?: unknown;
 }
 
 export interface KycCompanyResponse {
@@ -18,6 +25,7 @@ export interface KycCompanyResponse {
     city: string;
     postalCode: string;
     directors?: Director[];
+    hasAdmin?: boolean;
 }
 
 export interface Director {
@@ -26,7 +34,7 @@ export interface Director {
 }
 
 export interface PrepareSigningRequest {
-    emailToken: string,
+    peppolId: string,
     directorId: number,
     certificate: string,
     supportedSignatureAlgorithms: Array<SignatureAlgorithm>,
@@ -41,14 +49,28 @@ export interface PrepareSigningResponse {
 }
 
 export interface FinalizeSigningRequest {
-    emailToken: string,
+    peppolId: string,
     directorId: number,
+    email: string | null,
     certificate: string,
     signature: string,
     signatureAlgorithm: SignatureAlgorithm,
     hashToSign: string,
-    hashToFinalize: string,
-    password: string,
+    hashToFinalize: string
+}
+
+export interface VerifyAccountRequest {
+    token: string,
+    newPassword: string
+}
+
+export interface ConfirmCompanyRequest {
+    type: RegistrationAccountType,
+    peppolId: string,
+    email: string,
+    city?: string,
+    postalCode?: string,
+    street?: string
 }
 
 export class RegistrationService {
@@ -60,12 +82,8 @@ export class RegistrationService {
         return response.json();
     }
 
-    async confirmCompany(peppolId: string, email: string) {
-        const body = {
-            peppolId: peppolId,
-            email: email
-        };
-        const response = await this.kycApi.httpClient.post(`/api/register/confirm-company`, JSON.stringify(body) );
+    async confirmCompany(request: ConfirmCompanyRequest) {
+        const response = await this.kycApi.httpClient.post(`/api/register/confirm-company`, JSON.stringify(request) );
         return response.json();
     }
 
@@ -79,43 +97,44 @@ export class RegistrationService {
         return response.json();
     }
 
-    getContractUrl(directorId: number, token: string): string {
-        return `${this.kycApi.httpClient.baseUrl}/api/identity/contract/${directorId}?token=${token}`;
+    getContractUrl(peppolId: string, directorId: number): string {
+        return `${this.kycApi.httpClient.baseUrl}/api/identity/contract/${encodeURIComponent(peppolId)}/${directorId}`;
     }
 
     async finalizeSign(request: FinalizeSigningRequest) : Promise<Response> {
         return await this.kycApi.httpClient.post(`/api/identity/sign/finalize`, JSON.stringify(request));
     }
 
+    async verifyAccount(request: VerifyAccountRequest): Promise<Response> {
+        return await this.kycApi.httpClient.post(`/api/register/verify-account`, JSON.stringify(request));
+    }
+
     async unregisterCompany(): Promise<boolean> {
-        const response = await this.kycApi.httpClient.fetch('/sapi/company/peppol/unregister', { method: 'POST' }); //Using fetch to expose response header
+        const response = await this.kycApi.httpClient.fetch('/sapi/company/peppol/unregister', { method: 'POST' });
         if (response.status === 204) {
             console.log("Was already unregistered");
             return false;
         }
-        const token = await response.text();
-        if (response.ok && token?.trim()) {
-            this.loginService.updateToken(token.trim());
+        if (response.ok) {
+            // peppolActive flipped, so the token's claims are stale; KYC mints tokens now, hence a
+            // silent re-authorization rather than a token handed back in the response body.
+            await this.loginService.refreshToken();
             return false;
         }
         return true;
     }
 
     async registerCompany(): Promise<boolean> {
-        const response = await this.kycApi.httpClient.fetch('/sapi/company/peppol/register', { method: 'POST' }); //Using fetch to expose response header
+        const response = await this.kycApi.httpClient.fetch('/sapi/company/peppol/register', { method: 'POST' });
         if (response.status === 204) {
             console.log("Was already registered");
             return true;
         }
         if (response.ok) {
-            const token = await response.text();
-            if (token?.trim()) {
-                this.loginService.updateToken(token.trim());
-                return true;
-            }
-            return false;
+            await this.loginService.refreshToken();
+            return true;
         }
-        throw Error(response);
+        throw response;
     }
 
     async downloadSignedContract(): Promise<Response> {

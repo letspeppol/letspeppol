@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -40,7 +41,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleKycException(KycException ex) {
         Map<String, Object> body = new HashMap<>();
         body.put("errorCode", ex.getCode());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+        HttpStatus status = KycErrorCodes.AUTHENTCATION_FAILED.equals(ex.getCode())
+                ? HttpStatus.UNAUTHORIZED
+                : HttpStatus.BAD_REQUEST;
+        return ResponseEntity.status(status).body(body);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -53,6 +57,12 @@ public class GlobalExceptionHandler {
         }
         body.put("errors", errors);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Map<String, Object>> handleUnreadableBody(HttpMessageNotReadableException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("errorCode", "validation_failed"));
     }
 
     @ExceptionHandler(Exception.class)

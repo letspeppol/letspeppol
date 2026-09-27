@@ -4,17 +4,22 @@ import {I18nConfiguration} from "@aurelia/i18n";
 import { LetsPeppol } from './app/lets-peppol';
 import {Alert} from "./components/alert/alert";
 import {AuthenticationHook} from "./app/authentication-hook";
+import {DateFormatConverter} from "./app/value-converters/date-format";
+import {DateTimeFormatConverter} from "./app/value-converters/date-time-format";
 import {
     FeatureAckRegistration,
     NewFeatureCustomAttribute,
     NewFeatureSectionCustomAttribute,
 } from "./components/new-feature";
 import {VatDisplayRegistration} from "./services/app/vat-display-service";
+import {captureLoginError} from "./login/pending-login-error";
 import "./components/new-feature/rainbow-border.css";
 import en from "./app/locale/translation_en.json";
 import fr from "./app/locale/translation_fr.json";
 import nl from "./app/locale/translation_nl.json";
 import de from "./app/locale/translation_de.json";
+
+captureLoginError();
 
 Aurelia
     .register(RouterConfiguration.customize({
@@ -41,6 +46,8 @@ Aurelia
         VatDisplayRegistration,
         NewFeatureCustomAttribute,
         NewFeatureSectionCustomAttribute,
+        DateFormatConverter,
+        DateTimeFormatConverter
     )
     .app(LetsPeppol)
     .start();

@@ -1,4 +1,34 @@
 /* Onboarding layout */
+.confirmation-layout {
+  display: flex;
+  gap: var(--space-1);
+  align-items: flex-start;
+}
+
+.confirmation-layout h3 {
+  margin-top: 0;
+  margin-bottom: var(--space-075);
+  font-size: 1rem;
+  color: var(--muted);
+}
+
+.vertical-separator {
+  width: 1px;
+  background: var(--border-soft);
+  align-self: stretch;
+  opacity: .6;
+}
+
+@media (max-width: 860px) {
+  .confirmation-layout {
+    flex-direction: column;
+  }
+
+  .vertical-separator {
+    display: none;
+  }
+}
+
 .onboarding-steps {
     list-style: none;
     padding-left: 0;

@@ -3,6 +3,7 @@ import {resolve} from "@aurelia/kernel";
 import {Address} from "./company-service";
 import {AppApi} from "./app-api";
 import {CacheTtl} from "./cache-config";
+import {OwnershipService} from "./ownership-service";
 
 export interface PartnerDto {
     id?: number,
@@ -21,11 +22,17 @@ export interface PartnerDto {
     registeredOffice?: Address
 }
 
+interface PartnersRequest {
+    peppolId: string | null,
+    partners: Promise<PartnerDto[]>
+}
+
 @singleton()
 export class PartnerService {
     private appApi = resolve(AppApi);
-    private partnersCache?: { value: PartnerDto[], expiresAt: number };
-    private partnersRequest?: Promise<PartnerDto[]>;
+    private ownershipService = resolve(OwnershipService);
+    private partnersCache?: { peppolId: string | null, value: PartnerDto[], expiresAt: number };
+    private partnersRequest?: PartnersRequest;
 
     async searchPartners(params: {peppolId: string}): Promise<PartnerDto[]> {
         const qs = new URLSearchParams();
@@ -39,20 +46,31 @@ export class PartnerService {
     }
 
     async getPartners() : Promise<PartnerDto[]> {
-        if (this.partnersCache && this.partnersCache.expiresAt > Date.now()) {
+        const peppolId = this.ownershipService.getCurrentPeppolId();
+        if (this.partnersCache?.peppolId === peppolId && this.partnersCache.expiresAt > Date.now()) {
             return this.partnersCache.value;
         }
-        if (this.partnersRequest) {
-            return this.partnersRequest;
+        if (this.partnersRequest?.peppolId === peppolId) {
+            return this.partnersRequest.partners;
         }
-        this.partnersRequest = this.appApi.httpClient.get('/sapi/partner')
-            .then(response => response.json())
-            .then((partners: PartnerDto[]) => {
-                this.partnersCache = {value: partners, expiresAt: Date.now() + CacheTtl.partners};
-                return partners;
-            })
-            .finally(() => this.partnersRequest = undefined);
-        return this.partnersRequest;
+        const request: PartnersRequest = {
+            peppolId,
+            partners: this.appApi.httpClient.get('/sapi/partner')
+                .then(response => response.json())
+                .then((partners: PartnerDto[]) => {
+                    if (this.partnersRequest === request) {
+                        this.partnersCache = {peppolId, value: partners, expiresAt: Date.now() + CacheTtl.partners};
+                    }
+                    return partners;
+                })
+                .finally(() => {
+                    if (this.partnersRequest === request) {
+                        this.partnersRequest = undefined;
+                    }
+                }),
+        };
+        this.partnersRequest = request;
+        return request.partners;
     }
 
     async createPartner(partner: PartnerDto) : Promise<PartnerDto> {

@@ -10,29 +10,30 @@ services:
       - default
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.adminer.rule=Host(`${ADMINER_DOMAIN}`)"
+      - "traefik.docker.network=web"
+      - "traefik.http.routers.adminer.rule=Host(`${ADMINER_DOMAIN:?ADMINER_DOMAIN must be set}`)"
       - "traefik.http.routers.adminer.entrypoints=internal"
-      - "traefik.http.routers.adminer.tls.certresolver=${CERT_RESOLVER}"
+      - "traefik.http.routers.adminer.tls.certresolver=${CERT_RESOLVER:?CERT_RESOLVER must be set}"
       - "traefik.http.services.adminer.loadbalancer.server.port=8080"
 
   db:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER must be set}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}
       POSTGRES_DB: postgres
-      APP_USER: ${APP_USER}
-      APP_PASS: ${APP_PASS}
-      KYC_USER: ${KYC_USER}
-      KYC_PASS: ${KYC_PASS}
-      PROXY_USER: ${PROXY_USER}
-      PROXY_PASS: ${PROXY_PASS}
+      APP_USER: ${APP_USER:?APP_USER must be set}
+      APP_PASS: ${APP_PASS:?APP_PASS must be set}
+      KYC_USER: ${KYC_USER:?KYC_USER must be set}
+      KYC_PASS: ${KYC_PASS:?KYC_PASS must be set}
+      PROXY_USER: ${PROXY_USER:?PROXY_USER must be set}
+      PROXY_PASS: ${PROXY_PASS:?PROXY_PASS must be set}
     volumes:
       - db-data:/var/lib/postgresql/data
       - ../../postgres/init:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:?POSTGRES_USER must be set}"]
       interval: 5s
       timeout: 5s
       retries: 12
@@ -51,8 +52,8 @@ services:
         condition: service_healthy
     environment:
       PGHOST: db
-      PGUSER: ${POSTGRES_USER}
-      PGPASSWORD: ${POSTGRES_PASSWORD}
+      PGUSER: ${POSTGRES_USER:?POSTGRES_USER must be set}
+      PGPASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}
       TZ: Europe/Brussels
       DB_LIST: "app kyc proxy"
       DATA_DIR: /opt/data/db

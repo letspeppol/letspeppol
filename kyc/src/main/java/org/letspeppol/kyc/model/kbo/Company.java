@@ -10,9 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "company", indexes = {
-        @Index(name = "uk_company_number", columnList = "peppolId", unique = true)
-})
+@Table(name = "company")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -59,6 +57,11 @@ public class Company {
         this.city = city;
         this.postalCode = postalCode;
         this.street = street;
+    }
+
+    public void addDirector(Director director) {
+        directors.add(director);
+        director.setCompany(this);
     }
 
     public boolean isPeppolActive() {

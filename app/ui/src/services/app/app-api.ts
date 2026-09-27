@@ -2,6 +2,7 @@ import {resolve} from "@aurelia/kernel";
 import {newInstanceOf, singleton} from "aurelia";
 import {IHttpClient} from "@aurelia/fetch-client";
 import {Router} from "@aurelia/router";
+import {rememberCurrentNavigation} from "./ownership-route";
 
 @singleton()
 export class AppApi {
@@ -12,17 +13,19 @@ export class AppApi {
         const baseUrl = import.meta.env.VITE_APP_BASE_URL || '/app';
         this.httpClient.configure(config => config
             .withBaseUrl(baseUrl)
+            // No token at construction — LoginService.setAuthHeader() injects the bearer header once
+            // a token is obtained (tokens are held in memory, never in localStorage).
             .withDefaults({
-                headers: localStorage.getItem('token') ? {'Authorization': `Bearer ${localStorage.getItem('token')}`} : undefined,
                 credentials: "include"
             })
             .rejectErrorResponses()
             .withInterceptor({
                 responseError: (error: Response) => {
                     if (error.status === 401) {
+                        rememberCurrentNavigation();
                         localStorage.removeItem('token');
                         localStorage.removeItem('peppolActive');
-                        this.router.load('login');
+                        this.router.load('/login');
                     }
                     throw error;
                 }

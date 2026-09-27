@@ -1,5 +1,8 @@
 package org.letspeppol.app.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.letspeppol.app.config.SponsorProperties;
@@ -21,12 +24,14 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
+@Tag(name = "App Sponsors", description = "Public sponsor information and authenticated sponsor-invoice creation.")
 public class SponsorController {
 
     private final SponsorProperties sponsorProperties;
     private final SponsorInvoiceService sponsorInvoiceService;
 
     @GetMapping("/api/sponsors")
+    @Operation(summary = "List sponsors", description = "Returns public sponsor names, logo URLs, and website links configured for the project website.")
     public SponsorsResponseDto getSponsors() {
         List<SponsorDto> sponsors = sponsorProperties.getList().stream()
                 .map(s -> new SponsorDto(
@@ -39,11 +44,14 @@ public class SponsorController {
     }
 
     @GetMapping("/api/sponsors/contributions")
+    @Operation(summary = "List sponsor contributions", description = "Returns public aggregate sponsor contribution information derived from sponsor invoices.")
     public List<SponsorContributionDto> getSponsorContributions() {
         return sponsorInvoiceService.getSponsorContributions();
     }
 
     @PostMapping("/sapi/sponsors")
+    @Operation(summary = "Create sponsor invoice", description = "Creates and submits a sponsor invoice for the authenticated company. App obtains its downstream Proxy token with client credentials and forwards the user token as acting-user context.")
+    @SecurityRequirement(name = "oauth2", scopes = "openid")
     public SponsorInvoiceResponse createSponsorInvoice(@AuthenticationPrincipal Jwt jwt,
                                                        @Valid @RequestBody SponsorInvoiceRequest request) {
         String customerPeppolId = JwtUtil.getPeppolId(jwt);

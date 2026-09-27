@@ -1,6 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.5.7'
+	id 'org.springframework.boot' version '3.5.15'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -21,20 +21,22 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
-	implementation 'org.springframework.security:spring-security-crypto'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-api:2.8.17'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-authorization-server'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    // 0.30.3 is the last webauthn4j release on Jackson 2; upgrade on spring boot 4.1
+    implementation 'com.webauthn4j:webauthn4j-core:0.30.3.RELEASE'
+    implementation 'dev.samstevens.totp:totp:1.7.1'
     implementation 'io.micrometer:micrometer-registry-prometheus'
     implementation 'org.hibernate.orm:hibernate-community-dialects'
     implementation 'org.xerial:sqlite-jdbc:3.46.0.0'
 	implementation 'org.bouncycastle:bcprov-jdk18on:1.81.1'
-    implementation 'org.bouncycastle:bcpkix-jdk18on:1.81.1'
-    implementation 'org.bouncycastle:bcutil-jdk18on:1.81.1'
+	implementation 'org.bouncycastle:bcpkix-jdk18on:1.81.1'
+	implementation 'org.bouncycastle:bcutil-jdk18on:1.81.1'
     implementation 'com.itextpdf:bouncy-castle-adapter:9.3.0'
-    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
-    implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
-    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
     implementation 'com.itextpdf:itext-core:9.3.0'
     implementation 'org.jsoup:jsoup:1.18.1'
     implementation 'org.postgresql:postgresql:42.7.8'
@@ -46,14 +48,16 @@ dependencies {
     // Same com.jcraft.jsch package API.
     implementation 'com.github.mwiede:jsch:0.2.18'
 	compileOnly 'org.projectlombok:lombok:1.18.40'
-	annotationProcessor 'org.projectlombok:lombok:1.18.34'
+	annotationProcessor 'org.projectlombok:lombok:1.18.40'
 
     runtimeOnly 'com.h2database:h2'
 
-	testCompileOnly 'org.projectlombok:lombok:1.18.34'
-	testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testCompileOnly 'org.projectlombok:lombok:1.18.40'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.40'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.testcontainers:testcontainers-postgresql:2.0.3'
+    testImplementation 'com.squareup.okhttp3:mockwebserver:5.3.2'
 }
 
 tasks.named('test') {

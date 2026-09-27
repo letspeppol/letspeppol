@@ -1,12 +1,14 @@
 package org.letspeppol.app.config;
 
-import lombok.RequiredArgsConstructor;
+import org.letspeppol.app.dto.AccountType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
@@ -14,8 +16,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.StandardCharsets;
+
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -25,6 +27,8 @@ public class SecurityConfig {
 
     public static final String PEPPOL_ID = "peppolId";
     public static final String PEPPOL_ACTIVE = "peppolActive";
+    public static final String UID = "uid";
+    public static final String ACCOUNT_TYPE = "accountType";
     public static final String ROLE_SERVICE = "service";
     public static final String ROLE_KYC_USER = "kyc_user";
 
@@ -34,10 +38,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, PostAuthProxyRequest postAuthProxyRequest) throws Exception {
         http
-            //.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
             .cors(cors -> {})
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers("/actuator/**").permitAll() //TODO : what is this ?
+                    .requestMatchers("/v3/api-docs/**").permitAll()
                     .requestMatchers("/api/**").permitAll()
                     .requestMatchers("/sapi/**").hasAuthority(ROLE_KYC_USER)
                     .anyRequest().denyAll()
@@ -50,21 +54,46 @@ public class SecurityConfig {
     }
 
     @Bean
+    public JwtDecoder jwtDecoder(
+            @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}") String jwkSetUri,
+            @Value("${oauth2.audience:letspeppol-api}") String audience,
+            @Value("${oauth2.issuer:}") String issuer,
+            @Value("${oauth2.allow-loopback-jwks:false}") boolean allowLoopbackJwks,
+            Environment environment) {
+        requireTrustworthyJwkSetUri(jwkSetUri, environment, allowLoopbackJwks);
+        NimbusJwtDecoder decoder = NimbusJwtDecoder.withJwkSetUri(jwkSetUri).build();
+        decoder.setJwtValidator(JwtValidationSupport.build(audience, issuer));
+        return decoder;
+    }
+
+    // The JWKS endpoint is the JWT signature trust anchor, so in a deployed profile refuse to start
+    // on the loopback default (it means KYC_JWKS_URI was left unset). Internal HTTP to KYC is fine.
+    static void requireTrustworthyJwkSetUri(
+            String jwkSetUri, Environment environment, boolean allowLoopbackJwks) {
+        if (!environment.matchesProfiles("postgres") || allowLoopbackJwks) {
+            return;
+        }
+        String host = jwkSetUri == null ? null : URI.create(jwkSetUri).getHost();
+        boolean loopback = host == null
+                || host.equals("localhost") || host.equals("127.0.0.1") || host.equals("::1");
+        if (loopback) {
+            throw new IllegalStateException(
+                    "KYC_JWKS_URI must point at the KYC server in deployed environments; refusing to "
+                            + "trust the loopback default '" + jwkSetUri + "' as the JWT signature source");
+        }
+    }
+
+    @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
         converter.setJwtGrantedAuthoritiesConverter(jwt -> {
             Collection<GrantedAuthority> authorities = new ArrayList<>();
-            if (jwt.hasClaim(PEPPOL_ID)) {
+            if (jwt.hasClaim(PEPPOL_ID) && !AccountType.APP.name().equals(jwt.getClaimAsString(ACCOUNT_TYPE))) {
                 authorities.add(new SimpleGrantedAuthority(ROLE_KYC_USER));
             }
             return authorities;
         });
         return converter;
-    }
-
-    @Bean
-    public NimbusJwtDecoder jwtDecoder(@Value("${jwt.secret}") String secret) {
-        return NimbusJwtDecoder.withSecretKey(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256")).build();
     }
 
     @Bean
@@ -82,5 +111,4 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", config);
         return source;
     }
-
 }

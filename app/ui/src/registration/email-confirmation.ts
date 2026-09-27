@@ -57,7 +57,7 @@ export class EmailConfirmation {
     }
 
     getContractUrl() {
-        const contractUrl = this.registrationService.getContractUrl(this.confirmedDirector.id, this.emailToken);
+        const contractUrl = this.registrationService.getContractUrl(this.tokenVerificationResponse.company.peppolId, this.confirmedDirector.id);
         return `${contractUrl}#page=1&view=FitH,300`;
     }
 
@@ -90,14 +90,19 @@ export class EmailConfirmation {
                 signatureAlgorithm.hashFunction
             );
             const finalizeSigningResponse = await this.finalizeSigning(certificate, signResponse, prepareSigningResponse);
+            await this.registrationService.verifyAccount({
+                token: this.emailToken,
+                newPassword: this.password
+            });
             this.step = 3;
-            const registrationStatus = finalizeSigningResponse.headers.get('Registration-Status'); // OK | FAILED | SUSPENDED | CONFLICT | UNKNOWN
+            const registrationStatus = finalizeSigningResponse.headers.get('Registration-Status'); // OK | FAILED | SUSPENDED | MANUAL_REVIEW | CONFLICT | UNKNOWN
             switch (registrationStatus) {
               case 'UNKNOWN':
               case 'FAILED':
                 this.warningKey = 'account.registration-failed.try-again-one-day';
                 break;
               case 'SUSPENDED':
+              case 'MANUAL_REVIEW':
                 this.warningKey = 'account.registration-failed.contact-us';
                 break;
               case 'CONFLICT':
@@ -133,7 +138,7 @@ export class EmailConfirmation {
         const signatureAlgorithm = supportedSignatureAlgorithms.find(item => item.hashFunction === "SHA-256");
 
         const prepareSigningRequest = {
-            emailToken: this.emailToken,
+            peppolId: this.tokenVerificationResponse.company.peppolId,
             directorId: this.confirmedDirector.id,
             certificate: certificate,
             supportedSignatureAlgorithms: supportedSignatureAlgorithms,
@@ -145,14 +150,14 @@ export class EmailConfirmation {
 
     private async finalizeSigning(certificate: string, signResponse: LibrarySignResponse, prepareSigningResponse: PrepareSigningResponse): Promise<Response> {
         const finalizeSigningRequest = {
-            emailToken: this.emailToken,
+            peppolId: this.tokenVerificationResponse.company.peppolId,
             directorId: this.confirmedDirector.id,
+            email: this.tokenVerificationResponse.email,
             certificate: certificate,
             signature: signResponse.signature,
             signatureAlgorithm: signResponse.signatureAlgorithm,
             hashToSign: prepareSigningResponse.hashToSign,
-            hashToFinalize: prepareSigningResponse.hashToFinalize,
-            password: this.password
+            hashToFinalize: prepareSigningResponse.hashToFinalize
         };
         return await this.registrationService.finalizeSign(finalizeSigningRequest);
     }

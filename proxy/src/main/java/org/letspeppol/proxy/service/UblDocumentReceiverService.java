@@ -38,6 +38,7 @@ public class UblDocumentReceiverService {
         var pageable = PageRequest.of(0, limit, Sort.by("createdOn").ascending());
         return ublDocumentRepository.findAllNewByOwnerPeppolId(ownerPeppolId, 0, List.of(DocumentDirection.INCOMING, DocumentDirection.OUTGOING), pageable)
                 .stream()
+                .filter(ublDocument -> ublDocument.getAccessPoint() != null)
                 .map(UblDocumentMapper::toDto)
                 .toList();
     }
@@ -46,6 +47,7 @@ public class UblDocumentReceiverService {
         var pageable = PageRequest.of(0, limit, Sort.by("createdOn").descending());
         return ublDocumentRepository.findAllNewByLinkedUid(uid, 0, List.of(DocumentDirection.INCOMING, DocumentDirection.OUTGOING), pageable)
                 .stream()
+                .filter(ublDocument -> ublDocument.getAccessPoint() != null)
                 .map(UblDocumentMapper::toDto)
                 .toList();
     }
