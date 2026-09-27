@@ -1,0 +1,10 @@
+Hello,
+
+Your invoice with reference {{reference}} was successfully sent to {{recipient}} over the Peppol network.
+You can inspect the document at https://be.letspeppol.org/invoices/{{uuid}}
+
+Kind regards,
+Let’s Peppol Team
+
+--
+{{supportedByText}}: {{sponsorName}} ({{sponsorUrl}})

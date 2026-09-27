@@ -23,7 +23,8 @@ export interface CompanyDto {
     enableEmailNotification: boolean,
     addAttachmentToNotification: boolean,
     addPdfToSendingInvoice: boolean,
-    emailNotificationCCList: string,
+    emailNotificationCcListIncoming?: string,
+    emailNotificationCcListOutgoing?: string,
     companyGroup: CompanyGroup,
     registeredOffice: Address
 }
