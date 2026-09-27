@@ -133,6 +133,7 @@ const IDENTIFIER_ID_PARENTS = new Set([
 ]);
 
 const numberFields = [
+    "AllowanceTotalAmount",
     "ChargeTotalAmount",
     "CreditedQuantity",
     "InvoiceTypeCode",
@@ -148,6 +149,8 @@ const numberFields = [
     "TaxAmount",
     "TaxableAmount",
     "Amount",
+    "BaseAmount",
+    "MultiplierFactorNumeric",
     "value",       // for Amounts and Quantities
 ];
 

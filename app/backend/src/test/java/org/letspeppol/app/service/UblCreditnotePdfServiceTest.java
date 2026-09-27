@@ -144,6 +144,70 @@ class UblCreditnotePdfServiceTest {
         assertTrue(pdfText.contains("due to article 44"), pdfText);
     }
 
+    @SneakyThrows
+    @Test
+    void allowanceChargesAppearAtLineAndDocumentLevel() {
+        String xml = """
+                <CreditNote xmlns="urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2"
+                         xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+                         xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+                    <cbc:ID>CN-ADJUSTMENTS</cbc:ID>
+                    <cbc:IssueDate>2026-01-05</cbc:IssueDate>
+                    <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
+                    <cac:AccountingSupplierParty><cac:Party><cac:PartyName><cbc:Name>Supplier</cbc:Name></cac:PartyName></cac:Party></cac:AccountingSupplierParty>
+                    <cac:AccountingCustomerParty><cac:Party><cac:PartyName><cbc:Name>Customer</cbc:Name></cac:PartyName></cac:Party></cac:AccountingCustomerParty>
+                    <cac:AllowanceCharge>
+                        <cbc:ChargeIndicator>false</cbc:ChargeIndicator>
+                        <cbc:AllowanceChargeReason>Loyalty discount</cbc:AllowanceChargeReason>
+                        <cbc:MultiplierFactorNumeric>10</cbc:MultiplierFactorNumeric>
+                        <cbc:Amount currencyID="EUR">8.00</cbc:Amount>
+                    </cac:AllowanceCharge>
+                    <cac:AllowanceCharge>
+                        <cbc:ChargeIndicator>true</cbc:ChargeIndicator>
+                        <cbc:AllowanceChargeReason>Delivery</cbc:AllowanceChargeReason>
+                        <cbc:Amount currencyID="EUR">3.00</cbc:Amount>
+                    </cac:AllowanceCharge>
+                    <cac:CreditNoteLine>
+                        <cbc:ID>1</cbc:ID>
+                        <cbc:CreditedQuantity unitCode="H87">1</cbc:CreditedQuantity>
+                        <cbc:LineExtensionAmount currencyID="EUR">80.00</cbc:LineExtensionAmount>
+                        <cac:AllowanceCharge>
+                            <cbc:ChargeIndicator>false</cbc:ChargeIndicator>
+                            <cbc:AllowanceChargeReason>Line promotion</cbc:AllowanceChargeReason>
+                            <cbc:MultiplierFactorNumeric>20</cbc:MultiplierFactorNumeric>
+                            <cbc:Amount currencyID="EUR">20.00</cbc:Amount>
+                        </cac:AllowanceCharge>
+                        <cac:AllowanceCharge>
+                            <cbc:ChargeIndicator>true</cbc:ChargeIndicator>
+                            <cbc:Amount currencyID="EUR">5.00</cbc:Amount>
+                        </cac:AllowanceCharge>
+                        <cac:Item><cbc:Name>Service</cbc:Name></cac:Item>
+                        <cac:Price><cbc:PriceAmount currencyID="EUR">95.00</cbc:PriceAmount></cac:Price>
+                    </cac:CreditNoteLine>
+                    <cac:LegalMonetaryTotal>
+                        <cbc:LineExtensionAmount currencyID="EUR">80.00</cbc:LineExtensionAmount>
+                        <cbc:TaxExclusiveAmount currencyID="EUR">75.00</cbc:TaxExclusiveAmount>
+                        <cbc:PayableAmount currencyID="EUR">75.00</cbc:PayableAmount>
+                    </cac:LegalMonetaryTotal>
+                </CreditNote>
+                """;
+
+        String pdfText = extractText(new UblInvoicePdfService(null).toPdf(xml));
+        assertTrue(pdfText.contains("Line promotion (20%): -€20.00"), pdfText);
+        assertTrue(pdfText.contains("Charge: +€5.00"), pdfText);
+        assertTrue(pdfText.contains("Lines subtotal"), pdfText);
+        assertTrue(pdfText.contains("Loyalty discount (10%)"), pdfText);
+        assertTrue(pdfText.contains("-€8.00"), pdfText);
+        assertTrue(pdfText.contains("Delivery"), pdfText);
+        assertFalse(pdfText.contains("Discount - Line promotion"), pdfText);
+        assertFalse(pdfText.contains("Charge - Delivery"), pdfText);
+        assertTrue(pdfText.contains("+€3.00"), pdfText);
+
+        String pdfWithoutReason = extractText(new UblInvoicePdfService(null).toPdf(
+                xml.replace("<cbc:AllowanceChargeReason>Line promotion</cbc:AllowanceChargeReason>", "")));
+        assertTrue(pdfWithoutReason.contains("Discount (20%): -€20.00"), pdfWithoutReason);
+    }
+
     private static String extractText(byte[] pdf) throws java.io.IOException {
         try (PDDocument doc = PDDocument.load(pdf)) {
             return new PDFTextStripper().getText(doc);
