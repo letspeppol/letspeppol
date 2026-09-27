@@ -327,6 +327,13 @@
                     </div>
                   </xsl:if>
                 </xsl:for-each>
+                <xsl:for-each select="./*[local-name()='AllowanceCharge']">
+                  <div class="muted">
+                    <xsl:call-template name="allowance-charge-label"/>
+                    <xsl:text>: </xsl:text>
+                    <xsl:call-template name="allowance-charge-amount"/>
+                  </div>
+                </xsl:for-each>
               </td>
               <td>
                 <xsl:value-of select="normalize-space((./*[local-name()='CreditedQuantity'])[1])"/>
@@ -374,6 +381,24 @@
       </table>
 
       <table class="totals">
+        <xsl:if test="/*/*[local-name()='AllowanceCharge']">
+          <xsl:if test="/*/*[local-name()='LegalMonetaryTotal']/*[local-name()='LineExtensionAmount']">
+            <tr>
+              <td>Lines subtotal</td>
+              <td class="amount">
+                <xsl:call-template name="format-eur">
+                  <xsl:with-param name="value" select="normalize-space((/*/*[local-name()='LegalMonetaryTotal']/*[local-name()='LineExtensionAmount'])[1])"/>
+                </xsl:call-template>
+              </td>
+            </tr>
+          </xsl:if>
+          <xsl:for-each select="/*/*[local-name()='AllowanceCharge']">
+            <tr>
+              <td><xsl:call-template name="allowance-charge-label"/></td>
+              <td class="amount"><xsl:call-template name="allowance-charge-amount"/></td>
+            </tr>
+          </xsl:for-each>
+        </xsl:if>
         <tr>
           <td>Tax exclusive</td>
           <td class="amount">
@@ -615,6 +640,31 @@
       <xsl:when test="string-length($normalizedReasonId) &gt; 0">Other 0% VAT reason</xsl:when>
       <xsl:otherwise/>
     </xsl:choose>
+  </xsl:template>
+
+  <xsl:template name="allowance-charge-label">
+    <xsl:choose>
+      <xsl:when test="translate(normalize-space((./*[local-name()='ChargeIndicator'])[1]), 'TRUE', 'true') = 'true' or normalize-space((./*[local-name()='ChargeIndicator'])[1]) = '1'">Charge</xsl:when>
+      <xsl:otherwise>Discount</xsl:otherwise>
+    </xsl:choose>
+    <xsl:variable name="reason" select="normalize-space((./*[local-name()='AllowanceChargeReason'])[1])"/>
+    <xsl:if test="string-length($reason) &gt; 0">
+      <xsl:text> - </xsl:text><xsl:value-of select="$reason"/>
+    </xsl:if>
+    <xsl:variable name="percent" select="normalize-space((./*[local-name()='MultiplierFactorNumeric'])[1])"/>
+    <xsl:if test="string-length($percent) &gt; 0">
+      <xsl:text> (</xsl:text><xsl:value-of select="$percent"/><xsl:text>%)</xsl:text>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template name="allowance-charge-amount">
+    <xsl:choose>
+      <xsl:when test="translate(normalize-space((./*[local-name()='ChargeIndicator'])[1]), 'TRUE', 'true') = 'true' or normalize-space((./*[local-name()='ChargeIndicator'])[1]) = '1'">+</xsl:when>
+      <xsl:otherwise>-</xsl:otherwise>
+    </xsl:choose>
+    <xsl:call-template name="format-eur">
+      <xsl:with-param name="value" select="normalize-space((./*[local-name()='Amount'])[1])"/>
+    </xsl:call-template>
   </xsl:template>
 
   <xsl:template name="format-eur">

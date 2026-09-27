@@ -16,6 +16,8 @@
         <span if.bind="line.AllowanceChargeReason" title.bind="line.AllowanceChargeReason" class="allowance-charge-reason">${line.AllowanceChargeReason}</span>
         <span else t="${line.ChargeIndicator ? 'invoice.allowanceChargeModal.charge' : 'invoice.allowanceChargeModal.discount'}"></span>
         <span class="allowance-charge-separator" aria-hidden="true"></span>
+        <span if.bind="line.ChargeIndicator">+</span>
+        <span else>-</span>
         <span if.bind="line.MultiplierFactorNumeric" class="allowance-charge-amount">${line.MultiplierFactorNumeric}% ( ${line.Amount.value.toFixed(2) | price:line.Amount.__currencyID} )</span>
         <span else class="allowance-charge-amount">${line.Amount.value.toFixed(2) | price:line.Amount.__currencyID}</span>
     </div>
