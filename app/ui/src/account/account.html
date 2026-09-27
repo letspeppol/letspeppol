@@ -148,7 +148,7 @@
                     <h2 t="account.vat-ruleset.title">VAT Settings</h2>
                 </div>
                 <div style="display: grid; gap: var(--space-1)">
-                    <div class="vat-display-toggle">
+                    <div class="display-toggle">
                         <span class="vat-toggle-label" class.bind="!isVatExempt ? 'active' : ''" click.trigger="setVatRuleset(false)" t="account.vat-ruleset.options.VAT_REGISTERED">Subject to VAT</span>
                         <label class="switch" aria-label="Toggle VAT mode">
                             <input type="checkbox" checked.to-view="isVatExempt" change.trigger="setVatRuleset($event.target.checked)" />
@@ -157,7 +157,7 @@
                         <span class="vat-toggle-label" class.bind="isVatExempt ? 'active' : ''" click.trigger="setVatRuleset(true)" t="account.vat-ruleset.options.VAT_EXEMPT_ART_56BIS">VAT exempt by Art. 56bis - Small enterprises &lt; € 25.000</span>
                     </div>
                     <p class="muted" t="account.vat-display.description">Choose whether totals in the dashboard and invoice list are shown including or excluding VAT.</p>
-                    <div class="vat-display-toggle">
+                    <div class="display-toggle">
                         <span class="vat-toggle-label" class.bind="vatMode === 'excl' ? 'active' : ''" click.trigger="vatMode = 'excl'" t="account.vat-display.excl">Exclude VAT</span>
                         <label class="switch" aria-label="Toggle VAT inclusion">
                             <input type="checkbox" checked.to-view="vatMode === 'incl'" change.trigger="vatMode = $event.target.checked ? 'incl' : 'excl'" />
@@ -183,8 +183,12 @@
                         <span t="account.add-attachment-to-notification">Add attachment to notification</span>
                     </label>
                     <label class="field full">
-                        <span t="account.email-notification-cc-list">Email notification CC list</span>
-                        <textarea value.bind="company.emailNotificationCCList" change.trigger="validateEmailNotificationCCList()"></textarea>
+                        <span t="account.email-notification-cc-list-incoming">Incoming documents: email CC list</span>
+                        <textarea value.bind="company.emailNotificationCcListIncoming" change.trigger="validateEmailNotificationCcList('incoming')"></textarea>
+                    </label>
+                    <label class="field full">
+                        <span t="account.email-notification-cc-list-outgoing">Outgoing documents: email CC list</span>
+                        <textarea value.bind="company.emailNotificationCcListOutgoing" change.trigger="validateEmailNotificationCcList('outgoing')"></textarea>
                     </label>
                 </div>
             </div>
@@ -221,4 +225,3 @@
         </div>
     </section>
 </application-view>
-
