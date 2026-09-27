@@ -26,7 +26,8 @@ import {InvoiceDeliveryModal} from "./components/modals/invoice-delivery-modal";
 import moment, {Moment} from "moment";
 import {IRouter} from "@aurelia/router";
 import {I18N} from "@aurelia/i18n";
-import {collectVatReasonSelections, requiresDeliveryDetails} from "../../services/app/vat-rules";
+import {collectVatReasonSelections} from "../../services/app/vat-rules";
+import {isInvoiceValid} from "./invoice-validation";
 import {currentOwnershipRoute} from "../../services/app/ownership-route";
 
 export class InvoiceEdit {
@@ -381,36 +382,12 @@ export class InvoiceEdit {
         this.invoiceAttachmentModal.showModal();
     }
 
-    private invoiceRequiresDeliveryDetails(): boolean {
-        return this.invoiceContext.lines?.some(line => requiresDeliveryDetails(line.Item?.ClassifiedTaxCategory?.ID)) ?? false;
-    }
-
-    private hasRequiredDeliveryDetails(): boolean {
-        if (!this.invoiceRequiresDeliveryDetails()) {
-            return true;
-        }
-        const delivery = this.invoiceContext.selectedInvoice?.Delivery;
-        return !!delivery?.ActualDeliveryDate && !!delivery?.DeliveryLocation?.Address?.Country?.IdentificationCode;
-    }
-
     get isValid() {
-        const inv = this.invoiceContext.selectedInvoice;
-        const hasParty = inv && inv.AccountingCustomerParty && inv.AccountingCustomerParty.Party;
-        const partyIdentification = hasParty && inv.AccountingCustomerParty.Party.PartyIdentification;
-        const hasPartyIdentificationId =
-            !partyIdentification ||
-            (Array.isArray(partyIdentification) &&
-                partyIdentification.length > 0 &&
-                partyIdentification[0].ID &&
-                partyIdentification[0].ID.value);
-
-        return inv && (inv.BuyerReference || inv?.OrderReference?.ID) && inv.IssueDate && (inv.DueDate || inv.PaymentTerms || (inv as CreditNote)?.CreditNoteTypeCode)
-            && hasParty
-            && hasPartyIdentificationId
-            && inv.AccountingCustomerParty.Party.PartyName.Name
-            && inv.LegalMonetaryTotal.LineExtensionAmount.value > 0
-            && this.hasRequiredDeliveryDetails()
-            && this.paymentInfo?.isPaymentInfoComplete;
+        return isInvoiceValid(
+            this.invoiceContext.selectedInvoice,
+            this.invoiceContext.lines,
+            this.paymentInfo?.isPaymentInfoComplete,
+        );
     }
 
 }
