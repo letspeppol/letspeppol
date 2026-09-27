@@ -13,13 +13,11 @@
     </div>
 
     <div repeat.for="line of invoiceContext.selectedInvoice.AllowanceCharge" class="allowance-charge-line">
-        <span if.bind="line.AllowanceChargeReason" class="allowance-charge-reason">${line.AllowanceChargeReason}</span>
+        <span if.bind="line.AllowanceChargeReason" title.bind="line.AllowanceChargeReason" class="allowance-charge-reason">${line.AllowanceChargeReason}</span>
         <span else t="${line.ChargeIndicator ? 'invoice.allowanceChargeModal.charge' : 'invoice.allowanceChargeModal.discount'}"></span>
-        <span if.bind="line.AllowanceChargeReason" title.bind="line.AllowanceChargeReason" style="display: flex;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-info-icon lucide-info"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-        </span>
-        <span if.bind="line.MultiplierFactorNumeric">${line.MultiplierFactorNumeric}% ( ${line.Amount.value.toFixed(2) | price:line.Amount.__currencyID} )</span>
-        <span else> ${line.Amount.value.toFixed(2) | price:line.Amount.__currencyID}</span>
+        <span class="allowance-charge-separator" aria-hidden="true"></span>
+        <span if.bind="line.MultiplierFactorNumeric" class="allowance-charge-amount">${line.MultiplierFactorNumeric}% ( ${line.Amount.value.toFixed(2) | price:line.Amount.__currencyID} )</span>
+        <span else class="allowance-charge-amount">${line.Amount.value.toFixed(2) | price:line.Amount.__currencyID}</span>
     </div>
 
 </div>

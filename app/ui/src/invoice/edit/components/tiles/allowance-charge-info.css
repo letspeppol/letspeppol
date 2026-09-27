@@ -17,3 +17,13 @@
 .allowance-charge-line > span:not(.allowance-charge-reason) {
     flex-shrink: 0;
 }
+
+.allowance-charge-separator {
+    width: 2px;
+    height: 1.0em;
+    background: var(--border-soft);
+}
+
+.allowance-charge-amount {
+    white-space: nowrap;
+}
