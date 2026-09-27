@@ -29,7 +29,7 @@ services:
       SCRADA_COMPANY_KEY: ${SCRADA_COMPANY_KEY:?SCRADA_COMPANY_KEY must be set}
       BACKUP_DATA_DIR: /opt/data/proxy
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -h $$DB_HOST -p $$DB_PORT -U $$DB_USER"]
+      test: ["CMD-SHELL", "pg_isready -h $${DB_HOST} -p $${DB_PORT} -U $${DB_USER}"]
       interval: 5s
       timeout: 5s
       retries: 12
@@ -37,9 +37,11 @@ services:
     volumes:
       - /mnt/data/proxy:/opt/data/proxy
     networks:
-      - web
-      - default
-      - observability
+      default:
+      database:
+      observability:
+        aliases:
+          - blue-proxy
 
   app:
     build:
@@ -72,7 +74,7 @@ services:
       OPEN_COLLECTIVE_API_KEY: ${OPEN_COLLECTIVE_API_KEY:?OPEN_COLLECTIVE_API_KEY must be set}
       DOCUMENT_PRICE: ${DOCUMENT_PRICE:?DOCUMENT_PRICE must be set}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -h $$DB_HOST -p $$DB_PORT -U $$DB_USER"]
+      test: ["CMD-SHELL", "pg_isready -h $${DB_HOST} -p $${DB_PORT} -U $${DB_USER}"]
       interval: 5s
       timeout: 5s
       retries: 12
@@ -80,8 +82,11 @@ services:
     volumes:
       - /mnt/data/app:/opt/data/app
     networks:
-      - web
-      - default
+      default:
+      database:
+      observability:
+        aliases:
+          - blue-app
 
   kyc:
     build:
@@ -127,7 +132,7 @@ services:
       WEBEID_TRUSTED_CA_TRUSTSTORE: /kyc/truststore/belgian-eid.jks
       WEBEID_TRUSTED_CA_TRUSTSTORE_PASSWORD: changeit
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -h $$DB_HOST -p $$DB_PORT -U $$DB_USER"]
+      test: ["CMD-SHELL", "pg_isready -h $${DB_HOST} -p $${DB_PORT} -U $${DB_USER}"]
       interval: 5s
       timeout: 5s
       retries: 12
@@ -137,8 +142,11 @@ services:
       # RSA signing keys mounted read-only; provision them on the host out of band.
       - ${KYC_KEYS_DIR:-/opt/keys/kyc}:/run/secrets:ro
     networks:
-      - web
-      - default
+      default:
+      database:
+      observability:
+        aliases:
+          - blue-kyc
 
   ui:
     build:
@@ -159,51 +167,51 @@ services:
       - "traefik.docker.network=web"
 
       # API rate limit middleware
-      - "traefik.http.middlewares.api-limit.ratelimit.average=20"
-      - "traefik.http.middlewares.api-limit.ratelimit.burst=75"
-      - "traefik.http.middlewares.api-limit.ratelimit.period=1s"
-      - "traefik.http.middlewares.api-limit.ratelimit.sourceCriterion.ipStrategy.depth=1"
+      - "traefik.http.middlewares.blue-api-limit.ratelimit.average=20"
+      - "traefik.http.middlewares.blue-api-limit.ratelimit.burst=75"
+      - "traefik.http.middlewares.blue-api-limit.ratelimit.period=1s"
+      - "traefik.http.middlewares.blue-api-limit.ratelimit.sourceCriterion.ipStrategy.depth=1"
 
       # Public router
       - "traefik.http.routers.blue.rule=Host(`${ACTIVE_DOMAIN_BLUE:?ACTIVE_DOMAIN_BLUE must be set}`)"
       - "traefik.http.routers.blue.entrypoints=websecure"
-      - "traefik.http.routers.blue.service=nginx"
+      - "traefik.http.routers.blue.service=blue-ui"
       - "traefik.http.routers.blue.tls.certresolver=${CERT_RESOLVER_BLUE:?CERT_RESOLVER_BLUE must be set}"
 
       # API router
       - "traefik.http.routers.blue-api.rule=Host(`${ACTIVE_DOMAIN_BLUE:?ACTIVE_DOMAIN_BLUE must be set}`) && (PathPrefix(`/proxy/api/`) || PathPrefix(`/app/api/`) || PathPrefix(`/kyc/api/`))"
       - "traefik.http.routers.blue-api.entryPoints=websecure"
-      - "traefik.http.routers.blue-api.middlewares=api-limit"
-      - "traefik.http.routers.blue-api.service=nginx"
+      - "traefik.http.routers.blue-api.middlewares=blue-api-limit"
+      - "traefik.http.routers.blue-api.service=blue-ui"
       - "traefik.http.routers.blue-api.tls.certresolver=${CERT_RESOLVER_BLUE:?CERT_RESOLVER_BLUE must be set}"
 
       # Browser authentication router. Spring owns staged session authentication and CSRF.
       - "traefik.http.routers.blue-auth-browser.rule=Host(`${ACTIVE_DOMAIN_BLUE:?ACTIVE_DOMAIN_BLUE must be set}`) && PathPrefix(`/kyc/auth/browser/`)"
       - "traefik.http.routers.blue-auth-browser.entryPoints=websecure"
-      - "traefik.http.routers.blue-auth-browser.middlewares=api-limit"
-      - "traefik.http.routers.blue-auth-browser.service=nginx"
+      - "traefik.http.routers.blue-auth-browser.middlewares=blue-api-limit"
+      - "traefik.http.routers.blue-auth-browser.service=blue-ui"
       - "traefik.http.routers.blue-auth-browser.tls.certresolver=${CERT_RESOLVER_BLUE:?CERT_RESOLVER_BLUE must be set}"
 
       # OAuth2 protocol router. Do not require a blanket JWT/forward-auth middleware here:
       # Spring Authorization Server applies session, PKCE, or client auth per endpoint.
       - "traefik.http.routers.blue-auth-oauth2.rule=Host(`${ACTIVE_DOMAIN_BLUE:?ACTIVE_DOMAIN_BLUE must be set}`) && PathPrefix(`/kyc/auth/oauth2/`)"
       - "traefik.http.routers.blue-auth-oauth2.entryPoints=websecure"
-      - "traefik.http.routers.blue-auth-oauth2.middlewares=api-limit"
-      - "traefik.http.routers.blue-auth-oauth2.service=nginx"
+      - "traefik.http.routers.blue-auth-oauth2.middlewares=blue-api-limit"
+      - "traefik.http.routers.blue-auth-oauth2.service=blue-ui"
       - "traefik.http.routers.blue-auth-oauth2.tls.certresolver=${CERT_RESOLVER_BLUE:?CERT_RESOLVER_BLUE must be set}"
 
       # OIDC bearer endpoints are kept separate so policy can be tightened independently.
       - "traefik.http.routers.blue-auth-oidc.rule=Host(`${ACTIVE_DOMAIN_BLUE:?ACTIVE_DOMAIN_BLUE must be set}`) && PathPrefix(`/kyc/auth/oidc/`)"
       - "traefik.http.routers.blue-auth-oidc.entryPoints=websecure"
-      - "traefik.http.routers.blue-auth-oidc.middlewares=api-limit"
-      - "traefik.http.routers.blue-auth-oidc.service=nginx"
+      - "traefik.http.routers.blue-auth-oidc.middlewares=blue-api-limit"
+      - "traefik.http.routers.blue-auth-oidc.service=blue-ui"
       - "traefik.http.routers.blue-auth-oidc.tls.certresolver=${CERT_RESOLVER_BLUE:?CERT_RESOLVER_BLUE must be set}"
 
       # Discovery stays at its issuer-derived well-known location and must remain public.
       - "traefik.http.routers.blue-auth-discovery.rule=Host(`${ACTIVE_DOMAIN_BLUE:?ACTIVE_DOMAIN_BLUE must be set}`) && PathPrefix(`/kyc/.well-known/`)"
       - "traefik.http.routers.blue-auth-discovery.entryPoints=websecure"
-      - "traefik.http.routers.blue-auth-discovery.middlewares=api-limit"
-      - "traefik.http.routers.blue-auth-discovery.service=nginx"
+      - "traefik.http.routers.blue-auth-discovery.middlewares=blue-api-limit"
+      - "traefik.http.routers.blue-auth-discovery.service=blue-ui"
       - "traefik.http.routers.blue-auth-discovery.tls.certresolver=${CERT_RESOLVER_BLUE:?CERT_RESOLVER_BLUE must be set}"
 
       # Protected API router
@@ -211,22 +219,26 @@ services:
       # so no traefik jwt middleware here.
       - "traefik.http.routers.blue-sapi.rule=Host(`${ACTIVE_DOMAIN_BLUE:?ACTIVE_DOMAIN_BLUE must be set}`) && (PathPrefix(`/proxy/sapi/`) || PathPrefix(`/app/sapi/`) || PathPrefix(`/kyc/sapi/`))"
       - "traefik.http.routers.blue-sapi.entryPoints=websecure"
-      - "traefik.http.routers.blue-sapi.middlewares=api-limit"
-      - "traefik.http.routers.blue-sapi.service=nginx"
+      - "traefik.http.routers.blue-sapi.middlewares=blue-api-limit"
+      - "traefik.http.routers.blue-sapi.service=blue-ui"
       - "traefik.http.routers.blue-sapi.tls.certresolver=${CERT_RESOLVER_BLUE:?CERT_RESOLVER_BLUE must be set}"
 
       # Local API router
       - "traefik.http.routers.blue-lapi.rule=Host(`localhost`) && (PathPrefix(`/proxy/lapi/`) || PathPrefix(`/app/lapi/`) || PathPrefix(`/kyc/lapi/`))"
       - "traefik.http.routers.blue-lapi.entrypoints=internal"
-      - "traefik.http.routers.blue-lapi.middlewares=api-limit"
-      - "traefik.http.routers.blue-lapi.service=nginx"
+      - "traefik.http.routers.blue-lapi.middlewares=blue-api-limit"
+      - "traefik.http.routers.blue-lapi.service=blue-ui"
 
       # Service definition
-      - "traefik.http.services.nginx.loadbalancer.server.port=80"
+      - "traefik.http.services.blue-ui.loadbalancer.server.port=80"
 
 networks:
   web:
     external: true
+    name: web
+  database:
+    external: true
+    name: database
   observability:
     external: true
     name: observability

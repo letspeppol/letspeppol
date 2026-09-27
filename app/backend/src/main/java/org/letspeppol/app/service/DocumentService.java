@@ -302,6 +302,7 @@ public class DocumentService {
 
     public void updateStatus(UblDocumentDto ublDocumentDto) {
         Document document = documentRepository.findById(ublDocumentDto.id()).orElseThrow(() -> new NotFoundException("Document does not exist"));
+        Instant previousProcessedOn = document.getProcessedOn();
         String previousProcessedStatus = document.getProcessedStatus();
         document.setProxyOn(ublDocumentDto.createdOn());
         document.setScheduledOn(ublDocumentDto.scheduledOn());
@@ -309,6 +310,7 @@ public class DocumentService {
         document.setProcessedStatus(ublDocumentDto.processedStatus());
         documentRepository.save(document);
         notifyIfNewlyErrored(document, previousProcessedStatus);
+        notifyIfNewlySuccessfullyProcessed(document, previousProcessedOn);
     }
 
     public DocumentDto send(String peppolId, UUID id, Instant schedule, String tokenValue) {
@@ -389,6 +391,7 @@ public class DocumentService {
     }
 
     private Document deliver(Document document, String tokenValue) { //TODO : use boolean noArchive from Company
+        Instant previousProcessedOn = document.getProcessedOn();
         String previousProcessedStatus = document.getProcessedStatus();
         UblDocumentDto ublDocumentDto = ((document.getProxyOn() == null) ? proxyWebClient.post().uri("/sapi/document") : proxyWebClient.put().uri("/sapi/document/"+document.getId()))
                 .headers(headers -> headers.setBearerAuth(tokenValue))
@@ -428,6 +431,7 @@ public class DocumentService {
 
         document = documentRepository.save(document);
         notifyIfNewlyErrored(document, previousProcessedStatus);
+        notifyIfNewlySuccessfullyProcessed(document, previousProcessedOn);
         return document;
     }
 
@@ -461,6 +465,7 @@ public class DocumentService {
     }
 
     private Document rescheduleAtProxy(Document document, String tokenValue) { //TODO : use boolean noArchive from Company
+        Instant previousProcessedOn = document.getProcessedOn();
         String previousProcessedStatus = document.getProcessedStatus();
         UblDocumentDto ublDocumentDto = proxyWebClient.put()
                 .uri("/sapi/document/" + document.getId() + "/reschedule")
@@ -495,12 +500,29 @@ public class DocumentService {
         }
         document = documentRepository.save(document);
         notifyIfNewlyErrored(document, previousProcessedStatus);
+        notifyIfNewlySuccessfullyProcessed(document, previousProcessedOn);
         return document;
     }
 
-    //Notify only on the null -> non-null transition; processedStatus is persisted, so repeated proxy syncs never re-send.
+    private void notifyIfNewlySuccessfullyProcessed(Document document, Instant previousProcessedOn) {
+        if (previousProcessedOn != null || document.getProcessedOn() == null) {
+            return;
+        }
+
+        Company company = document.getCompany();
+        if (company != null
+                && (document.getProcessedStatus() == null || document.getProcessedStatus().isBlank())
+                && DocumentDirection.OUTGOING.equals(document.getDirection())
+                && company.isEnableEmailNotification()) {
+            notificationService.notifyOutgoingDocument(company, document);
+        }
+    }
+
+    // Notify only on the null/blank -> non-blank status transition; processedStatus is persisted, so repeated proxy syncs never re-send.
     private void notifyIfNewlyErrored(Document document, String previousProcessedStatus) {
-        if (previousProcessedStatus == null && document.getProcessedStatus() != null) {
+        if ((previousProcessedStatus == null || previousProcessedStatus.isBlank())
+                && document.getProcessedStatus() != null
+                && !document.getProcessedStatus().isBlank()) {
             Company company = document.getCompany();
             // A failed outgoing document is important enough to always notify, independently of
             // enableEmailNotification (which only governs incoming-document notifications).
