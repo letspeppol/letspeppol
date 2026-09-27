@@ -1,0 +1,19 @@
+.allowance-charge-line {
+    display: flex;
+    align-items: center;
+    gap: var(--space-025);
+    max-width: 100%;
+    min-width: 0;
+}
+
+.allowance-charge-reason {
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.allowance-charge-line > span:not(.allowance-charge-reason) {
+    flex-shrink: 0;
+}
