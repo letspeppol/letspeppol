@@ -236,9 +236,11 @@
   },
   "download": {
     "action": {"download": "Download", "retry": "Retry"}, "active-links": "active archives", "create": "Create archive", "creating": "Creating…",
-    "description": "Create a ZIP with finalized invoices and credit notes. Both dates are included.", "empty": "No archives have been created yet.", "from-date": "From date", "generation-failed": "Archive generation failed", "loading": "Loading archives…",
+    "description": "Create a ZIP with finalized invoices and credit notes. Both dates are included.", "empty": "No archives have been created yet.", "from-date": "From date", "generation-failed": "Archive generation failed",
+    "info": {"download-limit": "The ZIP file is deleted after it has been downloaded 3 times.", "expiration": "The download link expires and is deleted after 7 days."},
+    "loading": "Loading archives…",
     "status": {"FAILED": "Failed", "PENDING": "Pending", "PROCESSING": "Processing", "READY": "Ready"},
-    "table": {"actions": "Actions", "completed": "Completed", "created": "Created", "downloads": "Downloads", "expires": "Expires", "file": "File", "period": "Period", "status": "Status"},
+    "table": {"actions": "Actions", "completed": "Completed", "created": "Created", "downloads": "Downloads", "expires": "Expires", "file": "File", "period": "Period", "size": "Size (MB)", "status": "Status"},
     "title": "UBL downloads", "to-date": "To date",
     "validation": {"limit": "Delete an archive before creating another one.", "order": "The from date must not be after the to date.", "required": "Both dates are required.", "same-year": "Both dates must be in the same year."}
   },

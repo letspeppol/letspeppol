@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -102,6 +103,28 @@ class DownloadJobServiceTest {
         service.completeTerminalDownload(reservation);
         org.assertj.core.api.Assertions.assertThat(archive).doesNotExist();
         verify(downloadJobRepository).delete(job);
+    }
+
+    @Test
+    void listsReadyArchiveWithItsFileSize() throws Exception {
+        ReflectionTestUtils.setField(company, "id", 12L);
+        DownloadJob ready = new DownloadJob(company, LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 31));
+        ReflectionTestUtils.setField(ready, "id", 44L);
+        ready.setStatus(DownloadJob.Status.READY);
+        ready.setArchivePath(Path.of("12", "44", "archive.zip").toString());
+        ready.setExpiresOn(Instant.now().plusSeconds(3600));
+        Path archive = archiveDirectory.resolve(ready.getArchivePath());
+        Files.createDirectories(archive.getParent());
+        Files.writeString(archive, "zip content");
+
+        DownloadJob pending = new DownloadJob(company, LocalDate.of(2026, 2, 1), LocalDate.of(2026, 2, 28));
+        when(downloadJobRepository.findAllByCompanyPeppolIdOrderByCreatedOnDesc("0208:owner"))
+                .thenReturn(java.util.List.of(ready, pending));
+
+        var jobs = service.findAll("0208:owner");
+
+        assertThat(jobs.get(0).sizeBytes()).isEqualTo(Files.size(archive));
+        assertThat(jobs.get(1).sizeBytes()).isNull();
     }
 
     private static CreateDownloadJobRequest request(String from, String to) {
