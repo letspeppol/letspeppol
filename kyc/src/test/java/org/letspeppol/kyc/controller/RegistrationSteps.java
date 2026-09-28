@@ -313,6 +313,7 @@ public class RegistrationSteps {
             assertEquals(issuer, jwt.getIssuer().toString());
             assertEquals(peppolId, jwt.getClaimAsString("peppolId"));
             assertEquals("ADMIN", jwt.getClaimAsString("accountType"));
+            assertDoesNotThrow(() -> Instant.parse(jwt.getClaimAsString("companyLastUpdated")));
             assertTrue(jwt.getAudience().contains(audience));
 
             HttpResponse<String> userInfoResponse = browser.send(
@@ -378,6 +379,7 @@ public class RegistrationSteps {
             assertEquals(issuer, jwt.getIssuer().toString());
             assertEquals(appExternalId.toString(), jwt.getClaimAsString("uid"));
             assertEquals(AccountType.APP.name(), jwt.getClaimAsString("accountType"));
+            assertEquals("0208:1029545627", jwt.getClaimAsString("peppolId"));
             assertTrue(jwt.getClaimAsStringList("scope").contains("service"));
             assertTrue(jwt.getAudience().contains(audience));
             return accessToken;
@@ -437,7 +439,8 @@ public class RegistrationSteps {
                 .claim("uid", account.getExternalId().toString())
                 .claim("accountType", ownership.getType().name())
                 .claim("peppolId", ownership.getCompany().getPeppolId())
-                .claim("peppolActive", ownership.getCompany().isPeppolActive());
+                .claim("peppolActive", ownership.getCompany().isPeppolActive())
+                .claim("companyLastUpdated", ownership.getCompany().getLastUpdatedTimestamp().toString());
         if (issuer != null && !issuer.isBlank()) {
             claims.issuer(issuer);
         }

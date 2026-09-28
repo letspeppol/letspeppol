@@ -21,6 +21,7 @@ const lazy = (load: () => Promise<Record<string, unknown>>) => new NavigationStr
         { path: '/:peppolId/partners',     component: lazy(() => import('../partner/partners')),                  title: 'Partners' },
         { path: '/:peppolId/products',     component: lazy(() => import('../product/products')),                  title: 'Products' },
         { path: '/:peppolId/sponsors',     component: lazy(() => import('../sponsor/sponsors')),                  title: 'Sponsors' },
+        { path: '/:peppolId/downloads',    component: lazy(() => import('../download/downloads')),                title: 'Downloads' },
         { path: '/:peppolId/account',      component: lazy(() => import('../account/account')),                   title: 'Account' },
         { path: '/:peppolId/dashboard',    component: lazy(() => import('../dashboard/dashboard')),               title: 'Dashboard' },
         { path: ['', '/dashboard'],        component: lazy(() => import('../dashboard/dashboard')),               title: 'Dashboard' },

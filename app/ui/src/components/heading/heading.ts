@@ -64,6 +64,7 @@ export class Heading {
     get invoicesPath() { return this.loginService.getCurrentOwnershipRoute('/invoices'); }
     get partnersPath() { return this.loginService.getCurrentOwnershipRoute('/partners'); }
     get productsPath() { return this.loginService.getCurrentOwnershipRoute('/products'); }
+    get downloadsPath() { return this.loginService.getCurrentOwnershipRoute('/downloads'); }
     get accountPath() { return this.loginService.getCurrentOwnershipRoute('/account'); }
 
     async changeOwnership() {
@@ -81,17 +82,26 @@ export class Heading {
         this.swapping = true;
         try {
             await this.loginService.swapOwnership(nextOwnership);
-            this.selectedOwnershipKey = this.ownershipService.getCurrentOwnershipKey() ?? '';
-            this.invoiceContext.clearAccountCache();
-            this.ea.publish('account:switched');
-            await this.router.load(this.loginService.getCurrentOwnershipRoute('/dashboard'));
         } catch (error) {
             console.error(error);
-            this.selectedOwnershipKey = currentOwnershipKey ?? '';
             this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to switch ownership"});
+        }
+        try {
+            await this.followActingOwnership(currentOwnershipKey);
         } finally {
             this.swapping = false;
         }
+    }
+
+    private async followActingOwnership(previousOwnershipKey: string | null) {
+        const actingOwnershipKey = this.ownershipService.getCurrentOwnershipKey();
+        this.selectedOwnershipKey = actingOwnershipKey ?? '';
+        if (!actingOwnershipKey || actingOwnershipKey === previousOwnershipKey) {
+            return;
+        }
+        this.invoiceContext.clearAccountCache();
+        this.ea.publish('account:switched');
+        await this.router.load(this.loginService.getCurrentOwnershipRoute('/dashboard'));
     }
 
     async goToAddOwnership() {

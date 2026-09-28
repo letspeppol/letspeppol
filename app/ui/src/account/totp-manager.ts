@@ -18,6 +18,7 @@ export class TotpManager {
     disableCode = '';
     verifyError = false;
     disableError = false;
+    useRecoveryCode = false;
     busy = false;
 
     get verifyingText() { return this.i18n.tr('totp.verifying'); }
@@ -78,7 +79,22 @@ export class TotpManager {
     startDisable() {
         this.disableCode = '';
         this.disableError = false;
+        this.useRecoveryCode = false;
         this.state = 'disabling';
+    }
+
+    toggleRecoveryCode(event: Event) {
+        event.preventDefault();
+        this.useRecoveryCode = !this.useRecoveryCode;
+        this.disableCode = '';
+        this.disableError = false;
+    }
+
+    onRecoveryCodeInput(event: Event) {
+        const input = event.target as HTMLInputElement;
+        const normalized = input.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+        input.value = normalized;
+        this.disableCode = normalized;
     }
 
     cancelDisable() {

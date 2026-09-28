@@ -44,3 +44,6 @@ CREATE TABLE oauth2_authorization_consent (
     authorities          VARCHAR(1000) NOT NULL,
     PRIMARY KEY (registered_client_id, principal_name)
 );
+
+CREATE INDEX oauth2_authorization_code_idx ON oauth2_authorization USING hash (authorization_code_value);
+CREATE INDEX oauth2_authorization_id_token_idx ON oauth2_authorization USING hash (oidc_id_token_value);

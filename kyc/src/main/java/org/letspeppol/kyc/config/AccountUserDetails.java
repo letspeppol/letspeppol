@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.letspeppol.kyc.model.Account;
+import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -20,11 +21,11 @@ import java.util.UUID;
  * stored with its code (see {@code SecurityConfig#tokenCustomizer}). Freezing an ownership into the
  * browser-session principal would make independent tab contexts impossible.
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class AccountUserDetails implements UserDetails {
+@JsonIgnoreProperties(value = "password", ignoreUnknown = true)
+public class AccountUserDetails implements UserDetails, CredentialsContainer {
 
     private final String username;
-    private final String password;
+    private String password;
     private final UUID uid;
     private final boolean totpEnabled;
     private final Long accountId;
@@ -83,6 +84,11 @@ public class AccountUserDetails implements UserDetails {
     @Override
     public String getPassword() {
         return password;
+    }
+
+    @Override
+    public void eraseCredentials() {
+        password = null;
     }
 
     @Override

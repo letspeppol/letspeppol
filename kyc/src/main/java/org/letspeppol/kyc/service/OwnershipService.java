@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -54,8 +55,12 @@ public class OwnershipService {
     }
 
     public Ownership getByAccountEmailAndPeppolIdAndType(String email, String peppolId, AccountType type) {
-        return ownershipRepository.findFirstByAccountEmailAndCompanyPeppolIdAndTypeOrderByCreatedOnDesc(email.toLowerCase(), peppolId, type)
+        return findByAccountEmailAndPeppolIdAndType(email, peppolId, type)
                 .orElseThrow(() -> new KycException(KycErrorCodes.NO_OWNERSHIP));
+    }
+
+    public Optional<Ownership> findByAccountEmailAndPeppolIdAndType(String email, String peppolId, AccountType type) {
+        return ownershipRepository.findFirstByAccountEmailAndCompanyPeppolIdAndTypeOrderByCreatedOnDesc(email.toLowerCase(), peppolId, type);
     }
 
     public List<Ownership> getByPeppolId(String peppolId) {

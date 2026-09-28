@@ -167,6 +167,7 @@ export class AddOwnership {
                     this.warningKey = 'account.registration-failed.try-again-one-day';
                     break;
                 case 'SUSPENDED':
+                case 'MANUAL_REVIEW':
                     this.warningKey = 'account.registration-failed.contact-us';
                     break;
                 case 'CONFLICT': {
@@ -179,6 +180,9 @@ export class AddOwnership {
                     break;
             }
             await this.downloadFile(finalizeSigningResponse);
+            if (registrationStatus === 'MANUAL_REVIEW') {
+                return;
+            }
             await this.ownershipService.loadOwnerships(true);
             this.step = 3;
             this.ea.publish('alert', {alertType: AlertType.Success, text: "Account added successfully"});

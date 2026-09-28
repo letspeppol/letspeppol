@@ -95,13 +95,14 @@ export class EmailConfirmation {
                 newPassword: this.password
             });
             this.step = 3;
-            const registrationStatus = finalizeSigningResponse.headers.get('Registration-Status'); // OK | FAILED | SUSPENDED | CONFLICT | UNKNOWN
+            const registrationStatus = finalizeSigningResponse.headers.get('Registration-Status'); // OK | FAILED | SUSPENDED | MANUAL_REVIEW | CONFLICT | UNKNOWN
             switch (registrationStatus) {
               case 'UNKNOWN':
               case 'FAILED':
                 this.warningKey = 'account.registration-failed.try-again-one-day';
                 break;
               case 'SUSPENDED':
+              case 'MANUAL_REVIEW':
                 this.warningKey = 'account.registration-failed.contact-us';
                 break;
               case 'CONFLICT':
