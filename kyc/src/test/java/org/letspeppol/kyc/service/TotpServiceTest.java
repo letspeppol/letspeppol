@@ -8,7 +8,6 @@ import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.repository.AccountRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
