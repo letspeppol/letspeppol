@@ -45,8 +45,8 @@ export class TotalInfo {
         this.vatBreakdownRows = getVatBreakdownRows(taxTotal);
     }
 
-    hasTaxInclusiveAmount(): boolean {
-        return this.invoiceContext.selectedInvoice?.LegalMonetaryTotal?.TaxInclusiveAmount !== undefined;
+    totalAmount(taxInclusiveAmount: number | undefined, payableAmount: number | undefined): number {
+        return taxInclusiveAmount ?? payableAmount ?? 0;
     }
 
     showPrepaidAmount(): boolean {
