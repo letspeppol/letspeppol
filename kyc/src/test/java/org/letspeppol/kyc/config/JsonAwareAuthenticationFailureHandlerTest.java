@@ -1,7 +1,5 @@
 package org.letspeppol.kyc.config;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.springframework.http.HttpHeaders;
@@ -11,11 +9,15 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.LockedException;
 
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class JsonAwareAuthenticationFailureHandlerTest {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new JsonMapper();
     private final JsonAwareAuthenticationFailureHandler handler =
             new JsonAwareAuthenticationFailureHandler(objectMapper);
 
@@ -63,6 +65,6 @@ class JsonAwareAuthenticationFailureHandlerTest {
 
     private void assertErrorCode(MockHttpServletResponse response, String expected) throws Exception {
         JsonNode body = objectMapper.readTree(response.getContentAsByteArray());
-        assertThat(body.get("errorCode").asText()).isEqualTo(expected);
+        assertThat(body.get("errorCode").asString()).isEqualTo(expected);
     }
 }

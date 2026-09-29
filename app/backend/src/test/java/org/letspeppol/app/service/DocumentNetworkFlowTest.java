@@ -9,6 +9,8 @@ import reactor.core.publisher.Mono;
 import reactor.netty.DisposableServer;
 import reactor.netty.http.server.HttpServer;
 
+import tools.jackson.databind.json.JsonMapper;
+
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -42,7 +44,7 @@ class DocumentNetworkFlowTest {
                     mock(ValidationService.class),
                     mock(NotificationService.class),
                     mock(UblInvoicePdfService.class),
-                    new com.fasterxml.jackson.databind.ObjectMapper(),
+                    new JsonMapper(),
                     proxy,
                     proxy,
                     mock(Counter.class),

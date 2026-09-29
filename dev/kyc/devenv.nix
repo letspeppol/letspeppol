@@ -22,7 +22,7 @@
 in {
   languages.java = {
     enable = true;
-    jdk.package = pkgs.jdk21_headless;
+    jdk.package = pkgs.jdk25_headless;
   };
 
   packages = [

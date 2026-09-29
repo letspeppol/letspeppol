@@ -126,7 +126,7 @@ public class UblInvoicePdfService {
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception _) {
             // Fall back to invoice templates.
         }
         return "Invoice";

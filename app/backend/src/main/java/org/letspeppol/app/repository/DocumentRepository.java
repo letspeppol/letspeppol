@@ -5,6 +5,7 @@ import org.letspeppol.app.model.Document;
 import org.letspeppol.app.model.DocumentType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.NativeQuery;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import java.time.Instant;
@@ -28,7 +29,7 @@ public interface DocumentRepository extends JpaRepository<Document, UUID>, JpaSp
     boolean existsByInvoiceReferenceAndTypeAndOwnerPeppolId(String invoiceReference, DocumentType type, String ownerPeppolId);
 
     // Errored documents (processed_status IS NOT NULL) are excluded from the money totals and counted separately as erroredUnseenCount.
-    @Query(value = """
+    @NativeQuery("""
     SELECT
       COALESCE(SUM(CASE WHEN direction = 'INCOMING' AND processed_status IS NULL AND paid_on IS NULL THEN signed_incl END), 0) AS totalPayableOpenInclVat,
       COALESCE(SUM(CASE WHEN direction = 'INCOMING' AND processed_status IS NULL AND paid_on IS NULL AND due_date < NOW() THEN signed_incl END), 0) AS totalPayableOverdueInclVat,
@@ -56,7 +57,7 @@ public interface DocumentRepository extends JpaRepository<Document, UUID>, JpaSp
       FROM app.document
       WHERE owner_peppol_id = :ownerPeppolId AND drafted_on IS NULL
     ) d
-    """, nativeQuery = true)
+    """)
     TotalsRow totalsByOwner(@Param("ownerPeppolId") String ownerPeppolId);
 
 //    @Query("SELECT count(document) FROM Document document WHERE document.processedOn IS NOT NULL")
@@ -64,7 +65,7 @@ public interface DocumentRepository extends JpaRepository<Document, UUID>, JpaSp
 
     long countByProcessedOnIsNotNullAndIssueDateGreaterThanEqualAndIssueDateLessThan(Instant startInclusive, Instant endExclusive);
 
-    @Query(value = """
+    @NativeQuery("""
     SELECT COALESCE(MAX(day_count), 0) AS max_daily_total
     FROM (
       SELECT date_trunc('day', issue_date) AS day, COUNT(*) AS day_count
@@ -72,7 +73,7 @@ public interface DocumentRepository extends JpaRepository<Document, UUID>, JpaSp
       WHERE processed_on IS NOT NULL AND issue_date >= :startInclusive AND issue_date <  :endExclusive
       GROUP BY 1
     ) daily_counts
-    """, nativeQuery = true)
+    """)
     long maxDailyTotal(@Param("startInclusive") Instant startInclusive, @Param("endExclusive") Instant endExclusive);
 
 //    @Modifying

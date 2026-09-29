@@ -1,5 +1,5 @@
 # Multi-stage build for KYC Spring Boot application
-FROM eclipse-temurin:21-jdk AS build
+FROM eclipse-temurin:25-jdk AS build
 WORKDIR /workspace
 
 COPY gradlew .
@@ -14,7 +14,7 @@ RUN ./gradlew --no-daemon build -x test || true
 COPY src src
 RUN ./gradlew --no-daemon clean bootJar -x test
 
-FROM eclipse-temurin:21-jre AS runtime
+FROM eclipse-temurin:25-jre AS runtime
 WORKDIR /kyc
 ENV SPRING_PROFILES_ACTIVE=postgres \
     JAVA_OPTS="" \
@@ -35,4 +35,4 @@ ENV SERVER_PORT=8084
 COPY --from=build /workspace/build/libs/kyc.jar kyc.jar
 COPY truststore/belgian-eid.jks /kyc/truststore/belgian-eid.jks
 EXPOSE 8084
-ENTRYPOINT ["sh", "-c", "wait-for-db.sh java $JAVA_OPTS -Dserver.port=$SERVER_PORT -jar /kyc/kyc.jar"]
+ENTRYPOINT ["sh", "-c", "wait-for-db.sh java --enable-native-access=ALL-UNNAMED $JAVA_OPTS -Dserver.port=$SERVER_PORT -jar /kyc/kyc.jar"]
