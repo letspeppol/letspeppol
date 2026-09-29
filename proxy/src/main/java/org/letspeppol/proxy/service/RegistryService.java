@@ -65,7 +65,7 @@ public class RegistryService {
                 }
             }
             registry.setAccessPoint(AccessPoint.NONE);
-        } catch (Exception e) {
+        } catch (Exception _) {
             log.error("Failed to unregister {} at access point {}", registry.getPeppolId(), accessPoint);
         }
     }

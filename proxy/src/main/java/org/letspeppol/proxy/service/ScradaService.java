@@ -1,8 +1,5 @@
 package org.letspeppol.proxy.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +16,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+
 import java.util.List;
 import java.util.Map;
 
@@ -108,7 +110,7 @@ public class ScradaService implements AccessPointServiceInterface {
             try {
                 errorResponse = objectMapper.readValue(body, ErrorResponse.class);
             } catch (Exception parseFail) {
-                log.error("Scrada register API error {} {}: {} & parsing failed {}", e.getRawStatusCode(), e.getStatusText(), body, parseFail.getMessage(), e);
+                log.error("Scrada register API error {} {}: {} & parsing failed {}", e.getStatusCode().value(), e.getStatusText(), body, parseFail.getMessage(), e);
                 throw new RuntimeException("Scrada API error: " + e.getStatusCode(), e);
             }
             log.warn("Scrada register API could not succeed (code={} type={}) {}: {}", errorResponse.errorCode(), errorResponse.errorType(), errorResponse.defaultFormat(), body);
@@ -163,7 +165,7 @@ public class ScradaService implements AccessPointServiceInterface {
             }
             unregisterCounter.increment();
         } catch (WebClientResponseException e) { // HTTP error (non-2xx)
-            log.error("Scrada unregister API error {} {}: {}", e.getRawStatusCode(), e.getStatusText(), e.getResponseBodyAsString(), e);
+            log.error("Scrada unregister API error {} {}: {}", e.getStatusCode().value(), e.getStatusText(), e.getResponseBodyAsString(), e);
             throw new RuntimeException("Scrada API error: " + e.getStatusCode(), e);
         } catch (Exception e) { // timeouts, connection issues, deserialization errors, etc.
             log.error("Scrada unregister API call error {}", e.toString(), e);
@@ -194,13 +196,13 @@ public class ScradaService implements AccessPointServiceInterface {
                     .bodyValue(ublDocument.getUbl())
                     .retrieve()
                     .bodyToMono(JsonNode.class)
-                    .map(JsonNode::asText)
+                    .map(JsonNode::asString)
                     .blockOptional()
                     .orElseThrow(() -> new IllegalStateException("Empty response from Scrada send document"));
             documentSendCounter.increment();
             return uuid;
         } catch (WebClientResponseException e) { // HTTP error (non-2xx)
-            log.error("Scrada outbound API error {} {}: {}", e.getRawStatusCode(), e.getStatusText(), e.getResponseBodyAsString(), e);
+            log.error("Scrada outbound API error {} {}: {}", e.getStatusCode().value(), e.getStatusText(), e.getResponseBodyAsString(), e);
             throw new RuntimeException("Scrada outbound API error: " + e.getStatusCode(), e);
         } catch (Exception e) { // timeouts, connection issues, deserialization errors, etc.
             log.error("Scrada outbound API call error {}", e.toString(), e);
@@ -226,7 +228,7 @@ public class ScradaService implements AccessPointServiceInterface {
                 default -> new StatusReport(false, outboundDocument.status());
             };
         } catch (WebClientResponseException e) { // HTTP error (non-2xx)
-            log.error("Scrada outbound status API error {} {}: {}", e.getRawStatusCode(), e.getStatusText(), e.getResponseBodyAsString(), e);
+            log.error("Scrada outbound status API error {} {}: {}", e.getStatusCode().value(), e.getStatusText(), e.getResponseBodyAsString(), e);
             throw new RuntimeException("Scrada API error: " + e.getStatusCode(), e);
         } catch (Exception e) { // timeouts, connection issues, deserialization errors, etc.
             log.error("Scrada outbound status API call error {}", e.toString(), e);
@@ -242,7 +244,7 @@ public class ScradaService implements AccessPointServiceInterface {
             ublDocument.setAccessPointDetails(details);
             return details;
         } catch (WebClientResponseException e) { // HTTP error (non-2xx)
-            log.error("Scrada outbound details API error {} {}: {}", e.getRawStatusCode(), e.getStatusText(), e.getResponseBodyAsString(), e);
+            log.error("Scrada outbound details API error {} {}: {}", e.getStatusCode().value(), e.getStatusText(), e.getResponseBodyAsString(), e);
             throw new RuntimeException("Scrada API error: " + e.getStatusCode(), e);
         } catch (Exception e) { // timeouts, connection issues, deserialization errors, etc.
             log.error("Scrada outbound details API call error {}", e.toString(), e);
@@ -318,7 +320,7 @@ public class ScradaService implements AccessPointServiceInterface {
                 );
             }
         } catch (WebClientResponseException e) { // HTTP error (non-2xx)
-            log.error("Scrada inbound API error {} {}: {}", e.getRawStatusCode(), e.getStatusText(), e.getResponseBodyAsString(), e);
+            log.error("Scrada inbound API error {} {}: {}", e.getStatusCode().value(), e.getStatusText(), e.getResponseBodyAsString(), e);
             throw new RuntimeException("Scrada API error: " + e.getStatusCode(), e);
         } catch (Exception e) { // timeouts, connection issues, deserialization errors, etc.
             log.error("Scrada inbound API call error {}", e.toString(), e);

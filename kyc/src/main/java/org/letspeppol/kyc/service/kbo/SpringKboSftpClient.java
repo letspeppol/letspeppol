@@ -108,13 +108,13 @@ public class SpringKboSftpClient implements KboSftpClient {
         if (channel != null) {
             try {
                 channel.disconnect();
-            } catch (Exception ignored) {
+            } catch (Exception _) {
             }
         }
         if (session != null) {
             try {
                 session.disconnect();
-            } catch (Exception ignored) {
+            } catch (Exception _) {
             }
         }
     }
