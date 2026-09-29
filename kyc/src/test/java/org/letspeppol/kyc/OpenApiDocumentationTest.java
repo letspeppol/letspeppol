@@ -27,6 +27,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 /** Guards both generated OpenAPI quality and Mermaid endpoint coverage. */
 class OpenApiDocumentationTest {
 
+    private static final List<String> INTERNAL_PATH_ROOTS = List.of("/lapi", "/sapi/backoffice");
+
     @Test
     void everyKycApiHasExplanationAndAppearsInNetworkFlows() throws Exception {
         assertDocumentedControllers("org.letspeppol.kyc.controller", "/kyc");
@@ -55,7 +57,7 @@ class OpenApiDocumentationTest {
         for (var candidate : scanner.findCandidateComponents(packageName)) {
             Class<?> controller = ClassUtils.resolveClassName(
                     candidate.getBeanClassName(), OpenApiDocumentationTest.class.getClassLoader());
-            assertLocalControlApisHidden(controller);
+            assertInternalApisHidden(controller);
             if (AnnotatedElementUtils.hasAnnotation(controller, Hidden.class)) continue;
 
             Tag tag = AnnotatedElementUtils.findMergedAnnotation(controller, Tag.class);
@@ -89,7 +91,7 @@ class OpenApiDocumentationTest {
         return result;
     }
 
-    private static void assertLocalControlApisHidden(Class<?> controller) {
+    private static void assertInternalApisHidden(Class<?> controller) {
         boolean controllerHidden = AnnotatedElementUtils.hasAnnotation(controller, Hidden.class);
         for (Method method : controller.getDeclaredMethods()) {
             RequestMapping mapping = AnnotatedElementUtils.findMergedAnnotation(method, RequestMapping.class);
@@ -97,9 +99,9 @@ class OpenApiDocumentationTest {
             boolean operationHidden = controllerHidden
                     || AnnotatedElementUtils.hasAnnotation(method, Hidden.class);
             for (String path : paths(controller, mapping)) {
-                if (path.equals("/lapi") || path.startsWith("/lapi/")) {
+                if (INTERNAL_PATH_ROOTS.stream().anyMatch(root -> path.equals(root) || path.startsWith(root + "/"))) {
                     assertThat(operationHidden)
-                            .as("local-control operation %s.%s (%s) must be @Hidden",
+                            .as("internal operation %s.%s (%s) must be @Hidden",
                                     controller.getSimpleName(), method.getName(), path)
                             .isTrue();
                 }

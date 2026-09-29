@@ -11,6 +11,7 @@ import org.letspeppol.kyc.dto.RegistrationResponse;
 import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.model.AccountType;
 import org.letspeppol.kyc.model.DirectorIdentityVerification;
+import org.letspeppol.kyc.model.ReviewStatus;
 import org.letspeppol.kyc.repository.AccountIdentityVerificationRepository;
 import org.letspeppol.kyc.repository.DirectorRepository;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -37,10 +38,11 @@ public class IdentityVerificationService {
     private final JavaMailSender mailSender;
     private final EncryptionService encryptionService;
 
-    public boolean recordDirectorSignature(Account account, IdentityVerificationRequest req) {
+    public boolean recordDirectorSignature(Account account, AccountType requestedType, IdentityVerificationRequest req) {
         DirectorIdentityVerification directorIdentityVerification = new DirectorIdentityVerification(
                 account,
                 req.director(),
+                requestedType,
                 req.director().getName(),
                 getCN(req.x509Certificate()),
                 encryptionService.encrypt(req.x509Certificate().getSerialNumber().toString()),
@@ -49,9 +51,13 @@ public class IdentityVerificationService {
                 encryptionService.encrypt(req.certificate()),
                 encryptionService.encrypt(req.signature())
         );
+        boolean signerIsDirector = isAllowedToSign(req.x500Name(), req.director());
+        if (!signerIsDirector) {
+            directorIdentityVerification.setReviewStatus(ReviewStatus.PENDING);
+        }
         accountIdentityVerificationRepository.save(directorIdentityVerification);
 
-        if (!isAllowedToSign(req.x500Name(), req.director())) {
+        if (!signerIsDirector) {
             log.warn("Peppol not activated for email={} director={} signer={} serial={}", account.getEmail(), req.director().getName(), getFullName(req.x500Name()), req.x509Certificate().getSerialNumber());
             sendManualVerificationEmail(account.getEmail(), req.director().getCompany().getPeppolId(), req.director().getCompany().getName(), req.director().getName(), getFullName(req.x500Name())); //TODO : check, mail does not work !
             return false;

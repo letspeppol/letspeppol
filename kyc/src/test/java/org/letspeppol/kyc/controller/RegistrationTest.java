@@ -7,6 +7,8 @@ import mockwebserver3.MockWebServer;
 import org.junit.jupiter.api.*;
 import org.letspeppol.kyc.dto.*;
 import org.letspeppol.kyc.model.AccountType;
+import org.letspeppol.kyc.model.Permission;
+import org.letspeppol.kyc.model.ReviewStatus;
 import org.letspeppol.kyc.repository.*;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +16,14 @@ import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRe
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.*;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,6 +37,7 @@ class RegistrationTest {
 
     @Autowired private AccountRepository accountRepository;
     @Autowired private OwnershipRepository ownershipRepository;
+    @Autowired private JwtDecoder jwtDecoder;
     @MockitoBean private JavaMailSender javaMailSender;
     static MockWebServer mockWebServer;
 
@@ -70,6 +77,15 @@ class RegistrationTest {
 
     String foxtrotCompany = "Foxtrot Company";
     String foxtrotPeppolId = "0208:5555555555";
+
+    /// Golf registers with an eID whose name does not match the director listed in the KBO
+    String golfCompany = "Golf Company";
+    String golfPeppolId = "0208:6666666666";
+    String golfEmail = "golf@company.com";
+    String golfPassword = "golf-password";
+
+    String staffEmail = "staff@letspeppol.org";
+    String staffPassword = "staff-password";
 
     @BeforeAll
     static void startMockServer() throws Exception {
@@ -380,6 +396,46 @@ class RegistrationTest {
         registrationSteps.signContractAsLoggedIn(adminToken, deltaPeppolId, directorId);
         assertTrue(ownershipRepository.existsByTypeAndCompanyPeppolId(AccountType.ADMIN, deltaPeppolId));
         assertTrue(accountRepository.existsByEmail(adminEmail));
+    }
+
+    @Test
+    @Order(12)
+    void registrationWithMismatchingDirectorNeedsBackofficeApproval() {
+        registrationSteps.prepareDatabase(golfPeppolId, golfCompany, "Someone Else");
+        String emailToken = registrationSteps.confirmCompany(AccountType.ADMIN, golfPeppolId, golfEmail, "TestCity", "1234", "TestStreet");
+        Long directorId = registrationSteps.verifyAsNewAndSelfRequested(emailToken, golfPeppolId, golfEmail).getFirst().id();
+
+        assertEquals("MANUAL_REVIEW", registrationSteps.signContract(golfPeppolId, golfEmail, directorId, false));
+        registrationSteps.activateAccount(emailToken, golfPassword);
+        assertFalse(ownershipRepository.existsByTypeAndCompanyPeppolId(AccountType.ADMIN, golfPeppolId));
+
+        if (adminToken == null) {
+            loginAdminAsAdmin();
+        }
+        assertEquals(HttpStatus.FORBIDDEN, registrationSteps.registrationReviewsStatus(adminToken));
+
+        registrationSteps.createStaffAccount(staffEmail, staffPassword, Permission.REVIEW_REGISTRATIONS);
+        String staffToken = registrationSteps.staffOAuth2AuthorizationCodeWithPkce(staffEmail, staffPassword);
+        Jwt staffJwt = jwtDecoder.decode(staffToken);
+        assertNull(staffJwt.getClaimAsString("peppolId"));
+        assertEquals(List.of("REVIEW_REGISTRATIONS"), staffJwt.getClaimAsStringList("permissions"));
+        assertEquals(HttpStatus.FORBIDDEN, registrationSteps.companySearchStatus(staffToken));
+
+        RegistrationReviewDto review = registrationSteps.registrationReviews(staffToken).stream()
+                .filter(pending -> pending.peppolId().equals(golfPeppolId))
+                .findFirst()
+                .orElseThrow();
+        assertEquals(golfEmail, review.accountEmail());
+        assertEquals("Someone Else", review.directorName());
+        assertEquals(ReviewStatus.PENDING, review.reviewStatus());
+
+        RegistrationReviewDecisionResponse decision = registrationSteps.approveReview(staffToken, review.id());
+        assertEquals(ReviewStatus.APPROVED, decision.review().reviewStatus());
+        assertEquals(staffEmail, decision.review().reviewedBy());
+        assertNotNull(decision.registration());
+        assertTrue(ownershipRepository.existsByTypeAndCompanyPeppolId(AccountType.ADMIN, golfPeppolId));
+        assertTrue(registrationSteps.registrationReviews(staffToken).stream().noneMatch(pending -> pending.peppolId().equals(golfPeppolId)));
+        registrationSteps.login(golfEmail, golfPassword, golfPeppolId);
     }
 
     /**

@@ -18,7 +18,8 @@ export interface OwnershipSummary {
 
 interface JwtClaims {
     peppolId?: string,
-    accountType?: string
+    accountType?: string,
+    permissions?: string[]
 }
 
 @singleton()
@@ -47,7 +48,11 @@ export class OwnershipService {
             return;
         }
         const claims = this.claims();
-        if (claims?.peppolId && claims.accountType) {
+        if (!claims?.peppolId) {
+            this.ownerships = [];
+            return;
+        }
+        if (claims.accountType) {
             rememberActingOwnership(claims.peppolId, claims.accountType);
         }
         void this.loadOwnerships(true);
@@ -141,6 +146,10 @@ export class OwnershipService {
 
     getCurrentOwnershipType(): string | null {
         return this.claims()?.accountType ?? null;
+    }
+
+    hasPermission(permission: string): boolean {
+        return this.claims()?.permissions?.includes(permission) ?? false;
     }
 
     getCurrentPeppolId(): string | null {

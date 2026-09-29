@@ -1,0 +1,123 @@
+.backoffice-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-075);
+    border-top: 3px solid var(--staff);
+}
+
+.backoffice-header .brand {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-075);
+}
+
+.backoffice-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-035);
+    border-radius: 999px;
+    padding: var(--space-025) var(--space-065);
+    font-size: .8rem;
+    font-weight: 700;
+    letter-spacing: .02em;
+    color: var(--staff);
+    background: color-mix(in hsl, var(--staff) 12%, var(--panel));
+    border: 1px solid color-mix(in hsl, var(--staff) 35%, transparent);
+}
+
+.backoffice-return {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-04);
+    margin-left: var(--space-05);
+    padding: var(--space-04) var(--space-08) var(--space-04) var(--space-065);
+    border-radius: 999px;
+    font-size: .9rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    color: var(--primary);
+    background: color-mix(in hsl, var(--primary) 6%, var(--panel));
+    border: 1px solid color-mix(in hsl, var(--primary) 35%, transparent);
+    transition: background .2s ease, color .2s ease;
+}
+
+.backoffice-return:hover {
+    color: var(--panel);
+    background: var(--primary);
+}
+
+.backoffice-return:focus-visible {
+    outline: 2px solid color-mix(in hsl, var(--primary) 60%, transparent);
+    outline-offset: 2px;
+}
+
+.backoffice-header-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-06);
+}
+
+.backoffice-page {
+    display: grid;
+    gap: var(--space-125);
+}
+
+.backoffice-intro {
+    color: var(--muted);
+    margin: var(--space-035) 0 0;
+}
+
+.backoffice-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-05);
+}
+
+.backoffice-table-card {
+    overflow: hidden;
+}
+
+.backoffice-muted {
+    color: var(--muted);
+    font-size: .85rem;
+}
+
+.backoffice-flag {
+    display: inline-flex;
+    border-radius: 999px;
+    padding: var(--space-02) var(--space-05);
+    font-size: .8rem;
+    font-weight: 700;
+    color: var(--status-overdue);
+    background: color-mix(in hsl, var(--status-overdue) 12%, var(--panel));
+}
+
+.backoffice-flag + .backoffice-flag {
+    margin-left: var(--space-035);
+}
+
+.backoffice-security {
+    display: grid;
+    gap: var(--space-075);
+}
+
+.backoffice-security-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-1);
+}
+
+.backoffice-security-wide {
+    grid-column: 1 / -1;
+}
+
+.backoffice-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-05);
+}

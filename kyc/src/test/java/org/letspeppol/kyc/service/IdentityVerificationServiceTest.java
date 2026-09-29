@@ -4,11 +4,14 @@ import org.bouncycastle.asn1.x500.X500Name;
 import org.junit.jupiter.api.Test;
 import org.letspeppol.kyc.dto.IdentityVerificationRequest;
 import org.letspeppol.kyc.model.Account;
+import org.letspeppol.kyc.model.AccountType;
 import org.letspeppol.kyc.model.DirectorIdentityVerification;
+import org.letspeppol.kyc.model.ReviewStatus;
 import org.letspeppol.kyc.model.kbo.Company;
 import org.letspeppol.kyc.model.kbo.Director;
 import org.letspeppol.kyc.repository.AccountIdentityVerificationRepository;
 import org.letspeppol.kyc.repository.DirectorRepository;
+import org.mockito.ArgumentCaptor;
 import org.springframework.mail.javamail.JavaMailSender;
 
 import javax.security.auth.x500.X500Principal;
@@ -35,10 +38,13 @@ class IdentityVerificationServiceTest {
     void signerMatchingTheDirectorRegistersTheDirector() {
         Director director = director();
 
-        boolean signerIsDirector = service.recordDirectorSignature(new Account(), request(director, "Jan", "Peeters"));
+        boolean signerIsDirector = service.recordDirectorSignature(new Account(), AccountType.ADMIN, request(director, "Jan", "Peeters"));
 
         assertThat(signerIsDirector).isTrue();
         assertThat(director.isRegistered()).isTrue();
+        ArgumentCaptor<DirectorIdentityVerification> saved = ArgumentCaptor.forClass(DirectorIdentityVerification.class);
+        verify(verificationRepository).save(saved.capture());
+        assertThat(saved.getValue().getReviewStatus()).isEqualTo(ReviewStatus.NOT_REQUIRED);
         verify(directorRepository).save(director);
     }
 
@@ -46,12 +52,15 @@ class IdentityVerificationServiceTest {
     void signerNotMatchingTheDirectorIsKeptForManualReviewWithoutTouchingTheCompany() {
         Director director = director();
 
-        boolean signerIsDirector = service.recordDirectorSignature(new Account(), request(director, "Piet", "Janssens"));
+        boolean signerIsDirector = service.recordDirectorSignature(new Account(), AccountType.ADMIN, request(director, "Piet", "Janssens"));
 
         assertThat(signerIsDirector).isFalse();
         assertThat(director.isRegistered()).isFalse();
         assertThat(director.getCompany().isSuspended()).isFalse();
-        verify(verificationRepository).save(any(DirectorIdentityVerification.class));
+        ArgumentCaptor<DirectorIdentityVerification> saved = ArgumentCaptor.forClass(DirectorIdentityVerification.class);
+        verify(verificationRepository).save(saved.capture());
+        assertThat(saved.getValue().getReviewStatus()).isEqualTo(ReviewStatus.PENDING);
+        assertThat(saved.getValue().getRequestedType()).isEqualTo(AccountType.ADMIN);
         verify(directorRepository, never()).save(any());
     }
 

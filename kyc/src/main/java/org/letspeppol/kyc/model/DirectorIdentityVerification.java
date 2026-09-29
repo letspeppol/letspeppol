@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.type.PostgreSQLEnumJdbcType;
 import org.letspeppol.kyc.model.kbo.Director;
 
 import java.time.Instant;
@@ -52,10 +54,26 @@ public class DirectorIdentityVerification {
     @Column(nullable = false)
     private Instant createdOn = Instant.now();
 
-    public DirectorIdentityVerification(Account account, Director director, String directorNameSnapshot,
+    @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    private AccountType requestedType;
+
+    @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(nullable = false)
+    private ReviewStatus reviewStatus = ReviewStatus.NOT_REQUIRED;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reviewed_by")
+    private Account reviewedBy;
+
+    private Instant reviewedOn;
+
+    public DirectorIdentityVerification(Account account, Director director, AccountType requestedType, String directorNameSnapshot,
                                         String certificateSubject, String certificateSerial,
                                         String signatureAlgorithm, String dataHash, String certificate, String signature) {
         this.account = account;
+        this.requestedType = requestedType;
         this.director = director;
         this.directorNameSnapshot = directorNameSnapshot;
         this.certificateSubject = certificateSubject;

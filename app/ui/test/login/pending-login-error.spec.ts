@@ -17,6 +17,8 @@ beforeEach(() => {
 describe('pending login error', () => {
     it('maps known reason codes and falls back to the generic key', () => {
         expect(loginErrorKeyFor('ownership_unavailable')).toBe('login.authorization-no-ownership');
+        expect(loginErrorKeyFor('ownership_pending_review')).toBe('login.authorization-pending-review');
+        expect(loginErrorKeyFor('ownership_review_rejected')).toBe('login.authorization-review-rejected');
         expect(loginErrorKeyFor('access_denied')).toBe('login.authorization-denied');
         expect(loginErrorKeyFor('temporarily_unavailable')).toBe('login.authorization-unavailable');
         expect(loginErrorKeyFor('something_new')).toBe(GENERIC_LOGIN_ERROR_KEY);

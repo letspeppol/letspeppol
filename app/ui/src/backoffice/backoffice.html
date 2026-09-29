@@ -1,0 +1,132 @@
+<import from="../components/lang/language-selector"></import>
+<import from="../components/theme/theme-selector"></import>
+<import from="../components/confirmation/confirmation-modal"></import>
+<import from="../account/change-password-modal"></import>
+<import from="../account/passkey-manager"></import>
+<import from="../account/totp-manager"></import>
+<import from="../app/value-converters/date-time-format"></import>
+<import from="./backoffice.css"></import>
+
+<confirmation-modal></confirmation-modal>
+<change-password-modal component.ref="changePasswordModal"></change-password-modal>
+
+<header class="app-header backoffice-header">
+    <div class="brand">
+        <img src.bind="theme.themeDark ? 'logo-dark.png' : 'logo.png'" class="logo" height="30" alt="Let’s Peppol" t="[alt]navigation.brand-alt" />
+        <span class="backoffice-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>
+            <span t="navigation.backoffice">Backoffice</span>
+        </span>
+        <a if.bind="appPath" class="backoffice-return" load="route.bind: appPath; context.bind: null">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+            <span if.bind="appCompanyName" t="backoffice.back-to-company" t-params.bind="{ company: appCompanyName }">Back to ${appCompanyName}</span>
+            <span else t="backoffice.back-to-app">Back to the app</span>
+        </a>
+    </div>
+    <div class="backoffice-header-actions">
+        <language-selector></language-selector>
+        <theme-selector></theme-selector>
+        <button type="button" class="btn ghost" click.trigger="logout()" t="common.logout">Log out</button>
+    </div>
+</header>
+
+<main class="container">
+    <div class="backoffice-page">
+        <div class="section-header">
+            <div>
+                <h1 t="backoffice.title">Registration reviews</h1>
+                <p class="backoffice-intro" t="backoffice.description">Registrations where the name on the eID does not match the director listed in the KBO. Approving links the signer as administrator and, for administrator requests, activates the company on Peppol.</p>
+            </div>
+        </div>
+
+        <div class="backoffice-filter" role="tablist">
+            <button repeat.for="option of statuses" type="button" role="tab"
+                    class="btn tab ${option === status ? 'active' : ''}"
+                    aria-selected.bind="option === status"
+                    click.trigger="selectStatus(option)"
+                    t.bind="'backoffice.status.' + option">${option}</button>
+        </div>
+
+        <div class="card table-card backoffice-table-card">
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                    <tr>
+                        <th t="backoffice.table.signed-on">Signed on</th>
+                        <th t="backoffice.table.company">Company</th>
+                        <th t="backoffice.table.director">KBO director</th>
+                        <th t="backoffice.table.signer">eID signer</th>
+                        <th t="backoffice.table.account">Account</th>
+                        <th t="backoffice.table.requested-type">Requested as</th>
+                        <th if.bind="status !== 'PENDING'" t="backoffice.table.reviewed">Reviewed</th>
+                        <th class="actions-col" t="backoffice.table.actions">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr repeat.for="review of reviews">
+                        <td>${review.createdOn | dateTimeFormat}</td>
+                        <td>
+                            <div>${review.companyName}</div>
+                            <div class="backoffice-muted">${review.peppolId}</div>
+                            <span if.bind="review.companySuspended" class="backoffice-flag" t="backoffice.suspended">Suspended</span>
+                            <span if.bind="review.companyHasAdmin" class="backoffice-flag" t="backoffice.company-has-admin">Already has an administrator</span>
+                        </td>
+                        <td>${review.directorName}</td>
+                        <td>${review.signerName}</td>
+                        <td>
+                            <div>${review.accountEmail}</div>
+                            <div if.bind="!review.accountVerified" class="backoffice-muted" t="backoffice.email-not-verified">Password not set yet</div>
+                        </td>
+                        <td>
+                            <span if.bind="review.requestedType">${review.requestedType}</span>
+                            <span else class="backoffice-muted" t="backoffice.requested-type-unknown">Unknown</span>
+                        </td>
+                        <td if.bind="status !== 'PENDING'">
+                            <div>${review.reviewedBy}</div>
+                            <div class="backoffice-muted">${review.reviewedOn | dateTimeFormat}</div>
+                        </td>
+                        <td class="actions-col backoffice-actions">
+                            <button type="button" class="btn" click.trigger="downloadContract(review)" t="backoffice.action.contract">Contract</button>
+                            <button if.bind="review.reviewStatus !== 'APPROVED'" type="button" class="btn primary" disabled.bind="busyId !== undefined || review.companyHasAdmin" click.trigger="approve(review)" t="backoffice.action.approve">Approve</button>
+                            <button if.bind="review.reviewStatus === 'PENDING'" type="button" class="btn" disabled.bind="busyId !== undefined" click.trigger="reject(review)" t="backoffice.action.reject">Reject</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div if.bind="!isLoading && reviews.length === 0" class="empty-state">
+                <p t="backoffice.empty">No registrations with this status.</p>
+            </div>
+            <div if.bind="isLoading && reviews.length === 0" class="empty-state">
+                <p t="backoffice.loading">Loading registrations…</p>
+            </div>
+        </div>
+
+        <section if.bind="!hasCompany" class="backoffice-security">
+            <h2 t="backoffice.security">Your account security</h2>
+            <div class="backoffice-security-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 9.5 1 1"/><path d="m15.5 8.5-4 4"/><path d="M3 12a9 9 0 1 0 9-9 9.74 9.74 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><circle cx="10" cy="14" r="2"/></svg>
+                        <h2 t="account.change-password">Change Password</h2>
+                    </div>
+                    <button type="button" class="btn" style="width: fit-content" click.trigger="changePasswordModal.showChangePasswordModal()" t="account.change-password">Change Password</button>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
+                        <h2 t="totp.title">Two-Factor Authentication</h2>
+                    </div>
+                    <totp-manager></totp-manager>
+                </div>
+                <div class="card backoffice-security-wide">
+                    <div class="card-header">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"/><path d="m21 2-9.6 9.6"/><circle cx="7.5" cy="15.5" r="5.5"/></svg>
+                        <h2 t="passkey.title">Passkeys</h2>
+                    </div>
+                    <passkey-manager></passkey-manager>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>

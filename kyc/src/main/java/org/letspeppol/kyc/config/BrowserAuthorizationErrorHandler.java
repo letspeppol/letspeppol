@@ -28,6 +28,8 @@ import java.nio.charset.StandardCharsets;
 public class BrowserAuthorizationErrorHandler implements AuthenticationFailureHandler {
 
     static final String OWNERSHIP_UNAVAILABLE_REASON = "ownership_unavailable";
+    static final String OWNERSHIP_PENDING_REVIEW_REASON = "ownership_pending_review";
+    static final String OWNERSHIP_REVIEW_REJECTED_REASON = "ownership_review_rejected";
 
     private final String uiLoginUrl;
     private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
@@ -69,6 +71,12 @@ public class BrowserAuthorizationErrorHandler implements AuthenticationFailureHa
     }
 
     private static String reasonFor(OAuth2Error error) {
+        if (ActingOwnershipAuthorizationRequestConverter.isOwnershipPendingReview(error)) {
+            return OWNERSHIP_PENDING_REVIEW_REASON;
+        }
+        if (ActingOwnershipAuthorizationRequestConverter.isOwnershipReviewRejected(error)) {
+            return OWNERSHIP_REVIEW_REJECTED_REASON;
+        }
         return ActingOwnershipAuthorizationRequestConverter.isOwnershipUnavailable(error)
                 ? OWNERSHIP_UNAVAILABLE_REASON
                 : error.getErrorCode();

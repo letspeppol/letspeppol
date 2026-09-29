@@ -62,6 +62,27 @@ class SapiSecurityIntegrationTest {
     }
 
     @Test
+    void permissionsClaimWithoutAGrantInTheDatabaseCannotReachTheBackoffice() throws Exception {
+        JwtClaimsSet claims = JwtClaimsSet.builder()
+                .issuer("http://localhost:8084")
+                .subject("person@example.com")
+                .issuedAt(Instant.now().minusSeconds(5))
+                .expiresAt(Instant.now().plusSeconds(300))
+                .audience(List.of("letspeppol-api"))
+                .claim("uid", UUID.randomUUID().toString())
+                .claim("permissions", List.of("REVIEW_REGISTRATIONS"))
+                .build();
+        String staffToken = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+
+        mockMvc.perform(get("/sapi/backoffice/registration-reviews")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + staffToken))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(get(SEARCH_PATH)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + staffToken))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
     void malformedExpiredAndWrongAudienceTokensAreRejected() throws Exception {
         mockMvc.perform(get(SEARCH_PATH)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer not-a-jwt"))

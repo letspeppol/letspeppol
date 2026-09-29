@@ -27,3 +27,26 @@
     padding: 0.5rem;
     min-width: auto;
 }
+
+.tab.tab-staff {
+    position: relative;
+    margin-left: var(--space-1);
+    color: var(--staff);
+    border-color: color-mix(in hsl, var(--staff) 40%, transparent);
+    background: color-mix(in hsl, var(--staff) 8%, transparent);
+}
+
+.tab.tab-staff::before {
+    content: "";
+    position: absolute;
+    top: 20%;
+    bottom: 20%;
+    left: calc(var(--space-1) / -2 - 1px);
+    width: 1px;
+    background: var(--border-soft);
+}
+
+.tab.tab-staff:hover {
+    color: var(--staff-strong);
+    background: color-mix(in hsl, var(--staff) 14%, transparent);
+}

@@ -1,11 +1,13 @@
 import {lifecycleHooks} from '@aurelia/runtime-html';
 import {IRouteViewModel, NavigationInstruction, Params, RouteNode} from '@aurelia/router';
 import {LoginService} from "../services/app/login-service";
+import {OwnershipService} from "../services/app/ownership-service";
 import {resolve} from "@aurelia/kernel";
 
 @lifecycleHooks()
 export class AuthenticationHook {
     loginService = resolve(LoginService);
+    ownershipService = resolve(OwnershipService);
 
     async canLoad(viewModel: IRouteViewModel, params: Params, next: RouteNode): Promise<boolean | NavigationInstruction> {
         if (next.data?.allowEveryone) {
@@ -19,6 +21,13 @@ export class AuthenticationHook {
             this.loginService.rememberCurrentNavigation();
             return '/login';
         }
-        return requestedPeppolId ? true : this.loginService.getCurrentOwnershipRoute('/dashboard');
+        const requiredPermission = next.data?.permission;
+        if (typeof requiredPermission === 'string') {
+            return this.ownershipService.hasPermission(requiredPermission) ? true : this.loginService.getHomeRoute();
+        }
+        if (requestedPeppolId) {
+            return true;
+        }
+        return this.loginService.getHomeRoute();
     }
 }

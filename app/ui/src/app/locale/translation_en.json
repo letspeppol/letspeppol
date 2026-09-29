@@ -22,6 +22,7 @@
     "registration-failed": {
       "contact-provider": "Your Peppol ID is currently registered with {{provider}}. Please contact them to unregister it, then log in and try activating again.",
       "contact-us": "Registration was not finalized. Please contact support at support@letspeppol.org for the next steps.",
+      "manual-review": "Your contract is signed, but the name on your eID does not match the director listed in the KBO. Our team will review your registration and you can log in once it is approved.",
       "try-again-one-day": "Registration was not finalized. Please try again tomorrow. If the problem persists, contact support at support@letspeppol.org and include your account details.",
       "try-again-one-hour": "Registration was not finalized. Please try again in about an hour. The Peppol network may be temporarily overloaded."
     },
@@ -62,17 +63,39 @@
       "size-too-large-3mb": "File can not be more than 3MB",
       "unsafe-link": "This link cannot be opened because its address is invalid or unsafe."
     },
+    "backoffice": {
+      "approved": "Registration approved.",
+      "approved-not-registered": "Registration approved, but the Peppol activation did not succeed. The company can retry from its account page.",
+      "approved-without-activation": "Registration approved. The requested role was unknown, so Peppol was not activated; the company can activate it from its account page.",
+      "contract-failed": "Could not download the contract.",
+      "decision-failed": "Could not save the decision. The list has been refreshed.",
+      "load-failed": "Could not load the registrations.",
+      "rejected": "Registration rejected."
+    },
     "company": {
       "info-failed": "Failed to get company info",
       "save-failed": "Company save failed"
     },
     "danger": "Error",
+    "download": {
+      "create-failed": "Failed to create archive",
+      "created": "Archive job created",
+      "delete-failed": "Failed to delete archive",
+      "deleted": "Archive deleted",
+      "download-failed": "Failed to download archive",
+      "empty-period": "No finalized documents with UBL data exist in this period",
+      "limit-reached": "At most five active archives are allowed",
+      "load-failed": "Failed to load archives",
+      "retried": "Archive generation restarted",
+      "retry-failed": "Failed to retry archive generation",
+      "validation-failed": "The selected date range is invalid"
+    },
     "iban": {
       "saved": "IBAN saved"
     },
     "info": "Info",
     "invoice": {
-      "allowance-charge-items-hide-notallowed" : "Unable to hide Discount/Charge column, please first remove all line discounts",
+      "allowance-charge-items-hide-notallowed": "Unable to hide Discount/Charge column, please first remove all line discounts",
       "draft-created": {
         "CREDIT_NOTE": "Credit note draft created successfully",
         "INVOICE": "Invoice draft created successfully"
@@ -135,11 +158,6 @@
         }
       }
     },
-    "download": {
-      "create-failed": "Failed to create archive", "created": "Archive job created", "delete-failed": "Failed to delete archive", "deleted": "Archive deleted",
-      "download-failed": "Failed to download archive", "empty-period": "No finalized documents with UBL data exist in this period", "limit-reached": "At most five active archives are allowed",
-      "load-failed": "Failed to load archives", "retried": "Archive generation restarted", "retry-failed": "Failed to retry archive generation", "validation-failed": "The selected date range is invalid"
-    },
     "neutral": "Message",
     "partner": {
       "create-failed": "Partner creation failed",
@@ -174,6 +192,44 @@
       "upload-error": "Error uploading file"
     },
     "warning": "Warning"
+  },
+  "backoffice": {
+    "action": {
+      "approve": "Approve",
+      "contract": "Contract",
+      "reject": "Reject"
+    },
+    "approve-confirm": "Confirm that {{signer}} may represent {{company}} (KBO director: {{director}}). They become administrator and the company is activated on Peppol.",
+    "approve-confirm-without-activation": "Confirm that {{signer}} may represent {{company}} (KBO director: {{director}}). They become administrator; the company is not activated on Peppol automatically.",
+    "approve-title": "Approve registration",
+    "back-to-app": "Back to the app",
+    "back-to-company": "Back to {{company}}",
+    "company-has-admin": "Already has an administrator",
+    "description": "Registrations where the name on the eID does not match the director listed in the KBO. Approving links the signer as administrator and, for administrator requests, activates the company on Peppol.",
+    "email-not-verified": "Password not set yet",
+    "empty": "No registrations with this status.",
+    "loading": "Loading registrations…",
+    "reject-confirm": "Reject the registration of {{signer}} for {{company}}? They will not get access to the company.",
+    "reject-title": "Reject registration",
+    "requested-type-unknown": "Unknown",
+    "security": "Your account security",
+    "status": {
+      "APPROVED": "Approved",
+      "PENDING": "To review",
+      "REJECTED": "Rejected"
+    },
+    "suspended": "Suspended",
+    "table": {
+      "account": "Account",
+      "actions": "Actions",
+      "company": "Company",
+      "director": "KBO director",
+      "requested-type": "Requested as",
+      "reviewed": "Reviewed",
+      "signed-on": "Signed on",
+      "signer": "eID signer"
+    },
+    "title": "Registration reviews"
   },
   "common": {
     "apply": "Apply",
@@ -236,16 +292,6 @@
       "incl": "incl. VAT"
     }
   },
-  "download": {
-    "action": {"download": "Download", "retry": "Retry"}, "active-links": "active archives", "create": "Create archive", "creating": "Creating…",
-    "description": "Create a ZIP with finalized invoices and credit notes. Both dates are included.", "empty": "No archives have been created yet.", "from-date": "From date", "generation-failed": "Archive generation failed",
-    "info": {"download-limit": "The ZIP file is deleted after it has been downloaded 3 times.", "expiration": "The download link expires and is deleted after 7 days."},
-    "loading": "Loading archives…",
-    "status": {"FAILED": "Failed", "PENDING": "Pending", "PROCESSING": "Processing", "READY": "Ready"},
-    "table": {"actions": "Actions", "completed": "Completed", "created": "Created", "downloads": "Downloads", "expires": "Expires", "file": "File", "period": "Period", "size": "Size (MB)", "status": "Status"},
-    "title": "UBL downloads", "to-date": "To date",
-    "validation": {"limit": "Delete an archive before creating another one.", "order": "The from date must not be after the to date.", "required": "Both dates are required.", "same-year": "Both dates must be in the same year."}
-  },
   "documentDirection": {
     "INCOMING": "Incoming",
     "OUTGOING": "Outgoing"
@@ -293,6 +339,49 @@
     "sponsors": "tier sponsors",
     "sponsors-title": "Bronze, Silver and Gold sponsors combined"
   },
+  "download": {
+    "action": {
+      "download": "Download",
+      "retry": "Retry"
+    },
+    "active-links": "active archives",
+    "create": "Create archive",
+    "creating": "Creating…",
+    "description": "Create a ZIP with finalized invoices and credit notes. Both dates are included.",
+    "empty": "No archives have been created yet.",
+    "from-date": "From date",
+    "generation-failed": "Archive generation failed",
+    "info": {
+      "download-limit": "The ZIP file is deleted after it has been downloaded 3 times.",
+      "expiration": "The download link expires and is deleted after 7 days."
+    },
+    "loading": "Loading archives…",
+    "status": {
+      "FAILED": "Failed",
+      "PENDING": "Pending",
+      "PROCESSING": "Processing",
+      "READY": "Ready"
+    },
+    "table": {
+      "actions": "Actions",
+      "completed": "Completed",
+      "created": "Created",
+      "downloads": "Downloads",
+      "expires": "Expires",
+      "file": "File",
+      "period": "Period",
+      "size": "Size (MB)",
+      "status": "Status"
+    },
+    "title": "UBL downloads",
+    "to-date": "To date",
+    "validation": {
+      "limit": "Delete an archive before creating another one.",
+      "order": "The from date must not be after the to date.",
+      "required": "Both dates are required.",
+      "same-year": "Both dates must be in the same year."
+    }
+  },
   "error": {
     "account_not_found": "No account was found for this email address.",
     "account_not_verified": "Your account has not been verified yet. Please verify your email before signing in.",
@@ -305,6 +394,9 @@
     "registration-company-already-registered": "Company already registered",
     "registration-company-already-registered-on-peppol": "It looks like this Peppol ID is already registered with another provider. Activation here requires unregistering there first. You can still complete the signing process and handle this afterward.",
     "registration-company-not-found": "Company not found",
+    "review_already_decided": "This registration has already been decided. The list has been refreshed.",
+    "review_company_has_admin": "This company already has an administrator. They can invite the signer instead.",
+    "review_own_registration": "You cannot review your own registration.",
     "server-updating": "The server is updating. Please wait and try again.",
     "too_many_requests": "Too many login attempts. Please wait before trying again.",
     "UBL_DOCUMENT_ALREADY_CREATED": "This document was already submitted for delivery. Update the existing document instead.",
@@ -337,14 +429,13 @@
     },
     "all": "All",
     "allowanceChargeModal": {
-      "charge": "Charge",
-      "discount": "Discount",
-      "title": "Discounts/Costs",
-      "quantity": "Quantity/Amount",
-      "percentage": "Percentage",
       "amount": "Amount",
-      "cost": "Cost"
-
+      "charge": "Charge",
+      "cost": "Cost",
+      "discount": "Discount",
+      "percentage": "Percentage",
+      "quantity": "Quantity/Amount",
+      "title": "Discounts/Costs"
     },
     "attachmentModal": {
       "auto-pdf": "Include the auto-generated invoice PDF",
@@ -590,6 +681,8 @@
     "authorization-error": "We couldn't complete your sign-in. Please try again.",
     "authorization-expired": "Your session has expired. Please sign in again.",
     "authorization-no-ownership": "This account is not linked to a company. Ask your administrator for an invitation, or register your company first.",
+    "authorization-pending-review": "Your registration is being reviewed because the name on your eID does not match the director listed in the KBO. You can log in once it is approved.",
+    "authorization-review-rejected": "Your registration was not approved because the name on your eID does not match the director listed in the KBO. Contact support at support@letspeppol.org if you think this is a mistake.",
     "authorization-unavailable": "The sign-in service is temporarily unavailable. Please try again in a moment.",
     "checking-session": "Checking your session...",
     "continue": "Sign in",
@@ -619,6 +712,7 @@
   },
   "navigation": {
     "account": "Account",
+    "backoffice": "Backoffice",
     "brand-alt": "Let's Peppol",
     "dashboard": "Dashboard",
     "downloads": "Downloads",

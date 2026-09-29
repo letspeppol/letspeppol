@@ -22,6 +22,7 @@
     "registration-failed": {
       "contact-provider": "Ihre Peppol-ID ist derzeit bei {{provider}} registriert. Bitte kontaktieren Sie den Anbieter, um sie dort abzumelden, und melden Sie sich anschließend an und versuchen Sie die Aktivierung erneut.",
       "contact-us": "Die Registrierung wurde nicht abgeschlossen. Bitte wenden Sie sich an den Support unter support@letspeppol.org für die nächsten Schritte.",
+      "manual-review": "Ihr Vertrag ist unterzeichnet, aber der Name auf Ihrer eID stimmt nicht mit dem in der ZDU eingetragenen Geschäftsführer überein. Unser Team prüft Ihre Registrierung; Sie können sich anmelden, sobald sie genehmigt ist.",
       "try-again-one-day": "Die Registrierung wurde nicht abgeschlossen. Bitte versuchen Sie es morgen erneut. Wenn das Problem weiterhin besteht, wenden Sie sich an den Support unter support@letspeppol.org und geben Sie Ihre Kontodaten an.",
       "try-again-one-hour": "Die Registrierung wurde nicht abgeschlossen. Bitte versuchen Sie es in etwa einer Stunde erneut. Das Peppol-Netzwerk ist möglicherweise vorübergehend überlastet."
     },
@@ -62,11 +63,33 @@
       "size-too-large-3mb": "Datei darf nicht größer als 3 MB sein",
       "unsafe-link": "Dieser Link kann nicht geöffnet werden, da seine Adresse ungültig oder unsicher ist."
     },
+    "backoffice": {
+      "approved": "Registrierung genehmigt.",
+      "approved-not-registered": "Registrierung genehmigt, aber die Peppol-Aktivierung ist fehlgeschlagen. Das Unternehmen kann es auf seiner Kontoseite erneut versuchen.",
+      "approved-without-activation": "Registrierung genehmigt. Die angefragte Rolle war unbekannt, daher wurde Peppol nicht aktiviert; das Unternehmen kann es auf seiner Kontoseite aktivieren.",
+      "contract-failed": "Der Vertrag konnte nicht heruntergeladen werden.",
+      "decision-failed": "Die Entscheidung konnte nicht gespeichert werden. Die Liste wurde aktualisiert.",
+      "load-failed": "Die Registrierungen konnten nicht geladen werden.",
+      "rejected": "Registrierung abgelehnt."
+    },
     "company": {
       "info-failed": "Unternehmensinformationen konnten nicht geladen werden",
       "save-failed": "Unternehmen konnte nicht gespeichert werden"
     },
     "danger": "Fehler",
+    "download": {
+      "create-failed": "Archiv konnte nicht erstellt werden",
+      "created": "Archivauftrag erstellt",
+      "delete-failed": "Archiv konnte nicht gelöscht werden",
+      "deleted": "Archiv gelöscht",
+      "download-failed": "Archiv konnte nicht heruntergeladen werden",
+      "empty-period": "In diesem Zeitraum gibt es keine endgültigen Dokumente mit UBL-Daten",
+      "limit-reached": "Es sind höchstens fünf aktive Archive erlaubt",
+      "load-failed": "Archive konnten nicht geladen werden",
+      "retried": "Archiverstellung erneut gestartet",
+      "retry-failed": "Archiverstellung konnte nicht erneut gestartet werden",
+      "validation-failed": "Der ausgewählte Zeitraum ist ungültig"
+    },
     "iban": {
       "saved": "IBAN gespeichert"
     },
@@ -134,11 +157,6 @@
         }
       }
     },
-    "download": {
-      "create-failed": "Archiv konnte nicht erstellt werden", "created": "Archivauftrag erstellt", "delete-failed": "Archiv konnte nicht gelöscht werden", "deleted": "Archiv gelöscht",
-      "download-failed": "Archiv konnte nicht heruntergeladen werden", "empty-period": "In diesem Zeitraum gibt es keine endgültigen Dokumente mit UBL-Daten", "limit-reached": "Es sind höchstens fünf aktive Archive erlaubt",
-      "load-failed": "Archive konnten nicht geladen werden", "retried": "Archiverstellung erneut gestartet", "retry-failed": "Archiverstellung konnte nicht erneut gestartet werden", "validation-failed": "Der ausgewählte Zeitraum ist ungültig"
-    },
     "neutral": "Nachricht",
     "partner": {
       "create-failed": "Partner konnte nicht angelegt werden",
@@ -173,6 +191,44 @@
       "upload-error": "Fehler beim Hochladen der Datei"
     },
     "warning": "Warnung"
+  },
+  "backoffice": {
+    "action": {
+      "approve": "Genehmigen",
+      "contract": "Vertrag",
+      "reject": "Ablehnen"
+    },
+    "approve-confirm": "Bestätigen Sie, dass {{signer}} {{company}} vertreten darf (Geschäftsführer laut ZDU: {{director}}). Die Person wird Administrator und das Unternehmen wird auf Peppol aktiviert.",
+    "approve-confirm-without-activation": "Bestätigen Sie, dass {{signer}} {{company}} vertreten darf (Geschäftsführer laut ZDU: {{director}}). Die Person wird Administrator; das Unternehmen wird nicht automatisch auf Peppol aktiviert.",
+    "approve-title": "Registrierung genehmigen",
+    "back-to-app": "Zurück zur App",
+    "back-to-company": "Zurück zu {{company}}",
+    "company-has-admin": "Hat bereits einen Administrator",
+    "description": "Registrierungen, bei denen der Name auf der eID nicht mit dem in der ZDU eingetragenen Geschäftsführer übereinstimmt. Die Genehmigung verknüpft den Unterzeichner als Administrator und aktiviert das Unternehmen bei einer Anfrage als Administrator auf Peppol.",
+    "email-not-verified": "Passwort noch nicht festgelegt",
+    "empty": "Keine Registrierungen mit diesem Status.",
+    "loading": "Registrierungen werden geladen…",
+    "reject-confirm": "Die Registrierung von {{signer}} für {{company}} ablehnen? Die Person erhält keinen Zugriff auf das Unternehmen.",
+    "reject-title": "Registrierung ablehnen",
+    "requested-type-unknown": "Unbekannt",
+    "security": "Sicherheit Ihres Kontos",
+    "status": {
+      "APPROVED": "Genehmigt",
+      "PENDING": "Zu prüfen",
+      "REJECTED": "Abgelehnt"
+    },
+    "suspended": "Gesperrt",
+    "table": {
+      "account": "Konto",
+      "actions": "Aktionen",
+      "company": "Unternehmen",
+      "director": "Geschäftsführer (ZDU)",
+      "requested-type": "Angefragt als",
+      "reviewed": "Geprüft",
+      "signed-on": "Unterzeichnet am",
+      "signer": "Unterzeichner (eID)"
+    },
+    "title": "Registrierungsprüfungen"
   },
   "common": {
     "apply": "Anwenden",
@@ -235,16 +291,6 @@
       "incl": "inkl. MwSt."
     }
   },
-  "download": {
-    "action": {"download": "Herunterladen", "retry": "Erneut versuchen"}, "active-links": "aktive Archive", "create": "Archiv erstellen", "creating": "Wird erstellt…",
-    "description": "Erstellen Sie eine ZIP-Datei mit endgültigen Rechnungen und Gutschriften. Beide Daten sind eingeschlossen.", "empty": "Es wurden noch keine Archive erstellt.", "from-date": "Von", "generation-failed": "Archiverstellung fehlgeschlagen",
-    "info": {"download-limit": "Die ZIP-Datei wird nach 3 Downloads gelöscht.", "expiration": "Der Download-Link läuft nach 7 Tagen ab und wird gelöscht."},
-    "loading": "Archive werden geladen…",
-    "status": {"FAILED": "Fehlgeschlagen", "PENDING": "Ausstehend", "PROCESSING": "In Bearbeitung", "READY": "Bereit"},
-    "table": {"actions": "Aktionen", "completed": "Fertiggestellt", "created": "Erstellt", "downloads": "Downloads", "expires": "Läuft ab", "file": "Datei", "period": "Zeitraum", "size": "Größe (MB)", "status": "Status"},
-    "title": "UBL-Downloads", "to-date": "Bis",
-    "validation": {"limit": "Löschen Sie ein Archiv, bevor Sie ein neues erstellen.", "order": "Das Von-Datum darf nicht nach dem Bis-Datum liegen.", "required": "Beide Daten sind erforderlich.", "same-year": "Beide Daten müssen im selben Jahr liegen."}
-  },
   "documentDirection": {
     "INCOMING": "Eingehend",
     "OUTGOING": "Ausgehend"
@@ -292,6 +338,49 @@
     "sponsors": "Stufensponsoren",
     "sponsors-title": "Bronze-, Silber- und Gold-Sponsoren zusammen"
   },
+  "download": {
+    "action": {
+      "download": "Herunterladen",
+      "retry": "Erneut versuchen"
+    },
+    "active-links": "aktive Archive",
+    "create": "Archiv erstellen",
+    "creating": "Wird erstellt…",
+    "description": "Erstellen Sie eine ZIP-Datei mit endgültigen Rechnungen und Gutschriften. Beide Daten sind eingeschlossen.",
+    "empty": "Es wurden noch keine Archive erstellt.",
+    "from-date": "Von",
+    "generation-failed": "Archiverstellung fehlgeschlagen",
+    "info": {
+      "download-limit": "Die ZIP-Datei wird nach 3 Downloads gelöscht.",
+      "expiration": "Der Download-Link läuft nach 7 Tagen ab und wird gelöscht."
+    },
+    "loading": "Archive werden geladen…",
+    "status": {
+      "FAILED": "Fehlgeschlagen",
+      "PENDING": "Ausstehend",
+      "PROCESSING": "In Bearbeitung",
+      "READY": "Bereit"
+    },
+    "table": {
+      "actions": "Aktionen",
+      "completed": "Fertiggestellt",
+      "created": "Erstellt",
+      "downloads": "Downloads",
+      "expires": "Läuft ab",
+      "file": "Datei",
+      "period": "Zeitraum",
+      "size": "Größe (MB)",
+      "status": "Status"
+    },
+    "title": "UBL-Downloads",
+    "to-date": "Bis",
+    "validation": {
+      "limit": "Löschen Sie ein Archiv, bevor Sie ein neues erstellen.",
+      "order": "Das Von-Datum darf nicht nach dem Bis-Datum liegen.",
+      "required": "Beide Daten sind erforderlich.",
+      "same-year": "Beide Daten müssen im selben Jahr liegen."
+    }
+  },
   "error": {
     "account_not_found": "Für diese E-Mail-Adresse wurde kein Konto gefunden.",
     "account_not_verified": "Ihr Konto wurde noch nicht bestätigt. Bitte bestätigen Sie Ihre E-Mail-Adresse, bevor Sie sich anmelden.",
@@ -304,6 +393,9 @@
     "registration-company-already-registered": "Unternehmen bereits registriert",
     "registration-company-already-registered-on-peppol": "Diese Peppol-ID ist offenbar bereits bei einem anderen Anbieter registriert. Um sie hier zu aktivieren, muss sie dort zuerst abgemeldet werden. Sie können den Signaturprozess trotzdem abschließen und das anschließend erledigen.",
     "registration-company-not-found": "Unternehmen nicht gefunden",
+    "review_already_decided": "Über diese Registrierung wurde bereits entschieden. Die Liste wurde aktualisiert.",
+    "review_company_has_admin": "Dieses Unternehmen hat bereits einen Administrator. Dieser kann den Unterzeichner einladen.",
+    "review_own_registration": "Sie können Ihre eigene Registrierung nicht prüfen.",
     "server-updating": "Der Server wird gerade aktualisiert. Bitte warten Sie und versuchen Sie es erneut.",
     "too_many_requests": "Zu viele Anmeldeversuche. Bitte warten Sie, bevor Sie es erneut versuchen.",
     "UBL_DOCUMENT_ALREADY_CREATED": "Dieses Dokument wurde bereits zur Zustellung eingereicht. Aktualisieren Sie das vorhandene Dokument.",
@@ -336,13 +428,13 @@
     },
     "all": "Alle",
     "allowanceChargeModal": {
-      "charge": "Zuschlag",
-      "discount": "Rabatt",
-      "title": "Rabatte/Kosten",
-      "quantity": "Menge/Betrag",
-      "percentage": "Prozentsatz",
       "amount": "Betrag",
-      "cost": "Kosten"
+      "charge": "Zuschlag",
+      "cost": "Kosten",
+      "discount": "Rabatt",
+      "percentage": "Prozentsatz",
+      "quantity": "Menge/Betrag",
+      "title": "Rabatte/Kosten"
     },
     "attachmentModal": {
       "auto-pdf": "Automatisch generiertes Rechnungs-PDF einschließen",
@@ -587,6 +679,8 @@
     "authorization-error": "Ihre Anmeldung konnte nicht abgeschlossen werden. Bitte versuchen Sie es erneut.",
     "authorization-expired": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
     "authorization-no-ownership": "Dieses Konto ist mit keinem Unternehmen verknüpft. Bitten Sie Ihren Administrator um eine Einladung oder registrieren Sie zuerst Ihr Unternehmen.",
+    "authorization-pending-review": "Ihre Registrierung wird geprüft, da der Name auf Ihrer eID nicht mit dem in der ZDU eingetragenen Geschäftsführer übereinstimmt. Sie können sich anmelden, sobald sie genehmigt ist.",
+    "authorization-review-rejected": "Ihre Registrierung wurde nicht genehmigt, da der Name auf Ihrer eID nicht mit dem in der ZDU eingetragenen Geschäftsführer übereinstimmt. Wenden Sie sich an support@letspeppol.org, wenn Sie glauben, dass es sich um einen Fehler handelt.",
     "authorization-unavailable": "Der Anmeldedienst ist vorübergehend nicht verfügbar. Bitte versuchen Sie es gleich erneut.",
     "checking-session": "Sitzung wird überprüft...",
     "continue": "Anmelden",
@@ -616,6 +710,7 @@
   },
   "navigation": {
     "account": "Konto",
+    "backoffice": "Backoffice",
     "brand-alt": "Let's Peppol",
     "dashboard": "Dashboard",
     "downloads": "Downloads",

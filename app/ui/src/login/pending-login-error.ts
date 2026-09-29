@@ -6,6 +6,8 @@ export const GENERIC_LOGIN_ERROR_KEY = 'login.authorization-error';
 
 const ERROR_KEYS: Record<string, string> = {
     ownership_unavailable: 'login.authorization-no-ownership',
+    ownership_pending_review: 'login.authorization-pending-review',
+    ownership_review_rejected: 'login.authorization-review-rejected',
     access_denied: 'login.authorization-denied',
     login_required: 'login.authorization-expired',
     server_error: 'login.authorization-unavailable',

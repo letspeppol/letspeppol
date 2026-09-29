@@ -3,6 +3,9 @@ package org.letspeppol.kyc.config;
 import jakarta.servlet.http.HttpServletRequest;
 import org.letspeppol.kyc.model.AccountType;
 import org.letspeppol.kyc.model.Ownership;
+import org.letspeppol.kyc.model.ReviewStatus;
+import org.letspeppol.kyc.repository.AccountIdentityVerificationRepository;
+import org.letspeppol.kyc.repository.AccountRepository;
 import org.letspeppol.kyc.repository.OwnershipRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.OAuth2Error;
@@ -18,6 +21,7 @@ import java.util.Optional;
 
 /**
  * Resolves and freezes the acting ownership while an authorization request is accepted.
+ * An account without any ownership that holds a permission is authorized without company context.
  */
 public class ActingOwnershipAuthorizationRequestConverter implements AuthenticationConverter {
 
@@ -25,18 +29,29 @@ public class ActingOwnershipAuthorizationRequestConverter implements Authenticat
     public static final String ACCOUNT_TYPE_PARAMETER = "account_type";
 
     static final String OWNERSHIP_UNAVAILABLE_DESCRIPTION = "The requested acting ownership is not available";
+    static final String OWNERSHIP_PENDING_REVIEW_DESCRIPTION = "The requested acting ownership is awaiting manual review";
+    static final String OWNERSHIP_REVIEW_REJECTED_DESCRIPTION = "The requested acting ownership was rejected after manual review";
 
     private final OwnershipRepository ownershipRepository;
+    private final AccountRepository accountRepository;
+    private final AccountIdentityVerificationRepository identityVerificationRepository;
     private final AuthenticationConverter delegate;
 
-    public ActingOwnershipAuthorizationRequestConverter(OwnershipRepository ownershipRepository) {
-        this(ownershipRepository, new OAuth2AuthorizationCodeRequestAuthenticationConverter());
+    public ActingOwnershipAuthorizationRequestConverter(
+            OwnershipRepository ownershipRepository,
+            AccountRepository accountRepository,
+            AccountIdentityVerificationRepository identityVerificationRepository) {
+        this(ownershipRepository, accountRepository, identityVerificationRepository, new OAuth2AuthorizationCodeRequestAuthenticationConverter());
     }
 
     ActingOwnershipAuthorizationRequestConverter(
             OwnershipRepository ownershipRepository,
+            AccountRepository accountRepository,
+            AccountIdentityVerificationRepository identityVerificationRepository,
             AuthenticationConverter delegate) {
         this.ownershipRepository = ownershipRepository;
+        this.accountRepository = accountRepository;
+        this.identityVerificationRepository = identityVerificationRepository;
         this.delegate = delegate;
     }
 
@@ -81,6 +96,16 @@ public class ActingOwnershipAuthorizationRequestConverter implements Authenticat
             }
         }
 
+        if (selectedOwnership.isEmpty() && requestedPeppolId == null
+                && !accountRepository.findPermissionsById(userDetails.getAccountId()).isEmpty()) {
+            return authorizationRequest;
+        }
+        if (selectedOwnership.isEmpty() && hasReview(userDetails.getAccountId(), requestedPeppolId, ReviewStatus.PENDING)) {
+            throw pendingReview();
+        }
+        if (selectedOwnership.isEmpty() && hasReview(userDetails.getAccountId(), requestedPeppolId, ReviewStatus.REJECTED)) {
+            throw reviewRejected();
+        }
         Ownership ownership = selectedOwnership.orElseThrow(ActingOwnershipAuthorizationRequestConverter::invalidSelection);
         parameters.put(PEPPOL_ID_PARAMETER, ownership.getCompany().getPeppolId());
         parameters.put(ACCOUNT_TYPE_PARAMETER, ownership.getType().name());
@@ -106,15 +131,43 @@ public class ActingOwnershipAuthorizationRequestConverter implements Authenticat
         return stringValue;
     }
 
+    private boolean hasReview(Long accountId, String requestedPeppolId, ReviewStatus reviewStatus) {
+        return requestedPeppolId == null
+                ? identityVerificationRepository.existsByAccountIdAndReviewStatus(accountId, reviewStatus)
+                : identityVerificationRepository.existsByAccountIdAndDirectorCompanyPeppolIdAndReviewStatus(accountId, requestedPeppolId, reviewStatus);
+    }
+
+    static boolean isOwnershipPendingReview(OAuth2Error error) {
+        return OAuth2ErrorCodes.INVALID_REQUEST.equals(error.getErrorCode())
+                && OWNERSHIP_PENDING_REVIEW_DESCRIPTION.equals(error.getDescription());
+    }
+
+    static boolean isOwnershipReviewRejected(OAuth2Error error) {
+        return OAuth2ErrorCodes.INVALID_REQUEST.equals(error.getErrorCode())
+                && OWNERSHIP_REVIEW_REJECTED_DESCRIPTION.equals(error.getDescription());
+    }
+
     static boolean isOwnershipUnavailable(OAuth2Error error) {
         return OAuth2ErrorCodes.INVALID_REQUEST.equals(error.getErrorCode())
                 && OWNERSHIP_UNAVAILABLE_DESCRIPTION.equals(error.getDescription());
     }
 
     private static OAuth2AuthorizationCodeRequestAuthenticationException invalidSelection() {
+        return invalidRequest(OWNERSHIP_UNAVAILABLE_DESCRIPTION);
+    }
+
+    private static OAuth2AuthorizationCodeRequestAuthenticationException pendingReview() {
+        return invalidRequest(OWNERSHIP_PENDING_REVIEW_DESCRIPTION);
+    }
+
+    private static OAuth2AuthorizationCodeRequestAuthenticationException reviewRejected() {
+        return invalidRequest(OWNERSHIP_REVIEW_REJECTED_DESCRIPTION);
+    }
+
+    private static OAuth2AuthorizationCodeRequestAuthenticationException invalidRequest(String description) {
         OAuth2Error error = new OAuth2Error(
                 OAuth2ErrorCodes.INVALID_REQUEST,
-                OWNERSHIP_UNAVAILABLE_DESCRIPTION,
+                description,
                 null);
         // The standard provider has not validated redirect_uri yet, so do not attach the request.
         return new OAuth2AuthorizationCodeRequestAuthenticationException(error, null);

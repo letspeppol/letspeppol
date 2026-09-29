@@ -1,6 +1,7 @@
 package org.letspeppol.kyc.repository;
 
 import org.letspeppol.kyc.model.Account;
+import org.letspeppol.kyc.model.Permission;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -8,12 +9,19 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 public interface AccountRepository extends JpaRepository<Account, Long> {
     Optional<Account> findByEmail(String email);
     boolean existsByEmail(String email);
     Optional<Account> findByExternalId(UUID externalId);
+
+    @Query("select p from Account a join a.permissions p where a.id = :id")
+    Set<Permission> findPermissionsById(@Param("id") Long id);
+
+    @Query("select p from Account a join a.permissions p where a.externalId = :externalId")
+    Set<Permission> findPermissionsByExternalId(@Param("externalId") UUID externalId);
 
     @Transactional
     @Modifying

@@ -22,6 +22,7 @@
     "registration-failed": {
       "contact-provider": "Uw Peppol-ID is momenteel geregistreerd bij {{provider}}. Neem contact met hen op om het uit te schrijven, log daarna in en probeer opnieuw te activeren.",
       "contact-us": "De registratie is niet afgerond. Neem contact op met support via support@letspeppol.org voor de volgende stappen.",
+      "manual-review": "Uw contract is ondertekend, maar de naam op uw eID komt niet overeen met de bestuurder in de KBO. Ons team beoordeelt uw registratie; u kunt inloggen zodra ze is goedgekeurd.",
       "try-again-one-day": "De registratie is niet afgerond. Probeer het morgen opnieuw. Als het probleem aanhoudt, neem contact op met support via support@letspeppol.org en vermeld uw accountgegevens.",
       "try-again-one-hour": "De registratie is niet afgerond. Probeer het over ongeveer een uur opnieuw. Het Peppol-netwerk is mogelijk tijdelijk overbelast."
     },
@@ -62,11 +63,33 @@
       "size-too-large-3mb": "Bestand mag niet groter zijn dan 3 MB",
       "unsafe-link": "Deze link kan niet worden geopend omdat het adres ongeldig of onveilig is."
     },
+    "backoffice": {
+      "approved": "Registratie goedgekeurd.",
+      "approved-not-registered": "Registratie goedgekeurd, maar de Peppol-activatie is mislukt. Het bedrijf kan het opnieuw proberen via zijn accountpagina.",
+      "approved-without-activation": "Registratie goedgekeurd. De aangevraagde rol was onbekend, dus Peppol werd niet geactiveerd; het bedrijf kan dit activeren via zijn accountpagina.",
+      "contract-failed": "Het contract kon niet worden gedownload.",
+      "decision-failed": "De beslissing kon niet worden opgeslagen. De lijst is vernieuwd.",
+      "load-failed": "De registraties konden niet worden geladen.",
+      "rejected": "Registratie afgewezen."
+    },
     "company": {
       "info-failed": "Bedrijfsinformatie ophalen mislukt",
       "save-failed": "Bedrijf opslaan mislukt"
     },
     "danger": "Fout",
+    "download": {
+      "create-failed": "Archief aanmaken mislukt",
+      "created": "Archiefopdracht aangemaakt",
+      "delete-failed": "Archief verwijderen mislukt",
+      "deleted": "Archief verwijderd",
+      "download-failed": "Archief downloaden mislukt",
+      "empty-period": "Er zijn geen definitieve documenten met UBL-gegevens in deze periode",
+      "limit-reached": "Er zijn maximaal vijf actieve archieven toegestaan",
+      "load-failed": "Archieven laden mislukt",
+      "retried": "Archiefgeneratie opnieuw gestart",
+      "retry-failed": "Archiefgeneratie opnieuw proberen mislukt",
+      "validation-failed": "De gekozen periode is ongeldig"
+    },
     "iban": {
       "saved": "IBAN opgeslagen"
     },
@@ -134,11 +157,6 @@
         }
       }
     },
-    "download": {
-      "create-failed": "Archief aanmaken mislukt", "created": "Archiefopdracht aangemaakt", "delete-failed": "Archief verwijderen mislukt", "deleted": "Archief verwijderd",
-      "download-failed": "Archief downloaden mislukt", "empty-period": "Er zijn geen definitieve documenten met UBL-gegevens in deze periode", "limit-reached": "Er zijn maximaal vijf actieve archieven toegestaan",
-      "load-failed": "Archieven laden mislukt", "retried": "Archiefgeneratie opnieuw gestart", "retry-failed": "Archiefgeneratie opnieuw proberen mislukt", "validation-failed": "De gekozen periode is ongeldig"
-    },
     "neutral": "Bericht",
     "partner": {
       "create-failed": "Partner aanmaken mislukt",
@@ -173,6 +191,44 @@
       "upload-error": "Fout bij uploaden van bestand"
     },
     "warning": "Waarschuwing"
+  },
+  "backoffice": {
+    "action": {
+      "approve": "Goedkeuren",
+      "contract": "Contract",
+      "reject": "Afwijzen"
+    },
+    "approve-confirm": "Bevestig dat {{signer}} {{company}} mag vertegenwoordigen (bestuurder in de KBO: {{director}}). Deze persoon wordt beheerder en het bedrijf wordt geactiveerd op Peppol.",
+    "approve-confirm-without-activation": "Bevestig dat {{signer}} {{company}} mag vertegenwoordigen (bestuurder in de KBO: {{director}}). Deze persoon wordt beheerder; het bedrijf wordt niet automatisch geactiveerd op Peppol.",
+    "approve-title": "Registratie goedkeuren",
+    "back-to-app": "Terug naar de app",
+    "back-to-company": "Terug naar {{company}}",
+    "company-has-admin": "Heeft al een beheerder",
+    "description": "Registraties waarbij de naam op de eID niet overeenkomt met de bestuurder in de KBO. Goedkeuren koppelt de ondertekenaar als beheerder en activeert het bedrijf op Peppol wanneer als beheerder werd aangevraagd.",
+    "email-not-verified": "Nog geen wachtwoord ingesteld",
+    "empty": "Geen registraties met deze status.",
+    "loading": "Registraties laden…",
+    "reject-confirm": "De registratie van {{signer}} voor {{company}} afwijzen? Deze persoon krijgt geen toegang tot het bedrijf.",
+    "reject-title": "Registratie afwijzen",
+    "requested-type-unknown": "Onbekend",
+    "security": "Beveiliging van uw account",
+    "status": {
+      "APPROVED": "Goedgekeurd",
+      "PENDING": "Te beoordelen",
+      "REJECTED": "Afgewezen"
+    },
+    "suspended": "Geschorst",
+    "table": {
+      "account": "Account",
+      "actions": "Acties",
+      "company": "Bedrijf",
+      "director": "Bestuurder (KBO)",
+      "requested-type": "Aangevraagd als",
+      "reviewed": "Beoordeeld",
+      "signed-on": "Ondertekend op",
+      "signer": "Ondertekenaar (eID)"
+    },
+    "title": "Registraties beoordelen"
   },
   "common": {
     "apply": "Toepassen",
@@ -235,16 +291,6 @@
       "incl": "incl. btw"
     }
   },
-  "download": {
-    "action": {"download": "Downloaden", "retry": "Opnieuw proberen"}, "active-links": "actieve archieven", "create": "Archief aanmaken", "creating": "Aanmaken…",
-    "description": "Maak een ZIP met definitieve facturen en creditnota’s. Beide datums zijn inbegrepen.", "empty": "Er zijn nog geen archieven aangemaakt.", "from-date": "Van datum", "generation-failed": "Archiefgeneratie mislukt",
-    "info": {"download-limit": "Het ZIP-bestand wordt verwijderd nadat het 3 keer is gedownload.", "expiration": "De downloadlink vervalt en wordt na 7 dagen verwijderd."},
-    "loading": "Archieven laden…",
-    "status": {"FAILED": "Mislukt", "PENDING": "In afwachting", "PROCESSING": "Bezig", "READY": "Klaar"},
-    "table": {"actions": "Acties", "completed": "Voltooid", "created": "Aangemaakt", "downloads": "Downloads", "expires": "Vervalt", "file": "Bestand", "period": "Periode", "size": "Grootte (MB)", "status": "Status"},
-    "title": "UBL-downloads", "to-date": "Tot datum",
-    "validation": {"limit": "Verwijder een archief voordat u een nieuw aanmaakt.", "order": "De begindatum mag niet na de einddatum liggen.", "required": "Beide datums zijn verplicht.", "same-year": "Beide datums moeten in hetzelfde jaar liggen."}
-  },
   "documentDirection": {
     "INCOMING": "Inkomend",
     "OUTGOING": "Uitgaand"
@@ -292,6 +338,49 @@
     "sponsors": "tiersponsors",
     "sponsors-title": "Bronzen, zilveren en gouden sponsors samen"
   },
+  "download": {
+    "action": {
+      "download": "Downloaden",
+      "retry": "Opnieuw proberen"
+    },
+    "active-links": "actieve archieven",
+    "create": "Archief aanmaken",
+    "creating": "Aanmaken…",
+    "description": "Maak een ZIP met definitieve facturen en creditnota’s. Beide datums zijn inbegrepen.",
+    "empty": "Er zijn nog geen archieven aangemaakt.",
+    "from-date": "Van datum",
+    "generation-failed": "Archiefgeneratie mislukt",
+    "info": {
+      "download-limit": "Het ZIP-bestand wordt verwijderd nadat het 3 keer is gedownload.",
+      "expiration": "De downloadlink vervalt en wordt na 7 dagen verwijderd."
+    },
+    "loading": "Archieven laden…",
+    "status": {
+      "FAILED": "Mislukt",
+      "PENDING": "In afwachting",
+      "PROCESSING": "Bezig",
+      "READY": "Klaar"
+    },
+    "table": {
+      "actions": "Acties",
+      "completed": "Voltooid",
+      "created": "Aangemaakt",
+      "downloads": "Downloads",
+      "expires": "Vervalt",
+      "file": "Bestand",
+      "period": "Periode",
+      "size": "Grootte (MB)",
+      "status": "Status"
+    },
+    "title": "UBL-downloads",
+    "to-date": "Tot datum",
+    "validation": {
+      "limit": "Verwijder een archief voordat u een nieuw aanmaakt.",
+      "order": "De begindatum mag niet na de einddatum liggen.",
+      "required": "Beide datums zijn verplicht.",
+      "same-year": "Beide datums moeten in hetzelfde jaar liggen."
+    }
+  },
   "error": {
     "account_not_found": "Er is geen account gevonden voor dit e-mailadres.",
     "account_not_verified": "Uw account is nog niet geverifieerd. Verifieer uw e-mailadres voordat u inlogt.",
@@ -304,6 +393,9 @@
     "registration-company-already-registered": "Bedrijf al geregistreerd",
     "registration-company-already-registered-on-peppol": "Het lijkt erop dat deze Peppol-ID al bij een andere provider is geregistreerd. Activering hier vereist dat u zich daar eerst uitschrijft. U kunt het ondertekenproces wel afronden en dit daarna regelen.",
     "registration-company-not-found": "Bedrijf niet gevonden",
+    "review_already_decided": "Over deze registratie is al beslist. De lijst is vernieuwd.",
+    "review_company_has_admin": "Dit bedrijf heeft al een beheerder. Die kan de ondertekenaar uitnodigen.",
+    "review_own_registration": "U kunt uw eigen registratie niet beoordelen.",
     "server-updating": "De server wordt bijgewerkt. Even geduld en probeer het daarna opnieuw.",
     "too_many_requests": "Te veel inlogpogingen. Wacht even voordat u het opnieuw probeert.",
     "UBL_DOCUMENT_ALREADY_CREATED": "Dit document is al ingediend voor verzending. Werk het bestaande document bij.",
@@ -336,13 +428,13 @@
     },
     "all": "Alle",
     "allowanceChargeModal": {
-      "charge": "Toeslag",
-      "discount": "Korting",
-      "title": "Kortingen/Kosten",
-      "quantity": "Aantal/Bedrag",
-      "percentage": "Percentage",
       "amount": "Bedrag",
-      "cost": "Kosten"
+      "charge": "Toeslag",
+      "cost": "Kosten",
+      "discount": "Korting",
+      "percentage": "Percentage",
+      "quantity": "Aantal/Bedrag",
+      "title": "Kortingen/Kosten"
     },
     "attachmentModal": {
       "auto-pdf": "Voeg de automatisch gegenereerde factuur-PDF toe",
@@ -587,6 +679,8 @@
     "authorization-error": "We konden uw aanmelding niet voltooien. Probeer het opnieuw.",
     "authorization-expired": "Uw sessie is verlopen. Meld u opnieuw aan.",
     "authorization-no-ownership": "Dit account is niet aan een bedrijf gekoppeld. Vraag uw beheerder om een uitnodiging of registreer eerst uw bedrijf.",
+    "authorization-pending-review": "Uw registratie wordt beoordeeld omdat de naam op uw eID niet overeenkomt met de bestuurder in de KBO. U kunt inloggen zodra ze is goedgekeurd.",
+    "authorization-review-rejected": "Uw registratie werd niet goedgekeurd omdat de naam op uw eID niet overeenkomt met de bestuurder in de KBO. Neem contact op met support via support@letspeppol.org als u denkt dat dit een vergissing is.",
     "authorization-unavailable": "De aanmeldservice is tijdelijk niet beschikbaar. Probeer het zo dadelijk opnieuw.",
     "checking-session": "Uw sessie controleren...",
     "continue": "Inloggen",
@@ -616,6 +710,7 @@
   },
   "navigation": {
     "account": "Account",
+    "backoffice": "Backoffice",
     "brand-alt": "Let's Peppol",
     "dashboard": "Dashboard",
     "downloads": "Downloads",

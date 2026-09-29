@@ -18,6 +18,7 @@ export class Heading {
     selectedOwnershipKey = '';
     swapping = false;
     canAddOwnership = false;
+    canReviewRegistrations = false;
 
     async attached() {
         // Tokens are held in memory, so after a page reload the access token is only restored once
@@ -42,6 +43,7 @@ export class Heading {
         const currentOwnershipKey = this.ownershipService.getCurrentOwnershipKey() ?? '';
         this.selectedOwnershipKey = currentOwnershipKey;
         this.canAddOwnership = this.ownershipService.getCurrentOwnershipType() === 'ADMIN';
+        this.canReviewRegistrations = this.ownershipService.hasPermission('REVIEW_REGISTRATIONS');
         if (currentOwnershipKey && this.ownerships.some(ownership => this.getOwnershipKey(ownership) === currentOwnershipKey)) {
             queueMicrotask(() => {
                 this.selectedOwnershipKey = currentOwnershipKey;
@@ -66,6 +68,7 @@ export class Heading {
     get productsPath() { return this.loginService.getCurrentOwnershipRoute('/products'); }
     get downloadsPath() { return this.loginService.getCurrentOwnershipRoute('/downloads'); }
     get accountPath() { return this.loginService.getCurrentOwnershipRoute('/account'); }
+    readonly backofficePath = '/backoffice';
 
     async changeOwnership() {
         if (this.swapping) {

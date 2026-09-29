@@ -8,6 +8,7 @@ import org.letspeppol.kyc.model.kbo.Director;
 import org.letspeppol.kyc.repository.*;
 import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.model.Ownership;
+import org.letspeppol.kyc.model.Permission;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
@@ -22,6 +23,7 @@ import org.springframework.boot.test.context.TestComponent;
 import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.core.env.Environment;
 import org.springframework.http.*;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
@@ -46,6 +48,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -58,6 +61,9 @@ public class RegistrationSteps {
             0x30, 0x31, 0x30, 0x0d, 0x06, 0x09, 0x60, (byte) 0x86, 0x48,
             0x01, 0x65, 0x03, 0x04, 0x02, 0x01, 0x05, 0x00, 0x04, 0x20
     };
+    private static final String PKCE_VERIFIER = "registration-test-pkce-verifier-0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static final String PKCE_STATE = "registration-test-state";
+    private static final String PKCE_REDIRECT_URI = "http://localhost:9000/callback";
 
     @Autowired private TestRestTemplate restTemplate;
     @Autowired private EmailVerificationRepository emailVerificationRepository;
@@ -70,6 +76,7 @@ public class RegistrationSteps {
     @Autowired private JwtDecoder jwtDecoder;
     @Autowired private ObjectMapper objectMapper;
     @Autowired private Environment environment;
+    @Autowired private JdbcTemplate jdbcTemplate;
 
     @Value("${oauth2.audience:letspeppol-api}") private String audience;
     @Value("${spring.security.oauth2.authorizationserver.issuer:}") private String issuer;
@@ -126,12 +133,16 @@ public class RegistrationSteps {
     }
 
     void prepareDatabase(String peppolId, String companyName) {
+        prepareDatabase(peppolId, companyName, "Test Director");
+    }
+
+    void prepareDatabase(String peppolId, String companyName, String directorName) {
         // Insert test company in DB
         Company company = new Company(peppolId, "1234567890", "BE1234567890", companyName);
         company.setAddress("TestCity", "1234", "TestStreet");
         companyRepository.save(company);
         // Insert a director for the company
-        Director director = new Director("Test Director", company);
+        Director director = new Director(directorName, company);
         director.setRegistered(true);
         directorRepository.save(director);
     }
@@ -188,6 +199,8 @@ public class RegistrationSteps {
             paths.forEachEntry((path, pathItem) -> {
                 assertFalse(path.contains("/.well-known/"),
                         "Discovery path leaked into OpenAPI: " + path);
+                assertFalse(path.startsWith("/sapi/backoffice"),
+                        "Backoffice path leaked into OpenAPI: " + path);
                 pathItem.forEachEntry((method, operation) -> {
                     if (hasTag(operation, "authorization-server-endpoints")
                             || hasTag(operation, "login-endpoint")) {
@@ -230,80 +243,9 @@ public class RegistrationSteps {
             assertEquals(200, jwksResponse.statusCode(), jwksResponse.body());
             assertFalse(objectMapper.readTree(jwksResponse.body()).path("keys").isEmpty());
 
-            HttpResponse<String> sessionResponse = browser.send(
-                    HttpRequest.newBuilder(URI.create(origin + "/auth/browser/session"))
-                            .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
-                            .GET()
-                            .build(),
-                    HttpResponse.BodyHandlers.ofString());
-            assertEquals(200, sessionResponse.statusCode());
-            JsonNode session = objectMapper.readTree(sessionResponse.body());
-            String csrfToken = session.path("csrfToken").asString();
-            String csrfHeaderName = session.path("csrfHeaderName").asString();
-            String csrfParameterName = session.path("csrfParameterName").asString();
-            assertFalse(csrfToken.isBlank());
-
-            String loginBody = form(
-                    "username", email,
-                    "password", password,
-                    csrfParameterName, csrfToken);
-            HttpResponse<String> loginResponse = browser.send(
-                    HttpRequest.newBuilder(URI.create(origin + "/auth/browser/login"))
-                            .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
-                            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                            .header(csrfHeaderName, csrfToken)
-                            .POST(HttpRequest.BodyPublishers.ofString(loginBody))
-                            .build(),
-                    HttpResponse.BodyHandlers.ofString());
-            assertEquals(200, loginResponse.statusCode(), loginResponse.body());
-            assertEquals("authenticated", objectMapper.readTree(loginResponse.body()).path("status").asString());
-
-            String verifier = "registration-test-pkce-verifier-0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            String challenge = Base64.getUrlEncoder().withoutPadding()
-                    .encodeToString(MessageDigest.getInstance("SHA-256")
-                            .digest(verifier.getBytes(StandardCharsets.US_ASCII)));
-            String state = "registration-test-state";
-            String redirectUri = "http://localhost:9000/callback";
-            String authorizeQuery = form(
-                    "response_type", "code",
-                    "client_id", "letspeppol-ui",
-                    "redirect_uri", redirectUri,
-                    "code_challenge", challenge,
-                    "code_challenge_method", "S256",
-                    "state", state,
-                    "scope", "openid",
+            JsonNode tokenJson = authorizeWithPkce(browser, origin, email, password,
                     "peppol_id", peppolId,
                     "account_type", AccountType.ADMIN.name());
-
-            HttpResponse<String> authorizeResponse = browser.send(
-                    HttpRequest.newBuilder(URI.create(origin + "/auth/oauth2/authorize?" + authorizeQuery))
-                            .header(HttpHeaders.ACCEPT, MediaType.TEXT_HTML_VALUE)
-                            .GET()
-                            .build(),
-                    HttpResponse.BodyHandlers.ofString());
-            assertEquals(302, authorizeResponse.statusCode(), authorizeResponse.body());
-            URI callback = URI.create(authorizeResponse.headers().firstValue(HttpHeaders.LOCATION).orElseThrow());
-            assertEquals("localhost", callback.getHost());
-            assertEquals(9000, callback.getPort());
-            var callbackParameters = splitQuery(callback.getRawQuery());
-            assertEquals(state, callbackParameters.get("state"));
-            String code = callbackParameters.get("code");
-            assertNotNull(code);
-
-            String tokenBody = form(
-                    "grant_type", "authorization_code",
-                    "client_id", "letspeppol-ui",
-                    "redirect_uri", redirectUri,
-                    "code", code,
-                    "code_verifier", verifier);
-            HttpResponse<String> tokenResponse = browser.send(
-                    HttpRequest.newBuilder(URI.create(origin + "/auth/oauth2/token"))
-                            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                            .POST(HttpRequest.BodyPublishers.ofString(tokenBody))
-                            .build(),
-                    HttpResponse.BodyHandlers.ofString());
-            assertEquals(200, tokenResponse.statusCode(), tokenResponse.body());
-            JsonNode tokenJson = objectMapper.readTree(tokenResponse.body());
             assertFalse(tokenJson.has("refresh_token"), "The SPA must not receive a refresh token");
             assertTrue(tokenJson.hasNonNull("id_token"));
             String accessToken = tokenJson.path("access_token").asString();
@@ -337,6 +279,114 @@ public class RegistrationSteps {
         } catch (Exception e) {
             throw new AssertionError("OAuth2 Authorization Code + PKCE flow failed", e);
         }
+    }
+
+    private JsonNode authorizeWithPkce(HttpClient browser, String origin, String email, String password, String... selection) throws Exception {
+        URI callback = authorizationRedirect(browser, origin, email, password, selection);
+        assertEquals("localhost", callback.getHost());
+        assertEquals(9000, callback.getPort());
+        var callbackParameters = splitQuery(callback.getRawQuery());
+        assertEquals(PKCE_STATE, callbackParameters.get("state"));
+        String code = callbackParameters.get("code");
+        assertNotNull(code);
+
+        String tokenBody = form(
+                "grant_type", "authorization_code",
+                "client_id", "letspeppol-ui",
+                "redirect_uri", PKCE_REDIRECT_URI,
+                "code", code,
+                "code_verifier", PKCE_VERIFIER);
+        HttpResponse<String> tokenResponse = browser.send(
+                HttpRequest.newBuilder(URI.create(origin + "/auth/oauth2/token"))
+                        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                        .POST(HttpRequest.BodyPublishers.ofString(tokenBody))
+                        .build(),
+                HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, tokenResponse.statusCode(), tokenResponse.body());
+        return objectMapper.readTree(tokenResponse.body());
+    }
+
+    private URI authorizationRedirect(HttpClient browser, String origin, String email, String password, String... selection) throws Exception {
+        HttpResponse<String> sessionResponse = browser.send(
+                HttpRequest.newBuilder(URI.create(origin + "/auth/browser/session"))
+                        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                        .GET()
+                        .build(),
+                HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, sessionResponse.statusCode());
+        JsonNode session = objectMapper.readTree(sessionResponse.body());
+        String csrfToken = session.path("csrfToken").asString();
+        String csrfHeaderName = session.path("csrfHeaderName").asString();
+        String csrfParameterName = session.path("csrfParameterName").asString();
+        assertFalse(csrfToken.isBlank());
+
+        String loginBody = form(
+                "username", email,
+                "password", password,
+                csrfParameterName, csrfToken);
+        HttpResponse<String> loginResponse = browser.send(
+                HttpRequest.newBuilder(URI.create(origin + "/auth/browser/login"))
+                        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                        .header(csrfHeaderName, csrfToken)
+                        .POST(HttpRequest.BodyPublishers.ofString(loginBody))
+                        .build(),
+                HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, loginResponse.statusCode(), loginResponse.body());
+        assertEquals("authenticated", objectMapper.readTree(loginResponse.body()).path("status").asString());
+
+        String challenge = Base64.getUrlEncoder().withoutPadding()
+                .encodeToString(MessageDigest.getInstance("SHA-256")
+                        .digest(PKCE_VERIFIER.getBytes(StandardCharsets.US_ASCII)));
+        String authorizeQuery = form(
+                "response_type", "code",
+                "client_id", "letspeppol-ui",
+                "redirect_uri", PKCE_REDIRECT_URI,
+                "code_challenge", challenge,
+                "code_challenge_method", "S256",
+                "state", PKCE_STATE,
+                "scope", "openid");
+        if (selection.length > 0) {
+            authorizeQuery += "&" + form(selection);
+        }
+
+        HttpResponse<String> authorizeResponse = browser.send(
+                HttpRequest.newBuilder(URI.create(origin + "/auth/oauth2/authorize?" + authorizeQuery))
+                        .header(HttpHeaders.ACCEPT, MediaType.TEXT_HTML_VALUE)
+                        .GET()
+                        .build(),
+                HttpResponse.BodyHandlers.ofString());
+        assertEquals(302, authorizeResponse.statusCode(), authorizeResponse.body());
+        return URI.create(authorizeResponse.headers().firstValue(HttpHeaders.LOCATION).orElseThrow());
+    }
+
+    /** Drives the real authorization flow without company selection, as the UI does for staff-only accounts. */
+    String staffOAuth2AuthorizationCodeWithPkce(String email, String password) {
+        try {
+            return authorizeWithPkce(newBrowser(), localOrigin(), email, password).path("access_token").asString();
+        } catch (Exception e) {
+            throw new AssertionError("Staff OAuth2 Authorization Code + PKCE flow failed", e);
+        }
+    }
+
+    String authorizationRefusal(String email, String password) {
+        try {
+            URI redirect = authorizationRedirect(newBrowser(), localOrigin(), email, password);
+            return splitQuery(redirect.getRawQuery()).get("error");
+        } catch (Exception e) {
+            throw new AssertionError("OAuth2 authorization request failed", e);
+        }
+    }
+
+    private HttpClient newBrowser() {
+        return HttpClient.newBuilder()
+                .cookieHandler(new CookieManager(null, CookiePolicy.ACCEPT_ALL))
+                .followRedirects(HttpClient.Redirect.NEVER)
+                .build();
+    }
+
+    private String localOrigin() {
+        return "http://localhost:" + environment.getRequiredProperty("local.server.port");
     }
 
     private static boolean hasTag(JsonNode operation, String expectedTag) {
@@ -441,10 +491,30 @@ public class RegistrationSteps {
                 .claim("peppolId", ownership.getCompany().getPeppolId())
                 .claim("peppolActive", ownership.getCompany().isPeppolActive())
                 .claim("companyLastUpdated", ownership.getCompany().getLastUpdatedTimestamp().toString());
+        Set<Permission> permissions = accountRepository.findPermissionsById(account.getId());
+        if (!permissions.isEmpty()) {
+            claims.claim("permissions", permissions.stream().map(Permission::name).sorted().toList());
+        }
         if (issuer != null && !issuer.isBlank()) {
             claims.issuer(issuer);
         }
         return jwtEncoder.encode(JwtEncoderParameters.from(claims.build())).getTokenValue();
+    }
+
+    void grantPermission(String email, Permission permission) {
+        Account account = accountRepository.findByEmail(email.toLowerCase()).orElseThrow();
+        jdbcTemplate.update("insert into account_permission (account_id, permission) values (?, ?::permission)", account.getId(), permission.name());
+    }
+
+    void createStaffAccount(String email, String password, Permission permission) {
+        accountRepository.save(Account.builder()
+                .name("Staff Member")
+                .email(email.toLowerCase())
+                .passwordHash(passwordEncoder.encode(password))
+                .verified(true)
+                .verifiedOn(Instant.now())
+                .build());
+        grantPermission(email, permission);
     }
 
     CompanyResponse getCompany(String peppolId) {
@@ -540,6 +610,10 @@ public class RegistrationSteps {
     }
 
     void signContract(String peppolId, String email, Long directorId) {
+        signContract(peppolId, email, directorId, true);
+    }
+
+    String signContract(String peppolId, String email, Long directorId, boolean signerIsDirector) {
         {
             TestSigningIdentity identity = testSigningIdentity();
             String certificate = identity.certificate();
@@ -557,7 +631,7 @@ public class RegistrationSteps {
             assertNotNull(prepareResponse.hashToSign());
             assertNotNull(prepareResponse.hashToFinalize());
             assertEquals("SHA-256", prepareResponse.hashFunction());
-            assertTrue(prepareResponse.allowedToSign());
+            assertEquals(signerIsDirector, prepareResponse.allowedToSign());
 
             String contractUrl = "/api/identity/contract/" + peppolId + "/" + directorId;
             ResponseEntity<byte[]> contractResponse = restTemplate.getForEntity(contractUrl, byte[].class);
@@ -587,7 +661,34 @@ public class RegistrationSteps {
             assertNotNull(finalizeResponse.getHeaders().getContentType());
             assertEquals("application/pdf", finalizeResponse.getHeaders().getContentType().toString());
             assertNotNull(finalizeResponse.getHeaders().get("Registration-Status"));
+            return finalizeResponse.getHeaders().getFirst("Registration-Status");
         }
+    }
+
+    List<RegistrationReviewDto> registrationReviews(String jwtToken) {
+        ResponseEntity<RegistrationReviewDto[]> response = restTemplate.exchange(
+                "/sapi/backoffice/registration-reviews", HttpMethod.GET, new HttpEntity<>(jwtHeader(jwtToken)), RegistrationReviewDto[].class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        return List.of(response.getBody());
+    }
+
+    HttpStatusCode companySearchStatus(String jwtToken) {
+        return restTemplate.exchange(
+                "/sapi/company/search?companyName=__no_match__", HttpMethod.GET, new HttpEntity<>(jwtHeader(jwtToken)), String.class).getStatusCode();
+    }
+
+    HttpStatusCode registrationReviewsStatus(String jwtToken) {
+        return restTemplate.exchange(
+                "/sapi/backoffice/registration-reviews", HttpMethod.GET, new HttpEntity<>(jwtHeader(jwtToken)), String.class).getStatusCode();
+    }
+
+    RegistrationReviewDecisionResponse approveReview(String jwtToken, Long reviewId) {
+        ResponseEntity<RegistrationReviewDecisionResponse> response = restTemplate.exchange(
+                "/sapi/backoffice/registration-reviews/" + reviewId + "/approve", HttpMethod.POST, new HttpEntity<>(jwtHeader(jwtToken)), RegistrationReviewDecisionResponse.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        return response.getBody();
     }
 
     void signContractAsLoggedIn(String jwtToken, String peppolId, Long directorId) {

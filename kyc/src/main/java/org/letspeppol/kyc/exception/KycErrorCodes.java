@@ -45,6 +45,12 @@ public final class KycErrorCodes {
     public static final String INVALID_ACCOUNT_TYPE = "invalid_account_type";
     // Contract
     public static final String CONTRACT_NOT_FOUND = "contract_not_found";
+    // Manual review
+    public static final String REVIEW_NOT_FOUND = "review_not_found";
+    public static final String REVIEW_ALREADY_DECIDED = "review_already_decided";
+    public static final String REVIEW_OWN_REGISTRATION = "review_own_registration";
+    public static final String REVIEW_COMPANY_HAS_ADMIN = "review_company_has_admin";
+    public static final String INVALID_REVIEW_STATUS = "invalid_review_status";
     // Generic
     public static final String NOT_FOUND = "not_found";
     public static final String UNEXPECTED_ERROR = "unexpected_error";
@@ -52,6 +58,7 @@ public final class KycErrorCodes {
     public static final String AUTHENTCATION_FAILED = "auth_failed";
     public static final String NO_OWNERSHIP = "no_ownership";
     public static final String NOT_ADMIN = "not_admin";
+    public static final String MISSING_PERMISSION = "missing_permission";
     public static final String TOO_MANY_REQUESTS = "too_many_requests";
 
     private KycErrorCodes() {}

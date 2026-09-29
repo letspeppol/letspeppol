@@ -4,8 +4,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.letspeppol.kyc.model.AccountType;
 import org.letspeppol.kyc.model.Ownership;
+import org.letspeppol.kyc.model.Permission;
+import org.letspeppol.kyc.model.ReviewStatus;
 import org.letspeppol.kyc.model.kbo.Company;
+import org.letspeppol.kyc.repository.AccountIdentityVerificationRepository;
+import org.letspeppol.kyc.repository.AccountRepository;
 import org.letspeppol.kyc.repository.OwnershipRepository;
+import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2AuthorizationCodeRequestAuthenticationException;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2AuthorizationCodeRequestAuthenticationToken;
@@ -85,8 +90,104 @@ class ActingOwnershipAuthorizationRequestConverterTest {
                 .isInstanceOf(OAuth2AuthorizationCodeRequestAuthenticationException.class);
     }
 
+    @Test
+    void accountWithoutOwnershipButWithAPendingReviewIsToldItAwaitsReview() {
+        OwnershipRepository repository = mock(OwnershipRepository.class);
+        AccountIdentityVerificationRepository verifications = mock(AccountIdentityVerificationRepository.class);
+        when(repository.findFirstByAccountIdOrderByLastUsedDesc(ACCOUNT_ID)).thenReturn(Optional.empty());
+        when(verifications.existsByAccountIdAndReviewStatus(ACCOUNT_ID, ReviewStatus.PENDING)).thenReturn(true);
+
+        assertThatThrownBy(() -> convert(repository, verifications, Map.of()))
+                .isInstanceOfSatisfying(OAuth2AuthorizationCodeRequestAuthenticationException.class, exception ->
+                        assertThat(ActingOwnershipAuthorizationRequestConverter.isOwnershipPendingReview(exception.getError())).isTrue());
+    }
+
+    @Test
+    void accountWithoutOwnershipWhoseReviewWasRejectedIsToldSo() {
+        OwnershipRepository repository = mock(OwnershipRepository.class);
+        AccountIdentityVerificationRepository verifications = mock(AccountIdentityVerificationRepository.class);
+        when(repository.findFirstByAccountIdAndCompanyPeppolIdOrderByLastUsedDesc(ACCOUNT_ID, PEPPOL_ID)).thenReturn(Optional.empty());
+        when(verifications.existsByAccountIdAndDirectorCompanyPeppolIdAndReviewStatus(ACCOUNT_ID, PEPPOL_ID, ReviewStatus.REJECTED)).thenReturn(true);
+
+        assertThatThrownBy(() -> convert(repository, verifications, Map.of(
+                ActingOwnershipAuthorizationRequestConverter.PEPPOL_ID_PARAMETER, PEPPOL_ID)))
+                .isInstanceOfSatisfying(OAuth2AuthorizationCodeRequestAuthenticationException.class, exception ->
+                        assertThat(ActingOwnershipAuthorizationRequestConverter.isOwnershipReviewRejected(exception.getError())).isTrue());
+    }
+
+    @Test
+    void pendingReviewTakesPrecedenceOverAnEarlierRejection() {
+        OwnershipRepository repository = mock(OwnershipRepository.class);
+        AccountIdentityVerificationRepository verifications = mock(AccountIdentityVerificationRepository.class);
+        when(repository.findFirstByAccountIdOrderByLastUsedDesc(ACCOUNT_ID)).thenReturn(Optional.empty());
+        when(verifications.existsByAccountIdAndReviewStatus(ACCOUNT_ID, ReviewStatus.PENDING)).thenReturn(true);
+        when(verifications.existsByAccountIdAndReviewStatus(ACCOUNT_ID, ReviewStatus.REJECTED)).thenReturn(true);
+
+        assertThatThrownBy(() -> convert(repository, verifications, Map.of()))
+                .isInstanceOfSatisfying(OAuth2AuthorizationCodeRequestAuthenticationException.class, exception ->
+                        assertThat(ActingOwnershipAuthorizationRequestConverter.isOwnershipPendingReview(exception.getError())).isTrue());
+    }
+
+    @Test
+    void pendingReviewForAnotherCompanyDoesNotExplainAMissingOwnership() {
+        OwnershipRepository repository = mock(OwnershipRepository.class);
+        AccountIdentityVerificationRepository verifications = mock(AccountIdentityVerificationRepository.class);
+        when(repository.findFirstByAccountIdAndCompanyPeppolIdOrderByLastUsedDesc(ACCOUNT_ID, PEPPOL_ID)).thenReturn(Optional.empty());
+        when(verifications.existsByAccountIdAndReviewStatus(ACCOUNT_ID, ReviewStatus.PENDING)).thenReturn(true);
+
+        assertThatThrownBy(() -> convert(repository, verifications, Map.of(
+                ActingOwnershipAuthorizationRequestConverter.PEPPOL_ID_PARAMETER, PEPPOL_ID)))
+                .isInstanceOfSatisfying(OAuth2AuthorizationCodeRequestAuthenticationException.class, exception -> {
+                    OAuth2Error error = exception.getError();
+                    assertThat(ActingOwnershipAuthorizationRequestConverter.isOwnershipUnavailable(error)).isTrue();
+                });
+    }
+
+    @Test
+    void staffAccountWithoutOwnershipIsAuthorizedWithoutCompanyContext() {
+        OwnershipRepository repository = mock(OwnershipRepository.class);
+        AccountRepository accounts = mock(AccountRepository.class);
+        when(repository.findFirstByAccountIdOrderByLastUsedDesc(ACCOUNT_ID)).thenReturn(Optional.empty());
+        when(accounts.findPermissionsById(ACCOUNT_ID)).thenReturn(Set.of(Permission.REVIEW_REGISTRATIONS));
+
+        OAuth2AuthorizationCodeRequestAuthenticationToken result = convert(
+                repository, accounts, mock(AccountIdentityVerificationRepository.class), Map.of());
+
+        assertThat(result.getAdditionalParameters())
+                .doesNotContainKeys(
+                        ActingOwnershipAuthorizationRequestConverter.PEPPOL_ID_PARAMETER,
+                        ActingOwnershipAuthorizationRequestConverter.ACCOUNT_TYPE_PARAMETER);
+    }
+
+    @Test
+    void staffAccountCannotSelectACompanyItDoesNotOwn() {
+        OwnershipRepository repository = mock(OwnershipRepository.class);
+        AccountRepository accounts = mock(AccountRepository.class);
+        when(repository.findFirstByAccountIdAndCompanyPeppolIdOrderByLastUsedDesc(ACCOUNT_ID, PEPPOL_ID)).thenReturn(Optional.empty());
+        when(accounts.findPermissionsById(ACCOUNT_ID)).thenReturn(Set.of(Permission.REVIEW_REGISTRATIONS));
+
+        assertThatThrownBy(() -> convert(repository, accounts, mock(AccountIdentityVerificationRepository.class), Map.of(
+                ActingOwnershipAuthorizationRequestConverter.PEPPOL_ID_PARAMETER, PEPPOL_ID)))
+                .isInstanceOf(OAuth2AuthorizationCodeRequestAuthenticationException.class);
+    }
+
     private static OAuth2AuthorizationCodeRequestAuthenticationToken convert(
             OwnershipRepository repository,
+            Map<String, Object> additionalParameters) {
+        return convert(repository, mock(AccountIdentityVerificationRepository.class), additionalParameters);
+    }
+
+    private static OAuth2AuthorizationCodeRequestAuthenticationToken convert(
+            OwnershipRepository repository,
+            AccountIdentityVerificationRepository verifications,
+            Map<String, Object> additionalParameters) {
+        return convert(repository, mock(AccountRepository.class), verifications, additionalParameters);
+    }
+
+    private static OAuth2AuthorizationCodeRequestAuthenticationToken convert(
+            OwnershipRepository repository,
+            AccountRepository accounts,
+            AccountIdentityVerificationRepository verifications,
             Map<String, Object> additionalParameters) {
         AccountUserDetails user = new AccountUserDetails(
                 "person@example.com", "password", UUID.randomUUID(), false, ACCOUNT_ID, false, true);
@@ -103,7 +204,7 @@ class ActingOwnershipAuthorizationRequestConverterTest {
                         additionalParameters);
         AuthenticationConverter delegate = ignored -> request;
         return (OAuth2AuthorizationCodeRequestAuthenticationToken)
-                new ActingOwnershipAuthorizationRequestConverter(repository, delegate)
+                new ActingOwnershipAuthorizationRequestConverter(repository, accounts, verifications, delegate)
                         .convert(mock(HttpServletRequest.class));
     }
 

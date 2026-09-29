@@ -8,6 +8,8 @@ import com.nimbusds.jose.proc.SecurityContext;
 import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.model.AccountType;
 import org.letspeppol.kyc.model.Ownership;
+import org.letspeppol.kyc.model.Permission;
+import org.letspeppol.kyc.repository.AccountIdentityVerificationRepository;
 import org.letspeppol.kyc.repository.AccountRepository;
 import org.letspeppol.kyc.repository.OwnershipRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.authorization.OAuth2AuthorizationServerConfigurer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.GrantedAuthority;
@@ -70,11 +73,15 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 @Configuration
+@EnableMethodSecurity
 public class SecurityConfig {
 
     public static final String ROLE_KYC_USER = "kyc_user";
@@ -101,12 +108,14 @@ public class SecurityConfig {
     public SecurityFilterChain authorizationServerSecurityFilterChain(
             HttpSecurity http,
             CorsConfigurationSource corsConfigurationSource,
-            OwnershipRepository ownershipRepository) throws Exception {
+            OwnershipRepository ownershipRepository,
+            AccountRepository accountRepository,
+            AccountIdentityVerificationRepository identityVerificationRepository) throws Exception {
 
         // Not a @Bean: Spring Security 7 hands a context-wide AuthenticationConverter to the
         // resource server, which would run this on every /sapi/** request.
         ActingOwnershipAuthorizationRequestConverter actingOwnershipAuthorizationRequestConverter =
-                new ActingOwnershipAuthorizationRequestConverter(ownershipRepository);
+                new ActingOwnershipAuthorizationRequestConverter(ownershipRepository, accountRepository, identityVerificationRepository);
 
         OAuth2AuthorizationServerConfigurer configurer = new OAuth2AuthorizationServerConfigurer();
 
@@ -136,6 +145,7 @@ public class SecurityConfig {
     public SecurityFilterChain sapiSecurityFilterChain(
             HttpSecurity http,
             JwtDecoder jwtDecoder,
+            JwtAuthenticationConverter jwtAuthenticationConverter,
             CorsConfigurationSource corsConfigurationSource) throws Exception {
         http
                 .securityMatcher("/sapi/**")
@@ -143,10 +153,13 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .requestCache(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.anyRequest().hasAuthority(ROLE_KYC_USER))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/sapi/backoffice/**").hasAnyAuthority(permissionAuthorities())
+                        .requestMatchers("/sapi/password/change", "/sapi/totp/**", "/sapi/passkeys/**").hasAnyAuthority(accountHolderAuthorities())
+                        .anyRequest().hasAuthority(ROLE_KYC_USER))
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt
                         .decoder(jwtDecoder)
-                        .jwtAuthenticationConverter(jwtAuthenticationConverter())
+                        .jwtAuthenticationConverter(jwtAuthenticationConverter)
                 ));
         return http.build();
     }
@@ -156,6 +169,7 @@ public class SecurityConfig {
     public SecurityFilterChain browserAndPublicSecurityFilterChain(
             HttpSecurity http,
             JwtDecoder jwtDecoder,
+            JwtAuthenticationConverter jwtAuthenticationConverter,
             CorsConfigurationSource corsConfigurationSource,
             TotpAuthenticationSuccessHandler authenticationSuccessHandler,
             JsonAwareAuthenticationFailureHandler authenticationFailureHandler) throws Exception {
@@ -192,18 +206,30 @@ public class SecurityConfig {
                 // authenticated add-ownership variant. /sapi/** never reaches this chain.
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt
                         .decoder(jwtDecoder)
-                        .jwtAuthenticationConverter(jwtAuthenticationConverter())
+                        .jwtAuthenticationConverter(jwtAuthenticationConverter)
                 ));
         return http.build();
     }
 
+    private static String[] permissionAuthorities() {
+        return Arrays.stream(Permission.values()).map(Permission::name).toArray(String[]::new);
+    }
+
+    private static String[] accountHolderAuthorities() {
+        return Stream.concat(Stream.of(ROLE_KYC_USER), Arrays.stream(permissionAuthorities())).toArray(String[]::new);
+    }
+
     @Bean
-    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+    public JwtAuthenticationConverter jwtAuthenticationConverter(AccountRepository accountRepository) {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
         converter.setJwtGrantedAuthoritiesConverter(jwt -> {
             Collection<GrantedAuthority> authorities = new ArrayList<>();
             if (jwt.hasClaim("peppolId") && !AccountType.APP.name().equals(jwt.getClaimAsString("accountType"))) {
                 authorities.add(new SimpleGrantedAuthority(ROLE_KYC_USER));
+            }
+            if (jwt.hasClaim("permissions") && jwt.hasClaim("uid")) {
+                accountRepository.findPermissionsByExternalId(UUID.fromString(jwt.getClaimAsString("uid")))
+                        .forEach(permission -> authorities.add(new SimpleGrantedAuthority(permission.name())));
             }
             return authorities;
         });
@@ -342,8 +368,14 @@ public class SecurityConfig {
                 OAuth2AuthorizationRequest authorizationRequest = context.getAuthorization() == null
                         ? null
                         : context.getAuthorization().getAttribute(OAuth2AuthorizationRequest.class.getName());
-                addOwnershipClaims(claims, resolveAuthorizedOwnership(
-                        userDetails.getAccountId(), authorizationRequest, ownershipRepository));
+                Set<Permission> permissions = accountRepository.findPermissionsById(userDetails.getAccountId());
+                if (permissions.isEmpty() || !isCompanyLessAuthorization(authorizationRequest)) {
+                    addOwnershipClaims(claims, resolveAuthorizedOwnership(
+                            userDetails.getAccountId(), authorizationRequest, ownershipRepository));
+                }
+                if (!permissions.isEmpty()) {
+                    claims.claim("permissions", permissions.stream().map(Permission::name).sorted().toList());
+                }
             } else if (AuthorizationGrantType.CLIENT_CREDENTIALS.equals(context.getAuthorizationGrantType())
                     && "kyc-service".equals(context.getRegisteredClient().getClientId())) {
                 // Service-to-service token for the App backend's scheduled document sync:
@@ -374,6 +406,12 @@ public class SecurityConfig {
                 OAuth2ErrorCodes.INVALID_GRANT,
                 "The acting ownership selected by the authorization is no longer available",
                 null));
+    }
+
+    static boolean isCompanyLessAuthorization(OAuth2AuthorizationRequest authorizationRequest) {
+        return authorizationRequest != null
+                && !authorizationRequest.getAdditionalParameters().containsKey(ActingOwnershipAuthorizationRequestConverter.PEPPOL_ID_PARAMETER)
+                && !authorizationRequest.getAdditionalParameters().containsKey(ActingOwnershipAuthorizationRequestConverter.ACCOUNT_TYPE_PARAMETER);
     }
 
     static Ownership resolveAuthorizedOwnership(

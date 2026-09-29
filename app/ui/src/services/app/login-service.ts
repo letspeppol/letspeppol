@@ -26,6 +26,8 @@ const PEPPOL_ACTIVE_KEY = 'peppolActive';
 // only runs when there's plausibly a KYC session to ride.
 const SESSION_HINT_KEY = 'session_hint';
 const PEPPOL_ID_PARAMETER = 'peppol_id';
+const BACKOFFICE_ROUTE = '/backoffice';
+const REVIEW_REGISTRATIONS = 'REVIEW_REGISTRATIONS';
 const ACCOUNT_TYPE_PARAMETER = 'account_type';
 
 interface TokenResponse {
@@ -291,12 +293,19 @@ export class LoginService {
         const pendingNavigation = consumePendingNavigation();
         if (pendingNavigation) {
             const pendingPath = new URL(pendingNavigation, window.location.origin).pathname;
-            if (getPeppolIdFromPath(pendingPath)) {
+            if (getPeppolIdFromPath(pendingPath) || (pendingPath === BACKOFFICE_ROUTE && this.ownershipService.hasPermission(REVIEW_REGISTRATIONS))) {
                 return pendingNavigation;
             }
         }
+        return this.getHomeRoute();
+    }
+
+    getHomeRoute(): string {
         const peppolId = this.ownershipService.getCurrentPeppolId();
-        return peppolId ? ownershipRoute(peppolId, '/dashboard') : '/dashboard';
+        if (peppolId) {
+            return ownershipRoute(peppolId, '/dashboard');
+        }
+        return this.ownershipService.hasPermission(REVIEW_REGISTRATIONS) ? BACKOFFICE_ROUTE : '/dashboard';
     }
 
     getCurrentOwnershipRoute(target: string): string {

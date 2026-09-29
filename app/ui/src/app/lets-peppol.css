@@ -59,6 +59,8 @@
     --status-ok: #10b981;       /* green */
     --status-open: #f59e0b;     /* amber */
     --status-overdue: #ef4444;  /* red */
+    --staff: #7c3aed;
+    --staff-strong: #5b21b6;
 
     /* Pills */
     --pill-invoice-fg: #2563eb;
@@ -177,6 +179,8 @@
     --pill-error-fg: #fca5a5;
     --pill-error-bg: #2a0f0f;
     --pill-error-border: #7f1d1d;
+    --staff: #a78bfa;
+    --staff-strong: #c4b5fd;
 }
 
 :root[data-theme="light"] {

@@ -29,8 +29,8 @@ import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.letspeppol.kyc.dto.*;
 import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.KycException;
+import org.letspeppol.kyc.exception.NotFoundException;
 import org.letspeppol.kyc.model.Account;
-import org.letspeppol.kyc.model.AccountType;
 import org.letspeppol.kyc.model.kbo.Director;
 import org.letspeppol.kyc.repository.DirectorRepository;
 import org.letspeppol.kyc.service.signing.CertificateUtil;
@@ -46,6 +46,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
@@ -76,9 +77,7 @@ import static org.letspeppol.kyc.service.signing.CertificateUtil.getRDNName;
 @RequiredArgsConstructor
 public class SigningService {
 
-    private final CompanyService companyService;
-    private final Counter companyRegistrationCounterSuccess;
-    private final Counter companyRegistrationCounterFailure;
+    private final DirectorActivationService directorActivationService;
 
     public static final String LETS_PEPPOL_CONTRACT_TEMPLATE = "/docs/LetsPeppol_contract_template.pdf";
     public static final String IDENTIFICATION_CONTENT = "%s, a legal entity according to Belgian law, " +
@@ -91,7 +90,6 @@ public class SigningService {
     private static final String HASH_ALGORITHM = "SHA-256";
     private static final SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
     private final IdentityVerificationService identityVerificationService;
-    private final OwnershipService ownershipService;
     private final SignerAccountResolverService signerAccountResolverService;
     private final DirectorRepository directorRepository;
     private final Counter prepareSigningCounter;
@@ -375,26 +373,19 @@ public class SigningService {
         );
         SignerAccountResolverService.SignerResolution signerResolution = signerAccountResolverService.resolveSignerAccount(signingRequest, getFullName(identityVerificationRequest.x500Name()));
         Account account = signerResolution.account();
-        boolean signerIsDirector = identityVerificationService.recordDirectorSignature(account, identityVerificationRequest);
+        boolean signerIsDirector = identityVerificationService.recordDirectorSignature(account, signerResolution.requestedType(), identityVerificationRequest);
         if (!signerIsDirector) {
             return new FinalizeSigningResponse(writeContractToFile(signingRequest.peppolId(), account, finalPdfBytes), null, true);
         }
-        ownershipService.ensureAdminOwnership(account, director.getCompany());
-        RegistrationResponse registrationResponse = null;
-        if (signerResolution.requestedType() == AccountType.ADMIN && !director.getCompany().isSuspended()) {
-            registrationResponse = companyService.registerCompany(director.getCompany());
-            if (registrationResponse.peppolActive() && registrationResponse.errorCode() == null) {
-                companyRegistrationCounterSuccess.increment();
-            } else if (!registrationResponse.peppolActive()) {
-                companyRegistrationCounterFailure.increment();
-            }
-        }
+        RegistrationResponse registrationResponse = directorActivationService.activate(account, director.getCompany(), signerResolution.requestedType());
         return new FinalizeSigningResponse(writeContractToFile(signingRequest.peppolId(), account, finalPdfBytes), registrationResponse, false);
     }
 
     public byte[] getContract(String peppolId, Long accountId) {
         try {
             return Files.readAllBytes(Path.of(contractDirectory, "contract_%s_%d.pdf".formatted(peppolId.replace(':', '_'), accountId)));
+        } catch (NoSuchFileException e) {
+            throw new NotFoundException(KycErrorCodes.CONTRACT_NOT_FOUND);
         } catch (IOException e) {
             throw new RuntimeException("Error getting contract from file: " + e.getMessage(), e);
         }

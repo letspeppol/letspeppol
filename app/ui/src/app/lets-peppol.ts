@@ -23,6 +23,7 @@ const lazy = (load: () => Promise<Record<string, unknown>>) => new NavigationStr
         { path: '/:peppolId/sponsors',     component: lazy(() => import('../sponsor/sponsors')),                  title: 'Sponsors' },
         { path: '/:peppolId/downloads',    component: lazy(() => import('../download/downloads')),                title: 'Downloads' },
         { path: '/:peppolId/account',      component: lazy(() => import('../account/account')),                   title: 'Account' },
+        { path: '/backoffice',             component: lazy(() => import('../backoffice/backoffice')),             title: 'Backoffice',             data: { permission: 'REVIEW_REGISTRATIONS' }},
         { path: '/:peppolId/dashboard',    component: lazy(() => import('../dashboard/dashboard')),               title: 'Dashboard' },
         { path: ['', '/dashboard'],        component: lazy(() => import('../dashboard/dashboard')),               title: 'Dashboard' },
     ],

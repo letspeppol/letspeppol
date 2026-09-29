@@ -179,8 +179,10 @@ export class AddOwnership {
                 case 'FAILED':
                     this.warningKey = 'account.registration-failed.try-again-one-day';
                     break;
-                case 'SUSPENDED':
                 case 'MANUAL_REVIEW':
+                    this.warningKey = 'account.registration-failed.manual-review';
+                    break;
+                case 'SUSPENDED':
                     this.warningKey = 'account.registration-failed.contact-us';
                     break;
                 case 'CONFLICT': {

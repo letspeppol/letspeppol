@@ -8,7 +8,9 @@ import org.letspeppol.kyc.model.kbo.Company;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -56,6 +58,14 @@ public class Account {
 
     @Column(name = "totp_recovery_codes")
     private String totpRecoveryCodes;
+
+    @Builder.Default
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "account_permission", joinColumns = @JoinColumn(name = "account_id"))
+    @Column(name = "permission", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    private Set<Permission> permissions = new HashSet<>();
 
     @Builder.Default
     @Column(unique = true, nullable = false)

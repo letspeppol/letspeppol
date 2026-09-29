@@ -34,6 +34,36 @@ class BrowserAuthorizationErrorHandlerTest {
     }
 
     @Test
+    void pendingReviewSendsTheBrowserToTheLoginScreenWithItsOwnReason() throws Exception {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        handler.onAuthenticationFailure(browserRequest(), response, new OAuth2AuthorizationCodeRequestAuthenticationException(
+                new OAuth2Error(
+                        OAuth2ErrorCodes.INVALID_REQUEST,
+                        ActingOwnershipAuthorizationRequestConverter.OWNERSHIP_PENDING_REVIEW_DESCRIPTION,
+                        null),
+                null));
+
+        assertThat(response.getRedirectedUrl())
+                .isEqualTo(UI_LOGIN_URL + "?error=" + BrowserAuthorizationErrorHandler.OWNERSHIP_PENDING_REVIEW_REASON);
+    }
+
+    @Test
+    void rejectedReviewSendsTheBrowserToTheLoginScreenWithItsOwnReason() throws Exception {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        handler.onAuthenticationFailure(browserRequest(), response, new OAuth2AuthorizationCodeRequestAuthenticationException(
+                new OAuth2Error(
+                        OAuth2ErrorCodes.INVALID_REQUEST,
+                        ActingOwnershipAuthorizationRequestConverter.OWNERSHIP_REVIEW_REJECTED_DESCRIPTION,
+                        null),
+                null));
+
+        assertThat(response.getRedirectedUrl())
+                .isEqualTo(UI_LOGIN_URL + "?error=" + BrowserAuthorizationErrorHandler.OWNERSHIP_REVIEW_REJECTED_REASON);
+    }
+
+    @Test
     void operatorFacingDescriptionsNeverReachTheLoginUrl() throws Exception {
         MockHttpServletResponse response = new MockHttpServletResponse();
 

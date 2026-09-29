@@ -53,4 +53,27 @@ describe('OwnershipService', () => {
         expect(service.getCachedOwnerships()).toEqual([ownership]);
         expect(JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]')).toEqual([ownership]);
     });
+
+    it('reads permissions from a staff token without company context and skips loading ownerships', () => {
+        const {service} = createService('');
+        const get = (service as unknown as {kycApi: {httpClient: {get: ReturnType<typeof vi.fn>}}}).kycApi.httpClient.get;
+
+        service.onTokenChanged(unsignedToken({uid: 'staff', permissions: ['REVIEW_REGISTRATIONS']}));
+
+        expect(service.hasPermission('REVIEW_REGISTRATIONS')).toBe(true);
+        expect(service.getCurrentPeppolId()).toBeNull();
+        expect(service.getCachedOwnerships()).toEqual([]);
+        expect(get).not.toHaveBeenCalled();
+    });
+
+    it('grants no permission to a company token without the claim', () => {
+        const {service} = createService(unsignedToken({peppolId: ownership.peppolId, accountType: 'ADMIN'}));
+
+        expect(service.hasPermission('REVIEW_REGISTRATIONS')).toBe(false);
+    });
 });
+
+function unsignedToken(claims: Record<string, unknown>): string {
+    const encode = (value: object) => btoa(JSON.stringify(value)).replaceAll('=', '').replaceAll('+', '-').replaceAll('/', '_');
+    return `${encode({alg: 'none'})}.${encode(claims)}.`;
+}
