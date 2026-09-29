@@ -1,5 +1,7 @@
 package org.letspeppol.kyc.dto;
 
+import java.time.Instant;
+
 /**
  * Sent to App backend
  */
@@ -12,5 +14,7 @@ public record AccountInfo(
         String city,
         String postalCode,
         String directorName,
-        String directorEmail
+        String directorEmail,
+        boolean active,
+        Instant lastUpdatedTimestamp
 ) {}

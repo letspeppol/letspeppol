@@ -64,6 +64,7 @@ export class Heading {
     get invoicesPath() { return this.loginService.getCurrentOwnershipRoute('/invoices'); }
     get partnersPath() { return this.loginService.getCurrentOwnershipRoute('/partners'); }
     get productsPath() { return this.loginService.getCurrentOwnershipRoute('/products'); }
+    get downloadsPath() { return this.loginService.getCurrentOwnershipRoute('/downloads'); }
     get accountPath() { return this.loginService.getCurrentOwnershipRoute('/account'); }
 
     async changeOwnership() {

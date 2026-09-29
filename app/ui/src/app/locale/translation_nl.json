@@ -11,7 +11,8 @@
     "company-info": "Bedrijfsinfo",
     "company-legal-name": "Wettelijke bedrijfsnaam",
     "download-contract": "Contract downloaden",
-    "email-notification-cc-list": "CC-lijst voor e-mailmeldingen",
+    "email-notification-cc-list-incoming": "Inkomende documenten: e-mail CC-lijst",
+    "email-notification-cc-list-outgoing": "Uitgaande documenten: e-mail CC-lijst",
     "enable-email-notification": "E-mailmeldingen inschakelen",
     "iban": "IBAN",
     "invoice-settings": "Factuurinstellingen",
@@ -135,6 +136,11 @@
         }
       }
     },
+    "download": {
+      "create-failed": "Archief aanmaken mislukt", "created": "Archiefopdracht aangemaakt", "delete-failed": "Archief verwijderen mislukt", "deleted": "Archief verwijderd",
+      "download-failed": "Archief downloaden mislukt", "empty-period": "Er zijn geen definitieve documenten met UBL-gegevens in deze periode", "limit-reached": "Er zijn maximaal vijf actieve archieven toegestaan",
+      "load-failed": "Archieven laden mislukt", "retried": "Archiefgeneratie opnieuw gestart", "retry-failed": "Archiefgeneratie opnieuw proberen mislukt", "validation-failed": "De gekozen periode is ongeldig"
+    },
     "neutral": "Bericht",
     "partner": {
       "create-failed": "Partner aanmaken mislukt",
@@ -227,6 +233,14 @@
       "incl": "incl. btw"
     }
   },
+  "download": {
+    "action": {"download": "Downloaden", "retry": "Opnieuw proberen"}, "active-links": "actieve archieven", "create": "Archief aanmaken", "creating": "Aanmaken…",
+    "description": "Maak een ZIP met definitieve facturen en creditnota’s. Beide datums zijn inbegrepen.", "empty": "Er zijn nog geen archieven aangemaakt.", "from-date": "Van datum", "generation-failed": "Archiefgeneratie mislukt", "loading": "Archieven laden…",
+    "status": {"FAILED": "Mislukt", "PENDING": "In afwachting", "PROCESSING": "Bezig", "READY": "Klaar"},
+    "table": {"actions": "Acties", "completed": "Voltooid", "created": "Aangemaakt", "downloads": "Downloads", "expires": "Vervalt", "file": "Bestand", "period": "Periode", "status": "Status"},
+    "title": "UBL-downloads", "to-date": "Tot datum",
+    "validation": {"limit": "Verwijder een archief voordat u een nieuw aanmaakt.", "order": "De begindatum mag niet na de einddatum liggen.", "required": "Beide datums zijn verplicht.", "same-year": "Beide datums moeten in hetzelfde jaar liggen."}
+  },
   "documentDirection": {
     "INCOMING": "Inkomend",
     "OUTGOING": "Uitgaand"
@@ -317,6 +331,15 @@
       }
     },
     "all": "Alle",
+    "allowanceChargeModal": {
+      "charge": "Toeslag",
+      "discount": "Korting",
+      "title": "Kortingen/Kosten",
+      "quantity": "Aantal/Bedrag",
+      "percentage": "Percentage",
+      "amount": "Bedrag",
+      "cost": "Kosten"
+    },
     "attachmentModal": {
       "auto-pdf": "Voeg de automatisch gegenereerde factuur-PDF toe",
       "auto-pdf-replace": "Er wordt automatisch een factuur-PDF gegenereerd. Schakel deze hierboven uit als uw geüploade bestand deze vervangt.",
@@ -376,8 +399,10 @@
       "method": "Methode",
       "note": "Notitie",
       "number": "Nummer",
+      "payable-amount": "Te betalen bedrag",
       "payment": "Betaling",
       "pos": "Pos",
+      "prepaid-amount": "Vooruitbetaald bedrag",
       "recreate-positions": "Lijnposities opnieuw aanmaken",
       "save-draft": "Concept opslaan",
       "send": {
@@ -589,6 +614,7 @@
     "account": "Account",
     "brand-alt": "Let's Peppol",
     "dashboard": "Dashboard",
+    "downloads": "Downloads",
     "invoices": "Facturen",
     "language": "Taal",
     "partners": "Partners",

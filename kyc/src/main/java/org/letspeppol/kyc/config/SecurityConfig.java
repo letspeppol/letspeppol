@@ -358,6 +358,9 @@ public class SecurityConfig {
         if (ownership.getCompany() != null && ownership.getCompany().getPeppolId() != null) {
             claims.claim("peppolId", ownership.getCompany().getPeppolId());
             claims.claim("peppolActive", ownership.getCompany().isPeppolActive());
+            if (ownership.getCompany().getLastUpdatedTimestamp() != null) {
+                claims.claim("companyLastUpdated", ownership.getCompany().getLastUpdatedTimestamp().toString());
+            }
         }
     }
 

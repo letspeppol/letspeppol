@@ -11,7 +11,8 @@
     "company-info": "Informations société",
     "company-legal-name": "Dénomination sociale",
     "download-contract": "Télécharger le contrat",
-    "email-notification-cc-list": "Liste des destinataires en copie (CC) des notifications par e-mail",
+    "email-notification-cc-list-incoming": "Documents entrants : liste CC des notifications par e-mail",
+    "email-notification-cc-list-outgoing": "Documents sortants : liste CC des notifications par e-mail",
     "enable-email-notification": "Activer les notifications par e-mail",
     "iban": "IBAN",
     "invoice-settings": "Paramètres de facturation",
@@ -135,6 +136,11 @@
         }
       }
     },
+    "download": {
+      "create-failed": "Échec de la création de l’archive", "created": "Tâche d’archivage créée", "delete-failed": "Échec de la suppression de l’archive", "deleted": "Archive supprimée",
+      "download-failed": "Échec du téléchargement de l’archive", "empty-period": "Aucun document finalisé avec des données UBL n’existe pour cette période", "limit-reached": "Cinq archives actives au maximum sont autorisées",
+      "load-failed": "Échec du chargement des archives", "retried": "Génération de l’archive relancée", "retry-failed": "Échec de la nouvelle tentative", "validation-failed": "La période sélectionnée n’est pas valide"
+    },
     "neutral": "Message",
     "partner": {
       "create-failed": "Échec de la création du partenaire",
@@ -227,6 +233,14 @@
       "incl": "TVA inc."
     }
   },
+  "download": {
+    "action": {"download": "Télécharger", "retry": "Réessayer"}, "active-links": "archives actives", "create": "Créer l’archive", "creating": "Création…",
+    "description": "Créez un ZIP contenant les factures et notes de crédit finalisées. Les deux dates sont incluses.", "empty": "Aucune archive n’a encore été créée.", "from-date": "Date de début", "generation-failed": "Échec de la génération de l’archive", "loading": "Chargement des archives…",
+    "status": {"FAILED": "Échec", "PENDING": "En attente", "PROCESSING": "En cours", "READY": "Prête"},
+    "table": {"actions": "Actions", "completed": "Terminée", "created": "Créée", "downloads": "Téléchargements", "expires": "Expire", "file": "Fichier", "period": "Période", "status": "Statut"},
+    "title": "Téléchargements UBL", "to-date": "Date de fin",
+    "validation": {"limit": "Supprimez une archive avant d’en créer une autre.", "order": "La date de début ne peut pas être postérieure à la date de fin.", "required": "Les deux dates sont obligatoires.", "same-year": "Les deux dates doivent être dans la même année."}
+  },
   "documentDirection": {
     "INCOMING": "Entrant",
     "OUTGOING": "Sortant"
@@ -317,6 +331,15 @@
       }
     },
     "all": "Tous",
+    "allowanceChargeModal": {
+      "charge": "Frais",
+      "discount": "Remise",
+      "title": "Remises/Frais",
+      "quantity": "Quantité/Montant",
+      "percentage": "Pourcentage",
+      "amount": "Montant",
+      "cost": "Frais"
+    },
     "attachmentModal": {
       "auto-pdf": "Inclure le PDF de facture généré automatiquement",
       "auto-pdf-replace": "Un PDF de facture est généré automatiquement. Désactivez-le ci-dessus si votre fichier importé le remplace.",
@@ -376,8 +399,10 @@
       "method": "Méthode",
       "note": "Note",
       "number": "Numéro",
+      "payable-amount": "Montant à payer",
       "payment": "Paiement",
       "pos": "Pos",
+      "prepaid-amount": "Montant prépayé",
       "recreate-positions": "Recréer les positions de lignes",
       "save-draft": "Enregistrer brouillon",
       "send": {
@@ -589,6 +614,7 @@
     "account": "Compte",
     "brand-alt": "Let's Peppol",
     "dashboard": "Tableau de bord",
+    "downloads": "Téléchargements",
     "invoices": "Factures",
     "language": "Langue",
     "partners": "Partenaires",
