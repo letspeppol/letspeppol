@@ -22,9 +22,10 @@ export class AddOwnership {
     private readonly companyService = resolve(CompanyService);
     private readonly router = resolve(IRouter);
 
-    vatNumber: string | undefined;
+    enterpriseNumber: string | undefined;
     company: KycCompanyResponse | undefined;
     confirmedDirector: Director | undefined;
+    suggestedDirector: Director | undefined;
     subscriberEmail = '';
     errorCode: string | undefined;
     warningKey: string | undefined;
@@ -38,7 +39,7 @@ export class AddOwnership {
 
     attached() {
         if (this.ownershipService.getCurrentOwnershipType() !== 'ADMIN') {
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Only an admin can add another account"});
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Only an admin can add another company"});
             void this.router.load(currentOwnershipRoute('/dashboard'));
             return;
         }
@@ -50,17 +51,19 @@ export class AddOwnership {
         this.subscriberEmail = company.subscriberEmail ?? '';
     }
 
-    async checkVatNumber() {
+    async checkEnterpriseNumber() {
         this.errorCode = undefined;
         this.warningKey = undefined;
         this.company = undefined;
         this.confirmedDirector = undefined;
+        this.suggestedDirector = undefined;
+        this.prepareSigningResponse = null;
         this.step = 0;
         this.alreadyRegisteredProvider = '';
 
         try {
             this.ea.publish('showOverlay', "Searching company");
-            const digits = (this.vatNumber ?? '').replace(/\D/g, '');
+            const digits = (this.enterpriseNumber ?? '').replace(/\D/g, '');
             const companyNumber = digits.slice(-10).padStart(10, '0');
             const peppolId = `0208:${companyNumber}`;
             this.company = await this.registrationService.getCompany(peppolId);
@@ -81,9 +84,10 @@ export class AddOwnership {
     restart(event?: Event) {
         this.errorCode = undefined;
         this.warningKey = undefined;
-        this.vatNumber = undefined;
+        this.enterpriseNumber = undefined;
         this.company = undefined;
         this.confirmedDirector = undefined;
+        this.suggestedDirector = undefined;
         this.agreedToContract = false;
         this.step = 0;
         this.alreadyRegisteredProvider = '';
@@ -106,6 +110,8 @@ export class AddOwnership {
             return;
         }
 
+        this.suggestedDirector = undefined;
+        this.prepareSigningResponse = null;
         this.confirmedDirector = director;
         try {
             const {
@@ -125,10 +131,17 @@ export class AddOwnership {
                 supportedSignatureAlgorithms,
                 language: 'en'
             });
+            this.prepareSigningResponse = prepareSigningResponse;
+
+            if (!prepareSigningResponse.allowedToSign) {
+                this.suggestedDirector = this.company.directors?.find(
+                    candidate => candidate.id === prepareSigningResponse.suggestedDirectorId);
+                this.confirmedDirector = undefined;
+                return;
+            }
 
             this.certificate = certificate;
             this.signatureAlgorithm = signatureAlgorithm;
-            this.prepareSigningResponse = prepareSigningResponse;
             this.step = 2;
         } catch (error) {
             let text = "Confirming identity failed";
@@ -148,7 +161,7 @@ export class AddOwnership {
     }
 
     async confirmContract() {
-        if (!this.company || !this.confirmedDirector || !this.certificate || !this.signatureAlgorithm || !this.prepareSigningResponse) {
+        if (!this.company || !this.confirmedDirector || !this.certificate || !this.signatureAlgorithm || !this.prepareSigningResponse?.allowedToSign) {
             return;
         }
 
@@ -185,7 +198,7 @@ export class AddOwnership {
             }
             await this.ownershipService.loadOwnerships(true);
             this.step = 3;
-            this.ea.publish('alert', {alertType: AlertType.Success, text: "Account added successfully"});
+            this.ea.publish('alert', {alertType: AlertType.Success, text: "Company added successfully"});
         } catch (error) {
             let text = "Signing contract failed";
             if (error instanceof Response) {

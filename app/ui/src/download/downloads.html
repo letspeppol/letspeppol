@@ -17,7 +17,7 @@
             <span class="download-limit">${activeJobCount} / 5 <span t="download.active-links">active archives</span></span>
         </div>
 
-        <form class="card download-form" submit.trigger="createJob()">
+        <form class="card download-form" submit.trigger="createJob()" new-feature="download-form">
             <label class="select">
                 <span t="download.from-date">From date</span>
                 <input type="date" required value.bind="fromDate" max.bind="toDate || dateMaximum" />

@@ -64,6 +64,7 @@ import java.security.cert.CollectionCertStoreParameters;
 import java.security.cert.X509CertSelector;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.letspeppol.kyc.service.signing.CertificateUtil.getFullName;
@@ -261,7 +262,9 @@ public class SigningService {
         String hash = Base64.getEncoder().encodeToString(preparedPdfBytes);
         log.info("Contract prepared for signing, hash length: {}", hash.length());
         preparedHashes.put(safeHashName(hashToFinalize), hash);
-        return new PrepareSigningResponse(hash, hashToFinalize, HASH_ALGORITHM, isAllowedToSign(x500Name, director));
+        boolean allowedToSign = isAllowedToSign(x500Name, director);
+        Long suggestedDirectorId = allowedToSign ? null : findMatchingDirectorId(x500Name, director.getCompany().getDirectors());
+        return new PrepareSigningResponse(hash, hashToFinalize, HASH_ALGORITHM, allowedToSign, suggestedDirectorId);
     }
 
     public static SignerProperties getSignerProperties(String signatureContent) throws IOException {
@@ -318,6 +321,11 @@ public class SigningService {
         String surName = getRDNName(x500Name, BCStyle.SURNAME);
         String fullName = director.getName();
         return NameMatchUtil.matches(givenName, surName, fullName);
+    }
+
+    static Long findMatchingDirectorId(X500Name x500Name, List<Director> directors) {
+        List<Director> matches = directors.stream().filter(director -> isAllowedToSign(x500Name, director)).toList();
+        return matches.size() == 1 ? matches.getFirst().getId() : null;
     }
 
     public FinalizeSigningResponse finalizeSign(FinalizeSigningRequest signingRequest) {

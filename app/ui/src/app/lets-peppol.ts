@@ -16,7 +16,7 @@ const lazy = (load: () => Promise<Record<string, unknown>>) => new NavigationStr
         { path: '/registration',           component: lazy(() => import('../registration/registration')),         title: 'Registration',           data: { allowEveryone: true, registrationType: 'ADMIN' }},
         { path: '/affiliate/registration', component: lazy(() => import('../registration/registration')),         title: 'Affiliate Registration', data: { allowEveryone: true, registrationType: 'AFFILIATE' }},
         { path: '/email-confirmation',     component: lazy(() => import('../registration/email-confirmation')),   title: 'Email Confirmation',     data: { allowEveryone: true }},
-        { path: '/:peppolId/add-ownership', component: lazy(() => import('../registration/add-ownership')),       title: 'Add Account' },
+        { path: '/:peppolId/add-ownership', component: lazy(() => import('../registration/add-ownership')),       title: 'Add Company' },
         { path: ['/:peppolId/invoices', '/:peppolId/invoices/:id'], component: lazy(() => import('../invoice/invoices')), title: 'Invoice' },
         { path: '/:peppolId/partners',     component: lazy(() => import('../partner/partners')),                  title: 'Partners' },
         { path: '/:peppolId/products',     component: lazy(() => import('../product/products')),                  title: 'Products' },
