@@ -25,6 +25,7 @@ export class AddOwnership {
     vatNumber: string | undefined;
     company: KycCompanyResponse | undefined;
     confirmedDirector: Director | undefined;
+    suggestedDirector: Director | undefined;
     subscriberEmail = '';
     errorCode: string | undefined;
     warningKey: string | undefined;
@@ -55,6 +56,8 @@ export class AddOwnership {
         this.warningKey = undefined;
         this.company = undefined;
         this.confirmedDirector = undefined;
+        this.suggestedDirector = undefined;
+        this.prepareSigningResponse = null;
         this.step = 0;
         this.alreadyRegisteredProvider = '';
 
@@ -84,6 +87,7 @@ export class AddOwnership {
         this.vatNumber = undefined;
         this.company = undefined;
         this.confirmedDirector = undefined;
+        this.suggestedDirector = undefined;
         this.agreedToContract = false;
         this.step = 0;
         this.alreadyRegisteredProvider = '';
@@ -106,6 +110,8 @@ export class AddOwnership {
             return;
         }
 
+        this.suggestedDirector = undefined;
+        this.prepareSigningResponse = null;
         this.confirmedDirector = director;
         try {
             const {
@@ -125,10 +131,17 @@ export class AddOwnership {
                 supportedSignatureAlgorithms,
                 language: 'en'
             });
+            this.prepareSigningResponse = prepareSigningResponse;
+
+            if (!prepareSigningResponse.allowedToSign) {
+                this.suggestedDirector = this.company.directors?.find(
+                    candidate => candidate.id === prepareSigningResponse.suggestedDirectorId);
+                this.confirmedDirector = undefined;
+                return;
+            }
 
             this.certificate = certificate;
             this.signatureAlgorithm = signatureAlgorithm;
-            this.prepareSigningResponse = prepareSigningResponse;
             this.step = 2;
         } catch (error) {
             let text = "Confirming identity failed";
@@ -148,7 +161,7 @@ export class AddOwnership {
     }
 
     async confirmContract() {
-        if (!this.company || !this.confirmedDirector || !this.certificate || !this.signatureAlgorithm || !this.prepareSigningResponse) {
+        if (!this.company || !this.confirmedDirector || !this.certificate || !this.signatureAlgorithm || !this.prepareSigningResponse?.allowedToSign) {
             return;
         }
 

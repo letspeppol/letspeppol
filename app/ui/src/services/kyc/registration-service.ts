@@ -45,7 +45,8 @@ export interface PrepareSigningResponse {
     hashToSign: string,
     hashToFinalize: string,
     hashFunction: string,
-    allowedToSign: boolean
+    allowedToSign: boolean,
+    suggestedDirectorId: number | null
 }
 
 export interface FinalizeSigningRequest {
