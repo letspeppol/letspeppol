@@ -81,7 +81,7 @@ public class DownloadJobService {
                 .orElseThrow(() -> new NotFoundException("Company does not exist"));
         purgeExpiredForCompany(company);
         return downloadJobRepository.findAllByCompanyPeppolIdOrderByCreatedOnDesc(peppolId).stream()
-                .map(DownloadJobService::toDto)
+                .map(this::toDto)
                 .toList();
     }
 
@@ -366,12 +366,23 @@ public class DownloadJobService {
         return "Archive generation failed";
     }
 
-    private static DownloadJobDto toDto(DownloadJob job) {
+    private DownloadJobDto toDto(DownloadJob job) {
         return new DownloadJobDto(
                 job.getId(), job.getFromDate(), job.getToDate(), job.getStatus(),
-                job.getArchiveFilename(), job.getCreatedOn(), job.getCompletedOn(),
+                job.getArchiveFilename(), archiveSize(job), job.getCreatedOn(), job.getCompletedOn(),
                 job.getExpiresOn(), job.getDownloadCount(), job.getFailureMessage()
         );
+    }
+
+    private Long archiveSize(DownloadJob job) {
+        if (job.getStatus() != DownloadJob.Status.READY || job.getArchivePath() == null) {
+            return null;
+        }
+        try {
+            return Files.size(resolveStoredPath(job.getArchivePath()));
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     private record DateBounds(Instant startInclusive, Instant endExclusive) {

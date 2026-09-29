@@ -43,9 +43,9 @@ class DownloadJobProcessorTest {
         processor.process(7L);
 
         try (ZipFile zip = new ZipFile(zipPath.toFile(), StandardCharsets.UTF_8)) {
-            assertThat(zip.getEntry("in_INV_1.ubl")).isNotNull();
-            assertThat(zip.getEntry("out_CN_2.ubl")).isNotNull();
-            assertThat(new String(zip.getInputStream(zip.getEntry("in_INV_1.ubl")).readAllBytes(), StandardCharsets.UTF_8))
+            assertThat(zip.getEntry("in_INV_1.xml")).isNotNull();
+            assertThat(zip.getEntry("out_CN_2.xml")).isNotNull();
+            assertThat(new String(zip.getInputStream(zip.getEntry("in_INV_1.xml")).readAllBytes(), StandardCharsets.UTF_8))
                     .isEqualTo("<Invoice>één</Invoice>");
         }
         verify(service).publishReady(work, zipPath);
@@ -60,8 +60,8 @@ class DownloadJobProcessorTest {
         String second = DownloadJobProcessor.uniqueEntryName(
                 document("bbbbbbbb-0000-0000-0000-000000000002", DocumentDirection.INCOMING, "..\\invoice a", "ubl"), usedNames);
 
-        assertThat(first).isEqualTo("in_Invoice_A.ubl");
-        assertThat(second).isEqualTo("in_invoice_a_bbbbbbbb.ubl");
+        assertThat(first).isEqualTo("in_Invoice_A.xml");
+        assertThat(second).isEqualTo("in_invoice_a_bbbbbbbb.xml");
     }
 
     @Test

@@ -10,6 +10,7 @@ export interface DownloadJobDto {
     toDate: string;
     status: DownloadJobStatus;
     filename?: string;
+    sizeBytes: number | null;
     createdOn: string;
     completedOn?: string;
     expiresOn?: string;

@@ -235,9 +235,11 @@
   },
   "download": {
     "action": {"download": "Télécharger", "retry": "Réessayer"}, "active-links": "archives actives", "create": "Créer l’archive", "creating": "Création…",
-    "description": "Créez un ZIP contenant les factures et notes de crédit finalisées. Les deux dates sont incluses.", "empty": "Aucune archive n’a encore été créée.", "from-date": "Date de début", "generation-failed": "Échec de la génération de l’archive", "loading": "Chargement des archives…",
+    "description": "Créez un ZIP contenant les factures et notes de crédit finalisées. Les deux dates sont incluses.", "empty": "Aucune archive n’a encore été créée.", "from-date": "Date de début", "generation-failed": "Échec de la génération de l’archive",
+    "info": {"download-limit": "Le fichier ZIP est supprimé après 3 téléchargements.", "expiration": "Le lien de téléchargement expire et est supprimé après 7 jours."},
+    "loading": "Chargement des archives…",
     "status": {"FAILED": "Échec", "PENDING": "En attente", "PROCESSING": "En cours", "READY": "Prête"},
-    "table": {"actions": "Actions", "completed": "Terminée", "created": "Créée", "downloads": "Téléchargements", "expires": "Expire", "file": "Fichier", "period": "Période", "status": "Statut"},
+    "table": {"actions": "Actions", "completed": "Terminée", "created": "Créée", "downloads": "Téléchargements", "expires": "Expire", "file": "Fichier", "period": "Période", "size": "Taille (MB)", "status": "Statut"},
     "title": "Téléchargements UBL", "to-date": "Date de fin",
     "validation": {"limit": "Supprimez une archive avant d’en créer une autre.", "order": "La date de début ne peut pas être postérieure à la date de fin.", "required": "Les deux dates sont obligatoires.", "same-year": "Les deux dates doivent être dans la même année."}
   },

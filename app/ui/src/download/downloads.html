@@ -9,6 +9,10 @@
             <div>
                 <h1 t="download.title">UBL downloads</h1>
                 <p class="download-intro" t="download.description">Create a ZIP with finalized invoices and credit notes. Both dates are included.</p>
+                <div class="download-info" role="note">
+                    <p t="download.info.download-limit">The ZIP file is deleted after it has been downloaded 3 times.</p>
+                    <p t="download.info.expiration">The download link expires and is deleted after 7 days.</p>
+                </div>
             </div>
             <span class="download-limit">${activeJobCount} / 5 <span t="download.active-links">active archives</span></span>
         </div>
@@ -37,6 +41,7 @@
                     <tr>
                         <th t="download.table.period">Period</th>
                         <th t="download.table.file">File</th>
+                        <th t="download.table.size">Size (MB)</th>
                         <th t="download.table.status">Status</th>
                         <th t="download.table.created">Created</th>
                         <th t="download.table.completed">Completed</th>
@@ -49,6 +54,7 @@
                     <tr repeat.for="job of jobs">
                         <td>${job.fromDate | dateFormat} – ${job.toDate | dateFormat}</td>
                         <td>${job.filename || '—'}</td>
+                        <td>${formatSizeInMb(job.sizeBytes)}</td>
                         <td>
                             <span class="download-status status-${job.status.toLowerCase()}" t.bind="'download.status.' + job.status">${job.status}</span>
                             <span if.bind="job.status === 'FAILED'" class="download-failure" t="download.generation-failed">Archive generation failed</span>
