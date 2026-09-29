@@ -691,19 +691,20 @@
     "validating": "Dokument wird validiert, bitte warten"
   },
   "ownershipAdd": {
-    "account-info-body": "Dieses Unternehmen wird dem oben angezeigten bestehenden Konto hinzugefügt. Das Passwort für dieses Konto bleibt unverändert.",
-    "account-info-title": "2. Konto bestätigen",
-    "action": "Konto hinzufügen",
+    "account-info-body": "Dieses Unternehmen wird Ihrem bestehenden Konto hinzugefügt. Ihr Passwort bleibt unverändert.",
+    "account-info-title": "2. E-Mail-Adresse bestätigen",
+    "action": "Unternehmen hinzufügen",
     "back-dashboard": "Zurück zum Dashboard",
     "cancel": "Zurück zum Dashboard",
     "company-has-admin": "Dieses Unternehmen hat bereits ein Admin-Konto. Der aktuelle Ablauf unterstützt nur Unternehmen ohne bestehenden Admin.",
-    "intro": "Fügen Sie ein weiteres Konto für ein Unternehmen hinzu, indem Sie als einer seiner Direktoren unterschreiben.",
+    "intro": "Fügen Sie Ihrem Konto ein weiteres Unternehmen hinzu, indem Sie als Mitglied der Geschäftsführung unterschreiben.",
     "lookup": "Unternehmen suchen",
-    "read-contract-info": "Sie erhalten eine unterschriebene Kopie, sobald dieses Konto hinzugefügt wurde.",
-    "sign-button": "Konto hinzufügen",
-    "success-body": "Der unterschriebene Vertrag wurde heruntergeladen und das neue Unternehmen ist jetzt in Ihrer Konto-Auswahl verfügbar.",
-    "success-title": "Konto hinzugefügt",
-    "title": "Konto hinzufügen"
+    "read-contract-info": "Sie erhalten eine unterschriebene Kopie, sobald dieses Unternehmen hinzugefügt wurde.",
+    "sign-button": "Unternehmen hinzufügen",
+    "success-body": "Der unterschriebene Vertrag wurde heruntergeladen. Sie können das neue Unternehmen jetzt oben auswählen.",
+    "success-title": "Unternehmen hinzugefügt",
+    "title": "Unternehmen hinzufügen",
+    "tooltip": "Fügen Sie Ihrem Konto ein weiteres Unternehmen hinzu, indem Sie als Mitglied der Geschäftsführung mit Ihrer eID unterschreiben."
   },
   "partner": {
     "all": "Alle",

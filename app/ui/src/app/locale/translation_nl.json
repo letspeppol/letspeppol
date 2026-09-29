@@ -691,19 +691,20 @@
     "validating": "Document valideren, een moment geduld"
   },
   "ownershipAdd": {
-    "account-info-body": "Dit bedrijf wordt toegevoegd aan het bestaande account hierboven. Het wachtwoord van dat account blijft hetzelfde.",
-    "account-info-title": "2. Bevestig het account",
-    "action": "Account toevoegen",
+    "account-info-body": "Dit bedrijf wordt aan uw bestaande account toegevoegd. Uw wachtwoord blijft hetzelfde.",
+    "account-info-title": "2. Bevestig uw e-mailadres",
+    "action": "Bedrijf toevoegen",
     "back-dashboard": "Terug naar dashboard",
     "cancel": "Terug naar dashboard",
     "company-has-admin": "Dit bedrijf heeft al een admin-account. De huidige flow ondersteunt alleen bedrijven zonder bestaande admin.",
-    "intro": "Voeg een extra account toe voor een bedrijf door te tekenen als een van de bestuurders.",
+    "intro": "Voeg een ander bedrijf aan uw account toe door als een van de bestuurders te ondertekenen.",
     "lookup": "Bedrijf zoeken",
-    "read-contract-info": "U ontvangt een ondertekend exemplaar zodra dit account is toegevoegd.",
-    "sign-button": "Account toevoegen",
-    "success-body": "Het ondertekende contract werd gedownload en het nieuwe bedrijf is nu beschikbaar in uw accountkeuzelijst.",
-    "success-title": "Account toegevoegd",
-    "title": "Account toevoegen"
+    "read-contract-info": "U ontvangt een ondertekend exemplaar zodra dit bedrijf is toegevoegd.",
+    "sign-button": "Bedrijf toevoegen",
+    "success-body": "Het ondertekende contract is gedownload. U kunt het nieuwe bedrijf nu hierboven kiezen.",
+    "success-title": "Bedrijf toegevoegd",
+    "title": "Bedrijf toevoegen",
+    "tooltip": "Voeg een ander bedrijf aan uw account toe door als een van de bestuurders te ondertekenen met uw eID."
   },
   "partner": {
     "all": "Alle",
