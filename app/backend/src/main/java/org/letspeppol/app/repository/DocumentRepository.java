@@ -24,9 +24,10 @@ public interface DocumentRepository extends JpaRepository<Document, UUID>, JpaSp
     @Query("""
         SELECT COUNT(document) > 0 FROM Document document
         WHERE document.invoiceReference = :invoiceReference AND document.company.peppolId = :ownerPeppolId and document.type = :type
+        AND document.id <> :documentId
         AND document.draftedOn IS NULL AND document.proxyOn IS NOT NULL AND document.direction = 'OUTGOING' AND document.processedStatus IS NULL
         """)
-    boolean existsByInvoiceReferenceAndTypeAndOwnerPeppolId(String invoiceReference, DocumentType type, String ownerPeppolId);
+    boolean existsByInvoiceReferenceAndTypeAndOwnerPeppolId(String invoiceReference, DocumentType type, String ownerPeppolId, UUID documentId);
 
     // Errored documents (processed_status IS NOT NULL) are excluded from the money totals and counted separately as erroredUnseenCount.
     @NativeQuery("""

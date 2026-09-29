@@ -174,11 +174,6 @@ public class DocumentService {
         Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new NotFoundException("Company does not exist"));
         UblDto ublDto = readUBL(DocumentDirection.OUTGOING, ublXml, peppolId, draft);
         if (!draft) {
-             if (documentRepository.existsByInvoiceReferenceAndTypeAndOwnerPeppolId(ublDto.invoiceReference(), ublDto.type(), peppolId)) {
-                 throw new AppException(AppErrorCodes.INVOICE_NUMBER_ALREADY_USED);
-             }
-        }
-        if (!draft) {
             // The UI's generated_invoice marker is the source of truth: addRenderedPdfToUbl only
             // renders a PDF when that marker is present, so the per-invoice toggle wins. The
             // company addPdfToSendingInvoice flag only controls the toggle's default in the UI.
@@ -393,6 +388,9 @@ public class DocumentService {
     }
 
     private Document deliver(Document document, String tokenValue) { //TODO : use boolean noArchive from Company
+        if (documentRepository.existsByInvoiceReferenceAndTypeAndOwnerPeppolId(document.getInvoiceReference(), document.getType(), document.getOwnerPeppolId(), document.getId())) {
+            throw new AppException(AppErrorCodes.INVOICE_NUMBER_ALREADY_USED);
+        }
         Instant previousProcessedOn = document.getProcessedOn();
         String previousProcessedStatus = document.getProcessedStatus();
         UblDocumentDto ublDocumentDto = ((document.getProxyOn() == null) ? proxyWebClient.post().uri("/sapi/document") : proxyWebClient.put().uri("/sapi/document/"+document.getId()))
