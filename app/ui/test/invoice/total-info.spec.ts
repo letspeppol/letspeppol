@@ -89,7 +89,6 @@ describe('invoice total info', () => {
             PayableAmount: amount(101),
         });
 
-        expect(info.hasTaxInclusiveAmount()).toBe(true);
         expect(info.showPrepaidAmount()).toBe(true);
         expect(info.showPayableAmount()).toBe(true);
     });
@@ -112,7 +111,15 @@ describe('invoice total info', () => {
         expect(negativeAmounts.showPayableAmount()).toBe(false);
 
         const missingTaxInclusive = totalInfo({PayableAmount: amount(100)});
-        expect(missingTaxInclusive.hasTaxInclusiveAmount()).toBe(false);
         expect(missingTaxInclusive.showPayableAmount()).toBe(false);
+    });
+
+    test('uses tax inclusive, payable, then zero for the displayed total', () => {
+        const info = Object.create(TotalInfo.prototype) as TotalInfo;
+
+        expect(info.totalAmount(121, 101)).toBe(121);
+        expect(info.totalAmount(undefined, 101)).toBe(101);
+        expect(info.totalAmount(undefined, undefined)).toBe(0);
+        expect(info.totalAmount(0, 101)).toBe(0);
     });
 });

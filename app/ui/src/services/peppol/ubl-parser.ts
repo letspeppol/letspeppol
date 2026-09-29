@@ -108,10 +108,13 @@ const VALUE_OBJECT_FIELDS = new Set([
     'ItemClassificationCode',
 
     // Amounts
+    'AllowanceTotalAmount',
     'Amount',
+    'BaseAmount',
     'ChargeTotalAmount',
     'LineExtensionAmount',
     'PayableAmount',
+    'PrepaidAmount',
     'PriceAmount',
     'TaxAmount',
     'TaxableAmount',

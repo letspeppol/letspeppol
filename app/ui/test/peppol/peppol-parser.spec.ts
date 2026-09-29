@@ -78,6 +78,11 @@ describe("Invoice XML round-trip", () => {
             "Payment within 10 days, 2% discount"
         );
 
+        // --- AllowanceCharge ---
+        const allowance = invoiceObj.AllowanceCharge?.[0];
+        expect(allowance?.Amount).toEqual({__currencyID: "EUR", value: 40});
+        expect(allowance?.BaseAmount).toEqual({__currencyID: "EUR", value: 400});
+
         // --- TaxTotal ---
         const taxTotal = invoiceObj.TaxTotal?.[0];
         expect(taxTotal?.TaxAmount.value).toBe(331.25);
@@ -92,6 +97,7 @@ describe("Invoice XML round-trip", () => {
         expect(monetaryTotal.LineExtensionAmount?.value).toBe(1300);
         expect(monetaryTotal.TaxExclusiveAmount?.value).toBe(1325);
         expect(monetaryTotal.TaxInclusiveAmount?.value).toBe(1656.25);
+        expect(monetaryTotal.AllowanceTotalAmount).toEqual({__currencyID: "EUR", value: 40});
         expect(monetaryTotal.ChargeTotalAmount?.value).toBe(25);
         expect(monetaryTotal.PayableAmount.value).toBe(1656.25);
 
@@ -217,4 +223,3 @@ describe("CreditNote XML round-trip", () => {
         expect(rebuiltNormalized).toBe(originalNormalized);
     });
 });
-
