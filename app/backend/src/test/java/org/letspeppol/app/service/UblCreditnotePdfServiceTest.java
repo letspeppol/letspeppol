@@ -11,7 +11,7 @@ import org.letspeppol.app.util.CreditNoteUBLBuilder;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,8 +29,8 @@ class UblCreditnotePdfServiceTest {
         UblInvoicePdfService sut = new UblInvoicePdfService(null);
         byte[] pdf = sut.toPdf(byteArrayOutputStream.toString(StandardCharsets.UTF_8));
 
-        Files.createDirectories(Paths.get("build", "debug"));
-        Files.write(Paths.get("build", "debug", "creditnote.pdf"), pdf);
+        Files.createDirectories(Path.of("build", "debug"));
+        Files.write(Path.of("build", "debug", "creditnote.pdf"), pdf);
     }
 
     @SneakyThrows
@@ -135,8 +135,8 @@ class UblCreditnotePdfServiceTest {
         UblInvoicePdfService sut = new UblInvoicePdfService(null);
         byte[] pdf = sut.toPdf(xml);
 
-        Files.createDirectories(Paths.get("build", "debug"));
-        Files.write(Paths.get("build", "debug", "creditnote-zero-vat-footnote.pdf"), pdf);
+        Files.createDirectories(Path.of("build", "debug"));
+        Files.write(Path.of("build", "debug", "creditnote-zero-vat-footnote.pdf"), pdf);
 
         String pdfText = extractText(pdf);
         assertTrue(pdfText.contains("0% VAT notes"), pdfText);

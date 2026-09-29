@@ -38,7 +38,7 @@ public class CertificateUtil {
             byte[] der = Base64.getDecoder().decode(base64);
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
             return (X509Certificate) cf.generateCertificate(new java.io.ByteArrayInputStream(der));
-        } catch (CertificateException e) {
+        } catch (CertificateException _) {
             throw new KycException(KycErrorCodes.INVALID_CERTIFICATE);
         }
     }

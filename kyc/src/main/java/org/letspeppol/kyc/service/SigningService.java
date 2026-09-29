@@ -518,7 +518,7 @@ public class SigningService {
         try {
             certificate.verify(certificate.getPublicKey());
             return true;
-        } catch (Exception ignored) {
+        } catch (Exception _) {
             return false;
         }
     }
