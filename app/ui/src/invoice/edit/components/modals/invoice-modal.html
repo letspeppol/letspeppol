@@ -49,7 +49,7 @@
         <footer class="modal-footer">
             <small class="modal-footer-info" t="invoice.modal.reference-required">Either buyer reference OR order reference is required</small>
             <button type="button" class="btn" click.trigger="closeModal()" title="Cancel" t="[title]common.cancel" t="common.cancel">Cancel</button>
-            <button type="button" class="btn primary" click.trigger="saveInvoiceInfo()" disabled.bind="!buyerReference && !orderReference" title="Confirm" t="[title]common.confirm" t="common.confirm">Confirm</button>
+            <button type="button" class="btn primary" click.trigger="saveInvoiceInfo()" disabled.bind="!hasReference" title="Confirm" t="[title]common.confirm" t="common.confirm">Confirm</button>
         </footer>
     </div>
 </div>

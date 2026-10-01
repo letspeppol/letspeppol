@@ -129,3 +129,27 @@ describe('UBL string builder - BillingReference (credit notes)', () => {
         expect(buildCreditNoteXml(creditNoteObj)).not.toContain('<cac:BillingReference>');
     });
 });
+
+describe('UBL string builder - Delivery (credit notes)', () => {
+    test('buildCreditNoteXml emits cac:Delivery after the customer party', () => {
+        const creditNoteObj = parseCreditNote(sampleCreditNoteXml);
+        creditNoteObj.Delivery = {
+            ActualDeliveryDate: '2026-04-01',
+            DeliveryLocation: { Address: { Country: { IdentificationCode: 'NL' } } },
+        };
+
+        const rebuilt = buildCreditNoteXml(creditNoteObj);
+        expect(rebuilt).toContain(
+            '<cac:Delivery><cbc:ActualDeliveryDate>2026-04-01</cbc:ActualDeliveryDate><cac:DeliveryLocation><cac:Address><cac:Country><cbc:IdentificationCode>NL</cbc:IdentificationCode></cac:Country></cac:Address></cac:DeliveryLocation></cac:Delivery>'
+        );
+        expect(rebuilt.indexOf('<cac:Delivery>')).toBeGreaterThan(rebuilt.indexOf('<cac:AccountingCustomerParty>'));
+        expect(rebuilt.indexOf('<cac:Delivery>')).toBeLessThan(rebuilt.indexOf('<cac:TaxTotal>'));
+    });
+
+    test('buildCreditNoteXml omits cac:Delivery when there is none', () => {
+        const creditNoteObj = parseCreditNote(sampleCreditNoteXml);
+        creditNoteObj.Delivery = undefined;
+
+        expect(buildCreditNoteXml(creditNoteObj)).not.toContain('<cac:Delivery>');
+    });
+});

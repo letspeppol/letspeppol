@@ -18,6 +18,14 @@ export class ProductContext {
         this.selectedProduct = undefined;
     }
 
+    clearAccountCache() {
+        this.selectedProduct = undefined;
+        this.selectedProductCategory = undefined;
+        this.products = undefined;
+        this.productCategories = [];
+        this.productCategoryMap.clear();
+    }
+
     replaceProduct(currentProduct: ProductDto, newProduct: ProductDto) {
         let index = this.products.findIndex(item => item === currentProduct);
         if (index > -1) {

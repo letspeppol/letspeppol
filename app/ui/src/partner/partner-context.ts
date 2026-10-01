@@ -28,15 +28,17 @@ export class PartnerContext {
         this.selectedPartner = undefined;
     }
 
+    clearAccountCache() {
+        this.selectedPartner = undefined;
+        this.partners = [];
+        this.filteredPartners = [];
+    }
+
     replacePartner(currentPartner: PartnerDto, newPartner: PartnerDto) {
         let index = this.partners.findIndex(item => item === currentPartner);
         if (index > -1) {
             this.partners.splice(index, 1, newPartner);
         }
-        // index = this.filteredPartners.findIndex(item => item === currentPartner);
-        // if (index > -1) {
-        //     this.filteredPartners.splice(index, 1, newPartner);
-        // }
     }
 
     addPartner(partner) {

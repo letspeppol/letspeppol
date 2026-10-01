@@ -168,6 +168,7 @@
     },
     "success": "Succès",
     "upload": {
+      "not-ubl": "Ce fichier n'est pas une facture ou une note de crédit UBL",
       "size-too-large": "La taille totale des fichiers ne peut pas dépasser 10 Mo",
       "type-unsupported": "Type de fichier non pris en charge",
       "upload-error": "Erreur lors du téléversement du fichier"
@@ -320,6 +321,7 @@
   },
   "invoice": {
     "action": {
+      "credit-this-invoice": "Créer une note de crédit pour cette facture",
       "mark-paid": {
         "CREDIT_NOTE": "Marquer la note de crédit comme payée",
         "INVOICE": "Marquer la facture comme payée"
@@ -513,6 +515,11 @@
       "vat": "TVA"
     },
     "title": "Factures",
+    "uploadModal": {
+      "drop": "Déposez un fichier UBL ici",
+      "hint": "Une facture ou une note de crédit : le type de document est lu dans le fichier.",
+      "title": "Téléverser un UBL"
+    },
     "validationModal": {
       "error-count": "Nombre d'erreurs",
       "title": "Validation"

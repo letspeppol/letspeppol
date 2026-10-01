@@ -169,6 +169,7 @@
     },
     "success": "Success",
     "upload": {
+      "not-ubl": "This file is not a UBL invoice or credit note",
       "size-too-large": "Sum of all file sizes can not be more than 10MB",
       "type-unsupported": "File type not supported",
       "upload-error": "Error uploading file"
@@ -321,6 +322,7 @@
   },
   "invoice": {
     "action": {
+      "credit-this-invoice": "Create a credit note for this invoice",
       "mark-paid": {
         "CREDIT_NOTE": "Mark credit note as paid",
         "INVOICE": "Mark invoice as paid"
@@ -516,6 +518,11 @@
       "vat": "VAT"
     },
     "title": "Invoices",
+    "uploadModal": {
+      "drop": "Drop a UBL file here",
+      "hint": "An invoice or a credit note: the document type is read from the file.",
+      "title": "Upload UBL"
+    },
     "validationModal": {
       "error-count": "Error count",
       "title": "Validation"
