@@ -771,10 +771,23 @@
     "upper": "Au moins 1 majuscule"
   },
   "paymentTerms": {
-    "15_DAYS": "15 jours",
-    "30_DAYS": "30 jours",
-    "60_DAYS": "60 jours",
-    "END_OF_NEXT_MONTH": "Fin du mois"
+    "basis": {
+      "END_OF_MONTH": "après fin de mois",
+      "END_OF_NEXT_MONTH": "après fin du mois suivant",
+      "INVOICE_DATE": "après la date de facture"
+    },
+    "basis-label": "Compté à partir de",
+    "days-label": "Jours",
+    "end-of-month": "Fin de mois",
+    "end-of-month-days_one": "{{days}} jour après fin de mois",
+    "end-of-month-days_other": "{{days}} jours après fin de mois",
+    "end-of-next-month": "Fin du mois suivant",
+    "end-of-next-month-days_one": "{{days}} jour après fin du mois suivant",
+    "end-of-next-month-days_other": "{{days}} jours après fin du mois suivant",
+    "net_one": "{{days}} jour",
+    "net_other": "{{days}} jours",
+    "on-receipt": "Payable à réception",
+    "partner-hint": "Laissez vide pour utiliser vos propres conditions de paiement."
   },
   "placeholder": {
     "customer-search": "Recherche par nom ou TVA",

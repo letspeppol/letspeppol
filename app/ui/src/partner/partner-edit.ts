@@ -3,7 +3,6 @@ import {IEventAggregator} from "aurelia";
 import {resolve} from "@aurelia/kernel";
 import {PartnerService} from "../services/app/partner-service";
 import {PartnerContext} from "./partner-context";
-import {Account} from "../account/account";
 import {countryListAlpha2} from "../app/countries"
 import {normalizeEnterpriseNumber, normalizeVatNumber} from "./vat-normalizer";
 import {CompanySearchService} from "../services/kyc/company-search-service";
@@ -33,10 +32,6 @@ export class PartnerEdit {
         } catch {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.partner.update-failed')});
         }
-    }
-
-    getPaymentTerms() {
-        return Account.PAYMENT_TERMS;
     }
 
     peppolIdChanged() {

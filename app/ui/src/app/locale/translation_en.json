@@ -774,10 +774,23 @@
     "upper": "At least 1 uppercase letter"
   },
   "paymentTerms": {
-    "15_DAYS": "15 days",
-    "30_DAYS": "30 days",
-    "60_DAYS": "60 days",
-    "END_OF_NEXT_MONTH": "End of the month"
+    "basis": {
+      "END_OF_MONTH": "after end of month",
+      "END_OF_NEXT_MONTH": "after end of next month",
+      "INVOICE_DATE": "after invoice date"
+    },
+    "basis-label": "Counted from",
+    "days-label": "Days",
+    "end-of-month": "End of month",
+    "end-of-month-days_one": "{{days}} day after end of month",
+    "end-of-month-days_other": "{{days}} days after end of month",
+    "end-of-next-month": "End of next month",
+    "end-of-next-month-days_one": "{{days}} day after end of next month",
+    "end-of-next-month-days_other": "{{days}} days after end of next month",
+    "net_one": "{{days}} day",
+    "net_other": "{{days}} days",
+    "on-receipt": "Due on receipt",
+    "partner-hint": "Leave empty to use your own payment terms."
   },
   "placeholder": {
     "customer-search": "Search by name or VAT number",

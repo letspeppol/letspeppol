@@ -16,8 +16,58 @@ import {CompanyService} from "../services/app/company-service";
 import {DocumentType} from "../services/app/invoice-service";
 import {I18N} from "@aurelia/i18n";
 import {createNotSubjectToVatCategory, createVatExemptCategory, isVatExemptRuleset} from "../services/app/vat-rules";
+import {
+    DEFAULT_PAYMENT_TERM,
+    MAX_PAYMENT_TERM_DAYS,
+    PAYMENT_TERM_BASES,
+    PaymentTerm,
+    calculateDueDate,
+    formatPaymentTermCode,
+    parsePaymentTermCode,
+    preferredTerm,
+} from "../services/app/payment-terms";
 
 export const GENERATED_INVOICE = 'generated_invoice';
+
+const PAYMENT_TERM_LOCALES = ['en', 'fr', 'nl', 'de'];
+
+const CREDIT_NOTE_PAYMENT_TERM = 'NET_15';
+
+const DAYS_PLACEHOLDER = '\u0001';
+
+const PLURAL_SAMPLES = new Map<string, number[]>();
+
+function pluralSamples(locale: string): number[] {
+    let samples = PLURAL_SAMPLES.get(locale);
+    if (!samples) {
+        const rules = new Intl.PluralRules(locale);
+        const byForm = new Map<string, number>();
+        for (let days = 1; days <= MAX_PAYMENT_TERM_DAYS; days++) {
+            const form = rules.select(days);
+            if (!byForm.has(form)) {
+                byForm.set(form, days);
+            }
+        }
+        samples = [...byForm.values()];
+        PLURAL_SAMPLES.set(locale, samples);
+    }
+    return samples;
+}
+
+function escapeRegExp(value: string): string {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function paymentTermKey(term: PaymentTerm): string {
+    switch (term.basis) {
+        case 'END_OF_MONTH':
+            return term.days === 0 ? 'paymentTerms.end-of-month' : 'paymentTerms.end-of-month-days';
+        case 'END_OF_NEXT_MONTH':
+            return term.days === 0 ? 'paymentTerms.end-of-next-month' : 'paymentTerms.end-of-next-month-days';
+        default:
+            return term.days === 0 ? 'paymentTerms.on-receipt' : 'paymentTerms.net';
+    }
+}
 
 @singleton()
 export class InvoiceComposer {
@@ -34,7 +84,55 @@ export class InvoiceComposer {
     }
 
     public translatePaymentTerm(paymentTerm: string) {
-        return this.i18n.tr(`paymentTerms.${paymentTerm}`)
+        const term = parsePaymentTermCode(paymentTerm);
+        return term ? this.translateTerm(term) : paymentTerm;
+    }
+
+    private translateTerm(term: PaymentTerm, locale?: string) {
+        const options: Record<string, unknown> = {days: term.days};
+        if (term.days > 0) {
+            options.count = term.days;
+        }
+        if (locale) {
+            options.lng = locale;
+        }
+        return this.i18n.tr(paymentTermKey(term), options);
+    }
+
+    public derivePaymentTermCode(issueDate: string, dueDate?: string, note?: string): string | undefined {
+        const fromNote = this.parsePaymentTermNote(note);
+        if (fromNote && (!dueDate || calculateDueDate(fromNote, issueDate) === dueDate)) {
+            return formatPaymentTermCode(fromNote);
+        }
+        const derived = dueDate ? preferredTerm(issueDate, dueDate) : undefined;
+        return derived ? formatPaymentTermCode(derived) : undefined;
+    }
+
+    private parsePaymentTermNote(note?: string): PaymentTerm | undefined {
+        const trimmed = note?.trim();
+        if (!trimmed) {
+            return undefined;
+        }
+        for (const locale of PAYMENT_TERM_LOCALES) {
+            for (const basis of PAYMENT_TERM_BASES) {
+                if (this.translateTerm({days: 0, basis}, locale) === trimmed) {
+                    return {days: 0, basis};
+                }
+                for (const sample of pluralSamples(locale)) {
+                    const template = this.i18n.tr(paymentTermKey({days: sample, basis}), {
+                        count: sample,
+                        days: DAYS_PLACEHOLDER,
+                        lng: locale,
+                    });
+                    const pattern = new RegExp(`^${escapeRegExp(template).replace(DAYS_PLACEHOLDER, '(\\d{1,3})')}$`);
+                    const days = Number(pattern.exec(trimmed)?.[1]);
+                    if (Number.isInteger(days) && days > 0 && days <= MAX_PAYMENT_TERM_DAYS) {
+                        return {days, basis};
+                    }
+                }
+            }
+        }
+        return undefined;
     }
 
     createInvoice(): Invoice {
@@ -102,29 +200,16 @@ export class InvoiceComposer {
     }
 
     getDueDateForCompany() {
-        if (this.companyService.myCompany.paymentTerms) {
-            return this.getDueDate(this.companyService.myCompany.paymentTerms, moment().format('YYYY-MM-DD'));
-        }
-        return moment().add(30, 'day').format('YYYY-MM-DD');
+        const issueDate = moment().format('YYYY-MM-DD');
+        const paymentTerms = this.companyService.myCompany.paymentTerms;
+        return paymentTerms
+            ? this.getDueDate(paymentTerms, issueDate)
+            : calculateDueDate(DEFAULT_PAYMENT_TERM, issueDate);
     }
 
     getDueDate(paymentTerm: string, issueDate: string) {
-        const date = moment(issueDate);
-        switch (paymentTerm) {
-            case '15_DAYS':
-                date.add(15, 'day');
-                break;
-            case '30_DAYS':
-                date.add(30, 'day');
-                break;
-            case '60_DAYS':
-                date.add(60, 'day');
-                break;
-            case 'END_OF_NEXT_MONTH':
-                date.add(1, 'month').endOf('month');
-                break;
-        }
-        return date.format('YYYY-MM-DD');
+        const term = parsePaymentTermCode(paymentTerm);
+        return (term && calculateDueDate(term, issueDate)) ?? issueDate;
     }
 
     getPaymentMeansForMyCompany(paymentMeansCode: number) : PaymentMeans {
@@ -149,7 +234,7 @@ export class InvoiceComposer {
             }
         } else if (documentType === DocumentType.CREDIT_NOTE) {
             return {
-                Note: this.translatePaymentTerm('15_DAYS')
+                Note: this.translatePaymentTerm(CREDIT_NOTE_PAYMENT_TERM)
             }
         }
         return undefined;
