@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.FactorGrantedAuthority;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
@@ -30,22 +32,25 @@ class AccountUserDetailsSerializationTest {
     private RegisteredClientRepository registeredClientRepository;
 
     private AccountUserDetails roundTrip(AccountUserDetails principal) {
+        return (AccountUserDetails) roundTrip(
+                UsernamePasswordAuthenticationToken.authenticated(principal, null, List.of())).getPrincipal();
+    }
+
+    private UsernamePasswordAuthenticationToken roundTrip(UsernamePasswordAuthenticationToken authentication) {
+        AccountUserDetails principal = (AccountUserDetails) authentication.getPrincipal();
         RegisteredClient client = registeredClientRepository.findByClientId("letspeppol-ui");
         OAuth2Authorization authorization = OAuth2Authorization.withRegisteredClient(client)
                 .id(UUID.randomUUID().toString())
                 .principalName(principal.getUsername())
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .attribute(java.security.Principal.class.getName(),
-                        UsernamePasswordAuthenticationToken.authenticated(principal, null, List.of()))
+                .attribute(java.security.Principal.class.getName(), authentication)
                 .build();
 
         authorizationService.save(authorization);
         try {
             OAuth2Authorization stored = authorizationService.findById(authorization.getId());
             assertThat(stored).isNotNull();
-            UsernamePasswordAuthenticationToken authentication =
-                    stored.getAttribute(java.security.Principal.class.getName());
-            return (AccountUserDetails) authentication.getPrincipal();
+            return stored.getAttribute(java.security.Principal.class.getName());
         } finally {
             authorizationService.remove(authorization);
         }
@@ -81,5 +86,24 @@ class AccountUserDetailsSerializationTest {
         assertThat(restored.getAccountId()).isEqualTo(original.getAccountId());
         assertThat(restored.getUsername()).isEqualTo(original.getUsername());
         assertThat(restored.isTotpEnabled()).isEqualTo(original.isTotpEnabled());
+    }
+
+    @Test
+    void authenticationFactorsSurviveTheAuthorizationStore() {
+        List<GrantedAuthority> factors = List.of(
+                FactorGrantedAuthority.fromAuthority(FactorGrantedAuthority.PASSWORD_AUTHORITY),
+                FactorGrantedAuthority.fromAuthority(SecurityContextHelper.TOTP_AUTHORITY),
+                FactorGrantedAuthority.fromAuthority(FactorGrantedAuthority.WEBAUTHN_AUTHORITY));
+
+        UsernamePasswordAuthenticationToken restored = roundTrip(
+                UsernamePasswordAuthenticationToken.authenticated(principal(false, true), null, factors));
+
+        assertThat(restored.getAuthorities())
+                .allSatisfy(authority -> assertThat(authority).isInstanceOf(FactorGrantedAuthority.class))
+                .extracting(GrantedAuthority::getAuthority)
+                .containsExactlyInAnyOrder(
+                        FactorGrantedAuthority.PASSWORD_AUTHORITY,
+                        SecurityContextHelper.TOTP_AUTHORITY,
+                        FactorGrantedAuthority.WEBAUTHN_AUTHORITY);
     }
 }

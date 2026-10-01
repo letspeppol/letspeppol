@@ -24,6 +24,7 @@ import org.letspeppol.kyc.service.TotpService;
 import org.letspeppol.kyc.service.jwt.JwtClaimExtractor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.authority.FactorGrantedAuthority;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -121,7 +122,8 @@ public class TotpController {
         }
 
         loginAttemptService.recordSuccess(attemptKey);
-        SecurityContextHelper.establishSession(account, httpRequest);
+        SecurityContextHelper.establishSession(account, httpRequest,
+                FactorGrantedAuthority.PASSWORD_AUTHORITY, SecurityContextHelper.TOTP_AUTHORITY);
         session.removeAttribute(TotpAuthenticationSuccessHandler.TOTP_PENDING_ACCOUNT_ID);
         requestCache.removeRequest(httpRequest, httpResponse);
 

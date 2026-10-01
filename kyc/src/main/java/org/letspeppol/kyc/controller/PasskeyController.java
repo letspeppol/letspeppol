@@ -22,6 +22,7 @@ import org.letspeppol.kyc.service.PasskeyService;
 import org.letspeppol.kyc.service.jwt.JwtClaimExtractor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.authority.FactorGrantedAuthority;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -125,7 +126,7 @@ public class PasskeyController {
             return authenticationFailed();
         }
 
-        SecurityContextHelper.establishSession(account, request);
+        SecurityContextHelper.establishSession(account, request, FactorGrantedAuthority.WEBAUTHN_AUTHORITY);
         request.getSession().removeAttribute(TotpAuthenticationSuccessHandler.TOTP_PENDING_ACCOUNT_ID);
         requestCache.removeRequest(request, httpResponse);
 
