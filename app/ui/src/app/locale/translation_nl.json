@@ -425,6 +425,11 @@
       "apply": "Toepassen",
       "clear": "Wissen",
       "from": "Van",
+      "status": {
+        "all": "Alle statussen",
+        "paid": "Betaald",
+        "unpaid": "Niet betaald"
+      },
       "to": "Tot"
     },
     "incoming": "Inkomend",

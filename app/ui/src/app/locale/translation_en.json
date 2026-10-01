@@ -428,6 +428,11 @@
       "apply": "Apply",
       "clear": "Clear",
       "from": "From",
+      "status": {
+        "all": "All statuses",
+        "paid": "Paid",
+        "unpaid": "Unpaid"
+      },
       "to": "To"
     },
     "incoming": "Incoming",
