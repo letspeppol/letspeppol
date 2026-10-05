@@ -15,7 +15,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.authorization.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -107,6 +106,7 @@ public class SecurityConfig {
         // resource server, which would run this on every /sapi/** request.
         ActingOwnershipAuthorizationRequestConverter actingOwnershipAuthorizationRequestConverter =
                 new ActingOwnershipAuthorizationRequestConverter(ownershipRepository);
+        BrowserAuthorizationErrorHandler browserErrorHandler = new BrowserAuthorizationErrorHandler(uiLoginUrl());
 
         OAuth2AuthorizationServerConfigurer configurer = new OAuth2AuthorizationServerConfigurer();
 
@@ -120,10 +120,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.ignoringRequestMatchers(configurer.getEndpointsMatcher()))
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .with(configurer, c -> {
-                    c.oidc(Customizer.withDefaults());
+                    c.oidc(oidc -> oidc.logoutEndpoint(logout -> logout.errorResponseHandler(browserErrorHandler)));
                     c.authorizationEndpoint(endpoint -> endpoint
                             .authorizationRequestConverter(actingOwnershipAuthorizationRequestConverter)
-                            .errorResponseHandler(new BrowserAuthorizationErrorHandler(uiLoginUrl())));
+                            .errorResponseHandler(browserErrorHandler));
                 })
                 .exceptionHandling(e -> e.defaultAuthenticationEntryPointFor(
                         new LoginUrlAuthenticationEntryPoint(uiLoginUrl()),
