@@ -17,6 +17,7 @@ import {I18N} from "@aurelia/i18n";
 import {CompanyService} from "../../services/app/company-service";
 import {currentOwnershipRoute} from "../../services/app/ownership-route";
 import {parseCreditNote, parseInvoice} from "../../services/peppol/ubl-parser";
+import {OwnershipService} from "../../services/app/ownership-service";
 
 type SortDirection = "asc" | "desc";
 type StatusFilter = "ALL" | "UNPAID" | "OVERDUE" | "PAID" | "ERROR";
@@ -31,6 +32,7 @@ export class InvoiceOverview {
     private router = resolve(IRouter);
     private readonly i18n = resolve(I18N);
     private readonly companyService = resolve(CompanyService);
+    private readonly ownershipService = resolve(OwnershipService);
     private readonly vatDisplay = resolve(IVatDisplay);
     vatMode: VatDisplayMode = getVatDisplayMode(this.companyService.myCompany?.vatNumber, this.vatDisplay.mode);
     query: DocumentQuery = {pageable: {page: 0, size: 20, sort: [{property: 'issueDate', direction: 'desc'}]}}; 

@@ -28,7 +28,9 @@ public class SignerAccountResolverService {
         }
 
         EmailVerification emailVerification = activationService.getPendingVerification(signingRequest.email(), signingRequest.peppolId());
-        Account account = accountService.findByEmail(emailVerification.getEmail()).orElseGet(() -> accountService.createPendingAccount(emailVerification.getEmail(), fullName));
+        Account account = accountService.findByEmail(emailVerification.getEmail())
+                .map(existing -> accountService.renameUnlessVerified(existing, fullName))
+                .orElseGet(() -> accountService.createPendingAccount(emailVerification.getEmail(), fullName));
         return new SignerResolution(account, emailVerification.getType());
     }
 

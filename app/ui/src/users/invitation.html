@@ -1,0 +1,41 @@
+<import from="../components/view/wizard-view"></import>
+<import from="../components/choose-password/choose-password"></import>
+
+<wizard-view>
+    <h1 au-slot="header" t="invitation.title">Join your company</h1>
+    <p if.bind="verifying" t="invitation.loading">Checking your invitation…</p>
+    <div if.bind="accepted" class="auth-form">
+        <p t="invitation.accepted" t-params.bind="{company: info.companyName}">You now have access. Log in to continue.</p>
+        <div class="auth-actions">
+            <a class="btn primary" href="../login" t="login.action">Log in</a>
+        </div>
+    </div>
+    <form if.bind="info && !accepted" class="auth-form" submit.trigger="accept()">
+        <p t="invitation.intro" t-params.bind="{company: info.companyName}">You have been invited to work for this company on Let's Peppol.</p>
+        <div style="display: grid; gap: var(--space-1)">
+            <label class="field full">
+                <span t="label.company-name">Company name</span>
+                <input name="invitation-company" type="text" readonly value.bind="info.companyName" />
+            </label>
+            <label class="field full">
+                <span t="label.email">Email</span>
+                <input name="invitation-email" type="text" readonly value.bind="info.email" />
+            </label>
+        </div>
+        <template if.bind="info.passwordRequired">
+            <p t="invitation.choose-password">Choose a password for your new account.</p>
+            <choose-password component.ref="choosePassword" password.two-way="password" confirm-password.two-way="confirmPassword"></choose-password>
+        </template>
+        <p else t="invitation.existing-account">You already have an account with this email address. Your password stays the same.</p>
+        <p if.bind="errorText" class="form-error">${errorText}</p>
+        <div class="auth-actions">
+            <button type="submit" class="btn primary"
+                    disabled.bind="submitting || (info.passwordRequired && (!password || !choosePassword || !choosePassword.rules.matchOk || !choosePassword.rules.pwStrong))"
+                    t="invitation.accept">Accept invitation</button>
+        </div>
+    </form>
+    <template if.bind="!verifying && !info">
+        <p class="form-error">${errorText}</p>
+        <p class="auth-alt"><a href="../login" t="invitation.back-to-login">Back to log in</a></p>
+    </template>
+</wizard-view>

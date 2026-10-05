@@ -31,7 +31,7 @@
             <li class="donations-view-more" t="common.view-more">view more&hellip;</li>
         </ul>
     </button>
-    <button type="button" class="donations-action donations-action-button" title="Sponsor Let’s Peppol" click.trigger="showSponsorPaymentModal()">
+    <button if.bind="ownershipService.admin" type="button" class="donations-action donations-action-button" title="Sponsor Let’s Peppol" click.trigger="showSponsorPaymentModal()">
         <span class="sponsor-button">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                  stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-hand-heart">

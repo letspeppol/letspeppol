@@ -52,6 +52,9 @@ export class ApplicationView {
     }
 
     notPeppolActiveAction() {
+        if (!this.ownershipService.admin) {
+            return;
+        }
         if (this.currentRoute.path.endsWith('/account')) {
             this.ea.publish('account:register');
             return;

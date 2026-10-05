@@ -59,4 +59,13 @@ class RateLimiterServiceTest {
         s.checkPasswordReset("d@example.com");
         assertThrows(TooManyRequestsException.class, () -> s.checkPasswordReset("d@example.com"));
     }
+
+    @Test
+    void invitationsAreLimitedPerCompanyAndLeaveRegistrationEmailsAlone() {
+        RateLimiterService s = newLimiter(10, 300, 1, 3600);
+        s.checkInvitation(1L, "invited@example.com");
+        assertThrows(TooManyRequestsException.class, () -> s.checkInvitation(1L, "Invited@Example.com"));
+        assertDoesNotThrow(() -> s.checkInvitation(2L, "invited@example.com"));
+        assertDoesNotThrow(() -> s.checkActivation("invited@example.com"));
+    }
 }

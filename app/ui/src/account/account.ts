@@ -234,6 +234,9 @@ export class Account {
     }
 
     setVatRuleset(isExempt: boolean) {
+        if (!this.ownershipService.granted.COMPANY_SETTINGS) {
+            return;
+        }
         this.company.vatRuleset = isExempt ? 'VAT_EXEMPT_ART_56BIS' : 'VAT_REGISTERED';
     }
 
@@ -284,7 +287,7 @@ export class Account {
     }
 
     async saveAccount() {
-        if (this.accountSaving) return;
+        if (!this.ownershipService.granted.COMPANY_SETTINGS || this.accountSaving) return;
         this.accountSaving = true;
         try {
             this.ea.publish('showOverlay', this.i18n.tr('overlay.saving'));

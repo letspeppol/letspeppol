@@ -4,10 +4,12 @@ import {SponsorDto, SponsorService} from "../../services/app/sponsor-service";
 import {SponsorPaymentModal} from "./sponsor-payment-modal";
 import {IRouter} from "@aurelia/router";
 import {currentOwnershipRoute} from "../../services/app/ownership-route";
+import {OwnershipService} from "../../services/app/ownership-service";
 
 export class Donations {
     private statisticsService = resolve(StatisticsService);
     private sponsorService = resolve(SponsorService);
+    private readonly ownershipService = resolve(OwnershipService);
     private router = resolve(IRouter);
     private accountInfo: DonationStatsDto;
     private sponsors: SponsorDto[] = [];
@@ -64,6 +66,9 @@ export class Donations {
     }
 
     showSponsorPaymentModal() {
+        if (!this.ownershipService.admin) {
+            return;
+        }
         this.sponsorPaymentModal.showModal();
     }
 

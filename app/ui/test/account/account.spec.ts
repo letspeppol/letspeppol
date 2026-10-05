@@ -34,7 +34,7 @@ interface AccountHarness {
     warningKey?: string;
     alreadyRegisteredProvider: string;
     vatDisplay: {mode: string; setMode: ReturnType<typeof vi.fn>};
-    ownershipService: {getCurrentOwnershipType: ReturnType<typeof vi.fn>};
+    ownershipService: {getCurrentOwnershipType: ReturnType<typeof vi.fn>; granted: {COMPANY_SETTINGS: boolean}};
     peppolSettings?: PeppolSettings;
     peppolSettingsFailed: boolean;
     receivingBlocked: boolean;
@@ -79,7 +79,7 @@ function createAccountHarness(): AccountHarness {
     account.accessPointLoading = true;
     account.registrationRequest = 0;
     account.vatDisplay = {mode: 'excl', setMode: vi.fn()};
-    account.ownershipService = {getCurrentOwnershipType: vi.fn().mockReturnValue('ADMIN')};
+    account.ownershipService = {getCurrentOwnershipType: vi.fn().mockReturnValue('ADMIN'), granted: {COMPANY_SETTINGS: true}};
     account.accountSaving = false;
     account.confirmationModalContext = {showConfirmationModal: vi.fn()};
     account.accountRequest = 0;

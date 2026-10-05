@@ -3,6 +3,7 @@ package org.letspeppol.proxy.util;
 import org.letspeppol.proxy.config.SecurityConfig;
 import org.letspeppol.proxy.exception.SecurityException;
 import org.letspeppol.proxy.model.AccountType;
+import org.letspeppol.proxy.model.CompanyPermission;
 import org.springframework.security.oauth2.jwt.Jwt;
 
 import java.util.UUID;
@@ -43,6 +44,13 @@ public class JwtUtil {
             throw new SecurityException("Peppol ID not present");
         }
         return peppolId;
+    }
+
+    public static int getPermissionMask(Jwt jwt) {
+        if (jwt.getClaim(SecurityConfig.PERMISSION_MASK) instanceof Number mask) {
+            return mask.intValue() & CompanyPermission.ALL;
+        }
+        return CompanyPermission.withoutClaim(jwt.getClaimAsString(SecurityConfig.ACCOUNT_TYPE));
     }
 
 }

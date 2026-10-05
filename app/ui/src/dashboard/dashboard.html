@@ -12,7 +12,10 @@
         <span class="kpi-error-count">${erroredCount}</span>
         <span class="label" t="dashboard.errored"></span>
     </div>
-    <div class="dashboard-grid">
+    <div if.bind="!ownershipService.granted.INVOICE_READ" class="card empty-state">
+        <p t="dashboard.no-invoice-access">You do not have access to the invoice figures of this company.</p>
+    </div>
+    <div else class="dashboard-grid">
         <div class="card kpi-card">
             <h3 style="text-align: center">Income</h3>
             <div class="card kpi-card kpi-header">

@@ -30,6 +30,7 @@ import {collectVatReasonSelections} from "../../services/app/vat-rules";
 import {isInvoiceValid} from "./invoice-validation";
 import {currentOwnershipRoute} from "../../services/app/ownership-route";
 import {InvoiceAllowanceChargeModal} from "./components/modals/invoice-allowance-charge-modal";
+import {OwnershipService} from "../../services/app/ownership-service";
 
 export class InvoiceEdit {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -37,6 +38,7 @@ export class InvoiceEdit {
     private invoiceContext = resolve(InvoiceContext);
     private invoiceComposer = resolve(InvoiceComposer);
     private partnerService = resolve(PartnerService);
+    private readonly ownershipService = resolve(OwnershipService);
     private router = resolve(IRouter);
     private readonly i18n = resolve(I18N);
     private newInvoiceSubscription: IDisposable;
@@ -133,10 +135,16 @@ export class InvoiceEdit {
     }
 
     markErrorSeen() {
+        if (!this.ownershipService.granted.INVOICE_STATUS) {
+            return;
+        }
         return this.invoiceContext.markErrorSeen(this.invoiceContext.selectedDocument);
     }
 
     async resendErrored() {
+        if (!this.ownershipService.granted.INVOICE_SEND) {
+            return;
+        }
         const draft = await this.invoiceContext.createDraftFromErrored(this.invoiceContext.selectedDocument);
         if (draft) {
             this.router.load(currentOwnershipRoute(`/invoices/${draft.id}`));
@@ -158,6 +166,9 @@ export class InvoiceEdit {
     }
 
     async verifyNumberAndSend() {
+        if (!this.ownershipService.granted.INVOICE_SEND) {
+            return;
+        }
         if (!this.invoiceContext.selectedInvoice.ID) {
             this.invoiceNumberModal.showModal(() => this.sendInvoice());
         } else {
@@ -221,6 +232,9 @@ export class InvoiceEdit {
     }
 
     async saveAsDraft(returnToOverview: boolean = true) {
+        if (!this.ownershipService.granted.INVOICE_DRAFT) {
+            return;
+        }
         const type = this.selectedDocumentType;
         try {
             const xml = this.buildXml();
@@ -400,6 +414,9 @@ export class InvoiceEdit {
     }
 
     savePartner() {
+        if (!this.ownershipService.granted.PARTNER_MANAGE) {
+            return;
+        }
         const partner = this.invoiceContext.mapPartner(this.invoiceContext.partnerParty);
         this.partnerService.createPartner(partner)
             .then(() => {

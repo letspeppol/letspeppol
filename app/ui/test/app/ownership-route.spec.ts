@@ -30,6 +30,12 @@ describe('ownership routes', () => {
         expect(getPeppolIdFromPath('/callback?code=abc')).toBeNull();
     });
 
+    it('recognises the downloads and users screens as company routes', () => {
+        expect(getPeppolIdFromPath('/0208:0123456789/downloads')).toBe('0208:0123456789');
+        expect(getPeppolIdFromPath('/0208:0123456789/users')).toBe('0208:0123456789');
+        expect(getPeppolIdFromPath('/invitation')).toBeNull();
+    });
+
     it('keeps a bookmarked deep link through the login callback', () => {
         history.replaceState({}, '', '/0208:0123456789/invoices/17?box=sent#details');
         rememberCurrentNavigation();
