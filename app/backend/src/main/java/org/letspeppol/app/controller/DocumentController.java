@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.letspeppol.app.dto.CompanyPermission;
 import org.letspeppol.app.dto.DocumentDetailsDto;
 import org.letspeppol.app.dto.DocumentDto;
 import org.letspeppol.app.dto.DocumentFilter;
@@ -27,6 +28,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -51,6 +53,7 @@ public class DocumentController {
     private final UblInvoicePdfService ublInvoicePdfService;
 
     @PostMapping("validate")
+    @PreAuthorize("hasAuthority('INVOICE_DRAFT')")
     @Operation(summary = "Validate UBL XML", description = "Checks whether a raw UBL XML payload is structurally and semantically valid before it is stored or sent.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Validation result", content = @Content(schema = @Schema(implementation = ValidationResultDto.class))),
@@ -66,6 +69,7 @@ public class DocumentController {
     }
 
     @GetMapping()
+    @PreAuthorize("hasAuthority('INVOICE_READ')")
     @Operation(summary = "List documents", description = "Returns the authenticated company's documents with optional filters for type, direction, partner, and workflow state.")
     public PageResponse<DocumentDto> getAll(@AuthenticationPrincipal Jwt jwt,
                                     @RequestParam(required = false) DocumentType type,
@@ -115,6 +119,7 @@ public class DocumentController {
     }
 
     @GetMapping("{id}")
+    @PreAuthorize("hasAuthority('INVOICE_READ')")
     @Operation(summary = "Get document by id", description = "Loads one stored document visible to the authenticated company.")
     public DocumentDto getById(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
         String peppolId = JwtUtil.getPeppolId(jwt);
@@ -122,6 +127,7 @@ public class DocumentController {
     }
 
     @GetMapping("{id}/details")
+    @PreAuthorize("hasAuthority('INVOICE_READ')")
     @Operation(summary = "Get document details", description = "Returns the extended UBL-derived details used by the document editor and detail view.")
     public DocumentDetailsDto getDetails(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
         String peppolId = JwtUtil.getPeppolId(jwt);
@@ -129,6 +135,7 @@ public class DocumentController {
     }
 
     @PostMapping()
+    @PreAuthorize("hasAuthority('INVOICE_DRAFT')")
     @Operation(summary = "Create document", description = "Creates a new document from UBL XML. If the company is not yet Peppol-active, the document is forced into draft mode.")
     public DocumentDto create(@AuthenticationPrincipal Jwt jwt,
                               @RequestBody String ublXml,
@@ -139,11 +146,15 @@ public class DocumentController {
         if (!JwtUtil.isPeppolActive(jwt)) {
             draft = true;
         }
+        if (!draft) {
+            JwtUtil.requirePermission(jwt, CompanyPermission.INVOICE_SEND);
+        }
         String peppolId = JwtUtil.getPeppolId(jwt);
         return documentService.createFromUbl(peppolId, ublXml, draft, schedule, createdExternally, jwt.getTokenValue());
     }
 
     @PutMapping("{id}")
+    @PreAuthorize("hasAuthority('INVOICE_DRAFT')")
     @Operation(summary = "Update document", description = "Updates an existing document's UBL payload and send scheduling information.")
     public DocumentDto update(@AuthenticationPrincipal Jwt jwt,
                               @PathVariable UUID id,
@@ -154,11 +165,15 @@ public class DocumentController {
         if (!JwtUtil.isPeppolActive(jwt)) {
             draft = true;
         }
+        if (!draft) {
+            JwtUtil.requirePermission(jwt, CompanyPermission.INVOICE_SEND);
+        }
         String peppolId = JwtUtil.getPeppolId(jwt);
-        return documentService.update(peppolId, id, ublXml, draft, schedule, jwt.getTokenValue());
+        return documentService.update(peppolId, id, ublXml, draft, schedule, jwt.getTokenValue(), JwtUtil.hasPermission(jwt, CompanyPermission.INVOICE_SEND));
     }
 
     @PutMapping("{id}/send")
+    @PreAuthorize("hasAuthority('INVOICE_SEND')")
     @Operation(summary = "Send or schedule document", description = "Marks a document for transmission through Peppol immediately or at a scheduled time.")
     public DocumentDto send(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestParam(required = false) Instant schedule) {
         if (!JwtUtil.isPeppolActive(jwt)) {
@@ -169,6 +184,7 @@ public class DocumentController {
     }
 
     @PutMapping("{id}/reschedule")
+    @PreAuthorize("hasAuthority('INVOICE_SEND')")
     @Operation(summary = "Reschedule document", description = "Changes the scheduled transmission time of an outbound document and propagates it to Proxy when required.")
     public DocumentDto reschedule(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestParam(required = false) Instant schedule) {
         if (!JwtUtil.isPeppolActive(jwt)) {
@@ -179,6 +195,7 @@ public class DocumentController {
     }
 
     @PutMapping("{id}/read")
+    @PreAuthorize("hasAuthority('INVOICE_STATUS')")
     @Operation(summary = "Mark document as read", description = "Updates the document workflow state to indicate it has been read by the current company.")
     public DocumentDto read(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
         String peppolId = JwtUtil.getPeppolId(jwt);
@@ -186,6 +203,7 @@ public class DocumentController {
     }
 
     @PutMapping("{id}/paid")
+    @PreAuthorize("hasAuthority('INVOICE_STATUS')")
     @Operation(summary = "Mark document as paid", description = "Updates the document workflow state to indicate it has been paid.")
     public DocumentDto paid(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
         String peppolId = JwtUtil.getPeppolId(jwt);
@@ -193,6 +211,7 @@ public class DocumentController {
     }
 
     @PutMapping("{id}/error-seen")
+    @PreAuthorize("hasAuthority('INVOICE_STATUS')")
     @Operation(summary = "Acknowledge document error", description = "Marks the current transmission error as seen so the UI no longer presents it as new.")
     public DocumentDto markErrorSeen(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
         String peppolId = JwtUtil.getPeppolId(jwt);
@@ -200,13 +219,15 @@ public class DocumentController {
     }
 
     @DeleteMapping("{id}")
+    @PreAuthorize("hasAuthority('INVOICE_DRAFT')")
     @Operation(summary = "Delete document", description = "Deletes a stored document owned by the authenticated company.")
     public void delete(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
         String peppolId = JwtUtil.getPeppolId(jwt);
-        documentService.delete(peppolId, id);
+        documentService.delete(peppolId, id, JwtUtil.isAdmin(jwt));
     }
 
     @GetMapping("{id}/pdf")
+    @PreAuthorize("hasAuthority('INVOICE_READ')")
     @Operation(summary = "Render document as PDF", description = "Generates a PDF view of the stored UBL document for preview or download.")
     public ResponseEntity<byte[]> getPdf(@AuthenticationPrincipal Jwt jwt,
                                          @PathVariable UUID id,

@@ -52,7 +52,7 @@
                             <input type="search" value.bind="query.partnerName & debounce:300" placeholder="Search customer or reference" t="[placeholder]placeholder.invoice-search.customer" />
                         </label>
                     </div>
-                    <div>
+                    <div if.bind="ownershipService.granted.INVOICE_DRAFT">
                         <button class="btn primary" click.trigger="newCreditNote()" title="New invoice" t="[title]invoice.new.CREDIT_NOTE">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                 <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
@@ -172,19 +172,19 @@
                                     <span class="pill overdue" if.bind="!item.paidOn && !item.draftedOn && !item.processedStatus && isOverdue(item)" t="invoice.status.overdue">Overdue</span>
                                 </td>
                                 <td class="actions-col">
-                                    <button if.bind="invoiceContext.activeBox === 'DRAFTS'" class="icon-btn" title="Remove" t="[title]common.remove" click.trigger="deleteDraft($event, item)">
+                                    <button if.bind="invoiceContext.activeBox === 'DRAFTS' && ownershipService.granted.INVOICE_DRAFT" class="icon-btn" title="Remove" t="[title]common.remove" click.trigger="deleteDraft($event, item)">
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-icon lucide-trash"><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                                     </button>
-                                    <button if.bind="item.paidOn" class="icon-btn" title="Mark invoice as unpaid" t="[title]invoice.action.mark-unpaid.${item.type}" disabled.bind="!!item.processedStatus" click.trigger="markPaid($event, item)">
+                                    <button if.bind="item.paidOn && ownershipService.granted.INVOICE_STATUS" class="icon-btn" title="Mark invoice as unpaid" t="[title]invoice.action.mark-unpaid.${item.type}" disabled.bind="!!item.processedStatus" click.trigger="markPaid($event, item)">
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-undo-2"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5 5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
                                     </button>
-                                    <button if.bind="!item.paidOn && !item.draftedOn" class="icon-btn success" title="Mark invoice as paid" t="[title]invoice.action.mark-paid.${item.type}" disabled.bind="!!item.processedStatus" click.trigger="markPaid($event, item)">
+                                    <button if.bind="!item.paidOn && !item.draftedOn && ownershipService.granted.INVOICE_STATUS" class="icon-btn success" title="Mark invoice as paid" t="[title]invoice.action.mark-paid.${item.type}" disabled.bind="!!item.processedStatus" click.trigger="markPaid($event, item)">
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-banknote"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01"/><path d="M18 12h.01"/></svg>
                                     </button>
-                                    <button if.bind="item.direction === 'OUTGOING' && item.processedStatus && !item.errorSeenOn && !item.draftedOn" class="icon-btn" title="Reuse and resend" t="[title]invoice.action.resend.${item.type}" click.trigger="resendErrored($event, item)">
+                                    <button if.bind="item.direction === 'OUTGOING' && item.processedStatus && !item.errorSeenOn && !item.draftedOn && ownershipService.granted.INVOICE_SEND" class="icon-btn" title="Reuse and resend" t="[title]invoice.action.resend.${item.type}" click.trigger="resendErrored($event, item)">
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-cw"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
                                     </button>
-                                    <button if.bind="item.direction === 'OUTGOING' && item.processedStatus && !item.errorSeenOn && !item.draftedOn" class="icon-btn" title="Mark as seen" t="[title]invoice.action.mark-seen" click.trigger="markErrorSeen($event, item)">
+                                    <button if.bind="item.direction === 'OUTGOING' && item.processedStatus && !item.errorSeenOn && !item.draftedOn && ownershipService.granted.INVOICE_STATUS" class="icon-btn" title="Mark as seen" t="[title]invoice.action.mark-seen" click.trigger="markErrorSeen($event, item)">
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                                     </button>
                                 </td>

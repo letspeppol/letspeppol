@@ -8,6 +8,7 @@ import org.letspeppol.app.service.ProductCategoryService;
 import org.letspeppol.app.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +26,7 @@ public class ProductCategoryController {
     private final ProductCategoryService categoryService;
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('INVOICE_READ', 'PRODUCT_MANAGE')")
     @Operation(summary = "List root categories", description = "Returns the top-level product categories for the authenticated company, optionally expanded recursively.")
     public List<ProductCategoryDto> listRoot(@AuthenticationPrincipal Jwt jwt, @RequestParam(name = "deep", defaultValue = "false") boolean deep) {
         String peppolId = JwtUtil.getPeppolId(jwt);
@@ -32,6 +34,7 @@ public class ProductCategoryController {
     }
 
     @GetMapping("/all")
+    @PreAuthorize("hasAnyAuthority('INVOICE_READ', 'PRODUCT_MANAGE')")
     @Operation(summary = "List all categories flat", description = "Returns all product categories for the authenticated company as a flat list.")
     public List<ProductCategoryDto> listAllFlat(@AuthenticationPrincipal Jwt jwt) {
         String peppolId = JwtUtil.getPeppolId(jwt);
@@ -39,6 +42,7 @@ public class ProductCategoryController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('INVOICE_READ', 'PRODUCT_MANAGE')")
     @Operation(summary = "Get category by id", description = "Returns one product category for the authenticated company, optionally with its nested children.")
     public ProductCategoryDto getCategory(@AuthenticationPrincipal Jwt jwt, @PathVariable Long id, @RequestParam(name = "deep", defaultValue = "false") boolean deep) {
         String peppolId = JwtUtil.getPeppolId(jwt);
@@ -46,6 +50,7 @@ public class ProductCategoryController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('PRODUCT_MANAGE')")
     @Operation(summary = "Create category", description = "Creates a new product category for the authenticated company.")
     public ProductCategoryDto create(@AuthenticationPrincipal Jwt jwt, @RequestBody ProductCategoryDto dto) {
         String peppolId = JwtUtil.getPeppolId(jwt);
@@ -53,6 +58,7 @@ public class ProductCategoryController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('PRODUCT_MANAGE')")
     @Operation(summary = "Update category", description = "Updates an existing product category owned by the authenticated company.")
     public ProductCategoryDto update(@AuthenticationPrincipal Jwt jwt, @PathVariable Long id, @RequestBody ProductCategoryDto dto) {
         String peppolId = JwtUtil.getPeppolId(jwt);
@@ -60,6 +66,7 @@ public class ProductCategoryController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('PRODUCT_MANAGE')")
     @Operation(summary = "Delete category", description = "Deletes a product category owned by the authenticated company.")
     public void delete(@AuthenticationPrincipal Jwt jwt, @PathVariable Long id) {
         String peppolId = JwtUtil.getPeppolId(jwt);

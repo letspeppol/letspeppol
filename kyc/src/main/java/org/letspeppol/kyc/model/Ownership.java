@@ -43,12 +43,23 @@ public class Ownership {
     @Column(nullable = false)
     private Instant lastUsed = Instant.now();
 
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(nullable = false)
+    private OwnershipStatus status = OwnershipStatus.ACTIVE;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private int permissionMask = 0;
+
     public Ownership(Account account, AccountType type, Company company) {
         this.account = account;
         this.type = type;
         this.company = company;
         this.createdOn = Instant.now();
         this.lastUsed = Instant.now();
+        this.status = OwnershipStatus.ACTIVE;
     }
 
     public Ownership() {

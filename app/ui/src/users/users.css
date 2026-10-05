@@ -1,0 +1,106 @@
+.users-intro {
+    color: var(--muted);
+    margin: var(--space-035) 0 0;
+}
+
+.users-matrix .users-user-col {
+    min-width: 13rem;
+    box-shadow: 1px 0 0 var(--border-soft);
+}
+
+.users-matrix thead .users-user-col {
+    left: 0;
+    z-index: 3;
+}
+
+.users-matrix tbody .users-user-col {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background-color: var(--panel);
+}
+
+.users-matrix tbody tr:nth-child(even) .users-user-col {
+    background-image: linear-gradient(var(--table-row-alt), var(--table-row-alt));
+}
+
+.users-matrix tbody tr:hover .users-user-col {
+    background-image: linear-gradient(var(--table-row-hover), var(--table-row-hover));
+}
+
+.users-matrix .users-permission-col {
+    min-width: 5.75rem;
+    text-align: center;
+}
+
+.users-matrix thead .users-permission-col {
+    font-size: .82rem;
+    line-height: 1.2;
+    vertical-align: bottom;
+}
+
+.users-name {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-04);
+    font-weight: 600;
+}
+
+.users-email,
+.users-meta {
+    color: var(--muted);
+    font-size: .82rem;
+    overflow-wrap: anywhere;
+}
+
+.users-check {
+    display: inline-flex;
+    padding: var(--space-035);
+    cursor: pointer;
+}
+
+.users-check input {
+    width: 1.1rem;
+    height: 1.1rem;
+    cursor: inherit;
+    accent-color: var(--primary);
+}
+
+.users-check input:disabled {
+    cursor: not-allowed;
+}
+
+.users-row-saving {
+    opacity: .6;
+}
+
+.users-note {
+    margin: 0;
+    padding: var(--space-075) var(--space-1);
+    border-top: 1px solid var(--border-soft);
+    color: var(--muted);
+    font-size: .85rem;
+}
+
+.invite-permissions {
+    display: grid;
+    gap: var(--space-05);
+    margin: 0;
+    padding: var(--space-075);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-sm);
+}
+
+.invite-permissions legend {
+    padding: 0 var(--space-035);
+    color: var(--muted);
+    font-size: .85rem;
+}
+
+@media (width <= 700px) {
+    .users-matrix .users-user-col {
+        min-width: 9rem;
+        max-width: 9rem;
+    }
+}

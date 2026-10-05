@@ -3,8 +3,10 @@ package org.letspeppol.app.service;
 import io.micrometer.core.instrument.Counter;
 import org.junit.jupiter.api.Test;
 import org.letspeppol.app.dto.CompanyDto;
+import org.letspeppol.app.mapper.CompanyMapper;
 import org.letspeppol.app.model.Company;
 import org.letspeppol.app.repository.CompanyRepository;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import reactor.netty.DisposableServer;
@@ -16,6 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -132,6 +135,48 @@ class CompanyNetworkFlowTest {
 
         assertThat(result.vatNumber()).isEqualTo("BE0123456789");
         verify(repository, never()).save(existing);
+    }
+
+    @Test
+    void nonAdminCannotToggleEmailNotificationsAndKycIsNotCalled() {
+        AtomicInteger requests = new AtomicInteger();
+        DisposableServer server = HttpServer.create()
+                .port(0)
+                .handle((request, response) -> {
+                    requests.incrementAndGet();
+                    return response.status(200).send();
+                })
+                .bindNow();
+
+        try {
+            Company existing = company("BE0123456789");
+            CompanyRepository repository = mock(CompanyRepository.class);
+            when(repository.findByPeppolId(existing.getPeppolId())).thenReturn(Optional.of(existing));
+            CompanyService service = new CompanyService(
+                    repository,
+                    WebClient.create("http://localhost:" + server.port()),
+                    mock(Counter.class));
+            CompanyDto toggled = withEmailNotification(CompanyMapper.toDto(existing, true), !existing.isEnableEmailNotification());
+
+            assertThatThrownBy(() -> service.update(toggled, true, "user-access-token", false))
+                    .isInstanceOf(AccessDeniedException.class);
+
+            assertThat(requests).hasValue(0);
+            verify(repository, never()).save(any(Company.class));
+        } finally {
+            server.disposeNow();
+        }
+    }
+
+    private static CompanyDto withEmailNotification(CompanyDto company, boolean enableEmailNotification) {
+        return new CompanyDto(
+                company.peppolId(), company.identifier(), company.vatNumber(), company.name(), company.displayName(),
+                company.subscriber(), company.subscriberEmail(), company.paymentTerms(), company.iban(), company.bic(),
+                company.paymentAccountName(), company.vatRuleset(), company.lastInvoiceReference(),
+                company.lastCreditNoteReference(), company.peppolActive(), enableEmailNotification,
+                company.addAttachmentToNotification(), company.addPdfToSendingInvoice(),
+                company.emailNotificationCcListIncoming(), company.emailNotificationCcListOutgoing(),
+                company.companyGroup(), company.registeredOffice());
     }
 
     private static Company company(String vatNumber) {

@@ -7,7 +7,9 @@ import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.model.AccountType;
+import org.letspeppol.kyc.model.CompanyPermission;
 import org.letspeppol.kyc.model.Ownership;
+import org.letspeppol.kyc.model.OwnershipStatus;
 import org.letspeppol.kyc.repository.AccountRepository;
 import org.letspeppol.kyc.repository.OwnershipRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -358,8 +360,9 @@ public class SecurityConfig {
         };
     }
 
-    private static void addOwnershipClaims(JwtClaimsSet.Builder claims, Ownership ownership) {
+    static void addOwnershipClaims(JwtClaimsSet.Builder claims, Ownership ownership) {
         claims.claim("accountType", ownership.getType().name());
+        claims.claim("permissionMask", CompanyPermission.effectiveMask(ownership.getType(), ownership.getPermissionMask()));
         if (ownership.getCompany() != null && ownership.getCompany().getPeppolId() != null) {
             claims.claim("peppolId", ownership.getCompany().getPeppolId());
             claims.claim("peppolActive", ownership.getCompany().isPeppolActive());
@@ -399,8 +402,8 @@ public class SecurityConfig {
             throw invalidOwnershipGrant();
         }
         return ownershipRepository
-                .findFirstByAccountIdAndCompanyPeppolIdAndTypeOrderByLastUsedDesc(
-                        accountId, selectedPeppolId, selectedType)
+                .findFirstByAccountIdAndCompanyPeppolIdAndTypeAndStatusOrderByLastUsedDesc(
+                        accountId, selectedPeppolId, selectedType, OwnershipStatus.ACTIVE)
                 .orElseThrow(SecurityConfig::invalidOwnershipGrant);
     }
 

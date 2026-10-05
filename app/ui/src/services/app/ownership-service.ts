@@ -4,6 +4,13 @@ import {jwtDecode} from "jwt-decode";
 import {KYCApi} from "../kyc/kyc-api";
 import {CompanyService} from "./company-service";
 import {
+    CompanyPermission,
+    effectivePermissionMask,
+    flagsFromMask,
+    hasPermission,
+    PermissionFlags,
+} from "./company-permission";
+import {
     clearRememberedOwnership,
     getRememberedOwnershipType,
     rememberActingOwnership,
@@ -18,8 +25,11 @@ export interface OwnershipSummary {
 
 interface JwtClaims {
     peppolId?: string,
-    accountType?: string
+    accountType?: string,
+    permissionMask?: number
 }
+
+const ADMIN_ACCOUNT_TYPE = 'ADMIN';
 
 @singleton()
 export class OwnershipService {
@@ -33,6 +43,9 @@ export class OwnershipService {
     private loadingPromise: Promise<OwnershipSummary[]> | null = null;
 
     public ownerships: OwnershipSummary[] = [];
+    public permissionMask = 0;
+    public admin = false;
+    public granted: PermissionFlags = flagsFromMask(0);
 
     constructor() {
         this.restoreOwnershipsFromStorage();
@@ -41,6 +54,7 @@ export class OwnershipService {
     /** Called by LoginService whenever the access token changes (login, silent renewal, swap, logout). */
     onTokenChanged(token: string | null) {
         this.currentToken = token;
+        this.refreshPermissions();
         if (!token) {
             clearRememberedOwnership();
             this.clearOwnerships();
@@ -129,6 +143,18 @@ export class OwnershipService {
         } catch {
             return null;
         }
+    }
+
+    can(permission: CompanyPermission): boolean {
+        return hasPermission(this.permissionMask, permission);
+    }
+
+    private refreshPermissions() {
+        const claims = this.claims();
+        const accountType = claims?.peppolId ? claims.accountType : undefined;
+        this.permissionMask = accountType ? effectivePermissionMask(claims.permissionMask, accountType) : 0;
+        this.admin = accountType === ADMIN_ACCOUNT_TYPE;
+        this.granted = flagsFromMask(this.permissionMask);
     }
 
     getCurrentOwnershipKey(): string | null {

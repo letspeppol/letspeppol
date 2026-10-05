@@ -4,6 +4,8 @@ const CONTEXT_SECTIONS = new Set([
     'partners',
     'products',
     'sponsors',
+    'downloads',
+    'users',
     'account',
     'add-ownership',
 ]);

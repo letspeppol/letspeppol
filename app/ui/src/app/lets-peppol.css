@@ -1476,6 +1476,13 @@ main.container .data-table tbody td {
     background: var(--bg);
 }
 
+.readonly-fieldset {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
 /* ============================================================================
    15. Auth Forms
    ============================================================================ */

@@ -9,16 +9,21 @@ import {normalizeEnterpriseNumber, normalizeVatNumber} from "./vat-normalizer";
 import {CompanySearchService} from "../services/kyc/company-search-service";
 import {KycCompanyResponse} from "../services/kyc/registration-service";
 import {I18N} from "@aurelia/i18n";
+import {OwnershipService} from "../services/app/ownership-service";
 
 export class PartnerEdit {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
     private readonly companySearchService = resolve(CompanySearchService);
     private readonly partnerService = resolve(PartnerService);
     private readonly partnerContext = resolve(PartnerContext);
+    private readonly ownershipService = resolve(OwnershipService);
     private readonly i18n = resolve(I18N);
     private countryList = countryListAlpha2;
 
     async savePartner() {
+        if (!this.ownershipService.granted.PARTNER_MANAGE) {
+            return;
+        }
         try {
             let successKey = 'alert.partner.updated';
             if (this.partnerContext.selectedPartner.id) {

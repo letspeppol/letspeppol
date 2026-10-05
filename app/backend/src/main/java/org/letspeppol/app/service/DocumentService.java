@@ -24,6 +24,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.ClientResponse;
@@ -255,11 +256,14 @@ public class DocumentService {
 //        return DocumentMapper.toDto(document); //TODO : do we need to return something or are we only going to use this for received documents ?
     }
 
-    public DocumentDto update(String peppolId, UUID id, String ublXml, boolean draft, Instant schedule, String tokenValue) {
+    public DocumentDto update(String peppolId, UUID id, String ublXml, boolean draft, Instant schedule, String tokenValue, boolean canSend) {
         Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new NotFoundException("Company does not exist"));
         Document document = documentRepository.findById(id).orElseThrow(() -> new NotFoundException("Document does not exist"));
         if (!peppolId.equals(document.getOwnerPeppolId())) {
             throw new SecurityException(AppErrorCodes.PEPPOL_ID_MISMATCH);
+        }
+        if (!canSend && document.getDraftedOn() == null) {
+            throw new AccessDeniedException("Only a user who can send invoices can change a document that is no longer a draft");
         }
         if (document.getProcessedOn() != null) {
             throw new ConflictException("Document is already processed"); //TODO : port to 409 Conflict ?
@@ -383,7 +387,10 @@ public class DocumentService {
         return DocumentMapper.toDto(document);
     }
 
-    public void delete(String peppolId, UUID id) { //TODO : do we need to send boundaries ?
+    public void delete(String peppolId, UUID id, boolean admin) { //TODO : do we need to send boundaries ?
+        if (!admin && documentRepository.existsByIdAndOwnerPeppolIdAndDraftedOnIsNull(id, peppolId)) {
+            throw new AccessDeniedException("Only an administrator can delete a document that is no longer a draft");
+        }
         documentRepository.deleteByIdAndOwnerPeppolId(id, peppolId);
     }
 

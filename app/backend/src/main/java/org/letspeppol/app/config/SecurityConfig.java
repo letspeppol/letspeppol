@@ -1,10 +1,13 @@
 package org.letspeppol.app.config;
 
 import org.letspeppol.app.dto.AccountType;
+import org.letspeppol.app.dto.CompanyPermission;
+import org.letspeppol.app.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,6 +26,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Configuration
+@EnableMethodSecurity
 public class SecurityConfig {
 
     public static final String PEPPOL_ID = "peppolId";
@@ -30,8 +34,10 @@ public class SecurityConfig {
     public static final String COMPANY_LAST_UPDATED = "companyLastUpdated";
     public static final String UID = "uid";
     public static final String ACCOUNT_TYPE = "accountType";
+    public static final String PERMISSION_MASK = "permissionMask";
     public static final String ROLE_SERVICE = "service";
     public static final String ROLE_KYC_USER = "kyc_user";
+    public static final String ROLE_COMPANY_ADMIN = "company_admin";
 
     @Value("${cors.allowed-origins}")
     private String allowedOrigins;
@@ -91,6 +97,15 @@ public class SecurityConfig {
             Collection<GrantedAuthority> authorities = new ArrayList<>();
             if (jwt.hasClaim(PEPPOL_ID) && !AccountType.APP.name().equals(jwt.getClaimAsString(ACCOUNT_TYPE))) {
                 authorities.add(new SimpleGrantedAuthority(ROLE_KYC_USER));
+                int permissionMask = JwtUtil.getPermissionMask(jwt);
+                for (CompanyPermission permission : CompanyPermission.values()) {
+                    if (permission.in(permissionMask)) {
+                        authorities.add(new SimpleGrantedAuthority(permission.name()));
+                    }
+                }
+                if (JwtUtil.isAdmin(jwt)) {
+                    authorities.add(new SimpleGrantedAuthority(ROLE_COMPANY_ADMIN));
+                }
             }
             return authorities;
         });

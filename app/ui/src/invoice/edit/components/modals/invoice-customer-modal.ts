@@ -14,6 +14,7 @@ import {InvoiceContext} from "../../../invoice-context";
 import {InvoiceComposer} from "../../../invoice-composer";
 import {I18N} from "@aurelia/i18n";
 import {CompanyService} from "../../../../services/app/company-service";
+import {OwnershipService} from "../../../../services/app/ownership-service";
 
 export class InvoiceCustomerModal {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -22,6 +23,7 @@ export class InvoiceCustomerModal {
     private invoiceComposer = resolve(InvoiceComposer);
     private readonly i18n = resolve(I18N);
     private readonly companyService = resolve(CompanyService);
+    private readonly ownershipService = resolve(OwnershipService);
     private countryList = countryListAlpha2;
     @bindable invoiceContext: InvoiceContext;
     customerSearch: CustomerSearch;
@@ -88,7 +90,7 @@ export class InvoiceCustomerModal {
         if (this.customerSavedFunction) {
             this.customerSavedFunction();
         }
-        if (this.saveAsPartner) {
+        if (this.saveAsPartner && this.ownershipService.granted.PARTNER_MANAGE) {
             const partner = this.invoiceContext.mapPartner(this.customer);
             this.partnerService.createPartner(partner)
                 .then(() => this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.partner.created')}))

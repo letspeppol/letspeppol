@@ -81,6 +81,8 @@ public interface DocumentRepository extends JpaRepository<Document, UUID>, JpaSp
 //    @Query("DELETE FROM Document document WHERE document.id = :id AND document.company.peppolId = :peppolId")
     void deleteByIdAndOwnerPeppolId(UUID id, String peppolId);
 
+    boolean existsByIdAndOwnerPeppolIdAndDraftedOnIsNull(UUID id, String peppolId);
+
     @Query("""
         SELECT document FROM Document document
         WHERE document.ownerPeppolId = :ownerPeppolId

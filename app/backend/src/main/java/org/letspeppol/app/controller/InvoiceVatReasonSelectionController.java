@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.letspeppol.app.dto.VatReasonSelectionDto;
 import org.letspeppol.app.service.InvoiceVatReasonSelectionService;
 import org.letspeppol.app.util.JwtUtil;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,6 +27,7 @@ public class InvoiceVatReasonSelectionController {
     private final InvoiceVatReasonSelectionService invoiceVatReasonSelectionService;
 
     @PostMapping
+    @PreAuthorize("hasAuthority('INVOICE_DRAFT')")
     @Operation(summary = "Record VAT-reason selections", description = "Stores a batch of VAT-reason selections for the authenticated company. This telemetry contains rule choices, not invoice contents.")
     public void create(@AuthenticationPrincipal Jwt jwt, @RequestBody List<VatReasonSelectionDto> selections) {
         invoiceVatReasonSelectionService.recordSelections(JwtUtil.getPeppolId(jwt), selections);

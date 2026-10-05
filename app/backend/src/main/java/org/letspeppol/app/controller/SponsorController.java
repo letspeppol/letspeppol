@@ -13,6 +13,7 @@ import org.letspeppol.app.dto.SponsorDto;
 import org.letspeppol.app.dto.SponsorsResponseDto;
 import org.letspeppol.app.service.SponsorInvoiceService;
 import org.letspeppol.app.util.JwtUtil;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,6 +51,7 @@ public class SponsorController {
     }
 
     @PostMapping("/sapi/sponsors")
+    @PreAuthorize("hasAuthority('company_admin')")
     @Operation(summary = "Create sponsor invoice", description = "Creates and submits a sponsor invoice for the authenticated company. App obtains its downstream Proxy token with client credentials and forwards the user token as acting-user context.")
     @SecurityRequirement(name = "oauth2", scopes = "openid")
     public SponsorInvoiceResponse createSponsorInvoice(@AuthenticationPrincipal Jwt jwt,
