@@ -19,6 +19,7 @@ describe('pending login error', () => {
         expect(loginErrorKeyFor('ownership_unavailable')).toBe('login.authorization-no-ownership');
         expect(loginErrorKeyFor('access_denied')).toBe('login.authorization-denied');
         expect(loginErrorKeyFor('temporarily_unavailable')).toBe('login.authorization-unavailable');
+        expect(loginErrorKeyFor('invalid_token')).toBe('login.authorization-expired');
         expect(loginErrorKeyFor('something_new')).toBe(GENERIC_LOGIN_ERROR_KEY);
         expect(loginErrorKeyFor(null)).toBe(GENERIC_LOGIN_ERROR_KEY);
     });
