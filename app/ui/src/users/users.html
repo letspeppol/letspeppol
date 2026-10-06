@@ -40,6 +40,7 @@
                         <div class="users-name">
                             <span>${row.user.name}</span>
                             <span if.bind="isAdmin(row)" class="pill" t="ownership.role.ADMIN">Administrator</span>
+                            <span if.bind="isAffiliate(row)" class="pill" t="ownership.role.AFFILIATE">Affiliate</span>
                         </div>
                         <div class="users-email">${row.user.email}</div>
                     </td>
@@ -72,7 +73,7 @@
                             <button if.bind="row.user.status === 'SUSPENDED'" type="button" class="icon-btn success" disabled.bind="row.saving" title="Reactivate" t="[title]users.action.reactivate" click.trigger="reactivate(row)">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9 9.003a1 1 0 0 1 1.517-.859l4.997 2.997a1 1 0 0 1 0 1.718l-4.997 2.997A1 1 0 0 1 9 14.996z"/></svg>
                             </button>
-                            <button type="button" class="icon-btn" disabled.bind="row.saving" title="Remove" t="[title]common.remove" click.trigger="confirmRemove(row)">
+                            <button if.bind="row.removable" type="button" class="icon-btn" disabled.bind="row.saving" title="Remove" t="[title]common.remove" click.trigger="confirmRemove(row)">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                             </button>
                         </template>

@@ -55,12 +55,6 @@ class JwtUtilTest {
     }
 
     @Test
-    void missingMaskKeepsTheFixedPermissionsOfTheLegacyRestrictedTypes() {
-        assertThat(JwtUtil.getPermissionMask(jwt("USER_DRAFT", null))).isEqualTo(3);
-        assertThat(JwtUtil.getPermissionMask(jwt("USER_READ", null))).isEqualTo(1);
-    }
-
-    @Test
     void requirePermissionRejectsAMissingBit() {
         Jwt draftOnly = jwt("USER", 3);
 

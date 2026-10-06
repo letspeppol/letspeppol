@@ -45,10 +45,8 @@ public enum CompanyPermission {
 
     public static int effectiveMask(AccountType type, int storedMask) {
         return switch (type) {
-            case USER -> normalize(storedMask);
-            case USER_DRAFT -> INVOICE_READ.bit | INVOICE_DRAFT.bit;
-            case USER_READ -> INVOICE_READ.bit;
-            case ADMIN, AFFILIATE, APP -> ALL;
+            case USER, AFFILIATE -> normalize(storedMask);
+            case ADMIN, APP -> ALL;
         };
     }
 }

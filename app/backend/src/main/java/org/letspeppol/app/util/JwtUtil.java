@@ -55,7 +55,7 @@ public class JwtUtil {
         if (jwt.getClaim(SecurityConfig.PERMISSION_MASK) instanceof Number mask) {
             return mask.intValue() & CompanyPermission.ALL;
         }
-        return CompanyPermission.withoutClaim(jwt.getClaimAsString(SecurityConfig.ACCOUNT_TYPE));
+        return AccountType.USER.name().equals(jwt.getClaimAsString(SecurityConfig.ACCOUNT_TYPE)) ? 0 : CompanyPermission.ALL;
     }
 
     public static boolean hasPermission(Jwt jwt, CompanyPermission permission) {

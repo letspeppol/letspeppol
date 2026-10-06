@@ -60,14 +60,17 @@ class CompanyPermissionTest {
     }
 
     @Test
-    void onlyUsersUseTheirStoredMask() {
+    void usersAndAffiliatesUseTheirStoredMask() {
         assertThat(CompanyPermission.effectiveMask(AccountType.USER, 0)).isZero();
         assertThat(CompanyPermission.effectiveMask(AccountType.USER, 4)).isEqualTo(7);
         assertThat(CompanyPermission.effectiveMask(AccountType.USER, 255)).isEqualTo(255);
-        assertThat(CompanyPermission.effectiveMask(AccountType.USER_DRAFT, 255)).isEqualTo(3);
-        assertThat(CompanyPermission.effectiveMask(AccountType.USER_READ, 255)).isEqualTo(1);
+        assertThat(CompanyPermission.effectiveMask(AccountType.AFFILIATE, 0)).isZero();
+        assertThat(CompanyPermission.effectiveMask(AccountType.AFFILIATE, 16)).isEqualTo(17);
+    }
+
+    @Test
+    void adminsAndAppsAlwaysGetEveryPermission() {
         assertThat(CompanyPermission.effectiveMask(AccountType.ADMIN, 0)).isEqualTo(255);
-        assertThat(CompanyPermission.effectiveMask(AccountType.AFFILIATE, 0)).isEqualTo(255);
         assertThat(CompanyPermission.effectiveMask(AccountType.APP, 0)).isEqualTo(255);
     }
 }

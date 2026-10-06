@@ -27,17 +27,4 @@ public enum CompanyPermission {
     public boolean in(int mask) {
         return (mask & bit) != 0;
     }
-
-    public static int withoutClaim(String accountType) {
-        if (AccountType.USER.name().equals(accountType)) {
-            return 0;
-        }
-        if (AccountType.USER_DRAFT.name().equals(accountType)) {
-            return INVOICE_READ.bit | INVOICE_DRAFT.bit;
-        }
-        if (AccountType.USER_READ.name().equals(accountType)) {
-            return INVOICE_READ.bit;
-        }
-        return ALL;
-    }
 }

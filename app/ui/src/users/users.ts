@@ -16,12 +16,18 @@ import {
 } from "../services/app/company-permission";
 import {InviteUserModal} from "./invite-user-modal";
 
-const EDITABLE_TYPE = 'USER';
+const USER_TYPE = 'USER';
+const AFFILIATE_TYPE = 'AFFILIATE';
 const ADMIN_TYPE = 'ADMIN';
+
+function isEditable(user: CompanyUserDto): boolean {
+    return user.type === USER_TYPE || user.type === AFFILIATE_TYPE;
+}
 
 export interface UserRow {
     user: CompanyUserDto;
     editable: boolean;
+    removable: boolean;
     saving: boolean;
     flags: PermissionFlags;
     implied: PermissionFlags;
@@ -30,7 +36,8 @@ export interface UserRow {
 export function toUserRow(user: CompanyUserDto): UserRow {
     return {
         user,
-        editable: user.type === EDITABLE_TYPE,
+        editable: isEditable(user),
+        removable: user.type === USER_TYPE,
         saving: false,
         flags: flagsFromMask(user.permissionMask),
         implied: flagsFromMask(impliedPermissions(user.permissionMask)),
@@ -67,6 +74,10 @@ export class Users {
 
     isAdmin(row: UserRow): boolean {
         return row.user.type === ADMIN_TYPE;
+    }
+
+    isAffiliate(row: UserRow): boolean {
+        return row.user.type === AFFILIATE_TYPE;
     }
 
     isInvitationExpired(row: UserRow): boolean {
@@ -210,7 +221,8 @@ export class Users {
 
     private applyUser(row: UserRow, user: CompanyUserDto) {
         row.user = user;
-        row.editable = user.type === EDITABLE_TYPE;
+        row.editable = isEditable(user);
+        row.removable = user.type === USER_TYPE;
         this.showMask(row, user.permissionMask);
     }
 

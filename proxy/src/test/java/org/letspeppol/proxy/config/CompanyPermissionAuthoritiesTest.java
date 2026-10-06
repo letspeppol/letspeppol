@@ -33,13 +33,15 @@ class CompanyPermissionAuthoritiesTest {
     }
 
     @Test
-    void legacyRestrictedTypesWithoutMaskClaimKeepTheirFixedPermissions() {
-        assertThat(authorities(userJwt(AccountType.USER_DRAFT).build()))
-                .contains("INVOICE_READ", "INVOICE_DRAFT")
-                .doesNotContain("INVOICE_SEND", "INVOICE_STATUS", "INVOICE_EXPORT", "PARTNER_MANAGE", "PRODUCT_MANAGE", "COMPANY_SETTINGS");
-        assertThat(authorities(userJwt(AccountType.USER_READ).build()))
-                .contains("INVOICE_READ")
-                .doesNotContain("INVOICE_DRAFT", "INVOICE_SEND", "INVOICE_STATUS", "INVOICE_EXPORT", "PARTNER_MANAGE", "PRODUCT_MANAGE", "COMPANY_SETTINGS");
+    void affiliateGetsThePermissionsInItsMask() {
+        assertThat(authorities(userJwt(AccountType.AFFILIATE).claim(SecurityConfig.PERMISSION_MASK, 17).build()))
+                .contains(SecurityConfig.ROLE_KYC_USER, "INVOICE_READ", "INVOICE_EXPORT")
+                .doesNotContain("INVOICE_DRAFT", "INVOICE_SEND", "INVOICE_STATUS", "PARTNER_MANAGE", "PRODUCT_MANAGE", "COMPANY_SETTINGS");
+    }
+
+    @Test
+    void affiliateTokenMintedBeforeTheClaimExistedKeepsFullAccess() {
+        assertThat(authorities(userJwt(AccountType.AFFILIATE).build())).contains(ALL_PERMISSIONS);
     }
 
     @Test

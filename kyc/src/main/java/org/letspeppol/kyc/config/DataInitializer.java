@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.model.AccountType;
+import org.letspeppol.kyc.model.CompanyPermission;
 import org.letspeppol.kyc.model.Ownership;
 import org.letspeppol.kyc.model.kbo.Company;
 import org.letspeppol.kyc.model.kbo.Director;
@@ -127,6 +128,7 @@ public class DataInitializer implements CommandLineRunner {
             Ownership ownership = new Ownership(account, AccountType.ADMIN, company);
             ownershipRepository.save(ownership);
             Ownership affiliateOwnership = new Ownership(account, AccountType.AFFILIATE, company);
+            affiliateOwnership.setPermissionMask(CompanyPermission.ALL);
             ownershipRepository.save(affiliateOwnership);
             Account otherAccount = Account.builder()
                     .name("Bob")
@@ -138,6 +140,7 @@ public class DataInitializer implements CommandLineRunner {
                     .build();
             accountRepository.save(otherAccount);
             Ownership otherAffiliateOwnership = new Ownership(otherAccount, AccountType.AFFILIATE, company);
+            otherAffiliateOwnership.setPermissionMask(CompanyPermission.ALL);
             ownershipRepository.save(otherAffiliateOwnership);
             log.info("Seeded Affiliate account");
         }

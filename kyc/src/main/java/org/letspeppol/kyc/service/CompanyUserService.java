@@ -47,7 +47,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CompanyUserService {
 
-    private static final Set<AccountType> LISTED_TYPES = EnumSet.of(AccountType.ADMIN, AccountType.USER, AccountType.USER_DRAFT, AccountType.USER_READ);
+    private static final Set<AccountType> LISTED_TYPES = EnumSet.of(AccountType.ADMIN, AccountType.USER, AccountType.AFFILIATE);
+    private static final Set<AccountType> EDITABLE_TYPES = EnumSet.of(AccountType.USER, AccountType.AFFILIATE);
     private static final Set<AccountType> MEMBER_TYPES = EnumSet.complementOf(EnumSet.of(AccountType.APP));
 
     private final OwnershipRepository ownershipRepository;
@@ -113,6 +114,9 @@ public class CompanyUserService {
     @Transactional
     public void remove(Ownership admin, Long id) {
         Ownership ownership = editableUser(admin, id);
+        if (ownership.getType() != AccountType.USER) {
+            throw new KycException(KycErrorCodes.USER_NOT_EDITABLE);
+        }
         invitationRepository.findByOwnershipId(ownership.getId()).ifPresent(invitationRepository::delete);
         ownershipRepository.delete(ownership);
         log.info("Removed {} as user of company {}", ownership.getAccount().getEmail(), admin.getCompany().getPeppolId());
@@ -196,7 +200,7 @@ public class CompanyUserService {
         Ownership ownership = ownershipRepository.findByIdAndCompanyId(id, admin.getCompany().getId())
                 .filter(candidate -> LISTED_TYPES.contains(candidate.getType()))
                 .orElseThrow(() -> new NotFoundException(KycErrorCodes.USER_NOT_FOUND));
-        if (ownership.getType() != AccountType.USER) {
+        if (!EDITABLE_TYPES.contains(ownership.getType())) {
             throw new KycException(KycErrorCodes.USER_NOT_EDITABLE);
         }
         return ownership;

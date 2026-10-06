@@ -36,6 +36,13 @@ class OwnershipClaimsTest {
     }
 
     @Test
+    void affiliateTokenCarriesTheNormalisedStoredMask() {
+        assertThat(claimsFor(ownership(AccountType.AFFILIATE, 16)))
+                .containsEntry("accountType", "AFFILIATE")
+                .containsEntry("permissionMask", 17);
+    }
+
+    @Test
     void userWithoutPermissionsCarriesAnEmptyMask() {
         assertThat(claimsFor(ownership(AccountType.USER, 0))).containsEntry("permissionMask", 0);
     }

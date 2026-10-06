@@ -17,7 +17,7 @@ sequenceDiagram
 
     Note over Admin,API: Proof: CompanyUserTest<br/>SapiSecurityIntegrationTest<br/>CompanyPermissionTest<br/>KYC OpenApiDocumentationTest
     UI->>KYC: GET /kyc/sapi/users
-    KYC-->>UI: ADMIN and USER rows with status and effective permissionMask
+    KYC-->>UI: ADMIN, USER and AFFILIATE rows with status and effective permissionMask
     UI->>KYC: POST /kyc/sapi/users (email, name, permissionMask)
     KYC->>KYC: Find or create pending account<br/>Create INVITED ownership + invitation token
     KYC-->>Invitee: Mail /invitation?token={token}
@@ -58,8 +58,11 @@ claim of the access token. Bits are append-only.
 
 KYC normalises every mask it stores or emits: `INVOICE_SEND` implies `INVOICE_DRAFT`, and
 `INVOICE_DRAFT`, `INVOICE_STATUS` and `INVOICE_EXPORT` imply `INVOICE_READ`. A mask with unknown or
-negative bits is rejected with `invalid_permission_mask`. Only `USER` ownerships use the stored mask;
-`ADMIN`, `AFFILIATE` and `APP` tokens always carry all bits.
+negative bits is rejected with `invalid_permission_mask`. `USER` and `AFFILIATE` ownerships use the
+stored mask; `ADMIN` and `APP` tokens always carry all bits.
+
+An `AFFILIATE` ownership is created by the affiliate registration with all bits set. The ADMIN can
+change its mask and suspend or reactivate it like a `USER`. It cannot be invited or removed here.
 
 ## Status and errors
 
@@ -79,7 +82,7 @@ company and email address, separate from registration mails.
 | Caller is not the active ADMIN of the company | 403 | `not_admin` |
 | Invited email is already a member of the company | 400 | `user_already_member` |
 | Unknown id, or id of another company | 404 | `user_not_found` |
-| Row is not a `USER`, or not in the state the action needs | 400 | `user_not_editable` |
+| Row is the `ADMIN`, an `AFFILIATE` row on remove or resend, or not in the state the action needs | 400 | `user_not_editable` |
 | Mask has unknown or negative bits | 400 | `invalid_permission_mask` |
 | Invitation stored, but the mail could not be sent | 400 | `invitation_not_sent` |
 | Too many invitation mails from this company to this address | 429 | `too_many_requests` |

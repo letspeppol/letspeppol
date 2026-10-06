@@ -113,6 +113,21 @@ describe('Users permission matrix', () => {
         expect(row.flags.INVOICE_SEND).toBe(true);
     });
 
+    it('lets the administrator change the permissions of an affiliate but not remove it', async () => {
+        const row = toUserRow(user({type: 'AFFILIATE', permissionMask: 255}));
+        const {users, companyUserService} = createUsers([row]);
+        companyUserService.updatePermissions.mockResolvedValue(user({type: 'AFFILIATE', permissionMask: 127}));
+
+        await users.togglePermission(row, 'COMPANY_SETTINGS', false);
+
+        expect(companyUserService.updatePermissions).toHaveBeenCalledWith(7, 127);
+        expect(row.flags.COMPANY_SETTINGS).toBe(false);
+        expect(row.editable).toBe(true);
+        expect(row.removable).toBe(false);
+        expect(users.isAffiliate(row)).toBe(true);
+        expect(toUserRow(user()).removable).toBe(true);
+    });
+
     it('lists the administrator first', async () => {
         const {users, companyUserService} = createUsers();
         companyUserService.getUsers.mockResolvedValue([

@@ -26,11 +26,7 @@ export const PERMISSION_COLUMNS: CompanyPermissionName[] = [
 
 export const ALL_PERMISSIONS = PERMISSION_COLUMNS.reduce((mask, name) => mask | CompanyPermission[name], 0);
 
-const MASK_WITHOUT_CLAIM = new Map<string, number>([
-    ['USER', 0],
-    ['USER_DRAFT', CompanyPermission.INVOICE_READ | CompanyPermission.INVOICE_DRAFT],
-    ['USER_READ', CompanyPermission.INVOICE_READ],
-]);
+const USER_ACCOUNT_TYPE = 'USER';
 const READ_DEPENDENTS = CompanyPermission.INVOICE_DRAFT | CompanyPermission.INVOICE_STATUS | CompanyPermission.INVOICE_EXPORT;
 
 export function hasPermission(mask: number, permission: CompanyPermission): boolean {
@@ -69,5 +65,5 @@ export function effectivePermissionMask(claim: unknown, accountType: string | nu
     if (typeof claim === 'number' && Number.isInteger(claim)) {
         return claim & ALL_PERMISSIONS;
     }
-    return MASK_WITHOUT_CLAIM.get(accountType ?? '') ?? ALL_PERMISSIONS;
+    return accountType === USER_ACCOUNT_TYPE ? 0 : ALL_PERMISSIONS;
 }
