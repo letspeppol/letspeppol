@@ -12,6 +12,7 @@ import org.letspeppol.kyc.model.Ownership;
 import org.letspeppol.kyc.model.OwnershipStatus;
 import org.letspeppol.kyc.repository.AccountRepository;
 import org.letspeppol.kyc.repository.OwnershipRepository;
+import org.letspeppol.kyc.service.TokenRevocationFeed;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,12 +29,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.jackson.SecurityJacksonModules;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
+import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.OAuth2ErrorCodes;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
@@ -216,9 +219,11 @@ public class SecurityConfig {
     public JwtDecoder jwtDecoder(
             @Value("${jwt.public-key}") RSAPublicKey publicKey,
             @Value("${oauth2.audience:letspeppol-api}") String audience,
-            @Value("${spring.security.oauth2.authorizationserver.issuer:}") String issuer) {
+            @Value("${spring.security.oauth2.authorizationserver.issuer:}") String issuer,
+            TokenRevocationFeed tokenRevocationFeed) {
         NimbusJwtDecoder decoder = NimbusJwtDecoder.withPublicKey(publicKey).build();
-        decoder.setJwtValidator(JwtValidationSupport.build(audience, issuer));
+        decoder.setJwtValidator(new DelegatingOAuth2TokenValidator<Jwt>(
+                JwtValidationSupport.build(audience, issuer), tokenRevocationFeed::validate));
         return decoder;
     }
 

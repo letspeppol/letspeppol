@@ -994,7 +994,7 @@
       "resend": "Resend invitation",
       "suspend": "Suspend"
     },
-    "apply-note": "Changes apply the next time the user logs in, or within an hour.",
+    "apply-note": "Changes take effect within a few seconds.",
     "description": "Invite colleagues and choose what each of them may do for this company.",
     "hint": {
       "admin": "The administrator always has every permission.",

@@ -992,7 +992,7 @@
       "resend": "Einladung erneut senden",
       "suspend": "Sperren"
     },
-    "apply-note": "Änderungen gelten ab der nächsten Anmeldung des Benutzers oder innerhalb einer Stunde.",
+    "apply-note": "Änderungen werden innerhalb weniger Sekunden wirksam.",
     "description": "Laden Sie Kolleginnen und Kollegen ein und legen Sie fest, was jede Person für dieses Unternehmen tun darf.",
     "hint": {
       "admin": "Der Administrator hat immer alle Berechtigungen.",

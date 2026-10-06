@@ -120,6 +120,7 @@ class DocumentRepositoryArchiveTest extends PostgresIntegrationTest {
         document.setAmountExclVat(BigDecimal.ONE);
         document.setIssueDate(LocalDate.parse(issueDate).atStartOfDay(ZoneOffset.UTC).toInstant());
         document.setDraftedOn(draftedOn);
+        document.setCreatedExternally(false);
         document.setUbl(ubl);
         entityManager.persist(document);
         return document.getId();

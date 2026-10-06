@@ -992,7 +992,7 @@
       "resend": "Uitnodiging opnieuw verzenden",
       "suspend": "Schorsen"
     },
-    "apply-note": "Wijzigingen gelden zodra de gebruiker opnieuw inlogt, of binnen het uur.",
+    "apply-note": "Wijzigingen gaan binnen enkele seconden in.",
     "description": "Nodig collega's uit en bepaal wat elk van hen voor dit bedrijf mag doen.",
     "hint": {
       "admin": "De beheerder heeft altijd alle rechten.",

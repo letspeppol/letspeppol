@@ -992,7 +992,7 @@
       "resend": "Renvoyer l'invitation",
       "suspend": "Suspendre"
     },
-    "apply-note": "Les modifications s'appliquent à la prochaine connexion de l'utilisateur, ou dans l'heure.",
+    "apply-note": "Les modifications prennent effet en quelques secondes.",
     "description": "Invitez des collègues et choisissez ce que chacun peut faire pour cette entreprise.",
     "hint": {
       "admin": "L'administrateur dispose toujours de toutes les autorisations.",
