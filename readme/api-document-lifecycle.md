@@ -50,9 +50,8 @@ Document route coverage: the grouped App reads and actions include
 
 Every route needs the company permission below. KYC puts the caller's permissions in the access token
 as one integer, `permissionMask`, with one bit per permission; App and Proxy turn each set bit into an
-authority. A token without the claim gets what its `accountType` stands for: nothing for `USER`, read
-and draft for `USER_DRAFT`, read for `USER_READ`, and full access for every other type. A refused call
-answers `403` with `{"errorCode":"MISSING_PERMISSION"}`.
+authority. A token without the claim keeps full access unless its `accountType` is `USER`. A refused
+call answers `403` with `{"errorCode":"MISSING_PERMISSION"}`.
 
 Executable proof: [`SapiPermissionCoverageTest`](../app/backend/src/test/java/org/letspeppol/app/config/SapiPermissionCoverageTest.java) pins the rule of every App route, [`SapiPermissionIntegrationTest`](../app/backend/src/test/java/org/letspeppol/app/config/SapiPermissionIntegrationTest.java) exercises them over HTTP, and [`AppControllerPermissionTest`](../proxy/src/test/java/org/letspeppol/proxy/controller/AppControllerPermissionTest.java) does both for Proxy.
 

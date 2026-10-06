@@ -31,7 +31,7 @@ public class CompanyUserController {
     private final JwtClaimExtractor jwtClaimExtractor;
 
     @GetMapping
-    @Operation(summary = "List company users", description = "Returns the admin and user ownerships of the authenticated company with their status and effective permission mask. Intended for admin users.")
+    @Operation(summary = "List company users", description = "Returns the admin, user and affiliate ownerships of the authenticated company with their status and effective permission mask. Intended for admin users.")
     public ResponseEntity<List<CompanyUserDto>> list() {
         return ResponseEntity.ok(companyUserService.list(activeAdmin()));
     }
@@ -43,19 +43,19 @@ public class CompanyUserController {
     }
 
     @PutMapping("/{id}/permissions")
-    @Operation(summary = "Update user permissions", description = "Replaces the permission mask of a user ownership of the authenticated company and returns the normalised result. Intended for admin users.")
+    @Operation(summary = "Update user permissions", description = "Replaces the permission mask of a user or affiliate ownership of the authenticated company and returns the normalised result. Intended for admin users.")
     public ResponseEntity<CompanyUserDto> updatePermissions(@PathVariable Long id, @Valid @RequestBody UpdateUserPermissionsRequest request) {
         return ResponseEntity.ok(companyUserService.updatePermissions(activeAdmin(), id, request.permissionMask()));
     }
 
     @PostMapping("/{id}/suspend")
-    @Operation(summary = "Suspend a user", description = "Suspends an active user ownership so it can no longer obtain tokens for the authenticated company. Intended for admin users.")
+    @Operation(summary = "Suspend a user", description = "Suspends an active user or affiliate ownership so it can no longer obtain tokens for the authenticated company. Intended for admin users.")
     public ResponseEntity<CompanyUserDto> suspend(@PathVariable Long id) {
         return ResponseEntity.ok(companyUserService.suspend(activeAdmin(), id));
     }
 
     @PostMapping("/{id}/reactivate")
-    @Operation(summary = "Reactivate a user", description = "Restores a suspended user ownership of the authenticated company. Intended for admin users.")
+    @Operation(summary = "Reactivate a user", description = "Restores a suspended user or affiliate ownership of the authenticated company. Intended for admin users.")
     public ResponseEntity<CompanyUserDto> reactivate(@PathVariable Long id) {
         return ResponseEntity.ok(companyUserService.reactivate(activeAdmin(), id));
     }

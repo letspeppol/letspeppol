@@ -776,9 +776,7 @@
       "ADMIN": "Administrator",
       "AFFILIATE": "Affiliate",
       "APP": "App",
-      "USER": "Benutzer",
-      "USER_DRAFT": "Benutzer (nur Entwürfe)",
-      "USER_READ": "Benutzer (nur Lesen)"
+      "USER": "Benutzer"
     }
   },
   "ownershipAdd": {

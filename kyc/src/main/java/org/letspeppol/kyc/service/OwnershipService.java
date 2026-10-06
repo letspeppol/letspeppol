@@ -12,6 +12,7 @@ import org.letspeppol.kyc.exception.KycException;
 import org.letspeppol.kyc.mapper.OwnershipMapper;
 import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.model.AccountType;
+import org.letspeppol.kyc.model.CompanyPermission;
 import org.letspeppol.kyc.model.Ownership;
 import org.letspeppol.kyc.model.OwnershipStatus;
 import org.letspeppol.kyc.model.kbo.Company;
@@ -107,6 +108,15 @@ public class OwnershipService {
 
     public Ownership ensureAdminOwnership(Account account, Company company) {
         return ensureOwnership(account, AccountType.ADMIN, company);
+    }
+
+    public Ownership ensureAffiliateOwnership(Account account, Company company) {
+        return ownershipRepository.findFirstByAccountIdAndCompanyIdAndType(account.getId(), company.getId(), AccountType.AFFILIATE)
+                .orElseGet(() -> {
+                    Ownership ownership = new Ownership(account, AccountType.AFFILIATE, company);
+                    ownership.setPermissionMask(CompanyPermission.ALL);
+                    return ownershipRepository.save(ownership);
+                });
     }
 
     public void unlink(UUID uid, AccountType type, String peppolId) {

@@ -776,9 +776,7 @@
       "ADMIN": "Administrateur",
       "AFFILIATE": "Affilié",
       "APP": "Application",
-      "USER": "Utilisateur",
-      "USER_DRAFT": "Utilisateur (brouillons uniquement)",
-      "USER_READ": "Utilisateur (lecture seule)"
+      "USER": "Utilisateur"
     }
   },
   "ownershipAdd": {

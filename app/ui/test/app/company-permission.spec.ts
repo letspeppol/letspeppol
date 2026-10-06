@@ -68,10 +68,4 @@ describe('company permissions', () => {
         expect(effectivePermissionMask(undefined, 'AFFILIATE')).toBe(255);
         expect(effectivePermissionMask('7', 'USER')).toBe(0);
     });
-
-    it('keeps the fixed permissions of the legacy restricted types when the claim is missing', () => {
-        expect(effectivePermissionMask(undefined, 'USER_DRAFT')).toBe(3);
-        expect(effectivePermissionMask(undefined, 'USER_READ')).toBe(1);
-        expect(effectivePermissionMask(undefined, null)).toBe(255);
-    });
 });

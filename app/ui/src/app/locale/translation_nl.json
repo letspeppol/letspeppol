@@ -776,9 +776,7 @@
       "ADMIN": "Beheerder",
       "AFFILIATE": "Affiliate",
       "APP": "App",
-      "USER": "Gebruiker",
-      "USER_DRAFT": "Gebruiker (alleen concepten)",
-      "USER_READ": "Gebruiker (alleen lezen)"
+      "USER": "Gebruiker"
     }
   },
   "ownershipAdd": {

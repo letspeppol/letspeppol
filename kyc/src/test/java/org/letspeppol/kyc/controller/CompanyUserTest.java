@@ -19,6 +19,7 @@ import org.letspeppol.kyc.model.Ownership;
 import org.letspeppol.kyc.model.OwnershipInvitation;
 import org.letspeppol.kyc.model.OwnershipStatus;
 import org.letspeppol.kyc.repository.AccountRepository;
+import org.letspeppol.kyc.repository.CompanyRepository;
 import org.letspeppol.kyc.repository.OwnershipInvitationRepository;
 import org.letspeppol.kyc.repository.OwnershipRepository;
 import org.letspeppol.kyc.service.RateLimiterService;
@@ -43,6 +44,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CyclicBarrier;
@@ -62,6 +64,7 @@ class CompanyUserTest {
     @Autowired CompanyUserSteps companyUserSteps;
 
     @Autowired private AccountRepository accountRepository;
+    @Autowired private CompanyRepository companyRepository;
     @Autowired private OwnershipRepository ownershipRepository;
     @Autowired private OwnershipInvitationRepository invitationRepository;
     @Autowired private PasswordEncoder passwordEncoder;
@@ -409,6 +412,46 @@ class CompanyUserTest {
 
         assertThrows(DataIntegrityViolationException.class, () -> ownershipRepository.saveAndFlush(
                 new Ownership(existing.getAccount(), AccountType.USER, existing.getCompany())));
+    }
+
+    @Test
+    @Order(14)
+    void affiliateIsListedAndItsAccessIsManagedLikeAUser() {
+        String email = "affiliate@users-company.com";
+        Account account = accountRepository.save(Account.builder()
+                .name("Alex Affiliate")
+                .email(email)
+                .passwordHash(passwordEncoder.encode(userPassword))
+                .verified(true)
+                .verifiedOn(Instant.now())
+                .externalId(UUID.randomUUID())
+                .build());
+        Ownership affiliate = new Ownership(account, AccountType.AFFILIATE, companyRepository.findByPeppolId(peppolId).orElseThrow());
+        affiliate.setPermissionMask(255);
+        long id = ownershipRepository.save(affiliate).getId();
+
+        CompanyUserDto row = listedUser(id);
+        assertEquals(AccountType.AFFILIATE, row.type());
+        assertEquals(OwnershipStatus.ACTIVE, row.status());
+        assertEquals(255, row.permissionMask());
+
+        assertEquals(17, companyUserSteps.updatePermissions(adminToken, id, 16).permissionMask());
+        Jwt jwt = jwtDecoder.decode(companyUserSteps.authorize(email, userPassword, peppolId, AccountType.AFFILIATE).accessToken());
+        assertEquals("AFFILIATE", jwt.getClaimAsString("accountType"));
+        assertEquals(17L, ((Number) jwt.getClaim("permissionMask")).longValue());
+
+        assertEquals(OwnershipStatus.SUSPENDED, companyUserSteps.user(companyUserSteps.trySuspend(adminToken, id)).status());
+        assertEquals("ownership_unavailable",
+                companyUserSteps.authorize(email, userPassword, peppolId, AccountType.AFFILIATE).error());
+        assertEquals(OwnershipStatus.ACTIVE, companyUserSteps.user(companyUserSteps.tryReactivate(adminToken, id)).status());
+        assertNull(companyUserSteps.authorize(email, userPassword, peppolId, AccountType.AFFILIATE).error());
+
+        ApiResult removal = companyUserSteps.tryRemove(adminToken, id);
+        assertEquals(HttpStatus.BAD_REQUEST, removal.status());
+        assertEquals("user_not_editable", removal.errorCode());
+        assertEquals("user_not_editable", companyUserSteps.tryResend(adminToken, id).errorCode());
+        assertTrue(ownershipRepository.findById(id).isPresent());
+        assertEquals(HttpStatus.NOT_FOUND, companyUserSteps.tryUpdatePermissions(otherAdminToken, id, 1).status());
     }
 
     private CompanyUserDto listedUser(long id) {

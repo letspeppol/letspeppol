@@ -88,6 +88,16 @@ class AppControllerPermissionTest {
     }
 
     @Test
+    void affiliateReachesTheDocumentsOfItsCompanyWithinItsPermissions() {
+        Jwt jwt = authenticate(AccountType.AFFILIATE, 1);
+
+        controller.getAllNew(jwt, 5);
+        verify(receiverService).findAllNew(PEPPOL_ID, 5);
+
+        assertThatThrownBy(() -> controller.delete(jwt, UUID.randomUUID(), false)).isInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
     void userWithoutPermissionsCannotAcknowledge() {
         Jwt jwt = authenticate(AccountType.USER, 0);
 
