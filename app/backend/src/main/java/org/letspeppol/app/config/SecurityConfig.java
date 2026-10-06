@@ -11,6 +11,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
@@ -66,10 +68,12 @@ public class SecurityConfig {
             @Value("${oauth2.audience:letspeppol-api}") String audience,
             @Value("${oauth2.issuer:}") String issuer,
             @Value("${oauth2.allow-loopback-jwks:false}") boolean allowLoopbackJwks,
-            Environment environment) {
+            Environment environment,
+            TokenRevocationFeed tokenRevocationFeed) {
         requireTrustworthyJwkSetUri(jwkSetUri, environment, allowLoopbackJwks);
         NimbusJwtDecoder decoder = NimbusJwtDecoder.withJwkSetUri(jwkSetUri).build();
-        decoder.setJwtValidator(JwtValidationSupport.build(audience, issuer));
+        decoder.setJwtValidator(new DelegatingOAuth2TokenValidator<Jwt>(
+                JwtValidationSupport.build(audience, issuer), tokenRevocationFeed::validate));
         return decoder;
     }
 

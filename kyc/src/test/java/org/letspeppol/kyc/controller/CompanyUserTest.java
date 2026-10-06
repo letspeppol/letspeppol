@@ -37,6 +37,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtValidationException;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
@@ -228,13 +229,14 @@ class CompanyUserTest {
 
         assertEquals(OwnershipStatus.SUSPENDED, companyUserSteps.user(companyUserSteps.trySuspend(adminToken, user.id())).status());
         assertEquals("user_not_editable", companyUserSteps.trySuspend(adminToken, user.id()).errorCode());
-        assertTrue(companyUserSteps.ownedPeppolIds(userToken).isEmpty());
+        assertEquals(HttpStatus.UNAUTHORIZED, companyUserSteps.ownershipsStatus(userToken));
         assertEquals("ownership_unavailable",
                 companyUserSteps.authorize(email, userPassword, peppolId, AccountType.USER).error());
 
         assertEquals(OwnershipStatus.ACTIVE, companyUserSteps.user(companyUserSteps.tryReactivate(adminToken, user.id())).status());
-        assertEquals(List.of(peppolId), companyUserSteps.ownedPeppolIds(userToken));
-        assertNull(companyUserSteps.authorize(email, userPassword, peppolId, AccountType.USER).error());
+        assertEquals(HttpStatus.UNAUTHORIZED, companyUserSteps.ownershipsStatus(userToken));
+        String tokenAfterReactivation = companyUserSteps.authorize(email, userPassword, peppolId, AccountType.USER).accessToken();
+        assertEquals(List.of(peppolId), companyUserSteps.ownedPeppolIds(tokenAfterReactivation));
     }
 
     @Test
@@ -338,7 +340,7 @@ class CompanyUserTest {
         assertTrue(ownershipRepository.findById(user.id()).isEmpty());
         assertTrue(accountRepository.findByEmail(email).isPresent());
         assertTrue(companyUserSteps.listUsers(adminToken).stream().noneMatch(row -> row.id().equals(user.id())));
-        assertTrue(companyUserSteps.ownedPeppolIds(userToken).isEmpty());
+        assertEquals(HttpStatus.UNAUTHORIZED, companyUserSteps.ownershipsStatus(userToken));
         assertEquals("ownership_unavailable",
                 companyUserSteps.authorize(email, userPassword, peppolId, AccountType.USER).error());
         assertEquals(HttpStatus.NOT_FOUND, companyUserSteps.tryRemove(adminToken, user.id()).status());
@@ -452,6 +454,36 @@ class CompanyUserTest {
         assertEquals("user_not_editable", companyUserSteps.tryResend(adminToken, id).errorCode());
         assertTrue(ownershipRepository.findById(id).isPresent());
         assertEquals(HttpStatus.NOT_FOUND, companyUserSteps.tryUpdatePermissions(otherAdminToken, id, 1).status());
+    }
+
+    @Test
+    @Order(15)
+    void changedPermissionsRevokeTheTokensOfThatOwnershipOnly() {
+        String email = "revoked@users-company.com";
+        CompanyUserDto user = companyUserSteps.inviteAndAccept(adminToken, email, "Rita Revoked", 1, userPassword);
+        String firstToken = companyUserSteps.authorize(email, userPassword, peppolId, AccountType.USER).accessToken();
+        String secondToken = companyUserSteps.authorize(email, userPassword, peppolId, AccountType.USER).accessToken();
+        String firstTokenId = jwtDecoder.decode(firstToken).getId();
+        String secondTokenId = jwtDecoder.decode(secondToken).getId();
+        assertNotNull(firstTokenId);
+        assertNotEquals(firstTokenId, secondTokenId);
+
+        assertEquals(1, companyUserSteps.updatePermissions(adminToken, user.id(), 1).permissionMask());
+        assertEquals(HttpStatus.OK, companyUserSteps.ownershipsStatus(firstToken));
+        assertFalse(companyUserSteps.revokedTokenIds().contains(firstTokenId));
+
+        assertEquals(3, companyUserSteps.updatePermissions(adminToken, user.id(), 2).permissionMask());
+
+        assertEquals(HttpStatus.UNAUTHORIZED, companyUserSteps.ownershipsStatus(firstToken));
+        assertEquals(HttpStatus.UNAUTHORIZED, companyUserSteps.ownershipsStatus(secondToken));
+        assertTrue(companyUserSteps.revokedTokenIds().containsAll(List.of(firstTokenId, secondTokenId)));
+        assertThrows(JwtValidationException.class, () -> jwtDecoder.decode(firstToken));
+        assertEquals(HttpStatus.OK, companyUserSteps.ownershipsStatus(adminToken));
+        assertFalse(companyUserSteps.revokedTokenIds().contains(jwtDecoder.decode(adminToken).getId()));
+
+        String renewedToken = companyUserSteps.authorize(email, userPassword, peppolId, AccountType.USER).accessToken();
+        assertEquals(3L, ((Number) jwtDecoder.decode(renewedToken).getClaim("permissionMask")).longValue());
+        assertEquals(List.of(peppolId), companyUserSteps.ownedPeppolIds(renewedToken));
     }
 
     private CompanyUserDto listedUser(long id) {

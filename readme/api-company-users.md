@@ -27,7 +27,9 @@ sequenceDiagram
         UI->>KYC: POST /kyc/sapi/users/{id}/reactivate
         UI->>KYC: POST /kyc/sapi/users/{id}/resend
         UI->>KYC: DELETE /kyc/sapi/users/{id}
+        KYC->>KYC: Put the token ids of that ownership in the revocation feed
     end
+    API->>KYC: GET /lapi/revocations (every 5 seconds, internal)
     Invitee->>UI: Open link in email
     UI->>KYC: POST /kyc/api/invitation/verify?token={token}
     KYC-->>UI: email, name, company, passwordRequired
@@ -64,12 +66,33 @@ stored mask; `ADMIN` and `APP` tokens always carry all bits.
 An `AFFILIATE` ownership is created by the affiliate registration with all bits set. The ADMIN can
 change its mask and suspend or reactivate it like a `USER`. It cannot be invited or removed here.
 
+## Token revocation
+
+Changing a mask, suspending an ownership or removing it revokes the access tokens already issued for
+that ownership. Other ownerships of the same account keep their tokens.
+
+- KYC finds the unexpired access tokens of the ownership in its authorization store and puts their
+  `jti` in an in-memory revocation feed. An entry stays until the token has expired.
+- KYC checks the feed on every request, so it answers `401` for a revoked token at once.
+- App and Proxy read the feed from `GET /lapi/revocations` on KYC every five seconds
+  (`oauth2.revocation-feed.poll-delay-ms`) and answer `401` for a listed token. The feed address is
+  derived from the JWKS URI unless `oauth2.revocation-feed.uri` is set.
+- On `401` the UI signs the user in again silently. After a changed mask the new token carries the new
+  permissions; after a suspension or removal the sign-in for that company is refused.
+
+The feed lives under `/lapi`, which is not routed publicly, and holds token ids only. It is kept in
+memory: after a KYC restart, tokens revoked before the restart are accepted again until they expire.
+App and Proxy keep the entries they have already seen.
+
+Executable proof: `CompanyUserTest.changedPermissionsRevokeTheTokensOfThatOwnershipOnly` for KYC, and
+`TokenRevocationFeedTest` in KYC, App and Proxy.
+
 ## Status and errors
 
 An ownership is `INVITED` until the invitation is accepted, `ACTIVE` afterwards, and `SUSPENDED`
 while the ADMIN has suspended it. Only `ACTIVE` ownerships are listed by
-`/kyc/sapi/account/ownerships` and can obtain a token, so a suspension or removal takes effect at the
-next token renewal (at most one hour later).
+`/kyc/sapi/account/ownerships` and can obtain a token. Tokens that were already issued are revoked;
+see [Token revocation](#token-revocation).
 
 An `INVITED` row shows the name the ADMIN typed, also when the email address already has an account;
 the account's own name appears once the invitation is accepted. KYC stores the invitation first and

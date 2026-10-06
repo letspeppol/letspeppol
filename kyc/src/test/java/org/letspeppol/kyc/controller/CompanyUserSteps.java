@@ -189,6 +189,21 @@ public class CompanyUserSteps {
         return peppolIds;
     }
 
+    HttpStatusCode ownershipsStatus(String token) {
+        return call(HttpMethod.GET, "/sapi/account/ownerships", token, null).status();
+    }
+
+    List<String> revokedTokenIds() {
+        ApiResult result = call(HttpMethod.GET, "/lapi/revocations", null, null);
+        assertEquals(HttpStatus.OK, result.status());
+        List<String> tokenIds = new ArrayList<>();
+        result.body().forEach(node -> {
+            assertNotNull(Instant.parse(node.path("expiresAt").asString()));
+            tokenIds.add(node.path("jti").asString());
+        });
+        return tokenIds;
+    }
+
     Authorization authorize(String email, String password, String peppolId, AccountType accountType) {
         try {
             HttpClient browser = HttpClient.newBuilder()

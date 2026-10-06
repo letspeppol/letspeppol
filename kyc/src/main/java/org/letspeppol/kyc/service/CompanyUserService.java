@@ -7,6 +7,7 @@ import org.letspeppol.kyc.dto.AcceptInvitationRequest;
 import org.letspeppol.kyc.dto.CompanyUserDto;
 import org.letspeppol.kyc.dto.InvitationInfo;
 import org.letspeppol.kyc.dto.InviteUserRequest;
+import org.letspeppol.kyc.dto.OwnershipAccessChanged;
 import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.KycException;
 import org.letspeppol.kyc.exception.NotFoundException;
@@ -24,6 +25,7 @@ import org.letspeppol.kyc.repository.OwnershipRepository;
 import org.letspeppol.kyc.service.mail.UserInvitationEmailTemplateProvider;
 import org.letspeppol.kyc.util.LocaleUtil;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -60,6 +62,7 @@ public class CompanyUserService {
     private final JavaMailSender mailSender;
     private final UserInvitationEmailTemplateProvider templateProvider;
     private final TransactionTemplate transactionTemplate;
+    private final ApplicationEventPublisher eventPublisher;
     private final SecureRandom random = new SecureRandom();
 
     @Value("${app.mail.user-invitation.base-url}")
@@ -92,7 +95,11 @@ public class CompanyUserService {
     @Transactional
     public CompanyUserDto updatePermissions(Ownership admin, Long id, int requestedMask) {
         Ownership ownership = editableUser(admin, id);
-        ownership.setPermissionMask(validPermissionMask(requestedMask));
+        int permissionMask = validPermissionMask(requestedMask);
+        if (CompanyPermission.normalize(ownership.getPermissionMask()) != permissionMask) {
+            eventPublisher.publishEvent(OwnershipAccessChanged.of(ownership));
+        }
+        ownership.setPermissionMask(permissionMask);
         return toDto(ownershipRepository.save(ownership));
     }
 
@@ -119,6 +126,7 @@ public class CompanyUserService {
         }
         invitationRepository.findByOwnershipId(ownership.getId()).ifPresent(invitationRepository::delete);
         ownershipRepository.delete(ownership);
+        eventPublisher.publishEvent(OwnershipAccessChanged.of(ownership));
         log.info("Removed {} as user of company {}", ownership.getAccount().getEmail(), admin.getCompany().getPeppolId());
     }
 
@@ -193,6 +201,9 @@ public class CompanyUserService {
             throw new KycException(KycErrorCodes.USER_NOT_EDITABLE);
         }
         ownership.setStatus(to);
+        if (to == OwnershipStatus.SUSPENDED) {
+            eventPublisher.publishEvent(OwnershipAccessChanged.of(ownership));
+        }
         return toDto(ownershipRepository.save(ownership));
     }
 
