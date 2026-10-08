@@ -900,6 +900,15 @@
     "verify-enable": "Verify & Enable",
     "verifying": "Verifying..."
   },
+  "web-eid-setup": {
+    "choose-browser": "Use a desktop browser and choose its Web eID extension:",
+    "email-reopen": "If you reload or restart, reopen the confirmation link from your email to continue.",
+    "extension": "Web eID is unavailable in this browser. Install or enable its extension.",
+    "install": "Open the Web eID extension store for",
+    "instructions": "Open setup instructions",
+    "native": "The extension cannot reach the desktop eID application. Install or repair it, then restart your browser.",
+    "retry": "After installing or enabling the extension, return to this page and try again. If needed, reload the page."
+  },
   "welcome-notification": {
     "title": "Welcome"
   }

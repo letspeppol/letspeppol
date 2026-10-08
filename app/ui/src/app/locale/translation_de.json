@@ -897,6 +897,15 @@
     "verify-enable": "Überprüfen und aktivieren",
     "verifying": "Überprüfung..."
   },
+  "web-eid-setup": {
+    "choose-browser": "Verwenden Sie einen Browser auf einem Computer und wählen Sie dessen Web-eID-Erweiterung:",
+    "email-reopen": "Wenn Sie die Seite neu laden oder den Browser neu starten, öffnen Sie den Bestätigungslink aus Ihrer E-Mail erneut, um fortzufahren.",
+    "extension": "Web eID ist in diesem Browser nicht verfügbar. Installieren oder aktivieren Sie die Erweiterung.",
+    "install": "Den Web-eID-Erweiterungsstore öffnen für",
+    "instructions": "Installationsanleitung öffnen",
+    "native": "Die Erweiterung kann die eID-Anwendung auf Ihrem Computer nicht erreichen. Installieren oder reparieren Sie diese und starten Sie dann Ihren Browser neu.",
+    "retry": "Kehren Sie nach dem Installieren oder Aktivieren der Erweiterung zu dieser Seite zurück und versuchen Sie es erneut. Laden Sie die Seite bei Bedarf neu."
+  },
   "welcome-notification": {
     "title": "Willkommen"
   }

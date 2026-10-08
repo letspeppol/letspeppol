@@ -1,5 +1,6 @@
 <import from="../components/view/wizard-view"></import>
 <import from="../components/eid/card-reader"></import>
+<import from="../components/eid/web-eid-setup"></import>
 <import from="./onboarding.css"></import>
 
 <wizard-view>
@@ -35,10 +36,10 @@
                                 <span t="onboarding.step.prepare-eid.restart-browser">Restart your browser and verify that the Web eID extension is enabled.</span>
                                 <p class="hint" t="onboarding.step.prepare-eid.browser-help">Extension help:</p>
                                 <span class="link-group">
-                                    <a href="https://www.id.ee/en/article/install-id-software/#chrome" target="_blank" rel="noopener noreferrer" t="onboarding.browser.chrome">Chrome</a>,
-                                    <a href="https://www.id.ee/en/article/install-id-software/#mozilla-firefox" target="_blank" rel="noopener noreferrer" t="onboarding.browser.firefox">Firefox</a>,
+                                    <a href="https://chromewebstore.google.com/detail/web-eid/ncibgoaomkmdpilpocfeponihegamlic" target="_blank" rel="noopener noreferrer" t="onboarding.browser.chrome">Chrome</a>,
+                                    <a href="https://addons.mozilla.org/firefox/addon/web-eid-webextension/" target="_blank" rel="noopener noreferrer" t="onboarding.browser.firefox">Firefox</a>,
                                     <a href="https://www.id.ee/en/article/install-id-software/#safari" target="_blank" rel="noopener noreferrer" t="onboarding.browser.safari">Safari</a>,
-                                    <a href="https://www.id.ee/en/article/install-id-software/#microsoft-edge" target="_blank" rel="noopener noreferrer" t="onboarding.browser.edge">Microsoft Edge</a>
+                                    <a href="https://microsoftedge.microsoft.com/addons/detail/gnmckgbandlkacikdndelhfghdejfido" target="_blank" rel="noopener noreferrer" t="onboarding.browser.edge">Microsoft Edge</a>
                                 </span>
                             </li>
                             <li t="onboarding.step.prepare-eid.test-setup">
@@ -68,7 +69,9 @@
                 <card-reader caption-key="onboarding.anim-caption-sign" reader-label-key="onboarding.anim-reader-label"></card-reader>
                 <button type="button" class="btn primary" click.trigger="checkWebEID()" t="onboarding.check">Check Web eID</button>
 
-                <div class="onboarding-troubleshoot-block" if.bind="certificate == null || signatureAlgorithm == null">
+                <web-eid-setup issue.bind="webEidSetupIssue"></web-eid-setup>
+
+                <div class="onboarding-troubleshoot-block" if.bind="!webEidSetupIssue && (certificate == null || signatureAlgorithm == null)">
                     <p class="hint" t="onboarding.step.prepare-eid.troubleshoot.title">If confirmation fails:</p>
                     <ul class="onboarding-troubleshoot">
                         <li t="onboarding.step.prepare-eid.troubleshoot.reinsert">
@@ -89,7 +92,7 @@
                         </li>
                     </ul>
                 </div>
-                <div class="onboarding-success-block" else>
+                <div class="onboarding-success-block" if.bind="certificate != null && signatureAlgorithm != null">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="onboarding-success-icon lucide lucide-thumbs-up-icon lucide-thumbs-up"><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/><path d="M7 10v12"/></svg>
                     <div class="onboarding-success-text">
                         <p class="onboarding-success-title" t="onboarding.step.prepare-eid.success.title">Web eID is working</p>
