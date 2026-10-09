@@ -1,0 +1,20 @@
+<import from="./payment-terms-field.css"></import>
+
+<div class="payment-terms-field">
+    <input type="number"
+           inputmode="numeric"
+           min="0"
+           max.bind="maxDays"
+           step="1"
+           value.bind="days"
+           disabled.bind="disabled"
+           placeholder="0"
+           aria-label.bind="'paymentTerms.days-label' & t"
+           title.bind="'paymentTerms.days-label' & t" />
+    <select value.bind="basis"
+            disabled.bind="disabled"
+            aria-label.bind="'paymentTerms.basis-label' & t"
+            title.bind="'paymentTerms.basis-label' & t">
+        <option repeat.for="option of bases" value.bind="option">${('paymentTerms.basis.' + option) & t}</option>
+    </select>
+</div>

@@ -1,16 +1,10 @@
 import {bindable, observable} from "aurelia";
 import {onModalEnter} from "../../../../components/util/modal-keyboard";
 import {resolve} from "@aurelia/kernel";
-import {Account} from "../../../../account/account";
 import {InvoiceComposer} from "../../../invoice-composer";
 import {DocumentType} from "../../../../services/app/invoice-service";
 import {countryListAlpha2} from "../../../../app/countries";
 import {requiresDeliveryDetails} from "../../../../services/app/vat-rules";
-
-export interface Translation {
-    key: string,
-    translation: string
-}
 
 export class InvoiceDateModal {
     private invoiceComposer = resolve(InvoiceComposer);
@@ -19,22 +13,31 @@ export class InvoiceDateModal {
     @bindable documentType: DocumentType;
     @observable issueDate;
     @observable selectedPaymentTerm;
-    dueDate;
+    @observable dueDate;
     actualDeliveryDate;
     deliveryCountryCode;
     open = false;
-    possiblePaymentTerms: Translation[];
+
+    private syncing = false;
+    private initialPaymentTerm;
 
     showModal() {
         const invoice = this.invoiceContext.selectedInvoice;
+        this.syncing = true;
         this.issueDate = JSON.parse(JSON.stringify(invoice.IssueDate));
         this.dueDate = invoice.DueDate ? JSON.parse(JSON.stringify(invoice.DueDate)) : undefined;
-        this.loadPossiblePaymentTerms();
+        this.selectedPaymentTerm = this.invoiceComposer.derivePaymentTermCode(
+            this.issueDate,
+            this.dueDate,
+            invoice.PaymentTerms?.Note,
+        );
+        this.initialPaymentTerm = this.selectedPaymentTerm;
+        this.syncing = false;
         if (!this.dueDate) {
             this.recalculateDueDate();
         }
-        this.actualDeliveryDate = this.invoiceContext.selectedInvoice.Delivery?.ActualDeliveryDate;
-        this.deliveryCountryCode = this.invoiceContext.selectedInvoice.Delivery?.DeliveryLocation?.Address?.Country?.IdentificationCode;
+        this.actualDeliveryDate = invoice.Delivery?.ActualDeliveryDate;
+        this.deliveryCountryCode = invoice.Delivery?.DeliveryLocation?.Address?.Country?.IdentificationCode;
         this.open = true;
     }
 
@@ -50,14 +53,29 @@ export class InvoiceDateModal {
         this.recalculateDueDate();
     }
 
+    dueDateChanged() {
+        if (this.syncing || this.documentType === DocumentType.CREDIT_NOTE || !this.issueDate || !this.dueDate) {
+            return;
+        }
+        const derived = this.invoiceComposer.derivePaymentTermCode(this.issueDate, this.dueDate);
+        if (!derived) {
+            return;
+        }
+        this.syncing = true;
+        this.selectedPaymentTerm = derived;
+        this.syncing = false;
+    }
+
     private recalculateDueDate() {
-        if (this.documentType === DocumentType.CREDIT_NOTE) {
+        if (this.syncing || this.documentType === DocumentType.CREDIT_NOTE) {
             return;
         }
         if (!this.issueDate || !this.selectedPaymentTerm) {
             return;
         }
+        this.syncing = true;
         this.dueDate = this.invoiceComposer.getDueDate(this.selectedPaymentTerm, this.issueDate);
+        this.syncing = false;
     }
 
     private closeModal() {
@@ -75,6 +93,8 @@ export class InvoiceDateModal {
             this.invoiceContext.selectedInvoice.PaymentTerms = {
                 Note: this.invoiceComposer.translatePaymentTerm(this.selectedPaymentTerm)
             };
+        } else if (this.initialPaymentTerm) {
+            this.invoiceContext.selectedInvoice.PaymentTerms = undefined;
         }
         if (this.actualDeliveryDate || this.deliveryCountryCode) {
             if (!this.invoiceContext.selectedInvoice.Delivery) {
@@ -93,25 +113,6 @@ export class InvoiceDateModal {
         } else {
             this.invoiceContext.selectedInvoice.Delivery = undefined;
         }
-    }
-
-    private loadPossiblePaymentTerms() {
-        let selectedPaymentTerm: string = undefined;
-        const paymentTermNote = this.invoiceContext.selectedInvoice.PaymentTerms?.Note;
-        this.possiblePaymentTerms = [];
-        for (const paymentTerm of Account.PAYMENT_TERMS) {
-            const translation = this.invoiceComposer.translatePaymentTerm(paymentTerm);
-            if (paymentTermNote && translation === paymentTermNote) {
-                selectedPaymentTerm = paymentTerm;
-            }
-            this.possiblePaymentTerms.push({key: paymentTerm, translation: translation});
-        }
-        if (!selectedPaymentTerm && this.documentType === DocumentType.INVOICE && this.issueDate && this.dueDate) {
-            selectedPaymentTerm = Account.PAYMENT_TERMS.find(paymentTerm =>
-                this.invoiceComposer.getDueDate(paymentTerm, this.issueDate) === this.dueDate
-            );
-        }
-        this.selectedPaymentTerm = selectedPaymentTerm;
     }
 
     onKeyDown(event: KeyboardEvent) {

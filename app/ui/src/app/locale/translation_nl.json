@@ -771,10 +771,23 @@
     "upper": "Minstens 1 hoofdletter"
   },
   "paymentTerms": {
-    "15_DAYS": "15 dagen",
-    "30_DAYS": "30 dagen",
-    "60_DAYS": "60 dagen",
-    "END_OF_NEXT_MONTH": "Einde van de maand"
+    "basis": {
+      "END_OF_MONTH": "na einde maand",
+      "END_OF_NEXT_MONTH": "na einde volgende maand",
+      "INVOICE_DATE": "na factuurdatum"
+    },
+    "basis-label": "Geteld vanaf",
+    "days-label": "Dagen",
+    "end-of-month": "Einde maand",
+    "end-of-month-days_one": "{{days}} dag na einde maand",
+    "end-of-month-days_other": "{{days}} dagen na einde maand",
+    "end-of-next-month": "Einde volgende maand",
+    "end-of-next-month-days_one": "{{days}} dag na einde volgende maand",
+    "end-of-next-month-days_other": "{{days}} dagen na einde volgende maand",
+    "net_one": "{{days}} dag",
+    "net_other": "{{days}} dagen",
+    "on-receipt": "Betaalbaar bij ontvangst",
+    "partner-hint": "Laat leeg om je eigen betalingsvoorwaarden te gebruiken."
   },
   "placeholder": {
     "customer-search": "Zoek op naam of BTW",
