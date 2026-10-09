@@ -2,6 +2,7 @@ import {
     AccountingParty, AdditionalDocumentReference,
     CreditNote,
     CreditNoteLine,
+    CreditNotePaymentMeans,
     Invoice,
     InvoiceLine,
     PaymentMeans,
@@ -13,7 +14,6 @@ import moment from "moment/moment";
 import {singleton} from "aurelia";
 import {resolve} from "@aurelia/kernel";
 import {CompanyService} from "../services/app/company-service";
-import {DocumentType} from "../services/app/invoice-service";
 import {I18N} from "@aurelia/i18n";
 import {createNotSubjectToVatCategory, createVatExemptCategory, isVatExemptRuleset} from "../services/app/vat-rules";
 
@@ -79,7 +79,7 @@ export class InvoiceComposer {
         } as Invoice;
 
         invoice.PaymentMeans = this.getPaymentMeansForMyCompany(30);
-        invoice.PaymentTerms = this.getPaymentTermsForMyCompany(DocumentType.INVOICE);
+        invoice.PaymentTerms = this.getPaymentTermsForMyCompany();
 
         return invoice;
     }
@@ -94,7 +94,7 @@ export class InvoiceComposer {
             Note: this.i18n.tr('invoice.modal.credit-note-vat-note'),
             DocumentCurrencyCode: "EUR",
             BuyerReference: undefined,
-            OrderReference: { ID: "NA" },
+            OrderReference: undefined,
             AdditionalDocumentReference: this.getAdditionalDocumentReference(),
             AccountingSupplierParty: this.getAccountingSupplierParty(),
             AccountingCustomerParty: this.getAccountingCustomerParty(),
@@ -109,8 +109,6 @@ export class InvoiceComposer {
             },
             CreditNoteLine: []
         } as CreditNote;
-
-        creditNote.PaymentTerms = this.getPaymentTermsForMyCompany(DocumentType.CREDIT_NOTE);
 
         return creditNote;
     }
@@ -155,15 +153,11 @@ export class InvoiceComposer {
         } as PaymentMeans;
     }
 
-    getPaymentTermsForMyCompany(documentType: DocumentType): PaymentTerms {
+    getPaymentTermsForMyCompany(): PaymentTerms {
         const myCompany = this.companyService.myCompany;
         if (myCompany.paymentTerms) {
             return {
                 Note: this.translatePaymentTerm(myCompany.paymentTerms)
-            }
-        } else if (documentType === DocumentType.CREDIT_NOTE) {
-            return {
-                Note: this.translatePaymentTerm('15_DAYS')
             }
         }
         return undefined;
@@ -359,6 +353,10 @@ export class InvoiceComposer {
             AdditionalDocumentReference: invoice.AdditionalDocumentReference,
             AccountingSupplierParty: invoice.AccountingSupplierParty,
             AccountingCustomerParty: invoice.AccountingCustomerParty,
+            Delivery: invoice.Delivery,
+            // buildCreditNoteXml never emits DueDate, PaymentMeans or PaymentTerms, so keeping them
+            // here costs nothing in the UBL and lets a document type switch be undone without loss.
+            DueDate: invoice.DueDate,
             PaymentMeans: invoice.PaymentMeans,
             PaymentTerms: invoice.PaymentTerms,
             TaxTotal: invoice.TaxTotal,
@@ -379,7 +377,7 @@ export class InvoiceComposer {
             ProfileID: creditNote.ProfileID,
             ID: creditNote.ID,
             IssueDate: creditNote.IssueDate,
-            DueDate: undefined,
+            DueDate: creditNote.DueDate ?? this.getDueDateForCompany(),
             InvoiceTypeCode: 380,
             Note: creditNote.Note,
             DocumentCurrencyCode: "EUR",
@@ -388,8 +386,9 @@ export class InvoiceComposer {
             AdditionalDocumentReference: creditNote.AdditionalDocumentReference,
             AccountingSupplierParty: creditNote.AccountingSupplierParty,
             AccountingCustomerParty: creditNote.AccountingCustomerParty,
-            PaymentMeans: creditNote.PaymentMeans,
-            PaymentTerms: creditNote.PaymentTerms,
+            Delivery: creditNote.Delivery,
+            PaymentMeans: this.toInvoicePaymentMeans(creditNote.PaymentMeans) ?? this.getPaymentMeansForMyCompany(30),
+            PaymentTerms: creditNote.PaymentTerms ?? this.getPaymentTermsForMyCompany(),
             TaxTotal: creditNote.TaxTotal,
             LegalMonetaryTotal: creditNote.LegalMonetaryTotal,
             InvoiceLine: creditNote.CreditNoteLine.map(line => ({
@@ -400,6 +399,41 @@ export class InvoiceComposer {
                 Price: line.Price,
             })),
         } as Invoice;
+    }
+
+    // A credit note is not payable, so an invoice's payment block has no meaning on it. Dropping
+    // PaymentDueDate keeps buildPaymentMeans from treating the result as a credit note again.
+    private toInvoicePaymentMeans(paymentMeans?: CreditNotePaymentMeans): PaymentMeans {
+        if (!paymentMeans) {
+            return undefined;
+        }
+        return {
+            PaymentMeansCode: paymentMeans.PaymentMeansCode,
+            PaymentID: paymentMeans.PaymentID,
+            PayeeFinancialAccount: paymentMeans.PayeeFinancialAccount,
+        };
+    }
+
+    creditNoteFromInvoice(invoice: Invoice): CreditNote {
+        const creditNote = this.invoiceToCreditNote(structuredClone(invoice) as Invoice);
+        creditNote.ID = '';
+        creditNote.IssueDate = moment().format('YYYY-MM-DD');
+        creditNote.Note = this.i18n.tr('invoice.modal.credit-note-vat-note');
+        creditNote.AdditionalDocumentReference = this.resetGeneratedInvoiceReference(creditNote.AdditionalDocumentReference);
+        // A new credit note starts without the credited invoice's payment arrangements.
+        creditNote.DueDate = undefined;
+        creditNote.PaymentMeans = undefined;
+        creditNote.PaymentTerms = undefined;
+        return creditNote;
+    }
+
+    private resetGeneratedInvoiceReference(references: AdditionalDocumentReference[]): AdditionalDocumentReference[] {
+        if (!references?.length) {
+            return references;
+        }
+        return references.map(reference => reference.ID === GENERATED_INVOICE
+            ? this.getGeneratedInvoiceDocumentReference()
+            : reference);
     }
 
     public getGeneratedInvoiceDocumentReference(): AdditionalDocumentReference {

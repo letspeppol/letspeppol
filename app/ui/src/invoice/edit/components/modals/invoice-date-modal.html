@@ -11,13 +11,13 @@
                     <span t="invoice.dateModal.issue-date">Issue Date</span>
                     <input type="date" name="issueDate" value.bind="issueDate" required />
                 </label>
-                <label class="field full">
+                <label class="field full" if.bind="!isCreditNote">
                     <span t="invoice.dateModal.payment-terms">Payment Terms</span>
                     <select value.bind="selectedPaymentTerm">
                         <option repeat.for="term of possiblePaymentTerms" value.bind="term.key">${term.translation}</option>
                     </select>
                 </label>
-                <label class="field" if.bind="documentType === 'INVOICE'">
+                <label class="field" if.bind="!isCreditNote">
                     <span t="invoice.dateModal.due-date">Due Date</span>
                     <input type="date" name="dueDate" value.bind="dueDate" disabled />
                 </label>

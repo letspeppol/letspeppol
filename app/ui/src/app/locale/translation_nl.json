@@ -168,6 +168,7 @@
     },
     "success": "Succes",
     "upload": {
+      "not-ubl": "Dit bestand is geen UBL-factuur of -creditnota",
       "size-too-large": "Som van alle bestandsgroottes mag niet meer dan 10 MB zijn",
       "type-unsupported": "Bestandstype niet ondersteund",
       "upload-error": "Fout bij uploaden van bestand"
@@ -320,6 +321,7 @@
   },
   "invoice": {
     "action": {
+      "credit-this-invoice": "Een creditnota voor deze factuur aanmaken",
       "mark-paid": {
         "CREDIT_NOTE": "Creditnota markeren als betaald",
         "INVOICE": "Factuur markeren als betaald"
@@ -513,6 +515,11 @@
       "vat": "BTW"
     },
     "title": "Facturen",
+    "uploadModal": {
+      "drop": "Sleep hier een UBL-bestand",
+      "hint": "Een factuur of een creditnota: het documenttype wordt uit het bestand gelezen.",
+      "title": "UBL uploaden"
+    },
     "validationModal": {
       "error-count": "Aantal fouten",
       "title": "Validatie"

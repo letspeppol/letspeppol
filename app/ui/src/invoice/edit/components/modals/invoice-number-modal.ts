@@ -12,10 +12,14 @@ export class InvoiceNumberModal {
         return this.invoiceContext?.selectedDocumentType === DocumentType.CREDIT_NOTE;
     }
 
-    showModal(sendFunction: () => void) {
+    async showModal(sendFunction: () => void) {
         this.sendFunction = sendFunction;
         this.invoiceNumber = this.invoiceContext.nextReference;
         this.open = true;
+        await this.invoiceContext.referenceRequest;
+        if (this.open && !this.invoiceNumber) {
+            this.invoiceNumber = this.invoiceContext.nextReference;
+        }
     }
 
     closeModal() {

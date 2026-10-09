@@ -34,6 +34,28 @@ const parser = new XMLParser({
     }
 });
 
+export type UblDocumentKind = "Invoice" | "CreditNote";
+
+// Skips the XML declaration, the doctype and processing instructions, and any namespace prefix.
+const ROOT_ELEMENT = /<\s*(?:[\w.-]+:)?([\w.-]+)[\s/>]/;
+// The root element sits at the very start, so uploads of up to 10MB never need a full scan.
+const ROOT_ELEMENT_SEARCH_LENGTH = 64 * 1024;
+
+export function detectUblDocumentKind(xml: string): UblDocumentKind | undefined {
+    if (!xml?.trim()) {
+        return undefined;
+    }
+    const head = xml.slice(0, ROOT_ELEMENT_SEARCH_LENGTH).replace(/<!--[\s\S]*?-->/g, '');
+    switch (ROOT_ELEMENT.exec(head)?.[1]) {
+        case "CreditNote":
+            return "CreditNote";
+        case "Invoice":
+            return "Invoice";
+        default:
+            return undefined;
+    }
+}
+
 export function parseInvoice(xml: string): Invoice {
     return parseUblDocument<Invoice>(xml, "Invoice");
 }

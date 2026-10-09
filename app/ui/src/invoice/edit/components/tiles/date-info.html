@@ -13,11 +13,11 @@
     </div>
     <span t="invoice.dateModal.issue-date">Issue Date</span>
     <b>${invoiceContext.selectedInvoice.IssueDate | dateFormat}</b>
-    <template if.bind="selectedDocumentType === 'INVOICE'">
+    <template if.bind="!isCreditNote">
         <span t="invoice.dateModal.due-date">Due Date</span>
         <b>${invoiceContext.selectedInvoice.DueDate | dateFormat}</b>
     </template>
-    <template else>
+    <template if.bind="invoiceContext.selectedInvoice.PaymentTerms?.Note">
         <span t="invoice.dateModal.payment-terms">Payment Terms</span>
         <b>${invoiceContext.selectedInvoice.PaymentTerms?.Note}</b>
     </template>
