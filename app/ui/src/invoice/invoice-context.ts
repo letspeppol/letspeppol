@@ -128,6 +128,16 @@ export class InvoiceContext {
         this.readOnly = false;
     }
 
+    duplicateDocument(source: UBLDoc, documentType: DocumentType) {
+        this.selectedDocument = undefined;
+        this.selectedDocumentType = documentType;
+        this.readOnly = false;
+        this.partnerMissing = false;
+        this.selectedInvoice = this.invoiceComposer.duplicate(source, documentType);
+        this.invoiceCalculator.calculateTaxAndTotals(this.selectedInvoice);
+        this.getLastInvoiceReference();
+    }
+
     getNextPosition(): string {
         if (this.lines.length && this.lines[this.lines.length - 1]) {
             const id = parseInt(this.lines[this.lines.length - 1].ID);

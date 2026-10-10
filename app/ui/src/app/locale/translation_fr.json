@@ -94,6 +94,10 @@
         "CREDIT_NOTE": "Brouillon de note de crédit enregistré",
         "INVOICE": "Brouillon de facture enregistré"
       },
+      "duplicate-failed": {
+        "CREDIT_NOTE": "Échec de la duplication de la note de crédit",
+        "INVOICE": "Échec de la duplication de la facture"
+      },
       "load-failed": "Échec de la récupération de la facture",
       "mark-seen-failed": "Échec du marquage de la facture comme vue",
       "marked-paid": {
@@ -320,6 +324,10 @@
   },
   "invoice": {
     "action": {
+      "duplicate": {
+        "CREDIT_NOTE": "Dupliquer la note de crédit",
+        "INVOICE": "Dupliquer la facture"
+      },
       "mark-paid": {
         "CREDIT_NOTE": "Marquer la note de crédit comme payée",
         "INVOICE": "Marquer la facture comme payée"
@@ -398,6 +406,7 @@
       "delivery": "Preuve de livraison",
       "download-pdf": "PDF",
       "download-ubl": "UBL",
+      "duplicate": "Dupliquer",
       "invoice-lines": "Lignes de facture",
       "loading": "Chargement",
       "method": "Méthode",
