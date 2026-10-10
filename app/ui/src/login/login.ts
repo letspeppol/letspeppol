@@ -224,6 +224,7 @@ export class Login {
     private async continueWithOAuth(): Promise<boolean> {
         const {authorized, reason} = await this.loginService.completeLogin();
         if (!authorized) {
+            this.browserAuthentication.invalidateSession();
             this.step = 'credentials';
             this.errorKey = loginErrorKeyFor(reason);
             return false;

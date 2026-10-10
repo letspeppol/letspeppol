@@ -3,7 +3,6 @@
     "account-name": "Accountnaam",
     "activate-on-peppol": "Activeren op Peppol",
     "add-attachment-to-notification": "Bijlage toevoegen aan de melding",
-    "add-pdf-to-sending-invoice": "PDF toevoegen aan factuur",
     "address": "Adres",
     "cancel": "Annuleren",
     "change-password": "Wachtwoord wijzigen",
@@ -11,10 +10,10 @@
     "company-info": "Bedrijfsinfo",
     "company-legal-name": "Wettelijke bedrijfsnaam",
     "download-contract": "Contract downloaden",
-    "email-notification-cc-list": "CC-lijst voor e-mailmeldingen",
+    "email-notification-cc-list-incoming": "Inkomende documenten: e-mail CC-lijst",
+    "email-notification-cc-list-outgoing": "Uitgaande documenten: e-mail CC-lijst",
     "enable-email-notification": "E-mailmeldingen inschakelen",
     "iban": "IBAN",
-    "invoice-settings": "Factuurinstellingen",
     "notifications": "Meldingen",
     "number": "Nummer",
     "payment-info": "Betaalinformatie",
@@ -135,6 +134,11 @@
         }
       }
     },
+    "download": {
+      "create-failed": "Archief aanmaken mislukt", "created": "Archiefopdracht aangemaakt", "delete-failed": "Archief verwijderen mislukt", "deleted": "Archief verwijderd",
+      "download-failed": "Archief downloaden mislukt", "empty-period": "Er zijn geen definitieve documenten met UBL-gegevens in deze periode", "limit-reached": "Er zijn maximaal vijf actieve archieven toegestaan",
+      "load-failed": "Archieven laden mislukt", "retried": "Archiefgeneratie opnieuw gestart", "retry-failed": "Archiefgeneratie opnieuw proberen mislukt", "validation-failed": "De gekozen periode is ongeldig"
+    },
     "neutral": "Bericht",
     "partner": {
       "create-failed": "Partner aanmaken mislukt",
@@ -199,8 +203,12 @@
     "belgian-only": "Momenteel activeren we alleen Belgische ondernemingen. <br /> Land laten ondersteunen? <a href=\"mailto:country@letspeppol.org\">Help mee</a>",
     "choose-credentials-title": "2. Kies inloggegevens",
     "company": "Bedrijf",
+    "director-choose-suggested": "Selecteer deze bestuurder",
     "director-confirm": "Bevestigen",
     "director-confirmed": "Bevestigd",
+    "director-mismatch": "De naam op uw eID komt niet overeen met de geselecteerde bestuurder. Selecteer de juiste bestuurder om verder te gaan.",
+    "director-no-match": "Staat uw naam niet in de lijst? Neem dan contact op met de ondersteuning.",
+    "director-suggestion": "Uw eID komt mogelijk overeen met {{name}}.",
     "directors": "Bestuurders",
     "expand-button": "Vergroten",
     "header": "Identiteit bevestigen",
@@ -226,6 +234,16 @@
       "excl": "excl. btw",
       "incl": "incl. btw"
     }
+  },
+  "download": {
+    "action": {"download": "Downloaden", "retry": "Opnieuw proberen"}, "active-links": "actieve archieven", "create": "Archief aanmaken", "creating": "Aanmaken…",
+    "description": "Maak een ZIP met definitieve facturen en creditnota’s. Beide datums zijn inbegrepen.", "empty": "Er zijn nog geen archieven aangemaakt.", "from-date": "Van datum", "generation-failed": "Archiefgeneratie mislukt",
+    "info": {"download-limit": "Het ZIP-bestand wordt verwijderd nadat het 3 keer is gedownload.", "expiration": "De downloadlink vervalt en wordt na 7 dagen verwijderd."},
+    "loading": "Archieven laden…",
+    "status": {"FAILED": "Mislukt", "PENDING": "In afwachting", "PROCESSING": "Bezig", "READY": "Klaar"},
+    "table": {"actions": "Acties", "completed": "Voltooid", "created": "Aangemaakt", "downloads": "Downloads", "expires": "Vervalt", "file": "Bestand", "period": "Periode", "size": "Grootte (MB)", "status": "Status"},
+    "title": "UBL-downloads", "to-date": "Tot datum",
+    "validation": {"limit": "Verwijder een archief voordat u een nieuw aanmaakt.", "order": "De begindatum mag niet na de einddatum liggen.", "required": "Beide datums zijn verplicht.", "same-year": "Beide datums moeten in hetzelfde jaar liggen."}
   },
   "documentDirection": {
     "INCOMING": "Inkomend",
@@ -317,6 +335,15 @@
       }
     },
     "all": "Alle",
+    "allowanceChargeModal": {
+      "charge": "Toeslag",
+      "discount": "Korting",
+      "title": "Kortingen/Kosten",
+      "quantity": "Aantal/Bedrag",
+      "percentage": "Percentage",
+      "amount": "Bedrag",
+      "cost": "Kosten"
+    },
     "attachmentModal": {
       "auto-pdf": "Voeg de automatisch gegenereerde factuur-PDF toe",
       "auto-pdf-replace": "Er wordt automatisch een factuur-PDF gegenereerd. Schakel deze hierboven uit als uw geüploade bestand deze vervangt.",
@@ -376,8 +403,10 @@
       "method": "Methode",
       "note": "Notitie",
       "number": "Nummer",
+      "payable-amount": "Te betalen bedrag",
       "payment": "Betaling",
       "pos": "Pos",
+      "prepaid-amount": "Vooruitbetaald bedrag",
       "recreate-positions": "Lijnposities opnieuw aanmaken",
       "save-draft": "Concept opslaan",
       "send": {
@@ -589,6 +618,7 @@
     "account": "Account",
     "brand-alt": "Let's Peppol",
     "dashboard": "Dashboard",
+    "downloads": "Downloads",
     "invoices": "Facturen",
     "language": "Taal",
     "partners": "Partners",
@@ -661,19 +691,20 @@
     "validating": "Document valideren, een moment geduld"
   },
   "ownershipAdd": {
-    "account-info-body": "Dit bedrijf wordt toegevoegd aan het bestaande account hierboven. Het wachtwoord van dat account blijft hetzelfde.",
-    "account-info-title": "2. Bevestig het account",
-    "action": "Account toevoegen",
+    "account-info-body": "Dit bedrijf wordt aan uw bestaande account toegevoegd. Uw wachtwoord blijft hetzelfde.",
+    "account-info-title": "2. Bevestig uw e-mailadres",
+    "action": "Bedrijf toevoegen",
     "back-dashboard": "Terug naar dashboard",
     "cancel": "Terug naar dashboard",
     "company-has-admin": "Dit bedrijf heeft al een admin-account. De huidige flow ondersteunt alleen bedrijven zonder bestaande admin.",
-    "intro": "Voeg een extra account toe voor een bedrijf door te tekenen als een van de bestuurders.",
+    "intro": "Voeg een ander bedrijf aan uw account toe door als een van de bestuurders te ondertekenen.",
     "lookup": "Bedrijf zoeken",
-    "read-contract-info": "U ontvangt een ondertekend exemplaar zodra dit account is toegevoegd.",
-    "sign-button": "Account toevoegen",
-    "success-body": "Het ondertekende contract werd gedownload en het nieuwe bedrijf is nu beschikbaar in uw accountkeuzelijst.",
-    "success-title": "Account toegevoegd",
-    "title": "Account toevoegen"
+    "read-contract-info": "U ontvangt een ondertekend exemplaar zodra dit bedrijf is toegevoegd.",
+    "sign-button": "Bedrijf toevoegen",
+    "success-body": "Het ondertekende contract is gedownload. U kunt het nieuwe bedrijf nu hierboven kiezen.",
+    "success-title": "Bedrijf toegevoegd",
+    "title": "Bedrijf toevoegen",
+    "tooltip": "Voeg een ander bedrijf aan uw account toe door als een van de bestuurders te ondertekenen met uw eID."
   },
   "partner": {
     "all": "Alle",
@@ -843,6 +874,7 @@
     "copy-error": "Kopiëren mislukt",
     "disable": "2FA uitschakelen",
     "disable-confirm": "Voer uw huidige authenticatiecode in om 2FA uit te schakelen:",
+    "disable-confirm-recovery": "Voer een van uw herstelcodes in om 2FA uit te schakelen:",
     "disabled": "Tweefactorauthenticatie is niet ingeschakeld.",
     "disabled-alert": "Tweefactorauthenticatie uitgeschakeld",
     "disabling": "Uitschakelen...",

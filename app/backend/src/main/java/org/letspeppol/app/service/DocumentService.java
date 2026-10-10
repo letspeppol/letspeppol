@@ -1,8 +1,5 @@
 package org.letspeppol.app.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +30,11 @@ import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.xml.sax.SAXException;
 import reactor.core.publisher.Mono;
+
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
@@ -172,11 +174,6 @@ public class DocumentService {
         Company company = companyRepository.findByPeppolId(peppolId).orElseThrow(() -> new NotFoundException("Company does not exist"));
         UblDto ublDto = readUBL(DocumentDirection.OUTGOING, ublXml, peppolId, draft);
         if (!draft) {
-             if (documentRepository.existsByInvoiceReferenceAndTypeAndOwnerPeppolId(ublDto.invoiceReference(), ublDto.type(), peppolId)) {
-                 throw new AppException(AppErrorCodes.INVOICE_NUMBER_ALREADY_USED);
-             }
-        }
-        if (!draft) {
             // The UI's generated_invoice marker is the source of truth: addRenderedPdfToUbl only
             // renders a PDF when that marker is present, so the per-invoice toggle wins. The
             // company addPdfToSendingInvoice flag only controls the toggle's default in the UI.
@@ -302,6 +299,7 @@ public class DocumentService {
 
     public void updateStatus(UblDocumentDto ublDocumentDto) {
         Document document = documentRepository.findById(ublDocumentDto.id()).orElseThrow(() -> new NotFoundException("Document does not exist"));
+        Instant previousProcessedOn = document.getProcessedOn();
         String previousProcessedStatus = document.getProcessedStatus();
         document.setProxyOn(ublDocumentDto.createdOn());
         document.setScheduledOn(ublDocumentDto.scheduledOn());
@@ -309,6 +307,7 @@ public class DocumentService {
         document.setProcessedStatus(ublDocumentDto.processedStatus());
         documentRepository.save(document);
         notifyIfNewlyErrored(document, previousProcessedStatus);
+        notifyIfNewlySuccessfullyProcessed(document, previousProcessedOn);
     }
 
     public DocumentDto send(String peppolId, UUID id, Instant schedule, String tokenValue) {
@@ -389,6 +388,10 @@ public class DocumentService {
     }
 
     private Document deliver(Document document, String tokenValue) { //TODO : use boolean noArchive from Company
+        if (documentRepository.existsByInvoiceReferenceAndTypeAndOwnerPeppolId(document.getInvoiceReference(), document.getType(), document.getOwnerPeppolId(), document.getId())) {
+            throw new AppException(AppErrorCodes.INVOICE_NUMBER_ALREADY_USED);
+        }
+        Instant previousProcessedOn = document.getProcessedOn();
         String previousProcessedStatus = document.getProcessedStatus();
         UblDocumentDto ublDocumentDto = ((document.getProxyOn() == null) ? proxyWebClient.post().uri("/sapi/document") : proxyWebClient.put().uri("/sapi/document/"+document.getId()))
                 .headers(headers -> headers.setBearerAuth(tokenValue))
@@ -428,6 +431,7 @@ public class DocumentService {
 
         document = documentRepository.save(document);
         notifyIfNewlyErrored(document, previousProcessedStatus);
+        notifyIfNewlySuccessfullyProcessed(document, previousProcessedOn);
         return document;
     }
 
@@ -446,7 +450,7 @@ public class DocumentService {
             String errorCode = readText(root, "errorCode");
             String message = readText(root, "message");
             return new ProxyRequestException(statusCode, errorCode, message == null ? body : message);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             log.warn("Proxy returned an unstructured error response (status={}): {}", statusCode.value(), body, e);
         }
         return new ProxyRequestException(statusCode, body);
@@ -454,13 +458,14 @@ public class DocumentService {
 
     private String readText(JsonNode root, String fieldName) {
         JsonNode node = root.get(fieldName);
-        if (node == null || node.asText().isBlank()) {
+        if (node == null || !node.isValueNode() || node.asString().isBlank()) {
             return null;
         }
-        return node.asText();
+        return node.asString();
     }
 
     private Document rescheduleAtProxy(Document document, String tokenValue) { //TODO : use boolean noArchive from Company
+        Instant previousProcessedOn = document.getProcessedOn();
         String previousProcessedStatus = document.getProcessedStatus();
         UblDocumentDto ublDocumentDto = proxyWebClient.put()
                 .uri("/sapi/document/" + document.getId() + "/reschedule")
@@ -495,12 +500,29 @@ public class DocumentService {
         }
         document = documentRepository.save(document);
         notifyIfNewlyErrored(document, previousProcessedStatus);
+        notifyIfNewlySuccessfullyProcessed(document, previousProcessedOn);
         return document;
     }
 
-    //Notify only on the null -> non-null transition; processedStatus is persisted, so repeated proxy syncs never re-send.
+    private void notifyIfNewlySuccessfullyProcessed(Document document, Instant previousProcessedOn) {
+        if (previousProcessedOn != null || document.getProcessedOn() == null) {
+            return;
+        }
+
+        Company company = document.getCompany();
+        if (company != null
+                && (document.getProcessedStatus() == null || document.getProcessedStatus().isBlank())
+                && DocumentDirection.OUTGOING.equals(document.getDirection())
+                && company.isEnableEmailNotification()) {
+            notificationService.notifyOutgoingDocument(company, document);
+        }
+    }
+
+    // Notify only on the null/blank -> non-blank status transition; processedStatus is persisted, so repeated proxy syncs never re-send.
     private void notifyIfNewlyErrored(Document document, String previousProcessedStatus) {
-        if (previousProcessedStatus == null && document.getProcessedStatus() != null) {
+        if ((previousProcessedStatus == null || previousProcessedStatus.isBlank())
+                && document.getProcessedStatus() != null
+                && !document.getProcessedStatus().isBlank()) {
             Company company = document.getCompany();
             // A failed outgoing document is important enough to always notify, independently of
             // enableEmailNotification (which only governs incoming-document notifications).

@@ -1,6 +1,5 @@
 package org.letspeppol.kyc.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.letspeppol.kyc.dto.AuthErrorResponse;
@@ -10,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.InvalidMediaTypeException;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -35,7 +36,7 @@ public final class BrowserAuthenticationSupport {
                             && "application".equalsIgnoreCase(mediaType.getType())
                             && ("json".equalsIgnoreCase(mediaType.getSubtype())
                             || mediaType.getSubtype().toLowerCase(Locale.ROOT).endsWith("+json")));
-        } catch (InvalidMediaTypeException ignored) {
+        } catch (InvalidMediaTypeException _) {
             return false;
         }
     }

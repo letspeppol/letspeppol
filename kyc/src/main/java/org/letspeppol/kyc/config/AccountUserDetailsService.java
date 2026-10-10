@@ -26,7 +26,7 @@ public class AccountUserDetailsService implements UserDetailsService {
         if (!username.contains("@")) {
             try {
                 account = accountRepository.findByExternalId(UUID.fromString(username));
-            } catch (IllegalArgumentException ignored) {
+            } catch (IllegalArgumentException _) {
             }
         }
 
@@ -34,7 +34,7 @@ public class AccountUserDetailsService implements UserDetailsService {
             account = accountRepository.findByEmail(username.toLowerCase());
         }
 
-        boolean locked = loginAttemptService.isBlocked(loginKey(username));
+        boolean locked = !loginAttemptService.tryAttempt(loginKey(account.map(Account::getEmail).orElse(username)));
         return account
                 .map(a -> new AccountUserDetails(a, locked))
                 .orElseThrow(() -> new UsernameNotFoundException("Account not found: " + username));

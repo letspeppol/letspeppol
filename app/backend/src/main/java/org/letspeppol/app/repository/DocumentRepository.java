@@ -5,6 +5,7 @@ import org.letspeppol.app.model.Document;
 import org.letspeppol.app.model.DocumentType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.NativeQuery;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import java.time.Instant;
@@ -23,12 +24,13 @@ public interface DocumentRepository extends JpaRepository<Document, UUID>, JpaSp
     @Query("""
         SELECT COUNT(document) > 0 FROM Document document
         WHERE document.invoiceReference = :invoiceReference AND document.company.peppolId = :ownerPeppolId and document.type = :type
+        AND document.id <> :documentId
         AND document.draftedOn IS NULL AND document.proxyOn IS NOT NULL AND document.direction = 'OUTGOING' AND document.processedStatus IS NULL
         """)
-    boolean existsByInvoiceReferenceAndTypeAndOwnerPeppolId(String invoiceReference, DocumentType type, String ownerPeppolId);
+    boolean existsByInvoiceReferenceAndTypeAndOwnerPeppolId(String invoiceReference, DocumentType type, String ownerPeppolId, UUID documentId);
 
     // Errored documents (processed_status IS NOT NULL) are excluded from the money totals and counted separately as erroredUnseenCount.
-    @Query(value = """
+    @NativeQuery("""
     SELECT
       COALESCE(SUM(CASE WHEN direction = 'INCOMING' AND processed_status IS NULL AND paid_on IS NULL THEN signed_incl END), 0) AS totalPayableOpenInclVat,
       COALESCE(SUM(CASE WHEN direction = 'INCOMING' AND processed_status IS NULL AND paid_on IS NULL AND due_date < NOW() THEN signed_incl END), 0) AS totalPayableOverdueInclVat,
@@ -56,7 +58,7 @@ public interface DocumentRepository extends JpaRepository<Document, UUID>, JpaSp
       FROM app.document
       WHERE owner_peppol_id = :ownerPeppolId AND drafted_on IS NULL
     ) d
-    """, nativeQuery = true)
+    """)
     TotalsRow totalsByOwner(@Param("ownerPeppolId") String ownerPeppolId);
 
 //    @Query("SELECT count(document) FROM Document document WHERE document.processedOn IS NOT NULL")
@@ -64,7 +66,7 @@ public interface DocumentRepository extends JpaRepository<Document, UUID>, JpaSp
 
     long countByProcessedOnIsNotNullAndIssueDateGreaterThanEqualAndIssueDateLessThan(Instant startInclusive, Instant endExclusive);
 
-    @Query(value = """
+    @NativeQuery("""
     SELECT COALESCE(MAX(day_count), 0) AS max_daily_total
     FROM (
       SELECT date_trunc('day', issue_date) AS day, COUNT(*) AS day_count
@@ -72,11 +74,44 @@ public interface DocumentRepository extends JpaRepository<Document, UUID>, JpaSp
       WHERE processed_on IS NOT NULL AND issue_date >= :startInclusive AND issue_date <  :endExclusive
       GROUP BY 1
     ) daily_counts
-    """, nativeQuery = true)
+    """)
     long maxDailyTotal(@Param("startInclusive") Instant startInclusive, @Param("endExclusive") Instant endExclusive);
 
 //    @Modifying
 //    @Query("DELETE FROM Document document WHERE document.id = :id AND document.company.peppolId = :peppolId")
     void deleteByIdAndOwnerPeppolId(UUID id, String peppolId);
+
+    @Query("""
+        SELECT document FROM Document document
+        WHERE document.ownerPeppolId = :ownerPeppolId
+          AND document.issueDate >= :startInclusive
+          AND document.issueDate < :endExclusive
+          AND document.draftedOn IS NULL
+          AND document.ubl IS NOT NULL
+          AND (document.direction = 'INCOMING'
+               OR (document.direction = 'OUTGOING'
+                   AND document.processedOn IS NOT NULL
+                   AND document.processedStatus IS NULL))
+        ORDER BY document.issueDate, document.id
+        """)
+    List<Document> findAllForArchive(@Param("ownerPeppolId") String ownerPeppolId,
+                                     @Param("startInclusive") Instant startInclusive,
+                                     @Param("endExclusive") Instant endExclusive);
+
+    @Query("""
+        SELECT COUNT(document) > 0 FROM Document document
+        WHERE document.ownerPeppolId = :ownerPeppolId
+          AND document.issueDate >= :startInclusive
+          AND document.issueDate < :endExclusive
+          AND document.draftedOn IS NULL
+          AND document.ubl IS NOT NULL
+          AND (document.direction = 'INCOMING'
+               OR (document.direction = 'OUTGOING'
+                   AND document.processedOn IS NOT NULL
+                   AND document.processedStatus IS NULL))
+        """)
+    boolean existsForArchive(@Param("ownerPeppolId") String ownerPeppolId,
+                             @Param("startInclusive") Instant startInclusive,
+                             @Param("endExclusive") Instant endExclusive);
 
 }

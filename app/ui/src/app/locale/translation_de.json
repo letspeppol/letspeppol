@@ -3,7 +3,6 @@
     "account-name": "Kontoname",
     "activate-on-peppol": "Auf Peppol aktivieren",
     "add-attachment-to-notification": "Anhang zur Benachrichtigung hinzufügen",
-    "add-pdf-to-sending-invoice": "PDF zur Rechnung hinzufügen",
     "address": "Adresse",
     "cancel": "Abbrechen",
     "change-password": "Passwort ändern",
@@ -11,10 +10,10 @@
     "company-info": "Unternehmensinformationen",
     "company-legal-name": "Rechtlicher Unternehmensname",
     "download-contract": "Vertrag herunterladen",
-    "email-notification-cc-list": "CC-Liste für E-Mail-Benachrichtigungen",
+    "email-notification-cc-list-incoming": "Eingehende Dokumente: E-Mail-CC-Liste",
+    "email-notification-cc-list-outgoing": "Ausgehende Dokumente: E-Mail-CC-Liste",
     "enable-email-notification": "E-Mail-Benachrichtigungen aktivieren",
     "iban": "IBAN",
-    "invoice-settings": "Rechnungseinstellungen",
     "notifications": "Benachrichtigungen",
     "number": "Nummer",
     "payment-info": "Zahlungsinformationen",
@@ -135,6 +134,11 @@
         }
       }
     },
+    "download": {
+      "create-failed": "Archiv konnte nicht erstellt werden", "created": "Archivauftrag erstellt", "delete-failed": "Archiv konnte nicht gelöscht werden", "deleted": "Archiv gelöscht",
+      "download-failed": "Archiv konnte nicht heruntergeladen werden", "empty-period": "In diesem Zeitraum gibt es keine endgültigen Dokumente mit UBL-Daten", "limit-reached": "Es sind höchstens fünf aktive Archive erlaubt",
+      "load-failed": "Archive konnten nicht geladen werden", "retried": "Archiverstellung erneut gestartet", "retry-failed": "Archiverstellung konnte nicht erneut gestartet werden", "validation-failed": "Der ausgewählte Zeitraum ist ungültig"
+    },
     "neutral": "Nachricht",
     "partner": {
       "create-failed": "Partner konnte nicht angelegt werden",
@@ -199,8 +203,12 @@
     "belgian-only": "Wir aktivieren derzeit nur belgische Unternehmen. <br /> Soll Ihr Land unterstützt werden? <a href=\"mailto:country@letspeppol.org\">Helfen Sie uns</a>",
     "choose-credentials-title": "2. Zugangsdaten wählen",
     "company": "Unternehmen",
+    "director-choose-suggested": "Diese Person auswählen",
     "director-confirm": "Bestätigen",
     "director-confirmed": "Bestätigt",
+    "director-mismatch": "Der Name auf Ihrer eID stimmt nicht mit der ausgewählten Leitungsperson überein. Wählen Sie die richtige Person aus, um fortzufahren.",
+    "director-no-match": "Wenn Ihr Name nicht in der Liste steht, wenden Sie sich an den Support.",
+    "director-suggestion": "Ihre eID könnte mit {{name}} übereinstimmen.",
     "directors": "Geschäftsführung",
     "expand-button": "Erweitern",
     "header": "Identität bestätigen",
@@ -226,6 +234,16 @@
       "excl": "exkl. MwSt.",
       "incl": "inkl. MwSt."
     }
+  },
+  "download": {
+    "action": {"download": "Herunterladen", "retry": "Erneut versuchen"}, "active-links": "aktive Archive", "create": "Archiv erstellen", "creating": "Wird erstellt…",
+    "description": "Erstellen Sie eine ZIP-Datei mit endgültigen Rechnungen und Gutschriften. Beide Daten sind eingeschlossen.", "empty": "Es wurden noch keine Archive erstellt.", "from-date": "Von", "generation-failed": "Archiverstellung fehlgeschlagen",
+    "info": {"download-limit": "Die ZIP-Datei wird nach 3 Downloads gelöscht.", "expiration": "Der Download-Link läuft nach 7 Tagen ab und wird gelöscht."},
+    "loading": "Archive werden geladen…",
+    "status": {"FAILED": "Fehlgeschlagen", "PENDING": "Ausstehend", "PROCESSING": "In Bearbeitung", "READY": "Bereit"},
+    "table": {"actions": "Aktionen", "completed": "Fertiggestellt", "created": "Erstellt", "downloads": "Downloads", "expires": "Läuft ab", "file": "Datei", "period": "Zeitraum", "size": "Größe (MB)", "status": "Status"},
+    "title": "UBL-Downloads", "to-date": "Bis",
+    "validation": {"limit": "Löschen Sie ein Archiv, bevor Sie ein neues erstellen.", "order": "Das Von-Datum darf nicht nach dem Bis-Datum liegen.", "required": "Beide Daten sind erforderlich.", "same-year": "Beide Daten müssen im selben Jahr liegen."}
   },
   "documentDirection": {
     "INCOMING": "Eingehend",
@@ -317,6 +335,15 @@
       }
     },
     "all": "Alle",
+    "allowanceChargeModal": {
+      "charge": "Zuschlag",
+      "discount": "Rabatt",
+      "title": "Rabatte/Kosten",
+      "quantity": "Menge/Betrag",
+      "percentage": "Prozentsatz",
+      "amount": "Betrag",
+      "cost": "Kosten"
+    },
     "attachmentModal": {
       "auto-pdf": "Automatisch generiertes Rechnungs-PDF einschließen",
       "auto-pdf-replace": "Ein Rechnungs-PDF wird automatisch generiert. Schalten Sie es oben aus, wenn Ihre hochgeladene Datei es ersetzt.",
@@ -376,8 +403,10 @@
       "method": "Methode",
       "note": "Notiz",
       "number": "Nummer",
+      "payable-amount": "Zahlbetrag",
       "payment": "Zahlung",
       "pos": "Pos.",
+      "prepaid-amount": "Vorausbezahlter Betrag",
       "recreate-positions": "Positionen neu erstellen",
       "save-draft": "Entwurf speichern",
       "send": {
@@ -589,6 +618,7 @@
     "account": "Konto",
     "brand-alt": "Let's Peppol",
     "dashboard": "Dashboard",
+    "downloads": "Downloads",
     "invoices": "Rechnungen",
     "language": "Sprache",
     "partners": "Partner",
@@ -661,19 +691,20 @@
     "validating": "Dokument wird validiert, bitte warten"
   },
   "ownershipAdd": {
-    "account-info-body": "Dieses Unternehmen wird dem oben angezeigten bestehenden Konto hinzugefügt. Das Passwort für dieses Konto bleibt unverändert.",
-    "account-info-title": "2. Konto bestätigen",
-    "action": "Konto hinzufügen",
+    "account-info-body": "Dieses Unternehmen wird Ihrem bestehenden Konto hinzugefügt. Ihr Passwort bleibt unverändert.",
+    "account-info-title": "2. E-Mail-Adresse bestätigen",
+    "action": "Unternehmen hinzufügen",
     "back-dashboard": "Zurück zum Dashboard",
     "cancel": "Zurück zum Dashboard",
     "company-has-admin": "Dieses Unternehmen hat bereits ein Admin-Konto. Der aktuelle Ablauf unterstützt nur Unternehmen ohne bestehenden Admin.",
-    "intro": "Fügen Sie ein weiteres Konto für ein Unternehmen hinzu, indem Sie als einer seiner Direktoren unterschreiben.",
+    "intro": "Fügen Sie Ihrem Konto ein weiteres Unternehmen hinzu, indem Sie als Mitglied der Geschäftsführung unterschreiben.",
     "lookup": "Unternehmen suchen",
-    "read-contract-info": "Sie erhalten eine unterschriebene Kopie, sobald dieses Konto hinzugefügt wurde.",
-    "sign-button": "Konto hinzufügen",
-    "success-body": "Der unterschriebene Vertrag wurde heruntergeladen und das neue Unternehmen ist jetzt in Ihrer Konto-Auswahl verfügbar.",
-    "success-title": "Konto hinzugefügt",
-    "title": "Konto hinzufügen"
+    "read-contract-info": "Sie erhalten eine unterschriebene Kopie, sobald dieses Unternehmen hinzugefügt wurde.",
+    "sign-button": "Unternehmen hinzufügen",
+    "success-body": "Der unterschriebene Vertrag wurde heruntergeladen. Sie können das neue Unternehmen jetzt oben auswählen.",
+    "success-title": "Unternehmen hinzugefügt",
+    "title": "Unternehmen hinzufügen",
+    "tooltip": "Fügen Sie Ihrem Konto ein weiteres Unternehmen hinzu, indem Sie als Mitglied der Geschäftsführung mit Ihrer eID unterschreiben."
   },
   "partner": {
     "all": "Alle",
@@ -843,6 +874,7 @@
     "copy-error": "Kopieren fehlgeschlagen",
     "disable": "2FA deaktivieren",
     "disable-confirm": "Geben Sie Ihren aktuellen Authentifizierungscode ein, um 2FA zu deaktivieren:",
+    "disable-confirm-recovery": "Geben Sie einen Ihrer Wiederherstellungscodes ein, um 2FA zu deaktivieren:",
     "disabled": "Zwei-Faktor-Authentifizierung ist nicht aktiviert.",
     "disabled-alert": "Zwei-Faktor-Authentifizierung deaktiviert",
     "disabling": "Deaktivierung...",

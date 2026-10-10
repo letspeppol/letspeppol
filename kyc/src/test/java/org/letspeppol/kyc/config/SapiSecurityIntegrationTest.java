@@ -2,7 +2,7 @@ package org.letspeppol.kyc.config;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpSession;
@@ -54,6 +54,14 @@ class SapiSecurityIntegrationTest {
     }
 
     @Test
+    void appServiceTokenCannotActAsCompanyUser() throws Exception {
+        mockMvc.perform(get(SEARCH_PATH)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token(
+                                List.of("letspeppol-api"), Instant.now().plusSeconds(300), "APP")))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
     void malformedExpiredAndWrongAudienceTokensAreRejected() throws Exception {
         mockMvc.perform(get(SEARCH_PATH)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer not-a-jwt"))
@@ -88,6 +96,10 @@ class SapiSecurityIntegrationTest {
     }
 
     private String token(List<String> audience, Instant expiresAt) {
+        return token(audience, expiresAt, "ADMIN");
+    }
+
+    private String token(List<String> audience, Instant expiresAt, String accountType) {
         Instant issuedAt = expiresAt.isAfter(Instant.now())
                 ? Instant.now().minusSeconds(5)
                 : expiresAt.minusSeconds(300);
@@ -99,7 +111,7 @@ class SapiSecurityIntegrationTest {
                 .audience(audience)
                 .claim("uid", UUID.randomUUID().toString())
                 .claim("peppolId", "0208:0123456789")
-                .claim("accountType", "ADMIN")
+                .claim("accountType", accountType)
                 .build();
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }

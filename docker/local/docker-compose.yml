@@ -98,6 +98,7 @@ services:
       OPEN_COLLECTIVE_URL: ${OPEN_COLLECTIVE_URL:-https://api.opencollective.com/graphql/v2/}
       OPEN_COLLECTIVE_API_KEY: ${OPEN_COLLECTIVE_API_KEY:?OPEN_COLLECTIVE_API_KEY must be set}
       DOCUMENT_PRICE: ${DOCUMENT_PRICE:?DOCUMENT_PRICE must be set}
+      DOWNLOAD_ARCHIVE_DIR: ${DOWNLOAD_ARCHIVE_DIR:-/tmp/letspeppol-downloads}
     volumes:
       - ./opt/data/app:/opt/data/app
 
@@ -129,6 +130,7 @@ services:
       JWT_PRIVATE_KEY: ${JWT_PRIVATE_KEY:-classpath:kyc-private.pem}
       JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY:-classpath:kyc-public.pem}
       KYC_AUTH_APP_EXTERNAL_ID: ${KYC_AUTH_APP_EXTERNAL_ID:-b095630d-1bf3-4250-bf9e-2d49e6ce505b}
+      KYC_TOKEN_URI: ${KYC_TOKEN_URI:-http://kyc:8084/auth/oauth2/token}
       SERVICE_CLIENT_SECRET: ${SERVICE_CLIENT_SECRET:?SERVICE_CLIENT_SECRET must be set}
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:?CORS_ALLOWED_ORIGINS must be set}
       ENCRYPTION_KEY_1: ${ENCRYPTION_KEY_1:?ENCRYPTION_KEY_1 must be set}
@@ -175,7 +177,7 @@ volumes:
 
 networks:
   default:
-    name: lp-network
+    name: local
   observability:
     external: true
     name: observability

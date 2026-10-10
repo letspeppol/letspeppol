@@ -1,6 +1,5 @@
 package org.letspeppol.kyc.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
@@ -16,14 +15,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.oauth2.server.authorization.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.jackson.SecurityJacksonModules;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -42,7 +42,6 @@ import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
 import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
-import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
@@ -62,13 +61,16 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
+
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Configuration
@@ -98,7 +100,13 @@ public class SecurityConfig {
     public SecurityFilterChain authorizationServerSecurityFilterChain(
             HttpSecurity http,
             CorsConfigurationSource corsConfigurationSource,
-            ActingOwnershipAuthorizationRequestConverter actingOwnershipAuthorizationRequestConverter) throws Exception {
+            OwnershipRepository ownershipRepository) throws Exception {
+
+        // Not a @Bean: Spring Security 7 hands a context-wide AuthenticationConverter to the
+        // resource server, which would run this on every /sapi/** request.
+        ActingOwnershipAuthorizationRequestConverter actingOwnershipAuthorizationRequestConverter =
+                new ActingOwnershipAuthorizationRequestConverter(ownershipRepository);
+        BrowserAuthorizationErrorHandler browserErrorHandler = new BrowserAuthorizationErrorHandler(uiLoginUrl());
 
         OAuth2AuthorizationServerConfigurer configurer = new OAuth2AuthorizationServerConfigurer();
 
@@ -112,10 +120,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.ignoringRequestMatchers(configurer.getEndpointsMatcher()))
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .with(configurer, c -> {
-                    c.oidc(Customizer.withDefaults());
+                    c.oidc(oidc -> oidc.logoutEndpoint(logout -> logout.errorResponseHandler(browserErrorHandler)));
                     c.authorizationEndpoint(endpoint -> endpoint
                             .authorizationRequestConverter(actingOwnershipAuthorizationRequestConverter)
-                            .errorResponseHandler(new BrowserAuthorizationErrorHandler(uiLoginUrl())));
+                            .errorResponseHandler(browserErrorHandler));
                 })
                 .exceptionHandling(e -> e.defaultAuthenticationEntryPointFor(
                         new LoginUrlAuthenticationEntryPoint(uiLoginUrl()),
@@ -194,7 +202,7 @@ public class SecurityConfig {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
         converter.setJwtGrantedAuthoritiesConverter(jwt -> {
             Collection<GrantedAuthority> authorities = new ArrayList<>();
-            if (jwt.hasClaim("peppolId")) {
+            if (jwt.hasClaim("peppolId") && !AccountType.APP.name().equals(jwt.getClaimAsString("accountType"))) {
                 authorities.add(new SimpleGrantedAuthority(ROLE_KYC_USER));
             }
             return authorities;
@@ -217,27 +225,23 @@ public class SecurityConfig {
             org.springframework.jdbc.core.JdbcOperations jdbcOperations,
             RegisteredClientRepository registeredClientRepository) {
         JdbcOAuth2AuthorizationService service = new JdbcOAuth2AuthorizationService(jdbcOperations, registeredClientRepository);
-        JdbcOAuth2AuthorizationService.OAuth2AuthorizationRowMapper rowMapper =
-                new JdbcOAuth2AuthorizationService.OAuth2AuthorizationRowMapper(registeredClientRepository);
-        com.fasterxml.jackson.databind.ObjectMapper objectMapper =
-                new com.fasterxml.jackson.databind.ObjectMapper();
-        objectMapper.registerModules(org.springframework.security.jackson2.SecurityJackson2Modules.getModules(getClass().getClassLoader()));
-        objectMapper.registerModule(new org.springframework.security.oauth2.server.authorization.jackson2.OAuth2AuthorizationServerJackson2Module());
-        objectMapper.registerModule(new AccountUserDetailsJacksonModule());
-        rowMapper.setObjectMapper(objectMapper);
-        service.setAuthorizationRowMapper(rowMapper);
+        BasicPolymorphicTypeValidator.Builder typeValidator = BasicPolymorphicTypeValidator.builder()
+                .allowIfSubType(AccountUserDetails.class);
+        JsonMapper jsonMapper = JsonMapper.builder()
+                .addModules(SecurityJacksonModules.getModules(getClass().getClassLoader(), typeValidator))
+                .addModule(new AccountUserDetailsJacksonModule())
+                .build();
+        service.setAuthorizationRowMapper(
+                new JdbcOAuth2AuthorizationService.JsonMapperOAuth2AuthorizationRowMapper(
+                        registeredClientRepository, jsonMapper));
+        service.setAuthorizationParametersMapper(
+                new JdbcOAuth2AuthorizationService.JsonMapperOAuth2AuthorizationParametersMapper(jsonMapper));
         return service;
     }
 
     @Bean
     public JwtEncoder jwtEncoder(JWKSource<SecurityContext> jwkSource) {
         return new NimbusJwtEncoder(jwkSource);
-    }
-
-    @Bean
-    public ActingOwnershipAuthorizationRequestConverter actingOwnershipAuthorizationRequestConverter(
-            OwnershipRepository ownershipRepository) {
-        return new ActingOwnershipAuthorizationRequestConverter(ownershipRepository);
     }
 
     @Bean
@@ -324,7 +328,8 @@ public class SecurityConfig {
             AccountRepository accountRepository,
             OwnershipRepository ownershipRepository,
             @Value("${oauth2.audience:letspeppol-api}") String audience,
-            @Value("${oauth2.app-client.account-external-id:b095630d-1bf3-4250-bf9e-2d49e6ce505b}") String appAccountExternalId) {
+            @Value("${oauth2.app-client.account-external-id:b095630d-1bf3-4250-bf9e-2d49e6ce505b}") String appAccountExternalId,
+            @Value("${oauth2.app-client.peppol-id:0208:1029545627}") String appPeppolId) {
         return context -> {
             JwtClaimsSet.Builder claims = context.getClaims();
 
@@ -347,12 +352,8 @@ public class SecurityConfig {
                         .findByExternalId(UUID.fromString(appAccountExternalId))
                         .orElseThrow(() -> new IllegalStateException("App service account not found: " + appAccountExternalId));
                 claims.claim("uid", app.getExternalId().toString());
-                // The seeded APP account normally holds no ownership; fall back to the APP role so the
-                // claim set stays well-formed for consumers that read accountType.
-                Optional<Ownership> appOwnership = ownershipRepository.findFirstByAccountIdOrderByLastUsedDesc(app.getId());
-                appOwnership.ifPresentOrElse(
-                        ownership -> addOwnershipClaims(claims, ownership),
-                        () -> claims.claim("accountType", AccountType.APP.name()));
+                claims.claim("accountType", AccountType.APP.name());
+                claims.claim("peppolId", appPeppolId);
             }
         };
     }
@@ -362,6 +363,9 @@ public class SecurityConfig {
         if (ownership.getCompany() != null && ownership.getCompany().getPeppolId() != null) {
             claims.claim("peppolId", ownership.getCompany().getPeppolId());
             claims.claim("peppolActive", ownership.getCompany().isPeppolActive());
+            if (ownership.getCompany().getLastUpdatedTimestamp() != null) {
+                claims.claim("companyLastUpdated", ownership.getCompany().getLastUpdatedTimestamp().toString());
+            }
         }
     }
 
@@ -391,7 +395,7 @@ public class SecurityConfig {
         AccountType selectedType;
         try {
             selectedType = AccountType.valueOf(selectedAccountType);
-        } catch (IllegalArgumentException exception) {
+        } catch (IllegalArgumentException _) {
             throw invalidOwnershipGrant();
         }
         return ownershipRepository

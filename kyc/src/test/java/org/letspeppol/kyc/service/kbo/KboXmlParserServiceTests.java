@@ -180,7 +180,7 @@ class KboXmlParserServiceTests {
 
         kboXmlParserService.importEnterprises(enterpriseXml(activeAndEndedVatAuthorizations()));
 
-        Company created = batchCaptor.getValue().get(0);
+        Company created = batchCaptor.getValue().getFirst();
         assertEquals(VAT_TEST_NUMBER, created.getVatNumber());
     }
 
@@ -194,7 +194,7 @@ class KboXmlParserServiceTests {
 
         kboXmlParserService.importEnterprises(enterpriseXml(endedVatAuthorizations()));
 
-        Company created = batchCaptor.getValue().get(0);
+        Company created = batchCaptor.getValue().getFirst();
         assertNull(created.getVatNumber());
     }
 
@@ -208,7 +208,7 @@ class KboXmlParserServiceTests {
 
         kboXmlParserService.importEnterprises(enterpriseXml(null));
 
-        Company created = batchCaptor.getValue().get(0);
+        Company created = batchCaptor.getValue().getFirst();
         assertNull(created.getVatNumber());
     }
 
@@ -324,7 +324,7 @@ class KboXmlParserServiceTests {
 
         List<String> deletedIds = deleteCaptor.getValue();
         assertEquals(1, deletedIds.size());
-        assertEquals("0208:0404356574", deletedIds.get(0));
+        assertEquals("0208:0404356574", deletedIds.getFirst());
     }
 
     @Test

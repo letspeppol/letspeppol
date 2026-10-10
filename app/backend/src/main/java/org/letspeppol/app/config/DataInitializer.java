@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -41,7 +42,9 @@ public class DataInitializer implements CommandLineRunner {
                     "Hasselt",
                     "3500",
                     "Michiel Wouters",
-                    "letspeppol@itaa.be"
+                    "letspeppol@itaa.be",
+                    true,
+                    Instant.now()
             );
             companyService.add(accountInfo);
             PartnerDto partner = new PartnerDto(
@@ -92,19 +95,21 @@ public class DataInitializer implements CommandLineRunner {
 
         }
         peppolId = "0208:1023290711";
-//        if (companyRepository.findByPeppolId(peppolId).isEmpty()) {
-//            AccountInfo accountInfo = new AccountInfo(
-//                    peppolId,
-//                    "1023290711",
-//                    "BE1023290711",
-//                    "SoftwareOplossing bv.",
-//                    "Demerstraat 2",
-//                    "Hasselt",
-//                    "3500",
-//                    "Bart In stukken",
-//                    "bart@softwareoplossing.be"
-//            );
-//            companyService.add(accountInfo);
-//        }
+        if (companyRepository.findByPeppolId(peppolId).isEmpty()) {
+            AccountInfo accountInfo = new AccountInfo(
+                    peppolId,
+                    "1023290711",
+                    "BE1023290711",
+                    "SoftwareOplossing bv.",
+                    "Demerstraat 2",
+                    "Hasselt",
+                    "3500",
+                    "Bart In stukken",
+                    "bart@softwareoplossing.be",
+                    true,
+                    Instant.now()
+            );
+            companyService.add(accountInfo);
+        }
     }
 }

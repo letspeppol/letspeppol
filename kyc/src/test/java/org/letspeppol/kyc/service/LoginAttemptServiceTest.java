@@ -6,6 +6,12 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -24,66 +30,105 @@ class LoginAttemptServiceTest {
     private static final String KEY = "login:user@example.com";
 
     @Test
-    void notBlockedBeforeReachingMaxAttempts() {
-        LoginAttemptService service = new LoginAttemptService(3, 900, Clock.systemUTC());
-        service.recordFailure(KEY);
-        service.recordFailure(KEY);
+    void attemptsAreAllowedUpToTheLimitThenLocked() {
+        LoginAttemptService service = new LoginAttemptService(3, 900, 1_000, Clock.systemUTC());
 
-        assertThat(service.isBlocked(KEY)).isFalse();
-    }
-
-    @Test
-    void blockedAfterMaxAttempts() {
-        LoginAttemptService service = new LoginAttemptService(3, 900, Clock.systemUTC());
-        service.recordFailure(KEY);
-        service.recordFailure(KEY);
-        service.recordFailure(KEY);
-
-        assertThat(service.isBlocked(KEY)).isTrue();
+        assertThat(service.tryAttempt(KEY)).isTrue();
+        assertThat(service.tryAttempt(KEY)).isTrue();
+        assertThat(service.tryAttempt(KEY)).isTrue();
+        assertThat(service.tryAttempt(KEY)).isFalse();
     }
 
     @Test
     void recordSuccessResetsTheCounter() {
-        LoginAttemptService service = new LoginAttemptService(3, 900, Clock.systemUTC());
-        service.recordFailure(KEY);
-        service.recordFailure(KEY);
+        LoginAttemptService service = new LoginAttemptService(3, 900, 1_000, Clock.systemUTC());
+        service.tryAttempt(KEY);
+        service.tryAttempt(KEY);
         service.recordSuccess(KEY);
 
-        // Two fresh failures should not lock since the counter was reset.
-        service.recordFailure(KEY);
-        service.recordFailure(KEY);
-        assertThat(service.isBlocked(KEY)).isFalse();
-    }
-
-    @Test
-    void unknownKeyIsNotBlocked() {
-        LoginAttemptService service = new LoginAttemptService(3, 900, Clock.systemUTC());
-        assertThat(service.isBlocked("never-seen")).isFalse();
+        assertThat(service.tryAttempt(KEY)).isTrue();
+        assertThat(service.tryAttempt(KEY)).isTrue();
+        assertThat(service.tryAttempt(KEY)).isTrue();
+        assertThat(service.tryAttempt(KEY)).isFalse();
     }
 
     @Test
     void lockExpiresAfterLockoutWindow() {
         MutableClock clock = new MutableClock();
-        LoginAttemptService service = new LoginAttemptService(3, 900, clock);
-        service.recordFailure(KEY);
-        service.recordFailure(KEY);
-        service.recordFailure(KEY);
-        assertThat(service.isBlocked(KEY)).isTrue();
+        LoginAttemptService service = new LoginAttemptService(3, 900, 1_000, clock);
+        service.tryAttempt(KEY);
+        service.tryAttempt(KEY);
+        service.tryAttempt(KEY);
+        assertThat(service.tryAttempt(KEY)).isFalse();
 
         clock.advanceSeconds(901);
-        assertThat(service.isBlocked(KEY)).isFalse();
+        assertThat(service.tryAttempt(KEY)).isTrue();
     }
 
     @Test
-    void cleanupRemovesExpiredLocks() {
+    void attemptsOutsideTheWindowNoLongerCount() {
         MutableClock clock = new MutableClock();
-        LoginAttemptService service = new LoginAttemptService(1, 900, clock);
-        service.recordFailure(KEY); // maxAttempts=1 -> immediately locked
+        LoginAttemptService service = new LoginAttemptService(3, 900, 1_000, clock);
+        service.tryAttempt(KEY);
+        service.tryAttempt(KEY);
+
+        clock.advanceSeconds(901);
+
+        assertThat(service.tryAttempt(KEY)).isTrue();
+        assertThat(service.tryAttempt(KEY)).isTrue();
+        assertThat(service.tryAttempt(KEY)).isTrue();
+        assertThat(service.tryAttempt(KEY)).isFalse();
+    }
+
+    @Test
+    void cleanupRemovesKeysBelowTheLimit() {
+        MutableClock clock = new MutableClock();
+        LoginAttemptService service = new LoginAttemptService(5, 900, 10_000, clock);
+        for (int i = 0; i < 1_000; i++) {
+            service.tryAttempt("login:nobody-" + i + "@example.com");
+        }
 
         clock.advanceSeconds(901);
         service.cleanup();
 
-        // After cleanup the key is gone; a single new failure must not be already-locked.
-        assertThat(service.isBlocked(KEY)).isFalse();
+        assertThat(service.trackedKeys()).isZero();
+    }
+
+    @Test
+    void trackedKeysStayBoundedWithoutReleasingLockedKeys() {
+        MutableClock clock = new MutableClock();
+        LoginAttemptService service = new LoginAttemptService(2, 900, 10, clock);
+        service.tryAttempt(KEY);
+        service.tryAttempt(KEY);
+
+        for (int i = 0; i < 100; i++) {
+            clock.advanceSeconds(1);
+            service.tryAttempt("login:nobody-" + i + "@example.com");
+        }
+
+        assertThat(service.trackedKeys()).isLessThanOrEqualTo(10);
+        assertThat(service.tryAttempt(KEY)).isFalse();
+    }
+
+    @Test
+    void concurrentAttemptsCannotExceedTheLimit() throws Exception {
+        LoginAttemptService service = new LoginAttemptService(5, 900, 1_000, Clock.systemUTC());
+        int threads = 32;
+        CountDownLatch start = new CountDownLatch(1);
+        List<Future<Boolean>> results = new ArrayList<>();
+        try (ExecutorService executor = Executors.newFixedThreadPool(threads)) {
+            for (int i = 0; i < threads; i++) {
+                results.add(executor.submit(() -> {
+                    start.await();
+                    return service.tryAttempt(KEY);
+                }));
+            }
+            start.countDown();
+            long allowed = 0;
+            for (Future<Boolean> result : results) {
+                if (result.get()) allowed++;
+            }
+            assertThat(allowed).isEqualTo(5);
+        }
     }
 }

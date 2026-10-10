@@ -57,6 +57,41 @@ describe('BrowserAuthenticationService', () => {
         expect(JSON.parse(totpInit.body)).toEqual({code: '123456'});
     });
 
+    it('fetches a fresh CSRF token after a password login that needs no second factor', async () => {
+        const fetchMock = vi.fn()
+            .mockResolvedValueOnce(sessionResponse('csrf-before'))
+            .mockResolvedValueOnce(statusResponse('authenticated'))
+            .mockResolvedValueOnce(sessionResponse('csrf-after', 'authenticated'))
+            .mockResolvedValueOnce(statusResponse('authenticated'));
+        vi.stubGlobal('fetch', fetchMock);
+
+        const service = new BrowserAuthenticationService();
+        expect(await service.authenticateWithPassword('user@example.com', 'secret')).toBe('authenticated');
+        expect(fetchMock).toHaveBeenCalledTimes(2);
+
+        expect(await service.authenticateWithPassword('user@example.com', 'secret')).toBe('authenticated');
+        expect(fetchMock.mock.calls[2][0]).toBe('/kyc/auth/browser/session');
+        const [retryUrl, retryInit] = fetchMock.mock.calls[3];
+        expect(retryUrl).toBe('/kyc/auth/browser/login');
+        expect(retryInit.headers['X-CSRF-TOKEN']).toBe('csrf-after');
+    });
+
+    it('reloads the session on the next request once it has been invalidated', async () => {
+        const fetchMock = vi.fn()
+            .mockResolvedValueOnce(sessionResponse('csrf-before', 'authenticated'))
+            .mockResolvedValueOnce(sessionResponse('csrf-after'))
+            .mockResolvedValueOnce(statusResponse('authenticated'));
+        vi.stubGlobal('fetch', fetchMock);
+
+        const service = new BrowserAuthenticationService();
+        await service.getSession();
+        service.invalidateSession();
+        await service.authenticateWithPassword('user@example.com', 'secret');
+
+        expect(fetchMock.mock.calls[1][0]).toBe('/kyc/auth/browser/session');
+        expect(fetchMock.mock.calls[2][1].headers['X-CSRF-TOKEN']).toBe('csrf-after');
+    });
+
     it('surfaces structured authentication failures without using the KYC API interceptor', async () => {
         const fetchMock = vi.fn()
             .mockResolvedValueOnce(sessionResponse('csrf-token'))

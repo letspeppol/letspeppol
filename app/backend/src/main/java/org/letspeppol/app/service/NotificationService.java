@@ -1,7 +1,5 @@
 package org.letspeppol.app.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.app.config.SponsorProperties;
 import org.letspeppol.app.dto.DocumentNotificationEmailDto;
@@ -15,6 +13,10 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.HtmlUtils;
+
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -34,6 +36,8 @@ public class NotificationService {
     private final String notificationMailFrom;
     private final Resource emailNotificationTemplate;
     private final Resource emailNotificationHtmlTemplate;
+    private final Resource emailOutgoingNotificationTemplate;
+    private final Resource emailOutgoingNotificationHtmlTemplate;
     private final Resource emailErrorTemplate;
     private final Resource emailErrorHtmlTemplate;
     private final EmailJobRepository emailJobRepository;
@@ -46,6 +50,8 @@ public class NotificationService {
     public NotificationService(@Value("${notification.mail.from}") String notificationMailFrom,
                                @Value("classpath:mail/notification-email_en.txt") Resource emailNotificationTemplate,
                                @Value("classpath:mail/notification-email_en.html") Resource emailNotificationHtmlTemplate,
+                               @Value("classpath:mail/outgoing-notification-email_en.txt") Resource emailOutgoingNotificationTemplate,
+                               @Value("classpath:mail/outgoing-notification-email_en.html") Resource emailOutgoingNotificationHtmlTemplate,
                                @Value("classpath:mail/error-notification-email_en.txt") Resource emailErrorTemplate,
                                @Value("classpath:mail/error-notification-email_en.html") Resource emailErrorHtmlTemplate,
                                EmailJobRepository emailJobRepository,
@@ -55,6 +61,8 @@ public class NotificationService {
         this.notificationMailFrom = notificationMailFrom;
         this.emailNotificationTemplate = emailNotificationTemplate;
         this.emailNotificationHtmlTemplate = emailNotificationHtmlTemplate;
+        this.emailOutgoingNotificationTemplate = emailOutgoingNotificationTemplate;
+        this.emailOutgoingNotificationHtmlTemplate = emailOutgoingNotificationHtmlTemplate;
         this.emailErrorTemplate = emailErrorTemplate;
         this.emailErrorHtmlTemplate = emailErrorHtmlTemplate;
         this.emailJobRepository = emailJobRepository;
@@ -102,7 +110,7 @@ public class NotificationService {
             DocumentNotificationEmailDto emailDto = new DocumentNotificationEmailDto(
                     notificationMailFrom,
                     company.getSubscriberEmail(),
-                    company.getEmailNotificationCcList(),
+                    company.getEmailNotificationCcListIncoming(),
                     null,
                     null,
                     "New invoice %s received from %s".formatted(document.getInvoiceReference(), document.getPartnerName()),
@@ -118,10 +126,68 @@ public class NotificationService {
                     .build();
             EmailJob saved = emailJobRepository.save(emailJob);
             eventPublisher.publishEvent(new EmailJobCreatedEvent(saved.getId()));
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException _) {
             log.error("Failed to convert email object to json");
-        } catch (Exception e) {
+        } catch (Exception _) {
             log.error("Unable to create email notification");
+        }
+    }
+
+    public void notifyOutgoingDocument(Company company, Document document) {
+        try {
+            SponsorProperties.Sponsor sponsor = nextSponsor();
+            String recipient = Objects.toString(document.getPartnerName(), "");
+            String reference = Objects.toString(document.getInvoiceReference(), "");
+
+            String text = getTemplateContents("en-outgoing-txt", emailOutgoingNotificationTemplate)
+                    .replace("{{recipient}}", recipient)
+                    .replace("{{reference}}", reference)
+                    .replace("{{uuid}}", document.getId().toString());
+
+            String html = null;
+            if (sponsor != null) {
+                String logoUrl = sponsorProperties.getBaseUrl() + sponsor.getLogo();
+                text = text
+                        .replace("{{supportedByText}}", sponsorProperties.getEmailText())
+                        .replace("{{sponsorName}}", sponsor.getName())
+                        .replace("{{sponsorUrl}}", sponsor.getUrl());
+
+                html = getTemplateContents("en-outgoing-html", emailOutgoingNotificationHtmlTemplate)
+                        .replace("{{recipient}}", HtmlUtils.htmlEscape(recipient))
+                        .replace("{{reference}}", HtmlUtils.htmlEscape(reference))
+                        .replace("{{uuid}}", document.getId().toString())
+                        .replace("{{supportedByText}}", sponsorProperties.getEmailText())
+                        .replace("{{sponsorName}}", sponsor.getName())
+                        .replace("{{sponsorUrl}}", sponsor.getUrl())
+                        .replace("{{sponsorLogoUrl}}", logoUrl);
+            } else {
+                text = text
+                        .replace("\n--\n{{supportedByText}}: {{sponsorName}} ({{sponsorUrl}})\n", "");
+            }
+
+            DocumentNotificationEmailDto emailDto = new DocumentNotificationEmailDto(
+                    notificationMailFrom,
+                    company.getSubscriberEmail(),
+                    company.getEmailNotificationCcListOutgoing(),
+                    null,
+                    null,
+                    "Invoice %s successfully sent to %s".formatted(reference, recipient),
+                    text,
+                    html,
+                    company.isAddAttachmentToNotification() ? document.getId() : null
+            );
+
+            String json = objectMapper.writeValueAsString(emailDto);
+            EmailJob emailJob = EmailJob.builder()
+                    .toAddress(company.getSubscriberEmail())
+                    .payload(json)
+                    .build();
+            EmailJob saved = emailJobRepository.save(emailJob);
+            eventPublisher.publishEvent(new EmailJobCreatedEvent(saved.getId()));
+        } catch (JsonProcessingException e) {
+            log.error("Failed to convert outgoing email object to json");
+        } catch (Exception e) {
+            log.error("Unable to create outgoing email notification for document {}", document.getId(), e);
         }
     }
 
@@ -163,7 +229,7 @@ public class NotificationService {
             DocumentNotificationEmailDto emailDto = new DocumentNotificationEmailDto(
                     notificationMailFrom,
                     company.getSubscriberEmail(),
-                    company.getEmailNotificationCcList(),
+                    company.getEmailNotificationCcListIncoming(),
                     null,
                     null,
                     "Invoice %s could not be delivered".formatted(reference),
@@ -180,7 +246,7 @@ public class NotificationService {
                     .build();
             EmailJob saved = emailJobRepository.save(emailJob);
             eventPublisher.publishEvent(new EmailJobCreatedEvent(saved.getId()));
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException _) {
             log.error("Failed to convert error email object to json");
         } catch (Exception e) {
             log.error("Unable to create error email notification for document {}", document.getId(), e);

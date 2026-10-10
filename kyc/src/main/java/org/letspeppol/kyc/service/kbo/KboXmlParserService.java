@@ -798,7 +798,7 @@ public class KboXmlParserService {
                         hasEnd = true;
                         try {
                             endDate = LocalDate.parse(end, validityDateFormatter);
-                        } catch (Exception e) {
+                        } catch (Exception _) {
                             log.warn("Could not parse end date {}", end);
                         }
                     }

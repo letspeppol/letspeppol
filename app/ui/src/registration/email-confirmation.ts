@@ -27,6 +27,7 @@ export class EmailConfirmation {
     public emailToken: string;
     public tokenVerificationResponse: TokenVerificationResponse | undefined; // made public for template binding
     public confirmedDirector: Director | undefined; // holds the chosen director
+    public suggestedDirector: Director | undefined;
     private password = '';
     private passwordDuplicate;
     private registrationSuccess = true;
@@ -34,7 +35,7 @@ export class EmailConfirmation {
     private step = 0;
     private certificate;
     private signatureAlgorithm;
-    private prepareSigningResponse;
+    private prepareSigningResponse: PrepareSigningResponse | undefined;
     private confirmInProgress = false;
     private warningKey;
     private alreadyRegisteredProvider = '';
@@ -69,6 +70,7 @@ export class EmailConfirmation {
     }
 
     public async confirmContract() {
+        if (!this.prepareSigningResponse?.allowedToSign || !this.confirmedDirector) return;
         this.confirmInProgress = true;
         try {
 //             const {
@@ -95,13 +97,14 @@ export class EmailConfirmation {
                 newPassword: this.password
             });
             this.step = 3;
-            const registrationStatus = finalizeSigningResponse.headers.get('Registration-Status'); // OK | FAILED | SUSPENDED | CONFLICT | UNKNOWN
+            const registrationStatus = finalizeSigningResponse.headers.get('Registration-Status'); // OK | FAILED | SUSPENDED | MANUAL_REVIEW | CONFLICT | UNKNOWN
             switch (registrationStatus) {
               case 'UNKNOWN':
               case 'FAILED':
                 this.warningKey = 'account.registration-failed.try-again-one-day';
                 break;
               case 'SUSPENDED':
+              case 'MANUAL_REVIEW':
                 this.warningKey = 'account.registration-failed.contact-us';
                 break;
               case 'CONFLICT':
@@ -176,6 +179,8 @@ export class EmailConfirmation {
 
     public async confirmDirector(director: Director) {
         if (this.confirmedDirector) return; // already confirmed one
+        this.suggestedDirector = undefined;
+        this.prepareSigningResponse = undefined;
         this.confirmedDirector = director;
         try {
             const {
@@ -187,10 +192,17 @@ export class EmailConfirmation {
                 signatureAlgorithm,
                 prepareSigningResponse
             } = await this.prepareSigning(supportedSignatureAlgorithms, certificate);
+            this.prepareSigningResponse = prepareSigningResponse;
+
+            if (!prepareSigningResponse.allowedToSign) {
+                this.suggestedDirector = this.tokenVerificationResponse.company.directors?.find(
+                    candidate => candidate.id === prepareSigningResponse.suggestedDirectorId);
+                this.confirmedDirector = undefined;
+                return;
+            }
 
             this.certificate = certificate;
             this.signatureAlgorithm = signatureAlgorithm;
-            this.prepareSigningResponse = prepareSigningResponse;
             this.step = 2;
         } catch (error) {
             let text = "Confirming Identity failed";
