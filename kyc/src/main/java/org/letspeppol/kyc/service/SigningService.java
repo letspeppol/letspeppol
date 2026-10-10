@@ -94,6 +94,7 @@ public class SigningService {
     private final OwnershipService ownershipService;
     private final SignerAccountResolverService signerAccountResolverService;
     private final DirectorRepository directorRepository;
+    private final ContractStorageService contractStorageService;
     private final Counter prepareSigningCounter;
     private final Counter finalizeSigningCounter;
 
@@ -101,7 +102,6 @@ public class SigningService {
     private String dataDirectory;
 
     private String workingDirectory;
-    private String contractDirectory;
 
     // Maps a prepared-signing id (hashToFinalize) to the exact digest the server prepared for signing.
     // Binds the eID signature to OUR contract and makes a prepared signing single-use (anti-replay).
@@ -119,7 +119,6 @@ public class SigningService {
     @PostConstruct
     public void init() throws IOException {
         workingDirectory = initDirectory( "/temp");
-        contractDirectory = initDirectory( "/contracts");
         loadTrustedCaKeyStore();
     }
 
@@ -380,6 +379,7 @@ public class SigningService {
             return new FinalizeSigningResponse(writeContractToFile(signingRequest.peppolId(), account, finalPdfBytes), null, true);
         }
         ownershipService.ensureAdminOwnership(account, director.getCompany());
+        writeContractToFile(signingRequest.peppolId(), account, finalPdfBytes);
         RegistrationResponse registrationResponse = null;
         if (signerResolution.requestedType() == AccountType.ADMIN && !director.getCompany().isSuspended()) {
             registrationResponse = companyService.registerCompany(director.getCompany());
@@ -389,21 +389,16 @@ public class SigningService {
                 companyRegistrationCounterFailure.increment();
             }
         }
-        return new FinalizeSigningResponse(writeContractToFile(signingRequest.peppolId(), account, finalPdfBytes), registrationResponse, false);
+        return new FinalizeSigningResponse(finalPdfBytes, registrationResponse, false);
     }
 
     public byte[] getContract(String peppolId, Long accountId) {
-        try {
-            return Files.readAllBytes(Path.of(contractDirectory, "contract_%s_%d.pdf".formatted(peppolId.replace(':', '_'), accountId)));
-        } catch (IOException e) {
-            throw new RuntimeException("Error getting contract from file: " + e.getMessage(), e);
-        }
+        return contractStorageService.getContract(peppolId, accountId);
     }
 
     private byte[] writeContractToFile(String peppolId, Account account, byte[] finalPdfBytes) {
         try {
-            File finalizedPdf = new File(contractDirectory, "contract_%s_%d.pdf".formatted(peppolId.replace(':', '_'), account.getId()));
-            Files.write(finalizedPdf.toPath(), finalPdfBytes);
+            contractStorageService.storeContract(peppolId, account.getId(), finalPdfBytes);
             log.info("Contract signing completed successfully for company: {}, final contract size: {} bytes", peppolId, finalPdfBytes.length);
             return finalPdfBytes;
         } catch (Exception e) {

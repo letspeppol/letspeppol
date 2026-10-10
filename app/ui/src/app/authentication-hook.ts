@@ -2,6 +2,7 @@ import {lifecycleHooks} from '@aurelia/runtime-html';
 import {IRouteViewModel, NavigationInstruction, Params, RouteNode} from '@aurelia/router';
 import {LoginService} from "../services/app/login-service";
 import {resolve} from "@aurelia/kernel";
+import {ownershipRoute} from "../services/app/ownership-route";
 
 @lifecycleHooks()
 export class AuthenticationHook {
@@ -19,6 +20,9 @@ export class AuthenticationHook {
             this.loginService.rememberCurrentNavigation();
             return '/login';
         }
-        return requestedPeppolId ? true : this.loginService.getCurrentOwnershipRoute('/dashboard');
+        const dashboard = this.loginService.getCurrentOwnershipRoute('/dashboard');
+        return requestedPeppolId && dashboard === ownershipRoute(requestedPeppolId, '/dashboard')
+            ? true
+            : dashboard;
     }
 }

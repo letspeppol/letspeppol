@@ -38,10 +38,30 @@ public class ProxyService {
     }
 
     public RegistrationResponse registerCompany(String peppolId, String companyName) {
+        return registerCompany(peppolId, companyName, null, null, null, null);
+    }
+
+    public RegistrationResponse registerCompany(String peppolId, String companyName, String address,
+                                                String postalCode, String city, String vatNumber) {
+        return registerCompany(peppolId, companyName, address, postalCode, city, vatNumber, null);
+    }
+
+    public RegistrationResponse registerCompany(String peppolId, String companyName, String address,
+                                                String postalCode, String city, String vatNumber,
+                                                byte[] signedContract) {
         try {
             RegistryDto registryDto = webClient.post()
                     .uri(uriBuilder -> uriBuilder.path("/sapi/registry").queryParam("peppolId", peppolId).build())
-                    .body(Mono.just(new RegistrationRequest(companyName, "EN", "BE")), RegistrationRequest.class) //TODO : not default NL
+                    .body(Mono.just(new RegistrationRequest(
+                            companyName,
+                            "EN", //TODO : not default NL
+                            "BE",
+                            address,
+                            postalCode,
+                            city,
+                            vatNumber,
+                            signedContract
+                    )), RegistrationRequest.class)
                     .retrieve()
                     .bodyToMono(RegistryDto.class)
                     .blockOptional()

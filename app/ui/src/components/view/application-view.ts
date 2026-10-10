@@ -11,18 +11,23 @@ export class ApplicationView {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
     private readonly loginService = resolve(LoginService);
     private readonly ownershipService = resolve(OwnershipService);
-    private sub?: IDisposable;
+    private readonly subscriptions: IDisposable[] = [];
     peppolActive: boolean = true;
 
     async attached() {
-        this.sub = this.ea.subscribe('account:switched', () => {
+        this.subscriptions.push(this.ea.subscribe('account:switched', () => {
             void this.refreshPeppolActive();
-        });
+        }));
+        this.subscriptions.push(this.ea.subscribe('account:peppol-status-changed', (peppolActive: boolean) => {
+            this.peppolActive = peppolActive;
+        }));
         await this.refreshPeppolActive();
     }
 
     unbinding() {
-        this.sub?.dispose();
+        for (const subscription of this.subscriptions.splice(0)) {
+            subscription.dispose();
+        }
     }
 
     async refreshPeppolActive() {

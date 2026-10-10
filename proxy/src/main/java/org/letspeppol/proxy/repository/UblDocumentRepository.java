@@ -16,7 +16,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface UblDocumentRepository extends JpaRepository<UblDocument, UUID> {
-    List<UblDocument> findAllByHash(String hash);
+    Optional<UblDocument> findByHashAndOwnerPeppolId(String hash, String ownerPeppolId);
 
     Optional<UblDocument> findByIdAndOwnerPeppolId(UUID id, String ownerPeppolId);
 
@@ -26,7 +26,7 @@ public interface UblDocumentRepository extends JpaRepository<UblDocument, UUID> 
 
     List<UblDocument> findAllByDirectionAndProcessedOnIsNullAndAccessPointIsNotNull(DocumentDirection documentDirection, Pageable updatedOn);
 
-    Optional<UblDocument> findByAccessPointId(String accessPointId);
+    Optional<UblDocument> findByAccessPointIdAndOwnerPeppolId(String accessPointId, String ownerPeppolId);
 
     long countByOwnerPeppolIdAndDirectionAndScheduledOnBetween(
             String ownerPeppolId,

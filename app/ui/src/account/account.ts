@@ -1,4 +1,4 @@
-import {CompanyDto, CompanyService} from "../services/app/company-service";
+import {CompanyDto, CompanyService, PeppolRegistrationDto} from "../services/app/company-service";
 import {resolve} from "@aurelia/kernel";
 import {AlertType} from "../components/alert/alert";
 import {IEventAggregator, IDisposable} from "aurelia";
@@ -9,6 +9,12 @@ import {ConfirmationModalContext} from "../components/confirmation/confirmation-
 import {validateEmail} from "../app/util/email-validation";
 import {I18N} from "@aurelia/i18n";
 import {getVatDisplayMode, hasVatNumber, IVatDisplay, VatDisplayMode} from "../services/app/vat-display-service";
+
+const ACCESS_POINTS: Record<string, {name: string; url: string}> = {
+    RECOMMAND: {name: 'Recommand', url: 'https://recommand.eu/'},
+    SCRADA: {name: 'Scrada', url: 'https://www.scrada.be/'},
+    E_INVOICE: {name: 'E-Invoice', url: 'https://e-invoice.be/'},
+};
 
 export class Account {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -26,6 +32,39 @@ export class Account {
     private warningKey;
     private alreadyRegisteredProvider = '';
     private initialVatDisplayMode: VatDisplayMode = this.vatDisplay.mode;
+    private peppolRegistration?: PeppolRegistrationDto;
+    private accessPointLoading = true;
+    private registrationRequest = 0;
+
+    get accessPointName(): string {
+        if (this.accessPointLoading) return this.i18n.tr('account.access-point-loading');
+        const registration = this.peppolRegistration;
+        if (!registration) return this.i18n.tr('account.access-point-unavailable');
+        if (!registration.peppolActive || registration.accessPoint === 'NONE') {
+            return this.i18n.tr('account.access-point-none');
+        }
+        return ACCESS_POINTS[registration.accessPoint]?.name
+            || registration.accessPoint || this.i18n.tr('account.access-point-unavailable');
+    }
+
+    get accessPointUrl(): string | undefined {
+        if (this.accessPointLoading || !this.peppolRegistration?.peppolActive) return undefined;
+        return ACCESS_POINTS[this.peppolRegistration.accessPoint]?.url;
+    }
+
+    private async refreshPeppolRegistration() {
+        const request = ++this.registrationRequest;
+        this.accessPointLoading = true;
+        this.peppolRegistration = undefined;
+        try {
+            const registration = await this.companyService.getPeppolRegistration();
+            if (request === this.registrationRequest) this.peppolRegistration = registration;
+        } catch {
+            // Provider lookup failure must not prevent loading or updating the account.
+        } finally {
+            if (request === this.registrationRequest) this.accessPointLoading = false;
+        }
+    }
 
     get isVatExempt(): boolean {
         return this.company?.vatRuleset === 'VAT_EXEMPT_ART_56BIS';
@@ -76,6 +115,8 @@ export class Account {
         }
         this.company = JSON.parse(JSON.stringify(company));
         this.initialVatDisplayMode = this.vatDisplay.mode;
+
+        void this.refreshPeppolRegistration();
 
         if (!this.company.peppolActive && this.company.peppolId) {
             const peppolDirectoryResponse = await this.peppolDirService.findByParticipant(this.company.peppolId); // TODO : peppolId undefined ?
@@ -129,12 +170,11 @@ export class Account {
 
     async registerOnPeppol() {
         try {
-            this.company.peppolActive = await this.registrationService.registerCompany();
-            localStorage.setItem('peppolActive', String(this.company.peppolActive));
+            this.setPeppolActive(await this.registrationService.registerCompany());
+            void this.refreshPeppolRegistration();
             this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.account.peppol-activated')});
-            window.location.reload();
-        } catch (response: unknown) {
-            if (!(response instanceof Response)) {
+        } catch (error: unknown) {
+            if (!(error instanceof Response)) {
                 this.ea.publish('alert', { alertType: AlertType.Danger, text: this.i18n.tr('alert.account.peppol-activation-request-failed') });
                 return;
             }
@@ -173,13 +213,21 @@ export class Account {
 
     async unregisterFromPeppol() {
         try {
-            this.company.peppolActive = await this.registrationService.unregisterCompany()
-            localStorage.setItem('peppolActive', String(this.company.peppolActive));
+            this.setPeppolActive(await this.registrationService.unregisterCompany());
+            void this.refreshPeppolRegistration();
             this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.account.peppol-removed')});
-            window.location.reload();
         } catch {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.account.peppol-remove-failed')});
         }
+    }
+
+    private setPeppolActive(peppolActive: boolean) {
+        this.company.peppolActive = peppolActive;
+        if (this.companyService.myCompany) {
+            this.companyService.myCompany.peppolActive = peppolActive;
+        }
+        localStorage.setItem('peppolActive', String(peppolActive));
+        this.ea.publish('account:peppol-status-changed', peppolActive);
     }
 
     showChangePasswordModal() {

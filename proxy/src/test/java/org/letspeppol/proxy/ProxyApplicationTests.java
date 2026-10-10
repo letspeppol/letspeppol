@@ -8,7 +8,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 		"scrada.company-id=test-company-id",
 		"scrada.api-key=test-api-key",
 		"scrada.password=test-password",
-		"scrada.company-key=test-company-key"
+		"scrada.company-key=test-company-key",
+		"recommand.api-key=test-api-key",
+		"recommand.api-secret=test-api-secret"
 })
 class ProxyApplicationTests {
 

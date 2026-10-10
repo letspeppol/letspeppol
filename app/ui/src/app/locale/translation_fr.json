@@ -1,5 +1,10 @@
 {
   "account": {
+    "access-point": "Point d'accès",
+    "access-point-loading": "Chargement du point d'accès…",
+    "access-point-none": "Non connecté",
+    "access-point-none-description": "Non enregistré via Let’s Peppol",
+    "access-point-unavailable": "Point d'accès indisponible",
     "account-name": "Nom du compte",
     "activate-on-peppol": "Activer sur Peppol",
     "add-attachment-to-notification": "Ajouter une pièce jointe à la notification",
@@ -298,7 +303,7 @@
     "DUPLICATE_REQUEST": "Cette demande a déjà été traitée.",
     "login-failed": "Échec de la connexion",
     "no_ownership": "Ce compte n’est lié à aucune entreprise.",
-    "not-peppol-active": "Vous n'êtes actuellement pas enregistré sur Peppol",
+    "not-peppol-active": "Votre entreprise n'est actuellement pas enregistrée via Let’s Peppol",
     "not-peppol-active-action": "Résoudre cela maintenant",
     "registration-company-affiliate-contact-admin": "Cette entreprise a déjà un administrateur. Veuillez contacter votre administrateur pour poursuivre l’onboarding affilié.",
     "registration-company-already-registered": "Entreprise déjà enregistrée",
@@ -616,7 +621,7 @@
   },
   "navigation": {
     "account": "Compte",
-    "brand-alt": "Let's Peppol",
+    "brand-alt": "Let’s Peppol",
     "dashboard": "Tableau de bord",
     "downloads": "Téléchargements",
     "invoices": "Factures",
@@ -859,7 +864,7 @@
     "empty": "Pas encore de sponsors.",
     "load-error": "Impossible de charger les sponsors pour le moment.",
     "loading": "Chargement des sponsors...",
-    "subtitle": "Entreprises et personnes qui aident à faire vivre Let's Peppol.",
+    "subtitle": "Entreprises et personnes qui aident à faire vivre Let’s Peppol.",
     "table": {
       "amount": "Montant",
       "date": "Date",

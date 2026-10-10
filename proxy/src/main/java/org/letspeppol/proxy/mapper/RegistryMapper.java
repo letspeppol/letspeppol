@@ -11,7 +11,8 @@ public class RegistryMapper {
         }
         return new RegistryDto(
             registry.getPeppolId(),
-            registry.getAccessPoint() != AccessPoint.NONE
+            registry.getAccessPoint() != AccessPoint.NONE,
+            registry.getAccessPoint().name()
         );
     }
 }

@@ -54,7 +54,7 @@ public class UblDocumentReceiverService {
 
     public void createAsReceived(DocumentType documentType, String senderPeppolId, String receiverPeppolId, String ubl, AccessPoint accessPoint, String accessPointId, Runnable afterCommit) {
         String hash = HashUtil.sha256(ubl);
-        if (ublDocumentRepository.findByAccessPointId(accessPointId).isPresent() || !ublDocumentRepository.findAllByHash(hash).isEmpty()) {
+        if (ublDocumentRepository.findByAccessPointIdAndOwnerPeppolId(accessPointId, receiverPeppolId).isPresent() || ublDocumentRepository.findByHashAndOwnerPeppolId(hash, receiverPeppolId).isPresent()) {
             log.error("Receiving duplicate document {} from Access Point {}", accessPointId, accessPoint);
             afterCommit.run(); //TODO : does this make sense as AP needs to be informed we have successfully received the document ?
             throw new DuplicateRequestException("UblDocument " + accessPointId + " is already received");
