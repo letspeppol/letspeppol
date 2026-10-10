@@ -79,6 +79,14 @@ public class ActingOwnershipAuthorizationRequestConverter implements Authenticat
                         .findFirstByAccountIdAndCompanyPeppolIdAndTypeOrderByLastUsedDesc(
                                 userDetails.getAccountId(), requestedPeppolId, accountType);
             }
+            // A stale company URL should use this account's default. A missing role on a
+            // company the account still owns remains an invalid explicit selection.
+            if (selectedOwnership.isEmpty() && (requestedAccountType == null || ownershipRepository
+                    .findFirstByAccountIdAndCompanyPeppolIdOrderByLastUsedDesc(
+                            userDetails.getAccountId(), requestedPeppolId).isEmpty())) {
+                selectedOwnership = ownershipRepository
+                        .findFirstByAccountIdOrderByLastUsedDesc(userDetails.getAccountId());
+            }
         }
 
         Ownership ownership = selectedOwnership.orElseThrow(ActingOwnershipAuthorizationRequestConverter::invalidSelection);
