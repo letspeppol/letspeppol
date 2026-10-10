@@ -1,6 +1,5 @@
 package org.letspeppol.app.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.service.spi.ServiceException;
 import org.junit.jupiter.api.Test;
 import org.letspeppol.app.dto.accountant.LinkCustomerDto;
@@ -12,6 +11,7 @@ import org.letspeppol.app.repository.CompanyRepository;
 import org.letspeppol.app.repository.DocumentRepository;
 import org.letspeppol.app.repository.EmailJobRepository;
 import org.springframework.context.ApplicationEventPublisher;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -41,7 +41,7 @@ class AccountantServiceTest {
             mock(DocumentRepository.class),
             emailTemplateService,
             emailJobRepository,
-            new ObjectMapper(),
+            new JsonMapper(),
             mock(ApplicationEventPublisher.class));
 
     @Test

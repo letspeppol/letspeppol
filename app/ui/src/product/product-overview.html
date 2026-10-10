@@ -14,11 +14,11 @@
                     <span class="label">${category.name}</span>
                     <span class="badge" background-color.style="category.color">${category | productCount:productContext.products & signal:'productUpdate'}</span>
                 </button>
-                <button class="icon-btn" title="Edit" t="[title]common.edit" style="width: 30px" click.trigger="editProductCategory(category)">
+                <button if.bind="ownershipService.granted.PRODUCT_MANAGE" class="icon-btn" title="Edit" t="[title]common.edit" style="width: 30px" click.trigger="editProductCategory(category)">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pen-icon lucide-pen"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>
                 </button>
             </div>
-            <button class="btn primary" click.trigger="newProductCategory()" style="width: fit-content; margin-top: 10px" title="Category" t="[title]product.category">
+            <button if.bind="ownershipService.granted.PRODUCT_MANAGE" class="btn primary" click.trigger="newProductCategory()" style="width: fit-content; margin-top: 10px" title="Category" t="[title]product.category">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                 </svg>
@@ -40,7 +40,7 @@
                             <input type="search" placeholder="Search product" t="[placeholder]placeholder.product-search" value.bind="searchQuery"/>
                         </label>
                     </div>
-                    <button class="btn primary" click.trigger="productContext.newProduct()" title="New Product" t="[title]product.new">
+                    <button if.bind="ownershipService.granted.PRODUCT_MANAGE" class="btn primary" click.trigger="productContext.newProduct()" title="New Product" t="[title]product.new">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                             <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                         </svg>
@@ -123,7 +123,7 @@
                             <td>${item.taxPercentage}</td>
                             <td>${item.stockQuantity}</td>
                             <td class="actions-col">
-                                <button class="icon-btn" data-action="remove-line" title="Remove" t="[title]common.remove" click.trigger="deleteItem($event, item)">
+                                <button if.bind="ownershipService.granted.PRODUCT_MANAGE" class="icon-btn" data-action="remove-line" title="Remove" t="[title]common.remove" click.trigger="deleteItem($event, item)">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-icon lucide-trash"><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                                 </button>
                             </td>

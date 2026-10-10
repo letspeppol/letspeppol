@@ -63,6 +63,14 @@ public class AccountService {
         accountRepository.save(account);
     }
 
+    public Account renameUnlessVerified(Account account, String name) {
+        if (!account.isVerified()) {
+            account.setName(name);
+            accountRepository.save(account);
+        }
+        return account;
+    }
+
     public Account createPendingAccount(String email, String name) {
         Account account = new Account();
         account.setName(name);

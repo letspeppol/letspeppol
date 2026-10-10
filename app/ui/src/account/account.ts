@@ -9,6 +9,7 @@ import {ConfirmationModalContext} from "../components/confirmation/confirmation-
 import {validateEmail} from "../app/util/email-validation";
 import {I18N} from "@aurelia/i18n";
 import {getVatDisplayMode, hasVatNumber, IVatDisplay, VatDisplayMode} from "../services/app/vat-display-service";
+import {OwnershipService} from "../services/app/ownership-service";
 
 export class Account {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -17,6 +18,7 @@ export class Account {
     private readonly registrationService = resolve(RegistrationService);
     private readonly confirmationModalContext = resolve(ConfirmationModalContext);
     private readonly peppolDirService = resolve(PeppolDirService);
+    private readonly ownershipService = resolve(OwnershipService);
     private readonly i18n = resolve(I18N);
     private readonly vatDisplay = resolve(IVatDisplay);
     private company: CompanyDto;
@@ -48,6 +50,9 @@ export class Account {
     }
 
     setVatRuleset(isExempt: boolean) {
+        if (!this.ownershipService.granted.COMPANY_SETTINGS) {
+            return;
+        }
         this.company.vatRuleset = isExempt ? 'VAT_EXEMPT_ART_56BIS' : 'VAT_REGISTERED';
     }
 
@@ -86,6 +91,9 @@ export class Account {
     }
 
     async saveAccount() {
+        if (!this.ownershipService.granted.COMPANY_SETTINGS) {
+            return;
+        }
         try {
             this.ea.publish('showOverlay', this.i18n.tr('overlay.saving'));
             await this.companyService.updateCompany(this.company);
@@ -106,6 +114,9 @@ export class Account {
     }
 
     async register() {
+        if (!this.ownershipService.admin) {
+            return;
+        }
         const peppolDirectoryResponse = await this.peppolDirService.findByParticipant(this.company.peppolId);
         if (peppolDirectoryResponse.matches.length > 0) { //TODO : why not peppolDirectoryResponse.total-result-count ?
             this.confirmationModalContext.showConfirmationModal(
@@ -162,6 +173,9 @@ export class Account {
     }
 
     unregister() {
+        if (!this.ownershipService.admin) {
+            return;
+        }
         this.confirmationModalContext.showConfirmationModal(
             "Remove From Peppol",
             "Are you sure you wish to unsubscribe yourself from the Peppol network?\n" +

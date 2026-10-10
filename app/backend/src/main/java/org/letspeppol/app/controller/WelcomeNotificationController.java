@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.letspeppol.app.dto.WelcomeNotificationsResponse;
 import org.letspeppol.app.service.WelcomeNotificationService;
 import org.letspeppol.app.util.JwtUtil;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +24,7 @@ public class WelcomeNotificationController {
     private final WelcomeNotificationService welcomeNotificationService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('kyc_user')")
     @Operation(summary = "List welcome notifications", description = "Returns onboarding and configuration prompts that currently apply to the authenticated company.")
     public WelcomeNotificationsResponse getWelcomeNotifications(@AuthenticationPrincipal Jwt jwt) {
         return welcomeNotificationService.getNotificationsForCompany(JwtUtil.getPeppolId(jwt));

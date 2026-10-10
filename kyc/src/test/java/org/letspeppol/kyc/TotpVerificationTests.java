@@ -1,6 +1,5 @@
 package org.letspeppol.kyc;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.samstevens.totp.code.DefaultCodeGenerator;
 import dev.samstevens.totp.secret.DefaultSecretGenerator;
 import org.junit.jupiter.api.Test;
@@ -11,6 +10,7 @@ import org.letspeppol.kyc.service.TotpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import tools.jackson.databind.ObjectMapper;
 
 import java.time.Instant;
 import java.util.List;

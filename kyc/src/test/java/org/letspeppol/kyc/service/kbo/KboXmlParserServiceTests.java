@@ -48,6 +48,16 @@ class KboXmlParserServiceTests {
         kboXmlParserService.setDefaultBatchSize(1);
     }
 
+    private List<List<Company>> recordSavedBatches() {
+        List<List<Company>> savedBatches = new ArrayList<>();
+        when(kboBatchPersistenceService.saveBatch(anyList())).thenAnswer(invocation -> {
+            List<Company> batch = invocation.getArgument(0);
+            savedBatches.add(List.copyOf(batch));
+            return batch;
+        });
+        return savedBatches;
+    }
+
     @Test
     @DisplayName("importEnterprises should create companies and directors for enterprises with address and active functions held by a person")
     void importEnterprisesCreatesCompaniesAndDirectors() throws Exception {
@@ -142,14 +152,13 @@ class KboXmlParserServiceTests {
 
         when(companyRepository.findWithDirectorsByPeppolId(VAT_TEST_PEPPOL_ID)).thenReturn(Optional.of(existing));
 
-        ArgumentCaptor<List<Company>> batchCaptor = ArgumentCaptor.forClass(List.class);
-        when(kboBatchPersistenceService.saveBatch(batchCaptor.capture())).thenAnswer(invocation -> invocation.getArgument(0));
+        List<List<Company>> savedBatches = recordSavedBatches();
 
         kboXmlParserService.importEnterprises(enterpriseXml(activeAndEndedVatAuthorizations()));
 
         assertEquals(VAT_TEST_NUMBER, existing.getVatNumber());
-        assertEquals(1, batchCaptor.getAllValues().size());
-        assertEquals(List.of(existing), batchCaptor.getValue());
+        assertEquals(1, savedBatches.size());
+        assertEquals(List.of(existing), savedBatches.getLast());
     }
 
     @Test
@@ -161,13 +170,12 @@ class KboXmlParserServiceTests {
         existing.setDirectors(new ArrayList<>(List.of(new Director("Alex Example", existing))));
         when(companyRepository.findWithDirectorsByPeppolId(VAT_TEST_PEPPOL_ID)).thenReturn(Optional.of(existing));
 
-        ArgumentCaptor<List<Company>> batchCaptor = ArgumentCaptor.forClass(List.class);
-        when(kboBatchPersistenceService.saveBatch(batchCaptor.capture())).thenAnswer(invocation -> invocation.getArgument(0));
+        List<List<Company>> savedBatches = recordSavedBatches();
 
         kboXmlParserService.importEnterprises(enterpriseXml(endedVatAuthorizations()));
 
         assertNull(existing.getVatNumber());
-        assertEquals(List.of(existing), batchCaptor.getValue());
+        assertEquals(List.of(existing), savedBatches.getLast());
     }
 
     @Test
@@ -175,12 +183,11 @@ class KboXmlParserServiceTests {
     void importEnterprisesCreatesNewCompanyWithVat() {
         when(companyRepository.findWithDirectorsByPeppolId(VAT_TEST_PEPPOL_ID)).thenReturn(Optional.empty());
 
-        ArgumentCaptor<List<Company>> batchCaptor = ArgumentCaptor.forClass(List.class);
-        when(kboBatchPersistenceService.saveBatch(batchCaptor.capture())).thenAnswer(invocation -> invocation.getArgument(0));
+        List<List<Company>> savedBatches = recordSavedBatches();
 
         kboXmlParserService.importEnterprises(enterpriseXml(activeAndEndedVatAuthorizations()));
 
-        Company created = batchCaptor.getValue().getFirst();
+        Company created = savedBatches.getLast().getFirst();
         assertEquals(VAT_TEST_NUMBER, created.getVatNumber());
     }
 
@@ -189,12 +196,11 @@ class KboXmlParserServiceTests {
     void importEnterprisesCreatesNewCompanyWithoutVat() {
         when(companyRepository.findWithDirectorsByPeppolId(VAT_TEST_PEPPOL_ID)).thenReturn(Optional.empty());
 
-        ArgumentCaptor<List<Company>> batchCaptor = ArgumentCaptor.forClass(List.class);
-        when(kboBatchPersistenceService.saveBatch(batchCaptor.capture())).thenAnswer(invocation -> invocation.getArgument(0));
+        List<List<Company>> savedBatches = recordSavedBatches();
 
         kboXmlParserService.importEnterprises(enterpriseXml(endedVatAuthorizations()));
 
-        Company created = batchCaptor.getValue().getFirst();
+        Company created = savedBatches.getLast().getFirst();
         assertNull(created.getVatNumber());
     }
 
@@ -203,12 +209,11 @@ class KboXmlParserServiceTests {
     void importEnterprisesCreatesNewCompanyWithoutAuthorizations() {
         when(companyRepository.findWithDirectorsByPeppolId(VAT_TEST_PEPPOL_ID)).thenReturn(Optional.empty());
 
-        ArgumentCaptor<List<Company>> batchCaptor = ArgumentCaptor.forClass(List.class);
-        when(kboBatchPersistenceService.saveBatch(batchCaptor.capture())).thenAnswer(invocation -> invocation.getArgument(0));
+        List<List<Company>> savedBatches = recordSavedBatches();
 
         kboXmlParserService.importEnterprises(enterpriseXml(null));
 
-        Company created = batchCaptor.getValue().getFirst();
+        Company created = savedBatches.getLast().getFirst();
         assertNull(created.getVatNumber());
     }
 
@@ -255,7 +260,7 @@ class KboXmlParserServiceTests {
         InputStream is = getClass().getResourceAsStream("/D20251101.xml");
         assertNotNull(is);
 
-        Company existing1 = new Company("0208:0200762878", "0200762878", null, "VLOTTER");
+        Company existing1 = new Company("0208:0200762878", "0200762878", "BE0200762878", "VLOTTER");
         existing1.setId(1L);
         existing1.setAddress("Boom", "2850", "Colonel Silvertopstraat 15");
         existing1.setDirectors(new ArrayList<>(List.of(new Director("Go Van Dy", existing1), new Director("Bary De Smet", existing1))));
@@ -267,12 +272,11 @@ class KboXmlParserServiceTests {
         when(companyRepository.findWithDirectorsByPeppolId("0208:0200762878")).thenReturn(Optional.of(existing1));
         when(companyRepository.findWithDirectorsByPeppolId("0208:0200881951")).thenReturn(Optional.of(existing2));
 
-        ArgumentCaptor<List<Company>> batchCaptor = ArgumentCaptor.forClass(List.class);
-        when(kboBatchPersistenceService.saveBatch(batchCaptor.capture())).thenAnswer(invocation -> invocation.getArgument(0));
+        List<List<Company>> savedBatches = recordSavedBatches();
 
         kboXmlParserService.importEnterprises(is);
 
-        assertTrue(batchCaptor.getAllValues().isEmpty(), "No persistence should happen for unchanged enterprises");
+        assertTrue(savedBatches.isEmpty(), "No persistence should happen for unchanged enterprises");
     }
 
     @Test
@@ -291,12 +295,11 @@ class KboXmlParserServiceTests {
         when(companyRepository.findWithDirectorsByPeppolId("0208:0200762878")).thenReturn(Optional.of(existing));
         when(companyRepository.findWithDirectorsByPeppolId("0208:0200881951")).thenReturn(Optional.empty());
 
-        ArgumentCaptor<List<Company>> batchCaptor = ArgumentCaptor.forClass(List.class);
-        when(kboBatchPersistenceService.saveBatch(batchCaptor.capture())).thenAnswer(invocation -> invocation.getArgument(0));
+        List<List<Company>> savedBatches = recordSavedBatches();
 
         kboXmlParserService.importEnterprises(is);
 
-        assertFalse(batchCaptor.getAllValues().isEmpty(), "Changes to directors should trigger persistence");
+        assertFalse(savedBatches.isEmpty(), "Changes to directors should trigger persistence");
         List<String> directorNames = existing.getDirectors().stream().map(Director::getName).toList();
         assertEquals(3, directorNames.size());
         assertTrue(directorNames.contains("Go Van Dy"));

@@ -67,12 +67,25 @@
       "save-failed": "Company save failed"
     },
     "danger": "Error",
+    "download": {
+      "create-failed": "Failed to create archive",
+      "created": "Archive job created",
+      "delete-failed": "Failed to delete archive",
+      "deleted": "Archive deleted",
+      "download-failed": "Failed to download archive",
+      "empty-period": "No finalized documents with UBL data exist in this period",
+      "limit-reached": "At most five active archives are allowed",
+      "load-failed": "Failed to load archives",
+      "retried": "Archive generation restarted",
+      "retry-failed": "Failed to retry archive generation",
+      "validation-failed": "The selected date range is invalid"
+    },
     "iban": {
       "saved": "IBAN saved"
     },
     "info": "Info",
     "invoice": {
-      "allowance-charge-items-hide-notallowed" : "Unable to hide Discount/Charge column, please first remove all line discounts",
+      "allowance-charge-items-hide-notallowed": "Unable to hide Discount/Charge column, please first remove all line discounts",
       "draft-created": {
         "CREDIT_NOTE": "Credit note draft created successfully",
         "INVOICE": "Invoice draft created successfully"
@@ -135,11 +148,6 @@
         }
       }
     },
-    "download": {
-      "create-failed": "Failed to create archive", "created": "Archive job created", "delete-failed": "Failed to delete archive", "deleted": "Archive deleted",
-      "download-failed": "Failed to download archive", "empty-period": "No finalized documents with UBL data exist in this period", "limit-reached": "At most five active archives are allowed",
-      "load-failed": "Failed to load archives", "retried": "Archive generation restarted", "retry-failed": "Failed to retry archive generation", "validation-failed": "The selected date range is invalid"
-    },
     "neutral": "Message",
     "partner": {
       "create-failed": "Partner creation failed",
@@ -155,6 +163,9 @@
     "peppol-search": {
       "failed": "Searching Peppol directory failed",
       "no-results": "No results found"
+    },
+    "permission": {
+      "route-denied": "You do not have permission to open that page."
     },
     "product": {
       "created": "Product created",
@@ -172,6 +183,20 @@
       "size-too-large": "Sum of all file sizes can not be more than 10MB",
       "type-unsupported": "File type not supported",
       "upload-error": "Error uploading file"
+    },
+    "users": {
+      "invitation-resent": "Invitation sent again to {{- email}}",
+      "invite-failed": "The invitation could not be sent",
+      "invited": "Invitation sent to {{- email}}",
+      "invited-not-sent": "The user was added, but the invitation email could not be sent. Use “Resend invitation” to try again.",
+      "permissions-failed": "The permissions could not be saved",
+      "reactivate-failed": "Failed to reactivate user",
+      "reactivated": "User reactivated",
+      "remove-failed": "Failed to remove user",
+      "removed": "User removed",
+      "resend-failed": "The invitation could not be sent again",
+      "suspend-failed": "Failed to suspend user",
+      "suspended": "User suspended"
     },
     "warning": "Warning"
   },
@@ -231,20 +256,11 @@
   },
   "dashboard": {
     "errored": "Errored invoices",
+    "no-invoice-access": "You do not have access to the invoice figures of this company.",
     "vat-suffix": {
       "excl": "excl. VAT",
       "incl": "incl. VAT"
     }
-  },
-  "download": {
-    "action": {"download": "Download", "retry": "Retry"}, "active-links": "active archives", "create": "Create archive", "creating": "Creating…",
-    "description": "Create a ZIP with finalized invoices and credit notes. Both dates are included.", "empty": "No archives have been created yet.", "from-date": "From date", "generation-failed": "Archive generation failed",
-    "info": {"download-limit": "The ZIP file is deleted after it has been downloaded 3 times.", "expiration": "The download link expires and is deleted after 7 days."},
-    "loading": "Loading archives…",
-    "status": {"FAILED": "Failed", "PENDING": "Pending", "PROCESSING": "Processing", "READY": "Ready"},
-    "table": {"actions": "Actions", "completed": "Completed", "created": "Created", "downloads": "Downloads", "expires": "Expires", "file": "File", "period": "Period", "size": "Size (MB)", "status": "Status"},
-    "title": "UBL downloads", "to-date": "To date",
-    "validation": {"limit": "Delete an archive before creating another one.", "order": "The from date must not be after the to date.", "required": "Both dates are required.", "same-year": "Both dates must be in the same year."}
   },
   "documentDirection": {
     "INCOMING": "Incoming",
@@ -293,12 +309,61 @@
     "sponsors": "tier sponsors",
     "sponsors-title": "Bronze, Silver and Gold sponsors combined"
   },
+  "download": {
+    "action": {
+      "download": "Download",
+      "retry": "Retry"
+    },
+    "active-links": "active archives",
+    "create": "Create archive",
+    "creating": "Creating…",
+    "description": "Create a ZIP with finalized invoices and credit notes. Both dates are included.",
+    "empty": "No archives have been created yet.",
+    "from-date": "From date",
+    "generation-failed": "Archive generation failed",
+    "info": {
+      "download-limit": "The ZIP file is deleted after it has been downloaded 3 times.",
+      "expiration": "The download link expires and is deleted after 7 days."
+    },
+    "loading": "Loading archives…",
+    "status": {
+      "FAILED": "Failed",
+      "PENDING": "Pending",
+      "PROCESSING": "Processing",
+      "READY": "Ready"
+    },
+    "table": {
+      "actions": "Actions",
+      "completed": "Completed",
+      "created": "Created",
+      "downloads": "Downloads",
+      "expires": "Expires",
+      "file": "File",
+      "period": "Period",
+      "size": "Size (MB)",
+      "status": "Status"
+    },
+    "title": "UBL downloads",
+    "to-date": "To date",
+    "validation": {
+      "limit": "Delete an archive before creating another one.",
+      "order": "The from date must not be after the to date.",
+      "required": "Both dates are required.",
+      "same-year": "Both dates must be in the same year."
+    }
+  },
   "error": {
     "account_not_found": "No account was found for this email address.",
     "account_not_verified": "Your account has not been verified yet. Please verify your email before signing in.",
     "DUPLICATE_REQUEST": "This request was already processed.",
+    "invalid_permission_mask": "This combination of permissions is not valid.",
+    "invitation_expired": "This invitation has expired. Ask your administrator to send a new one.",
+    "invitation_not_found": "This invitation link is not valid or has already been used.",
+    "invitation_not_sent": "The invitation email could not be sent. Please try again later.",
     "login-failed": "Login failed",
+    "MISSING_PERMISSION": "You do not have permission to do this.",
     "no_ownership": "This account is not linked to a company.",
+    "not_admin": "Only the administrator can do this.",
     "not-peppol-active": "You are currently not registered on Peppol",
     "not-peppol-active-action": "Solve this now",
     "registration-company-affiliate-contact-admin": "This company already has an administrator. Please contact your administrator to continue affiliate onboarding.",
@@ -310,6 +375,9 @@
     "UBL_DOCUMENT_ALREADY_CREATED": "This document was already submitted for delivery. Update the existing document instead.",
     "UBL_DOCUMENT_CONTENT_ALREADY_SENT": "This exact document was already submitted. Change the content before sending again.",
     "unexpected_error": "An unexpected server error occurred. Please try again later.",
+    "user_already_member": "This person already has access to this company.",
+    "user_not_editable": "The permissions of this account cannot be changed.",
+    "user_not_found": "This user no longer exists.",
     "wrong_password": "The password you entered is incorrect."
   },
   "forgot": {
@@ -318,6 +386,18 @@
     "request-link": "Request reset link",
     "reset-failed": "Reset password failed",
     "title": "Forgot Password"
+  },
+  "invitation": {
+    "accept": "Accept invitation",
+    "accept-failed": "The invitation could not be accepted. Please try again.",
+    "accepted": "You now have access to {{- company}}. Log in to continue.",
+    "back-to-login": "Back to log in",
+    "choose-password": "Choose a password for your new account.",
+    "existing-account": "You already have an account with this email address. Your password stays the same.",
+    "intro": "You have been invited to work for {{- company}} on Let's Peppol.",
+    "loading": "Checking your invitation…",
+    "title": "Join your company",
+    "verify-failed": "This invitation could not be checked. Please try again later."
   },
   "invoice": {
     "action": {
@@ -337,14 +417,13 @@
     },
     "all": "All",
     "allowanceChargeModal": {
-      "charge": "Charge",
-      "discount": "Discount",
-      "title": "Discounts/Costs",
-      "quantity": "Quantity/Amount",
-      "percentage": "Percentage",
       "amount": "Amount",
-      "cost": "Cost"
-
+      "charge": "Charge",
+      "cost": "Cost",
+      "discount": "Discount",
+      "percentage": "Percentage",
+      "quantity": "Quantity/Amount",
+      "title": "Discounts/Costs"
     },
     "attachmentModal": {
       "auto-pdf": "Include the auto-generated invoice PDF",
@@ -626,7 +705,8 @@
     "language": "Language",
     "partners": "Partners",
     "products": "Products",
-    "toggle-theme": "Toggle theme"
+    "toggle-theme": "Toggle theme",
+    "users": "Users"
   },
   "new-feature": {
     "click-to-dismiss": "Click to dismiss",
@@ -692,6 +772,14 @@
       "INVOICE": "Sending invoice, please wait"
     },
     "validating": "Validating document, please wait"
+  },
+  "ownership": {
+    "role": {
+      "ADMIN": "Administrator",
+      "AFFILIATE": "Affiliate",
+      "APP": "App",
+      "USER": "User"
+    }
   },
   "ownershipAdd": {
     "account-info-body": "This company will be added to your existing account. Your password stays the same.",
@@ -899,6 +987,60 @@
     "title": "Two-Factor Authentication",
     "verify-enable": "Verify & Enable",
     "verifying": "Verifying..."
+  },
+  "users": {
+    "action": {
+      "reactivate": "Reactivate",
+      "resend": "Resend invitation",
+      "suspend": "Suspend"
+    },
+    "apply-note": "Changes take effect within a few seconds.",
+    "description": "Invite colleagues and choose what each of them may do for this company.",
+    "hint": {
+      "admin": "The administrator always has every permission.",
+      "implied": "Included because another selected permission needs it.",
+      "not-editable": "The permissions of this account cannot be changed here."
+    },
+    "invitation-expires": "Expires",
+    "invite": {
+      "action": "Invite user",
+      "description": "We email a link to join this company. The link can be used once.",
+      "permissions": "Permissions",
+      "send": "Send invitation",
+      "title": "Invite user"
+    },
+    "load-failed": "The users could not be loaded.",
+    "loading": "Loading users…",
+    "permission": {
+      "COMPANY_SETTINGS": "Company settings and bank details",
+      "INVOICE_DRAFT": "Create and edit drafts",
+      "INVOICE_EXPORT": "Bulk downloads",
+      "INVOICE_READ": "View invoices",
+      "INVOICE_SEND": "Send invoices",
+      "INVOICE_STATUS": "Mark as paid or read",
+      "PARTNER_MANAGE": "Manage partners",
+      "PRODUCT_MANAGE": "Manage products"
+    },
+    "remove": {
+      "confirm": "Remove {{- name}} from this company? Their account stays, but they lose access to this company.",
+      "title": "Remove user"
+    },
+    "status": {
+      "ACTIVE": "Active",
+      "EXPIRED": "Invitation expired",
+      "INVITED": "Invited",
+      "SUSPENDED": "Suspended"
+    },
+    "suspend": {
+      "confirm": "Suspend {{- name}}? They lose access to this company until you reactivate them.",
+      "title": "Suspend user"
+    },
+    "table": {
+      "actions": "Actions",
+      "status": "Status",
+      "user": "User"
+    },
+    "title": "Users"
   },
   "welcome-notification": {
     "title": "Welcome"

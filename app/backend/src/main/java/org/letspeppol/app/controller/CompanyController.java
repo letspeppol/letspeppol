@@ -11,6 +11,7 @@ import org.letspeppol.app.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,7 @@ public class CompanyController {
 
     /// Gets Company info on login by UI (right after retrieving JWT Token)
     @GetMapping
+    @PreAuthorize("hasAuthority('kyc_user')")
     @Operation(summary = "Get company profile", description = "Loads the company profile displayed in the app immediately after authentication.")
     public ResponseEntity<CompanyDto> getCompany(@AuthenticationPrincipal Jwt jwt) {
         String peppolId = JwtUtil.getPeppolId(jwt);
@@ -41,6 +43,7 @@ public class CompanyController {
 
     /// Updates Company info by UI (only stored in App)
     @PutMapping
+    @PreAuthorize("hasAuthority('COMPANY_SETTINGS')")
     @Operation(summary = "Update company profile", description = "Updates application-managed company fields while enforcing that the authenticated company can only modify its own profile.")
     public ResponseEntity<CompanyDto> updateCompany(@AuthenticationPrincipal Jwt jwt, @RequestBody CompanyDto companyDto) {
         String peppolId = JwtUtil.getPeppolId(jwt);
@@ -48,6 +51,6 @@ public class CompanyController {
             log.warn("Malicious update attempt for peppolId {} company {} {}", peppolId, companyDto.peppolId(), companyDto.name());
             throw new AppException(AppErrorCodes.PEPPOL_ID_MISMATCH);
         }
-        return ResponseEntity.ok(companyService.update(companyDto, JwtUtil.isPeppolActive(jwt), jwt.getTokenValue()));
+        return ResponseEntity.ok(companyService.update(companyDto, JwtUtil.isPeppolActive(jwt), jwt.getTokenValue(), JwtUtil.isAdmin(jwt)));
     }
 }

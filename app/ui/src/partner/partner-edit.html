@@ -7,11 +7,12 @@
         </div>
         <div class="editor-header-actions">
             <button type="button" class="btn" click.trigger="partnerContext.clearSelectedPartner()" t="partner.edit.cancel">Cancel</button>
-            <button type="button" class="btn primary" click.trigger="savePartner()" disabled.bind="!partnerContext.selectedPartner.name || !partnerContext.selectedPartner.peppolId || !partnerContext.selectedPartner.peppolId.includes(':')" t="partner.edit.save">Save partner</button>
+            <button if.bind="ownershipService.granted.PARTNER_MANAGE" type="button" class="btn primary" click.trigger="savePartner()" disabled.bind="!partnerContext.selectedPartner.name || !partnerContext.selectedPartner.peppolId || !partnerContext.selectedPartner.peppolId.includes(':')" t="partner.edit.save">Save partner</button>
         </div>
     </div>
 </div>
 <section>
+    <fieldset class="readonly-fieldset" disabled.bind="!ownershipService.granted.PARTNER_MANAGE">
     <div style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(250px, 320px));">
         <div class="card">
             <div class="card-header">
@@ -109,5 +110,6 @@
             </div>
         </div>
     </div>
+    </fieldset>
 
 </section>

@@ -1,6 +1,7 @@
 import {resolve} from "@aurelia/kernel";
 import {Router} from "@aurelia/router";
 import {IEventAggregator} from "aurelia";
+import {I18N} from "@aurelia/i18n";
 import {ThemeService} from '../../services/app/theme-service';
 import {LoginService} from "../../services/app/login-service";
 import {InvoiceContext} from "../../invoice/invoice-context";
@@ -14,6 +15,7 @@ export class Heading {
     private theme = resolve(ThemeService);
     private readonly ownershipService = resolve(OwnershipService);
     private readonly ea = resolve(IEventAggregator);
+    private readonly i18n = resolve(I18N);
     ownerships: OwnershipSummary[] = [];
     selectedOwnershipKey = '';
     swapping = false;
@@ -41,7 +43,7 @@ export class Heading {
         this.ownerships = this.ownershipService.getCachedOwnerships();
         const currentOwnershipKey = this.ownershipService.getCurrentOwnershipKey() ?? '';
         this.selectedOwnershipKey = currentOwnershipKey;
-        this.canAddOwnership = this.ownershipService.getCurrentOwnershipType() === 'ADMIN';
+        this.canAddOwnership = this.ownershipService.admin;
         if (currentOwnershipKey && this.ownerships.some(ownership => this.getOwnershipKey(ownership) === currentOwnershipKey)) {
             queueMicrotask(() => {
                 this.selectedOwnershipKey = currentOwnershipKey;
@@ -53,7 +55,8 @@ export class Heading {
     }
 
     getOwnershipLabel(ownership: OwnershipSummary) {
-        return `${ownership.companyName} - ${ownership.type}`;
+        const role = this.i18n.tr(`ownership.role.${ownership.type}`);
+        return `${ownership.companyName} - ${role.startsWith('ownership.role.') ? ownership.type : role}`;
     }
 
     getOwnershipKey(ownership: OwnershipSummary) {
@@ -65,6 +68,7 @@ export class Heading {
     get partnersPath() { return this.loginService.getCurrentOwnershipRoute('/partners'); }
     get productsPath() { return this.loginService.getCurrentOwnershipRoute('/products'); }
     get downloadsPath() { return this.loginService.getCurrentOwnershipRoute('/downloads'); }
+    get usersPath() { return this.loginService.getCurrentOwnershipRoute('/users'); }
     get accountPath() { return this.loginService.getCurrentOwnershipRoute('/account'); }
 
     async changeOwnership() {
@@ -87,6 +91,7 @@ export class Heading {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to switch ownership"});
         }
         try {
+            await this.refreshOwnerships();
             await this.followActingOwnership(currentOwnershipKey);
         } finally {
             this.swapping = false;

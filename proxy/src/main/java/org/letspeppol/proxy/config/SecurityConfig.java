@@ -3,10 +3,15 @@ package org.letspeppol.proxy.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.letspeppol.proxy.model.CompanyPermission;
+import org.letspeppol.proxy.util.JwtUtil;
 import org.springframework.core.env.Environment;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
@@ -21,6 +26,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Configuration
+@EnableMethodSecurity
 public class SecurityConfig {
 
     public static final String PEPPOL_ID = "peppolId";
@@ -28,6 +34,7 @@ public class SecurityConfig {
     public static final String UID = "uid"; //Needed for multiple accounts to a joined Peppol ID
     public static final String ROLE_SERVICE = "service";
     public static final String ACCOUNT_TYPE = "accountType";
+    public static final String PERMISSION_MASK = "permissionMask";
     public static final String ROLE_KYC_USER = "kyc_user";
     public static final String ACTING_USER_AUTHORIZATION_HEADER = "X-Acting-User-Authorization";
 
@@ -68,6 +75,12 @@ public class SecurityConfig {
             // peppolId is its sending company, so uid (not peppolId) is the correct discriminator for ROLE_KYC_USER here.
             if (jwt.hasClaim(UID)) {
                 authorities.add(new SimpleGrantedAuthority(ROLE_KYC_USER));
+                int permissionMask = JwtUtil.getPermissionMask(jwt);
+                for (CompanyPermission permission : CompanyPermission.values()) {
+                    if (permission.in(permissionMask)) {
+                        authorities.add(new SimpleGrantedAuthority(permission.name()));
+                    }
+                }
             }
             return authorities;
         });
@@ -80,10 +93,12 @@ public class SecurityConfig {
             @Value("${oauth2.audience:letspeppol-api}") String audience,
             @Value("${oauth2.issuer:}") String issuer,
             @Value("${oauth2.allow-loopback-jwks:false}") boolean allowLoopbackJwks,
-            Environment environment) {
+            Environment environment,
+            TokenRevocationFeed tokenRevocationFeed) {
         requireTrustworthyJwkSetUri(jwkSetUri, environment, allowLoopbackJwks);
         NimbusJwtDecoder decoder = NimbusJwtDecoder.withJwkSetUri(jwkSetUri).build();
-        decoder.setJwtValidator(JwtValidationSupport.build(audience, issuer));
+        decoder.setJwtValidator(new DelegatingOAuth2TokenValidator<Jwt>(
+                JwtValidationSupport.build(audience, issuer), tokenRevocationFeed::validate));
         return decoder;
     }
 

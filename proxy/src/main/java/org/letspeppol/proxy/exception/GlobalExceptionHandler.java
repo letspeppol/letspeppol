@@ -5,18 +5,20 @@ import org.letspeppol.proxy.dto.SimpleMessage;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.lang.SecurityException;
 import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    public static final String MISSING_PERMISSION = "MISSING_PERMISSION";
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<SimpleMessage> handleNotFound(NotFoundException ex) {
@@ -49,6 +51,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(SecurityException.class)
     public ResponseEntity<SimpleMessage> handleSecurityException(SecurityException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new SimpleMessage(ex.getMessage()));
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Map<String, Object>> handleAccessDenied(AccessDeniedException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("errorCode", MISSING_PERMISSION);
+        body.put("message", "Missing permission");
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(body);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

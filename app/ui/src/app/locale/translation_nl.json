@@ -67,6 +67,19 @@
       "save-failed": "Bedrijf opslaan mislukt"
     },
     "danger": "Fout",
+    "download": {
+      "create-failed": "Archief aanmaken mislukt",
+      "created": "Archiefopdracht aangemaakt",
+      "delete-failed": "Archief verwijderen mislukt",
+      "deleted": "Archief verwijderd",
+      "download-failed": "Archief downloaden mislukt",
+      "empty-period": "Er zijn geen definitieve documenten met UBL-gegevens in deze periode",
+      "limit-reached": "Er zijn maximaal vijf actieve archieven toegestaan",
+      "load-failed": "Archieven laden mislukt",
+      "retried": "Archiefgeneratie opnieuw gestart",
+      "retry-failed": "Archiefgeneratie opnieuw proberen mislukt",
+      "validation-failed": "De gekozen periode is ongeldig"
+    },
     "iban": {
       "saved": "IBAN opgeslagen"
     },
@@ -134,11 +147,6 @@
         }
       }
     },
-    "download": {
-      "create-failed": "Archief aanmaken mislukt", "created": "Archiefopdracht aangemaakt", "delete-failed": "Archief verwijderen mislukt", "deleted": "Archief verwijderd",
-      "download-failed": "Archief downloaden mislukt", "empty-period": "Er zijn geen definitieve documenten met UBL-gegevens in deze periode", "limit-reached": "Er zijn maximaal vijf actieve archieven toegestaan",
-      "load-failed": "Archieven laden mislukt", "retried": "Archiefgeneratie opnieuw gestart", "retry-failed": "Archiefgeneratie opnieuw proberen mislukt", "validation-failed": "De gekozen periode is ongeldig"
-    },
     "neutral": "Bericht",
     "partner": {
       "create-failed": "Partner aanmaken mislukt",
@@ -154,6 +162,9 @@
     "peppol-search": {
       "failed": "Zoeken in Peppol-directory mislukt",
       "no-results": "Geen resultaten gevonden"
+    },
+    "permission": {
+      "route-denied": "U hebt geen toegang tot die pagina."
     },
     "product": {
       "created": "Product aangemaakt",
@@ -171,6 +182,20 @@
       "size-too-large": "Som van alle bestandsgroottes mag niet meer dan 10 MB zijn",
       "type-unsupported": "Bestandstype niet ondersteund",
       "upload-error": "Fout bij uploaden van bestand"
+    },
+    "users": {
+      "invitation-resent": "Uitnodiging opnieuw verzonden naar {{- email}}",
+      "invite-failed": "De uitnodiging kon niet worden verzonden",
+      "invited": "Uitnodiging verzonden naar {{- email}}",
+      "invited-not-sent": "De gebruiker is toegevoegd, maar de uitnodigingsmail kon niet worden verzonden. Gebruik ‘Uitnodiging opnieuw verzenden’ om het opnieuw te proberen.",
+      "permissions-failed": "De rechten konden niet worden opgeslagen",
+      "reactivate-failed": "Gebruiker opnieuw activeren mislukt",
+      "reactivated": "Gebruiker opnieuw geactiveerd",
+      "remove-failed": "Gebruiker verwijderen mislukt",
+      "removed": "Gebruiker verwijderd",
+      "resend-failed": "De uitnodiging kon niet opnieuw worden verzonden",
+      "suspend-failed": "Gebruiker schorsen mislukt",
+      "suspended": "Gebruiker geschorst"
     },
     "warning": "Waarschuwing"
   },
@@ -230,20 +255,11 @@
   },
   "dashboard": {
     "errored": "Facturen met fout",
+    "no-invoice-access": "U hebt geen toegang tot de factuurcijfers van dit bedrijf.",
     "vat-suffix": {
       "excl": "excl. btw",
       "incl": "incl. btw"
     }
-  },
-  "download": {
-    "action": {"download": "Downloaden", "retry": "Opnieuw proberen"}, "active-links": "actieve archieven", "create": "Archief aanmaken", "creating": "Aanmaken…",
-    "description": "Maak een ZIP met definitieve facturen en creditnota’s. Beide datums zijn inbegrepen.", "empty": "Er zijn nog geen archieven aangemaakt.", "from-date": "Van datum", "generation-failed": "Archiefgeneratie mislukt",
-    "info": {"download-limit": "Het ZIP-bestand wordt verwijderd nadat het 3 keer is gedownload.", "expiration": "De downloadlink vervalt en wordt na 7 dagen verwijderd."},
-    "loading": "Archieven laden…",
-    "status": {"FAILED": "Mislukt", "PENDING": "In afwachting", "PROCESSING": "Bezig", "READY": "Klaar"},
-    "table": {"actions": "Acties", "completed": "Voltooid", "created": "Aangemaakt", "downloads": "Downloads", "expires": "Vervalt", "file": "Bestand", "period": "Periode", "size": "Grootte (MB)", "status": "Status"},
-    "title": "UBL-downloads", "to-date": "Tot datum",
-    "validation": {"limit": "Verwijder een archief voordat u een nieuw aanmaakt.", "order": "De begindatum mag niet na de einddatum liggen.", "required": "Beide datums zijn verplicht.", "same-year": "Beide datums moeten in hetzelfde jaar liggen."}
   },
   "documentDirection": {
     "INCOMING": "Inkomend",
@@ -292,12 +308,61 @@
     "sponsors": "tiersponsors",
     "sponsors-title": "Bronzen, zilveren en gouden sponsors samen"
   },
+  "download": {
+    "action": {
+      "download": "Downloaden",
+      "retry": "Opnieuw proberen"
+    },
+    "active-links": "actieve archieven",
+    "create": "Archief aanmaken",
+    "creating": "Aanmaken…",
+    "description": "Maak een ZIP met definitieve facturen en creditnota’s. Beide datums zijn inbegrepen.",
+    "empty": "Er zijn nog geen archieven aangemaakt.",
+    "from-date": "Van datum",
+    "generation-failed": "Archiefgeneratie mislukt",
+    "info": {
+      "download-limit": "Het ZIP-bestand wordt verwijderd nadat het 3 keer is gedownload.",
+      "expiration": "De downloadlink vervalt en wordt na 7 dagen verwijderd."
+    },
+    "loading": "Archieven laden…",
+    "status": {
+      "FAILED": "Mislukt",
+      "PENDING": "In afwachting",
+      "PROCESSING": "Bezig",
+      "READY": "Klaar"
+    },
+    "table": {
+      "actions": "Acties",
+      "completed": "Voltooid",
+      "created": "Aangemaakt",
+      "downloads": "Downloads",
+      "expires": "Vervalt",
+      "file": "Bestand",
+      "period": "Periode",
+      "size": "Grootte (MB)",
+      "status": "Status"
+    },
+    "title": "UBL-downloads",
+    "to-date": "Tot datum",
+    "validation": {
+      "limit": "Verwijder een archief voordat u een nieuw aanmaakt.",
+      "order": "De begindatum mag niet na de einddatum liggen.",
+      "required": "Beide datums zijn verplicht.",
+      "same-year": "Beide datums moeten in hetzelfde jaar liggen."
+    }
+  },
   "error": {
     "account_not_found": "Er is geen account gevonden voor dit e-mailadres.",
     "account_not_verified": "Uw account is nog niet geverifieerd. Verifieer uw e-mailadres voordat u inlogt.",
     "DUPLICATE_REQUEST": "Deze aanvraag is al verwerkt.",
+    "invalid_permission_mask": "Deze combinatie van rechten is niet geldig.",
+    "invitation_expired": "Deze uitnodiging is verlopen. Vraag uw beheerder om een nieuwe.",
+    "invitation_not_found": "Deze uitnodigingslink is niet geldig of is al gebruikt.",
+    "invitation_not_sent": "De uitnodigingsmail kon niet worden verzonden. Probeer het later opnieuw.",
     "login-failed": "Inloggen mislukt",
+    "MISSING_PERMISSION": "U hebt hiervoor geen rechten.",
     "no_ownership": "Dit account is niet aan een bedrijf gekoppeld.",
+    "not_admin": "Alleen de beheerder kan dit doen.",
     "not-peppol-active": "U bent momenteel niet geregistreerd op Peppol",
     "not-peppol-active-action": "Los dit nu op",
     "registration-company-affiliate-contact-admin": "Dit bedrijf heeft al een administrator. Neem contact op met uw administrator om de affiliate-onboarding voort te zetten.",
@@ -309,6 +374,9 @@
     "UBL_DOCUMENT_ALREADY_CREATED": "Dit document is al ingediend voor verzending. Werk het bestaande document bij.",
     "UBL_DOCUMENT_CONTENT_ALREADY_SENT": "Dit identieke document is al ingediend. Wijzig de inhoud voordat u het opnieuw verzendt.",
     "unexpected_error": "Er is een onverwachte serverfout opgetreden. Probeer het later opnieuw.",
+    "user_already_member": "Deze persoon heeft al toegang tot dit bedrijf.",
+    "user_not_editable": "De rechten van dit account kunnen niet worden gewijzigd.",
+    "user_not_found": "Deze gebruiker bestaat niet meer.",
     "wrong_password": "Het ingevoerde wachtwoord is onjuist."
   },
   "forgot": {
@@ -317,6 +385,18 @@
     "request-link": "Resetlink aanvragen",
     "reset-failed": "Reset mislukt",
     "title": "Wachtwoord vergeten"
+  },
+  "invitation": {
+    "accept": "Uitnodiging aanvaarden",
+    "accept-failed": "De uitnodiging kon niet worden aanvaard. Probeer het opnieuw.",
+    "accepted": "U hebt nu toegang tot {{- company}}. Log in om verder te gaan.",
+    "back-to-login": "Terug naar inloggen",
+    "choose-password": "Kies een wachtwoord voor uw nieuwe account.",
+    "existing-account": "U hebt al een account met dit e-mailadres. Uw wachtwoord blijft hetzelfde.",
+    "intro": "U bent uitgenodigd om voor {{- company}} te werken op Let's Peppol.",
+    "loading": "Uw uitnodiging wordt gecontroleerd…",
+    "title": "Sluit u aan bij uw bedrijf",
+    "verify-failed": "Deze uitnodiging kon niet worden gecontroleerd. Probeer het later opnieuw."
   },
   "invoice": {
     "action": {
@@ -336,13 +416,13 @@
     },
     "all": "Alle",
     "allowanceChargeModal": {
-      "charge": "Toeslag",
-      "discount": "Korting",
-      "title": "Kortingen/Kosten",
-      "quantity": "Aantal/Bedrag",
-      "percentage": "Percentage",
       "amount": "Bedrag",
-      "cost": "Kosten"
+      "charge": "Toeslag",
+      "cost": "Kosten",
+      "discount": "Korting",
+      "percentage": "Percentage",
+      "quantity": "Aantal/Bedrag",
+      "title": "Kortingen/Kosten"
     },
     "attachmentModal": {
       "auto-pdf": "Voeg de automatisch gegenereerde factuur-PDF toe",
@@ -623,7 +703,8 @@
     "language": "Taal",
     "partners": "Partners",
     "products": "Producten",
-    "toggle-theme": "Thema wisselen"
+    "toggle-theme": "Thema wisselen",
+    "users": "Gebruikers"
   },
   "new-feature": {
     "click-to-dismiss": "Klik om te sluiten",
@@ -689,6 +770,14 @@
       "INVOICE": "Factuur verzenden, een moment geduld"
     },
     "validating": "Document valideren, een moment geduld"
+  },
+  "ownership": {
+    "role": {
+      "ADMIN": "Beheerder",
+      "AFFILIATE": "Affiliate",
+      "APP": "App",
+      "USER": "Gebruiker"
+    }
   },
   "ownershipAdd": {
     "account-info-body": "Dit bedrijf wordt aan uw bestaande account toegevoegd. Uw wachtwoord blijft hetzelfde.",
@@ -896,6 +985,60 @@
     "title": "Tweefactorauthenticatie",
     "verify-enable": "Verifiëren en inschakelen",
     "verifying": "Verifiëren..."
+  },
+  "users": {
+    "action": {
+      "reactivate": "Opnieuw activeren",
+      "resend": "Uitnodiging opnieuw verzenden",
+      "suspend": "Schorsen"
+    },
+    "apply-note": "Wijzigingen gaan binnen enkele seconden in.",
+    "description": "Nodig collega's uit en bepaal wat elk van hen voor dit bedrijf mag doen.",
+    "hint": {
+      "admin": "De beheerder heeft altijd alle rechten.",
+      "implied": "Inbegrepen omdat een ander geselecteerd recht dit vereist.",
+      "not-editable": "De rechten van dit account kunnen hier niet worden gewijzigd."
+    },
+    "invitation-expires": "Verloopt op",
+    "invite": {
+      "action": "Gebruiker uitnodigen",
+      "description": "We sturen een e-mail met een link om toegang te krijgen tot dit bedrijf. De link kan één keer worden gebruikt.",
+      "permissions": "Rechten",
+      "send": "Uitnodiging verzenden",
+      "title": "Gebruiker uitnodigen"
+    },
+    "load-failed": "De gebruikers konden niet worden geladen.",
+    "loading": "Gebruikers laden…",
+    "permission": {
+      "COMPANY_SETTINGS": "Bedrijfsinstellingen en bankgegevens",
+      "INVOICE_DRAFT": "Concepten maken en bewerken",
+      "INVOICE_EXPORT": "Bulkdownloads",
+      "INVOICE_READ": "Facturen bekijken",
+      "INVOICE_SEND": "Facturen verzenden",
+      "INVOICE_STATUS": "Markeren als betaald of gelezen",
+      "PARTNER_MANAGE": "Partners beheren",
+      "PRODUCT_MANAGE": "Producten beheren"
+    },
+    "remove": {
+      "confirm": "{{- name}} uit dit bedrijf verwijderen? Het account blijft bestaan, maar verliest de toegang tot dit bedrijf.",
+      "title": "Gebruiker verwijderen"
+    },
+    "status": {
+      "ACTIVE": "Actief",
+      "EXPIRED": "Uitnodiging verlopen",
+      "INVITED": "Uitgenodigd",
+      "SUSPENDED": "Geschorst"
+    },
+    "suspend": {
+      "confirm": "{{- name}} schorsen? Deze gebruiker heeft geen toegang meer tot dit bedrijf tot u hem of haar opnieuw activeert.",
+      "title": "Gebruiker schorsen"
+    },
+    "table": {
+      "actions": "Acties",
+      "status": "Status",
+      "user": "Gebruiker"
+    },
+    "title": "Gebruikers"
   },
   "welcome-notification": {
     "title": "Welkom"

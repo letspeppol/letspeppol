@@ -1,0 +1,91 @@
+<import from="../components/view/application-view"></import>
+<import from="../components/confirmation/confirmation-modal"></import>
+<import from="../app/value-converters/date-format"></import>
+<import from="./invite-user-modal"></import>
+<import from="./users.css"></import>
+
+<invite-user-modal component.ref="inviteUserModal"></invite-user-modal>
+<confirmation-modal></confirmation-modal>
+
+<application-view>
+    <div class="section-header">
+        <div>
+            <h1 id="users-title" t="users.title">Users</h1>
+            <p class="users-intro" t="users.description">Invite colleagues and choose what each of them may do for this company.</p>
+        </div>
+        <div class="actions">
+            <button type="button" class="btn primary" click.trigger="showInviteModal()" title="Invite user" t="[title]users.invite.action">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                <span t="users.invite.action">Invite user</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="card table-card">
+        <div class="table-wrapper">
+            <table class="data-table users-matrix" aria-describedby="users-title">
+                <thead>
+                <tr>
+                    <th class="users-user-col" t="users.table.user">User</th>
+                    <th t="users.table.status">Status</th>
+                    <th repeat.for="column of columns" class="users-permission-col" t="users.permission.${column}"></th>
+                    <th class="actions-col" t="users.table.actions">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr repeat.for="row of rows" class.bind="row.saving ? 'users-row-saving' : ''">
+                    <td class="users-user-col">
+                        <div class="users-name">
+                            <span>${row.user.name}</span>
+                            <span if.bind="isAdmin(row)" class="pill" t="ownership.role.ADMIN">Administrator</span>
+                            <span if.bind="isAffiliate(row)" class="pill" t="ownership.role.AFFILIATE">Affiliate</span>
+                        </div>
+                        <div class="users-email">${row.user.email}</div>
+                    </td>
+                    <td>
+                        <span if.bind="isInvitationExpired(row)" class="pill error" t="users.status.EXPIRED">Invitation expired</span>
+                        <template else>
+                            <span class="pill" class.bind="row.user.status === 'ACTIVE' ? 'incoming' : row.user.status === 'INVITED' ? 'sent' : 'error'" t="users.status.${row.user.status}">${row.user.status}</span>
+                            <div if.bind="row.user.status === 'INVITED' && row.user.invitationExpiresOn" class="users-meta">
+                                <span t="users.invitation-expires">Expires</span> ${row.user.invitationExpiresOn | dateFormat}
+                            </div>
+                        </template>
+                    </td>
+                    <td repeat.for="column of columns" class="users-permission-col">
+                        <label class="users-check" title.bind="checkboxHint(row, column)">
+                            <input type="checkbox"
+                                   checked.to-view="row.flags[column]"
+                                   disabled.bind="!row.editable || row.saving || row.implied[column]"
+                                   change.trigger="togglePermission(row, column, $event.target.checked)"
+                                   t="[aria-label]users.permission.${column}" />
+                        </label>
+                    </td>
+                    <td class="actions-col">
+                        <template if.bind="row.editable">
+                            <button if.bind="row.user.status === 'INVITED'" type="button" class="icon-btn" disabled.bind="row.saving" title="Resend invitation" t="[title]users.action.resend" click.trigger="resendInvitation(row)">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
+                            </button>
+                            <button if.bind="row.user.status === 'ACTIVE'" type="button" class="icon-btn" disabled.bind="row.saving" title="Suspend" t="[title]users.action.suspend" click.trigger="confirmSuspend(row)">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="10" x2="10" y1="15" y2="9"/><line x1="14" x2="14" y1="15" y2="9"/></svg>
+                            </button>
+                            <button if.bind="row.user.status === 'SUSPENDED'" type="button" class="icon-btn success" disabled.bind="row.saving" title="Reactivate" t="[title]users.action.reactivate" click.trigger="reactivate(row)">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9 9.003a1 1 0 0 1 1.517-.859l4.997 2.997a1 1 0 0 1 0 1.718l-4.997 2.997A1 1 0 0 1 9 14.996z"/></svg>
+                            </button>
+                            <button if.bind="row.removable" type="button" class="icon-btn" disabled.bind="row.saving" title="Remove" t="[title]common.remove" click.trigger="confirmRemove(row)">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            </button>
+                        </template>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div if.bind="rows.length === 0" class="empty-state">
+            <p if.bind="loadingUsers" t="users.loading">Loading users…</p>
+            <p if.bind="!loadingUsers && loadFailed" t="users.load-failed">The users could not be loaded.</p>
+        </div>
+        <p class="users-note" t="users.apply-note">Changes take effect within a few seconds.</p>
+    </div>
+</application-view>

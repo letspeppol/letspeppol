@@ -13,4 +13,5 @@ public final class AppErrorCodes {
     public static final String PEPPOL_DIR_RATE_LIMIT_ERROR = "PEPPOL_DIR_RATE_LIMIT_ERROR";
     public static final String INVOICE_NUMBER_ALREADY_USED = "INVOICE_NUMBER_ALREADY_USED";
     public static final String KYC_REST_ERROR = "KYC_REST_ERROR";
+    public static final String MISSING_PERMISSION = "MISSING_PERMISSION";
 }

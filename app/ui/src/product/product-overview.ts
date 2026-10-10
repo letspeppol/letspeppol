@@ -6,6 +6,7 @@ import {AlertType} from "../components/alert/alert";
 import {ProductCategoryDto, ProductCategoryService} from "../services/app/product-category-service";
 import {ProductCategoryModal} from "./product-category-modal";
 import {I18N} from "@aurelia/i18n";
+import {OwnershipService} from "../services/app/ownership-service";
 
 type SortDirection = "asc" | "desc";
 
@@ -14,6 +15,7 @@ export class ProductOverview {
     private productContext = resolve(ProductContext);
     private productService = resolve(ProductService);
     private productCategoryService = resolve(ProductCategoryService);
+    private readonly ownershipService = resolve(OwnershipService);
     private readonly i18n = resolve(I18N);
     @bindable productCategoryModal: ProductCategoryModal;
     searchQuery = '';

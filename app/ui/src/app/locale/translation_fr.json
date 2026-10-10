@@ -67,6 +67,19 @@
       "save-failed": "Échec de l'enregistrement de l'entreprise"
     },
     "danger": "Erreur",
+    "download": {
+      "create-failed": "Échec de la création de l’archive",
+      "created": "Tâche d’archivage créée",
+      "delete-failed": "Échec de la suppression de l’archive",
+      "deleted": "Archive supprimée",
+      "download-failed": "Échec du téléchargement de l’archive",
+      "empty-period": "Aucun document finalisé avec des données UBL n’existe pour cette période",
+      "limit-reached": "Cinq archives actives au maximum sont autorisées",
+      "load-failed": "Échec du chargement des archives",
+      "retried": "Génération de l’archive relancée",
+      "retry-failed": "Échec de la nouvelle tentative",
+      "validation-failed": "La période sélectionnée n’est pas valide"
+    },
     "iban": {
       "saved": "IBAN enregistré"
     },
@@ -134,11 +147,6 @@
         }
       }
     },
-    "download": {
-      "create-failed": "Échec de la création de l’archive", "created": "Tâche d’archivage créée", "delete-failed": "Échec de la suppression de l’archive", "deleted": "Archive supprimée",
-      "download-failed": "Échec du téléchargement de l’archive", "empty-period": "Aucun document finalisé avec des données UBL n’existe pour cette période", "limit-reached": "Cinq archives actives au maximum sont autorisées",
-      "load-failed": "Échec du chargement des archives", "retried": "Génération de l’archive relancée", "retry-failed": "Échec de la nouvelle tentative", "validation-failed": "La période sélectionnée n’est pas valide"
-    },
     "neutral": "Message",
     "partner": {
       "create-failed": "Échec de la création du partenaire",
@@ -154,6 +162,9 @@
     "peppol-search": {
       "failed": "Échec de la recherche dans l'annuaire Peppol",
       "no-results": "Aucun résultat trouvé"
+    },
+    "permission": {
+      "route-denied": "Vous n'avez pas accès à cette page."
     },
     "product": {
       "created": "Produit créé",
@@ -171,6 +182,20 @@
       "size-too-large": "La taille totale des fichiers ne peut pas dépasser 10 Mo",
       "type-unsupported": "Type de fichier non pris en charge",
       "upload-error": "Erreur lors du téléversement du fichier"
+    },
+    "users": {
+      "invitation-resent": "Invitation renvoyée à {{- email}}",
+      "invite-failed": "L'invitation n'a pas pu être envoyée",
+      "invited": "Invitation envoyée à {{- email}}",
+      "invited-not-sent": "L'utilisateur a été ajouté, mais l'e-mail d'invitation n'a pas pu être envoyé. Utilisez « Renvoyer l'invitation » pour réessayer.",
+      "permissions-failed": "Les autorisations n'ont pas pu être enregistrées",
+      "reactivate-failed": "Échec de la réactivation de l'utilisateur",
+      "reactivated": "Utilisateur réactivé",
+      "remove-failed": "Échec du retrait de l'utilisateur",
+      "removed": "Utilisateur retiré",
+      "resend-failed": "L'invitation n'a pas pu être renvoyée",
+      "suspend-failed": "Échec de la suspension de l'utilisateur",
+      "suspended": "Utilisateur suspendu"
     },
     "warning": "Avertissement"
   },
@@ -230,20 +255,11 @@
   },
   "dashboard": {
     "errored": "Factures en erreur",
+    "no-invoice-access": "Vous n'avez pas accès aux chiffres de facturation de cette entreprise.",
     "vat-suffix": {
       "excl": "HT",
       "incl": "TVA inc."
     }
-  },
-  "download": {
-    "action": {"download": "Télécharger", "retry": "Réessayer"}, "active-links": "archives actives", "create": "Créer l’archive", "creating": "Création…",
-    "description": "Créez un ZIP contenant les factures et notes de crédit finalisées. Les deux dates sont incluses.", "empty": "Aucune archive n’a encore été créée.", "from-date": "Date de début", "generation-failed": "Échec de la génération de l’archive",
-    "info": {"download-limit": "Le fichier ZIP est supprimé après 3 téléchargements.", "expiration": "Le lien de téléchargement expire et est supprimé après 7 jours."},
-    "loading": "Chargement des archives…",
-    "status": {"FAILED": "Échec", "PENDING": "En attente", "PROCESSING": "En cours", "READY": "Prête"},
-    "table": {"actions": "Actions", "completed": "Terminée", "created": "Créée", "downloads": "Téléchargements", "expires": "Expire", "file": "Fichier", "period": "Période", "size": "Taille (MB)", "status": "Statut"},
-    "title": "Téléchargements UBL", "to-date": "Date de fin",
-    "validation": {"limit": "Supprimez une archive avant d’en créer une autre.", "order": "La date de début ne peut pas être postérieure à la date de fin.", "required": "Les deux dates sont obligatoires.", "same-year": "Les deux dates doivent être dans la même année."}
   },
   "documentDirection": {
     "INCOMING": "Entrant",
@@ -292,12 +308,61 @@
     "sponsors": "sponsors tiers",
     "sponsors-title": "Sponsors Bronze, Argent et Or réunis"
   },
+  "download": {
+    "action": {
+      "download": "Télécharger",
+      "retry": "Réessayer"
+    },
+    "active-links": "archives actives",
+    "create": "Créer l’archive",
+    "creating": "Création…",
+    "description": "Créez un ZIP contenant les factures et notes de crédit finalisées. Les deux dates sont incluses.",
+    "empty": "Aucune archive n’a encore été créée.",
+    "from-date": "Date de début",
+    "generation-failed": "Échec de la génération de l’archive",
+    "info": {
+      "download-limit": "Le fichier ZIP est supprimé après 3 téléchargements.",
+      "expiration": "Le lien de téléchargement expire et est supprimé après 7 jours."
+    },
+    "loading": "Chargement des archives…",
+    "status": {
+      "FAILED": "Échec",
+      "PENDING": "En attente",
+      "PROCESSING": "En cours",
+      "READY": "Prête"
+    },
+    "table": {
+      "actions": "Actions",
+      "completed": "Terminée",
+      "created": "Créée",
+      "downloads": "Téléchargements",
+      "expires": "Expire",
+      "file": "Fichier",
+      "period": "Période",
+      "size": "Taille (MB)",
+      "status": "Statut"
+    },
+    "title": "Téléchargements UBL",
+    "to-date": "Date de fin",
+    "validation": {
+      "limit": "Supprimez une archive avant d’en créer une autre.",
+      "order": "La date de début ne peut pas être postérieure à la date de fin.",
+      "required": "Les deux dates sont obligatoires.",
+      "same-year": "Les deux dates doivent être dans la même année."
+    }
+  },
   "error": {
     "account_not_found": "Aucun compte n’a été trouvé pour cette adresse e-mail.",
     "account_not_verified": "Votre compte n’a pas encore été vérifié. Vérifiez votre adresse e-mail avant de vous connecter.",
     "DUPLICATE_REQUEST": "Cette demande a déjà été traitée.",
+    "invalid_permission_mask": "Cette combinaison d'autorisations n'est pas valide.",
+    "invitation_expired": "Cette invitation a expiré. Demandez-en une nouvelle à votre administrateur.",
+    "invitation_not_found": "Ce lien d'invitation n'est pas valide ou a déjà été utilisé.",
+    "invitation_not_sent": "L'e-mail d'invitation n'a pas pu être envoyé. Veuillez réessayer plus tard.",
     "login-failed": "Échec de la connexion",
+    "MISSING_PERMISSION": "Vous n'avez pas l'autorisation de faire cela.",
     "no_ownership": "Ce compte n’est lié à aucune entreprise.",
+    "not_admin": "Seul l'administrateur peut faire cela.",
     "not-peppol-active": "Vous n'êtes actuellement pas enregistré sur Peppol",
     "not-peppol-active-action": "Résoudre cela maintenant",
     "registration-company-affiliate-contact-admin": "Cette entreprise a déjà un administrateur. Veuillez contacter votre administrateur pour poursuivre l’onboarding affilié.",
@@ -309,6 +374,9 @@
     "UBL_DOCUMENT_ALREADY_CREATED": "Ce document a déjà été soumis pour envoi. Modifiez le document existant.",
     "UBL_DOCUMENT_CONTENT_ALREADY_SENT": "Ce document identique a déjà été soumis. Modifiez son contenu avant de le renvoyer.",
     "unexpected_error": "Une erreur inattendue du serveur s’est produite. Veuillez réessayer plus tard.",
+    "user_already_member": "Cette personne a déjà accès à cette entreprise.",
+    "user_not_editable": "Les autorisations de ce compte ne peuvent pas être modifiées.",
+    "user_not_found": "Cet utilisateur n'existe plus.",
     "wrong_password": "Le mot de passe saisi est incorrect."
   },
   "forgot": {
@@ -317,6 +385,18 @@
     "request-link": "Demander lien de réinitialisation",
     "reset-failed": "Échec de réinitialisation",
     "title": "Mot de passe oublié"
+  },
+  "invitation": {
+    "accept": "Accepter l'invitation",
+    "accept-failed": "L'invitation n'a pas pu être acceptée. Veuillez réessayer.",
+    "accepted": "Vous avez maintenant accès à {{- company}}. Connectez-vous pour continuer.",
+    "back-to-login": "Retour à la connexion",
+    "choose-password": "Choisissez un mot de passe pour votre nouveau compte.",
+    "existing-account": "Vous avez déjà un compte avec cette adresse e-mail. Votre mot de passe reste le même.",
+    "intro": "Vous avez été invité à travailler pour {{- company}} sur Let's Peppol.",
+    "loading": "Vérification de votre invitation…",
+    "title": "Rejoignez votre entreprise",
+    "verify-failed": "Cette invitation n'a pas pu être vérifiée. Veuillez réessayer plus tard."
   },
   "invoice": {
     "action": {
@@ -336,13 +416,13 @@
     },
     "all": "Tous",
     "allowanceChargeModal": {
-      "charge": "Frais",
-      "discount": "Remise",
-      "title": "Remises/Frais",
-      "quantity": "Quantité/Montant",
-      "percentage": "Pourcentage",
       "amount": "Montant",
-      "cost": "Frais"
+      "charge": "Frais",
+      "cost": "Frais",
+      "discount": "Remise",
+      "percentage": "Pourcentage",
+      "quantity": "Quantité/Montant",
+      "title": "Remises/Frais"
     },
     "attachmentModal": {
       "auto-pdf": "Inclure le PDF de facture généré automatiquement",
@@ -623,7 +703,8 @@
     "language": "Langue",
     "partners": "Partenaires",
     "products": "Produits",
-    "toggle-theme": "Changer de thème"
+    "toggle-theme": "Changer de thème",
+    "users": "Utilisateurs"
   },
   "new-feature": {
     "click-to-dismiss": "Cliquer pour fermer",
@@ -689,6 +770,14 @@
       "INVOICE": "Envoi de la facture, veuillez patienter"
     },
     "validating": "Validation du document, veuillez patienter"
+  },
+  "ownership": {
+    "role": {
+      "ADMIN": "Administrateur",
+      "AFFILIATE": "Affilié",
+      "APP": "Application",
+      "USER": "Utilisateur"
+    }
   },
   "ownershipAdd": {
     "account-info-body": "Cette entreprise sera ajoutée à votre compte existant. Votre mot de passe reste inchangé.",
@@ -896,6 +985,60 @@
     "title": "Authentification à deux facteurs",
     "verify-enable": "Vérifier et activer",
     "verifying": "Vérification..."
+  },
+  "users": {
+    "action": {
+      "reactivate": "Réactiver",
+      "resend": "Renvoyer l'invitation",
+      "suspend": "Suspendre"
+    },
+    "apply-note": "Les modifications prennent effet en quelques secondes.",
+    "description": "Invitez des collègues et choisissez ce que chacun peut faire pour cette entreprise.",
+    "hint": {
+      "admin": "L'administrateur dispose toujours de toutes les autorisations.",
+      "implied": "Inclus parce qu'une autre autorisation sélectionnée en a besoin.",
+      "not-editable": "Les autorisations de ce compte ne peuvent pas être modifiées ici."
+    },
+    "invitation-expires": "Expire le",
+    "invite": {
+      "action": "Inviter un utilisateur",
+      "description": "Nous envoyons par e-mail un lien pour rejoindre cette entreprise. Le lien ne peut être utilisé qu'une seule fois.",
+      "permissions": "Autorisations",
+      "send": "Envoyer l'invitation",
+      "title": "Inviter un utilisateur"
+    },
+    "load-failed": "Impossible de charger les utilisateurs.",
+    "loading": "Chargement des utilisateurs…",
+    "permission": {
+      "COMPANY_SETTINGS": "Paramètres de l'entreprise et coordonnées bancaires",
+      "INVOICE_DRAFT": "Créer et modifier des brouillons",
+      "INVOICE_EXPORT": "Téléchargements groupés",
+      "INVOICE_READ": "Consulter les factures",
+      "INVOICE_SEND": "Envoyer des factures",
+      "INVOICE_STATUS": "Marquer comme payée ou lue",
+      "PARTNER_MANAGE": "Gérer les partenaires",
+      "PRODUCT_MANAGE": "Gérer les produits"
+    },
+    "remove": {
+      "confirm": "Retirer {{- name}} de cette entreprise ? Son compte est conservé, mais il perd l'accès à cette entreprise.",
+      "title": "Retirer l'utilisateur"
+    },
+    "status": {
+      "ACTIVE": "Actif",
+      "EXPIRED": "Invitation expirée",
+      "INVITED": "Invité",
+      "SUSPENDED": "Suspendu"
+    },
+    "suspend": {
+      "confirm": "Suspendre {{- name}} ? Cette personne n'aura plus accès à cette entreprise jusqu'à ce que vous la réactiviez.",
+      "title": "Suspendre l'utilisateur"
+    },
+    "table": {
+      "actions": "Actions",
+      "status": "Statut",
+      "user": "Utilisateur"
+    },
+    "title": "Utilisateurs"
   },
   "welcome-notification": {
     "title": "Bienvenue"

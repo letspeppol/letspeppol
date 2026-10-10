@@ -4,18 +4,23 @@ import {resolve} from "@aurelia/kernel";
 import {ProductService} from "../services/app/product-service";
 import {ProductContext} from "./product-context";
 import {I18N} from "@aurelia/i18n";
+import {OwnershipService} from "../services/app/ownership-service";
 
 export class ProductEdit {
     private readonly signaler = resolve(ISignaler);
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
     private readonly productService = resolve(ProductService);
     private readonly productContext = resolve(ProductContext);
+    private readonly ownershipService = resolve(OwnershipService);
     private readonly i18n = resolve(I18N);
     taxPercentages: number[] = [21, 12, 6, 0];
 
     categoryIdMatcher = (a: number, b: number) => { return a == b; };
 
     async saveProduct() {
+        if (!this.ownershipService.granted.PRODUCT_MANAGE) {
+            return;
+        }
         try {
             let successKey = 'alert.product.updated';
             if (this.productContext.selectedProduct.id) {

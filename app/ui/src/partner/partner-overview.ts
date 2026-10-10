@@ -4,6 +4,7 @@ import {PartnerContext} from "./partner-context";
 import {IEventAggregator, watch} from "aurelia";
 import {AlertType} from "../components/alert/alert";
 import {I18N} from "@aurelia/i18n";
+import {OwnershipService} from "../services/app/ownership-service";
 
 type SortDirection = "asc" | "desc";
 
@@ -11,6 +12,7 @@ export class PartnerOverview {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
     private partnerContext = resolve(PartnerContext);
     private partnerService = resolve(PartnerService);
+    private readonly ownershipService = resolve(OwnershipService);
     private readonly i18n = resolve(I18N);
     searchQuery = '';
     category = 'all';

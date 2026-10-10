@@ -14,6 +14,7 @@ import org.letspeppol.app.util.JwtUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +34,7 @@ public class AccountantController {
 
     /// Accountant tries to link a customer company to itself
     @PostMapping("/link-customer")
+    @PreAuthorize("hasAuthority('company_admin')")
     @Operation(summary = "Request customer link", description = "Starts the workflow where an accountant asks to be linked to a customer company.")
     public ResponseEntity<Void> linkCustomer(@AuthenticationPrincipal Jwt jwt, @RequestBody LinkCustomerDto linkCustomerDto) {
         UUID uid = JwtUtil.getUid(jwt);
@@ -43,6 +45,7 @@ public class AccountantController {
 
     /// Customer confirms the accountant link request
     @PostMapping("/confirm-customer-link")
+    @PreAuthorize("hasAuthority('company_admin')")
     @Operation(summary = "Confirm customer link", description = "Confirms a previously requested accountant-customer relationship using the supplied token.")
     public ResponseEntity<Void> confirmLink(@AuthenticationPrincipal Jwt jwt, @RequestParam String token) {
         String peppolId = JwtUtil.getPeppolId(jwt);
@@ -51,6 +54,7 @@ public class AccountantController {
     }
 
     @GetMapping("/customers")
+    @PreAuthorize("hasAuthority('kyc_user')")
     @Operation(summary = "List linked customers", description = "Returns the customer companies currently linked to the authenticated accountant.")
     public ResponseEntity<List<CustomerDto>> getCustomersForAccountant(@AuthenticationPrincipal Jwt jwt) {
         UUID uid = JwtUtil.getUid(jwt);
@@ -59,6 +63,7 @@ public class AccountantController {
     }
 
     @GetMapping("/documents")
+    @PreAuthorize("hasAuthority('kyc_user')")
     @Operation(summary = "List customer documents", description = "Returns paged documents for one linked customer so accountants can review customer traffic.")
     public PageResponse<DocumentDto> getCustomerDocuments(@AuthenticationPrincipal Jwt jwt, @RequestParam String customerPeppolId, Pageable pageable) {
         UUID uid = JwtUtil.getUid(jwt);

@@ -8,12 +8,14 @@ import moment from "moment";
 import {I18N} from "@aurelia/i18n";
 import {formatBelgianStructuredCommunication} from "../../../belgian-structured-communication";
 import {isPaymentInfoComplete} from "../../invoice-validation";
+import {OwnershipService} from "../../../../services/app/ownership-service";
 
 export class PaymentInfo {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
     private invoiceService = resolve(InvoiceService);
     private invoiceContext = resolve(InvoiceContext);
     private invoiceComposer = resolve(InvoiceComposer);
+    private readonly ownershipService = resolve(OwnershipService);
     private readonly i18n = resolve(I18N);
 
     @bindable readOnly: boolean;
@@ -66,7 +68,7 @@ export class PaymentInfo {
         event?.stopPropagation();
         const document = this.invoiceContext.selectedDocument;
 
-        if (!document?.id) {
+        if (!document?.id || !this.ownershipService.granted.INVOICE_STATUS) {
             return;
         }
 

@@ -16,6 +16,7 @@ import org.letspeppol.app.model.VatRuleset;
 import org.letspeppol.app.repository.CompanyRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -108,9 +109,12 @@ public class CompanyService {
                 .orElseThrow(() -> new IllegalStateException("Account was not known at KYC"));
     }
 
-    public CompanyDto update(CompanyDto companyDto, boolean isPeppolActive, String tokenValue) {
+    public CompanyDto update(CompanyDto companyDto, boolean isPeppolActive, String tokenValue, boolean admin) {
         Company company = companyRepository.findByPeppolId(companyDto.peppolId()).orElseThrow(() -> new NotFoundException("Company does not exist"));
         if (company.isEnableEmailNotification() != companyDto.enableEmailNotification()) {
+            if (!admin) {
+                throw new AccessDeniedException("Only an administrator can change email notifications");
+            }
             ServiceRequest serviceRequest = new ServiceRequest(UUID.fromString(appExternalId));
             if (companyDto.enableEmailNotification()) {
                 kycWebClient.post()
