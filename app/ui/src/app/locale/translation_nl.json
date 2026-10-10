@@ -654,14 +654,19 @@
         "browser-help": "Hulp voor de extensie:",
         "install-beidconnect": "Zorg ervoor dat BeIDConnect is geïnstalleerd (Belgische eID-middleware).",
         "install-beidconnect-link": "Download BeIDConnect",
+        "install-bridge": "Installeer Let’s Peppol eID Bridge voor Windows (x64).",
+        "install-bridge-link": "Download het Windows-installatieprogramma",
         "install-web-eid": "Installeer de Web eID-applicatie",
+        "old-options": "Oude of andere installatie-informatie",
         "restart-browser": "Start uw browser opnieuw en controleer of de Web eID-extensie is ingeschakeld.",
+        "safari-extension": "Hulp voor de Safari-extensie:",
         "success": {
           "subtitle": "Uw kaartlezer en browserconfiguratie lijken in orde.",
           "title": "Web eID werkt"
         },
         "test-setup": "Sluit uw eID-kaartlezer aan, steek uw eID-kaart in en voer de test rechts uit.",
         "title": "Bereid uw eID-software, kaartlezer en kaart voor",
+        "unsigned-installer": "Het installatieprogramma is niet digitaal ondertekend. Windows kan een waarschuwing over een onbekende uitgever tonen.",
         "troubleshoot": {
           "contact": "Contacteer support:",
           "other-device": "Probeer een andere computer.",
@@ -896,6 +901,15 @@
     "title": "Tweefactorauthenticatie",
     "verify-enable": "Verifiëren en inschakelen",
     "verifying": "Verifiëren..."
+  },
+  "web-eid-setup": {
+    "choose-browser": "Gebruik een browser op een computer en kies de bijbehorende Web eID-extensie:",
+    "email-reopen": "Als u de pagina vernieuwt of de browser herstart, opent u de bevestigingslink uit uw e-mail opnieuw om verder te gaan.",
+    "extension": "Web eID is niet beschikbaar in deze browser. Installeer de extensie of schakel deze in.",
+    "install": "Open de Web eID-extensiewinkel voor",
+    "instructions": "Open de installatie-instructies",
+    "native": "De extensie kan de eID-applicatie op uw computer niet bereiken. Installeer of herstel deze en herstart uw browser.",
+    "retry": "Keer na het installeren of inschakelen van de extensie terug naar deze pagina en probeer opnieuw. Vernieuw de pagina indien nodig."
   },
   "welcome-notification": {
     "title": "Welkom"

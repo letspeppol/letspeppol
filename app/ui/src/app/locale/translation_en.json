@@ -657,14 +657,19 @@
         "browser-help": "Extension help:",
         "install-beidconnect": "Ensure BeIDConnect is installed (Belgian eID middleware).",
         "install-beidconnect-link": "Download BeIDConnect",
+        "install-bridge": "Install Let’s Peppol eID Bridge for Windows (x64).",
+        "install-bridge-link": "Download the Windows installer",
         "install-web-eid": "Install the Web eID application",
+        "old-options": "Old or other installation information",
         "restart-browser": "Restart your browser and verify that the Web eID extension is enabled.",
+        "safari-extension": "Safari extension help:",
         "success": {
           "subtitle": "Your card reader and browser setup look good.",
           "title": "Web eID is working"
         },
         "test-setup": "Connect your eID reader, insert your eID card, and run the test on the right.",
         "title": "Prepare your eID software, reader and card",
+        "unsigned-installer": "The installer is unsigned, so Windows may show an unknown-publisher warning.",
         "troubleshoot": {
           "contact": "Contact support:",
           "other-device": "Try another computer.",
@@ -899,6 +904,15 @@
     "title": "Two-Factor Authentication",
     "verify-enable": "Verify & Enable",
     "verifying": "Verifying..."
+  },
+  "web-eid-setup": {
+    "choose-browser": "Use a desktop browser and choose its Web eID extension:",
+    "email-reopen": "If you reload or restart, reopen the confirmation link from your email to continue.",
+    "extension": "Web eID is unavailable in this browser. Install or enable its extension.",
+    "install": "Open the Web eID extension store for",
+    "instructions": "Open setup instructions",
+    "native": "The extension cannot reach the desktop eID application. Install or repair it, then restart your browser.",
+    "retry": "After installing or enabling the extension, return to this page and try again. If needed, reload the page."
   },
   "welcome-notification": {
     "title": "Welcome"

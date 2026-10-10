@@ -4,8 +4,10 @@ import * as webeid from '@web-eid/web-eid-library/web-eid';
 import {IEventAggregator} from "aurelia";
 import {AlertType} from "../components/alert/alert";
 import {RegistrationAccountType} from "../services/kyc/registration-service";
+import {getWebEidSetupIssue, WebEidSetupIssue} from "../components/eid/web-eid-setup";
 
 export class Onboarding {
+    webEidSetupIssue: WebEidSetupIssue = null;
     readonly ea: IEventAggregator = resolve(IEventAggregator);
     private certificate = null;
     private signatureAlgorithm = null;
@@ -22,6 +24,9 @@ export class Onboarding {
     }
 
     public async checkWebEID() {
+            this.webEidSetupIssue = null;
+            this.certificate = null;
+            this.signatureAlgorithm = null;
             try {
                 const {
                     certificate,
@@ -31,6 +36,8 @@ export class Onboarding {
                 this.certificate = certificate;
                 this.signatureAlgorithm = supportedSignatureAlgorithms.find(item => item.hashFunction === "SHA-256");
             } catch (error) {
+                this.webEidSetupIssue = getWebEidSetupIssue(error);
+                if (this.webEidSetupIssue) return;
                 let text = "Confirming Identity failed";
                 if (error instanceof Response) {
                     try {

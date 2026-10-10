@@ -654,14 +654,19 @@
         "browser-help": "Hilfe zur Erweiterung:",
         "install-beidconnect": "Stellen Sie sicher, dass BeIDConnect installiert ist (belgische eID-Middleware).",
         "install-beidconnect-link": "BeIDConnect herunterladen",
+        "install-bridge": "Installieren Sie Let’s Peppol eID Bridge für Windows (x64).",
+        "install-bridge-link": "Windows-Installationsprogramm herunterladen",
         "install-web-eid": "Web-eID-Anwendung installieren",
+        "old-options": "Frühere oder andere Installationsinformationen",
         "restart-browser": "Starten Sie Ihren Browser neu und prüfen Sie, ob die Web-eID-Erweiterung aktiviert ist.",
+        "safari-extension": "Hilfe zur Safari-Erweiterung:",
         "success": {
           "subtitle": "Ihr Kartenleser und die Browser-Einrichtung sehen gut aus.",
           "title": "Web eID funktioniert"
         },
         "test-setup": "Schließen Sie Ihren Kartenleser an, stecken Sie Ihre eID-Karte ein und führen Sie den Test rechts aus.",
         "title": "eID-Software, Kartenleser und Karte vorbereiten",
+        "unsigned-installer": "Das Installationsprogramm ist nicht signiert. Windows kann eine Warnung zu einem unbekannten Herausgeber anzeigen.",
         "troubleshoot": {
           "contact": "Support kontaktieren:",
           "other-device": "Versuchen Sie es an einem anderen Computer.",
@@ -896,6 +901,15 @@
     "title": "Zwei-Faktor-Authentifizierung",
     "verify-enable": "Überprüfen und aktivieren",
     "verifying": "Überprüfung..."
+  },
+  "web-eid-setup": {
+    "choose-browser": "Verwenden Sie einen Browser auf einem Computer und wählen Sie dessen Web-eID-Erweiterung:",
+    "email-reopen": "Wenn Sie die Seite neu laden oder den Browser neu starten, öffnen Sie den Bestätigungslink aus Ihrer E-Mail erneut, um fortzufahren.",
+    "extension": "Web eID ist in diesem Browser nicht verfügbar. Installieren oder aktivieren Sie die Erweiterung.",
+    "install": "Den Web-eID-Erweiterungsstore öffnen für",
+    "instructions": "Installationsanleitung öffnen",
+    "native": "Die Erweiterung kann die eID-Anwendung auf Ihrem Computer nicht erreichen. Installieren oder reparieren Sie diese und starten Sie dann Ihren Browser neu.",
+    "retry": "Kehren Sie nach dem Installieren oder Aktivieren der Erweiterung zu dieser Seite zurück und versuchen Sie es erneut. Laden Sie die Seite bei Bedarf neu."
   },
   "welcome-notification": {
     "title": "Willkommen"

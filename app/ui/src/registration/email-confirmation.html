@@ -1,6 +1,7 @@
 <import from="../components/view/wizard-view"></import>
 <import from="../components/stepper/stepper"></import>
 <import from="../components/eid/card-reader"></import>
+<import from="../components/eid/web-eid-setup"></import>
 <import from="../components/choose-password/choose-password"></import>
 
 <wizard-view>
@@ -17,6 +18,7 @@
         <div class="loading-msg" t="confirmation.loading">Loading company details…</div>
     </template>
     <form class="auth-form" if.bind="tokenVerificationResponse">
+        <web-eid-setup issue.bind="webEidSetupIssue" email-confirmation.bind="true"></web-eid-setup>
         <div class="confirmation-layout" if.bind="step === 1">
             <div>
                 <h3 t="confirmation.company">1. Verify the company</h3>
