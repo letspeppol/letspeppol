@@ -17,20 +17,9 @@
                         <span t="onboarding.step.prepare-eid.title">Prepare your eID software, reader and card</span>
                         <ul class="onboarding-substeps">
                             <li>
-                                <span t="onboarding.step.prepare-eid.install-web-eid">Install the Web eID application</span>
-                                <span class="link-group">
-                                    <a href="https://github.com/web-eid/web-eid-app/releases/download/v2.8.0/web-eid_2.8.0.913.x64.exe" target="_blank" rel="noopener noreferrer" t="onboarding.os.windows">Windows</a>
-                                    <span t="onboarding.or">or</span>
-                                    <a href="https://github.com/web-eid/web-eid-app/releases/download/v2.8.0/web-eid_2.8.0.710.dmg" target="_blank" rel="noopener noreferrer" t="onboarding.os.macos">macOS</a>
-                                    <span t="onboarding.or">or</span>
-                                    <a href="https://github.com/web-eid/web-eid-app/releases/tag/v2.8.0" target="_blank" rel="noopener noreferrer" t="onboarding.os.linux">Linux</a>
-                                </span>
-                                <p class="hint" t="onboarding.step.prepare-eid.alt-stack">Alternatively, you can install the full software stack from id.ee.</p>
-                                <a class="hint-link" href="https://www.id.ee/en/article/install-id-software/" target="_blank" rel="noopener noreferrer" t="onboarding.step.prepare-eid.alt-stack-link">Open id.ee installation guide</a>
-                            </li>
-                            <li>
-                                <span t="onboarding.step.prepare-eid.install-beidconnect">Ensure BeIDConnect is installed (Belgian eID middleware).</span>
-                                <a href="https://eid.belgium.be/en/download/beidconnect" target="_blank" rel="noopener noreferrer" t="onboarding.step.prepare-eid.install-beidconnect-link">Download BeIDConnect</a>
+                                <span t="onboarding.step.prepare-eid.install-bridge">Install Let’s Peppol eID Bridge for Windows (x64).</span>
+                                <a href="https://github.com/letspeppol/eid-bridge/releases/download/v1.1.0/LetsPeppol-eID-Bridge-1.1.0-windows-x64-unsigned.msi" target="_blank" rel="noopener noreferrer" t="onboarding.step.prepare-eid.install-bridge-link">Download the Windows installer</a>
+                                <p class="hint" t="onboarding.step.prepare-eid.unsigned-installer">The installer is unsigned, so Windows may show an unknown-publisher warning.</p>
                             </li>
                             <li>
                                 <span t="onboarding.step.prepare-eid.restart-browser">Restart your browser and verify that the Web eID extension is enabled.</span>
@@ -38,7 +27,6 @@
                                 <span class="link-group">
                                     <a href="https://chromewebstore.google.com/detail/web-eid/ncibgoaomkmdpilpocfeponihegamlic" target="_blank" rel="noopener noreferrer" t="onboarding.browser.chrome">Chrome</a>,
                                     <a href="https://addons.mozilla.org/firefox/addon/web-eid-webextension/" target="_blank" rel="noopener noreferrer" t="onboarding.browser.firefox">Firefox</a>,
-                                    <a href="https://www.id.ee/en/article/install-id-software/#safari" target="_blank" rel="noopener noreferrer" t="onboarding.browser.safari">Safari</a>,
                                     <a href="https://microsoftedge.microsoft.com/addons/detail/gnmckgbandlkacikdndelhfghdejfido" target="_blank" rel="noopener noreferrer" t="onboarding.browser.edge">Microsoft Edge</a>
                                 </span>
                             </li>
@@ -46,6 +34,31 @@
                                 Connect your eID reader, insert your eID card, and run the test on the right.
                             </li>
                         </ul>
+                        <details class="onboarding-legacy-install">
+                            <summary t="onboarding.step.prepare-eid.old-options">Old or other installation information</summary>
+                            <ul class="onboarding-substeps">
+                                <li>
+                                    <span t="onboarding.step.prepare-eid.install-web-eid">Install the Web eID application</span>
+                                    <span class="link-group">
+                                        <a href="https://github.com/web-eid/web-eid-app/releases/download/v2.8.0/web-eid_2.8.0.913.x64.exe" target="_blank" rel="noopener noreferrer" t="onboarding.os.windows">Windows</a>
+                                        <span t="onboarding.or">or</span>
+                                        <a href="https://github.com/web-eid/web-eid-app/releases/download/v2.8.0/web-eid_2.8.0.710.dmg" target="_blank" rel="noopener noreferrer" t="onboarding.os.macos">macOS</a>
+                                        <span t="onboarding.or">or</span>
+                                        <a href="https://github.com/web-eid/web-eid-app/releases/tag/v2.8.0" target="_blank" rel="noopener noreferrer" t="onboarding.os.linux">Linux</a>
+                                    </span>
+                                    <p class="hint" t="onboarding.step.prepare-eid.alt-stack">Alternatively, you can install the full software stack from id.ee.</p>
+                                    <a class="hint-link" href="https://www.id.ee/en/article/install-id-software/" target="_blank" rel="noopener noreferrer" t="onboarding.step.prepare-eid.alt-stack-link">Open id.ee installation guide</a>
+                                </li>
+                                <li>
+                                    <span t="onboarding.step.prepare-eid.install-beidconnect">Ensure BeIDConnect is installed (Belgian eID middleware).</span>
+                                    <a href="https://eid.belgium.be/en/download/beidconnect" target="_blank" rel="noopener noreferrer" t="onboarding.step.prepare-eid.install-beidconnect-link">Download BeIDConnect</a>
+                                </li>
+                                <li>
+                                    <span t="onboarding.step.prepare-eid.safari-extension">Safari extension help:</span>
+                                    <a href="https://www.id.ee/en/article/install-id-software/#safari" target="_blank" rel="noopener noreferrer" t="onboarding.browser.safari">Safari</a>
+                                </li>
+                            </ul>
+                        </details>
                     </li>
                     <li class="onboarding-steps-item" t="onboarding.step.verify-email">
                         Verify your email address (check spam for emails from @letspeppol.org).

@@ -654,14 +654,19 @@
         "browser-help": "Aide pour l’extension :",
         "install-beidconnect": "Assurez-vous que BeIDConnect est installé (middleware eID belge).",
         "install-beidconnect-link": "Télécharger BeIDConnect",
+        "install-bridge": "Installez Let’s Peppol eID Bridge pour Windows (x64).",
+        "install-bridge-link": "Télécharger le programme d’installation Windows",
         "install-web-eid": "Installez l’application Web eID",
+        "old-options": "Anciennes ou autres informations d’installation",
         "restart-browser": "Redémarrez votre navigateur et vérifiez que l’extension Web eID est activée.",
+        "safari-extension": "Aide pour l’extension Safari :",
         "success": {
           "subtitle": "Votre lecteur de carte et la configuration du navigateur semblent corrects.",
           "title": "Web eID fonctionne"
         },
         "test-setup": "Connectez votre lecteur eID, insérez votre carte eID et lancez le test à droite.",
         "title": "Préparez votre logiciel eID, votre lecteur et votre carte",
+        "unsigned-installer": "Le programme d’installation n’est pas signé. Windows peut afficher un avertissement concernant un éditeur inconnu.",
         "troubleshoot": {
           "contact": "Contacter le support :",
           "other-device": "Essayez sur un autre ordinateur.",
