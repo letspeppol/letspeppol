@@ -1,5 +1,10 @@
 {
   "account": {
+    "access-point": "Access Point",
+    "access-point-loading": "Access Point wird geladen…",
+    "access-point-none": "Nicht verbunden",
+    "access-point-none-description": "Nicht über Let’s Peppol registriert",
+    "access-point-unavailable": "Access Point nicht verfügbar",
     "account-name": "Kontoname",
     "activate-on-peppol": "Auf Peppol aktivieren",
     "add-attachment-to-notification": "Anhang zur Benachrichtigung hinzufügen",
@@ -298,7 +303,7 @@
     "DUPLICATE_REQUEST": "Diese Anfrage wurde bereits verarbeitet.",
     "login-failed": "Anmeldung fehlgeschlagen",
     "no_ownership": "Dieses Konto ist mit keinem Unternehmen verknüpft.",
-    "not-peppol-active": "Sie sind derzeit nicht bei Peppol registriert",
+    "not-peppol-active": "Ihr Unternehmen ist derzeit nicht über Let’s Peppol registriert",
     "not-peppol-active-action": "Jetzt lösen",
     "registration-company-affiliate-contact-admin": "Dieses Unternehmen hat bereits einen Administrator. Bitte wenden Sie sich an Ihren Administrator, um das Affiliate-Onboarding fortzusetzen.",
     "registration-company-already-registered": "Unternehmen bereits registriert",
@@ -616,7 +621,7 @@
   },
   "navigation": {
     "account": "Konto",
-    "brand-alt": "Let's Peppol",
+    "brand-alt": "Let’s Peppol",
     "dashboard": "Dashboard",
     "downloads": "Downloads",
     "invoices": "Rechnungen",

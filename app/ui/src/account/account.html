@@ -56,7 +56,7 @@
                     <h2 t="account.company-info">Company Info</h2>
                 </div>
                 <div style="display: grid; gap: var(--space-1)">
-                    <div style="display: flex; gap: var(--space-1)">
+                    <div class="company-identifiers">
                         <label class="field">
                             <span t="label.enterprise-number">Enterprise Number</span>
                             <input type="text" value.bind="company.identifier" disabled />
@@ -70,10 +70,21 @@
                         <span t="account.company-legal-name">Company legal name</span>
                         <input type="text" value.bind="company.name" disabled />
                     </label>
-                    <label class="field">
-                        <span t="label.peppolId">Peppol ID</span>
-                        <input type="text" value.bind="company.peppolId" disabled />
-                    </label>
+                    <div class="company-identifiers">
+                        <label class="field">
+                            <span t="label.peppolId">Peppol ID</span>
+                            <input type="text" value.to-view="company.peppolId" readonly />
+                        </label>
+                        <div class="field">
+                            <span t="account.access-point">Access Point</span>
+                            <div class="access-point-value">
+                                <input type="text" value.to-view="accessPointName" title.bind="peppolRegistration && (!peppolRegistration.peppolActive || peppolRegistration.accessPoint === 'NONE') ? i18n.tr('account.access-point-none-description') : ''" aria-label.bind="i18n.tr('account.access-point')" readonly />
+                                <a if.bind="accessPointUrl" class="access-point-link" href.bind="accessPointUrl" aria-label.bind="accessPointName" title.bind="accessPointUrl" target="_blank" rel="noopener noreferrer">
+                                    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                     <label class="field full">
                         <span t="account.peppol-registration">Peppol Registration</span>
                         <button if.bind="company.peppolActive" type="button" class="btn danger" style="width: fit-content" title="Remove this company from Peppol" click.trigger="unregister()">

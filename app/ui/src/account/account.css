@@ -2,3 +2,41 @@
     font-size: 1rem;
     color: var(--muted);
 }
+
+.company-identifiers {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-1);
+}
+
+.company-identifiers .field {
+    min-width: 0;
+}
+
+.access-point-value {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.access-point-value input {
+    width: 100%;
+    padding-right: calc(var(--space-065) + 1.5rem);
+}
+
+.access-point-link {
+    position: absolute;
+    right: var(--space-065);
+    display: inline-flex;
+    align-items: center;
+    color: var(--primary);
+}
+
+.access-point-link:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 1px;
+}
+
+.access-point-link svg {
+    flex-shrink: 0;
+}

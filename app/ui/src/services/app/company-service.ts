@@ -29,6 +29,12 @@ export interface CompanyDto {
     registeredOffice: Address
 }
 
+export interface PeppolRegistrationDto {
+    peppolId: string;
+    peppolActive: boolean;
+    accessPoint: string | null;
+}
+
 export interface Address {
     city?: string,
     postalCode?: string,
@@ -41,6 +47,11 @@ export interface Address {
 export class CompanyService {
     private appApi = resolve(AppApi);
     public myCompany: CompanyDto;
+
+    async getPeppolRegistration(): Promise<PeppolRegistrationDto> {
+        const response = await this.appApi.httpClient.get('/sapi/company/peppol-registration');
+        return response.json();
+    }
 
     async getAndSetMyCompanyForToken() : Promise<CompanyDto> {
         this.myCompany = await this.appApi.httpClient.get(`/sapi/company`).then(response => response.json());
