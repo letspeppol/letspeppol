@@ -4,6 +4,8 @@ import jakarta.mail.Session;
 import jakarta.mail.internet.MimeMessage;
 import mockwebserver3.MockResponse;
 import mockwebserver3.MockWebServer;
+import mockwebserver3.Dispatcher;
+import mockwebserver3.RecordedRequest;
 import org.junit.jupiter.api.*;
 import org.letspeppol.kyc.dto.*;
 import org.letspeppol.kyc.model.AccountType;
@@ -18,6 +20,10 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import tools.jackson.databind.ObjectMapper;
+
+import java.time.Duration;
+import java.util.Base64;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,8 +37,10 @@ class RegistrationTest {
 
     @Autowired private AccountRepository accountRepository;
     @Autowired private OwnershipRepository ownershipRepository;
+    @Autowired private CompanyRepository companyRepository;
     @MockitoBean private JavaMailSender javaMailSender;
     static MockWebServer mockWebServer;
+    static MockWebServer tokenServer;
 
     String adminCompany = "Test Company";
     String adminPeppolId = "0208:1234567890";
@@ -75,16 +83,29 @@ class RegistrationTest {
     static void startMockServer() throws Exception {
         mockWebServer = new MockWebServer();
         mockWebServer.start();
+        tokenServer = new MockWebServer();
+        tokenServer.start();
+        tokenServer.setDispatcher(new Dispatcher() {
+            @Override
+            public MockResponse dispatch(RecordedRequest request) {
+                return new MockResponse.Builder()
+                        .body("{\"access_token\":\"test-service-token\",\"token_type\":\"Bearer\",\"expires_in\":3600}")
+                        .addHeader("Content-Type", "application/json")
+                        .build();
+            }
+        });
     }
 
     @DynamicPropertySource
     static void registerProperties(DynamicPropertyRegistry registry) {
         registry.add("proxy.api.url", () -> "http://localhost:" + mockWebServer.getPort());
+        registry.add("kyc.service-client.token-uri", () -> "http://localhost:" + tokenServer.getPort() + "/token");
     }
 
     @AfterAll
     static void shutdownMockServer() throws Exception {
         if (mockWebServer != null) mockWebServer.close();
+        if (tokenServer != null) tokenServer.close();
     }
 
     @BeforeEach
@@ -118,6 +139,14 @@ class RegistrationTest {
         // 5. GET /api/identity/contract/{directorId}?token=...
         // 6. POST /api/identity/sign/finalize
         registrationSteps.signContract(adminPeppolId, adminEmail, directorId);
+        var proxyRequest = assertTimeoutPreemptively(Duration.ofSeconds(5), () -> mockWebServer.takeRequest());
+        assertEquals("/sapi/registry?peppolId=" + adminPeppolId, proxyRequest.getTarget());
+        assertEquals("Bearer test-service-token", proxyRequest.getHeaders().get("Authorization"));
+        var registrationBody = new ObjectMapper().readTree(proxyRequest.getBody().toByteArray());
+        byte[] signedContract = Base64.getDecoder().decode(registrationBody.path("signedContract").asText());
+        assertTrue(signedContract.length > 5);
+        assertArrayEquals(new byte[] {'%', 'P', 'D', 'F', '-'}, java.util.Arrays.copyOf(signedContract, 5));
+        assertTrue(companyRepository.findByPeppolId(adminPeppolId).orElseThrow().isRegisteredOnPeppol());
         registrationSteps.activateAccount(emailToken, adminPassword);
         assertTrue(ownershipRepository.existsByTypeAndCompanyPeppolId(AccountType.ADMIN, adminPeppolId));
     }

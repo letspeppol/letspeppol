@@ -1,7 +1,7 @@
 package org.letspeppol.proxy.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import io.micrometer.core.instrument.Counter;
@@ -28,6 +28,7 @@ import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
@@ -37,6 +38,7 @@ import static org.mockito.Mockito.when;
 
 class RecommandServiceTest {
 
+    private static final byte[] SIGNED_CONTRACT = "%PDF-1.7\nSigned contract\n%%EOF".getBytes(StandardCharsets.UTF_8);
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final List<Request> requests = new CopyOnWriteArrayList<>();
     private final List<Response> responses = new ArrayList<>();
@@ -44,6 +46,7 @@ class RecommandServiceTest {
     private RecommandService service;
     private UblDocumentReceiverService receiverService;
     private RegistryRepository registryRepository;
+    private Counter registerCounter;
 
     @BeforeEach
     void setUp() throws IOException {
@@ -59,7 +62,7 @@ class RecommandServiceTest {
                 "api-secret"
         );
         SimpleMeterRegistry meterRegistry = new SimpleMeterRegistry();
-        Counter registerCounter = meterRegistry.counter("register");
+        registerCounter = meterRegistry.counter("register");
         Counter unregisterCounter = meterRegistry.counter("unregister");
         Counter sendCounter = meterRegistry.counter("send");
         service = new RecommandService(
@@ -84,6 +87,7 @@ class RecommandServiceTest {
                 {"success":true,"company":{"id":"company-1"},"verificationUrl":"https://verify.example/1"}
                 """);
         respond(200, "{\"success\":true}");
+        respond(200, "{\"success\":true}");
 
         Map<String, Object> variables = service.register(
                 "0208:0685912734",
@@ -94,14 +98,15 @@ class RecommandServiceTest {
                         "Main Street 1",
                         "1000",
                         "Brussels",
-                        "BE0685912734"
+                        "BE0685912734",
+                        SIGNED_CONTRACT
                 )
         );
         service.unregister("0208:0685912734", variables);
 
         assertThat(variables).containsEntry("companyId", "company-1")
                 .containsEntry("verificationUrl", "https://verify.example/1");
-        assertThat(requests).hasSize(2);
+        assertThat(requests).hasSize(3);
         assertThat(requests.get(0).method()).isEqualTo("POST");
         assertThat(requests.get(0).path()).isEqualTo("/api/v1/companies");
         assertThat(requests.get(0).authorization()).isEqualTo("Basic YXBpLWtleTphcGktc2VjcmV0");
@@ -110,8 +115,69 @@ class RecommandServiceTest {
         assertThat(createRequest.path("enterpriseNumber").asText()).isEqualTo("0685912734");
         assertThat(createRequest.path("address").asText()).isEqualTo("Main Street 1");
         assertThat(createRequest.path("isSmpRecipient").asBoolean()).isTrue();
-        assertThat(requests.get(1).method()).isEqualTo("DELETE");
-        assertThat(requests.get(1).path()).isEqualTo("/api/v1/companies/company-1");
+        Request verification = requests.get(1);
+        assertThat(verification.method()).isEqualTo("POST");
+        assertThat(verification.path()).isEqualTo("/api/v1/companies/company-1/verify-by-contract");
+        assertThat(verification.authorization()).isEqualTo("Basic YXBpLWtleTphcGktc2VjcmV0");
+        assertThat(verification.contentType()).startsWith("multipart/form-data;boundary=");
+        assertThat(verification.body()).contains("name=\"contract\"", "filename=\"contract_signed.pdf\"",
+                "Content-Type: application/pdf");
+        assertThat(verification.bodyBytes()).containsSubsequence(SIGNED_CONTRACT);
+        assertThat(registerCounter.count()).isEqualTo(1);
+        assertThat(requests.get(2).method()).isEqualTo("DELETE");
+        assertThat(requests.get(2).path()).isEqualTo("/api/v1/companies/company-1");
+    }
+
+    @Test
+    void requiresASignedContractBeforeCreatingACompany() {
+        assertThatThrownBy(() -> service.register("0208:0685912734", new RegistrationRequest("Example BV", "EN", "BE")))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("signed PDF contract");
+        assertThat(requests).isEmpty();
+        assertThat(registerCounter.count()).isZero();
+    }
+
+    @Test
+    void failsRegistrationAndRemovesTheCreatedCompanyWhenVerificationIsRefused() {
+        respond(200, "{\"success\":true,\"company\":{\"id\":\"company-1\"}}");
+        respond(400, "{\"success\":false,\"errors\":{\"authorization\":[\"Not allowed\"]}}");
+        respond(200, "{\"success\":true}");
+
+        assertThatThrownBy(() -> service.register("0208:0685912734", registrationWithContract()))
+                .hasStackTraceContaining("verify company by contract").hasStackTraceContaining("400");
+        assertThat(requests).extracting(Request::method, Request::path).containsExactly(
+                org.assertj.core.groups.Tuple.tuple("POST", "/api/v1/companies"),
+                org.assertj.core.groups.Tuple.tuple("POST", "/api/v1/companies/company-1/verify-by-contract"),
+                org.assertj.core.groups.Tuple.tuple("DELETE", "/api/v1/companies/company-1")
+        );
+        assertThat(registerCounter.count()).isZero();
+    }
+
+    @Test
+    void rejectsAnUnsuccessfulVerificationResponse() {
+        respond(200, "{\"success\":true,\"company\":{\"id\":\"company-1\"}}");
+        respond(200, "{\"success\":false}");
+        respond(200, "{\"success\":true}");
+
+        assertThatThrownBy(() -> service.register("0208:0685912734", registrationWithContract()))
+                .hasStackTraceContaining("Recommand did not verify the company by contract");
+        assertThat(requests.get(2).method()).isEqualTo("DELETE");
+        assertThat(registerCounter.count()).isZero();
+    }
+
+    @Test
+    void rejectsAnEmptyVerificationResponse() {
+        respond(200, "{\"success\":true,\"company\":{\"id\":\"company-1\"}}");
+        respond(200, "");
+        respond(200, "{\"success\":true}");
+
+        assertThatThrownBy(() -> service.register("0208:0685912734", registrationWithContract()))
+                .hasStackTraceContaining("Empty response from Recommand verify company by contract");
+        assertThat(registerCounter.count()).isZero();
+    }
+
+    private RegistrationRequest registrationWithContract() {
+        return new RegistrationRequest("Example BV", "EN", "BE", "Main Street 1", "1000", "Brussels",
+                "BE0685912734", SIGNED_CONTRACT);
     }
 
     @Test
@@ -188,7 +254,7 @@ class RecommandServiceTest {
     private JsonNode readBody(Request request) {
         try {
             return objectMapper.readTree(request.body());
-        } catch (IOException e) {
+        } catch (tools.jackson.core.JacksonException e) {
             throw new AssertionError(e);
         }
     }
@@ -198,12 +264,15 @@ class RecommandServiceTest {
     }
 
     private void handle(HttpExchange exchange) throws IOException {
-        String body = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+        byte[] bodyBytes = exchange.getRequestBody().readAllBytes();
+        String body = new String(bodyBytes, StandardCharsets.UTF_8);
         requests.add(new Request(
                 exchange.getRequestMethod(),
                 exchange.getRequestURI().getPath(),
                 exchange.getRequestHeaders().getFirst("Authorization"),
-                body
+                body,
+                exchange.getRequestHeaders().getFirst("Content-Type"),
+                bodyBytes
         ));
         Response response = responses.remove(0);
         byte[] responseBody = response.body().getBytes(StandardCharsets.UTF_8);
@@ -213,7 +282,8 @@ class RecommandServiceTest {
         exchange.close();
     }
 
-    private record Request(String method, String path, String authorization, String body) {}
+    private record Request(String method, String path, String authorization, String body,
+                           String contentType, byte[] bodyBytes) {}
 
     private record Response(int status, String body) {}
 }

@@ -1,9 +1,9 @@
 package org.letspeppol.proxy.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ObjectNode;
 import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +17,7 @@ import org.letspeppol.proxy.dto.recommand.MarkAsReadRequest;
 import org.letspeppol.proxy.dto.recommand.RecommandVariables;
 import org.letspeppol.proxy.dto.recommand.SendDocumentRequest;
 import org.letspeppol.proxy.dto.recommand.SendDocumentResponse;
+import org.letspeppol.proxy.dto.recommand.VerifyCompanyResponse;
 import org.letspeppol.proxy.exception.NotFoundException;
 import org.letspeppol.proxy.model.AccessPoint;
 import org.letspeppol.proxy.model.DocumentType;
@@ -24,7 +25,9 @@ import org.letspeppol.proxy.model.Registry;
 import org.letspeppol.proxy.model.UblDocument;
 import org.letspeppol.proxy.repository.RegistryRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -65,6 +68,11 @@ public class RecommandService implements AccessPointServiceInterface {
     public Map<String, Object> register(String peppolId, RegistrationRequest data) {
         PeppolIdentifier identifier = parsePeppolId(peppolId);
         Objects.requireNonNull(data, "Registration data must not be null");
+        byte[] signedContract = data.signedContract();
+        if (signedContract == null || signedContract.length == 0) {
+            throw new IllegalArgumentException("A signed PDF contract is required for Recommand registration");
+        }
+        String operation = "create company";
         try {
             CreateCompanyRequest request = new CreateCompanyRequest(
                     requireText(data.name(), "Company name"),
@@ -88,18 +96,56 @@ public class RecommandService implements AccessPointServiceInterface {
                     .blockOptional()
                     .orElseThrow(() -> new IllegalStateException("Empty response from Recommand create company"));
 
-            if (!response.success() || response.company() == null || response.company().id() == null) {
+            if (!response.success() || response.company() == null || response.company().id() == null
+                    || response.company().id().isBlank()) {
                 throw new IllegalStateException("Recommand did not return a company ID");
             }
+            operation = "verify company by contract";
+            verifyCompanyByContract(response.company().id(), signedContract);
             registerCounter.increment();
             return objectMapper.convertValue(
                     new RecommandVariables(response.company().id(), response.verificationUrl()),
                     new TypeReference<>() {}
             );
         } catch (WebClientResponseException e) {
-            throw apiFailure("create company", e);
+            throw apiFailure(operation, e);
         } catch (Exception e) {
-            throw callFailure("create company", e);
+            throw callFailure(operation, e);
+        }
+    }
+
+    /// Completes company activation using the signed contract.
+    private void verifyCompanyByContract(String companyId, byte[] signedContract) {
+        try {
+            MultipartBodyBuilder multipart = new MultipartBodyBuilder();
+            multipart.part("contract", new ByteArrayResource(signedContract))
+                    .filename("contract_signed.pdf")
+                    .contentType(MediaType.APPLICATION_PDF);
+            VerifyCompanyResponse response = recommandWebClient.post()
+                    .uri("/companies/{companyId}/verify-by-contract", companyId)
+                    .contentType(MediaType.MULTIPART_FORM_DATA)
+                    .bodyValue(multipart.build())
+                    .retrieve()
+                    .bodyToMono(VerifyCompanyResponse.class)
+                    .blockOptional()
+                    .orElseThrow(() -> new IllegalStateException("Empty response from Recommand verify company by contract"));
+            if (!response.success()) {
+                throw new IllegalStateException("Recommand did not verify the company by contract");
+            }
+        } catch (RuntimeException e) {
+            // The local registry is only saved after registration succeeds. Remove the newly
+            // created remote company so a retry can create and verify it again.
+            try {
+                recommandWebClient.delete()
+                        .uri("/companies/{companyId}", companyId)
+                        .retrieve()
+                        .toBodilessEntity()
+                        .block();
+            } catch (Exception cleanupFailure) {
+                e.addSuppressed(cleanupFailure);
+                log.error("Failed to remove Recommand company {} after verification failed", companyId, cleanupFailure);
+            }
+            throw e;
         }
     }
 
