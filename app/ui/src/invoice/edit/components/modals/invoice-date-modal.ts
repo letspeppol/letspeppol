@@ -5,6 +5,7 @@ import {InvoiceComposer} from "../../../invoice-composer";
 import {DocumentType} from "../../../../services/app/invoice-service";
 import {countryListAlpha2} from "../../../../app/countries";
 import {requiresDeliveryDetails} from "../../../../services/app/vat-rules";
+import {earliestDueDate, isDueDateAllowed} from "../../../../services/app/payment-terms";
 
 export class InvoiceDateModal {
     private invoiceComposer = resolve(InvoiceComposer);
@@ -45,6 +46,17 @@ export class InvoiceDateModal {
         return this.invoiceContext.lines?.some(line => requiresDeliveryDetails(line.Item?.ClassifiedTaxCategory?.ID)) ?? false;
     }
 
+    get minDueDate(): string {
+        return earliestDueDate(this.issueDate);
+    }
+
+    get dueDateError(): 'due-before-issue' | 'due-in-past' | undefined {
+        if (this.documentType === DocumentType.CREDIT_NOTE || isDueDateAllowed(this.issueDate, this.dueDate)) {
+            return undefined;
+        }
+        return this.issueDate && this.dueDate < this.issueDate ? 'due-before-issue' : 'due-in-past';
+    }
+
     issueDateChanged() {
         this.recalculateDueDate();
     }
@@ -83,7 +95,7 @@ export class InvoiceDateModal {
     }
 
     private saveDate() {
-        if (!this.issueDate) {
+        if (!this.issueDate || this.dueDateError) {
             return;
         }
         this.open = false;

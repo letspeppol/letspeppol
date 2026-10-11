@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { DocumentType } from '../../src/services/app/invoice-service';
 import {
     calculateDueDate,
@@ -58,6 +58,15 @@ function edit(modal: InvoiceDateModal, field: 'issueDate' | 'dueDate' | 'selecte
     modal[field] = value;
     modal[`${field}Changed`]();
 }
+
+beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 6, 5, 12));
+});
+
+afterEach(() => {
+    vi.useRealTimers();
+});
 
 describe('InvoiceDateModal payment terms', () => {
     it('opens invoices without payment terms and preserves their due date', () => {
@@ -150,5 +159,85 @@ describe('InvoiceDateModal payment terms', () => {
         save(modal);
 
         expect(invoice.PaymentTerms).toEqual({Note: 'Payable per contract'});
+    });
+});
+
+describe('InvoiceDateModal due date bounds', () => {
+    it('offers today as the earliest due date for an invoice issued today or earlier', () => {
+        const modal = openModal({IssueDate: '2026-06-20', DueDate: '2026-07-20', PaymentTerms: undefined});
+
+        expect(modal.minDueDate).toBe('2026-07-05');
+        expect(modal.dueDateError).toBeUndefined();
+    });
+
+    it('offers the issue date as the earliest due date for an invoice issued later', () => {
+        const modal = openModal({IssueDate: '2026-07-05', DueDate: '2026-08-04', PaymentTerms: undefined});
+
+        edit(modal, 'issueDate', '2026-07-12');
+
+        expect(modal.minDueDate).toBe('2026-07-12');
+    });
+
+    it('accepts a due date of today on an invoice issued today', () => {
+        const invoice: Record<string, unknown> = {IssueDate: '2026-07-05', DueDate: '2026-08-04', PaymentTerms: undefined};
+        const modal = openModal(invoice);
+
+        edit(modal, 'dueDate', '2026-07-05');
+        save(modal);
+
+        expect(modal.dueDateError).toBeUndefined();
+        expect(invoice.DueDate).toBe('2026-07-05');
+    });
+
+    it('refuses to save a due date in the past', () => {
+        const invoice: Record<string, unknown> = {IssueDate: '2026-06-01', DueDate: '2026-07-20', PaymentTerms: undefined};
+        const modal = openModal(invoice);
+
+        edit(modal, 'dueDate', '2026-07-04');
+        save(modal);
+
+        expect(modal.dueDateError).toBe('due-in-past');
+        expect(modal.open).toBe(true);
+        expect(invoice.DueDate).toBe('2026-07-20');
+    });
+
+    it('refuses to save a due date before the issue date', () => {
+        const invoice: Record<string, unknown> = {IssueDate: '2026-07-20', DueDate: '2026-08-19', PaymentTerms: undefined};
+        const modal = openModal(invoice);
+
+        edit(modal, 'dueDate', '2026-07-19');
+        save(modal);
+
+        expect(modal.dueDateError).toBe('due-before-issue');
+        expect(modal.open).toBe(true);
+        expect(invoice.DueDate).toBe('2026-08-19');
+    });
+
+    it('refuses a back-dated issue date whose term has already expired', () => {
+        const invoice: Record<string, unknown> = {IssueDate: '2026-07-05', DueDate: '2026-08-04', PaymentTerms: undefined};
+        const modal = openModal(invoice);
+
+        edit(modal, 'issueDate', '2026-05-01');
+        save(modal);
+
+        expect(modal.dueDate).toBe('2026-05-31');
+        expect(modal.dueDateError).toBe('due-in-past');
+        expect(invoice.IssueDate).toBe('2026-07-05');
+    });
+
+    it('flags a draft whose due date has passed since it was saved', () => {
+        const modal = openModal({IssueDate: '2026-06-01', DueDate: '2026-07-01', PaymentTerms: undefined});
+
+        expect(modal.dueDateError).toBe('due-in-past');
+    });
+
+    it('does not check credit notes, which have no due date field', () => {
+        const invoice: Record<string, unknown> = {IssueDate: '2026-06-01', DueDate: '2026-06-15', PaymentTerms: {Note: '15 days'}};
+        const modal = openModal(invoice, DocumentType.CREDIT_NOTE);
+
+        save(modal);
+
+        expect(modal.dueDateError).toBeUndefined();
+        expect(modal.open).toBe(false);
     });
 });

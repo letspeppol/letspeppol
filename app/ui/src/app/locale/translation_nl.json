@@ -368,7 +368,11 @@
       "due-date": "Vervaldatum",
       "issue-date": "Uitgiftedatum",
       "payment-terms": "Betalingsvoorwaarden",
-      "title": "Datum"
+      "title": "Datum",
+      "validation": {
+        "due-before-issue": "De vervaldatum mag niet vóór de uitgiftedatum liggen.",
+        "due-in-past": "De vervaldatum mag niet in het verleden liggen."
+      }
     },
     "deliveryModal": {
       "corner1-id": "Corner 1-ID",

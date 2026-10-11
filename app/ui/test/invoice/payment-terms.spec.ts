@@ -1,8 +1,10 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
     calculateDueDate,
     candidateTerms,
+    earliestDueDate,
     formatPaymentTermCode,
+    isDueDateAllowed,
     parsePaymentTermCode,
     preferredTerm,
 } from '../../src/services/app/payment-terms';
@@ -93,5 +95,38 @@ describe('preferredTerm', () => {
 
     it('returns nothing when no term reaches the due date', () => {
         expect(preferredTerm('2026-07-05', '2026-07-04')).toBeUndefined();
+    });
+});
+
+describe('due date bounds', () => {
+    beforeEach(() => {
+        vi.useFakeTimers();
+        vi.setSystemTime(new Date(2026, 6, 5, 12));
+    });
+
+    afterEach(() => {
+        vi.useRealTimers();
+    });
+
+    it('starts at today for an invoice issued today or earlier', () => {
+        expect(earliestDueDate('2026-07-05')).toBe('2026-07-05');
+        expect(earliestDueDate('2026-06-01')).toBe('2026-07-05');
+        expect(earliestDueDate(undefined)).toBe('2026-07-05');
+    });
+
+    it('starts at the issue date for an invoice issued later', () => {
+        expect(earliestDueDate('2026-07-20')).toBe('2026-07-20');
+    });
+
+    it('allows a due date from the earliest one onwards', () => {
+        expect(isDueDateAllowed('2026-06-01', '2026-07-05')).toBe(true);
+        expect(isDueDateAllowed('2026-06-01', '2026-07-04')).toBe(false);
+        expect(isDueDateAllowed('2026-07-20', '2026-07-20')).toBe(true);
+        expect(isDueDateAllowed('2026-07-20', '2026-07-19')).toBe(false);
+    });
+
+    it('allows a missing due date', () => {
+        expect(isDueDateAllowed('2026-07-05', undefined)).toBe(true);
+        expect(isDueDateAllowed('2026-07-05', '')).toBe(true);
     });
 });

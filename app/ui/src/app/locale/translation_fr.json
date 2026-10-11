@@ -368,7 +368,11 @@
       "due-date": "Date d'échéance",
       "issue-date": "Date d'émission",
       "payment-terms": "Conditions de paiement",
-      "title": "Date"
+      "title": "Date",
+      "validation": {
+        "due-before-issue": "La date d'échéance ne peut pas être antérieure à la date d'émission.",
+        "due-in-past": "La date d'échéance ne peut pas être dans le passé."
+      }
     },
     "deliveryModal": {
       "corner1-id": "ID Corner 1",

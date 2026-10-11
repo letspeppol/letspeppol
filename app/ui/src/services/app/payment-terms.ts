@@ -72,6 +72,15 @@ export function calculateDueDate(term: PaymentTerm, issueDate: string): string |
     return anchor.add(term.days, 'day').format('YYYY-MM-DD');
 }
 
+export function earliestDueDate(issueDate?: string): string {
+    const today = moment().format('YYYY-MM-DD');
+    return issueDate && issueDate > today ? issueDate : today;
+}
+
+export function isDueDateAllowed(issueDate?: string, dueDate?: string): boolean {
+    return !dueDate || dueDate >= earliestDueDate(issueDate);
+}
+
 export function candidateTerms(issueDate: string, dueDate: string): PaymentTerm[] {
     const due = moment(dueDate, 'YYYY-MM-DD', true);
     if (!due.isValid() || !moment(issueDate, 'YYYY-MM-DD', true).isValid()) {

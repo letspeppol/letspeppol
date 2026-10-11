@@ -370,7 +370,11 @@
       "due-date": "Due Date",
       "issue-date": "Issue Date",
       "payment-terms": "Payment Terms",
-      "title": "Date"
+      "title": "Date",
+      "validation": {
+        "due-before-issue": "The due date cannot be before the issue date.",
+        "due-in-past": "The due date cannot be in the past."
+      }
     },
     "deliveryModal": {
       "corner1-id": "Corner 1 ID",

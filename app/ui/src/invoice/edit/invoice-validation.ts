@@ -1,5 +1,11 @@
 import {CreditNote, Invoice, UBLLine} from "../../services/peppol/ubl";
 import {requiresDeliveryDetails} from "../../services/app/vat-rules";
+import {isDueDateAllowed} from "../../services/app/payment-terms";
+
+export function hasAllowedDueDate(invoice: Invoice | CreditNote): boolean {
+    return !!(invoice as CreditNote).CreditNoteTypeCode
+        || isDueDateAllowed(invoice.IssueDate, invoice.DueDate);
+}
 
 export function isInvoiceValid(
     invoice: Invoice | CreditNote | undefined,
@@ -32,6 +38,7 @@ export function isInvoiceValid(
     return hasReference
         && !!invoice.IssueDate
         && hasDueDateAlternative
+        && hasAllowedDueDate(invoice)
         && !!customerParty
         && hasValidPartyIdentification
         && !!customerParty.PartyLegalEntity?.RegistrationName

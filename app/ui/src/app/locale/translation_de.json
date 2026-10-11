@@ -368,7 +368,11 @@
       "due-date": "Fälligkeitsdatum",
       "issue-date": "Ausstellungsdatum",
       "payment-terms": "Zahlungsbedingungen",
-      "title": "Datum"
+      "title": "Datum",
+      "validation": {
+        "due-before-issue": "Das Fälligkeitsdatum darf nicht vor dem Ausstellungsdatum liegen.",
+        "due-in-past": "Das Fälligkeitsdatum darf nicht in der Vergangenheit liegen."
+      }
     },
     "deliveryModal": {
       "corner1-id": "Corner 1-ID",
