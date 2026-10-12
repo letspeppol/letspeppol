@@ -28,7 +28,7 @@
                         <span t="invoice.order-reference">Order Reference</span>
                         <input type="text" name="reference" value.bind="orderReference" keydown.trigger="onKeyDown($event)" required />
                     </label>
-                    <label class="field full" if.bind="isCreditNote">
+                    <label class="field full" missing-required.class="isInvoiceReferenceMissing" if.bind="isCreditNote">
                         <span t="invoice.modal.invoice-reference">Select invoice reference</span>
                         <select name="invoiceReference" value.bind="selectedInvoiceReferenceId">
                             <option model.bind="undefined" t="invoice.modal.invoice-reference-none"></option>

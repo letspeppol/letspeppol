@@ -21,10 +21,15 @@ export class InvoiceModal {
     referenceableInvoices: DocumentDto[] = [];
     selectedInvoiceReferenceId: string | undefined;
     private referenceLoadToken = 0;
+    private loadingReferenceableInvoices = false;
     private opening = false;
 
     get isCreditNote(): boolean {
         return this.selectedDocumentType === DocumentType.CREDIT_NOTE;
+    }
+
+    get isInvoiceReferenceMissing(): boolean {
+        return !this.loadingReferenceableInvoices && !this.selectedInvoiceReferenceId;
     }
 
     get hasReference(): boolean {
@@ -120,9 +125,11 @@ export class InvoiceModal {
         if (!this.isCreditNote) {
             if (token === this.referenceLoadToken) {
                 this.referenceableInvoices = [];
+                this.loadingReferenceableInvoices = false;
             }
             return;
         }
+        this.loadingReferenceableInvoices = true;
         try {
             const page = await this.invoiceService.getDocuments({
                 type: DocumentType.INVOICE,
@@ -138,6 +145,10 @@ export class InvoiceModal {
         } catch {
             if (token === this.referenceLoadToken) {
                 this.referenceableInvoices = [];
+            }
+        } finally {
+            if (token === this.referenceLoadToken) {
+                this.loadingReferenceableInvoices = false;
             }
         }
     }

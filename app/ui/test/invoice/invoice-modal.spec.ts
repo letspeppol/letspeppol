@@ -43,7 +43,9 @@ function openedCreditNoteModal() {
 }
 
 describe('InvoiceModal referenceable invoices', () => {
-    beforeEach(() => services.getDocuments.mockReset());
+    beforeEach(() => {
+        services.getDocuments.mockReset();
+    });
 
     it('loads the list when the document type is switched to credit note', async () => {
         services.getDocuments.mockResolvedValue(documentPage(['INV-2026-0001']));
@@ -94,6 +96,42 @@ describe('InvoiceModal referenceable invoices', () => {
 
         expect(modal.selectedInvoiceReferenceId).toBe('INV-2026-0002');
         expect(modal.referenceableInvoices.map(inv => inv.invoiceReference)).toEqual(['INV-2026-0002']);
+    });
+
+    it('marks the invoice reference as missing until one is selected', async () => {
+        services.getDocuments.mockResolvedValue(documentPage(['INV-2026-0001']));
+        const modal = openedCreditNoteModal();
+        modal.showModal();
+        await vi.waitFor(() => expect(modal.referenceableInvoices).toHaveLength(1));
+
+        expect(modal.isInvoiceReferenceMissing).toBe(true);
+
+        modal.selectedInvoiceReferenceId = 'INV-2026-0001';
+
+        expect(modal.isInvoiceReferenceMissing).toBe(false);
+    });
+
+    it('does not mark the invoice reference as missing while the referenced invoice is loading', async () => {
+        let resolveLookup: (page: unknown) => void;
+        services.getDocuments.mockReturnValue(new Promise(resolve => { resolveLookup = resolve; }));
+        const modal = new InvoiceModal();
+        modal.originalDocumentType = DocumentType.CREDIT_NOTE;
+        modal.invoiceContext = invoiceContext('INV-2026-0001');
+        modal.showModal();
+
+        expect(modal.isInvoiceReferenceMissing).toBe(false);
+
+        resolveLookup(documentPage(['INV-2026-0001']));
+        await vi.waitFor(() => expect(modal.selectedInvoiceReferenceId).toBe('INV-2026-0001'));
+        expect(modal.isInvoiceReferenceMissing).toBe(false);
+    });
+
+    it('marks the invoice reference as missing when the lookup fails', async () => {
+        services.getDocuments.mockRejectedValue(new Error('offline'));
+        const modal = openedCreditNoteModal();
+        modal.showModal();
+
+        await vi.waitFor(() => expect(modal.isInvoiceReferenceMissing).toBe(true));
     });
 
     it('looks the list up once per open', async () => {

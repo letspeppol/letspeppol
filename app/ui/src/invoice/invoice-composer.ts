@@ -80,7 +80,7 @@ export class InvoiceComposer {
             Note: this.i18n.tr('invoice.modal.credit-note-vat-note'),
             DocumentCurrencyCode: "EUR",
             BuyerReference: undefined,
-            OrderReference: undefined,
+            OrderReference: { ID: "NA" },
             AdditionalDocumentReference: this.getAdditionalDocumentReference(),
             AccountingSupplierParty: this.getAccountingSupplierParty(),
             AccountingCustomerParty: this.getAccountingCustomerParty(),

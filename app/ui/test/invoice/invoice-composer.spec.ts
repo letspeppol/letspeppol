@@ -87,12 +87,12 @@ describe('InvoiceComposer credit note from an invoice', () => {
         expect(invoice.AdditionalDocumentReference[0].Attachment.EmbeddedDocumentBinaryObject.value).toBe('JVBERi0xLjc=');
     });
 
-    test('creates a credit note without a placeholder order reference or payment terms', () => {
+    test('creates a credit note with a placeholder order reference and without payment terms', () => {
         const composer = composerForCreditNotes('30_DAYS');
 
         const creditNote = composer.createCreditNote();
 
-        expect(creditNote.OrderReference).toBeUndefined();
+        expect(creditNote.OrderReference).toEqual({ ID: 'NA' });
         expect(creditNote.BuyerReference).toBeUndefined();
         expect(creditNote.PaymentTerms).toBeUndefined();
         expect(creditNote.PaymentMeans).toBeUndefined();
