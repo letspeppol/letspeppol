@@ -72,6 +72,62 @@ describe('InvoiceComposer', () => {
         expect(copy.DueDate).toBe(moment().add(15, 'day').format('YYYY-MM-DD'));
     });
 
+    test('recalculates the due date from the payment terms of the source', () => {
+        const composer = composerWithCompany('30_DAYS');
+        const source = {
+            ID: 'INV_2026_0013',
+            IssueDate: '2026-08-02',
+            PaymentTerms: { Note: '15 days' },
+        } as unknown as Invoice;
+
+        const copy = composer.duplicate(source, DocumentType.INVOICE);
+
+        expect(copy.DueDate).toBe(moment().add(15, 'day').format('YYYY-MM-DD'));
+        expect(copy.PaymentTerms).toEqual({ Note: '15 days' });
+    });
+
+    test('recalculates an end of month due date instead of shifting it by a number of days', () => {
+        const composer = composerWithCompany();
+        const source = {
+            ID: 'INV-2',
+            IssueDate: '2025-03-10',
+            DueDate: '2025-04-30',
+            PaymentTerms: { Note: 'End of the month' },
+        } as unknown as Invoice;
+
+        const copy = composer.duplicate(source, DocumentType.INVOICE);
+
+        expect(copy.DueDate).toBe(moment().add(1, 'month').endOf('month').format('YYYY-MM-DD'));
+    });
+
+    test('derives the payment terms from the source dates when the note is not recognised', () => {
+        const composer = composerWithCompany();
+        const source = {
+            ID: 'INV-3',
+            IssueDate: '2025-03-10',
+            DueDate: '2025-04-30',
+            PaymentTerms: { Note: 'Fin du mois' },
+        } as unknown as Invoice;
+
+        const copy = composer.duplicate(source, DocumentType.INVOICE);
+
+        expect(copy.DueDate).toBe(moment().add(1, 'month').endOf('month').format('YYYY-MM-DD'));
+    });
+
+    test('keeps the payment period of the source when no payment terms match', () => {
+        const composer = composerWithCompany();
+        const source = {
+            ID: 'INV-4',
+            IssueDate: '2025-01-10',
+            DueDate: '2025-02-24',
+            PaymentTerms: { Note: '45 dagen netto' },
+        } as unknown as Invoice;
+
+        const copy = composer.duplicate(source, DocumentType.INVOICE);
+
+        expect(copy.DueDate).toBe(moment().add(45, 'day').format('YYYY-MM-DD'));
+    });
+
     test('duplicates a credit note without adding a due date', () => {
         const composer = composerWithCompany();
         const source = {
@@ -92,8 +148,18 @@ describe('InvoiceComposer', () => {
     });
 });
 
+const paymentTermTranslations: Record<string, string> = {
+    'paymentTerms.15_DAYS': '15 days',
+    'paymentTerms.30_DAYS': '30 days',
+    'paymentTerms.60_DAYS': '60 days',
+    'paymentTerms.END_OF_NEXT_MONTH': 'End of the month',
+};
+
 function composerWithCompany(paymentTerms?: string): InvoiceComposer {
     const composer = Object.create(InvoiceComposer.prototype) as InvoiceComposer;
-    Object.assign(composer, { companyService: { myCompany: { paymentTerms } } });
+    Object.assign(composer, {
+        companyService: { myCompany: { paymentTerms } },
+        i18n: { tr: (key: string) => paymentTermTranslations[key] ?? key },
+    });
     return composer;
 }

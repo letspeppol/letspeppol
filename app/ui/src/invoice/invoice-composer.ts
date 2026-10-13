@@ -17,6 +17,7 @@ import {CompanyService} from "../services/app/company-service";
 import {DocumentType} from "../services/app/invoice-service";
 import {I18N} from "@aurelia/i18n";
 import {createNotSubjectToVatCategory, createVatExemptCategory, isVatExemptRuleset} from "../services/app/vat-rules";
+import {Account} from "../account/account";
 
 export const GENERATED_INVOICE = 'generated_invoice';
 
@@ -394,7 +395,7 @@ export class InvoiceComposer {
         const issueDate = moment().format('YYYY-MM-DD');
         copy.ID = '';
         if (documentType === DocumentType.INVOICE) {
-            copy.DueDate = this.shiftDueDate(source.IssueDate, source.DueDate, issueDate);
+            copy.DueDate = this.getDueDateForDuplicate(source, issueDate);
         }
         copy.IssueDate = issueDate;
         if (copy.PaymentMeans) {
@@ -402,6 +403,26 @@ export class InvoiceComposer {
         }
         copy.AdditionalDocumentReference = this.resetGeneratedInvoiceReference(copy.AdditionalDocumentReference);
         return copy;
+    }
+
+    private getDueDateForDuplicate(source: UBLDoc, issueDate: string): string {
+        const paymentTerm = this.findPaymentTerm(source);
+        if (paymentTerm) {
+            return this.getDueDate(paymentTerm, issueDate);
+        }
+        return this.shiftDueDate(source.IssueDate, source.DueDate, issueDate);
+    }
+
+    private findPaymentTerm(source: UBLDoc): string | undefined {
+        const note = source.PaymentTerms?.Note;
+        const paymentTerm = note && Account.PAYMENT_TERMS.find(term => this.translatePaymentTerm(term) === note);
+        if (paymentTerm) {
+            return paymentTerm;
+        }
+        if (!source.IssueDate || !source.DueDate) {
+            return undefined;
+        }
+        return Account.PAYMENT_TERMS.find(term => this.getDueDate(term, source.IssueDate) === source.DueDate);
     }
 
     private shiftDueDate(sourceIssueDate: string, sourceDueDate: string, issueDate: string): string {
