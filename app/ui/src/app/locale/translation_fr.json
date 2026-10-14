@@ -400,6 +400,10 @@
       "cancel": "Annuler",
       "delete-draft": "Supprimer brouillon",
       "delivery": "Preuve de livraison",
+      "delivery-error": {
+        "CREDIT_NOTE": "Cette note de crédit n'a pas pu être livrée",
+        "INVOICE": "Cette facture n'a pas pu être livrée"
+      },
       "download-pdf": "PDF",
       "download-ubl": "UBL",
       "duplicate": "Dupliquer",

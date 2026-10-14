@@ -100,7 +100,23 @@ export class InvoiceEdit {
 
     get canDuplicate() {
         const document = this.invoiceContext.selectedDocument;
-        return !!document?.id && document.direction === DocumentDirection.OUTGOING;
+        return !!document?.id && document.direction === DocumentDirection.OUTGOING && !document.processedStatus;
+    }
+
+    get hasDeliveryError() {
+        const document = this.invoiceContext.selectedDocument;
+        return document?.direction === DocumentDirection.OUTGOING && !!document.processedStatus;
+    }
+
+    markErrorSeen() {
+        return this.invoiceContext.markErrorSeen(this.invoiceContext.selectedDocument);
+    }
+
+    async resendErrored() {
+        const draft = await this.invoiceContext.createDraftFromErrored(this.invoiceContext.selectedDocument);
+        if (draft) {
+            this.router.load(currentOwnershipRoute(`/invoices/${draft.id}`));
+        }
     }
 
     addLine() {

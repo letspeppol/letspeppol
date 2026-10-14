@@ -403,6 +403,10 @@
       "cancel": "Cancel",
       "delete-draft": "Delete draft",
       "delivery": "Delivery proof",
+      "delivery-error": {
+        "CREDIT_NOTE": "This credit note could not be delivered",
+        "INVOICE": "This invoice could not be delivered"
+      },
       "download-pdf": "PDF",
       "download-ubl": "UBL",
       "duplicate": "Duplicate",

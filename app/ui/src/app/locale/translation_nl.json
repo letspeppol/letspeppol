@@ -400,6 +400,10 @@
       "cancel": "Annuleren",
       "delete-draft": "Concept verwijderen",
       "delivery": "Leveringsbewijs",
+      "delivery-error": {
+        "CREDIT_NOTE": "Deze creditnota kon niet worden afgeleverd",
+        "INVOICE": "Deze factuur kon niet worden afgeleverd"
+      },
       "download-pdf": "PDF",
       "download-ubl": "UBL",
       "duplicate": "Dupliceren",

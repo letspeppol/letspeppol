@@ -400,6 +400,10 @@
       "cancel": "Abbrechen",
       "delete-draft": "Entwurf löschen",
       "delivery": "Zustellnachweis",
+      "delivery-error": {
+        "CREDIT_NOTE": "Diese Gutschrift konnte nicht zugestellt werden",
+        "INVOICE": "Diese Rechnung konnte nicht zugestellt werden"
+      },
       "download-pdf": "PDF",
       "download-ubl": "UBL",
       "duplicate": "Duplizieren",
