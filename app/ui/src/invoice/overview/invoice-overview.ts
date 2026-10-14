@@ -17,7 +17,7 @@ import {CompanyService} from "../../services/app/company-service";
 import {currentOwnershipRoute} from "../../services/app/ownership-route";
 
 type SortDirection = "asc" | "desc";
-type StatusFilter = "ALL" | "UNPAID" | "PAID";
+type StatusFilter = "ALL" | "UNPAID" | "OVERDUE" | "PAID" | "ERROR";
 
 export class InvoiceOverview {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -94,7 +94,9 @@ export class InvoiceOverview {
 
     changeStatus(value: StatusFilter) {
         this.statusFilter = value;
-        this.query.paid = value === 'ALL' ? undefined : value === 'PAID';
+        this.query.paid = value === 'PAID' ? true : value === 'UNPAID' ? false : undefined;
+        this.query.overdue = value === 'OVERDUE' ? true : undefined;
+        this.query.errored = value === 'ERROR' ? true : undefined;
         this.query.pageable.page = 0;
         this.reloadCurrentView();
     }

@@ -61,7 +61,9 @@
                     <select change.trigger="changeStatus($event.target.value)" aria-label="Status" t="[aria-label]invoice.table.status">
                         <option value="ALL" t="invoice.filter.status.all">All statuses</option>
                         <option value="UNPAID" t="invoice.filter.status.unpaid">Unpaid</option>
+                        <option value="OVERDUE" t="invoice.filter.status.overdue">Overdue</option>
                         <option value="PAID" t="invoice.filter.status.paid">Paid</option>
+                        <option value="ERROR" t="invoice.filter.status.error">Error</option>
                     </select>
                 </label>
                 <label class="search">

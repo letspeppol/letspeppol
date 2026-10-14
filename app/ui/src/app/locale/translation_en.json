@@ -426,6 +426,8 @@
       "from": "From",
       "status": {
         "all": "All statuses",
+        "error": "Error",
+        "overdue": "Overdue",
         "paid": "Paid",
         "unpaid": "Unpaid"
       },

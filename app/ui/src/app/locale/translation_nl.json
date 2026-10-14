@@ -423,6 +423,8 @@
       "from": "Van",
       "status": {
         "all": "Alle statussen",
+        "error": "Fout",
+        "overdue": "Vervallen",
         "paid": "Betaald",
         "unpaid": "Niet betaald"
       },

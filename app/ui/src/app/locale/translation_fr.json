@@ -423,6 +423,8 @@
       "from": "De",
       "status": {
         "all": "Tous les statuts",
+        "error": "Erreur",
+        "overdue": "En retard",
         "paid": "Payée",
         "unpaid": "Impayée"
       },
