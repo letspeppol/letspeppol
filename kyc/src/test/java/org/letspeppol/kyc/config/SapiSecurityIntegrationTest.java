@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,8 +19,11 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -59,6 +63,53 @@ class SapiSecurityIntegrationTest {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token(
                                 List.of("letspeppol-api"), Instant.now().plusSeconds(300), "APP")))
                 .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void userTokenCannotManageCompanyUsers() throws Exception {
+        String userToken = token(List.of("letspeppol-api"), Instant.now().plusSeconds(300), "USER");
+
+        mockMvc.perform(get("/sapi/users").header(HttpHeaders.AUTHORIZATION, "Bearer " + userToken))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.errorCode").value("not_admin"));
+        mockMvc.perform(post("/sapi/users")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + userToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"email":"someone@example.com","name":"Someone","permissionMask":255}
+                                """))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(put("/sapi/users/1/permissions")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + userToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"permissionMask":255}
+                                """))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(delete("/sapi/users/1").header(HttpHeaders.AUTHORIZATION, "Bearer " + userToken))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void adminClaimWithoutAnActiveAdminOwnershipCannotManageCompanyUsers() throws Exception {
+        mockMvc.perform(get("/sapi/users")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token(
+                                List.of("letspeppol-api"), Instant.now().plusSeconds(300), "ADMIN")))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.errorCode").value("not_admin"));
+    }
+
+    @Test
+    void userTokenCannotRequestAnotherCompany() throws Exception {
+        mockMvc.perform(post("/sapi/linked/request-company")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token(
+                                List.of("letspeppol-api"), Instant.now().plusSeconds(300), "USER"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"type":"ADMIN","peppolId":"0208:0123456789","email":"director@example.com"}
+                                """))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.errorCode").value("not_admin"));
     }
 
     @Test

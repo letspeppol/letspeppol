@@ -36,4 +36,21 @@ Master-data route coverage: `/app/sapi/partner/search`, `/app/sapi/partner/{id}`
 `/app/sapi/product/{id}`, `/app/sapi/product-category/all`, and
 `/app/sapi/product-category/{id}` are the item/search variants represented by the grouped arrows.
 
+## Permissions
+
+The routes above follow the same `permissionMask` rules as the
+[document lifecycle](./api-document-lifecycle.md#permissions).
+
+| Rule | Routes |
+|---|---|
+| Any member of the company | `GET /app/sapi/company`, `GET /app/sapi/welcome-notifications`, `GET /app/sapi/accountant/customers`, `GET /app/sapi/accountant/documents` |
+| `COMPANY_SETTINGS` (128) | `PUT /app/sapi/company`; switching email notifications on or off also needs the `ADMIN` |
+| `INVOICE_READ` (1) | `GET /app/sapi/stats/account` |
+| `INVOICE_READ` (1) or `PARTNER_MANAGE` (32) | `GET /app/sapi/partner`, `/search` |
+| `PARTNER_MANAGE` (32) | `POST`, `PUT`, `DELETE /app/sapi/partner` |
+| `INVOICE_READ` (1) or `PRODUCT_MANAGE` (64) | `GET /app/sapi/product`, `GET /app/sapi/product-category`, `/all`, `/{id}` |
+| `PRODUCT_MANAGE` (64) | `POST`, `PUT`, `DELETE /app/sapi/product` and `/app/sapi/product-category` |
+| `INVOICE_DRAFT` (2) | `POST /app/sapi/invoice-vat-reason-selection` |
+| `ADMIN` only | `POST /app/sapi/accountant/link-customer`, `POST /app/sapi/accountant/confirm-customer-link`, `POST /app/sapi/sponsors` |
+
 Return to the [API network flow guide](./api-network-flows.md).

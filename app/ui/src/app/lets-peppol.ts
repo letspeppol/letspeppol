@@ -1,6 +1,7 @@
 import {NavigationStrategy, route} from "@aurelia/router";
 import {resolve} from "@aurelia/kernel";
 import {Alert} from "../components/alert/alert";
+import {CompanyPermission} from "../services/app/company-permission";
 
 // NavigationStrategy invokes the dynamic import only after its route matches. Previously every
 // screen was imported here, so even /login and /callback loaded the complete application graph.
@@ -16,12 +17,14 @@ const lazy = (load: () => Promise<Record<string, unknown>>) => new NavigationStr
         { path: '/registration',           component: lazy(() => import('../registration/registration')),         title: 'Registration',           data: { allowEveryone: true, registrationType: 'ADMIN' }},
         { path: '/affiliate/registration', component: lazy(() => import('../registration/registration')),         title: 'Affiliate Registration', data: { allowEveryone: true, registrationType: 'AFFILIATE' }},
         { path: '/email-confirmation',     component: lazy(() => import('../registration/email-confirmation')),   title: 'Email Confirmation',     data: { allowEveryone: true }},
-        { path: '/:peppolId/add-ownership', component: lazy(() => import('../registration/add-ownership')),       title: 'Add Company' },
-        { path: ['/:peppolId/invoices', '/:peppolId/invoices/:id'], component: lazy(() => import('../invoice/invoices')), title: 'Invoice' },
-        { path: '/:peppolId/partners',     component: lazy(() => import('../partner/partners')),                  title: 'Partners' },
-        { path: '/:peppolId/products',     component: lazy(() => import('../product/products')),                  title: 'Products' },
+        { path: '/invitation',             component: lazy(() => import('../users/invitation')),                  title: 'Invitation',             data: { allowEveryone: true }},
+        { path: '/:peppolId/add-ownership', component: lazy(() => import('../registration/add-ownership')),       title: 'Add Company',            data: { adminOnly: true }},
+        { path: ['/:peppolId/invoices', '/:peppolId/invoices/:id'], component: lazy(() => import('../invoice/invoices')), title: 'Invoice', data: { requiresAny: [CompanyPermission.INVOICE_READ] }},
+        { path: '/:peppolId/partners',     component: lazy(() => import('../partner/partners')),                  title: 'Partners',               data: { requiresAny: [CompanyPermission.INVOICE_READ, CompanyPermission.PARTNER_MANAGE] }},
+        { path: '/:peppolId/products',     component: lazy(() => import('../product/products')),                  title: 'Products',               data: { requiresAny: [CompanyPermission.INVOICE_READ, CompanyPermission.PRODUCT_MANAGE] }},
         { path: '/:peppolId/sponsors',     component: lazy(() => import('../sponsor/sponsors')),                  title: 'Sponsors' },
-        { path: '/:peppolId/downloads',    component: lazy(() => import('../download/downloads')),                title: 'Downloads' },
+        { path: '/:peppolId/downloads',    component: lazy(() => import('../download/downloads')),                title: 'Downloads',              data: { requiresAny: [CompanyPermission.INVOICE_EXPORT] }},
+        { path: '/:peppolId/users',        component: lazy(() => import('../users/users')),                       title: 'Users',                  data: { adminOnly: true }},
         { path: '/:peppolId/account',      component: lazy(() => import('../account/account')),                   title: 'Account' },
         { path: '/:peppolId/dashboard',    component: lazy(() => import('../dashboard/dashboard')),               title: 'Dashboard' },
         { path: ['', '/dashboard'],        component: lazy(() => import('../dashboard/dashboard')),               title: 'Dashboard' },

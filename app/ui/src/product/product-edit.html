@@ -5,11 +5,12 @@
         </div>
         <div class="editor-header-actions">
             <button type="button" class="btn" click.trigger="productContext.clearSelectedProduct()" t="product.edit.cancel">Cancel</button>
-            <button type="button" class="btn primary" click.trigger="saveProduct()" disabled.bind="!productContext.selectedProduct.name" t="product.edit.save">Save product</button>
+            <button if.bind="ownershipService.granted.PRODUCT_MANAGE" type="button" class="btn primary" click.trigger="saveProduct()" disabled.bind="!productContext.selectedProduct.name" t="product.edit.save">Save product</button>
         </div>
     </div>
 </div>
 <section>
+    <fieldset class="readonly-fieldset" disabled.bind="!ownershipService.granted.PRODUCT_MANAGE">
     <div style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(300px, 350px));">
         <div class="card">
             <div class="card-header">
@@ -80,5 +81,6 @@
         </div>
 
     </div>
+    </fieldset>
 
 </section>

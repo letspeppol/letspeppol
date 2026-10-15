@@ -86,6 +86,9 @@ public class LinkedController {
     @Operation(summary = "Request onboarding for another company", description = "Starts an additional company request flow based on the currently authenticated ownership context.")
     public SimpleMessage requestCompany(@RequestBody ConfirmCompanyRequest request, @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, required = false) String acceptLanguage) {
         JwtInfo jwtInfo = jwtClaimExtractor.extract();
+        if (jwtInfo.accountType() != AccountType.ADMIN && jwtInfo.accountType() != AccountType.AFFILIATE) {
+            throw new ForbiddenException(KycErrorCodes.NOT_ADMIN);
+        }
         Ownership ownership = ownershipService.getByAccountExternalIdPeppolIdAndType(jwtInfo.uid(), jwtInfo.peppolId(), jwtInfo.accountType());
         activationService.requestActivation(ownership, request, acceptLanguage);
         return new SimpleMessage("Request email sent");

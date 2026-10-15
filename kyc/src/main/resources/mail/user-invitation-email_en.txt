@@ -1,0 +1,11 @@
+Hello,
+
+{{inviterName}} has invited you to work for {{companyName}} on Let’s Peppol.
+
+To accept the invitation, please click the link below (valid for {{validDays}} days):
+{{invitationLink}}
+
+If you did not expect this invitation, you can safely ignore this message.
+
+Kind regards,
+Let’s Peppol Team

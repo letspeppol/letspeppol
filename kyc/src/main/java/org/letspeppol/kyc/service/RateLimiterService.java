@@ -48,6 +48,10 @@ public class RateLimiterService {
         check("activation", email, false, emailMax, Duration.ofSeconds(emailWindowSeconds));
     }
 
+    public void checkInvitation(Long companyId, String email) {
+        check("invitation", companyId + "|" + email, false, emailMax, Duration.ofSeconds(emailWindowSeconds));
+    }
+
     public void checkPasswordReset(String email) {
         check("password-reset", email, false, emailMax, Duration.ofSeconds(emailWindowSeconds));
     }

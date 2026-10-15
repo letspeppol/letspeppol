@@ -6,14 +6,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.kyc.dto.AuthRequest;
 import org.letspeppol.kyc.dto.OwnershipSummary;
 import org.letspeppol.kyc.dto.ServiceRequest;
+import org.letspeppol.kyc.exception.ForbiddenException;
 import org.letspeppol.kyc.exception.KycErrorCodes;
 import org.letspeppol.kyc.exception.KycException;
 import org.letspeppol.kyc.mapper.OwnershipMapper;
 import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.model.AccountType;
+import org.letspeppol.kyc.model.CompanyPermission;
 import org.letspeppol.kyc.model.Ownership;
+import org.letspeppol.kyc.model.OwnershipStatus;
 import org.letspeppol.kyc.model.kbo.Company;
 import org.letspeppol.kyc.repository.OwnershipRepository;
+import org.letspeppol.kyc.service.jwt.JwtInfo;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -33,8 +37,16 @@ public class OwnershipService {
     private final ProxyService proxyService;
 
     public Ownership getByAccountExternalIdPeppolIdAndType(UUID uid, String peppolId, AccountType type) {
-        return ownershipRepository.findFirstByAccountExternalIdAndCompanyPeppolIdAndTypeOrderByLastUsedDesc(uid, peppolId, type)
+        return ownershipRepository.findFirstByAccountExternalIdAndCompanyPeppolIdAndTypeAndStatusOrderByLastUsedDesc(uid, peppolId, type, OwnershipStatus.ACTIVE)
                 .orElseThrow(() -> new KycException(KycErrorCodes.NO_OWNERSHIP));
+    }
+
+    public Ownership requireActiveAdmin(JwtInfo jwtInfo) {
+        if (jwtInfo.accountType() != AccountType.ADMIN) {
+            throw new ForbiddenException(KycErrorCodes.NOT_ADMIN);
+        }
+        return ownershipRepository.findFirstByAccountExternalIdAndCompanyPeppolIdAndTypeAndStatusOrderByLastUsedDesc(jwtInfo.uid(), jwtInfo.peppolId(), AccountType.ADMIN, OwnershipStatus.ACTIVE)
+                .orElseThrow(() -> new ForbiddenException(KycErrorCodes.NOT_ADMIN));
     }
 
     /**
@@ -68,7 +80,7 @@ public class OwnershipService {
     }
 
     public List<OwnershipSummary> getOwnershipSummaries(UUID uid) {
-        return ownershipRepository.findByAccountExternalIdOrderByCreatedOnAsc(uid).stream()
+        return ownershipRepository.findByAccountExternalIdAndStatusOrderByCreatedOnAsc(uid, OwnershipStatus.ACTIVE).stream()
                 .map(OwnershipMapper::toOwnershipSummary)
                 .toList();
     }
@@ -96,6 +108,15 @@ public class OwnershipService {
 
     public Ownership ensureAdminOwnership(Account account, Company company) {
         return ensureOwnership(account, AccountType.ADMIN, company);
+    }
+
+    public Ownership ensureAffiliateOwnership(Account account, Company company) {
+        return ownershipRepository.findFirstByAccountIdAndCompanyIdAndType(account.getId(), company.getId(), AccountType.AFFILIATE)
+                .orElseGet(() -> {
+                    Ownership ownership = new Ownership(account, AccountType.AFFILIATE, company);
+                    ownership.setPermissionMask(CompanyPermission.ALL);
+                    return ownershipRepository.save(ownership);
+                });
     }
 
     public void unlink(UUID uid, AccountType type, String peppolId) {

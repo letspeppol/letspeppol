@@ -154,6 +154,9 @@ class RegistrationTest {
         registrationSteps.activateAccount(emailToken, affiliatePassword);
         assertTrue(ownershipRepository.existsByTypeAndCompanyPeppolId(AccountType.ADMIN, affiliatePeppolId));
         assertTrue(ownershipRepository.existsByTypeAndCompanyPeppolId(AccountType.AFFILIATE, affiliatePeppolId));
+        assertEquals(255, ownershipRepository.findByCompanyPeppolIdOrderByCreatedOnAsc(affiliatePeppolId).stream()
+                .filter(ownership -> ownership.getType() == AccountType.AFFILIATE)
+                .findFirst().orElseThrow().getPermissionMask());
     }
 
     @Test

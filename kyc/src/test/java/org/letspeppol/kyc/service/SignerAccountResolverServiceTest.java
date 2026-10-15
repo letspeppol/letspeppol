@@ -76,11 +76,13 @@ class SignerAccountResolverServiceTest {
         EmailVerification invitation = new EmailVerification(null, AccountType.AFFILIATE, "jan@example.com", PEPPOL_ID, "token", Instant.now().plusSeconds(60));
         when(activationService.getPendingVerification("jan@example.com", PEPPOL_ID)).thenReturn(invitation);
         when(accountService.findByEmail("jan@example.com")).thenReturn(Optional.of(account));
+        when(accountService.renameUnlessVerified(account, "Jan Peeters")).thenReturn(account);
 
         SignerAccountResolverService.SignerResolution resolution = resolver.resolveSignerAccount(request("jan@example.com"), "Jan Peeters");
 
         assertThat(resolution.account()).isSameAs(account);
         assertThat(resolution.requestedType()).isEqualTo(AccountType.AFFILIATE);
+        verify(accountService, never()).createPendingAccount(any(), any());
         verifyNoInteractions(jwtClaimExtractor);
     }
 

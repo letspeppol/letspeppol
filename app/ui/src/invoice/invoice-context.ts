@@ -9,6 +9,7 @@ import {parseCreditNote, parseInvoice} from "../services/peppol/ubl-parser";
 import {PartnerDto, PartnerService} from "../services/app/partner-service";
 import {resolve} from "@aurelia/kernel";
 import {I18N} from "@aurelia/i18n";
+import {OwnershipService} from "../services/app/ownership-service";
 
 @singleton()
 export class InvoiceContext {
@@ -18,6 +19,7 @@ export class InvoiceContext {
     private readonly invoiceComposer = resolve(InvoiceComposer);
     private readonly invoiceCalculator = resolve(InvoiceCalculator);
     private readonly i18n = resolve(I18N);
+    private readonly ownershipService = resolve(OwnershipService);
     private createEmptyPage(): DocumentPageDto {
         return {
             content: [],
@@ -88,7 +90,8 @@ export class InvoiceContext {
     }
 
     selectInvoice(item: DocumentDto) {
-        this.readOnly = (item.direction === DocumentDirection.INCOMING || item.proxyOn != null || item.createdExternally);
+        this.readOnly = (item.direction === DocumentDirection.INCOMING || item.proxyOn != null || item.createdExternally
+            || !this.ownershipService.granted.INVOICE_DRAFT);
         this.selectedDocument = item;
         if (item.draftedOn) {
             this.getLastInvoiceReference();

@@ -79,7 +79,7 @@
             </div>
         </div>
         <footer class="modal-footer">
-            <label class="field checkbox">
+            <label if.bind="ownershipService.granted.PARTNER_MANAGE" class="field checkbox">
                 <input type="checkbox" checked.bind="saveAsPartner" disabled.bind="!customer.PartyName.Name || !peppolId" />
                 <span t="invoice.customerModal.save-as-partner"></span>
             </label>
