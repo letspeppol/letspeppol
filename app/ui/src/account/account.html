@@ -133,12 +133,10 @@
                         <span t="label.account-name">Account Name</span>
                         <input type="text" value.bind="company.paymentAccountName" />
                     </label>
-                    <label class="field full">
+                    <div class="field full">
                         <span t="label.payment-terms">Payment Terms</span>
-                        <select value.bind="company.paymentTerms">
-                            <option repeat.for="terms of getPaymentTerms()" value.bind="terms" t="paymentTerms.${terms}"></option>
-                        </select>
-                    </label>
+                        <payment-terms-field value.two-way="company.paymentTerms"></payment-terms-field>
+                    </div>
                 </div>
             </div>
 
