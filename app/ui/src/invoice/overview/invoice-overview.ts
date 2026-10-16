@@ -18,6 +18,7 @@ import {currentOwnershipRoute} from "../../services/app/ownership-route";
 import {parseCreditNote, parseInvoice} from "../../services/peppol/ubl-parser";
 
 type SortDirection = "asc" | "desc";
+type StatusFilter = "ALL" | "UNPAID" | "OVERDUE" | "PAID" | "ERROR";
 
 export class InvoiceOverview {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -31,8 +32,10 @@ export class InvoiceOverview {
     query: DocumentQuery = {pageable: {page: 0, size: 20, sort: [{property: 'issueDate', direction: 'desc'}]}}; 
     activeSortProperty = 'issueDate';
     activeSortDirection: SortDirection = 'desc';
+    statusFilter: StatusFilter = 'ALL';
     private resetSubscription: IDisposable;
     private unsubscribeVatDisplay?: () => void;
+    private pendingLoads = 0;
 
     @bindable uploadUblModal: UploadUblModal;
 
@@ -51,7 +54,11 @@ export class InvoiceOverview {
     }
 
     async loadDrafts() {
+        const showsDrafts = this.invoiceContext.activeBox === 'DRAFTS';
         this.invoiceContext.loadingDrafts = true;
+        if (showsDrafts) {
+            this.beginLoading();
+        }
         try {
             this.invoiceContext.draftPage = await this.invoiceService.getDocuments({...this.query, draft: true });
             if (this.invoiceContext.activeBox === 'DRAFTS') {
@@ -59,6 +66,9 @@ export class InvoiceOverview {
             }
         } finally {
             this.invoiceContext.loadingDrafts = false;
+            if (showsDrafts) {
+                this.endLoading();
+            }
         }
     }
 
@@ -69,16 +79,25 @@ export class InvoiceOverview {
     }
 
     loadInvoices() {
-        this.invoiceContext.loadingInvoices = true;
+        this.beginLoading();
         this.invoiceService.getDocuments({
             ...this.query,
             draft: this.invoiceContext.activeBox === 'DRAFTS'
         }).then(page => this.invoiceContext.invoicePage = page)
-        .finally(() => this.invoiceContext.loadingInvoices = false);
+        .finally(() => this.endLoading());
     }
 
     changeDocType(value: DocumentType) {
         this.query.type = value;
+        this.query.pageable.page = 0;
+        this.reloadCurrentView();
+    }
+
+    changeStatus(value: StatusFilter) {
+        this.statusFilter = value;
+        this.query.paid = value === 'PAID' ? true : value === 'UNPAID' ? false : undefined;
+        this.query.overdue = value === 'OVERDUE' ? true : undefined;
+        this.query.errored = value === 'ERROR' ? true : undefined;
         this.query.pageable.page = 0;
         this.reloadCurrentView();
     }
@@ -100,7 +119,6 @@ export class InvoiceOverview {
             case 'DRAFTS':
                 this.query.pageable.page = 0;
                 this.loadDrafts();
-                this.invoiceContext.loadingInvoices = this.invoiceContext.loadingDrafts;
                 break;
         }
     }
@@ -235,6 +253,16 @@ export class InvoiceOverview {
 
     showUploadUblModal() {
         this.uploadUblModal.showModal();
+    }
+
+    private beginLoading() {
+        this.pendingLoads++;
+        this.invoiceContext.loadingInvoices = true;
+    }
+
+    private endLoading() {
+        this.pendingLoads = Math.max(0, this.pendingLoads - 1);
+        this.invoiceContext.loadingInvoices = this.pendingLoads > 0;
     }
 
     private reloadCurrentView() {

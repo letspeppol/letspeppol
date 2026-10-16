@@ -444,6 +444,13 @@
       "apply": "Appliquer",
       "clear": "Effacer",
       "from": "De",
+      "status": {
+        "all": "Tous les statuts",
+        "error": "Erreur",
+        "overdue": "En retard",
+        "paid": "Payée",
+        "unpaid": "Impayée"
+      },
       "to": "À"
     },
     "incoming": "Entrant",

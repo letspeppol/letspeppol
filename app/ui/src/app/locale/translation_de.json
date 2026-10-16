@@ -444,6 +444,13 @@
       "apply": "Anwenden",
       "clear": "Leeren",
       "from": "Von",
+      "status": {
+        "all": "Alle Status",
+        "error": "Fehler",
+        "overdue": "Überfällig",
+        "paid": "Bezahlt",
+        "unpaid": "Unbezahlt"
+      },
       "to": "Bis"
     },
     "incoming": "Eingehend",
