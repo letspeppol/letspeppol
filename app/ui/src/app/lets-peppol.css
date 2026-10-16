@@ -1141,6 +1141,40 @@ main.container .data-table tbody td {
     margin-bottom: var(--space-1);
 }
 
+.delivery-error-banner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    margin-bottom: var(--space-1);
+    border-color: var(--pill-error-border);
+    background: var(--pill-error-bg);
+    color: var(--pill-error-fg);
+}
+
+.delivery-error-icon {
+    flex-shrink: 0;
+}
+
+.delivery-error-banner.is-seen {
+    opacity: .55;
+    filter: grayscale(1);
+}
+
+.delivery-error-text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-04);
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.delivery-error-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-05);
+}
+
 .composer-head {
     display: grid;
     grid-template-columns: auto auto auto auto auto auto;

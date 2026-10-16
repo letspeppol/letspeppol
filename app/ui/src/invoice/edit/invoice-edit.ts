@@ -88,6 +88,37 @@ export class InvoiceEdit {
         this.showCustomerModal();
     }
 
+    async duplicate() {
+        const source = this.invoiceContext.selectedInvoice;
+        const type = this.selectedDocumentType;
+        if (!source) {
+            return;
+        }
+        await this.router.load(currentOwnershipRoute('/invoices'));
+        this.invoiceContext.duplicateDocument(source, type);
+    }
+
+    get canDuplicate() {
+        const document = this.invoiceContext.selectedDocument;
+        return !!document?.id && document.direction === DocumentDirection.OUTGOING && !document.processedStatus;
+    }
+
+    get hasDeliveryError() {
+        const document = this.invoiceContext.selectedDocument;
+        return document?.direction === DocumentDirection.OUTGOING && !!document.processedStatus;
+    }
+
+    markErrorSeen() {
+        return this.invoiceContext.markErrorSeen(this.invoiceContext.selectedDocument);
+    }
+
+    async resendErrored() {
+        const draft = await this.invoiceContext.createDraftFromErrored(this.invoiceContext.selectedDocument);
+        if (draft) {
+            this.router.load(currentOwnershipRoute(`/invoices/${draft.id}`));
+        }
+    }
+
     addLine() {
         let line: UBLLine;
         const pos = this.invoiceContext.getNextPosition();

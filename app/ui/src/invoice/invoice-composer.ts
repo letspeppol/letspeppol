@@ -8,6 +8,7 @@ import {
     PaymentMeansCode,
     PaymentTerms,
     UBLBaseLine,
+    UBLDoc,
 } from "../services/peppol/ubl";
 import moment from "moment/moment";
 import {singleton} from "aurelia";
@@ -16,6 +17,7 @@ import {CompanyService} from "../services/app/company-service";
 import {DocumentType} from "../services/app/invoice-service";
 import {I18N} from "@aurelia/i18n";
 import {createNotSubjectToVatCategory, createVatExemptCategory, isVatExemptRuleset} from "../services/app/vat-rules";
+import {Account} from "../account/account";
 import {
     DEFAULT_PAYMENT_TERM,
     MAX_PAYMENT_TERM_DAYS,
@@ -485,6 +487,61 @@ export class InvoiceComposer {
                 Price: line.Price,
             })),
         } as Invoice;
+    }
+
+    duplicate(source: UBLDoc, documentType: DocumentType): UBLDoc {
+        const copy = structuredClone(source) as UBLDoc;
+        const issueDate = moment().format('YYYY-MM-DD');
+        copy.ID = '';
+        if (documentType === DocumentType.INVOICE) {
+            copy.DueDate = this.getDueDateForDuplicate(source, issueDate);
+        }
+        copy.IssueDate = issueDate;
+        if (copy.PaymentMeans) {
+            copy.PaymentMeans.PaymentID = undefined;
+        }
+        copy.AdditionalDocumentReference = this.resetGeneratedInvoiceReference(copy.AdditionalDocumentReference);
+        return copy;
+    }
+
+    private getDueDateForDuplicate(source: UBLDoc, issueDate: string): string {
+        const paymentTerm = this.findPaymentTerm(source);
+        if (paymentTerm) {
+            return this.getDueDate(paymentTerm, issueDate);
+        }
+        return this.shiftDueDate(source.IssueDate, source.DueDate, issueDate);
+    }
+
+    private findPaymentTerm(source: UBLDoc): string | undefined {
+        const note = source.PaymentTerms?.Note;
+        const paymentTerm = note && Account.PAYMENT_TERMS.find(term => this.translatePaymentTerm(term) === note);
+        if (paymentTerm) {
+            return paymentTerm;
+        }
+        if (!source.IssueDate || !source.DueDate) {
+            return undefined;
+        }
+        return Account.PAYMENT_TERMS.find(term => this.getDueDate(term, source.IssueDate) === source.DueDate);
+    }
+
+    private shiftDueDate(sourceIssueDate: string, sourceDueDate: string, issueDate: string): string {
+        if (!sourceIssueDate || !sourceDueDate) {
+            return this.getDueDateForCompany();
+        }
+        const days = moment(sourceDueDate).diff(moment(sourceIssueDate), 'days');
+        if (!Number.isFinite(days) || days < 0) {
+            return this.getDueDateForCompany();
+        }
+        return moment(issueDate).add(days, 'day').format('YYYY-MM-DD');
+    }
+
+    private resetGeneratedInvoiceReference(references: AdditionalDocumentReference[]): AdditionalDocumentReference[] {
+        if (!references?.length) {
+            return references;
+        }
+        return references.map(reference => reference.ID === GENERATED_INVOICE
+            ? this.getGeneratedInvoiceDocumentReference()
+            : reference);
     }
 
     public getGeneratedInvoiceDocumentReference(): AdditionalDocumentReference {
