@@ -34,6 +34,16 @@ public class RegistryService {
         return optionalRegistry.isPresent() ? optionalRegistry.get().getAccessPoint() : AccessPoint.NONE;
     }
 
+    /** Correct stale local registration without deregistering or deleting anything at the provider. */
+    public void markNotRegistered(String peppolId, AccessPoint expectedAccessPoint) {
+        registryRepository.findById(peppolId).ifPresent(registry -> {
+            if (registry.getAccessPoint() == expectedAccessPoint) {
+                registry.setAccessPoint(AccessPoint.NONE);
+                registryRepository.save(registry);
+            }
+        });
+    }
+
     private void register(RegistrationRequest data, AccessPoint accessPoint, Registry registry) {
         try {
             if (accessPoint != AccessPoint.NONE) {

@@ -19,6 +19,7 @@ import org.letspeppol.proxy.dto.recommand.SendDocumentRequest;
 import org.letspeppol.proxy.dto.recommand.SendDocumentResponse;
 import org.letspeppol.proxy.dto.recommand.VerifyCompanyResponse;
 import org.letspeppol.proxy.exception.NotFoundException;
+import org.letspeppol.proxy.exception.SendAuthorizationException;
 import org.letspeppol.proxy.model.AccessPoint;
 import org.letspeppol.proxy.model.DocumentType;
 import org.letspeppol.proxy.model.Registry;
@@ -33,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -170,6 +172,7 @@ public class RecommandService implements AccessPointServiceInterface {
 
     /// Recommand API: POST /api/v1/{companyId}/send
     @Override
+    @Transactional(noRollbackFor = SendAuthorizationException.class)
     public String sendDocument(UblDocument ublDocument) {
         RecommandVariables variables = variablesFor(ublDocument.getOwnerPeppolId());
         parsePeppolId(ublDocument.getPartnerPeppolId());
@@ -194,10 +197,35 @@ public class RecommandService implements AccessPointServiceInterface {
             documentSendCounter.increment();
             return response.id();
         } catch (WebClientResponseException e) {
+            if (e.getStatusCode().value() == 401) {
+                throw new SendAuthorizationException(companyMissing(variables.companyId()), e);
+            }
             throw apiFailure("send document", e);
         } catch (Exception e) {
             throw callFailure("send document", e);
         }
+    }
+
+    private boolean companyMissing(String companyId) {
+        try {
+            recommandWebClient.get()
+                    .uri("/companies/{companyId}", companyId)
+                    .retrieve()
+                    .toBodilessEntity()
+                    .timeout(Duration.ofSeconds(10))
+                    .block();
+        } catch (WebClientResponseException e) {
+            // A 401 here can mean invalid shared credentials. Only a 404 confirms a missing company.
+            if (e.getStatusCode().value() == 404) {
+                return true;
+            }
+            log.warn("Recommand company lookup for {} returned HTTP {}; registration retained",
+                    companyId, e.getStatusCode().value());
+        } catch (Exception e) {
+            log.warn("Recommand company lookup for {} failed; registration retained ({})",
+                    companyId, e.getClass().getSimpleName());
+        }
+        return false;
     }
 
     /// Recommand API: GET /api/v1/documents/{documentId}

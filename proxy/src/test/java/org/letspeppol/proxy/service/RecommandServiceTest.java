@@ -9,6 +9,14 @@ import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.letspeppol.proxy.exception.SendAuthorizationException;
+import org.springframework.aop.framework.ProxyFactory;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.annotation.AnnotationTransactionAttributeSource;
+import org.springframework.transaction.interceptor.TransactionInterceptor;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.letspeppol.proxy.config.RecommandConfig;
 import org.letspeppol.proxy.dto.RegistrationRequest;
 import org.letspeppol.proxy.dto.StatusReport;
@@ -26,6 +34,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
+import javax.sql.DataSource;
+import java.sql.Connection;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -33,6 +43,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -178,6 +189,61 @@ class RecommandServiceTest {
     private RegistrationRequest registrationWithContract() {
         return new RegistrationRequest("Example BV", "EN", "BE", "Main Street 1", "1000", "Brussels",
                 "BE0685912734", SIGNED_CONTRACT);
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {200, 404, 401, 503})
+    void classifiesUnauthorizedSendUsingCompanyLookup(int lookupStatus) {
+        when(registryRepository.findById("0208:0685912734")).thenReturn(Optional.of(new Registry(
+                "0208:0685912734", AccessPoint.RECOMMAND, Map.of("companyId", "company-1"))));
+        respond(401, "{\"success\":false,\"errors\":{\"root\":[\"Unauthorized\"]}}");
+        respond(lookupStatus, "{}");
+
+        UblDocument document = new UblDocument();
+        document.setOwnerPeppolId("0208:0685912734");
+        document.setPartnerPeppolId("0208:0123456789");
+        document.setUbl("<Invoice/>");
+
+        assertThatThrownBy(() -> service.sendDocument(document))
+                .isInstanceOfSatisfying(SendAuthorizationException.class,
+                        failure -> assertThat(failure.isCompanyMissing()).isEqualTo(lookupStatus == 404));
+        assertThat(requests).extracting(Request::method, Request::path).containsExactly(
+                org.assertj.core.groups.Tuple.tuple("POST", "/api/v1/company-1/send"),
+                org.assertj.core.groups.Tuple.tuple("GET", "/api/v1/companies/company-1"));
+    }
+
+    @Test
+    void authorizationFailureDoesNotRollBackTheSchedulersTransaction() throws Exception {
+        when(registryRepository.findById("0208:0685912734")).thenReturn(Optional.of(new Registry(
+                "0208:0685912734", AccessPoint.RECOMMAND, Map.of("companyId", "company-1"))));
+        respond(401, "{}");
+        respond(404, "{}");
+        UblDocument document = new UblDocument();
+        document.setOwnerPeppolId("0208:0685912734");
+        document.setPartnerPeppolId("0208:0123456789");
+        document.setUbl("<Invoice/>");
+
+        DataSource dataSource = mock(DataSource.class);
+        Connection connection = mock(Connection.class);
+        when(dataSource.getConnection()).thenReturn(connection);
+        when(connection.getAutoCommit()).thenReturn(true);
+        var transactions = new DataSourceTransactionManager(dataSource);
+        var interceptor = new TransactionInterceptor();
+        interceptor.setTransactionManager(transactions);
+        interceptor.setTransactionAttributeSource(new AnnotationTransactionAttributeSource());
+        var factory = new ProxyFactory(service);
+        factory.setProxyTargetClass(true);
+        factory.addAdvice(interceptor);
+        RecommandService transactionalService = (RecommandService) factory.getProxy();
+
+        new TransactionTemplate(transactions).executeWithoutResult(status -> {
+            assertThatThrownBy(() -> transactionalService.sendDocument(document))
+                    .isInstanceOf(SendAuthorizationException.class);
+            assertThat(status.isRollbackOnly()).isFalse();
+        });
+
+        verify(connection).commit();
+        verify(connection, never()).rollback();
     }
 
     @Test
