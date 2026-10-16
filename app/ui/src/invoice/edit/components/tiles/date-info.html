@@ -17,7 +17,7 @@
         <span t="invoice.dateModal.payment-terms">Payment Terms</span>
         <b>${invoiceContext.selectedInvoice.PaymentTerms.Note}</b>
     </template>
-    <template if.bind="invoiceContext.selectedInvoice.DueDate">
+    <template if.bind="!isCreditNote && invoiceContext.selectedInvoice.DueDate">
         <span t="invoice.dateModal.due-date">Due Date</span>
         <b>${invoiceContext.selectedInvoice.DueDate | dateFormat}</b>
     </template>

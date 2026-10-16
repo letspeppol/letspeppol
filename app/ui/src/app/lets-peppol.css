@@ -1496,6 +1496,11 @@ main.container .data-table tbody td {
     resize: vertical;
 }
 
+.field.missing-required select {
+    border-color: var(--pill-error-fg);
+    box-shadow: 0 0 2px 0 var(--pill-error-fg);
+}
+
 .field input:focus,
 .field select:focus {
     outline: 2px solid color-mix(in hsl, var(--primary) 40%, var(--border-soft));

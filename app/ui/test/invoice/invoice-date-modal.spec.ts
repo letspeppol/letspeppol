@@ -241,3 +241,28 @@ describe('InvoiceDateModal due date bounds', () => {
         expect(modal.open).toBe(false);
     });
 });
+
+describe('InvoiceDateModal saving', () => {
+    it('keeps the payment arrangement a credit note carries for a switch back to an invoice', () => {
+        const invoice: Record<string, unknown> = {IssueDate: '2026-07-05', DueDate: '2026-08-04', PaymentTerms: {Note: '30 days'}};
+        const modal = openModal(invoice, DocumentType.CREDIT_NOTE);
+
+        edit(modal, 'issueDate', '2026-07-06');
+        save(modal);
+
+        expect(invoice.IssueDate).toBe('2026-07-06');
+        expect(invoice.DueDate).toBe('2026-08-04');
+        expect(invoice.PaymentTerms).toEqual({Note: '30 days'});
+    });
+
+    it('writes the due date and payment terms of an invoice', () => {
+        const invoice: Record<string, unknown> = {IssueDate: '2026-07-05', DueDate: '2026-08-04', PaymentTerms: undefined};
+        const modal = openModal(invoice);
+
+        edit(modal, 'selectedPaymentTerm', 'NET_15');
+        save(modal);
+
+        expect(invoice.DueDate).toBe('2026-07-20');
+        expect(invoice.PaymentTerms).toEqual({Note: '15 days'});
+    });
+});

@@ -7,4 +7,12 @@ export class InvoiceInfo {
 
     @bindable readOnly: boolean;
     @bindable showInvoiceModal;
+
+    get isReferenceMissing(): boolean {
+        if (this.readOnly) {
+            return false;
+        }
+        const document = this.invoiceContext.selectedInvoice;
+        return !document?.BuyerReference?.trim() && !document?.OrderReference?.ID?.trim();
+    }
 }

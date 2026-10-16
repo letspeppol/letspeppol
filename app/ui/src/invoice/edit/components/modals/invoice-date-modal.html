@@ -11,11 +11,11 @@
                     <span t="invoice.dateModal.issue-date">Issue Date</span>
                     <input type="date" name="issueDate" value.bind="issueDate" required />
                 </label>
-                <div class="field full">
+                <div class="field full" if.bind="!isCreditNote">
                     <span t="invoice.dateModal.payment-terms">Payment Terms</span>
                     <payment-terms-field value.two-way="selectedPaymentTerm"></payment-terms-field>
                 </div>
-                <label class="field" if.bind="documentType === 'INVOICE'">
+                <label class="field" if.bind="!isCreditNote">
                     <span t="invoice.dateModal.due-date">Due Date</span>
                     <input type="date" name="dueDate" value.bind="dueDate" min.bind="minDueDate" />
                 </label>

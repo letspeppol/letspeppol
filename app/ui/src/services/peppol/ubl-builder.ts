@@ -614,6 +614,7 @@ export function buildCreditNoteXml(creditNote: CreditNote): string {
         buildAdditionalDocumentReference(creditNote.AdditionalDocumentReference),
         buildAccountingParty('cac:AccountingSupplierParty', creditNote.AccountingSupplierParty),
         buildAccountingParty('cac:AccountingCustomerParty', creditNote.AccountingCustomerParty),
+        buildDelivery(creditNote.Delivery),
         buildAllowanceCharge(creditNote.AllowanceCharge),
         buildTaxTotal(creditNote.TaxTotal),
         buildMonetaryTotal(creditNote.LegalMonetaryTotal),

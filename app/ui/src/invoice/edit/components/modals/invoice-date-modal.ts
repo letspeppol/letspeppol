@@ -12,9 +12,9 @@ export class InvoiceDateModal {
     countryList = countryListAlpha2;
     @bindable invoiceContext;
     @bindable documentType: DocumentType;
-    @observable issueDate;
-    @observable selectedPaymentTerm;
-    @observable dueDate;
+    @observable issueDate = undefined;
+    @observable selectedPaymentTerm = undefined;
+    @observable dueDate = undefined;
     actualDeliveryDate;
     deliveryCountryCode;
     open = false;
@@ -42,6 +42,10 @@ export class InvoiceDateModal {
         this.open = true;
     }
 
+    get isCreditNote(): boolean {
+        return this.documentType === DocumentType.CREDIT_NOTE;
+    }
+
     get requiresDeliveryDetails(): boolean {
         return this.invoiceContext.lines?.some(line => requiresDeliveryDetails(line.Item?.ClassifiedTaxCategory?.ID)) ?? false;
     }
@@ -51,7 +55,7 @@ export class InvoiceDateModal {
     }
 
     get dueDateError(): 'due-before-issue' | 'due-in-past' | undefined {
-        if (this.documentType === DocumentType.CREDIT_NOTE || isDueDateAllowed(this.issueDate, this.dueDate)) {
+        if (this.isCreditNote || isDueDateAllowed(this.issueDate, this.dueDate)) {
             return undefined;
         }
         return this.issueDate && this.dueDate < this.issueDate ? 'due-before-issue' : 'due-in-past';
@@ -66,7 +70,7 @@ export class InvoiceDateModal {
     }
 
     dueDateChanged() {
-        if (this.syncing || this.documentType === DocumentType.CREDIT_NOTE || !this.issueDate || !this.dueDate) {
+        if (this.syncing || this.isCreditNote || !this.issueDate || !this.dueDate) {
             return;
         }
         const derived = this.invoiceComposer.derivePaymentTermCode(this.issueDate, this.dueDate);
@@ -79,7 +83,7 @@ export class InvoiceDateModal {
     }
 
     private recalculateDueDate() {
-        if (this.syncing || this.documentType === DocumentType.CREDIT_NOTE) {
+        if (this.syncing || this.isCreditNote) {
             return;
         }
         if (!this.issueDate || !this.selectedPaymentTerm) {
@@ -100,13 +104,15 @@ export class InvoiceDateModal {
         }
         this.open = false;
         this.invoiceContext.selectedInvoice.IssueDate = this.issueDate;
-        this.invoiceContext.selectedInvoice.DueDate = this.dueDate;
-        if (this.selectedPaymentTerm) {
-            this.invoiceContext.selectedInvoice.PaymentTerms = {
-                Note: this.invoiceComposer.translatePaymentTerm(this.selectedPaymentTerm)
-            };
-        } else if (this.initialPaymentTerm) {
-            this.invoiceContext.selectedInvoice.PaymentTerms = undefined;
+        if (!this.isCreditNote) {
+            this.invoiceContext.selectedInvoice.DueDate = this.dueDate;
+            if (this.selectedPaymentTerm) {
+                this.invoiceContext.selectedInvoice.PaymentTerms = {
+                    Note: this.invoiceComposer.translatePaymentTerm(this.selectedPaymentTerm)
+                };
+            } else if (this.initialPaymentTerm) {
+                this.invoiceContext.selectedInvoice.PaymentTerms = undefined;
+            }
         }
         if (this.actualDeliveryDate || this.deliveryCountryCode) {
             if (!this.invoiceContext.selectedInvoice.Delivery) {
