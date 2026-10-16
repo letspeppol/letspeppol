@@ -18,7 +18,6 @@ import {CompanyService} from "../services/app/company-service";
 import {DocumentType} from "../services/app/invoice-service";
 import {I18N} from "@aurelia/i18n";
 import {createNotSubjectToVatCategory, createVatExemptCategory, isVatExemptRuleset} from "../services/app/vat-rules";
-import {Account} from "../account/account";
 import {
     DEFAULT_PAYMENT_TERM,
     MAX_PAYMENT_TERM_DAYS,
@@ -529,34 +528,8 @@ export class InvoiceComposer {
     }
 
     private getDueDateForDuplicate(source: UBLDoc, issueDate: string): string {
-        const paymentTerm = this.findPaymentTerm(source);
-        if (paymentTerm) {
-            return this.getDueDate(paymentTerm, issueDate);
-        }
-        return this.shiftDueDate(source.IssueDate, source.DueDate, issueDate);
-    }
-
-    private findPaymentTerm(source: UBLDoc): string | undefined {
-        const note = source.PaymentTerms?.Note;
-        const paymentTerm = note && Account.PAYMENT_TERMS.find(term => this.translatePaymentTerm(term) === note);
-        if (paymentTerm) {
-            return paymentTerm;
-        }
-        if (!source.IssueDate || !source.DueDate) {
-            return undefined;
-        }
-        return Account.PAYMENT_TERMS.find(term => this.getDueDate(term, source.IssueDate) === source.DueDate);
-    }
-
-    private shiftDueDate(sourceIssueDate: string, sourceDueDate: string, issueDate: string): string {
-        if (!sourceIssueDate || !sourceDueDate) {
-            return this.getDueDateForCompany();
-        }
-        const days = moment(sourceDueDate).diff(moment(sourceIssueDate), 'days');
-        if (!Number.isFinite(days) || days < 0) {
-            return this.getDueDateForCompany();
-        }
-        return moment(issueDate).add(days, 'day').format('YYYY-MM-DD');
+        const paymentTerm = this.derivePaymentTermCode(source.IssueDate, source.DueDate, source.PaymentTerms?.Note);
+        return paymentTerm ? this.getDueDate(paymentTerm, issueDate) : this.getDueDateForCompany();
     }
 
     private resetGeneratedInvoiceReference(references: AdditionalDocumentReference[]): AdditionalDocumentReference[] {

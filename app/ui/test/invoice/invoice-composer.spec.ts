@@ -299,11 +299,14 @@ function creditableInvoice(): Invoice {
     } as unknown as Invoice;
 }
 
-function creditNoteTranslations(key: string, options?: { days?: number }): string {
-    if (key === 'invoice.modal.credit-note-vat-note') {
-        return 'VAT note';
-    }
-    return key === 'paymentTerms.net' ? `${options?.days} days` : key;
+const translations: Record<string, string> = {
+    'invoice.modal.credit-note-vat-note': 'VAT note',
+    'paymentTerms.net': '{{days}} days',
+    'paymentTerms.end-of-next-month': 'End of the month',
+};
+
+function translate(key: string, options?: { days?: unknown }): string {
+    return (translations[key] ?? key).replace('{{days}}', String(options?.days));
 }
 
 function composerForCreditNotes(paymentTerms?: string): InvoiceComposer {
@@ -322,23 +325,16 @@ function composerForCreditNotes(paymentTerms?: string): InvoiceComposer {
                 registeredOffice: { street: 'Main Street', houseNumber: '1', city: 'Brussels', postalCode: '1000' },
             },
         },
-        i18n: { tr: (key: string, options?: { days?: number }) => creditNoteTranslations(key, options) },
+        i18n: { tr: translate },
     });
     return composer;
 }
-
-const paymentTermTranslations: Record<string, string> = {
-    'paymentTerms.15_DAYS': '15 days',
-    'paymentTerms.30_DAYS': '30 days',
-    'paymentTerms.60_DAYS': '60 days',
-    'paymentTerms.END_OF_NEXT_MONTH': 'End of the month',
-};
 
 function composerWithCompany(paymentTerms?: string): InvoiceComposer {
     const composer = Object.create(InvoiceComposer.prototype) as InvoiceComposer;
     Object.assign(composer, {
         companyService: { myCompany: { paymentTerms } },
-        i18n: { tr: (key: string) => paymentTermTranslations[key] ?? key },
+        i18n: { tr: translate },
     });
     return composer;
 }
