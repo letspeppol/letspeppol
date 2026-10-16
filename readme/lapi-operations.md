@@ -15,7 +15,7 @@ exclude LAPI paths; these operations depend on that network restriction for oper
 | --- | --- | --- |
 | GET | `/proxy/lapi/monitor` | Basic proxy health probe; returns `ok`. |
 | GET | `/proxy/lapi/monitor/{amount}` | Adjust the monitored balance; returns the resulting balance. This request changes state. |
-| POST | `/proxy/lapi/registry/{peppolId}/move` | Move an active registration to another access point. |
+| POST | `/kyc/lapi/company/{peppolId}/move` | Move an active registration to another access point. |
 | GET | `/kyc/lapi/kbo` | Basic KBO endpoint health probe; returns `ok`. |
 | POST | `/kyc/lapi/kbo/sync` | Run the initial KBO synchronization. Existing KYC CSRF protection applies. |
 
@@ -23,18 +23,18 @@ exclude LAPI paths; these operations depend on that network restriction for oper
 
 ```sh
 curl --fail-with-body -X POST \
-  -H 'Content-Type: application/json' --data-binary @registration.json \
-  'http://localhost:8443/proxy/lapi/registry/0208:0123456789/move?accessPoint=RECOMMAND'
+  'http://localhost:8443/kyc/lapi/company/0208:0123456789/move?accessPoint=RECOMMAND'
 ```
 
 The optional `accessPoint` selects an available provider: `SCRADA`, `RECOMMAND`, or `E_INVOICE`.
 Omit it to use `proxy.access-point`. Selecting the current provider succeeds without moving it.
 Unknown or unavailable targets, including `NONE` and `LOOPBACK`, are rejected.
 
-`registration.json` contains the company's registration details: `name`, `language`, `country`,
-`address`, `postalCode`, `city`, `vatNumber`, and `signedContract` (the signed PDF encoded as Base64).
-Include the signed contract when moving to or from Recommand, as it is also needed for recovery.
-Both providers check their requirements before the existing registration is removed.
+No request body is needed. KYC loads its company details and signed ADMIN contract, then sends
+them to `POST /proxy/sapi/registry/{peppolId}/move` using its existing service credentials.
+The proxy validates both providers and handles the migration and recovery. KYC forwards the
+result and updates its registration state. Missing data or a missing contract stops migration
+before deregistration. Suspended companies cannot be migrated.
 
 | Status | Meaning |
 | --- | --- |

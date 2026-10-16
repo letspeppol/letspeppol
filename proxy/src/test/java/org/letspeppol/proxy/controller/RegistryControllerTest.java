@@ -8,6 +8,8 @@ import org.letspeppol.proxy.model.AccessPoint;
 import org.letspeppol.proxy.model.Registry;
 import org.letspeppol.proxy.repository.RegistryRepository;
 import org.letspeppol.proxy.service.AccessPointServiceRegistry;
+import org.letspeppol.proxy.service.AppLinkService;
+import org.letspeppol.proxy.service.RegistryService;
 import org.letspeppol.proxy.service.AccessPointServiceInterface;
 import org.letspeppol.proxy.service.RecommandService;
 import org.letspeppol.proxy.service.ScradaService;
@@ -15,10 +17,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.http.MediaType;
+import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -28,6 +32,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.util.Map;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,9 +42,9 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-class RegistryOperationsControllerTest {
+class RegistryControllerTest {
     private static final String ID = "0208:0123456789";
-    private static final String MOVE_PATH = "/lapi/registry/" + ID + "/move";
+    private static final String MOVE_PATH = "/sapi/registry/" + ID + "/move";
     private static final String PATH = MOVE_PATH + "?accessPoint=RECOMMAND";
     private static final String PAYLOAD = """
             {"name":"Example BV","language":"EN","country":"BE","signedContract":"AQ=="}
@@ -65,6 +70,7 @@ class RegistryOperationsControllerTest {
         scrada = context.getBean(ScradaService.class);
         recommand = context.getBean(RecommandService.class);
         mvc = MockMvcBuilders.webAppContextSetup(context)
+                .defaultRequest(post("/").header(HttpHeaders.AUTHORIZATION, "Bearer service-token"))
                 .addFilters(context.getBean("springSecurityFilterChain", Filter.class)).build();
     }
 
@@ -88,7 +94,7 @@ class RegistryOperationsControllerTest {
     }
 
     @Test
-    void operatorCanMoveWithoutAUserTokenOrCsrfToken() throws Exception {
+    void kycServiceCanMoveWithItsServiceToken() throws Exception {
         mvc.perform(post(PATH).contentType(MediaType.APPLICATION_JSON).content(PAYLOAD))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.accessPoint").value("RECOMMAND"));
 
@@ -227,6 +233,20 @@ class RegistryOperationsControllerTest {
     }
 
     @Test
+    void migrationRequiresServiceCredentials() throws Exception {
+        mvc.perform(post(PATH).header(HttpHeaders.AUTHORIZATION, "")
+                        .contentType(MediaType.APPLICATION_JSON).content(PAYLOAD))
+                .andExpect(status().is4xxClientError());
+        mvc.perform(post(PATH).header(HttpHeaders.AUTHORIZATION, "Bearer user-token")
+                        .contentType(MediaType.APPLICATION_JSON).content(PAYLOAD))
+                .andExpect(status().isForbidden());
+        mvc.perform(post("/lapi/registry/" + ID + "/move")
+                        .contentType(MediaType.APPLICATION_JSON).content(PAYLOAD))
+                .andExpect(status().isForbidden());
+        verifyNoInteractions(scrada, recommand);
+    }
+
+    @Test
     void honorsRequirementsOfAnyProviderThroughTheInterface() throws Exception {
         var provider = mock(AccessPointServiceInterface.class);
         when(accessPoints.get(AccessPoint.E_INVOICE)).thenReturn(provider);
@@ -267,11 +287,18 @@ class RegistryOperationsControllerTest {
         @Bean ScradaService scrada() { return mock(ScradaService.class); }
         @Bean RecommandService recommand() { return mock(RecommandService.class); }
         @Bean AccessPointServiceRegistry accessPoints() { return mock(AccessPointServiceRegistry.class); }
-        @Bean JwtDecoder decoder() { return mock(JwtDecoder.class); }
+        @Bean JwtDecoder decoder() {
+            var decoder = mock(JwtDecoder.class);
+            when(decoder.decode("service-token")).thenReturn(Jwt.withTokenValue("service-token")
+                    .header("alg", "RS256").subject("kyc-service").claim("scope", List.of("service")).build());
+            when(decoder.decode("user-token")).thenReturn(Jwt.withTokenValue("user-token")
+                    .header("alg", "RS256").subject("user").claim("uid", "user-id").build());
+            return decoder;
+        }
         @Bean CorsConfigurationSource corsConfigurationSource() { return request -> new CorsConfiguration(); }
         @Bean GlobalExceptionHandler errors() { return new GlobalExceptionHandler(); }
-        @Bean RegistryOperationsController controller(RegistryRepository repository, AccessPointServiceRegistry accessPoints) {
-            return new RegistryOperationsController(repository, accessPoints);
+        @Bean RegistryController controller(RegistryRepository repository, AccessPointServiceRegistry accessPoints) {
+            return new RegistryController(mock(AppLinkService.class), mock(RegistryService.class), repository, accessPoints);
         }
         @Bean SecurityFilterChain security(HttpSecurity http) throws Exception {
             return new SecurityConfig().securityFilterChain(http);

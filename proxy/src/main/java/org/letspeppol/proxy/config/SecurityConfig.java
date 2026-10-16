@@ -37,13 +37,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/lapi/registry/**"))
                 .cors(cors -> {})
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
                         .requestMatchers("/lapi/monitor/**").permitAll() // Secured by Traefik
-                        .requestMatchers("/lapi/registry/**").permitAll() // Internal-only operator router
                         // Public usage/donation stats rendered on the public site; the app backend calls
                         // /api/stats without a bearer token, so this endpoint must stay public.
                         .requestMatchers("/api/stats/**").permitAll()

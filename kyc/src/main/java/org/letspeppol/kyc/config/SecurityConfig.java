@@ -170,7 +170,7 @@ public class SecurityConfig {
                 // controller's SAMEORIGIN header after the response has been created.
                 .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()))
                 // CSRF guards the cookie/session browser surface (/auth/browser/**).
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**", "/actuator/**"))
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**", "/actuator/**", "/lapi/company/**"))
                 .requestCache(rc -> rc.requestCache(requestCache))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/browser/**", "/error", "/favicon.ico").permitAll()
