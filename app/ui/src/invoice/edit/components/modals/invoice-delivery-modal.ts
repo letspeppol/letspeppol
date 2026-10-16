@@ -29,6 +29,10 @@ export class InvoiceDeliveryModal {
         return this.formatDateTime(this.details?.processedOn);
     }
 
+    deliveryIdLabel(id?: string): string {
+        return id || (this.details?.processedStatus ? "REJECTED" : "/");
+    }
+
     private formatDateTime(value?: string): string {
         if (!value) {
             return "/";

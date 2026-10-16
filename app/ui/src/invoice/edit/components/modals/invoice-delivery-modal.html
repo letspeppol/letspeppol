@@ -42,11 +42,11 @@
                     </div>
                     <div>
                         <dt t="invoice.deliveryModal.corner2-id">Corner 2 ID</dt>
-                        <dd>${details.accessPointId || 'REJECTED'}</dd>
+                        <dd>${deliveryIdLabel(details.accessPointId)}</dd>
                     </div>
                     <div>
                         <dt t="invoice.deliveryModal.corner3-id">Corner 3 ID</dt>
-                        <dd>${details.partnerPeppolMessageId || 'REJECTED'}</dd>
+                        <dd>${deliveryIdLabel(details.partnerPeppolMessageId)}</dd>
                     </div>
                 </dl>
             </section>

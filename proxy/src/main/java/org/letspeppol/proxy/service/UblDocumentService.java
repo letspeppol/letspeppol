@@ -1,17 +1,18 @@
 package org.letspeppol.proxy.service;
 
 import lombok.RequiredArgsConstructor;
+import org.letspeppol.proxy.dto.DeliveryDetails;
 import org.letspeppol.proxy.dto.DocumentDetailsDto;
 import org.letspeppol.proxy.dto.UblDocumentDto;
 import org.letspeppol.proxy.exception.ConflictException;
 import org.letspeppol.proxy.exception.NotFoundException;
+import org.letspeppol.proxy.mapper.DeliveryDetailsMapper;
 import org.letspeppol.proxy.mapper.UblDocumentMapper;
 import org.letspeppol.proxy.model.DocumentDirection;
 import org.letspeppol.proxy.model.UblDocument;
 import org.letspeppol.proxy.repository.UblDocumentRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -42,7 +43,7 @@ public class UblDocumentService {
         if (!DocumentDirection.OUTGOING.equals(ublDocument.getDirection()) || ublDocument.getProcessedOn() == null) {
             throw new ConflictException("Delivery details are only available for processed outgoing documents");
         }
-        Map<String, Object> details = getAccessPointDetails(ublDocument);
+        DeliveryDetails details = DeliveryDetailsMapper.toDto(ublDocument.getAccessPoint(), getAccessPointDetails(ublDocument));
         return toDetailsDto(ublDocument, details);
     }
 
@@ -66,7 +67,7 @@ public class UblDocumentService {
         return details;
     }
 
-    private DocumentDetailsDto toDetailsDto(UblDocument ublDocument, Map<String, Object> details) {
+    private DocumentDetailsDto toDetailsDto(UblDocument ublDocument, DeliveryDetails details) {
         return new DocumentDetailsDto(
                 ublDocument.getId(),
                 ublDocument.getOwnerPeppolId(),
@@ -75,20 +76,10 @@ public class UblDocumentService {
                 ublDocument.getAccessPointId(),
                 ublDocument.getProcessedOn(),
                 ublDocument.getProcessedStatus(),
-                valueAsString(details, "peppolC3SeatID"),
-                valueAsString(details, "peppolC3MessageID"),
-                valueAsInstant(details, "peppolC3Timestamp")
+                details.partnerPeppolAccessPoint(),
+                details.partnerPeppolMessageId(),
+                details.partnerPeppolMessageOn()
         );
-    }
-
-    private String valueAsString(Map<String, Object> details, String key) {
-        Object value = details.get(key);
-        return value == null ? null : value.toString();
-    }
-
-    private Instant valueAsInstant(Map<String, Object> details, String key) {
-        String value = valueAsString(details, key);
-        return value == null || value.isBlank() ? null : Instant.parse(value);
     }
 
 }
