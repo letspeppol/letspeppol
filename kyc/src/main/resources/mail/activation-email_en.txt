@@ -5,8 +5,11 @@ We received a request to verify the email address for the company with Peppol ID
 To complete the verification, please click the link below (valid for 7 days):
 {{activationLink}}
 
-Next steps (Web eID setup & identity verification)
-For detailed instructions to install and test Web eID, please follow our onboarding checklist:
+Next steps (eID signing software & identity verification)
+On Windows (x64), install Let's Peppol eID Bridge:
+https://github.com/letspeppol/eid-bridge/releases/download/v1.1.0/LetsPeppol-eID-Bridge-1.1.0-windows-x64-unsigned.msi
+
+Restart your browser and ensure the Web eID extension is enabled. For setup, testing and other installation options, follow our onboarding checklist:
 https://be.letspeppol.org/onboarding
 
 If you did not request this verification, you can safely ignore this message.

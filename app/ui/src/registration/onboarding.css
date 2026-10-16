@@ -71,6 +71,15 @@
   gap: 0.6rem;
 }
 
+.onboarding-legacy-install {
+  margin-top: 0.75rem;
+}
+
+.onboarding-legacy-install summary {
+  cursor: pointer;
+  color: var(--muted);
+}
+
 .link-group {
   display: inline-flex;
   flex-wrap: wrap;
