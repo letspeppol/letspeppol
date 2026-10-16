@@ -115,8 +115,8 @@ class NotificationServiceEmailIT extends PostgresIntegrationTest {
 
         List<EmailJob> pendingJobs = emailJobRepository.findAllByStatusOrderByCreatedOnAsc(EmailJob.Status.PENDING);
         assertFalse(pendingJobs.isEmpty(), "Expected at least one PENDING EmailJob — notifyIncomingDocument failed silently");
-        System.out.println("✅ EmailJob created with id=" + pendingJobs.get(0).getId());
-        System.out.println("   payload: " + pendingJobs.get(0).getPayload());
+        System.out.println("✅ EmailJob created with id=" + pendingJobs.getFirst().getId());
+        System.out.println("   payload: " + pendingJobs.getFirst().getPayload());
 
         await().atMost(30, SECONDS)
                 .pollInterval(Duration.ofSeconds(1))

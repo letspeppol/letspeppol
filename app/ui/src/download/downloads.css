@@ -30,6 +30,22 @@
     margin: 0;
 }
 
+.download-info {
+    margin-top: var(--space-075);
+    padding: var(--space-075) var(--space-1);
+    border-left: 3px solid var(--primary);
+    border-radius: var(--radius);
+    background: color-mix(in hsl, var(--primary) 7%, var(--panel));
+}
+
+.download-info p {
+    margin: 0;
+}
+
+.download-info p + p {
+    margin-top: var(--space-035);
+}
+
 .download-table-card {
     overflow: hidden;
 }

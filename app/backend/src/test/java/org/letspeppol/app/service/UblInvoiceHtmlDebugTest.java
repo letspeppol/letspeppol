@@ -41,8 +41,8 @@ class UblInvoiceHtmlDebugTest {
 
         Path dir = Path.of("build", "debug");
         Files.createDirectories(dir);
-        Files.writeString(dir.resolve("invoice.xhtml"), xhtml, StandardCharsets.UTF_8);
-        Files.writeString(dir.resolve("invoice.xml"), ublXml, StandardCharsets.UTF_8);
+        Files.writeString(dir.resolve("invoice.xhtml"), xhtml);
+        Files.writeString(dir.resolve("invoice.xml"), ublXml);
     }
 
     private String transformToHtml(String ublInvoiceXml) throws Exception {

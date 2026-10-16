@@ -1,6 +1,5 @@
 package org.letspeppol.kyc.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.letspeppol.kyc.model.Account;
@@ -13,13 +12,16 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class TotpAuthenticationSuccessHandlerTest {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new JsonMapper();
     private final TotpAuthenticationSuccessHandler handler = new TotpAuthenticationSuccessHandler(objectMapper);
 
     @AfterEach
@@ -37,7 +39,7 @@ class TotpAuthenticationSuccessHandlerTest {
         handler.onAuthenticationSuccess(request, response, authentication(false));
 
         assertThat(response.getStatus()).isEqualTo(200);
-        assertThat(objectMapper.readTree(response.getContentAsByteArray()).get("status").asText())
+        assertThat(objectMapper.readTree(response.getContentAsByteArray()).get("status").asString())
                 .isEqualTo(BrowserAuthenticationSupport.STATUS_AUTHENTICATED);
         assertThat(request.getSession().getAttribute(TotpAuthenticationSuccessHandler.TOTP_PENDING_ACCOUNT_ID))
                 .isNull();
@@ -56,7 +58,7 @@ class TotpAuthenticationSuccessHandlerTest {
         handler.onAuthenticationSuccess(request, response, authentication(true));
 
         assertThat(response.getStatus()).isEqualTo(202);
-        assertThat(objectMapper.readTree(response.getContentAsByteArray()).get("status").asText())
+        assertThat(objectMapper.readTree(response.getContentAsByteArray()).get("status").asString())
                 .isEqualTo(BrowserAuthenticationSupport.STATUS_TOTP_REQUIRED);
         assertThat(request.getSession().getAttribute(TotpAuthenticationSuccessHandler.TOTP_PENDING_ACCOUNT_ID))
                 .isEqualTo(42L);

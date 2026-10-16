@@ -3,7 +3,6 @@
     "account-name": "Kontoname",
     "activate-on-peppol": "Auf Peppol aktivieren",
     "add-attachment-to-notification": "Anhang zur Benachrichtigung hinzufügen",
-    "add-pdf-to-sending-invoice": "PDF zur Rechnung hinzufügen",
     "address": "Adresse",
     "cancel": "Abbrechen",
     "change-password": "Passwort ändern",
@@ -15,7 +14,6 @@
     "email-notification-cc-list-outgoing": "Ausgehende Dokumente: E-Mail-CC-Liste",
     "enable-email-notification": "E-Mail-Benachrichtigungen aktivieren",
     "iban": "IBAN",
-    "invoice-settings": "Rechnungseinstellungen",
     "notifications": "Benachrichtigungen",
     "number": "Nummer",
     "payment-info": "Zahlungsinformationen",
@@ -209,8 +207,12 @@
     "belgian-only": "Wir aktivieren derzeit nur belgische Unternehmen. <br /> Soll Ihr Land unterstützt werden? <a href=\"mailto:country@letspeppol.org\">Helfen Sie uns</a>",
     "choose-credentials-title": "2. Zugangsdaten wählen",
     "company": "Unternehmen",
+    "director-choose-suggested": "Diese Person auswählen",
     "director-confirm": "Bestätigen",
     "director-confirmed": "Bestätigt",
+    "director-mismatch": "Der Name auf Ihrer eID stimmt nicht mit der ausgewählten Leitungsperson überein. Wählen Sie die richtige Person aus, um fortzufahren.",
+    "director-no-match": "Wenn Ihr Name nicht in der Liste steht, wenden Sie sich an den Support.",
+    "director-suggestion": "Ihre eID könnte mit {{name}} übereinstimmen.",
     "directors": "Geschäftsführung",
     "expand-button": "Erweitern",
     "header": "Identität bestätigen",
@@ -239,9 +241,11 @@
   },
   "download": {
     "action": {"download": "Herunterladen", "retry": "Erneut versuchen"}, "active-links": "aktive Archive", "create": "Archiv erstellen", "creating": "Wird erstellt…",
-    "description": "Erstellen Sie eine ZIP-Datei mit endgültigen Rechnungen und Gutschriften. Beide Daten sind eingeschlossen.", "empty": "Es wurden noch keine Archive erstellt.", "from-date": "Von", "generation-failed": "Archiverstellung fehlgeschlagen", "loading": "Archive werden geladen…",
+    "description": "Erstellen Sie eine ZIP-Datei mit endgültigen Rechnungen und Gutschriften. Beide Daten sind eingeschlossen.", "empty": "Es wurden noch keine Archive erstellt.", "from-date": "Von", "generation-failed": "Archiverstellung fehlgeschlagen",
+    "info": {"download-limit": "Die ZIP-Datei wird nach 3 Downloads gelöscht.", "expiration": "Der Download-Link läuft nach 7 Tagen ab und wird gelöscht."},
+    "loading": "Archive werden geladen…",
     "status": {"FAILED": "Fehlgeschlagen", "PENDING": "Ausstehend", "PROCESSING": "In Bearbeitung", "READY": "Bereit"},
-    "table": {"actions": "Aktionen", "completed": "Fertiggestellt", "created": "Erstellt", "downloads": "Downloads", "expires": "Läuft ab", "file": "Datei", "period": "Zeitraum", "status": "Status"},
+    "table": {"actions": "Aktionen", "completed": "Fertiggestellt", "created": "Erstellt", "downloads": "Downloads", "expires": "Läuft ab", "file": "Datei", "period": "Zeitraum", "size": "Größe (MB)", "status": "Status"},
     "title": "UBL-Downloads", "to-date": "Bis",
     "validation": {"limit": "Löschen Sie ein Archiv, bevor Sie ein neues erstellen.", "order": "Das Von-Datum darf nicht nach dem Bis-Datum liegen.", "required": "Beide Daten sind erforderlich.", "same-year": "Beide Daten müssen im selben Jahr liegen."}
   },
@@ -376,7 +380,11 @@
       "due-date": "Fälligkeitsdatum",
       "issue-date": "Ausstellungsdatum",
       "payment-terms": "Zahlungsbedingungen",
-      "title": "Datum"
+      "title": "Datum",
+      "validation": {
+        "due-before-issue": "Das Fälligkeitsdatum darf nicht vor dem Ausstellungsdatum liegen.",
+        "due-in-past": "Das Fälligkeitsdatum darf nicht in der Vergangenheit liegen."
+      }
     },
     "deliveryModal": {
       "corner1-id": "Corner 1-ID",
@@ -700,19 +708,20 @@
     "validating": "Dokument wird validiert, bitte warten"
   },
   "ownershipAdd": {
-    "account-info-body": "Dieses Unternehmen wird dem oben angezeigten bestehenden Konto hinzugefügt. Das Passwort für dieses Konto bleibt unverändert.",
-    "account-info-title": "2. Konto bestätigen",
-    "action": "Konto hinzufügen",
+    "account-info-body": "Dieses Unternehmen wird Ihrem bestehenden Konto hinzugefügt. Ihr Passwort bleibt unverändert.",
+    "account-info-title": "2. E-Mail-Adresse bestätigen",
+    "action": "Unternehmen hinzufügen",
     "back-dashboard": "Zurück zum Dashboard",
     "cancel": "Zurück zum Dashboard",
     "company-has-admin": "Dieses Unternehmen hat bereits ein Admin-Konto. Der aktuelle Ablauf unterstützt nur Unternehmen ohne bestehenden Admin.",
-    "intro": "Fügen Sie ein weiteres Konto für ein Unternehmen hinzu, indem Sie als einer seiner Direktoren unterschreiben.",
+    "intro": "Fügen Sie Ihrem Konto ein weiteres Unternehmen hinzu, indem Sie als Mitglied der Geschäftsführung unterschreiben.",
     "lookup": "Unternehmen suchen",
-    "read-contract-info": "Sie erhalten eine unterschriebene Kopie, sobald dieses Konto hinzugefügt wurde.",
-    "sign-button": "Konto hinzufügen",
-    "success-body": "Der unterschriebene Vertrag wurde heruntergeladen und das neue Unternehmen ist jetzt in Ihrer Konto-Auswahl verfügbar.",
-    "success-title": "Konto hinzugefügt",
-    "title": "Konto hinzufügen"
+    "read-contract-info": "Sie erhalten eine unterschriebene Kopie, sobald dieses Unternehmen hinzugefügt wurde.",
+    "sign-button": "Unternehmen hinzufügen",
+    "success-body": "Der unterschriebene Vertrag wurde heruntergeladen. Sie können das neue Unternehmen jetzt oben auswählen.",
+    "success-title": "Unternehmen hinzugefügt",
+    "title": "Unternehmen hinzufügen",
+    "tooltip": "Fügen Sie Ihrem Konto ein weiteres Unternehmen hinzu, indem Sie als Mitglied der Geschäftsführung mit Ihrer eID unterschreiben."
   },
   "partner": {
     "all": "Alle",
@@ -779,10 +788,23 @@
     "upper": "Mindestens 1 Großbuchstabe"
   },
   "paymentTerms": {
-    "15_DAYS": "15 Tage",
-    "30_DAYS": "30 Tage",
-    "60_DAYS": "60 Tage",
-    "END_OF_NEXT_MONTH": "Ende des Monats"
+    "basis": {
+      "END_OF_MONTH": "nach Monatsende",
+      "END_OF_NEXT_MONTH": "nach Ende des Folgemonats",
+      "INVOICE_DATE": "nach Rechnungsdatum"
+    },
+    "basis-label": "Gezählt ab",
+    "days-label": "Tage",
+    "end-of-month": "Monatsende",
+    "end-of-month-days_one": "{{days}} Tag nach Monatsende",
+    "end-of-month-days_other": "{{days}} Tage nach Monatsende",
+    "end-of-next-month": "Ende des Folgemonats",
+    "end-of-next-month-days_one": "{{days}} Tag nach Ende des Folgemonats",
+    "end-of-next-month-days_other": "{{days}} Tage nach Ende des Folgemonats",
+    "net_one": "{{days}} Tag",
+    "net_other": "{{days}} Tage",
+    "on-receipt": "Zahlbar bei Erhalt",
+    "partner-hint": "Leer lassen, um Ihre eigenen Zahlungsbedingungen zu verwenden."
   },
   "placeholder": {
     "customer-search": "Suche nach Name oder USt-IdNr.",

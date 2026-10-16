@@ -13,6 +13,8 @@ import org.letspeppol.kyc.service.PasskeyService;
 import org.letspeppol.kyc.service.jwt.JwtClaimExtractor;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.FactorGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
@@ -89,6 +91,9 @@ class PasskeyControllerBrowserAuthTest {
                 HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
         assertThat(sessionContext).isNotNull();
         assertThat(sessionContext.getAuthentication().isAuthenticated()).isTrue();
+        assertThat(sessionContext.getAuthentication().getAuthorities())
+                .extracting(GrantedAuthority::getAuthority)
+                .containsExactly(FactorGrantedAuthority.WEBAUTHN_AUTHORITY);
     }
 
     private PasskeyAuthenticationResponse credential() {

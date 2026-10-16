@@ -13,9 +13,9 @@
             </div>
         </div>
     </div>
-    <div class="total-display" if.bind="hasTaxInclusiveAmount() || showPrepaidAmount() || showPayableAmount()">
-        <span if.bind="hasTaxInclusiveAmount()" t="invoice.edit.total">Total</span>
-        <strong if.bind="hasTaxInclusiveAmount()">${invoiceContext.selectedInvoice.LegalMonetaryTotal.TaxInclusiveAmount.value.toFixed(2) | price:item.currency}</strong>
+    <div class="total-display">
+        <span t="invoice.edit.total">Total</span>
+        <strong>${totalAmount(invoiceContext.selectedInvoice.LegalMonetaryTotal.TaxInclusiveAmount?.value, invoiceContext.selectedInvoice.LegalMonetaryTotal.PayableAmount?.value).toFixed(2) | price:item.currency}</strong>
         <span if.bind="showPrepaidAmount()" t="invoice.edit.prepaid-amount">Prepaid amount</span>
         <b if.bind="showPrepaidAmount()">${invoiceContext.selectedInvoice.LegalMonetaryTotal.PrepaidAmount.value.toFixed(2) | price:item.currency}</b>
         <span if.bind="showPayableAmount()" t="invoice.edit.payable-amount">Payable amount</span>

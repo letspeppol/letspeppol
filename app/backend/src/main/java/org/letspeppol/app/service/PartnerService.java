@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,7 +28,7 @@ public class PartnerService {
     public List<PartnerDto> search(String ownerPeppolId, String peppolId) {
         return partnerRepository.search(ownerPeppolId, peppolId).stream()
                 .map(PartnerMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public List<PartnerDto> findByPeppolId(String peppolId) {

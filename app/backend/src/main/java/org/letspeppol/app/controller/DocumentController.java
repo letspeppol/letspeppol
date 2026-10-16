@@ -103,7 +103,7 @@ public class DocumentController {
 
     private void rejectIfUblTooLarge(String ublXml) {
         if (ublXml != null && ublXml.getBytes(StandardCharsets.UTF_8).length > MAX_UBL_BYTES) {
-            throw new ResponseStatusException(HttpStatus.PAYLOAD_TOO_LARGE, "UBL XML exceeds the maximum allowed size");
+            throw new ResponseStatusException(HttpStatus.CONTENT_TOO_LARGE, "UBL XML exceeds the maximum allowed size");
         }
     }
 
@@ -213,7 +213,7 @@ public class DocumentController {
                                          @RequestParam(required = false, defaultValue = "FINAL") UblInvoicePdfService.RenderMode mode) { // Will be used later for proforma
         String peppolId = JwtUtil.getPeppolId(jwt);
         DocumentDto doc = documentService.findById(peppolId, id);
-        UblInvoicePdfService.RenderMode renderMode = doc.scheduledOn() == null ? UblInvoicePdfService.RenderMode.DRAFT : UblInvoicePdfService.RenderMode.FINAL;
+        UblInvoicePdfService.RenderMode renderMode = doc.draftedOn() != null ? UblInvoicePdfService.RenderMode.DRAFT : UblInvoicePdfService.RenderMode.FINAL;
         byte[] pdf = ublInvoicePdfService.toPdf(doc.ubl(), renderMode);
 
         return ResponseEntity.ok()

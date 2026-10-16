@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -40,7 +39,7 @@ public class CompanyService {
     public List<CompanySearchResponse> search(String identifier, String vatNumber, String peppolId, String name) {
         return companyRepository.search(identifier, vatNumber, peppolId, name != null ? name.toLowerCase(Locale.ROOT) + "%" : null, Pageable.ofSize(5)).stream()
                 .map(CompanyMapper::toSearchResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public Company getByPeppolId(String peppolId) {

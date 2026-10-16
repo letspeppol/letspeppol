@@ -5,12 +5,16 @@ export interface FeatureMetadata {
 }
 
 export const FEATURE_REGISTRY: Readonly<Record<string, FeatureMetadata>> = {
-    'account-notifications': { section: 'account',  expiresAt: '2026-10-26' },
-    'vat-display':           { section: 'account',  expiresAt: '2026-11-26' },
-    'passkeys':              { section: 'account',  expiresAt: '2026-12-26' },
-    'totp':                  { section: 'account',  expiresAt: '2026-12-26' },
-    'donation-bar': { expiresAt: '2026-10-26', preservePosition: true },
-    'payment-state-action': { section: 'invoice', expiresAt: '2026-10-26' },
+    'account-notifications':            { section: 'account',  expiresAt: '2026-10-01' },
+    'account-notifications-outgoing':   { section: 'account',  expiresAt: '2026-12-01' },
+    'vat-display':                      { section: 'account',  expiresAt: '2026-11-01' },
+    'passkeys':                         { section: 'account',  expiresAt: '2026-12-01' },
+    'totp':                             { section: 'account',  expiresAt: '2026-12-01' },
+    'download-form':                    { section: 'downloads', expiresAt: '2026-12-01' },
+    'donation-bar':                     { expiresAt: '2026-10-01', preservePosition: true },
+    'add-account':                     { expiresAt: '2026-12-01' },
+    'payment-state-action':             { section: 'invoices', expiresAt: '2026-10-01' },
+    'allowance-charge':                 { section: 'invoices', expiresAt: '2026-12-01' },
 };
 
 export function getFeature(id: string): FeatureMetadata | undefined {
