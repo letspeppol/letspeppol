@@ -397,6 +397,7 @@
       "corner1-id": "ID Corner 1",
       "corner2-id": "ID Corner 2",
       "corner3-id": "ID Corner 3",
+      "delivered": "Livré",
       "error-stamp-label": "Cachet d'erreur de livraison",
       "from": "de",
       "invoice-number": "Numéro de facture",

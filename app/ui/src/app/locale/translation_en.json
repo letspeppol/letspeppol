@@ -399,6 +399,7 @@
       "corner1-id": "Corner 1 ID",
       "corner2-id": "Corner 2 ID",
       "corner3-id": "Corner 3 ID",
+      "delivered": "Delivered",
       "error-stamp-label": "Delivery error stamp",
       "from": "from",
       "invoice-number": "Invoice Number",

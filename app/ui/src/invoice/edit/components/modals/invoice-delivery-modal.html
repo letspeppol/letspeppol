@@ -24,9 +24,10 @@
                     </div>
                 </div>
 
-                <div class="delivery-stamp-marks" if.bind="hasPartnerPeppolAccessPoint || hasProcessedStatus">
-                    <div class="delivery-stamp-mark" if.bind="hasPartnerPeppolAccessPoint" aria-label="Delivery stamp" t="[aria-label]invoice.deliveryModal.stamp-label">
-                        <span class="delivery-stamp-body">${details.partnerPeppolAccessPoint}</span>
+                <div class="delivery-stamp-marks" if.bind="hasDeliveryStamp || hasProcessedStatus">
+                    <div class="delivery-stamp-mark" if.bind="hasDeliveryStamp" aria-label="Delivery stamp" t="[aria-label]invoice.deliveryModal.stamp-label">
+                        <span class="delivery-stamp-body" if.bind="details.partnerPeppolAccessPoint">${details.partnerPeppolAccessPoint}</span>
+                        <span class="delivery-stamp-body" else t="invoice.deliveryModal.delivered">Delivered</span>
                         <span class="delivery-stamp-date">${partnerMessageOnLabel}</span>
                     </div>
                     <div class="delivery-stamp-mark error" if.bind="hasProcessedStatus" aria-label="Delivery error stamp" t="[aria-label]invoice.deliveryModal.error-stamp-label">

@@ -13,8 +13,8 @@ export class InvoiceDeliveryModal {
         this.open = false;
     }
 
-    get hasPartnerPeppolAccessPoint(): boolean {
-        return this.details?.partnerPeppolAccessPoint != null;
+    get hasDeliveryStamp(): boolean {
+        return Boolean(this.details?.partnerPeppolAccessPoint || this.details?.partnerPeppolMessageId);
     }
 
     get hasProcessedStatus(): boolean {
