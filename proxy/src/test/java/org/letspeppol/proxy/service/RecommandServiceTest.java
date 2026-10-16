@@ -141,8 +141,28 @@ class RecommandServiceTest {
 
     @Test
     void requiresASignedContractBeforeCreatingACompany() {
+        assertThatThrownBy(() -> service.validateRegistration("0208:0685912734", new RegistrationRequest("Example BV", "EN", "BE")))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("signed PDF contract");
         assertThatThrownBy(() -> service.register("0208:0685912734", new RegistrationRequest("Example BV", "EN", "BE")))
                 .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("signed PDF contract");
+        assertThat(requests).isEmpty();
+        assertThat(registerCounter.count()).isZero();
+    }
+
+    @Test
+    void validatesRegistrationRequirementsWithoutRemoteChanges() {
+        service.validateRegistration("0208:0685912734", registrationWithContract());
+
+        assertThatThrownBy(() -> service.validateRegistration("invalid-id", registrationWithContract()))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("Peppol ID");
+        for (var data : List.of(
+                new RegistrationRequest("", "EN", "BE", null, null, null, null, SIGNED_CONTRACT),
+                new RegistrationRequest("Example", "EN", "", null, null, null, null, SIGNED_CONTRACT))) {
+            assertThatThrownBy(() -> service.validateRegistration("0208:0685912734", data))
+                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> service.register("0208:0685912734", data))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
         assertThat(requests).isEmpty();
         assertThat(registerCounter.count()).isZero();
     }

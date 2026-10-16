@@ -178,7 +178,7 @@ services:
       - "traefik.http.middlewares.green-api-limit.ratelimit.sourceCriterion.ipStrategy.depth=1"
 
       # Public router
-      - "traefik.http.routers.green.rule=Host(`${ACTIVE_DOMAIN_GREEN:?ACTIVE_DOMAIN_GREEN must be set}`)"
+      - "traefik.http.routers.green.rule=Host(`${ACTIVE_DOMAIN_GREEN:?ACTIVE_DOMAIN_GREEN must be set}`) && !(PathPrefix(`/proxy/lapi/`) || PathPrefix(`/app/lapi/`) || PathPrefix(`/kyc/lapi/`))"
       - "traefik.http.routers.green.entrypoints=websecure"
       - "traefik.http.routers.green.service=green-ui"
       - "traefik.http.routers.green.tls.certresolver=${CERT_RESOLVER_GREEN:?CERT_RESOLVER_GREEN must be set}"

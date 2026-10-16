@@ -10,6 +10,9 @@ public interface AccessPointServiceInterface {
 
     AccessPoint getType();
 
+    /** Check registration requirements without remote changes, including requirements for restoring a registration. */
+    void validateRegistration(String peppolId, RegistrationRequest data);
+
     Map<String, Object> register(String peppolId, RegistrationRequest data);
 
     void unregister(String peppolId, Map<String, Object> variables);

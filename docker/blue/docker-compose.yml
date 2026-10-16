@@ -178,7 +178,7 @@ services:
       - "traefik.http.middlewares.blue-api-limit.ratelimit.sourceCriterion.ipStrategy.depth=1"
 
       # Public router
-      - "traefik.http.routers.blue.rule=Host(`${ACTIVE_DOMAIN_BLUE:?ACTIVE_DOMAIN_BLUE must be set}`)"
+      - "traefik.http.routers.blue.rule=Host(`${ACTIVE_DOMAIN_BLUE:?ACTIVE_DOMAIN_BLUE must be set}`) && !(PathPrefix(`/proxy/lapi/`) || PathPrefix(`/app/lapi/`) || PathPrefix(`/kyc/lapi/`))"
       - "traefik.http.routers.blue.entrypoints=websecure"
       - "traefik.http.routers.blue.service=blue-ui"
       - "traefik.http.routers.blue.tls.certresolver=${CERT_RESOLVER_BLUE:?CERT_RESOLVER_BLUE must be set}"

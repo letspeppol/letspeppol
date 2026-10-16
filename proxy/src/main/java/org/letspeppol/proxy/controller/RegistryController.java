@@ -31,7 +31,7 @@ public class RegistryController {
     private final AppLinkService appLinkService;
     private final RegistryService registryService;
 
-    @Value("${proxy.access-point:RECOMMAND}")
+    @Value("${proxy.access-point}")
     private AccessPoint accessPoint;
 
     @GetMapping()

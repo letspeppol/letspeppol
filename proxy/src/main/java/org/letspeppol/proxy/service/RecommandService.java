@@ -65,23 +65,31 @@ public class RecommandService implements AccessPointServiceInterface {
         return AccessPoint.RECOMMAND;
     }
 
+    @Override
+    public void validateRegistration(String peppolId, RegistrationRequest data) {
+        parsePeppolId(peppolId);
+        Objects.requireNonNull(data, "Registration data must not be null");
+        if (data.signedContract() == null || data.signedContract().length == 0) {
+            throw new IllegalArgumentException("A signed PDF contract is required for Recommand registration");
+        }
+        requireText(data.name(), "Company name");
+        requireText(data.country(), "Company country");
+    }
+
     /// Recommand API: POST /api/v1/companies
     @Override
     public Map<String, Object> register(String peppolId, RegistrationRequest data) {
+        validateRegistration(peppolId, data);
         PeppolIdentifier identifier = parsePeppolId(peppolId);
-        Objects.requireNonNull(data, "Registration data must not be null");
         byte[] signedContract = data.signedContract();
-        if (signedContract == null || signedContract.length == 0) {
-            throw new IllegalArgumentException("A signed PDF contract is required for Recommand registration");
-        }
         String operation = "create company";
         try {
             CreateCompanyRequest request = new CreateCompanyRequest(
-                    requireText(data.name(), "Company name"),
+                    data.name(),
                     emptyIfNull(data.address()),
                     emptyIfNull(data.postalCode()),
                     emptyIfNull(data.city()),
-                    requireText(data.country(), "Company country").toUpperCase(Locale.ROOT),
+                    data.country().toUpperCase(Locale.ROOT),
                     identifier.scheme(),
                     identifier.value(),
                     data.vatNumber(),
