@@ -13,6 +13,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.HtmlUtils;
+import org.springframework.web.util.UriUtils;
 
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
@@ -80,7 +81,8 @@ public class NotificationService {
                     .replace("{{supplier}}", document.getPartnerName())
                     .replace("{{reference}}", document.getInvoiceReference())
                     .replace("{{totalAmount}}", totalAmount)
-                    .replace("{{uuid}}", document.getId().toString());
+                    .replace("{{uuid}}", document.getId().toString())
+                    .replace("{{peppolId}}", peppolIdPathSegment(company));
 
             String html = null;
             if (sponsor != null) {
@@ -97,6 +99,7 @@ public class NotificationService {
                         .replace("{{reference}}", referenceHtml)
                         .replace("{{totalAmount}}", totalAmount)
                         .replace("{{uuid}}", document.getId().toString())
+                        .replace("{{peppolId}}", peppolIdPathSegment(company))
                         .replace("{{supportedByText}}", sponsorProperties.getEmailText())
                         .replace("{{sponsorName}}", sponsor.getName())
                         .replace("{{sponsorUrl}}", sponsor.getUrl())
@@ -142,7 +145,8 @@ public class NotificationService {
             String text = getTemplateContents("en-outgoing-txt", emailOutgoingNotificationTemplate)
                     .replace("{{recipient}}", recipient)
                     .replace("{{reference}}", reference)
-                    .replace("{{uuid}}", document.getId().toString());
+                    .replace("{{uuid}}", document.getId().toString())
+                    .replace("{{peppolId}}", peppolIdPathSegment(company));
 
             String html = null;
             if (sponsor != null) {
@@ -156,6 +160,7 @@ public class NotificationService {
                         .replace("{{recipient}}", HtmlUtils.htmlEscape(recipient))
                         .replace("{{reference}}", HtmlUtils.htmlEscape(reference))
                         .replace("{{uuid}}", document.getId().toString())
+                        .replace("{{peppolId}}", peppolIdPathSegment(company))
                         .replace("{{supportedByText}}", sponsorProperties.getEmailText())
                         .replace("{{sponsorName}}", sponsor.getName())
                         .replace("{{sponsorUrl}}", sponsor.getUrl())
@@ -202,7 +207,8 @@ public class NotificationService {
             String errorMessage = Objects.toString(document.getProcessedStatus(), "");
 
             String text = getTemplateContents("en-error-txt", emailErrorTemplate)
-                    .replace("{{uuid}}", document.getId().toString());
+                    .replace("{{uuid}}", document.getId().toString())
+                    .replace("{{peppolId}}", peppolIdPathSegment(company));
 
             String html = null;
             if (sponsor != null) {
@@ -214,6 +220,7 @@ public class NotificationService {
 
                 html = getTemplateContents("en-error-html", emailErrorHtmlTemplate)
                         .replace("{{uuid}}", document.getId().toString())
+                        .replace("{{peppolId}}", peppolIdPathSegment(company))
                         .replace("{{supportedByText}}", sponsorProperties.getEmailText())
                         .replace("{{sponsorName}}", sponsor.getName())
                         .replace("{{sponsorUrl}}", sponsor.getUrl())
@@ -259,6 +266,10 @@ public class NotificationService {
                 .replace("{{partner}}", escape ? HtmlUtils.htmlEscape(partner) : partner)
                 .replace("{{reference}}", escape ? HtmlUtils.htmlEscape(reference) : reference)
                 .replace("{{errorMessage}}", escape ? HtmlUtils.htmlEscape(errorMessage) : errorMessage);
+    }
+
+    private String peppolIdPathSegment(Company company) {
+        return UriUtils.encodePathSegment(company.getPeppolId(), StandardCharsets.UTF_8);
     }
 
     private SponsorProperties.Sponsor nextSponsor() {
