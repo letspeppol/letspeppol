@@ -58,6 +58,7 @@ export class InvoiceCustomerModal {
         this.saveAsPartner = false;
         this.open = true;
         this.customerSearch.resetSearch();
+        void this.customerSearch.getPartners();
         this.customerSearch.focusInput();
         this.customerSavedFunction = customerSavedFunction;
     }
@@ -139,9 +140,13 @@ export class InvoiceCustomerModal {
         }
         this.customer = this.toParty(c, scheme, identifier);
         if (c.paymentTerms) {
-            this.invoiceContext.selectedInvoice.PaymentTerms = {
+            const invoice = this.invoiceContext.selectedInvoice;
+            invoice.PaymentTerms = {
                 Note: this.invoiceComposer.translatePaymentTerm(c.paymentTerms)
             };
+            if (invoice.DueDate) {
+                invoice.DueDate = this.invoiceComposer.getDueDate(c.paymentTerms, invoice.IssueDate);
+            }
         }
     }
 

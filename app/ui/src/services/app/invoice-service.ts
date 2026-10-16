@@ -28,6 +28,8 @@ export interface DocumentQuery {
     partnerPeppolId?: string;
     invoiceReference?: string;
     paid?: boolean;
+    overdue?: boolean;
+    errored?: boolean;
     read?: boolean;
     draft?: boolean;
     pageable: Pageable;
@@ -128,6 +130,8 @@ export class InvoiceService {
         if (query.partnerPeppolId) search.append("partnerPeppolId", query.partnerPeppolId);
         if (query.invoiceReference) search.append("invoiceReference", query.invoiceReference);
         if (query.paid !== undefined) search.append("paid", String(query.paid));
+        if (query.overdue !== undefined) search.append("overdue", String(query.overdue));
+        if (query.errored !== undefined) search.append("errored", String(query.errored));
         if (query.read !== undefined) search.append("read", String(query.read));
         if (query.draft !== undefined) search.append("draft", String(query.draft));
 

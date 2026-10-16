@@ -1,4 +1,4 @@
-import {describe, expect, test} from 'vitest';
+import {afterEach, beforeEach, describe, expect, test, vi} from 'vitest';
 import {isInvoiceValid, isPaymentInfoComplete} from '../../src/invoice/edit/invoice-validation';
 import type {CreditNote, Invoice, UBLLine} from '../../src/services/peppol/ubl';
 
@@ -24,7 +24,46 @@ function valid(invoice = createInvoice(), lines: UBLLine[] = []): boolean {
     return isInvoiceValid(invoice, lines, true);
 }
 
+beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 8, 6, 12));
+});
+
+afterEach(() => {
+    vi.useRealTimers();
+});
+
 describe('invoice send validation', () => {
+    test('rejects a due date in the past', () => {
+        const invoice = createInvoice();
+        invoice.IssueDate = '2026-08-01';
+
+        invoice.DueDate = '2026-09-05';
+        expect(valid(invoice)).toBe(false);
+
+        invoice.DueDate = '2026-09-06';
+        expect(valid(invoice)).toBe(true);
+    });
+
+    test('rejects a due date before the issue date', () => {
+        const invoice = createInvoice();
+        invoice.IssueDate = '2026-09-20';
+
+        invoice.DueDate = '2026-09-19';
+        expect(valid(invoice)).toBe(false);
+
+        invoice.DueDate = '2026-09-20';
+        expect(valid(invoice)).toBe(true);
+    });
+
+    test('does not hold a credit note to the due date bounds', () => {
+        const creditNote = createInvoice() as CreditNote;
+        creditNote.CreditNoteTypeCode = 381;
+        creditNote.DueDate = '2026-08-01';
+
+        expect(valid(creditNote)).toBe(true);
+    });
+
     test('accepts either a buyer reference or an order reference', () => {
         const orderReferenceInvoice = createInvoice();
         orderReferenceInvoice.BuyerReference = undefined;

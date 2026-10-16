@@ -4,7 +4,7 @@ import {CompanyService} from "../services/app/company-service";
 import {InvoiceComposer} from "./invoice-composer";
 import {InvoiceCalculator} from "./invoice-calculator";
 import {AlertType} from "../components/alert/alert";
-import {DocumentDirection, DocumentDto, DocumentPageDto, DocumentType} from "../services/app/invoice-service";
+import {DocumentDirection, DocumentDto, DocumentPageDto, DocumentType, InvoiceService} from "../services/app/invoice-service";
 import {parseCreditNote, parseInvoice} from "../services/peppol/ubl-parser";
 import {PartnerDto, PartnerService} from "../services/app/partner-service";
 import {resolve} from "@aurelia/kernel";
@@ -15,6 +15,7 @@ export class InvoiceContext {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
     private readonly companyService = resolve(CompanyService);
     private readonly partnerService = resolve(PartnerService);
+    private readonly invoiceService = resolve(InvoiceService);
     private readonly invoiceComposer = resolve(InvoiceComposer);
     private readonly invoiceCalculator = resolve(InvoiceCalculator);
     private readonly i18n = resolve(I18N);
@@ -36,12 +37,14 @@ export class InvoiceContext {
     loadingDrafts = false;
     // Current invoice
     lines : undefined | InvoiceLine[] | CreditNoteLine[];
-    @observable selectedInvoice:  undefined | Invoice | CreditNote;
+    @observable selectedInvoice:  undefined | Invoice | CreditNote = undefined;
     selectedDocument: DocumentDto;
     selectedRouteId: string = undefined;
     selectedDocumentType: DocumentType = DocumentType.INVOICE;
     lastReference: string = undefined;
     nextReference: string = undefined;
+    referenceRequest: Promise<void> = Promise.resolve();
+    private referenceToken = 0;
     readOnly: boolean = false;
     partnerMissing: boolean = false;
     addPdfToSendingInvoice: boolean = false;
@@ -68,13 +71,19 @@ export class InvoiceContext {
         this.clearSelectedInvoice();
         this.draftPage = this.createEmptyPage();
         this.invoicePage = this.createEmptyPage();
+        this.activeBox = 'ALL';
         this.loadingInvoices = false;
         this.loadingDrafts = false;
         this.lines = undefined;
-        this.lastInvoiceReference = undefined;
-        this.nextInvoiceReference = undefined;
+        this.selectedRouteId = undefined;
+        this.selectedDocumentType = DocumentType.INVOICE;
+        this.referenceToken++;
+        this.referenceRequest = Promise.resolve();
+        this.lastReference = undefined;
+        this.nextReference = undefined;
         this.readOnly = false;
         this.partnerMissing = false;
+        this.addPdfToSendingInvoice = false;
     }
 
     selectedInvoiceChanged(newValue: UBLDoc) {
@@ -90,15 +99,15 @@ export class InvoiceContext {
     selectInvoice(item: DocumentDto) {
         this.readOnly = (item.direction === DocumentDirection.INCOMING || item.proxyOn != null || item.createdExternally);
         this.selectedDocument = item;
-        if (item.draftedOn) {
-            this.getLastInvoiceReference();
-        }
         if (item.type === DocumentType.CREDIT_NOTE) {
             this.selectedDocumentType = DocumentType.CREDIT_NOTE;
             this.selectedInvoice = parseCreditNote(item.ubl);
         } else {
             this.selectedDocumentType = DocumentType.INVOICE;
             this.selectedInvoice = parseInvoice(item.ubl);
+        }
+        if (item.draftedOn) {
+            this.getLastInvoiceReference();
         }
         if (this.readOnly) {
             this.partnerMissing = true;
@@ -119,6 +128,7 @@ export class InvoiceContext {
     }
 
     newUBLDocument(documentType : DocumentType = DocumentType.INVOICE) {
+        this.selectedDocumentType = documentType;
         if (documentType === DocumentType.INVOICE) {
             this.selectedInvoice = this.invoiceComposer.createInvoice();
         } else {
@@ -126,6 +136,26 @@ export class InvoiceContext {
         }
         this.invoiceCalculator.calculateTaxAndTotals(this.selectedInvoice);
         this.readOnly = false;
+    }
+
+    newCreditNoteFromInvoice(invoice: Invoice) {
+        this.selectedDocument = undefined;
+        this.selectedDocumentType = DocumentType.CREDIT_NOTE;
+        this.readOnly = false;
+        this.partnerMissing = false;
+        this.selectedInvoice = this.invoiceComposer.creditNoteFromInvoice(invoice);
+        this.invoiceCalculator.calculateTaxAndTotals(this.selectedInvoice);
+        this.getLastInvoiceReference();
+    }
+
+    duplicateDocument(source: UBLDoc, documentType: DocumentType) {
+        this.selectedDocument = undefined;
+        this.selectedDocumentType = documentType;
+        this.readOnly = false;
+        this.partnerMissing = false;
+        this.selectedInvoice = this.invoiceComposer.duplicate(source, documentType);
+        this.invoiceCalculator.calculateTaxAndTotals(this.selectedInvoice);
+        this.getLastInvoiceReference();
     }
 
     getNextPosition(): string {
@@ -138,18 +168,27 @@ export class InvoiceContext {
         return "1";
     }
 
-    getLastInvoiceReference() {
-        this.companyService.getAndSetMyCompanyForToken().then(company => {
-            if (this.selectedDocumentType === DocumentType.CREDIT_NOTE) {
-                this.lastReference = company.lastCreditNoteReference;
-            } else {
-                this.lastReference = company.lastInvoiceReference;
+    getLastInvoiceReference(): Promise<void> {
+        const token = ++this.referenceToken;
+        const documentType = this.selectedDocumentType;
+        this.lastReference = undefined;
+        this.nextReference = undefined;
+        this.referenceRequest = this.companyService.getAndSetMyCompanyForToken().then(company => {
+            if (token !== this.referenceToken) {
+                return;
             }
-            this.nextReference = this.computeNextInvoiceReference(this.selectedDocumentType, this.lastReference);
+            this.lastReference = documentType === DocumentType.CREDIT_NOTE
+                ? company.lastCreditNoteReference
+                : company.lastInvoiceReference;
+            this.nextReference = this.computeNextInvoiceReference(documentType, this.lastReference);
         }).catch(() => {
+            if (token !== this.referenceToken) {
+                return;
+            }
             this.lastReference = undefined;
             this.nextReference = undefined;
         });
+        return this.referenceRequest;
     }
 
     private computeNextInvoiceReference(documentType: DocumentType, lastRef?: string): string {
@@ -189,6 +228,38 @@ export class InvoiceContext {
                 countryCode: party?.PostalAddress?.Country.IdentificationCode
             }
         } as PartnerDto;
+    }
+
+    // Acknowledge an errored invoice: it stays visible (greyed out) but leaves the errored counter and offers no further action.
+    async markErrorSeen(document: DocumentDto) {
+        try {
+            const updated = await this.invoiceService.markErrorSeenDocument(document.id);
+            document.errorSeenOn = updated.errorSeenOn;
+            this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.invoice.marked-seen')});
+        } catch {
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.invoice.mark-seen-failed')});
+        }
+    }
+
+    // Reuse the errored invoice's content as a new editable draft so the user can correct it and resend with the same number
+    // (the uniqueness check ignores errored documents, so the number is free to reuse).
+    async createDraftFromErrored(document: DocumentDto): Promise<DocumentDto | undefined> {
+        try {
+            const ubl = document.ubl ?? (await this.invoiceService.getDocument(document.id)).ubl;
+            if (!ubl) {
+                this.ea.publish('alert', {alertType: AlertType.Warning, text: this.i18n.tr('alert.invoice.no-ubl-data')});
+                return undefined;
+            }
+            const draft = await this.invoiceService.createDocument(ubl, true, false);
+            this.draftPage?.content.unshift(draft);
+            if (this.draftPage) {
+                this.draftPage.totalElements++;
+            }
+            return draft;
+        } catch {
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr(`alert.invoice.resend-failed.${document.type}`)});
+            return undefined;
+        }
     }
 
     // Drafts

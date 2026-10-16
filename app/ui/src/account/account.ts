@@ -26,7 +26,6 @@ export class Account {
     private readonly i18n = resolve(I18N);
     private readonly vatDisplay = resolve(IVatDisplay);
     private company: CompanyDto;
-    public static PAYMENT_TERMS = ['15_DAYS', '30_DAYS', '60_DAYS', 'END_OF_NEXT_MONTH'];
     private alreadyPeppolActivated = false;
     changePasswordModal: ChangePasswordModal;
     private warningKey;
@@ -232,10 +231,6 @@ export class Account {
 
     showChangePasswordModal() {
         this.changePasswordModal.showChangePasswordModal();
-    }
-
-    getPaymentTerms() {
-        return Account.PAYMENT_TERMS;
     }
 
     async downloadContract() {

@@ -99,6 +99,10 @@
         "CREDIT_NOTE": "Creditnotaconcept opgeslagen",
         "INVOICE": "Factuurconcept opgeslagen"
       },
+      "duplicate-failed": {
+        "CREDIT_NOTE": "Dupliceren van de creditnota mislukt",
+        "INVOICE": "Dupliceren van de factuur mislukt"
+      },
       "load-failed": "Factuur ophalen mislukt",
       "mark-seen-failed": "Markeren van factuur als gezien mislukt",
       "marked-paid": {
@@ -173,6 +177,7 @@
     },
     "success": "Succes",
     "upload": {
+      "not-ubl": "Dit bestand is geen UBL-factuur of -creditnota",
       "size-too-large": "Som van alle bestandsgroottes mag niet meer dan 10 MB zijn",
       "type-unsupported": "Bestandstype niet ondersteund",
       "upload-error": "Fout bij uploaden van bestand"
@@ -325,6 +330,11 @@
   },
   "invoice": {
     "action": {
+      "credit-this-invoice": "Een creditnota voor deze factuur aanmaken",
+      "duplicate": {
+        "CREDIT_NOTE": "Creditnota dupliceren",
+        "INVOICE": "Factuur dupliceren"
+      },
       "mark-paid": {
         "CREDIT_NOTE": "Creditnota markeren als betaald",
         "INVOICE": "Factuur markeren als betaald"
@@ -377,7 +387,11 @@
       "due-date": "Vervaldatum",
       "issue-date": "Uitgiftedatum",
       "payment-terms": "Betalingsvoorwaarden",
-      "title": "Datum"
+      "title": "Datum",
+      "validation": {
+        "due-before-issue": "De vervaldatum mag niet vóór de uitgiftedatum liggen.",
+        "due-in-past": "De vervaldatum mag niet in het verleden liggen."
+      }
     },
     "deliveryModal": {
       "corner1-id": "Corner 1-ID",
@@ -401,8 +415,13 @@
       "cancel": "Annuleren",
       "delete-draft": "Concept verwijderen",
       "delivery": "Leveringsbewijs",
+      "delivery-error": {
+        "CREDIT_NOTE": "Deze creditnota kon niet worden afgeleverd",
+        "INVOICE": "Deze factuur kon niet worden afgeleverd"
+      },
       "download-pdf": "PDF",
       "download-ubl": "UBL",
+      "duplicate": "Dupliceren",
       "invoice-lines": "Factuurlijnen",
       "loading": "Laden",
       "method": "Methode",
@@ -430,6 +449,13 @@
       "apply": "Toepassen",
       "clear": "Wissen",
       "from": "Van",
+      "status": {
+        "all": "Alle statussen",
+        "error": "Fout",
+        "overdue": "Vervallen",
+        "paid": "Betaald",
+        "unpaid": "Niet betaald"
+      },
       "to": "Tot"
     },
     "incoming": "Inkomend",
@@ -518,6 +544,11 @@
       "vat": "BTW"
     },
     "title": "Facturen",
+    "uploadModal": {
+      "drop": "Sleep hier een UBL-bestand",
+      "hint": "Een factuur of een creditnota: het documenttype wordt uit het bestand gelezen.",
+      "title": "UBL uploaden"
+    },
     "validationModal": {
       "error-count": "Aantal fouten",
       "title": "Validatie"
@@ -776,10 +807,23 @@
     "upper": "Minstens 1 hoofdletter"
   },
   "paymentTerms": {
-    "15_DAYS": "15 dagen",
-    "30_DAYS": "30 dagen",
-    "60_DAYS": "60 dagen",
-    "END_OF_NEXT_MONTH": "Einde van de maand"
+    "basis": {
+      "END_OF_MONTH": "na einde maand",
+      "END_OF_NEXT_MONTH": "na einde volgende maand",
+      "INVOICE_DATE": "na factuurdatum"
+    },
+    "basis-label": "Geteld vanaf",
+    "days-label": "Dagen",
+    "end-of-month": "Einde maand",
+    "end-of-month-days_one": "{{days}} dag na einde maand",
+    "end-of-month-days_other": "{{days}} dagen na einde maand",
+    "end-of-next-month": "Einde volgende maand",
+    "end-of-next-month-days_one": "{{days}} dag na einde volgende maand",
+    "end-of-next-month-days_other": "{{days}} dagen na einde volgende maand",
+    "net_one": "{{days}} dag",
+    "net_other": "{{days}} dagen",
+    "on-receipt": "Betaalbaar bij ontvangst",
+    "partner-hint": "Laat leeg om je eigen betalingsvoorwaarden te gebruiken."
   },
   "placeholder": {
     "customer-search": "Zoek op naam of BTW",

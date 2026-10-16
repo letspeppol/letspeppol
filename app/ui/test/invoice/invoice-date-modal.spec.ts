@@ -1,69 +1,268 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { DocumentType } from '../../src/services/app/invoice-service';
-
-const invoiceComposer = vi.hoisted(() => ({
-    translatePaymentTerm: vi.fn((paymentTerm: string) => {
-        const translations: Record<string, string> = {
-            '15_DAYS': '15 days',
-            '30_DAYS': '30 days',
-            '60_DAYS': '60 days',
-            END_OF_NEXT_MONTH: 'End of next month',
-        };
-        return translations[paymentTerm] ?? paymentTerm;
-    }),
-    getDueDate: vi.fn((paymentTerm: string, issueDate: string) => {
-        if (issueDate !== '2026-07-05') {
-            return issueDate;
-        }
-        const dueDates: Record<string, string> = {
-            '15_DAYS': '2026-07-20',
-            '30_DAYS': '2026-08-04',
-            '60_DAYS': '2026-09-03',
-            END_OF_NEXT_MONTH: '2026-08-31',
-        };
-        return dueDates[paymentTerm] ?? issueDate;
-    }),
-}));
+import {
+    calculateDueDate,
+    formatPaymentTermCode,
+    parsePaymentTermCode,
+    preferredTerm,
+} from '../../src/services/app/payment-terms';
 
 vi.mock('@aurelia/kernel', async importOriginal => ({
     ...await importOriginal<typeof import('@aurelia/kernel')>(),
     resolve: () => invoiceComposer,
 }));
 
+const invoiceComposer = {
+    translatePaymentTerm: (code: string) => {
+        const term = parsePaymentTermCode(code);
+        const days = `${term.days} ${term.days === 1 ? 'day' : 'days'}`;
+        if (term.basis === 'END_OF_MONTH') {
+            return term.days === 0 ? 'End of month' : `${days} end of month`;
+        }
+        if (term.basis === 'END_OF_NEXT_MONTH') {
+            return term.days === 0 ? 'End of next month' : `${days} end of next month`;
+        }
+        return term.days === 0 ? 'Due on receipt' : days;
+    },
+    getDueDate: (code: string, issueDate: string) =>
+        calculateDueDate(parsePaymentTermCode(code), issueDate) ?? issueDate,
+    derivePaymentTermCode: (issueDate: string, dueDate?: string, note?: string) => {
+        const fromNote = KNOWN_CODES.find(code => invoiceComposer.translatePaymentTerm(code) === note?.trim());
+        if (fromNote && (!dueDate || invoiceComposer.getDueDate(fromNote, issueDate) === dueDate)) {
+            return fromNote;
+        }
+        const term = dueDate ? preferredTerm(issueDate, dueDate) : undefined;
+        return term ? formatPaymentTermCode(term) : undefined;
+    },
+};
+
+const KNOWN_CODES = ['NET_0', 'NET_15', 'NET_30', 'NET_45', 'NET_60', 'EOM_0', 'EOM_30', 'EONM_0'];
+
 import { InvoiceDateModal } from '../../src/invoice/edit/components/modals/invoice-date-modal';
+
+type ModalInternals = { saveDate(): void };
+
+function save(modal: InvoiceDateModal) {
+    (modal as unknown as ModalInternals).saveDate();
+}
+
+function openModal(invoice: Record<string, unknown>, documentType = DocumentType.INVOICE) {
+    const modal = new InvoiceDateModal();
+    modal.documentType = documentType;
+    modal.invoiceContext = {selectedInvoice: invoice};
+    modal.showModal();
+    return modal;
+}
+
+function edit(modal: InvoiceDateModal, field: 'issueDate' | 'dueDate' | 'selectedPaymentTerm', value: unknown) {
+    modal[field] = value;
+    modal[`${field}Changed`]();
+}
+
+beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 6, 5, 12));
+});
+
+afterEach(() => {
+    vi.useRealTimers();
+});
 
 describe('InvoiceDateModal payment terms', () => {
     it('opens invoices without payment terms and preserves their due date', () => {
-        const modal = new InvoiceDateModal();
-        modal.documentType = DocumentType.INVOICE;
-        modal.invoiceContext = {
-            selectedInvoice: {
-                IssueDate: '2026-07-05',
-                DueDate: '2026-08-04',
-                PaymentTerms: undefined,
-            },
-        };
+        const modal = openModal({IssueDate: '2026-07-05', DueDate: '2026-08-04', PaymentTerms: undefined});
 
-        expect(() => modal.showModal()).not.toThrow();
         expect(modal.open).toBe(true);
         expect(modal.dueDate).toBe('2026-08-04');
-        expect(modal.selectedPaymentTerm).toBe('30_DAYS');
+        expect(modal.selectedPaymentTerm).toBe('NET_30');
     });
 
-    it('leaves unmatched due dates unchanged when no payment term is set', () => {
-        const modal = new InvoiceDateModal();
-        modal.documentType = DocumentType.INVOICE;
-        modal.invoiceContext = {
-            selectedInvoice: {
-                IssueDate: '2026-07-05',
-                DueDate: '2026-07-31',
-                PaymentTerms: undefined,
-            },
-        };
-
-        modal.showModal();
+    it('states a due date that matches no preset as its own day count', () => {
+        const modal = openModal({IssueDate: '2026-07-05', DueDate: '2026-07-31', PaymentTerms: undefined});
 
         expect(modal.dueDate).toBe('2026-07-31');
+        expect(modal.selectedPaymentTerm).toBe('EOM_0');
+    });
+
+    it('fills in a missing due date from the term in the note', () => {
+        const modal = openModal({IssueDate: '2026-07-05', DueDate: undefined, PaymentTerms: {Note: '30 days'}});
+
+        expect(modal.selectedPaymentTerm).toBe('NET_30');
+        expect(modal.dueDate).toBe('2026-08-04');
+    });
+
+    it('leaves the due date empty when there is no term to compute it from', () => {
+        const modal = openModal({IssueDate: '2026-07-05', DueDate: undefined, PaymentTerms: undefined});
+
         expect(modal.selectedPaymentTerm).toBeUndefined();
+        expect(modal.dueDate).toBeUndefined();
+    });
+
+    it('recalculates the due date when the term changes', () => {
+        const modal = openModal({IssueDate: '2026-07-05', DueDate: '2026-08-04', PaymentTerms: undefined});
+
+        edit(modal, 'selectedPaymentTerm', 'EOM_30');
+
+        expect(modal.dueDate).toBe('2026-08-30');
+    });
+
+    it('recalculates the due date when the issue date changes', () => {
+        const modal = openModal({IssueDate: '2026-07-05', DueDate: '2026-08-04', PaymentTerms: undefined});
+
+        edit(modal, 'issueDate', '2026-07-10');
+
+        expect(modal.dueDate).toBe('2026-08-09');
+    });
+
+    it('restates a hand-typed due date as a day count', () => {
+        const modal = openModal({IssueDate: '2026-07-05', DueDate: '2026-08-04', PaymentTerms: undefined});
+
+        edit(modal, 'dueDate', '2026-07-20');
+
+        expect(modal.selectedPaymentTerm).toBe('NET_15');
+        expect(modal.dueDate).toBe('2026-07-20');
+    });
+
+    it('leaves the due date alone on credit notes', () => {
+        const modal = openModal({IssueDate: '2026-07-05', PaymentTerms: {Note: '15 days'}}, DocumentType.CREDIT_NOTE);
+
+        edit(modal, 'selectedPaymentTerm', 'NET_30');
+
+        expect(modal.dueDate).toBeUndefined();
+    });
+
+    it('writes the note for the selected term on save', () => {
+        const invoice: Record<string, unknown> = {IssueDate: '2026-07-05', DueDate: '2026-08-04', PaymentTerms: undefined};
+        const modal = openModal(invoice);
+
+        edit(modal, 'selectedPaymentTerm', 'EOM_0');
+        save(modal);
+
+        expect(invoice.DueDate).toBe('2026-07-31');
+        expect(invoice.PaymentTerms).toEqual({Note: 'End of month'});
+    });
+
+    it('drops the note when the user clears a term it recognised', () => {
+        const invoice: Record<string, unknown> = {IssueDate: '2026-07-05', DueDate: '2026-08-04', PaymentTerms: {Note: '30 days'}};
+        const modal = openModal(invoice);
+
+        edit(modal, 'selectedPaymentTerm', undefined);
+        save(modal);
+
+        expect(invoice.PaymentTerms).toBeUndefined();
+    });
+
+    it('keeps a note it could not read when no term was chosen', () => {
+        const invoice: Record<string, unknown> = {IssueDate: '2026-07-05', PaymentTerms: {Note: 'Payable per contract'}};
+        const modal = openModal(invoice, DocumentType.CREDIT_NOTE);
+
+        save(modal);
+
+        expect(invoice.PaymentTerms).toEqual({Note: 'Payable per contract'});
+    });
+});
+
+describe('InvoiceDateModal due date bounds', () => {
+    it('offers today as the earliest due date for an invoice issued today or earlier', () => {
+        const modal = openModal({IssueDate: '2026-06-20', DueDate: '2026-07-20', PaymentTerms: undefined});
+
+        expect(modal.minDueDate).toBe('2026-07-05');
+        expect(modal.dueDateError).toBeUndefined();
+    });
+
+    it('offers the issue date as the earliest due date for an invoice issued later', () => {
+        const modal = openModal({IssueDate: '2026-07-05', DueDate: '2026-08-04', PaymentTerms: undefined});
+
+        edit(modal, 'issueDate', '2026-07-12');
+
+        expect(modal.minDueDate).toBe('2026-07-12');
+    });
+
+    it('accepts a due date of today on an invoice issued today', () => {
+        const invoice: Record<string, unknown> = {IssueDate: '2026-07-05', DueDate: '2026-08-04', PaymentTerms: undefined};
+        const modal = openModal(invoice);
+
+        edit(modal, 'dueDate', '2026-07-05');
+        save(modal);
+
+        expect(modal.dueDateError).toBeUndefined();
+        expect(invoice.DueDate).toBe('2026-07-05');
+    });
+
+    it('refuses to save a due date in the past', () => {
+        const invoice: Record<string, unknown> = {IssueDate: '2026-06-01', DueDate: '2026-07-20', PaymentTerms: undefined};
+        const modal = openModal(invoice);
+
+        edit(modal, 'dueDate', '2026-07-04');
+        save(modal);
+
+        expect(modal.dueDateError).toBe('due-in-past');
+        expect(modal.open).toBe(true);
+        expect(invoice.DueDate).toBe('2026-07-20');
+    });
+
+    it('refuses to save a due date before the issue date', () => {
+        const invoice: Record<string, unknown> = {IssueDate: '2026-07-20', DueDate: '2026-08-19', PaymentTerms: undefined};
+        const modal = openModal(invoice);
+
+        edit(modal, 'dueDate', '2026-07-19');
+        save(modal);
+
+        expect(modal.dueDateError).toBe('due-before-issue');
+        expect(modal.open).toBe(true);
+        expect(invoice.DueDate).toBe('2026-08-19');
+    });
+
+    it('refuses a back-dated issue date whose term has already expired', () => {
+        const invoice: Record<string, unknown> = {IssueDate: '2026-07-05', DueDate: '2026-08-04', PaymentTerms: undefined};
+        const modal = openModal(invoice);
+
+        edit(modal, 'issueDate', '2026-05-01');
+        save(modal);
+
+        expect(modal.dueDate).toBe('2026-05-31');
+        expect(modal.dueDateError).toBe('due-in-past');
+        expect(invoice.IssueDate).toBe('2026-07-05');
+    });
+
+    it('flags a draft whose due date has passed since it was saved', () => {
+        const modal = openModal({IssueDate: '2026-06-01', DueDate: '2026-07-01', PaymentTerms: undefined});
+
+        expect(modal.dueDateError).toBe('due-in-past');
+    });
+
+    it('does not check credit notes, which have no due date field', () => {
+        const invoice: Record<string, unknown> = {IssueDate: '2026-06-01', DueDate: '2026-06-15', PaymentTerms: {Note: '15 days'}};
+        const modal = openModal(invoice, DocumentType.CREDIT_NOTE);
+
+        save(modal);
+
+        expect(modal.dueDateError).toBeUndefined();
+        expect(modal.open).toBe(false);
+    });
+});
+
+describe('InvoiceDateModal saving', () => {
+    it('keeps the payment arrangement a credit note carries for a switch back to an invoice', () => {
+        const invoice: Record<string, unknown> = {IssueDate: '2026-07-05', DueDate: '2026-08-04', PaymentTerms: {Note: '30 days'}};
+        const modal = openModal(invoice, DocumentType.CREDIT_NOTE);
+
+        edit(modal, 'issueDate', '2026-07-06');
+        save(modal);
+
+        expect(invoice.IssueDate).toBe('2026-07-06');
+        expect(invoice.DueDate).toBe('2026-08-04');
+        expect(invoice.PaymentTerms).toEqual({Note: '30 days'});
+    });
+
+    it('writes the due date and payment terms of an invoice', () => {
+        const invoice: Record<string, unknown> = {IssueDate: '2026-07-05', DueDate: '2026-08-04', PaymentTerms: undefined};
+        const modal = openModal(invoice);
+
+        edit(modal, 'selectedPaymentTerm', 'NET_15');
+        save(modal);
+
+        expect(invoice.DueDate).toBe('2026-07-20');
+        expect(invoice.PaymentTerms).toEqual({Note: '15 days'});
     });
 });

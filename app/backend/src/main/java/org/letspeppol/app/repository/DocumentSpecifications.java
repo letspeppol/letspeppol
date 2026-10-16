@@ -6,6 +6,8 @@ import org.letspeppol.app.model.DocumentDirection;
 import org.letspeppol.app.model.DocumentType;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.time.Instant;
+
 public final class DocumentSpecifications {
 
     private DocumentSpecifications() {
@@ -37,6 +39,12 @@ public final class DocumentSpecifications {
         }
         if (filter.getPaid() != null) {
             spec = spec.and(isPaid(filter.getPaid()));
+        }
+        if (filter.getOverdue() != null) {
+            spec = spec.and(isOverdue(filter.getOverdue()));
+        }
+        if (filter.getErrored() != null) {
+            spec = spec.and(isErrored(filter.getErrored()));
         }
         if (filter.getRead() != null) {
             spec = spec.and(isRead(filter.getRead()));
@@ -74,6 +82,28 @@ public final class DocumentSpecifications {
 
     public static Specification<Document> isPaid(boolean paid) {
         return (root, query, cb) -> paid ? cb.isNotNull(root.get("paidOn")) : cb.isNull(root.get("paidOn"));
+    }
+
+    public static Specification<Document> isOverdue(boolean overdue) {
+        return (root, query, cb) -> {
+            Instant now = Instant.now();
+            return overdue
+                    ? cb.and(
+                            cb.isNull(root.get("paidOn")),
+                            cb.isNull(root.get("draftedOn")),
+                            cb.isNull(root.get("processedStatus")),
+                            cb.lessThan(root.get("dueDate"), now))
+                    : cb.or(
+                            cb.isNotNull(root.get("paidOn")),
+                            cb.isNotNull(root.get("draftedOn")),
+                            cb.isNotNull(root.get("processedStatus")),
+                            cb.isNull(root.get("dueDate")),
+                            cb.greaterThanOrEqualTo(root.get("dueDate"), now));
+        };
+    }
+
+    public static Specification<Document> isErrored(boolean errored) {
+        return (root, query, cb) -> errored ? cb.isNotNull(root.get("processedStatus")) : cb.isNull(root.get("processedStatus"));
     }
 
     public static Specification<Document> isRead(boolean read) {

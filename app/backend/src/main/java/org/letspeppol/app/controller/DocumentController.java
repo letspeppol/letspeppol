@@ -74,6 +74,8 @@ public class DocumentController {
                                     @RequestParam(required = false) String partnerPeppolId,
                                     @RequestParam(required = false) String invoiceReference,
                                     @RequestParam(required = false) Boolean paid,
+                                    @RequestParam(required = false) Boolean overdue,
+                                    @RequestParam(required = false) Boolean errored,
                                     @RequestParam(required = false) Boolean read,
                                     @RequestParam(required = false) Boolean draft,
                                     Pageable pageable
@@ -87,6 +89,8 @@ public class DocumentController {
         filter.setPartnerPeppolId(partnerPeppolId != null && !partnerPeppolId.isBlank() ? partnerPeppolId.trim() : null);
         filter.setInvoiceReference(invoiceReference != null && !invoiceReference.isBlank() ? invoiceReference.trim() : null);
         filter.setPaid(paid);
+        filter.setOverdue(overdue);
+        filter.setErrored(errored);
         filter.setRead(read);
         filter.setDraft(draft);
         Pageable cappedPageable = capPageSize(pageable);

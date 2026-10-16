@@ -99,6 +99,10 @@
         "CREDIT_NOTE": "Gutschriftsentwurf gespeichert",
         "INVOICE": "Rechnungsentwurf gespeichert"
       },
+      "duplicate-failed": {
+        "CREDIT_NOTE": "Duplizieren der Gutschrift fehlgeschlagen",
+        "INVOICE": "Duplizieren der Rechnung fehlgeschlagen"
+      },
       "load-failed": "Rechnung konnte nicht geladen werden",
       "mark-seen-failed": "Rechnung konnte nicht als gesehen markiert werden",
       "marked-paid": {
@@ -173,6 +177,7 @@
     },
     "success": "Erfolg",
     "upload": {
+      "not-ubl": "Diese Datei ist keine UBL-Rechnung und keine UBL-Gutschrift",
       "size-too-large": "Die Gesamtgröße aller Dateien darf 10 MB nicht überschreiten",
       "type-unsupported": "Dateityp nicht unterstützt",
       "upload-error": "Fehler beim Hochladen der Datei"
@@ -325,6 +330,11 @@
   },
   "invoice": {
     "action": {
+      "credit-this-invoice": "Eine Gutschrift für diese Rechnung erstellen",
+      "duplicate": {
+        "CREDIT_NOTE": "Gutschrift duplizieren",
+        "INVOICE": "Rechnung duplizieren"
+      },
       "mark-paid": {
         "CREDIT_NOTE": "Gutschrift als bezahlt markieren",
         "INVOICE": "Rechnung als bezahlt markieren"
@@ -377,7 +387,11 @@
       "due-date": "Fälligkeitsdatum",
       "issue-date": "Ausstellungsdatum",
       "payment-terms": "Zahlungsbedingungen",
-      "title": "Datum"
+      "title": "Datum",
+      "validation": {
+        "due-before-issue": "Das Fälligkeitsdatum darf nicht vor dem Ausstellungsdatum liegen.",
+        "due-in-past": "Das Fälligkeitsdatum darf nicht in der Vergangenheit liegen."
+      }
     },
     "deliveryModal": {
       "corner1-id": "Corner 1-ID",
@@ -401,8 +415,13 @@
       "cancel": "Abbrechen",
       "delete-draft": "Entwurf löschen",
       "delivery": "Zustellnachweis",
+      "delivery-error": {
+        "CREDIT_NOTE": "Diese Gutschrift konnte nicht zugestellt werden",
+        "INVOICE": "Diese Rechnung konnte nicht zugestellt werden"
+      },
       "download-pdf": "PDF",
       "download-ubl": "UBL",
+      "duplicate": "Duplizieren",
       "invoice-lines": "Rechnungspositionen",
       "loading": "Wird geladen",
       "method": "Methode",
@@ -430,6 +449,13 @@
       "apply": "Anwenden",
       "clear": "Leeren",
       "from": "Von",
+      "status": {
+        "all": "Alle Status",
+        "error": "Fehler",
+        "overdue": "Überfällig",
+        "paid": "Bezahlt",
+        "unpaid": "Unbezahlt"
+      },
       "to": "Bis"
     },
     "incoming": "Eingehend",
@@ -518,6 +544,11 @@
       "vat": "MwSt."
     },
     "title": "Rechnungen",
+    "uploadModal": {
+      "drop": "UBL-Datei hier ablegen",
+      "hint": "Eine Rechnung oder eine Gutschrift: Der Dokumenttyp wird aus der Datei gelesen.",
+      "title": "UBL hochladen"
+    },
     "validationModal": {
       "error-count": "Anzahl der Fehler",
       "title": "Validierung"
@@ -776,10 +807,23 @@
     "upper": "Mindestens 1 Großbuchstabe"
   },
   "paymentTerms": {
-    "15_DAYS": "15 Tage",
-    "30_DAYS": "30 Tage",
-    "60_DAYS": "60 Tage",
-    "END_OF_NEXT_MONTH": "Ende des Monats"
+    "basis": {
+      "END_OF_MONTH": "nach Monatsende",
+      "END_OF_NEXT_MONTH": "nach Ende des Folgemonats",
+      "INVOICE_DATE": "nach Rechnungsdatum"
+    },
+    "basis-label": "Gezählt ab",
+    "days-label": "Tage",
+    "end-of-month": "Monatsende",
+    "end-of-month-days_one": "{{days}} Tag nach Monatsende",
+    "end-of-month-days_other": "{{days}} Tage nach Monatsende",
+    "end-of-next-month": "Ende des Folgemonats",
+    "end-of-next-month-days_one": "{{days}} Tag nach Ende des Folgemonats",
+    "end-of-next-month-days_other": "{{days}} Tage nach Ende des Folgemonats",
+    "net_one": "{{days}} Tag",
+    "net_other": "{{days}} Tage",
+    "on-receipt": "Zahlbar bei Erhalt",
+    "partner-hint": "Leer lassen, um Ihre eigenen Zahlungsbedingungen zu verwenden."
   },
   "placeholder": {
     "customer-search": "Suche nach Name oder USt-IdNr.",

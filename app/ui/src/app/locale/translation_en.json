@@ -100,6 +100,10 @@
         "CREDIT_NOTE": "Credit note draft saved",
         "INVOICE": "Invoice draft saved"
       },
+      "duplicate-failed": {
+        "CREDIT_NOTE": "Failed to duplicate the credit note",
+        "INVOICE": "Failed to duplicate the invoice"
+      },
       "load-failed": "Failed to get invoice",
       "mark-seen-failed": "Failed to mark invoice as seen",
       "marked-paid": {
@@ -174,6 +178,7 @@
     },
     "success": "Success",
     "upload": {
+      "not-ubl": "This file is not a UBL invoice or credit note",
       "size-too-large": "Sum of all file sizes can not be more than 10MB",
       "type-unsupported": "File type not supported",
       "upload-error": "Error uploading file"
@@ -326,6 +331,11 @@
   },
   "invoice": {
     "action": {
+      "credit-this-invoice": "Create a credit note for this invoice",
+      "duplicate": {
+        "CREDIT_NOTE": "Duplicate credit note",
+        "INVOICE": "Duplicate invoice"
+      },
       "mark-paid": {
         "CREDIT_NOTE": "Mark credit note as paid",
         "INVOICE": "Mark invoice as paid"
@@ -379,7 +389,11 @@
       "due-date": "Due Date",
       "issue-date": "Issue Date",
       "payment-terms": "Payment Terms",
-      "title": "Date"
+      "title": "Date",
+      "validation": {
+        "due-before-issue": "The due date cannot be before the issue date.",
+        "due-in-past": "The due date cannot be in the past."
+      }
     },
     "deliveryModal": {
       "corner1-id": "Corner 1 ID",
@@ -404,8 +418,13 @@
       "cancel": "Cancel",
       "delete-draft": "Delete draft",
       "delivery": "Delivery proof",
+      "delivery-error": {
+        "CREDIT_NOTE": "This credit note could not be delivered",
+        "INVOICE": "This invoice could not be delivered"
+      },
       "download-pdf": "PDF",
       "download-ubl": "UBL",
+      "duplicate": "Duplicate",
       "invoice-lines": "Invoice lines",
       "loading": "Loading",
       "method": "Method",
@@ -433,6 +452,13 @@
       "apply": "Apply",
       "clear": "Clear",
       "from": "From",
+      "status": {
+        "all": "All statuses",
+        "error": "Error",
+        "overdue": "Overdue",
+        "paid": "Paid",
+        "unpaid": "Unpaid"
+      },
       "to": "To"
     },
     "incoming": "Incoming",
@@ -521,6 +547,11 @@
       "vat": "VAT"
     },
     "title": "Invoices",
+    "uploadModal": {
+      "drop": "Drop a UBL file here",
+      "hint": "An invoice or a credit note: the document type is read from the file.",
+      "title": "Upload UBL"
+    },
     "validationModal": {
       "error-count": "Error count",
       "title": "Validation"
@@ -779,10 +810,23 @@
     "upper": "At least 1 uppercase letter"
   },
   "paymentTerms": {
-    "15_DAYS": "15 days",
-    "30_DAYS": "30 days",
-    "60_DAYS": "60 days",
-    "END_OF_NEXT_MONTH": "End of the month"
+    "basis": {
+      "END_OF_MONTH": "after end of month",
+      "END_OF_NEXT_MONTH": "after end of next month",
+      "INVOICE_DATE": "after invoice date"
+    },
+    "basis-label": "Counted from",
+    "days-label": "Days",
+    "end-of-month": "End of month",
+    "end-of-month-days_one": "{{days}} day after end of month",
+    "end-of-month-days_other": "{{days}} days after end of month",
+    "end-of-next-month": "End of next month",
+    "end-of-next-month-days_one": "{{days}} day after end of next month",
+    "end-of-next-month-days_other": "{{days}} days after end of next month",
+    "net_one": "{{days}} day",
+    "net_other": "{{days}} days",
+    "on-receipt": "Due on receipt",
+    "partner-hint": "Leave empty to use your own payment terms."
   },
   "placeholder": {
     "customer-search": "Search by name or VAT number",

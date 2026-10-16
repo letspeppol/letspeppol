@@ -14,6 +14,8 @@ public class DocumentFilter {
     private String partnerPeppolId;
     private String invoiceReference;
     private Boolean paid;
+    private Boolean overdue;
+    private Boolean errored;
     private Boolean read;
     private Boolean draft;
 }
