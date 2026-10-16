@@ -3,6 +3,7 @@ package org.letspeppol.proxy.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.proxy.dto.StatusReport;
+import org.letspeppol.proxy.exception.SendAuthorizationException;
 import org.letspeppol.proxy.model.AccessPoint;
 import org.letspeppol.proxy.model.DocumentDirection;
 import org.letspeppol.proxy.model.UblDocument;
@@ -12,9 +13,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import static java.lang.Math.max;
 
@@ -23,6 +27,13 @@ import static java.lang.Math.max;
 @Transactional
 @Service
 public class UblDocumentSchedulerService {
+
+    private static final int MAX_AUTHORIZATION_ATTEMPTS = 3;
+    private static final Duration AUTHORIZATION_RETRY_DELAY = Duration.ofHours(1);
+    private static final Duration AUTHORIZATION_RETRY_WINDOW = Duration.ofDays(1);
+    private static final String AUTHORIZATION_PROVIDER = "sendAuthorizationProvider";
+    private static final String AUTHORIZATION_FIRST_FAILURE = "sendAuthorizationFirstFailureOn";
+    private static final String AUTHORIZATION_ATTEMPTS = "sendAuthorizationAttempts";
 
     private final UblDocumentRepository ublDocumentRepository;
     private final RegistryService registryService;
@@ -73,13 +84,79 @@ public class UblDocumentSchedulerService {
             pickedUp(ublDocument, AccessPoint.LOOPBACK, loopbackId.toString());
             return;
         }
-        String accessPointId = service.sendDocument(ublDocument);
+        Map<String, Object> details = ublDocument.getAccessPointDetails();
+        if (details != null && accessPoint.name().equals(details.get(AUTHORIZATION_PROVIDER))
+                && !Instant.now().isBefore(Instant.parse(details.get(AUTHORIZATION_FIRST_FAILURE).toString())
+                        .plus(AUTHORIZATION_RETRY_WINDOW))) {
+            failAuthorization(ublDocument, accessPoint, false);
+            return;
+        }
+        String accessPointId;
+        try {
+            accessPointId = service.sendDocument(ublDocument);
+        } catch (SendAuthorizationException e) {
+            handleAuthorizationFailure(ublDocument, accessPoint, e.isCompanyMissing());
+            return;
+        }
         if (accessPointId == null) {
             ublDocument.setScheduledOn(ublDocument.getScheduledOn().plus(1, ChronoUnit.HOURS)); //Postpone 1 hour to try again
             return;
         }
+        clearAuthorizationFailures(ublDocument);
         log.info("Successful send document {} to Peppol Access Point {} | balance = {} ", ublDocument.getId(), accessPoint, balanceService.decrement());
         pickedUp(ublDocument, accessPoint, accessPointId);
+    }
+
+    private void handleAuthorizationFailure(UblDocument document, AccessPoint accessPoint, boolean companyMissing) {
+        Instant now = Instant.now();
+        Map<String, Object> details = new HashMap<>(document.getAccessPointDetails() == null
+                ? Map.of() : document.getAccessPointDetails());
+        boolean sameProvider = accessPoint.name().equals(details.get(AUTHORIZATION_PROVIDER));
+        Instant firstFailure = sameProvider
+                ? Instant.parse(details.get(AUTHORIZATION_FIRST_FAILURE).toString()) : now;
+        int attempts = sameProvider ? ((Number) details.get(AUTHORIZATION_ATTEMPTS)).intValue() + 1 : 1;
+        details.put(AUTHORIZATION_PROVIDER, accessPoint.name());
+        details.put(AUTHORIZATION_FIRST_FAILURE, firstFailure.toString());
+        details.put(AUTHORIZATION_ATTEMPTS, attempts);
+        document.setAccessPointDetails(details); // Existing JSON field keeps retries durable across restarts.
+
+        if (companyMissing || attempts >= MAX_AUTHORIZATION_ATTEMPTS
+                || !now.isBefore(firstFailure.plus(AUTHORIZATION_RETRY_WINDOW))) {
+            failAuthorization(document, accessPoint, companyMissing);
+            return;
+        }
+        Instant retryOn = now.plus(AUTHORIZATION_RETRY_DELAY);
+        Instant deadline = firstFailure.plus(AUTHORIZATION_RETRY_WINDOW);
+        document.setScheduledOn(retryOn.isBefore(deadline) ? retryOn : deadline);
+        log.warn("PEPPOL_SEND_AUTHORIZATION_RETRY document={} sender={} accessPoint={} attempt={}/{} retryOn={}",
+                document.getId(), document.getOwnerPeppolId(), accessPoint, attempts,
+                MAX_AUTHORIZATION_ATTEMPTS, document.getScheduledOn());
+    }
+
+    private void failAuthorization(UblDocument document, AccessPoint accessPoint, boolean companyMissing) {
+        String message;
+        if (companyMissing) {
+            registryService.markNotRegistered(document.getOwnerPeppolId(), accessPoint);
+            message = "Sender " + document.getOwnerPeppolId() + " is not registered with " + accessPoint
+                    + ". Register the company before sending again.";
+        } else {
+            message = "Sending through " + accessPoint + " could not be authorized; retry limit reached. "
+                    + "Contact support to check the company registration and access-point credentials.";
+        }
+        pickedUp(document, accessPoint, null);
+        delivered(document, new StatusReport(false, message));
+        log.error("PEPPOL_SEND_AUTHORIZATION_FAILED document={} sender={} accessPoint={} httpStatus=401 companyMissing={} reason={}",
+                document.getId(), document.getOwnerPeppolId(), accessPoint, companyMissing, message);
+    }
+
+    private void clearAuthorizationFailures(UblDocument document) {
+        if (document.getAccessPointDetails() != null) {
+            Map<String, Object> details = new HashMap<>(document.getAccessPointDetails());
+            details.remove(AUTHORIZATION_PROVIDER);
+            details.remove(AUTHORIZATION_FIRST_FAILURE);
+            details.remove(AUTHORIZATION_ATTEMPTS);
+            document.setAccessPointDetails(details.isEmpty() ? null : details);
+        }
     }
 
     public void synchronizeOutgoingDocuments() {

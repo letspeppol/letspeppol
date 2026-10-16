@@ -57,9 +57,19 @@ public class ScradaService implements AccessPointServiceInterface {
         return AccessPoint.SCRADA;
     }
 
+    @Override
+    public void validateRegistration(String peppolId, RegistrationRequest data) {
+        normalizePeppolId(peppolId);
+        if (data == null || data.name() == null || data.name().isBlank()
+                || data.country() == null || data.country().isBlank()) {
+            throw new IllegalArgumentException("Company name and country are required for SCRADA registration");
+        }
+    }
+
     /// DOCS : [Scrada : Register company](https://www.scrada.be/api-documentation/#tag/Peppol-inbound/paths/~1v1~1company~1%7BcompanyID%7D~1peppol~1register/post)
     @Override
     public Map<String, Object> register(String peppolId, RegistrationRequest data) {
+        validateRegistration(peppolId, data);
         try {
             RegisterRequest registerRequest = new RegisterRequest(
                     new ParticipantIdentifier(

@@ -1,5 +1,10 @@
 {
   "account": {
+    "access-point": "Access Point",
+    "access-point-loading": "Access Point laden…",
+    "access-point-none": "Niet verbonden",
+    "access-point-none-description": "Niet geregistreerd via Let’s Peppol",
+    "access-point-unavailable": "Access Point niet beschikbaar",
     "account-name": "Accountnaam",
     "activate-on-peppol": "Activeren op Peppol",
     "add-attachment-to-notification": "Bijlage toevoegen aan de melding",
@@ -303,7 +308,7 @@
     "DUPLICATE_REQUEST": "Deze aanvraag is al verwerkt.",
     "login-failed": "Inloggen mislukt",
     "no_ownership": "Dit account is niet aan een bedrijf gekoppeld.",
-    "not-peppol-active": "U bent momenteel niet geregistreerd op Peppol",
+    "not-peppol-active": "Uw bedrijf is momenteel niet geregistreerd via Let’s Peppol",
     "not-peppol-active-action": "Los dit nu op",
     "registration-company-affiliate-contact-admin": "Dit bedrijf heeft al een administrator. Neem contact op met uw administrator om de affiliate-onboarding voort te zetten.",
     "registration-company-already-registered": "Bedrijf al geregistreerd",
@@ -392,6 +397,7 @@
       "corner1-id": "Corner 1-ID",
       "corner2-id": "Corner 2-ID",
       "corner3-id": "Corner 3-ID",
+      "delivered": "Afgeleverd",
       "error-stamp-label": "Foutstempel voor levering",
       "from": "van",
       "invoice-number": "Factuurnummer",
@@ -647,7 +653,7 @@
   },
   "navigation": {
     "account": "Account",
-    "brand-alt": "Let's Peppol",
+    "brand-alt": "Let’s Peppol",
     "dashboard": "Dashboard",
     "downloads": "Downloads",
     "invoices": "Facturen",
@@ -903,7 +909,7 @@
     "empty": "Nog geen sponsors.",
     "load-error": "De sponsors konden nu niet worden geladen.",
     "loading": "Sponsors laden...",
-    "subtitle": "Bedrijven en mensen die Let's Peppol mee draaiende houden.",
+    "subtitle": "Bedrijven en mensen die Let’s Peppol mee draaiende houden.",
     "table": {
       "amount": "Bedrag",
       "date": "Datum",

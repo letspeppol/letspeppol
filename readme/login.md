@@ -11,7 +11,10 @@ Protected application URLs start with the active Peppol ID, for example
 `/0208:0123456789/invoices/17`. The UI sends that Peppol ID and the tab's remembered account type as
 `peppol_id` and `account_type` on the authorization request. KYC validates the ownership, stores the
 exact selection with the authorization code, and revalidates it during token exchange. `lastUsed` is
-only the default when login or a context-free `/dashboard` request supplies no selection.
+the default when login or a context-free `/dashboard` request supplies no selection. If the account
+has no ownership for the requested Peppol ID, KYC selects its most recently used ownership and the UI
+opens that company's dashboard, discarding the stale deep link. An unavailable role on a company the
+account still owns remains an error, as does an account without any ownership.
 
 Executable proof: [`RegistrationTest`](../kyc/src/test/java/org/letspeppol/kyc/controller/RegistrationTest.java), method `oauth2AuthorizationCodeWithPkce`. TOTP and passkey branches are covered by [`TotpAuthenticationSuccessHandlerTest`](../kyc/src/test/java/org/letspeppol/kyc/config/TotpAuthenticationSuccessHandlerTest.java) and [`PasskeyControllerBrowserAuthTest`](../kyc/src/test/java/org/letspeppol/kyc/controller/PasskeyControllerBrowserAuthTest.java).
 

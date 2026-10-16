@@ -104,7 +104,9 @@ export class LoginService {
             ? {peppolId: requestedPeppolId, type: this.ownershipService.getRememberedOwnershipType(requestedPeppolId) ?? undefined}
             : this.selectorForPath(window.location.pathname);
         const {authorized} = await this.silentLogin(selector);
-        return authorized && (!requestedPeppolId || this.ownershipService.getCurrentPeppolId() === requestedPeppolId);
+        // The server can select the default company for a stale URL. The route hook
+        // redirects to that company before loading the requested screen.
+        return authorized;
     }
 
     async completeLogin(): Promise<AuthorizationResult> {
@@ -288,14 +290,14 @@ export class LoginService {
     }
 
     getPostLoginPath(): string {
+        const peppolId = this.ownershipService.getCurrentPeppolId();
         const pendingNavigation = consumePendingNavigation();
         if (pendingNavigation) {
             const pendingPath = new URL(pendingNavigation, window.location.origin).pathname;
-            if (getPeppolIdFromPath(pendingPath)) {
+            if (peppolId && getPeppolIdFromPath(pendingPath) === peppolId) {
                 return pendingNavigation;
             }
         }
-        const peppolId = this.ownershipService.getCurrentPeppolId();
         return peppolId ? ownershipRoute(peppolId, '/dashboard') : '/dashboard';
     }
 

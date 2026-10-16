@@ -38,7 +38,15 @@ public class EInvoiceService implements AccessPointServiceInterface {
     }
 
     @Override
+    public void validateRegistration(String peppolId, RegistrationRequest data) {
+        if (peppolId == null || peppolId.isBlank() || data == null || data.name() == null || data.name().isBlank()) {
+            throw new IllegalArgumentException("Peppol ID and company name are required for e-invoice registration");
+        }
+    }
+
+    @Override
     public Map<String, Object> register(String peppolId, RegistrationRequest data) {
+        validateRegistration(peppolId, data);
         try {
             TenantCreateResponse tenantCreateResponse = eInvoiceOrganisationWebClient
                 .post()

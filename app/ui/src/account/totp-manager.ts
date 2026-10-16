@@ -131,7 +131,7 @@ export class TotpManager {
     }
 
     downloadRecoveryCodes() {
-        const text = "Let's Peppol - Recovery Codes\n" +
+        const text = "Let’s Peppol - Recovery Codes\n" +
             "==============================\n\n" +
             this.recoveryCodes.join('\n') +
             "\n\nStore these codes in a safe place.\nEach code can only be used once.\n";
