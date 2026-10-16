@@ -5,7 +5,6 @@ import org.letspeppol.kyc.dto.CompanySearchResponse;
 import org.letspeppol.kyc.dto.DirectorDto;
 import org.letspeppol.kyc.model.kbo.Company;
 
-import java.util.stream.Collectors;
 
 public class CompanyMapper {
 
@@ -21,7 +20,7 @@ public class CompanyMapper {
                 company.getPostalCode(),
                 company.getDirectors().stream()
                         .map(d -> new DirectorDto(d.getId(), d.getName()))
-                        .collect(Collectors.toList()),
+                        .toList(),
                 company.isHasKboAddress(),
                 company.isRegisteredOnPeppol(),
                 hasAdmin

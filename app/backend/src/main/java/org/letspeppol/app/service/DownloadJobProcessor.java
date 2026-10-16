@@ -67,17 +67,17 @@ public class DownloadJobProcessor {
         String prefix = document.direction() == DocumentDirection.INCOMING ? "in_" : "out_";
         String reference = sanitizeReference(document.invoiceReference(), document.id());
         String base = prefix + reference;
-        String candidate = base + ".ubl";
+        String candidate = base + ".xml";
         if (usedNames.add(candidate.toLowerCase(Locale.ROOT))) {
             return candidate;
         }
 
         String shortId = document.id().replace("-", "");
         shortId = shortId.substring(0, Math.min(8, shortId.length()));
-        candidate = base + "_" + shortId + ".ubl";
+        candidate = base + "_" + shortId + ".xml";
         int collision = 2;
         while (!usedNames.add(candidate.toLowerCase(Locale.ROOT))) {
-            candidate = base + "_" + shortId + "_" + collision++ + ".ubl";
+            candidate = base + "_" + shortId + "_" + collision++ + ".xml";
         }
         return candidate;
     }

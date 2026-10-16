@@ -42,10 +42,10 @@ public class ValidationService {
         // Robustly get the document element for DDD detection
         org.w3c.dom.Node node = source.getNode();
         org.w3c.dom.Element docElem = null;
-        if (node instanceof org.w3c.dom.Document) {
-            docElem = ((org.w3c.dom.Document) node).getDocumentElement();
-        } else if (node instanceof org.w3c.dom.Element) {
-            docElem = (org.w3c.dom.Element) node;
+        if (node instanceof org.w3c.dom.Document document) {
+            docElem = document.getDocumentElement();
+        } else if (node instanceof org.w3c.dom.Element element) {
+            docElem = element;
         }
         if (docElem == null) {
             return errorResponse("Could not find document element in XML");
@@ -102,7 +102,7 @@ public class ValidationService {
                 if (latestActiveVersion != null) {
                     return latestActiveVersion.getID();
                 }
-            } catch (Exception ignored) {
+            } catch (Exception _) {
                 return null;
             }
         }

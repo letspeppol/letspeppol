@@ -12,7 +12,7 @@ import {
 import {AlertType} from "../../components/alert/alert";
 import {InvoicePaymentModal} from "./components/modals/invoice-payment-modal";
 import {InvoiceCustomerModal} from "./components/modals/invoice-customer-modal";
-import {InvoiceComposer} from "../invoice-composer";
+import {GENERATED_INVOICE, InvoiceComposer, isGeneratedInvoicePlaceholder, isPdfAttachment} from "../invoice-composer";
 import {DocumentDirection, DocumentType, InvoiceService} from "../../services/app/invoice-service";
 import {ValidationResultModal} from "./components/modals/validation-result-modal";
 import {InvoiceModal} from "./components/modals/invoice-modal";
@@ -105,6 +105,37 @@ export class InvoiceEdit {
             && document.direction === DocumentDirection.OUTGOING
             && !!document.processedOn
             && !document.processedStatus;
+    }
+
+    async duplicate() {
+        const source = this.invoiceContext.selectedInvoice;
+        const type = this.selectedDocumentType;
+        if (!source) {
+            return;
+        }
+        await this.router.load(currentOwnershipRoute('/invoices'));
+        this.invoiceContext.duplicateDocument(source, type);
+    }
+
+    get canDuplicate() {
+        const document = this.invoiceContext.selectedDocument;
+        return !!document?.id && document.direction === DocumentDirection.OUTGOING && !document.processedStatus;
+    }
+
+    get hasDeliveryError() {
+        const document = this.invoiceContext.selectedDocument;
+        return document?.direction === DocumentDirection.OUTGOING && !!document.processedStatus;
+    }
+
+    markErrorSeen() {
+        return this.invoiceContext.markErrorSeen(this.invoiceContext.selectedDocument);
+    }
+
+    async resendErrored() {
+        const draft = await this.invoiceContext.createDraftFromErrored(this.invoiceContext.selectedDocument);
+        if (draft) {
+            this.router.load(currentOwnershipRoute(`/invoices/${draft.id}`));
+        }
     }
 
     addLine() {
@@ -241,6 +272,19 @@ export class InvoiceEdit {
 
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
+    }
+
+    get hasEmbeddedPdfInvoice(): boolean {
+        const additionalDocumentReferences = this.invoiceContext.selectedInvoice?.AdditionalDocumentReference ?? [];
+        const incoming = this.invoiceContext.selectedDocument?.direction === DocumentDirection.INCOMING;
+        return additionalDocumentReferences.some(additionalDocumentReference =>
+            isPdfAttachment(additionalDocumentReference)
+            && !isGeneratedInvoicePlaceholder(additionalDocumentReference)
+            && (incoming || additionalDocumentReference.ID === GENERATED_INVOICE));
+    }
+
+    get canDownloadPDF(): boolean {
+        return !!this.invoiceContext.selectedDocument?.id && !this.hasEmbeddedPdfInvoice;
     }
 
     async downloadPDF() {

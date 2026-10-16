@@ -2,14 +2,15 @@ package org.letspeppol.kyc.controller;
 
 import jakarta.mail.Session;
 import jakarta.mail.internet.MimeMessage;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
+import mockwebserver3.MockResponse;
+import mockwebserver3.MockWebServer;
 import org.junit.jupiter.api.*;
 import org.letspeppol.kyc.dto.*;
 import org.letspeppol.kyc.model.AccountType;
 import org.letspeppol.kyc.repository.*;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.*;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureTestRestTemplate
 @Import(RegistrationSteps.class)
 class RegistrationTest {
 
@@ -82,18 +84,19 @@ class RegistrationTest {
 
     @AfterAll
     static void shutdownMockServer() throws Exception {
-        if (mockWebServer != null) mockWebServer.shutdown();
+        if (mockWebServer != null) mockWebServer.close();
     }
 
     @BeforeEach
     void setupMailSender() {
         Mockito.when(javaMailSender.createMimeMessage()).thenReturn(new MimeMessage(Session.getInstance(new java.util.Properties())));
         // Enqueue a default response for /sapi/registry POST
-        mockWebServer.enqueue(new MockResponse()
-            .setBody("""
-                    {"peppolActive":true}
-                    """)
-            .addHeader("Content-Type", "application/json"));
+        mockWebServer.enqueue(new MockResponse.Builder()
+                .body("""
+                        {"peppolActive":true}
+                        """)
+                .addHeader("Content-Type", "application/json")
+                .build());
     }
 
 

@@ -4,7 +4,7 @@ import {CompanyService} from "../services/app/company-service";
 import {InvoiceComposer} from "./invoice-composer";
 import {InvoiceCalculator} from "./invoice-calculator";
 import {AlertType} from "../components/alert/alert";
-import {DocumentDirection, DocumentDto, DocumentPageDto, DocumentType} from "../services/app/invoice-service";
+import {DocumentDirection, DocumentDto, DocumentPageDto, DocumentType, InvoiceService} from "../services/app/invoice-service";
 import {parseCreditNote, parseInvoice} from "../services/peppol/ubl-parser";
 import {PartnerDto, PartnerService} from "../services/app/partner-service";
 import {resolve} from "@aurelia/kernel";
@@ -15,6 +15,7 @@ export class InvoiceContext {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
     private readonly companyService = resolve(CompanyService);
     private readonly partnerService = resolve(PartnerService);
+    private readonly invoiceService = resolve(InvoiceService);
     private readonly invoiceComposer = resolve(InvoiceComposer);
     private readonly invoiceCalculator = resolve(InvoiceCalculator);
     private readonly i18n = resolve(I18N);
@@ -147,6 +148,16 @@ export class InvoiceContext {
         this.getLastInvoiceReference();
     }
 
+    duplicateDocument(source: UBLDoc, documentType: DocumentType) {
+        this.selectedDocument = undefined;
+        this.selectedDocumentType = documentType;
+        this.readOnly = false;
+        this.partnerMissing = false;
+        this.selectedInvoice = this.invoiceComposer.duplicate(source, documentType);
+        this.invoiceCalculator.calculateTaxAndTotals(this.selectedInvoice);
+        this.getLastInvoiceReference();
+    }
+
     getNextPosition(): string {
         if (this.lines.length && this.lines[this.lines.length - 1]) {
             const id = parseInt(this.lines[this.lines.length - 1].ID);
@@ -217,6 +228,38 @@ export class InvoiceContext {
                 countryCode: party?.PostalAddress?.Country.IdentificationCode
             }
         } as PartnerDto;
+    }
+
+    // Acknowledge an errored invoice: it stays visible (greyed out) but leaves the errored counter and offers no further action.
+    async markErrorSeen(document: DocumentDto) {
+        try {
+            const updated = await this.invoiceService.markErrorSeenDocument(document.id);
+            document.errorSeenOn = updated.errorSeenOn;
+            this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.invoice.marked-seen')});
+        } catch {
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.invoice.mark-seen-failed')});
+        }
+    }
+
+    // Reuse the errored invoice's content as a new editable draft so the user can correct it and resend with the same number
+    // (the uniqueness check ignores errored documents, so the number is free to reuse).
+    async createDraftFromErrored(document: DocumentDto): Promise<DocumentDto | undefined> {
+        try {
+            const ubl = document.ubl ?? (await this.invoiceService.getDocument(document.id)).ubl;
+            if (!ubl) {
+                this.ea.publish('alert', {alertType: AlertType.Warning, text: this.i18n.tr('alert.invoice.no-ubl-data')});
+                return undefined;
+            }
+            const draft = await this.invoiceService.createDocument(ubl, true, false);
+            this.draftPage?.content.unshift(draft);
+            if (this.draftPage) {
+                this.draftPage.totalElements++;
+            }
+            return draft;
+        } catch {
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr(`alert.invoice.resend-failed.${document.type}`)});
+            return undefined;
+        }
     }
 
     // Drafts

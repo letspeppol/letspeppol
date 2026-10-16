@@ -18,7 +18,12 @@ export function validateDownloadPeriod(fromDate?: string, toDate?: string): stri
     return undefined;
 }
 
+export function formatSizeInMb(sizeBytes: number | null): string {
+    return sizeBytes == null ? "—" : (sizeBytes / 1_000_000).toFixed(2) + " MB";
+}
+
 export class Downloads {
+    readonly formatSizeInMb = formatSizeInMb;
     private readonly downloadJobService = resolve(DownloadJobService);
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
     private readonly i18n = resolve(I18N);

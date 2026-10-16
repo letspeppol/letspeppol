@@ -11,6 +11,7 @@ public record DownloadJobDto(
         LocalDate toDate,
         DownloadJob.Status status,
         String filename,
+        Long sizeBytes,
         Instant createdOn,
         Instant completedOn,
         Instant expiresOn,

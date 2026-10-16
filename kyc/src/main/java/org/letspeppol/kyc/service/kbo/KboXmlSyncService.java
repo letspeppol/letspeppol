@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
@@ -61,10 +60,10 @@ public class KboXmlSyncService {
         }
 
         // Prefer the last ZIP lexicographically
-        String remoteZipName = zips.get(zips.size() - 1);
+        String remoteZipName = zips.getLast();
         String remoteZipPath = concatPath(fullDir, remoteZipName);
 
-        Path kboBase = Paths.get(dataDir, "kbo");
+        Path kboBase = Path.of(dataDir, "kbo");
         Path localZip = kboBase.resolve(remoteZipName);
 
         try {
@@ -124,7 +123,7 @@ public class KboXmlSyncService {
             return;
         }
 
-        Path kboBase = Paths.get(dataDir, "kbo");
+        Path kboBase = Path.of(dataDir, "kbo");
         try {
             Files.createDirectories(kboBase);
         } catch (IOException e) {

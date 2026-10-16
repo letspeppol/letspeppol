@@ -1,5 +1,5 @@
 import {describe, expect, it} from "vitest";
-import {validateDownloadPeriod} from "../../src/download/downloads";
+import {formatSizeInMb, validateDownloadPeriod} from "../../src/download/downloads";
 
 describe("validateDownloadPeriod", () => {
     it("accepts an inclusive single-day period", () => {
@@ -17,5 +17,12 @@ describe("validateDownloadPeriod", () => {
 
     it("rejects dates from different years", () => {
         expect(validateDownloadPeriod("2025-12-31", "2026-01-01")).toBe("download.validation.same-year");
+    });
+});
+
+describe("formatSizeInMb", () => {
+    it("shows the size in decimal megabytes when available", () => {
+        expect(formatSizeInMb(1_250_000)).toBe("1.25 MB");
+        expect(formatSizeInMb(null)).toBe("—");
     });
 });

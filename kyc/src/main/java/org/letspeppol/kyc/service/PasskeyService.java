@@ -1,9 +1,10 @@
 package org.letspeppol.kyc.service;
 
 import com.webauthn4j.WebAuthnManager;
-import com.webauthn4j.authenticator.AuthenticatorImpl;
 import com.webauthn4j.converter.AttestedCredentialDataConverter;
 import com.webauthn4j.converter.util.ObjectConverter;
+import com.webauthn4j.credential.CredentialRecord;
+import com.webauthn4j.credential.CredentialRecordImpl;
 import com.webauthn4j.data.AuthenticationData;
 import com.webauthn4j.data.AuthenticationParameters;
 import com.webauthn4j.data.AuthenticationRequest;
@@ -170,7 +171,11 @@ public class PasskeyService {
         byte[] clientDataJSON = Base64.getUrlDecoder().decode(response.clientDataJSON());
         byte[] attestationObject = Base64.getUrlDecoder().decode(response.attestationObject());
 
-        ServerProperty serverProperty = new ServerProperty(origins, rpId, new DefaultChallenge(challenge), null);
+        ServerProperty serverProperty = ServerProperty.builder()
+                .origins(origins)
+                .rpId(rpId)
+                .challenge(new DefaultChallenge(challenge))
+                .build();
         RegistrationRequest registrationRequest = new RegistrationRequest(attestationObject, clientDataJSON);
         // userVerificationRequired = true: passkeys act as multi-factor (possession + PIN/biometric),
         // which is what allows passkey login to bypass the separate TOTP step safely.
@@ -180,7 +185,7 @@ public class PasskeyService {
         RegistrationData registrationData;
         try {
             registrationData = webAuthnManager.parse(registrationRequest);
-            webAuthnManager.validate(registrationData, registrationParameters);
+            webAuthnManager.verify(registrationData, registrationParameters);
         } catch (VerificationException e) {
             throw new IllegalArgumentException("WebAuthn registration validation failed: " + e.getMessage(), e);
         }
@@ -247,25 +252,30 @@ public class PasskeyService {
                 .orElseThrow(() -> new IllegalArgumentException("Unknown credential"));
 
         AttestedCredentialData attestedCredentialData = credentialDataConverter.convert(stored.getPublicKeyCose());
-        AuthenticatorImpl authenticator = new AuthenticatorImpl(
-                attestedCredentialData, null, stored.getSignCount());
+        CredentialRecord credentialRecord = new CredentialRecordImpl(
+                null, null, null, null, stored.getSignCount(), attestedCredentialData,
+                null, null, null, null);
 
         byte[] clientDataJSON = Base64.getUrlDecoder().decode(response.clientDataJSON());
         byte[] authenticatorData = Base64.getUrlDecoder().decode(response.authenticatorData());
         byte[] signature = Base64.getUrlDecoder().decode(response.signature());
 
-        ServerProperty serverProperty = new ServerProperty(origins, rpId, new DefaultChallenge(challenge), null);
+        ServerProperty serverProperty = ServerProperty.builder()
+                .origins(origins)
+                .rpId(rpId)
+                .challenge(new DefaultChallenge(challenge))
+                .build();
         AuthenticationRequest authRequest = new AuthenticationRequest(
                 credentialId, authenticatorData, clientDataJSON, signature);
         // userVerificationRequired = true: enforce that the authenticator verified the user
         // (PIN/biometric), so a passkey is a true multi-factor credential, not possession-only.
         AuthenticationParameters authParameters = new AuthenticationParameters(
-                serverProperty, authenticator, null, true, true);
+                serverProperty, credentialRecord, null, true, true);
 
         AuthenticationData authData;
         try {
             authData = webAuthnManager.parse(authRequest);
-            webAuthnManager.validate(authData, authParameters);
+            webAuthnManager.verify(authData, authParameters);
         } catch (VerificationException e) {
             throw new IllegalArgumentException("WebAuthn authentication failed: " + e.getMessage(), e);
         }

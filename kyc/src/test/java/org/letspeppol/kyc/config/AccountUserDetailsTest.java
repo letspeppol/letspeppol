@@ -1,11 +1,12 @@
 package org.letspeppol.kyc.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.session.SessionRegistryImpl;
-import org.springframework.security.jackson2.SecurityJackson2Modules;
-import org.springframework.security.oauth2.server.authorization.jackson2.OAuth2AuthorizationServerJackson2Module;
+import org.springframework.security.jackson.SecurityJacksonModules;
+
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 
 import java.security.Principal;
 import java.util.Map;
@@ -44,10 +45,12 @@ class AccountUserDetailsTest {
     @Test
     void storedAuthorizationDoesNotContainThePasswordHash() throws Exception {
         AccountUserDetails principal = new AccountUserDetails("person@example.com", "$2a$12$hash", UUID.randomUUID(), false, 1L, false, true);
-        ObjectMapper authorizationMapper = new ObjectMapper();
-        authorizationMapper.registerModules(SecurityJackson2Modules.getModules(getClass().getClassLoader()));
-        authorizationMapper.registerModule(new OAuth2AuthorizationServerJackson2Module());
-        authorizationMapper.registerModule(new AccountUserDetailsJacksonModule());
+        BasicPolymorphicTypeValidator.Builder typeValidator = BasicPolymorphicTypeValidator.builder()
+                .allowIfSubType(AccountUserDetails.class);
+        JsonMapper authorizationMapper = JsonMapper.builder()
+                .addModules(SecurityJacksonModules.getModules(getClass().getClassLoader(), typeValidator))
+                .addModule(new AccountUserDetailsJacksonModule())
+                .build();
 
         String storedAttributes = authorizationMapper.writeValueAsString(Map.of(
                 Principal.class.getName(),

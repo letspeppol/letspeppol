@@ -8,6 +8,7 @@ const ERROR_KEYS: Record<string, string> = {
     ownership_unavailable: 'login.authorization-no-ownership',
     access_denied: 'login.authorization-denied',
     login_required: 'login.authorization-expired',
+    invalid_token: 'login.authorization-expired',
     server_error: 'login.authorization-unavailable',
     temporarily_unavailable: 'login.authorization-unavailable',
 };

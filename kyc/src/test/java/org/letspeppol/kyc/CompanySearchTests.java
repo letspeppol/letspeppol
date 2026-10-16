@@ -52,12 +52,12 @@ class CompanySearchTests {
         // Search by VAT
         results = companyService.search(null, "BE9900002222", null, null);
         assertThat(results).hasSize(1);
-        assertThat(results.get(0).name()).isEqualTo("Beta Inc");
+        assertThat(results.getFirst().name()).isEqualTo("Beta Inc");
 
         // Search by Peppol ID
         results = companyService.search(null, null, "0208:9900003333", null);
         assertThat(results).hasSize(1);
-        assertThat(results.get(0).name()).isEqualTo("Acme Limited");
+        assertThat(results.getFirst().name()).isEqualTo("Acme Limited");
 
         // Search case insensitive
         results = companyService.search(null, null, null, "acme");

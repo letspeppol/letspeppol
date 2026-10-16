@@ -3,7 +3,6 @@
     "account-name": "Accountnaam",
     "activate-on-peppol": "Activeren op Peppol",
     "add-attachment-to-notification": "Bijlage toevoegen aan de melding",
-    "add-pdf-to-sending-invoice": "PDF toevoegen aan factuur",
     "address": "Adres",
     "cancel": "Annuleren",
     "change-password": "Wachtwoord wijzigen",
@@ -15,7 +14,6 @@
     "email-notification-cc-list-outgoing": "Uitgaande documenten: e-mail CC-lijst",
     "enable-email-notification": "E-mailmeldingen inschakelen",
     "iban": "IBAN",
-    "invoice-settings": "Factuurinstellingen",
     "notifications": "Meldingen",
     "number": "Nummer",
     "payment-info": "Betaalinformatie",
@@ -95,6 +93,10 @@
       "draft-saved": {
         "CREDIT_NOTE": "Creditnotaconcept opgeslagen",
         "INVOICE": "Factuurconcept opgeslagen"
+      },
+      "duplicate-failed": {
+        "CREDIT_NOTE": "Dupliceren van de creditnota mislukt",
+        "INVOICE": "Dupliceren van de factuur mislukt"
       },
       "load-failed": "Factuur ophalen mislukt",
       "mark-seen-failed": "Markeren van factuur als gezien mislukt",
@@ -206,8 +208,12 @@
     "belgian-only": "Momenteel activeren we alleen Belgische ondernemingen. <br /> Land laten ondersteunen? <a href=\"mailto:country@letspeppol.org\">Help mee</a>",
     "choose-credentials-title": "2. Kies inloggegevens",
     "company": "Bedrijf",
+    "director-choose-suggested": "Selecteer deze bestuurder",
     "director-confirm": "Bevestigen",
     "director-confirmed": "Bevestigd",
+    "director-mismatch": "De naam op uw eID komt niet overeen met de geselecteerde bestuurder. Selecteer de juiste bestuurder om verder te gaan.",
+    "director-no-match": "Staat uw naam niet in de lijst? Neem dan contact op met de ondersteuning.",
+    "director-suggestion": "Uw eID komt mogelijk overeen met {{name}}.",
     "directors": "Bestuurders",
     "expand-button": "Vergroten",
     "header": "Identiteit bevestigen",
@@ -236,9 +242,11 @@
   },
   "download": {
     "action": {"download": "Downloaden", "retry": "Opnieuw proberen"}, "active-links": "actieve archieven", "create": "Archief aanmaken", "creating": "Aanmaken…",
-    "description": "Maak een ZIP met definitieve facturen en creditnota’s. Beide datums zijn inbegrepen.", "empty": "Er zijn nog geen archieven aangemaakt.", "from-date": "Van datum", "generation-failed": "Archiefgeneratie mislukt", "loading": "Archieven laden…",
+    "description": "Maak een ZIP met definitieve facturen en creditnota’s. Beide datums zijn inbegrepen.", "empty": "Er zijn nog geen archieven aangemaakt.", "from-date": "Van datum", "generation-failed": "Archiefgeneratie mislukt",
+    "info": {"download-limit": "Het ZIP-bestand wordt verwijderd nadat het 3 keer is gedownload.", "expiration": "De downloadlink vervalt en wordt na 7 dagen verwijderd."},
+    "loading": "Archieven laden…",
     "status": {"FAILED": "Mislukt", "PENDING": "In afwachting", "PROCESSING": "Bezig", "READY": "Klaar"},
-    "table": {"actions": "Acties", "completed": "Voltooid", "created": "Aangemaakt", "downloads": "Downloads", "expires": "Vervalt", "file": "Bestand", "period": "Periode", "status": "Status"},
+    "table": {"actions": "Acties", "completed": "Voltooid", "created": "Aangemaakt", "downloads": "Downloads", "expires": "Vervalt", "file": "Bestand", "period": "Periode", "size": "Grootte (MB)", "status": "Status"},
     "title": "UBL-downloads", "to-date": "Tot datum",
     "validation": {"limit": "Verwijder een archief voordat u een nieuw aanmaakt.", "order": "De begindatum mag niet na de einddatum liggen.", "required": "Beide datums zijn verplicht.", "same-year": "Beide datums moeten in hetzelfde jaar liggen."}
   },
@@ -318,6 +326,10 @@
   "invoice": {
     "action": {
       "credit-this-invoice": "Een creditnota voor deze factuur aanmaken",
+      "duplicate": {
+        "CREDIT_NOTE": "Creditnota dupliceren",
+        "INVOICE": "Factuur dupliceren"
+      },
       "mark-paid": {
         "CREDIT_NOTE": "Creditnota markeren als betaald",
         "INVOICE": "Factuur markeren als betaald"
@@ -370,7 +382,11 @@
       "due-date": "Vervaldatum",
       "issue-date": "Uitgiftedatum",
       "payment-terms": "Betalingsvoorwaarden",
-      "title": "Datum"
+      "title": "Datum",
+      "validation": {
+        "due-before-issue": "De vervaldatum mag niet vóór de uitgiftedatum liggen.",
+        "due-in-past": "De vervaldatum mag niet in het verleden liggen."
+      }
     },
     "deliveryModal": {
       "corner1-id": "Corner 1-ID",
@@ -394,8 +410,13 @@
       "cancel": "Annuleren",
       "delete-draft": "Concept verwijderen",
       "delivery": "Leveringsbewijs",
+      "delivery-error": {
+        "CREDIT_NOTE": "Deze creditnota kon niet worden afgeleverd",
+        "INVOICE": "Deze factuur kon niet worden afgeleverd"
+      },
       "download-pdf": "PDF",
       "download-ubl": "UBL",
+      "duplicate": "Dupliceren",
       "invoice-lines": "Factuurlijnen",
       "loading": "Laden",
       "method": "Methode",
@@ -694,19 +715,20 @@
     "validating": "Document valideren, een moment geduld"
   },
   "ownershipAdd": {
-    "account-info-body": "Dit bedrijf wordt toegevoegd aan het bestaande account hierboven. Het wachtwoord van dat account blijft hetzelfde.",
-    "account-info-title": "2. Bevestig het account",
-    "action": "Account toevoegen",
+    "account-info-body": "Dit bedrijf wordt aan uw bestaande account toegevoegd. Uw wachtwoord blijft hetzelfde.",
+    "account-info-title": "2. Bevestig uw e-mailadres",
+    "action": "Bedrijf toevoegen",
     "back-dashboard": "Terug naar dashboard",
     "cancel": "Terug naar dashboard",
     "company-has-admin": "Dit bedrijf heeft al een admin-account. De huidige flow ondersteunt alleen bedrijven zonder bestaande admin.",
-    "intro": "Voeg een extra account toe voor een bedrijf door te tekenen als een van de bestuurders.",
+    "intro": "Voeg een ander bedrijf aan uw account toe door als een van de bestuurders te ondertekenen.",
     "lookup": "Bedrijf zoeken",
-    "read-contract-info": "U ontvangt een ondertekend exemplaar zodra dit account is toegevoegd.",
-    "sign-button": "Account toevoegen",
-    "success-body": "Het ondertekende contract werd gedownload en het nieuwe bedrijf is nu beschikbaar in uw accountkeuzelijst.",
-    "success-title": "Account toegevoegd",
-    "title": "Account toevoegen"
+    "read-contract-info": "U ontvangt een ondertekend exemplaar zodra dit bedrijf is toegevoegd.",
+    "sign-button": "Bedrijf toevoegen",
+    "success-body": "Het ondertekende contract is gedownload. U kunt het nieuwe bedrijf nu hierboven kiezen.",
+    "success-title": "Bedrijf toegevoegd",
+    "title": "Bedrijf toevoegen",
+    "tooltip": "Voeg een ander bedrijf aan uw account toe door als een van de bestuurders te ondertekenen met uw eID."
   },
   "partner": {
     "all": "Alle",
@@ -773,10 +795,23 @@
     "upper": "Minstens 1 hoofdletter"
   },
   "paymentTerms": {
-    "15_DAYS": "15 dagen",
-    "30_DAYS": "30 dagen",
-    "60_DAYS": "60 dagen",
-    "END_OF_NEXT_MONTH": "Einde van de maand"
+    "basis": {
+      "END_OF_MONTH": "na einde maand",
+      "END_OF_NEXT_MONTH": "na einde volgende maand",
+      "INVOICE_DATE": "na factuurdatum"
+    },
+    "basis-label": "Geteld vanaf",
+    "days-label": "Dagen",
+    "end-of-month": "Einde maand",
+    "end-of-month-days_one": "{{days}} dag na einde maand",
+    "end-of-month-days_other": "{{days}} dagen na einde maand",
+    "end-of-next-month": "Einde volgende maand",
+    "end-of-next-month-days_one": "{{days}} dag na einde volgende maand",
+    "end-of-next-month-days_other": "{{days}} dagen na einde volgende maand",
+    "net_one": "{{days}} dag",
+    "net_other": "{{days}} dagen",
+    "on-receipt": "Betaalbaar bij ontvangst",
+    "partner-hint": "Laat leeg om je eigen betalingsvoorwaarden te gebruiken."
   },
   "placeholder": {
     "customer-search": "Zoek op naam of BTW",
