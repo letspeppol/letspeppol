@@ -129,7 +129,10 @@
 
       <div class="content">
 
-      <h1>Credit note</h1>
+      <h1><xsl:choose>
+        <xsl:when test="/*/*[local-name()='CreditNoteTypeCode'] = '261' or contains(/*/*[local-name()='CustomizationID'], 'urn:fdc:peppol.eu:2017:poacc:selfbilling:') or contains(/*/*[local-name()='ProfileID'], 'urn:fdc:peppol.eu:2017:poacc:selfbilling:')">Self-billed credit note</xsl:when>
+        <xsl:otherwise>Credit note</xsl:otherwise>
+      </xsl:choose></h1>
 
       <table class="meta">
         <tr>

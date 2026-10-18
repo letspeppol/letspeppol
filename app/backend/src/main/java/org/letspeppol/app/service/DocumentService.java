@@ -425,7 +425,7 @@ public class DocumentService {
         document.setUbl(ublDocumentDto.ubl());
         if (DocumentType.CREDIT_NOTE.equals(document.getType())) {
             document.getCompany().setLastCreditNoteReference(document.getInvoiceReference());
-        } else {
+        } else if (DocumentType.INVOICE.equals(document.getType())) {
             document.getCompany().setLastInvoiceReference(document.getInvoiceReference());
         }
 
@@ -495,7 +495,7 @@ public class DocumentService {
         document.setProcessedStatus(ublDocumentDto.processedStatus());
         if (DocumentType.CREDIT_NOTE.equals(document.getType())) {
             document.getCompany().setLastCreditNoteReference(document.getInvoiceReference());
-        } else {
+        } else if (DocumentType.INVOICE.equals(document.getType())) {
             document.getCompany().setLastInvoiceReference(document.getInvoiceReference());
         }
         document = documentRepository.save(document);

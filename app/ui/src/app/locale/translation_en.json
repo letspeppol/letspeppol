@@ -274,7 +274,9 @@
   },
   "documentType": {
     "CREDIT_NOTE": "Credit Note",
-    "INVOICE": "Invoice"
+    "INVOICE": "Invoice",
+    "SELF_BILLING_CREDIT_NOTE": "Self-billed credit note",
+    "SELF_BILLING_INVOICE": "Self-billed invoice"
   },
   "donations": {
     "active-companies": "companies",

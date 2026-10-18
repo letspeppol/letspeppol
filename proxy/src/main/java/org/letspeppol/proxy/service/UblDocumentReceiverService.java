@@ -5,12 +5,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.proxy.dto.UblDocumentDto;
 import org.letspeppol.proxy.exception.DuplicateRequestException;
-import org.letspeppol.proxy.exception.NotFoundException;
 import org.letspeppol.proxy.mapper.UblDocumentMapper;
 import org.letspeppol.proxy.model.*;
 import org.letspeppol.proxy.repository.AppLinkRepository;
 import org.letspeppol.proxy.repository.UblDocumentRepository;
 import org.letspeppol.proxy.util.HashUtil;
+import org.letspeppol.proxy.util.UblParser;
+import org.letspeppol.proxy.exception.UblException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,14 @@ public class UblDocumentReceiverService {
                 .toList();
     }
 
-    public void createAsReceived(DocumentType documentType, String senderPeppolId, String receiverPeppolId, String ubl, AccessPoint accessPoint, String accessPointId, Runnable afterCommit) {
+    public void createAsReceived(String senderPeppolId, String receiverPeppolId, String ubl, AccessPoint accessPoint, String accessPointId, Runnable afterCommit) {
+        DocumentType documentType;
+        try {
+            // Classify the actual UBL; access points may label self-billing as ordinary billing.
+            documentType = UblParser.parseDocumentType(ubl);
+        } catch (javax.xml.parsers.ParserConfigurationException | java.io.IOException | org.xml.sax.SAXException e) {
+            throw new UblException("Could not classify received UBL: " + e.getMessage());
+        }
         String hash = HashUtil.sha256(ubl);
         if (ublDocumentRepository.findByAccessPointIdAndOwnerPeppolId(accessPointId, receiverPeppolId).isPresent() || ublDocumentRepository.findByHashAndOwnerPeppolId(hash, receiverPeppolId).isPresent()) {
             log.error("Receiving duplicate document {} from Access Point {}", accessPointId, accessPoint);

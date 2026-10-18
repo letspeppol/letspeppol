@@ -23,7 +23,6 @@ import org.letspeppol.proxy.dto.recommand.VerifyCompanyResponse;
 import org.letspeppol.proxy.exception.NotFoundException;
 import org.letspeppol.proxy.exception.SendAuthorizationException;
 import org.letspeppol.proxy.model.AccessPoint;
-import org.letspeppol.proxy.model.DocumentType;
 import org.letspeppol.proxy.model.Registry;
 import org.letspeppol.proxy.model.UblDocument;
 import org.letspeppol.proxy.repository.RegistryRepository;
@@ -426,7 +425,6 @@ public class RecommandService implements AccessPointServiceInterface {
     @Override
     public void receiveDocument(UblDocument ublDocument) {
         ublDocumentReceiverService.createAsReceived(
-                Objects.requireNonNull(ublDocument.getType(), "Document type must not be null"),
                 requireText(ublDocument.getPartnerPeppolId(), "Sender Peppol ID"),
                 requireText(ublDocument.getOwnerPeppolId(), "Receiver Peppol ID"),
                 requireText(ublDocument.getUbl(), "UBL document"),
@@ -466,13 +464,11 @@ public class RecommandService implements AccessPointServiceInterface {
     private void receiveInboxDocument(InboxResponse.InboxDocument inboxDocument) {
         JsonNode document = getDocument(inboxDocument.id());
         String ubl = textValue(document, "xml");
-        DocumentType documentType = toDocumentType(textValue(document, "type"), textValue(document, "docTypeId"));
         String senderId = textValue(document, "senderId");
         String receiverId = textValue(document, "receiverId");
 
         log.debug("Receiving Recommand document {} from {} to {}", inboxDocument.id(), senderId, receiverId);
         ublDocumentReceiverService.createAsReceived(
-                documentType,
                 senderId,
                 receiverId,
                 ubl,
@@ -491,22 +487,6 @@ public class RecommandService implements AccessPointServiceInterface {
                 .retrieve()
                 .toBodilessEntity()
                 .block();
-    }
-
-    private DocumentType toDocumentType(String type, String docTypeId) {
-        return switch (type) {
-            case "invoice" -> DocumentType.INVOICE;
-            case "creditNote" -> DocumentType.CREDIT_NOTE;
-            default -> {
-                if (docTypeId.contains("CreditNote-2")) {
-                    yield DocumentType.CREDIT_NOTE;
-                }
-                if (docTypeId.contains("Invoice-2")) {
-                    yield DocumentType.INVOICE;
-                }
-                throw new IllegalArgumentException("Unsupported Recommand document type: " + type);
-            }
-        };
     }
 
     private String textValue(JsonNode node, String field) {

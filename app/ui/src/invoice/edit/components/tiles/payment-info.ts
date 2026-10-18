@@ -2,7 +2,7 @@ import {resolve} from "@aurelia/kernel";
 import {InvoiceContext} from "../../../invoice-context";
 import {bindable, computed, IEventAggregator} from "aurelia";
 import {InvoiceComposer} from "../../../invoice-composer";
-import {InvoiceService, DocumentDirection, DocumentType} from "../../../../services/app/invoice-service";
+import {baseDocumentType, InvoiceService, DocumentDirection, DocumentType} from "../../../../services/app/invoice-service";
 import {AlertType} from "../../../../components/alert/alert";
 import moment from "moment";
 import {I18N} from "@aurelia/i18n";
@@ -34,14 +34,14 @@ export class PaymentInfo {
         return !this.invoiceContext.selectedDocument?.paidOn
             && this.isSuccessfullyProcessed
             && this.invoiceContext.selectedDocument?.direction === DocumentDirection.INCOMING
-            && this.invoiceContext.selectedDocument?.type !== DocumentType.CREDIT_NOTE
+            && this.invoiceContext.selectedDocument?.type === DocumentType.INVOICE
             && !!this.invoiceContext.selectedInvoice?.PaymentMeans?.PayeeFinancialAccount?.ID;
     }
 
     get currentDocumentType(): DocumentType {
-        return this.invoiceContext.selectedDocument?.type
+        return baseDocumentType(this.invoiceContext.selectedDocument?.type
             || this.invoiceContext.selectedDocumentType
-            || DocumentType.INVOICE;
+            || DocumentType.INVOICE);
     }
 
     get isSuccessfullyProcessed(): boolean {
@@ -75,10 +75,10 @@ export class PaymentInfo {
             await this.invoiceService.togglePaidDocument(document.id);
             if (document.paidOn) {
                 document.paidOn = undefined;
-                this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(`alert.invoice.marked-unpaid.${document.type}`)});
+                this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(`alert.invoice.marked-unpaid.${baseDocumentType(document.type)}`)});
             } else {
                 document.paidOn = datePaid;
-                this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(`alert.invoice.marked-paid.${document.type}`)});
+                this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(`alert.invoice.marked-paid.${baseDocumentType(document.type)}`)});
             }
         } catch {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.invoice.paid-status-failed')});

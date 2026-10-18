@@ -273,7 +273,9 @@
   },
   "documentType": {
     "CREDIT_NOTE": "Note de crédit",
-    "INVOICE": "Facture"
+    "INVOICE": "Facture",
+    "SELF_BILLING_CREDIT_NOTE": "Avoir autofacturé",
+    "SELF_BILLING_INVOICE": "Facture autofacturée"
   },
   "donations": {
     "active-companies": "entreprises",

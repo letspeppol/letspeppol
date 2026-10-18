@@ -61,7 +61,7 @@
                 </td>
                 <td><textarea class="description required-input" placeholder="Description" t="[placeholder]label.description" value.bind="line.Item.Description" readonly.bind="readOnly"></textarea></td>
                 <td class="num">
-                    <template if.bind="invoiceContext.selectedDocumentType === 'INVOICE'">
+                    <template if.bind="invoiceContext.isInvoice">
                         <div required-table-input.class="!line.InvoicedQuantity.value">
                             <input class="qty" type="number" min="0" step="1" value.bind="line.InvoicedQuantity.value" change.trigger="calcLineTotal(line)" readonly.bind="readOnly" />
                         </div>

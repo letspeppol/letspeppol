@@ -273,7 +273,9 @@
   },
   "documentType": {
     "CREDIT_NOTE": "Creditnota",
-    "INVOICE": "Factuur"
+    "INVOICE": "Factuur",
+    "SELF_BILLING_CREDIT_NOTE": "Creditnota via selfbilling",
+    "SELF_BILLING_INVOICE": "Factuur via selfbilling"
   },
   "donations": {
     "active-companies": "bedrijven",

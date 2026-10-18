@@ -30,6 +30,50 @@ import static org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTest
 @AutoConfigureTestDatabase(replace = NONE)
 class DocumentRepositoryTotalsTest extends PostgresIntegrationTest {
 
+    @Test
+    void receivedSelfBilledInvoicesAndCreditsContributeToReceivables() {
+        persist(d -> {
+            d.setType(DocumentType.SELF_BILLING_INVOICE);
+            d.setAmountInclVat(new BigDecimal("121"));
+            d.setAmountExclVat(new BigDecimal("100"));
+            d.setDueDate(daysAgo(1));
+        });
+        persist(d -> {
+            d.setType(DocumentType.SELF_BILLING_CREDIT_NOTE);
+            d.setAmountInclVat(new BigDecimal("24.20"));
+            d.setAmountExclVat(new BigDecimal("20"));
+            d.setDueDate(daysAgo(1));
+        });
+        flush();
+        TotalsRow totals = documentRepository.totalsByOwner(OWNER);
+        assertThat(totals.totalReceivableOpenInclVat()).isEqualByComparingTo("96.80");
+        assertThat(totals.totalReceivableOpenExclVat()).isEqualByComparingTo("80");
+        assertThat(totals.totalReceivableOverdueInclVat()).isEqualByComparingTo("96.80");
+        assertThat(totals.totalReceivableThisYearInclVat()).isEqualByComparingTo("96.80");
+        assertThat(totals.totalPayableOpenInclVat()).isEqualByComparingTo("0");
+    }
+
+    @Test
+    void outgoingSelfBilledInvoicesAndCreditsContributeToPayables() {
+        persist(d -> {
+            d.setDirection(DocumentDirection.OUTGOING);
+            d.setType(DocumentType.SELF_BILLING_INVOICE);
+            d.setAmountInclVat(new BigDecimal("121"));
+            d.setAmountExclVat(new BigDecimal("100"));
+        });
+        persist(d -> {
+            d.setDirection(DocumentDirection.OUTGOING);
+            d.setType(DocumentType.SELF_BILLING_CREDIT_NOTE);
+            d.setAmountInclVat(new BigDecimal("24.20"));
+            d.setAmountExclVat(new BigDecimal("20"));
+        });
+        flush();
+        TotalsRow totals = documentRepository.totalsByOwner(OWNER);
+        assertThat(totals.totalPayableOpenInclVat()).isEqualByComparingTo("96.80");
+        assertThat(totals.totalPayableOpenExclVat()).isEqualByComparingTo("80");
+        assertThat(totals.totalReceivableOpenInclVat()).isEqualByComparingTo("0");
+    }
+
     private static final String OWNER = "0208:0000000001";
     private static final String OTHER_OWNER = "0208:0000000002";
     private static final Currency EUR = Currency.getInstance("EUR");

@@ -7,6 +7,7 @@ import {
     DocumentDto,
     DocumentQuery,
     InvoiceService, DocumentDirection,
+    baseDocumentType, isInvoiceType, isSelfBillingType,
 } from "../../services/app/invoice-service";
 import {getVatDisplayMode, IVatDisplay, VatDisplayMode} from "../../services/app/vat-display-service";
 import moment from "moment";
@@ -21,6 +22,9 @@ type SortDirection = "asc" | "desc";
 type StatusFilter = "ALL" | "UNPAID" | "OVERDUE" | "PAID" | "ERROR";
 
 export class InvoiceOverview {
+    readonly isInvoiceType = isInvoiceType;
+    readonly isSelfBillingType = isSelfBillingType;
+    readonly baseDocumentType = baseDocumentType;
     readonly ea: IEventAggregator = resolve(IEventAggregator);
     private invoiceService = resolve(InvoiceService);
     private invoiceContext = resolve(InvoiceContext);
@@ -212,10 +216,10 @@ export class InvoiceOverview {
             await this.invoiceService.togglePaidDocument(item.id);
             if (item.paidOn) {
                 item.paidOn = undefined;
-                this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(`alert.invoice.marked-unpaid.${item.type}`)});
+                this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(`alert.invoice.marked-unpaid.${baseDocumentType(item.type)}`)});
             } else {
                 item.paidOn = datePaid;
-                this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(`alert.invoice.marked-paid.${item.type}`)});
+                this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(`alert.invoice.marked-paid.${baseDocumentType(item.type)}`)});
             }
         } catch {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.invoice.paid-status-failed')});
@@ -237,6 +241,7 @@ export class InvoiceOverview {
 
     async duplicate(event: Event, item: DocumentDto) {
         event.stopPropagation();
+        if (isSelfBillingType(item.type)) return;
         try {
             const ubl = item.ubl ?? (await this.invoiceService.getDocument(item.id)).ubl;
             if (!ubl) {

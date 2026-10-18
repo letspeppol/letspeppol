@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.letspeppol.proxy.exception.SendAuthorizationException;
-import org.letspeppol.proxy.exception.AlreadyRegisteredException;
 import org.letspeppol.proxy.dto.PeppolSettings;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -23,7 +22,6 @@ import org.letspeppol.proxy.config.RecommandConfig;
 import org.letspeppol.proxy.dto.RegistrationRequest;
 import org.letspeppol.proxy.dto.StatusReport;
 import org.letspeppol.proxy.model.AccessPoint;
-import org.letspeppol.proxy.model.DocumentType;
 import org.letspeppol.proxy.model.Registry;
 import org.letspeppol.proxy.model.UblDocument;
 import org.letspeppol.proxy.repository.RegistryRepository;
@@ -413,16 +411,15 @@ class RecommandServiceTest {
                 """);
         respond(200, "{\"success\":true}");
         doAnswer(invocation -> {
-            invocation.<Runnable>getArgument(6).run();
+            invocation.<Runnable>getArgument(5).run();
             return null;
         }).when(receiverService).createAsReceived(
-                any(), any(), any(), any(), any(), any(), any()
+                any(), any(), any(), any(), any(), any()
         );
 
         service.receiveDocuments();
 
         verify(receiverService).createAsReceived(
-                eq(DocumentType.INVOICE),
                 eq("0208:0123456789"),
                 eq("0208:0685912734"),
                 eq("<Invoice/>"),

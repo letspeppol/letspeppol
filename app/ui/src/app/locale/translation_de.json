@@ -273,7 +273,9 @@
   },
   "documentType": {
     "CREDIT_NOTE": "Gutschrift",
-    "INVOICE": "Rechnung"
+    "INVOICE": "Rechnung",
+    "SELF_BILLING_CREDIT_NOTE": "Gutschrift im Gutschriftverfahren",
+    "SELF_BILLING_INVOICE": "Rechnung im Gutschriftverfahren"
   },
   "donations": {
     "active-companies": "Unternehmen",

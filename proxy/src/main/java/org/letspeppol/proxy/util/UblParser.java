@@ -1,8 +1,7 @@
 package org.letspeppol.proxy.util;
 
 import org.letspeppol.proxy.dto.PeppolParties;
-//import org.letspeppol.proxy.dto.UblDto;
-//import org.letspeppol.proxy.model.DocumentType;
+import org.letspeppol.proxy.model.DocumentType;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -14,15 +13,38 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
 import java.io.StringReader;
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneOffset;
-import java.util.Currency;
 
 public final class UblParser {
 
+    public static DocumentType parseDocumentType(String xml) throws ParserConfigurationException, IOException, SAXException {
+        return parseDocumentType(prepareDomDocument(xml).getDocumentElement());
+    }
+
+    private static DocumentType parseDocumentType(org.w3c.dom.Element root) {
+        boolean selfBilling = false;
+        for (var child = root.getFirstChild(); child != null; child = child.getNextSibling()) {
+            selfBilling = switch (child.getLocalName() == null ? "" : child.getLocalName()) {
+                case "CustomizationID", "ProfileID" -> child.getTextContent().contains("urn:fdc:peppol.eu:2017:poacc:selfbilling:");
+                case "InvoiceTypeCode" -> switch (child.getTextContent().trim()) {
+                    case "389", "527" -> true;
+                    default -> false;
+                };
+                case "CreditNoteTypeCode" -> "261".equals(child.getTextContent().trim());
+                default -> false;
+            };
+            if (selfBilling) break;
+        }
+        return switch (root.getLocalName()) {
+            case "Invoice" -> selfBilling ? DocumentType.SELF_BILLING_INVOICE : DocumentType.INVOICE;
+            case "CreditNote" -> selfBilling ? DocumentType.SELF_BILLING_CREDIT_NOTE : DocumentType.CREDIT_NOTE;
+            default -> throw new IllegalArgumentException("Unsupported UBL document type: " + root.getLocalName());
+        };
+    }
+
     private static Document prepareDomDocument(String xml) throws ParserConfigurationException, IOException, SAXException {
+        if (xml != null && !xml.isEmpty() && xml.charAt(0) == '\uFEFF') {
+            xml = xml.substring(1);
+        }
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setNamespaceAware(true); //Safety if forgotten to add local-name()
         documentBuilderFactory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true); //Sets protective limits and disables risky stuff
@@ -48,7 +70,9 @@ public final class UblParser {
         }
         String receiverPeppolId = receiverScheme.isEmpty() ? receiverId : receiverScheme + ":" + receiverId;
 
-        return new PeppolParties(senderPeppolId, receiverPeppolId);
+        return parseDocumentType(document.getDocumentElement()).isSelfBilling()
+                ? new PeppolParties(receiverPeppolId, senderPeppolId)
+                : new PeppolParties(senderPeppolId, receiverPeppolId);
     }
 
     public static PeppolParties parsePeppolParties(String xml) throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {

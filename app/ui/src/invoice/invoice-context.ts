@@ -4,7 +4,7 @@ import {CompanyService} from "../services/app/company-service";
 import {InvoiceComposer} from "./invoice-composer";
 import {InvoiceCalculator} from "./invoice-calculator";
 import {AlertType} from "../components/alert/alert";
-import {DocumentDirection, DocumentDto, DocumentPageDto, DocumentType, InvoiceService} from "../services/app/invoice-service";
+import {baseDocumentType, DocumentDirection, DocumentDto, DocumentPageDto, DocumentType, InvoiceService, isInvoiceType, isCreditNoteType, isSelfBillingType} from "../services/app/invoice-service";
 import {parseCreditNote, parseInvoice} from "../services/peppol/ubl-parser";
 import {PartnerDto, PartnerService} from "../services/app/partner-service";
 import {resolve} from "@aurelia/kernel";
@@ -49,6 +49,24 @@ export class InvoiceContext {
     partnerMissing: boolean = false;
     addPdfToSendingInvoice: boolean = false;
     showAllowanceChargeForLines: boolean = false;
+
+    get selfBilling(): boolean {
+        return isSelfBillingType(this.selectedDocumentType);
+    }
+
+    get isInvoice(): boolean {
+        return isInvoiceType(this.selectedDocumentType);
+    }
+
+    get partnerParty(): Party {
+        return this.partnerIsSupplier
+            ? this.selectedInvoice?.AccountingSupplierParty.Party
+            : this.selectedInvoice?.AccountingCustomerParty.Party;
+    }
+
+    get partnerIsSupplier(): boolean {
+        return (this.selectedDocument?.direction === DocumentDirection.INCOMING) !== this.selfBilling;
+    }
 
     clearSelectedInvoice() {
         this.selectedInvoice = undefined;
@@ -99,14 +117,14 @@ export class InvoiceContext {
     selectInvoice(item: DocumentDto) {
         this.readOnly = (item.direction === DocumentDirection.INCOMING || item.proxyOn != null || item.createdExternally);
         this.selectedDocument = item;
-        if (item.type === DocumentType.CREDIT_NOTE) {
-            this.selectedDocumentType = DocumentType.CREDIT_NOTE;
+        this.selectedDocumentType = item.type;
+        if (isCreditNoteType(item.type)) {
             this.selectedInvoice = parseCreditNote(item.ubl);
         } else {
-            this.selectedDocumentType = DocumentType.INVOICE;
             this.selectedInvoice = parseInvoice(item.ubl);
         }
-        if (item.draftedOn) {
+        this.readOnly ||= this.selfBilling;
+        if (item.draftedOn && !this.selfBilling) {
             this.getLastInvoiceReference();
         }
         if (this.readOnly) {
@@ -128,6 +146,7 @@ export class InvoiceContext {
     }
 
     newUBLDocument(documentType : DocumentType = DocumentType.INVOICE) {
+        if (isSelfBillingType(documentType)) throw new Error('Creating self-billed documents in the editor is not supported');
         this.selectedDocumentType = documentType;
         if (documentType === DocumentType.INVOICE) {
             this.selectedInvoice = this.invoiceComposer.createInvoice();
@@ -149,6 +168,7 @@ export class InvoiceContext {
     }
 
     duplicateDocument(source: UBLDoc, documentType: DocumentType) {
+        if (isSelfBillingType(documentType)) return;
         this.selectedDocument = undefined;
         this.selectedDocumentType = documentType;
         this.readOnly = false;
@@ -250,14 +270,14 @@ export class InvoiceContext {
                 this.ea.publish('alert', {alertType: AlertType.Warning, text: this.i18n.tr('alert.invoice.no-ubl-data')});
                 return undefined;
             }
-            const draft = await this.invoiceService.createDocument(ubl, true, false);
+            const draft = await this.invoiceService.createDocument(ubl, true, isSelfBillingType(document.type));
             this.draftPage?.content.unshift(draft);
             if (this.draftPage) {
                 this.draftPage.totalElements++;
             }
             return draft;
         } catch {
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr(`alert.invoice.resend-failed.${document.type}`)});
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr(`alert.invoice.resend-failed.${baseDocumentType(document.type)}`)});
             return undefined;
         }
     }

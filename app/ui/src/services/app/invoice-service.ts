@@ -19,6 +19,24 @@ export enum DocumentDirection {
 export enum DocumentType {
   INVOICE = "INVOICE",
   CREDIT_NOTE = "CREDIT_NOTE",
+  SELF_BILLING_INVOICE = "SELF_BILLING_INVOICE",
+  SELF_BILLING_CREDIT_NOTE = "SELF_BILLING_CREDIT_NOTE",
+}
+
+export function isInvoiceType(type?: DocumentType): boolean {
+    return type === DocumentType.INVOICE || type === DocumentType.SELF_BILLING_INVOICE;
+}
+
+export function isCreditNoteType(type?: DocumentType): boolean {
+    return type === DocumentType.CREDIT_NOTE || type === DocumentType.SELF_BILLING_CREDIT_NOTE;
+}
+
+export function isSelfBillingType(type?: DocumentType): boolean {
+    return type === DocumentType.SELF_BILLING_INVOICE || type === DocumentType.SELF_BILLING_CREDIT_NOTE;
+}
+
+export function baseDocumentType(type: DocumentType): DocumentType {
+    return isCreditNoteType(type) ? DocumentType.CREDIT_NOTE : DocumentType.INVOICE;
 }
 
 export interface DocumentQuery {

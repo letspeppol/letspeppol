@@ -1,7 +1,7 @@
 import {resolve} from "@aurelia/kernel";
 import {InvoiceContext} from "../../../invoice-context";
 import {bindable} from "aurelia";
-import {DocumentType} from "../../../../services/app/invoice-service";
+import {isCreditNoteType} from "../../../../services/app/invoice-service";
 import {requiresDeliveryDetails} from "../../../../services/app/vat-rules";
 import {hasAllowedDueDate} from "../../invoice-validation";
 
@@ -12,7 +12,7 @@ export class DateInfo {
     @bindable showDateModal;
 
     get isCreditNote(): boolean {
-        return this.invoiceContext.selectedDocumentType === DocumentType.CREDIT_NOTE;
+        return isCreditNoteType(this.invoiceContext.selectedDocumentType);
     }
 
     get isDateInfoComplete(): boolean {

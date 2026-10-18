@@ -38,6 +38,9 @@ public class ScradaService implements AccessPointServiceInterface {
     public static final String CREDIT_NOTES_VALUE = "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2::CreditNote##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1";
     public static final String PROCESS_SCHEME = "cenbii-procid-ubl";
     public static final String PROCESS_VALUE = "urn:fdc:peppol.eu:2017:poacc:billing:01:1.0";
+    public static final String SELF_BILLING_INVOICES_VALUE = INVOICES_VALUE.replace(":billing:", ":selfbilling:");
+    public static final String SELF_BILLING_CREDIT_NOTES_VALUE = CREDIT_NOTES_VALUE.replace(":billing:", ":selfbilling:");
+    public static final String SELF_BILLING_PROCESS_VALUE = PROCESS_VALUE.replace(":billing:", ":selfbilling:");
 
     /// Peppol participant id as `scheme:value`, e.g. `0208:1029545627`.
     /// Restricted to a safe header character set (no CR/LF/control chars) to prevent HTTP header injection.
@@ -191,6 +194,12 @@ public class ScradaService implements AccessPointServiceInterface {
     public String sendDocument(UblDocument ublDocument) {
         String senderId = normalizePeppolId(ublDocument.getOwnerPeppolId());
         String receiverId = normalizePeppolId(ublDocument.getPartnerPeppolId());
+        String documentTypeValue = switch (ublDocument.getType()) {
+            case INVOICE -> INVOICES_VALUE;
+            case CREDIT_NOTE -> CREDIT_NOTES_VALUE;
+            case SELF_BILLING_INVOICE -> SELF_BILLING_INVOICES_VALUE;
+            case SELF_BILLING_CREDIT_NOTE -> SELF_BILLING_CREDIT_NOTES_VALUE;
+        };
         try {
             String uuid = scradaWebClient
                     .post()
@@ -201,10 +210,10 @@ public class ScradaService implements AccessPointServiceInterface {
                     .header("x-scrada-peppol-receiver-scheme", PARTICIPANT_SCHEME)
                     .header("x-scrada-peppol-receiver-id", receiverId)
                     .header("x-scrada-peppol-c1-country-code", "BE") //This is Peppol Corner Stone 1 and always Belgium for Scrada
-                    .header("x-scrada-peppol-document-type-scheme", ublDocument.getType() == org.letspeppol.proxy.model.DocumentType.INVOICE ? INVOICES_SCHEME : CREDIT_NOTES_SCHEME)
-                    .header("x-scrada-peppol-document-type-value", ublDocument.getType() == org.letspeppol.proxy.model.DocumentType.INVOICE ? INVOICES_VALUE : CREDIT_NOTES_VALUE)
+                    .header("x-scrada-peppol-document-type-scheme", ublDocument.getType().isInvoice() ? INVOICES_SCHEME : CREDIT_NOTES_SCHEME)
+                    .header("x-scrada-peppol-document-type-value", documentTypeValue)
                     .header("x-scrada-peppol-process-scheme", PROCESS_SCHEME)
-                    .header("x-scrada-peppol-process-value", PROCESS_VALUE)
+                    .header("x-scrada-peppol-process-value", ublDocument.getType().isSelfBilling() ? SELF_BILLING_PROCESS_VALUE : PROCESS_VALUE)
                     .header("x-scrada-external-reference", ublDocument.getId().toString()) //This is useful for Scrada debugging in https://scrada.be/en/company/{CompanyId}/settings/integrations/peppol/peppol-history
                     .bodyValue(ublDocument.getUbl())
                     .retrieve()
@@ -316,7 +325,6 @@ public class ScradaService implements AccessPointServiceInterface {
                         .orElseThrow(() -> new IllegalStateException("Empty response from Scrada get inbound document"));
 
                 ublDocumentReceiverService.createAsReceived(
-                        inboundDocument.peppolDocumentTypeValue().equals(INVOICES_VALUE) ? org.letspeppol.proxy.model.DocumentType.INVOICE : org.letspeppol.proxy.model.DocumentType.CREDIT_NOTE,
                         inboundDocument.peppolSenderID(),
                         inboundDocument.peppolReceiverID(),
                         ubl,
