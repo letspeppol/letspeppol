@@ -21,7 +21,8 @@
       "receiving-enable": "This company will receive Peppol invoices, credit notes, self-billed invoices and self-billed credit notes in Let’s Peppol. First unregister receiving with any other Peppol provider. Apply this change now?",
       "receiving-enable-title": "Allow receiving Peppol documents",
       "sending-disable": "This company will stop sending and receiving Peppol invoices and credit notes, including self-billed documents, via Let’s Peppol. Apply this change now?",
-      "sending-enable": "Register this company to send Peppol invoices and credit notes via Let’s Peppol? Receiving is also enabled if its Peppol address is available. This change applies immediately."
+      "sending-enable": "Register this company to send Peppol invoices and credit notes via Let’s Peppol? Receiving is also enabled if its Peppol address is available. This change applies immediately.",
+      "sending-receiving-enable": "Register this company to send and receive Peppol invoices and credit notes through Scrada? Sending and receiving are enabled together. This change applies immediately."
     },
     "download-contract": "Download Contract",
     "email-notification-cc-list-incoming": "Incoming documents: email CC list",
@@ -43,6 +44,8 @@
       "self-billed-credit-notes": "Self-billing credit notes",
       "self-billed-invoices": "Self-billing invoices"
     },
+    "receiving-provider": "This company already receives Peppol documents through {{provider}} (SMP). Unregister receiving with that provider, then refresh to enable receiving here.",
+    "receiving-refresh": "Refresh",
     "registration-failed": {
       "contact-provider": "Your Peppol ID is currently registered with {{provider}}. Please contact them to unregister it, then log in and try activating again.",
       "contact-us": "Registration was not finalized. Please contact support at support@letspeppol.org for the next steps.",
@@ -51,6 +54,8 @@
     },
     "remove-sending": "Remove sending",
     "save": "Save",
+    "send-and-receive-peppol-documents": "Send and receive Peppol documents",
+    "stop-sending-and-receiving": "Stop sending and receiving Peppol documents",
     "title": "Account",
     "vat-display": {
       "description": "Choose whether totals in the dashboard and invoice list are shown including or excluding VAT.",

@@ -17,6 +17,7 @@ import org.letspeppol.proxy.repository.RegistryRepository;
 import org.letspeppol.proxy.service.AccessPointServiceRegistry;
 import org.letspeppol.proxy.service.AppLinkService;
 import org.letspeppol.proxy.service.RegistryService;
+import org.letspeppol.proxy.service.RecommandService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +41,7 @@ public class RegistryController {
     private final RegistryService registryService;
     private final RegistryRepository registryRepository;
     private final AccessPointServiceRegistry accessPoints;
+    private final RecommandService recommandService;
 
     @Value("${proxy.access-point}")
     private AccessPoint accessPoint;
@@ -48,6 +50,18 @@ public class RegistryController {
     @Operation(summary = "Get registry state", description = "Returns the current proxy registration state for the given company.")
     public RegistryDto getById(@RequestParam String peppolId) {
         return registryService.get(peppolId);
+    }
+
+    @GetMapping("/registration-status")
+    @Operation(summary = "Get registration state and default access point", description = "Includes the configured access point for new registrations, even when the company has never registered.")
+    public RegistryDto getRegistrationStatus(@RequestParam String peppolId) {
+        try {
+            RegistryDto registration = registryService.get(peppolId);
+            return new RegistryDto(registration.peppolId(), registration.peppolActive(),
+                    registration.accessPoint(), accessPoint.name());
+        } catch (NotFoundException ex) {
+            return new RegistryDto(peppolId, false, AccessPoint.NONE.name(), accessPoint.name());
+        }
     }
 
     @PostMapping()
@@ -61,9 +75,15 @@ public class RegistryController {
     }
 
     @GetMapping("/settings")
-    @Operation(summary = "Get cached company Peppol settings", description = "Reads the receiving flag stored in the proxy registry, fetching it from the provider only when unknown.")
+    @Operation(summary = "Get company Peppol settings", description = "Reads the receiving flag, fetching it from the provider when unknown, and checks the current receiving SMP for send-only companies.")
     public PeppolSettings getSettings(@RequestParam String peppolId) {
         return registryService.getSettings(peppolId);
+    }
+
+    @GetMapping("/receiving-availability")
+    @Operation(summary = "Check the current receiving SMP", description = "Uses Recommand to look up a Peppol identifier without requiring a local registration. Reserved for trusted backend services.")
+    public PeppolSettings getReceivingAvailability(@RequestParam String peppolId) {
+        return recommandService.getReceivingAvailability(peppolId);
     }
 
     @PutMapping("/settings")

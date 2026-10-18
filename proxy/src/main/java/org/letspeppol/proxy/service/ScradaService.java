@@ -153,7 +153,12 @@ public class ScradaService implements AccessPointServiceInterface {
 
     private RuntimeException processErrorResponse(ErrorResponse errorResponse) {
         return switch (errorResponse.errorCode()) {
-            case 110554 -> new AlreadyRegisteredException(errorResponse.parameters().get(1));
+            case 110554 -> {
+                List<String> parameters = errorResponse.parameters();
+                String provider = parameters != null && parameters.size() > 1 ? parameters.get(1) : null;
+                yield new AlreadyRegisteredException(provider == null || provider.isBlank()
+                        ? "another Peppol provider" : provider);
+            }
             case 100008 -> processErrorResponse(errorResponse.innerErrors().getFirst());
             case 110552 -> new AlreadyRegisteredException("scrada.be");
             case 100030 -> new ServiceUnavailableException(errorResponse.defaultFormat());

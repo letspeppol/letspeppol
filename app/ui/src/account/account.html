@@ -93,30 +93,32 @@
                             </div>
                         </div>
                     </div>
-                    <label class="field checkbox">
+                    <label if.bind="!accessPointLoading" class="field checkbox">
                         <input type="checkbox" checked.to-view="sendingAllowed" change.trigger="changeSending($event)" disabled.bind="!canEditPeppolSettings || accountSaving" />
-                        <span t="account.allow-sending">Send Peppol documents</span>
+                        <span t.bind="isScrada ? 'account.send-and-receive-peppol-documents' : 'account.allow-sending'">Send Peppol documents</span>
                     </label>
                     <template if.bind="supportsPeppolSettings">
                         <span if.bind="peppolSettingsLoading" t="account.peppol-settings-loading">Loading Peppol settings…</span>
                         <div if.bind="peppolSettingsFailed" role="alert">
                             <span t="account.peppol-settings-unavailable">Peppol settings are unavailable.</span>
-                            <button type="button" class="btn" click.trigger="refreshPeppolRegistration()" t="account.peppol-settings-retry">Retry</button>
+                            <button type="button" class="btn" click.trigger="refreshReceivingSettings()" disabled.bind="accountSaving || peppolSettingsLoading" t="account.peppol-settings-retry">Retry</button>
                         </div>
-                        <template if.bind="peppolSettings">
-                            <div>
-                                <label class="field checkbox">
-                                    <input type="checkbox" checked.to-view="sendingAllowed && peppolSettings.receiveDocuments" change.trigger="changeReceiving($event)" disabled.bind="!sendingAllowed || !canEditPeppolSettings || accountSaving" aria-describedby="peppol-received-document-types" />
-                                    <span t="account.receive-peppol-documents">Receive Peppol documents</span>
-                                </label>
-                                <ul id="peppol-received-document-types" class="peppol-document-types">
-                                    <li t="account.received-document-types.invoices">Invoices</li>
-                                    <li t="account.received-document-types.credit-notes">Credit notes</li>
-                                    <li t="account.received-document-types.self-billed-invoices">Self-billing invoices</li>
-                                    <li t="account.received-document-types.self-billed-credit-notes">Self-billing credit notes</li>
-                                </ul>
+                        <div>
+                            <label class="field checkbox">
+                                <input type="checkbox" checked.to-view="sendingAllowed && !receivingBlocked && peppolSettings.receiveDocuments" change.trigger="changeReceiving($event)" disabled.bind="!canChangeReceiving" aria-describedby.bind="receivingBlocked ? 'peppol-receiving-provider' : 'peppol-received-document-types'" />
+                                <span t="account.receive-peppol-documents">Receive Peppol documents</span>
+                            </label>
+                            <div if.bind="receivingBlocked" id="peppol-receiving-provider" class="peppol-receiving-provider" role="status">
+                                <p t="account.receiving-provider" t-params.bind="{ provider: peppolSettings.receivingSmpUrl }">This company already receives Peppol documents through another provider.</p>
+                                <button type="button" class="btn" click.trigger="refreshReceivingSettings()" disabled.bind="accountSaving || peppolSettingsLoading || accessPointLoading" t="account.receiving-refresh">Refresh</button>
                             </div>
-                        </template>
+                            <ul if.bind="!receivingBlocked" id="peppol-received-document-types" class="peppol-document-types">
+                                <li t="account.received-document-types.invoices">Invoices</li>
+                                <li t="account.received-document-types.credit-notes">Credit notes</li>
+                                <li t="account.received-document-types.self-billed-invoices">Self-billing invoices</li>
+                                <li t="account.received-document-types.self-billed-credit-notes">Self-billing credit notes</li>
+                            </ul>
+                        </div>
                     </template>
                     <template if.bind="warningKey">
                         <div class="alert alert--warning warning-box" t.bind="warningKey" t-params.bind="{ provider: alreadyRegisteredProvider }"></div>

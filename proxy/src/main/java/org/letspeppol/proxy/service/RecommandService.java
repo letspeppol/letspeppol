@@ -167,6 +167,18 @@ public class RecommandService implements AccessPointServiceInterface {
     }
 
     private void checkRecipientAvailable(String peppolId) {
+        String smpUrl = findReceivingSmp(peppolId);
+        if (smpUrl != null) {
+            throw new AlreadyRegisteredException(smpUrl);
+        }
+    }
+
+    public PeppolSettings getReceivingAvailability(String peppolId) {
+        parsePeppolId(peppolId);
+        return new PeppolSettings(false, findReceivingSmp(peppolId));
+    }
+
+    private String findReceivingSmp(String peppolId) {
         JsonNode response = recommandWebClient.post().uri("/verify")
                 .contentType(MediaType.APPLICATION_JSON).bodyValue(Map.of("peppolAddress", peppolId))
                 .retrieve().bodyToMono(JsonNode.class).blockOptional()
@@ -175,14 +187,18 @@ public class RecommandService implements AccessPointServiceInterface {
             throw new IllegalStateException("Recommand recipient lookup failed");
         }
         if (response.path("isValid").asBoolean()) {
-            throw new AlreadyRegisteredException(response.path("smpUrl").asText("another Peppol provider"));
+            String smpUrl = response.path("smpUrl").asText("");
+            return smpUrl.isBlank() ? "another Peppol provider" : smpUrl;
         }
+        return null;
     }
 
     @Override
     public PeppolSettings getSettings(Registry registry) {
         loadReceiving(registry);
-        return new PeppolSettings(registry.getReceiveDocuments());
+        // Always check the network for send-only companies, so a refresh detects a released SMP.
+        return new PeppolSettings(registry.getReceiveDocuments(),
+                registry.getReceiveDocuments() ? null : findReceivingSmp(registry.getPeppolId()));
     }
 
     @Override

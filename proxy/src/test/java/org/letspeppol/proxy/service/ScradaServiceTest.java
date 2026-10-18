@@ -4,7 +4,13 @@ import com.sun.net.httpserver.HttpServer;
 import io.micrometer.core.instrument.Counter;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.letspeppol.proxy.dto.RegistrationRequest;
+import org.letspeppol.proxy.exception.AlreadyRegisteredException;
+import org.letspeppol.proxy.exception.GlobalExceptionHandler;
+import org.letspeppol.proxy.model.AccessPoint;
 import org.letspeppol.proxy.model.DocumentType;
+import org.letspeppol.proxy.model.Registry;
 import org.letspeppol.proxy.model.UblDocument;
 import org.springframework.web.reactive.function.client.WebClient;
 import tools.jackson.databind.json.JsonMapper;
@@ -15,9 +21,62 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 
 class ScradaServiceTest {
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "{\"errorCode\":110554,\"errorType\":1,\"defaultFormat\":\"Already registered\",\"parameters\":[\"0208:0123456789\",\"https://other-smp.example\"],\"innerErrors\":[]}",
+            "{\"errorCode\":100008,\"errorType\":1,\"defaultFormat\":\"Registration failed\",\"innerErrors\":[{\"errorCode\":110554,\"errorType\":1,\"parameters\":[\"0208:0123456789\",\"https://other-smp.example\"]}]}",
+            "{\"errorCode\":110554,\"defaultFormat\":\"Already registered\",\"parameters\":[\"0208:0123456789\",\"https://other-smp.example\"]}",
+            "{\"errorCode\":100008,\"errorType\":null,\"innerErrors\":[{\"errorCode\":110554,\"errorType\":null,\"parameters\":[\"0208:0123456789\",\"https://other-smp.example\"]}]}"
+    })
+    void mapsScrada500RegistrationConflictsTo409WithTheProvider(String body) throws Exception {
+        assertRegistrationConflict(body, "https://other-smp.example");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "{\"errorCode\":110554}",
+            "{\"errorCode\":110554,\"parameters\":null}",
+            "{\"errorCode\":110554,\"parameters\":[]}",
+            "{\"errorCode\":110554,\"parameters\":[\"0208:0123456789\"]}",
+            "{\"errorCode\":110554,\"parameters\":[\"0208:0123456789\",null]}",
+            "{\"errorCode\":110554,\"parameters\":[\"0208:0123456789\",\" \" ]}",
+            "{\"errorCode\":100008,\"innerErrors\":[{\"errorCode\":110554,\"parameters\":null}]}"
+    })
+    void preservesRegistrationConflictsWhenScradaOmitsTheProvider(String body) throws Exception {
+        assertRegistrationConflict(body, "another Peppol provider");
+    }
+
+    private void assertRegistrationConflict(String body, String expectedProvider) throws Exception {
+        var server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        server.createContext("/register", exchange -> {
+            exchange.getRequestBody().readAllBytes();
+            byte[] response = body.getBytes(StandardCharsets.UTF_8);
+            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.sendResponseHeaders(500, response.length);
+            exchange.getResponseBody().write(response);
+            exchange.close();
+        });
+        server.start();
+        try {
+            var service = new ScradaService(mock(UblDocumentReceiverService.class),
+                    WebClient.create("http://127.0.0.1:" + server.getAddress().getPort()),
+                    mock(Counter.class), mock(Counter.class), mock(Counter.class), mock(Counter.class), new JsonMapper());
+            assertThatThrownBy(() -> service.register(new Registry("0208:0123456789", AccessPoint.NONE, null),
+                    new RegistrationRequest("Example", "EN", "BE")))
+                    .isInstanceOfSatisfying(AlreadyRegisteredException.class, conflict -> {
+                        var response = new GlobalExceptionHandler().handleAlreadyRegisteredException(conflict);
+                        assertThat(response.getStatusCode().value()).isEqualTo(409);
+                        assertThat(response.getBody()).isEqualTo(expectedProvider);
+                    });
+        } finally {
+            server.stop(0);
+        }
+    }
+
     @ParameterizedTest
     @EnumSource(DocumentType.class)
     void sendsUploadedXmlWithTheCorrectDocumentAndProcessIdentifiers(DocumentType type) throws Exception {

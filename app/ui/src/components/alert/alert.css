@@ -24,7 +24,6 @@
 
 .alert {
     position: relative;
-    z-index: 100;
     max-width: 400px;
     display: flex;
     gap: 12px;

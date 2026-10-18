@@ -2,6 +2,10 @@ package org.letspeppol.proxy.controller;
 
 import jakarta.servlet.Filter;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.letspeppol.proxy.dto.RegistryDto;
+import org.letspeppol.proxy.exception.NotFoundException;
 import org.letspeppol.proxy.config.SecurityConfig;
 import org.letspeppol.proxy.exception.GlobalExceptionHandler;
 import org.letspeppol.proxy.dto.PeppolSettings;
@@ -26,6 +30,7 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.cors.CorsConfiguration;
@@ -84,6 +89,7 @@ class RegistryControllerTest {
 
     @BeforeEach
     void setUp() {
+        ReflectionTestUtils.setField(context.getBean(RegistryController.class), "accessPoint", AccessPoint.SCRADA);
         reset(repository, accessPoints, scrada, recommand);
         reset(context.getBean(RegistryService.class));
         when(accessPoints.get(AccessPoint.SCRADA)).thenReturn(scrada);
@@ -104,6 +110,38 @@ class RegistryControllerTest {
             call.<Registry>getArgument(0).setReceiveDocuments(true);
             return null;
         }).when(scrada).register(any(), any());
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = AccessPoint.class, names = {"SCRADA", "RECOMMAND"})
+    void registrationStatusIncludesTheDefaultForCompaniesThatNeverRegistered(AccessPoint defaultAccessPoint) throws Exception {
+        ReflectionTestUtils.setField(context.getBean(RegistryController.class), "accessPoint", defaultAccessPoint);
+        when(context.getBean(RegistryService.class).get(ID)).thenThrow(new NotFoundException("No registration"));
+
+        mvc.perform(get("/sapi/registry/registration-status").param("peppolId", ID))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.peppolId").value(ID))
+                .andExpect(jsonPath("$.peppolActive").value(false))
+                .andExpect(jsonPath("$.accessPoint").value("NONE"))
+                .andExpect(jsonPath("$.defaultAccessPoint").value(defaultAccessPoint.name()));
+    }
+
+    @Test
+    void registrationStatusKeepsTheCurrentProviderSeparateFromTheDefault() throws Exception {
+        var service = context.getBean(RegistryService.class);
+        when(service.get(ID)).thenReturn(new RegistryDto(ID, true, "RECOMMAND"));
+
+        mvc.perform(get("/sapi/registry/registration-status").param("peppolId", ID))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.accessPoint").value("RECOMMAND"))
+                .andExpect(jsonPath("$.defaultAccessPoint").value("SCRADA"));
+
+        when(service.get(ID)).thenReturn(new RegistryDto(ID, false, "NONE"));
+        mvc.perform(get("/sapi/registry/registration-status").param("peppolId", ID))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.peppolActive").value(false))
+                .andExpect(jsonPath("$.accessPoint").value("NONE"))
+                .andExpect(jsonPath("$.defaultAccessPoint").value("SCRADA"));
     }
 
     @Test
@@ -133,6 +171,21 @@ class RegistryControllerTest {
                         .content("{\"receiveDocuments\":false}"))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.receiveDocuments").value(false));
         verify(service).updateSettings(ID, new PeppolSettings(false));
+    }
+
+    @Test
+    void onlyBackendServicesCanUseTheInternalReceivingLookup() throws Exception {
+        when(recommand.getReceivingAvailability(ID)).thenReturn(new PeppolSettings(false, "https://other-smp.example"));
+        mvc.perform(get("/sapi/registry/receiving-availability").param("peppolId", ID))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.receivingSmpUrl").value("https://other-smp.example"));
+
+        mvc.perform(get("/sapi/registry/receiving-availability").param("peppolId", ID)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer user-token"))
+                .andExpect(status().isForbidden());
+        mvc.perform(get("/sapi/registry/receiving-availability").param("peppolId", ID)
+                        .header(HttpHeaders.AUTHORIZATION, ""))
+                .andExpect(status().isUnauthorized());
+        verify(recommand, times(1)).getReceivingAvailability(ID);
     }
 
     @Test
@@ -341,7 +394,7 @@ class RegistryControllerTest {
         @Bean CorsConfigurationSource corsConfigurationSource() { return request -> new CorsConfiguration(); }
         @Bean GlobalExceptionHandler errors() { return new GlobalExceptionHandler(); }
         @Bean RegistryController controller(RegistryRepository repository, AccessPointServiceRegistry accessPoints, RegistryService registryService) {
-            return new RegistryController(mock(AppLinkService.class), registryService, repository, accessPoints);
+            return new RegistryController(mock(AppLinkService.class), registryService, repository, accessPoints, recommand());
         }
         @Bean SecurityFilterChain security(HttpSecurity http) throws Exception {
             return new SecurityConfig().securityFilterChain(http);

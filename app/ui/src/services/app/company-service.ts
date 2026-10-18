@@ -33,10 +33,12 @@ export interface PeppolRegistrationDto {
     peppolId: string;
     peppolActive: boolean;
     accessPoint: string | null;
+    defaultAccessPoint?: string | null;
 }
 
 export interface PeppolSettings {
     receiveDocuments: boolean;
+    receivingSmpUrl?: string | null;
 }
 
 export interface Address {
@@ -59,6 +61,11 @@ export class CompanyService {
 
     async getPeppolSettings(): Promise<PeppolSettings> {
         const response = await this.appApi.httpClient.get('/sapi/company/peppol-registration/settings');
+        return response.json();
+    }
+
+    async getReceivingAvailability(): Promise<PeppolSettings> {
+        const response = await this.appApi.httpClient.get('/sapi/company/peppol-registration/receiving-availability');
         return response.json();
     }
 

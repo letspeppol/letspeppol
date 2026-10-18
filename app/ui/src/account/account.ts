@@ -57,8 +57,10 @@ export class Account {
         if (!this.canEditPeppolSettings || this.accountSaving || enabled === this.sendingAllowed) return;
         const company = this.company;
         this.confirmationModalContext.showConfirmationModal(
-            this.i18n.tr(enabled ? 'account.allow-sending' : 'account.remove-sending'),
-            this.i18n.tr(enabled ? 'account.confirm.sending-enable' : 'account.confirm.sending-disable'),
+            this.i18n.tr(this.isScrada ? (enabled ? 'account.send-and-receive-peppol-documents' : 'account.stop-sending-and-receiving')
+                : enabled ? 'account.allow-sending' : 'account.remove-sending'),
+            this.i18n.tr(enabled ? (this.isScrada ? 'account.confirm.sending-receiving-enable' : 'account.confirm.sending-enable')
+                : 'account.confirm.sending-disable'),
             () => {
                 if (company !== this.company || enabled === this.sendingAllowed) return;
                 return this.applyPeppolChange(() => enabled ? this.registerOnPeppol() : this.unregisterFromPeppol());
@@ -73,7 +75,27 @@ export class Account {
     }
 
     get supportsPeppolSettings(): boolean {
-        return !!this.peppolRegistration?.peppolActive && this.peppolRegistration.accessPoint === 'RECOMMAND';
+        return this.effectiveAccessPoint === 'RECOMMAND';
+    }
+
+    private get effectiveAccessPoint(): string | undefined {
+        const registration = this.peppolRegistration;
+        return registration?.peppolActive && registration.accessPoint !== 'NONE'
+            ? registration.accessPoint : registration?.defaultAccessPoint;
+    }
+
+    get isScrada(): boolean {
+        return this.effectiveAccessPoint === 'SCRADA';
+    }
+
+    get receivingBlocked(): boolean {
+        return !!this.peppolSettings?.receivingSmpUrl;
+    }
+
+    get canChangeReceiving(): boolean {
+        return this.supportsPeppolSettings && this.canEditPeppolSettings && !!this.peppolSettings
+            && !this.receivingBlocked && !this.peppolSettingsLoading && !this.peppolSettingsFailed
+            && !this.accessPointLoading && !this.accountSaving;
     }
 
     get accessPointName(): string {
@@ -104,15 +126,7 @@ export class Account {
             this.peppolRegistration = registration;
             this.accessPointLoading = false;
             if (this.supportsPeppolSettings) {
-                this.peppolSettingsLoading = true;
-                try {
-                    const settings = await this.companyService.getPeppolSettings();
-                    if (request === this.registrationRequest) {
-                        this.peppolSettings = {...settings};
-                    }
-                } catch {
-                    if (request === this.registrationRequest) this.peppolSettingsFailed = true;
-                }
+                await this.refreshReceivingSettings();
             }
         } catch {
             // Provider lookup failure must not prevent loading or updating the account.
@@ -124,19 +138,34 @@ export class Account {
         }
     }
 
+    private async refreshReceivingSettings() {
+        if (!this.supportsPeppolSettings) return;
+        const request = this.registrationRequest;
+        this.peppolSettingsLoading = true;
+        this.peppolSettingsFailed = false;
+        try {
+            const settings = await (this.sendingAllowed
+                ? this.companyService.getPeppolSettings() : this.companyService.getReceivingAvailability());
+            if (request === this.registrationRequest) this.peppolSettings = {...settings};
+        } catch {
+            if (request === this.registrationRequest) this.peppolSettingsFailed = true;
+        } finally {
+            if (request === this.registrationRequest) this.peppolSettingsLoading = false;
+        }
+    }
+
     changeReceiving(event: Event) {
         const input = event.target as HTMLInputElement;
         const enabled = input.checked;
         const settings = this.peppolSettings;
-        if (!settings) return;
-        input.checked = settings.receiveDocuments;
-        if (!this.sendingAllowed || !this.canEditPeppolSettings || this.accountSaving || settings.receiveDocuments === enabled) return;
+        input.checked = !this.receivingBlocked && !!settings?.receiveDocuments;
+        if (!this.canChangeReceiving || settings.receiveDocuments === enabled) return;
         const action = enabled ? 'enable' : 'disable';
         this.confirmationModalContext.showConfirmationModal(
             this.i18n.tr(`account.confirm.receiving-${action}-title`),
             this.i18n.tr(`account.confirm.receiving-${action}`),
             () => {
-                if (this.peppolSettings !== settings || !this.sendingAllowed) return;
+                if (this.peppolSettings !== settings || !this.canChangeReceiving) return;
                 return this.applyPeppolChange(() => this.savePeppolSettings(enabled));
             },
             undefined,
@@ -160,7 +189,13 @@ export class Account {
 
     private async savePeppolSettings(receiveDocuments: boolean): Promise<boolean> {
         if (!this.peppolSettings || !this.canEditPeppolSettings) return false;
+        if (receiveDocuments && this.receivingBlocked) return false;
         if (this.peppolSettings.receiveDocuments === receiveDocuments) return true;
+        if (receiveDocuments && !this.sendingAllowed) {
+            if (!await this.registerOnPeppol() || !this.sendingAllowed || !this.peppolSettings || this.receivingBlocked) return false;
+            // Activation usually enables receiving already; otherwise use the normal conflict check.
+            if (this.peppolSettings.receiveDocuments) return true;
+        }
         const request = this.registrationRequest;
         try {
             const settings = await this.companyService.updatePeppolSettings({receiveDocuments});
@@ -170,7 +205,7 @@ export class Account {
         } catch (error) {
             if (request !== this.registrationRequest) return false;
             // Reload the receiving flag when a provider write has an uncertain outcome.
-            await this.refreshPeppolRegistration();
+            await this.refreshReceivingSettings();
             const key = error instanceof Response && error.status === 409
                 ? 'alert.account.receiving-conflict' : 'alert.account.peppol-settings-failed';
             this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr(key)});
@@ -279,6 +314,8 @@ export class Account {
         try {
             this.setPeppolActive(await this.registrationService.registerCompany());
             if (!this.company.peppolActive) throw new Error('Sending was not activated');
+            this.warningKey = undefined;
+            this.alreadyRegisteredProvider = '';
             await this.refreshPeppolRegistration();
             return true;
         } catch (error: unknown) {

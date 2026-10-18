@@ -47,3 +47,14 @@
     color: var(--muted);
     font-size: 0.875rem;
 }
+
+.peppol-receiving-provider {
+    margin: var(--space-05) 0 0;
+    padding-left: 1.5rem;
+    font-size: 0.875rem;
+    overflow-wrap: anywhere;
+}
+
+.peppol-receiving-provider p {
+    margin: 0 0 var(--space-05);
+}

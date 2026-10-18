@@ -28,7 +28,7 @@ public class PeppolRegistrationController {
     private final PeppolRegistrationService peppolRegistrationService;
 
     @GetMapping
-    @Operation(summary = "Get company Peppol registration", description = "Reads the authenticated company's current Access Point from the proxy registry.")
+    @Operation(summary = "Get company Peppol registration", description = "Reads the authenticated company's current Access Point and the configured default for new registrations from the proxy.")
     public PeppolRegistrationDto getRegistration(@AuthenticationPrincipal Jwt jwt) {
         return peppolRegistrationService.get(JwtUtil.getPeppolId(jwt));
     }
@@ -37,6 +37,12 @@ public class PeppolRegistrationController {
     @Operation(summary = "Get company receiving settings")
     public PeppolSettings getSettings(@AuthenticationPrincipal Jwt jwt) {
         return peppolRegistrationService.getSettings(JwtUtil.getPeppolId(jwt));
+    }
+
+    @GetMapping("/receiving-availability")
+    @Operation(summary = "Check receiving availability for the authenticated company", description = "Looks up the current SMP using the Peppol ID from the JWT. No company identifier parameter is accepted or required.")
+    public PeppolSettings getReceivingAvailability(@AuthenticationPrincipal Jwt jwt) {
+        return peppolRegistrationService.getReceivingAvailability(JwtUtil.getPeppolId(jwt));
     }
 
     @PutMapping("/settings")

@@ -21,7 +21,8 @@
       "receiving-enable": "Dieses Unternehmen empfängt Peppol-Rechnungen, Gutschriften, Self-Billing-Rechnungen und Self-Billing-Gutschriften in Let’s Peppol. Melden Sie den Empfang zuerst bei einem anderen Peppol-Anbieter ab. Diese Änderung jetzt anwenden?",
       "receiving-enable-title": "Empfang von Peppol-Dokumenten erlauben",
       "sending-disable": "Dieses Unternehmen sendet und empfängt keine Peppol-Rechnungen und Gutschriften, einschließlich Self-Billing-Dokumenten, mehr über Let’s Peppol. Diese Änderung jetzt anwenden?",
-      "sending-enable": "Dieses Unternehmen zum Senden von Peppol-Rechnungen und Gutschriften über Let’s Peppol registrieren? Der Empfang wird ebenfalls aktiviert, wenn seine Peppol-Adresse verfügbar ist. Diese Änderung wird sofort angewendet."
+      "sending-enable": "Dieses Unternehmen zum Senden von Peppol-Rechnungen und Gutschriften über Let’s Peppol registrieren? Der Empfang wird ebenfalls aktiviert, wenn seine Peppol-Adresse verfügbar ist. Diese Änderung wird sofort angewendet.",
+      "sending-receiving-enable": "Dieses Unternehmen zum Senden und Empfangen von Peppol-Rechnungen und Gutschriften über Scrada registrieren? Senden und Empfangen werden gemeinsam aktiviert. Diese Änderung wird sofort angewendet."
     },
     "download-contract": "Vertrag herunterladen",
     "email-notification-cc-list-incoming": "Eingehende Dokumente: E-Mail-CC-Liste",
@@ -43,6 +44,8 @@
       "self-billed-credit-notes": "Self-Billing-Gutschriften",
       "self-billed-invoices": "Self-Billing-Rechnungen"
     },
+    "receiving-provider": "Dieses Unternehmen empfängt bereits Peppol-Dokumente über {{provider}} (SMP). Melden Sie den Empfang bei diesem Anbieter ab und aktualisieren Sie anschließend, um den Empfang hier zu aktivieren.",
+    "receiving-refresh": "Aktualisieren",
     "registration-failed": {
       "contact-provider": "Ihre Peppol-ID ist derzeit bei {{provider}} registriert. Bitte kontaktieren Sie den Anbieter, um sie dort abzumelden, und melden Sie sich anschließend an und versuchen Sie die Aktivierung erneut.",
       "contact-us": "Die Registrierung wurde nicht abgeschlossen. Bitte wenden Sie sich an den Support unter support@letspeppol.org für die nächsten Schritte.",
@@ -51,6 +54,8 @@
     },
     "remove-sending": "Senden deaktivieren",
     "save": "Speichern",
+    "send-and-receive-peppol-documents": "Peppol-Dokumente senden und empfangen",
+    "stop-sending-and-receiving": "Senden und Empfangen von Peppol-Dokumenten beenden",
     "title": "Konto",
     "vat-display": {
       "description": "Wählen Sie, ob Summen im Dashboard und in der Rechnungsliste inklusive oder exklusive MwSt. angezeigt werden.",

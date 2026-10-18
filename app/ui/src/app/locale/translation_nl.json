@@ -21,7 +21,8 @@
       "receiving-enable": "Dit bedrijf ontvangt Peppol-facturen, creditnota’s, selfbillingfacturen en selfbillingcreditnota’s in Let’s Peppol. Meld de ontvangst eerst af bij een eventuele andere Peppol-provider. Deze wijziging nu toepassen?",
       "receiving-enable-title": "Peppol-documenten ontvangen toestaan",
       "sending-disable": "Dit bedrijf stopt met het verzenden en ontvangen van Peppol-facturen en creditnota’s, inclusief selfbillingdocumenten, via Let’s Peppol. Deze wijziging nu toepassen?",
-      "sending-enable": "Dit bedrijf registreren om Peppol-facturen en creditnota’s te verzenden via Let’s Peppol? Ontvangst wordt ook ingeschakeld als het Peppol-adres beschikbaar is. Deze wijziging wordt onmiddellijk toegepast."
+      "sending-enable": "Dit bedrijf registreren om Peppol-facturen en creditnota’s te verzenden via Let’s Peppol? Ontvangst wordt ook ingeschakeld als het Peppol-adres beschikbaar is. Deze wijziging wordt onmiddellijk toegepast.",
+      "sending-receiving-enable": "Dit bedrijf registreren om Peppol-facturen en creditnota’s te verzenden en ontvangen via Scrada? Verzenden en ontvangen worden samen ingeschakeld. Deze wijziging wordt onmiddellijk toegepast."
     },
     "download-contract": "Contract downloaden",
     "email-notification-cc-list-incoming": "Inkomende documenten: e-mail CC-lijst",
@@ -43,6 +44,8 @@
       "self-billed-credit-notes": "Self-billing creditnota’s",
       "self-billed-invoices": "Self-billing facturen"
     },
+    "receiving-provider": "Dit bedrijf ontvangt al Peppol-documenten via {{provider}} (SMP). Meld de ontvangst af bij die provider en vernieuw daarna om hier ontvangst in te schakelen.",
+    "receiving-refresh": "Vernieuwen",
     "registration-failed": {
       "contact-provider": "Uw Peppol-ID is momenteel geregistreerd bij {{provider}}. Neem contact met hen op om het uit te schrijven, log daarna in en probeer opnieuw te activeren.",
       "contact-us": "De registratie is niet afgerond. Neem contact op met support via support@letspeppol.org voor de volgende stappen.",
@@ -51,6 +54,8 @@
     },
     "remove-sending": "Verzenden uitschakelen",
     "save": "Opslaan",
+    "send-and-receive-peppol-documents": "Peppol-documenten verzenden en ontvangen",
+    "stop-sending-and-receiving": "Stoppen met Peppol-documenten verzenden en ontvangen",
     "title": "Account",
     "vat-display": {
       "description": "Kies of totalen op het dashboard en in de factuurlijst inclusief of exclusief btw worden getoond.",

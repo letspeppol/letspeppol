@@ -129,7 +129,7 @@ class RecommandServiceTest {
         var registry = new Registry(ID, AccessPoint.RECOMMAND, null);
         service.register(registry, registrationWithContract());
 
-        assertThat(service.getSettings(registry)).isEqualTo(new PeppolSettings(false));
+        assertThat(registry.getReceiveDocuments()).isFalse();
         assertThat(requests).hasSize(8);
         assertThat(requests.stream().filter(r -> r.method().equals("PUT"))).isEmpty();
         assertThat(registry.getVariables()).containsEntry("companyId", "company-1").doesNotContainKey("companySettings");
@@ -143,8 +143,7 @@ class RecommandServiceTest {
 
         var registry = new Registry(ID, AccessPoint.RECOMMAND, null);
         service.register(registry, registrationWithContract());
-        assertThat(service.getSettings(registry))
-                .isEqualTo(new PeppolSettings(false));
+        assertThat(registry.getReceiveDocuments()).isFalse();
         assertThat(requests).extracting(Request::method).doesNotContain("DELETE");
     }
 
@@ -197,9 +196,10 @@ class RecommandServiceTest {
         var registry = cachedRegistry(true);
         respond(200, "{\"success\":true}");
         assertThat(service.updateSettings(registry, new PeppolSettings(false))).isEqualTo(new PeppolSettings(false));
+        respond(200, "{\"success\":true,\"isValid\":false}");
         assertThat(service.getSettings(registry)).isEqualTo(new PeppolSettings(false));
         assertThat(registry.getVariables()).containsOnlyKeys("companyId");
-        assertThat(requests).extracting(Request::method).containsExactly("PUT");
+        assertThat(requests).extracting(Request::method).containsExactly("PUT", "POST");
     }
 
     @Test
@@ -223,21 +223,78 @@ class RecommandServiceTest {
                 .isInstanceOf(org.springframework.web.reactive.function.client.WebClientResponseException.class);
         assertThat(registry.getReceiveDocuments()).isNull();
         respondCompany(false);
+        respond(200, "{\"success\":true,\"isValid\":false}");
+        respond(200, "{\"success\":true,\"isValid\":false}");
 
         assertThat(service.getSettings(registry)).isEqualTo(new PeppolSettings(false));
         assertThat(service.getSettings(registry)).isEqualTo(new PeppolSettings(false));
         assertThat(registry.getVariables()).isSameAs(registrationVariables);
-        assertThat(requests).extracting(Request::method).containsExactly("PUT", "GET");
+        assertThat(requests).extracting(Request::method).containsExactly("PUT", "GET", "POST", "POST");
     }
 
     @Test
     void unknownReceivingStateIsFetchedOnce() {
         var registry = new Registry(ID, AccessPoint.RECOMMAND, companyVariables());
         respondCompany(false);
+        respond(200, "{\"success\":true,\"isValid\":false}");
+        respond(200, "{\"success\":true,\"isValid\":false}");
         assertThat(service.getSettings(registry)).isEqualTo(new PeppolSettings(false));
         assertThat(service.getSettings(registry)).isEqualTo(new PeppolSettings(false));
-        assertThat(requests).hasSize(1);
+        assertThat(requests).extracting(Request::method).containsExactly("GET", "POST", "POST");
 
+    }
+
+    @Test
+    void settingsExposeTheCurrentSmpAndRefreshAfterItIsReleased() {
+        var registry = cachedRegistry(false);
+        respond(200, "{\"success\":true,\"isValid\":true,\"smpUrl\":\"https://other-smp.example\"}");
+        respond(200, "{\"success\":true,\"isValid\":false}");
+
+        assertThat(service.getSettings(registry))
+                .isEqualTo(new PeppolSettings(false, "https://other-smp.example"));
+        assertThat(service.getSettings(registry)).isEqualTo(new PeppolSettings(false));
+        assertThat(registry.getReceiveDocuments()).isFalse();
+        assertThat(requests).allSatisfy(request -> {
+            assertThat(request.method()).isEqualTo("POST");
+            assertThat(request.path()).endsWith("/verify");
+            assertThat(readBody(request).path("peppolAddress").asText()).isEqualTo(ID);
+        });
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"{}", "{\"success\":false,\"isValid\":false}"})
+    void failedSmpChecksDoNotReportReceivingAsAvailable(String lookup) {
+        respond(200, lookup);
+        assertThatThrownBy(() -> service.getSettings(cachedRegistry(false)))
+                .isInstanceOf(IllegalStateException.class).hasMessageContaining("lookup failed");
+    }
+
+    @Test
+    void availabilityChecksTheNetworkWithoutALocalRegistrationAndDetectsAReleasedSmp() {
+        respond(200, "{\"success\":true,\"isValid\":true,\"smpUrl\":\"https://other-smp.example\"}");
+        respond(200, "{\"success\":true,\"isValid\":false}");
+
+        assertThat(service.getReceivingAvailability(ID))
+                .isEqualTo(new PeppolSettings(false, "https://other-smp.example"));
+        assertThat(service.getReceivingAvailability(ID)).isEqualTo(new PeppolSettings(false));
+        assertThat(requests).hasSize(2).allSatisfy(request -> {
+            assertThat(request.method()).isEqualTo("POST");
+            assertThat(request.path()).endsWith("/verify");
+            assertThat(readBody(request).path("peppolAddress").asText()).isEqualTo(ID);
+        });
+        org.mockito.Mockito.verifyNoInteractions(registryRepository);
+    }
+
+    @Test
+    void availabilityDoesNotReportMalformedLookupsAsAvailable() {
+        respond(200, "{}");
+        assertThatThrownBy(() -> service.getReceivingAvailability(ID)).isInstanceOf(IllegalStateException.class);
+    }
+
+    @Test
+    void occupiedSmpWithoutUrlStillBlocksReceiving() {
+        respond(200, "{\"success\":true,\"isValid\":true,\"smpUrl\":\"\"}");
+        assertThat(service.getSettings(cachedRegistry(false)).receivingSmpUrl()).isNotBlank();
     }
 
     @Test

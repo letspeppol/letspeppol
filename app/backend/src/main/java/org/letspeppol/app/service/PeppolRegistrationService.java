@@ -21,22 +21,28 @@ public class PeppolRegistrationService {
     public PeppolRegistrationDto get(String peppolId) {
         try {
             return proxyWebClient.get()
-                    .uri(uriBuilder -> uriBuilder.path("/sapi/registry").queryParam("peppolId", peppolId).build())
+                    .uri(uriBuilder -> uriBuilder.path("/sapi/registry/registration-status").queryParam("peppolId", peppolId).build())
                     .retrieve()
                     .bodyToMono(PeppolRegistrationDto.class)
                     .blockOptional()
                     .orElseThrow(() -> new IllegalStateException("Empty proxy registry response"));
-        } catch (WebClientResponseException.NotFound ex) {
-            return new PeppolRegistrationDto(peppolId, false, "NONE");
         } catch (Exception ex) {
             throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Access Point unavailable", ex);
         }
     }
 
     public PeppolSettings getSettings(String peppolId) {
+        return getSettings(peppolId, "/sapi/registry/settings");
+    }
+
+    public PeppolSettings getReceivingAvailability(String peppolId) {
+        return getSettings(peppolId, "/sapi/registry/receiving-availability");
+    }
+
+    private PeppolSettings getSettings(String peppolId, String path) {
         try {
             return proxyWebClient.get()
-                    .uri(builder -> builder.path("/sapi/registry/settings").queryParam("peppolId", peppolId).build())
+                    .uri(builder -> builder.path(path).queryParam("peppolId", peppolId).build())
                     .retrieve().bodyToMono(PeppolSettings.class).blockOptional()
                     .orElseThrow(() -> new IllegalStateException("Empty proxy settings response"));
         } catch (WebClientResponseException ex) {
