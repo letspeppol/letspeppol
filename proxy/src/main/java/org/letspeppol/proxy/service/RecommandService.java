@@ -8,6 +8,8 @@ import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.proxy.dto.RegistrationRequest;
+import org.letspeppol.proxy.dto.PeppolSettings;
+import org.letspeppol.proxy.exception.AlreadyRegisteredException;
 import org.letspeppol.proxy.dto.StatusReport;
 import org.letspeppol.proxy.dto.recommand.CreateCompanyRequest;
 import org.letspeppol.proxy.dto.recommand.CreateCompanyResponse;
@@ -48,6 +50,13 @@ import java.util.regex.Pattern;
 @Service
 public class RecommandService implements AccessPointServiceInterface {
 
+    static final String BILLING_PROCESS = "urn:fdc:peppol.eu:2017:poacc:billing:01:1.0";
+    static final String INVOICE = "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1";
+    static final String CREDIT_NOTE = "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2::CreditNote##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1";
+    static final String SELF_BILLING_PROCESS = "urn:fdc:peppol.eu:2017:poacc:selfbilling:01:1.0";
+    static final String SELF_BILLING_INVOICE = "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:selfbilling:3.0::2.1";
+    static final String SELF_BILLING_CREDIT_NOTE = "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2::CreditNote##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:selfbilling:3.0::2.1";
+
     private static final Pattern PEPPOL_ID_PATTERN =
             Pattern.compile("([0-9A-Za-z]{1,16}):([0-9A-Za-z._\\-]{1,128})");
 
@@ -68,6 +77,9 @@ public class RecommandService implements AccessPointServiceInterface {
     @Override
     public void validateRegistration(String peppolId, RegistrationRequest data) {
         parsePeppolId(peppolId);
+        if (!peppolId.startsWith("0208:")) {
+            throw new IllegalArgumentException("Recommand registration requires the company's 0208 enterprise identifier");
+        }
         Objects.requireNonNull(data, "Registration data must not be null");
         if (data.signedContract() == null || data.signedContract().length == 0) {
             throw new IllegalArgumentException("A signed PDF contract is required for Recommand registration");
@@ -78,11 +90,13 @@ public class RecommandService implements AccessPointServiceInterface {
 
     /// Recommand API: POST /api/v1/companies
     @Override
-    public Map<String, Object> register(String peppolId, RegistrationRequest data) {
+    public void register(Registry registry, RegistrationRequest data) {
+        String peppolId = registry.getPeppolId();
         validateRegistration(peppolId, data);
         PeppolIdentifier identifier = parsePeppolId(peppolId);
         byte[] signedContract = data.signedContract();
         String operation = "create company";
+        String companyId = null;
         try {
             CreateCompanyRequest request = new CreateCompanyRequest(
                     data.name(),
@@ -93,8 +107,8 @@ public class RecommandService implements AccessPointServiceInterface {
                     identifier.scheme(),
                     identifier.value(),
                     data.vatNumber(),
-                    true,
-                    false
+                    false,
+                    true
             );
             CreateCompanyResponse response = recommandWebClient
                     .post()
@@ -110,41 +124,158 @@ public class RecommandService implements AccessPointServiceInterface {
                     || response.company().id().isBlank()) {
                 throw new IllegalStateException("Recommand did not return a company ID");
             }
-            operation = "verify company by contract";
-            verifyCompanyByContract(response.company().id(), signedContract);
-            registerCounter.increment();
-            return objectMapper.convertValue(
-                    new RecommandVariables(response.company().id(), response.verificationUrl()),
+            companyId = response.company().id();
+            operation = "set up company receiving";
+            Map<String, Object> variables = objectMapper.convertValue(
+                    new RecommandVariables(companyId, response.verificationUrl()),
                     new TypeReference<>() {}
             );
+            createIdentifier(companyId, identifier);
+            createDocumentTypes(companyId);
+            operation = "verify company by contract";
+            verifyCompanyByContract(companyId, signedContract);
+            boolean receiving = false;
+            operation = "activate receiving";
+            if (canReceiveByDefault(peppolId)) {
+                try {
+                    updateReceiving(companyId, true, registry);
+                    receiving = true;
+                } catch (AlreadyRegisteredException conflict) {
+                    log.info("Registered {} for sending only after a recipient registration conflict", peppolId);
+                }
+            }
+            registry.setVariables(variables);
+            registry.setReceiveDocuments(receiving);
+            registerCounter.increment();
         } catch (WebClientResponseException e) {
+            cleanupCreatedCompany(companyId, e);
             throw apiFailure(operation, e);
         } catch (Exception e) {
+            cleanupCreatedCompany(companyId, e);
             throw callFailure(operation, e);
+        }
+    }
+
+    private boolean canReceiveByDefault(String peppolId) {
+        try {
+            checkRecipientAvailable(peppolId);
+            return true;
+        } catch (RuntimeException e) {
+            // Sending can start while another provider receives, or while a lookup is unavailable.
+            log.info("Registering {} for sending only: {}", peppolId, e.getMessage());
+            return false;
+        }
+    }
+
+    private void checkRecipientAvailable(String peppolId) {
+        JsonNode response = recommandWebClient.post().uri("/verify")
+                .contentType(MediaType.APPLICATION_JSON).bodyValue(Map.of("peppolAddress", peppolId))
+                .retrieve().bodyToMono(JsonNode.class).blockOptional()
+                .orElseThrow(() -> new IllegalStateException("Empty Recommand recipient lookup"));
+        if (!response.path("success").asBoolean() || !response.path("isValid").isBoolean()) {
+            throw new IllegalStateException("Recommand recipient lookup failed");
+        }
+        if (response.path("isValid").asBoolean()) {
+            throw new AlreadyRegisteredException(response.path("smpUrl").asText("another Peppol provider"));
+        }
+    }
+
+    @Override
+    public PeppolSettings getSettings(Registry registry) {
+        loadReceiving(registry);
+        return new PeppolSettings(registry.getReceiveDocuments());
+    }
+
+    @Override
+    @Transactional(noRollbackFor = RuntimeException.class)
+    public PeppolSettings updateSettings(Registry registry, PeppolSettings settings) {
+        String companyId = parseVariables(registry.getVariables()).companyId();
+        loadReceiving(registry);
+        if (Boolean.TRUE.equals(settings.receiveDocuments()) && !registry.getReceiveDocuments()) {
+            checkRecipientAvailable(registry.getPeppolId());
+        }
+        if (settings.receiveDocuments() != null
+                && !settings.receiveDocuments().equals(registry.getReceiveDocuments())) {
+            updateReceiving(companyId, settings.receiveDocuments(), registry);
+            registry.setReceiveDocuments(settings.receiveDocuments());
+        }
+        return new PeppolSettings(registry.getReceiveDocuments());
+    }
+
+    private void loadReceiving(Registry registry) {
+        if (registry.getReceiveDocuments() == null) {
+            String companyId = parseVariables(registry.getVariables()).companyId();
+            registry.setReceiveDocuments(getCompany(companyId).path("isSmpRecipient").asBoolean());
+        }
+    }
+
+    private JsonNode getCompany(String companyId) {
+        JsonNode response = recommandWebClient.get().uri("/companies/{companyId}", companyId)
+                .retrieve().bodyToMono(JsonNode.class).blockOptional()
+                .orElseThrow(() -> new IllegalStateException("Empty Recommand company response"));
+        requireSuccess(response, "get company");
+        JsonNode company = response.path("company");
+        if (!company.path("isSmpRecipient").isBoolean()) {
+            throw new IllegalStateException("Recommand company has no receiving setting");
+        }
+        return company;
+    }
+
+    private void createDocumentTypes(String companyId) {
+        for (String docTypeId : List.of(INVOICE, CREDIT_NOTE, SELF_BILLING_INVOICE, SELF_BILLING_CREDIT_NOTE)) {
+            String processId = docTypeId.contains("poacc:selfbilling:") ? SELF_BILLING_PROCESS : BILLING_PROCESS;
+            JsonNode response = recommandWebClient.post().uri("/companies/{companyId}/document-types", companyId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(Map.of("docTypeId", docTypeId, "processId", processId))
+                    .retrieve().bodyToMono(JsonNode.class).blockOptional()
+                    .orElseThrow(() -> new IllegalStateException("Empty Recommand create document type response"));
+            requireSuccess(response, "create document type");
+        }
+    }
+
+    private void createIdentifier(String companyId, PeppolIdentifier identifier) {
+        JsonNode response = recommandWebClient.post().uri("/companies/{companyId}/identifiers", companyId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(Map.of("scheme", identifier.scheme(), "identifier", identifier.value()))
+                .retrieve().bodyToMono(JsonNode.class).blockOptional()
+                .orElseThrow(() -> new IllegalStateException("Empty Recommand create identifier response"));
+        requireSuccess(response, "create identifier");
+    }
+
+    private void updateReceiving(String companyId, boolean receive, Registry registry) {
+        registry.setReceiveDocuments(null);
+        JsonNode response = recommandWebClient.put().uri("/companies/{companyId}", companyId)
+                .contentType(MediaType.APPLICATION_JSON).bodyValue(Map.of("isSmpRecipient", receive)).retrieve()
+                .onStatus(status -> status.value() == 409, error -> error.releaseBody()
+                        .thenReturn(new AlreadyRegisteredException("another Peppol provider")))
+                .bodyToMono(JsonNode.class).blockOptional()
+                .orElseThrow(() -> new IllegalStateException("Empty Recommand update company response"));
+        requireSuccess(response, "update company");
+    }
+
+    private void requireSuccess(JsonNode response, String operation) {
+        if (!response.path("success").asBoolean()) {
+            throw new IllegalStateException("Recommand did not " + operation);
         }
     }
 
     /// Completes company activation using the signed contract.
     private void verifyCompanyByContract(String companyId, byte[] signedContract) {
-        try {
-            MultipartBodyBuilder multipart = new MultipartBodyBuilder();
-            multipart.part("contract", new ByteArrayResource(signedContract))
-                    .filename("contract_signed.pdf")
-                    .contentType(MediaType.APPLICATION_PDF);
-            VerifyCompanyResponse response = recommandWebClient.post()
-                    .uri("/companies/{companyId}/verify-by-contract", companyId)
-                    .contentType(MediaType.MULTIPART_FORM_DATA)
-                    .bodyValue(multipart.build())
-                    .retrieve()
-                    .bodyToMono(VerifyCompanyResponse.class)
-                    .blockOptional()
-                    .orElseThrow(() -> new IllegalStateException("Empty response from Recommand verify company by contract"));
-            if (!response.success()) {
-                throw new IllegalStateException("Recommand did not verify the company by contract");
-            }
-        } catch (RuntimeException e) {
-            // The local registry is only saved after registration succeeds. Remove the newly
-            // created remote company so a retry can create and verify it again.
+        MultipartBodyBuilder multipart = new MultipartBodyBuilder();
+        multipart.part("contract", new ByteArrayResource(signedContract))
+                .filename("contract_signed.pdf")
+                .contentType(MediaType.APPLICATION_PDF);
+        VerifyCompanyResponse response = recommandWebClient.post()
+                .uri("/companies/{companyId}/verify-by-contract", companyId)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .bodyValue(multipart.build())
+                .retrieve().bodyToMono(VerifyCompanyResponse.class).blockOptional()
+                .orElseThrow(() -> new IllegalStateException("Empty response from Recommand verify company by contract"));
+        if (!response.success()) throw new IllegalStateException("Recommand did not verify the company by contract");
+    }
+
+    private void cleanupCreatedCompany(String companyId, Exception failure) {
+        if (companyId != null) {
             try {
                 recommandWebClient.delete()
                         .uri("/companies/{companyId}", companyId)
@@ -152,10 +283,9 @@ public class RecommandService implements AccessPointServiceInterface {
                         .toBodilessEntity()
                         .block();
             } catch (Exception cleanupFailure) {
-                e.addSuppressed(cleanupFailure);
-                log.error("Failed to remove Recommand company {} after verification failed", companyId, cleanupFailure);
+                failure.addSuppressed(cleanupFailure);
+                log.error("Failed to remove Recommand company {} after registration failed", companyId, cleanupFailure);
             }
-            throw e;
         }
     }
 

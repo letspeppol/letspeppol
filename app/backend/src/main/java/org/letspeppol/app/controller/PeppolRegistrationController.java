@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.letspeppol.app.dto.PeppolRegistrationDto;
+import org.letspeppol.app.dto.PeppolSettings;
 import org.letspeppol.app.service.PeppolRegistrationService;
 import org.letspeppol.app.util.JwtUtil;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -12,6 +13,10 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 @RequiredArgsConstructor
 @RestController
@@ -26,5 +31,20 @@ public class PeppolRegistrationController {
     @Operation(summary = "Get company Peppol registration", description = "Reads the authenticated company's current Access Point from the proxy registry.")
     public PeppolRegistrationDto getRegistration(@AuthenticationPrincipal Jwt jwt) {
         return peppolRegistrationService.get(JwtUtil.getPeppolId(jwt));
+    }
+
+    @GetMapping("/settings")
+    @Operation(summary = "Get company receiving settings")
+    public PeppolSettings getSettings(@AuthenticationPrincipal Jwt jwt) {
+        return peppolRegistrationService.getSettings(JwtUtil.getPeppolId(jwt));
+    }
+
+    @PutMapping("/settings")
+    @Operation(summary = "Update company receiving settings")
+    public PeppolSettings updateSettings(@AuthenticationPrincipal Jwt jwt, @RequestBody PeppolSettings settings) {
+        if (!"ADMIN".equals(jwt.getClaimAsString("accountType"))) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only a company administrator can change Peppol settings");
+        }
+        return peppolRegistrationService.updateSettings(JwtUtil.getPeppolId(jwt), settings);
     }
 }

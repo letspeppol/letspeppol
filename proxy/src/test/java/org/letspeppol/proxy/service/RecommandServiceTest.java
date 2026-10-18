@@ -12,6 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.letspeppol.proxy.exception.SendAuthorizationException;
+import org.letspeppol.proxy.exception.AlreadyRegisteredException;
+import org.letspeppol.proxy.dto.PeppolSettings;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.annotation.AnnotationTransactionAttributeSource;
@@ -93,122 +95,221 @@ class RecommandServiceTest {
     }
 
     @Test
-    void registersAndUnregistersACompany() throws Exception {
-        respond(200, """
-                {"success":true,"company":{"id":"company-1"},"verificationUrl":"https://verify.example/1"}
-                """);
+    void registersOnly0208WithAllFourDocumentTypesAndKeepsVatData() {
+        respondRegistrationSetup();
+        respond(200, "{\"success\":true,\"isValid\":false}");
         respond(200, "{\"success\":true}");
-        respond(200, "{\"success\":true}");
+        var registry = new Registry(ID, AccessPoint.RECOMMAND, null);
+        service.register(registry, registrationWithContract());
 
-        Map<String, Object> variables = service.register(
-                "0208:0685912734",
-                new RegistrationRequest(
-                        "Example BV",
-                        "NL",
-                        "BE",
-                        "Main Street 1",
-                        "1000",
-                        "Brussels",
-                        "BE0685912734",
-                        SIGNED_CONTRACT
-                )
-        );
-        service.unregister("0208:0685912734", variables);
-
-        assertThat(variables).containsEntry("companyId", "company-1")
-                .containsEntry("verificationUrl", "https://verify.example/1");
-        assertThat(requests).hasSize(3);
-        assertThat(requests.get(0).method()).isEqualTo("POST");
-        assertThat(requests.get(0).path()).isEqualTo("/api/v1/companies");
-        assertThat(requests.get(0).authorization()).isEqualTo("Basic YXBpLWtleTphcGktc2VjcmV0");
-        JsonNode createRequest = objectMapper.readTree(requests.get(0).body());
-        assertThat(createRequest.path("enterpriseNumberScheme").asText()).isEqualTo("0208");
-        assertThat(createRequest.path("enterpriseNumber").asText()).isEqualTo("0685912734");
-        assertThat(createRequest.path("address").asText()).isEqualTo("Main Street 1");
-        assertThat(createRequest.path("isSmpRecipient").asBoolean()).isTrue();
-        Request verification = requests.get(1);
-        assertThat(verification.method()).isEqualTo("POST");
-        assertThat(verification.path()).isEqualTo("/api/v1/companies/company-1/verify-by-contract");
-        assertThat(verification.authorization()).isEqualTo("Basic YXBpLWtleTphcGktc2VjcmV0");
-        assertThat(verification.contentType()).startsWith("multipart/form-data;boundary=");
-        assertThat(verification.body()).contains("name=\"contract\"", "filename=\"contract_signed.pdf\"",
-                "Content-Type: application/pdf");
-        assertThat(verification.bodyBytes()).containsSubsequence(SIGNED_CONTRACT);
+        assertThat(service.getSettings(registry)).isEqualTo(new PeppolSettings(true));
+        assertThat(requests).hasSize(9);
+        assertThat(registry.getVariables()).containsEntry("companyId", "company-1").doesNotContainKey("companySettings");
+        JsonNode create = readBody(requests.get(0));
+        assertThat(create.path("skipDefaultCompanySetup").asBoolean()).isTrue();
+        assertThat(create.path("isSmpRecipient").asBoolean()).isFalse();
+        assertThat(create.path("vatNumber").asText()).isEqualTo("BE0685912734");
+        assertThat(readBody(requests.get(1)).path("scheme").asText()).isEqualTo("0208");
+        assertThat(readBody(requests.get(1)).path("identifier").asText()).isEqualTo("0685912734");
+        assertThat(requests.stream().filter(r -> r.path().endsWith("/document-types")))
+                .extracting(r -> readBody(r).path("docTypeId").asText()).containsExactlyElementsOf(REQUIRED_TYPES);
+        assertThat(readBody(requests.get(7)).path("peppolAddress").asText()).isEqualTo(ID);
+        assertThat(readBody(requests.get(8)).path("isSmpRecipient").asBoolean()).isTrue();
+        assertThat(requests.get(6).bodyBytes()).containsSubsequence(SIGNED_CONTRACT);
+        assertThat(requests).allSatisfy(r -> assertThat(r.body()).doesNotContain("9925"));
         assertThat(registerCounter.count()).isEqualTo(1);
-        assertThat(requests.get(2).method()).isEqualTo("DELETE");
-        assertThat(requests.get(2).path()).isEqualTo("/api/v1/companies/company-1");
+        respond(200, "{\"success\":true}");
+        service.unregister(ID, registry.getVariables());
+        assertThat(requests.get(9).method()).isEqualTo("DELETE");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"{\"success\":true,\"isValid\":true}", "{}"})
+    void registersSendOnlyWhen0208IsOccupiedOrLookupIsUncertain(String lookup) {
+        respondRegistrationSetup();
+        respond(200, lookup);
+        var registry = new Registry(ID, AccessPoint.RECOMMAND, null);
+        service.register(registry, registrationWithContract());
+
+        assertThat(service.getSettings(registry)).isEqualTo(new PeppolSettings(false));
+        assertThat(requests).hasSize(8);
+        assertThat(requests.stream().filter(r -> r.method().equals("PUT"))).isEmpty();
+        assertThat(registry.getVariables()).containsEntry("companyId", "company-1").doesNotContainKey("companySettings");
     }
 
     @Test
-    void requiresASignedContractBeforeCreatingACompany() {
-        assertThatThrownBy(() -> service.validateRegistration("0208:0685912734", new RegistrationRequest("Example BV", "EN", "BE")))
-                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("signed PDF contract");
-        assertThatThrownBy(() -> service.register("0208:0685912734", new RegistrationRequest("Example BV", "EN", "BE")))
-                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("signed PDF contract");
+    void receivingConflictAfterLookupKeepsTheVerifiedCompanySendOnly() {
+        respondRegistrationSetup();
+        respond(200, "{\"success\":true,\"isValid\":false}");
+        respond(409, "{}");
+
+        var registry = new Registry(ID, AccessPoint.RECOMMAND, null);
+        service.register(registry, registrationWithContract());
+        assertThat(service.getSettings(registry))
+                .isEqualTo(new PeppolSettings(false));
+        assertThat(requests).extracting(Request::method).doesNotContain("DELETE");
+    }
+
+    @Test
+    void validatesRequirementsBeforeRemoteChanges() {
+        assertThatThrownBy(() -> service.register(new Registry(ID, AccessPoint.RECOMMAND, null), new RegistrationRequest("Example", "EN", "BE")))
+                .hasMessageContaining("signed PDF contract");
+        assertThatThrownBy(() -> service.validateRegistration("9925:BE0685912734", registrationWithContract()))
+                .hasMessageContaining("0208");
+        assertThatThrownBy(() -> service.register(new Registry("invalid-id", AccessPoint.RECOMMAND, null), registrationWithContract()))
+                .hasMessageContaining("Peppol ID");
         assertThat(requests).isEmpty();
+    }
+
+    @Test
+    void failedSetupDeletesTheNewCompanySoRegistrationCanBeRetried() {
+        respond(200, "{\"success\":true,\"company\":{\"id\":\"company-1\"}}");
+        respond(503, "{}");
+        respond(200, "{\"success\":true}");
+
+        assertThatThrownBy(() -> service.register(new Registry(ID, AccessPoint.RECOMMAND, null), registrationWithContract())).hasStackTraceContaining("set up company receiving");
+        assertThat(requests).extracting(Request::method).containsExactly("POST", "POST", "DELETE");
+        assertThat(registerCounter.count()).isZero();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"{\"success\":false}", ""})
+    void failedContractVerificationDeletesTheNewCompany(String verification) {
+        respond(200, "{\"success\":true,\"company\":{\"id\":\"company-1\"}}");
+        respond(200, "{\"success\":true}");
+        for (String type : REQUIRED_TYPES) respondCreatedType(type);
+        respond(200, verification);
+        respond(200, "{\"success\":true}");
+
+        assertThatThrownBy(() -> service.register(new Registry(ID, AccessPoint.RECOMMAND, null), registrationWithContract())).hasStackTraceContaining("verify company by contract");
+        assertThat(requests.get(7).method()).isEqualTo("DELETE");
         assertThat(registerCounter.count()).isZero();
     }
 
     @Test
-    void validatesRegistrationRequirementsWithoutRemoteChanges() {
-        service.validateRegistration("0208:0685912734", registrationWithContract());
-
-        assertThatThrownBy(() -> service.validateRegistration("invalid-id", registrationWithContract()))
-                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("Peppol ID");
-        for (var data : List.of(
-                new RegistrationRequest("", "EN", "BE", null, null, null, null, SIGNED_CONTRACT),
-                new RegistrationRequest("Example", "EN", "", null, null, null, null, SIGNED_CONTRACT))) {
-            assertThatThrownBy(() -> service.validateRegistration("0208:0685912734", data))
-                    .isInstanceOf(IllegalArgumentException.class);
-            assertThatThrownBy(() -> service.register("0208:0685912734", data))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
+    void cachedReadsAndUnchangedSettingsMakeNoProviderRequests() {
+        var registry = cachedRegistry(true);
+        assertThat(service.getSettings(registry)).isEqualTo(new PeppolSettings(true));
+        assertThat(service.updateSettings(registry, new PeppolSettings(true))).isEqualTo(new PeppolSettings(true));
         assertThat(requests).isEmpty();
-        assertThat(registerCounter.count()).isZero();
     }
 
     @Test
-    void failsRegistrationAndRemovesTheCreatedCompanyWhenVerificationIsRefused() {
-        respond(200, "{\"success\":true,\"company\":{\"id\":\"company-1\"}}");
-        respond(400, "{\"success\":false,\"errors\":{\"authorization\":[\"Not allowed\"]}}");
+    void disablingReceivingOnlySendsOnePutAndKeepsAllDocumentTypes() {
+        var registry = cachedRegistry(true);
         respond(200, "{\"success\":true}");
-
-        assertThatThrownBy(() -> service.register("0208:0685912734", registrationWithContract()))
-                .hasStackTraceContaining("verify company by contract").hasStackTraceContaining("400");
-        assertThat(requests).extracting(Request::method, Request::path).containsExactly(
-                org.assertj.core.groups.Tuple.tuple("POST", "/api/v1/companies"),
-                org.assertj.core.groups.Tuple.tuple("POST", "/api/v1/companies/company-1/verify-by-contract"),
-                org.assertj.core.groups.Tuple.tuple("DELETE", "/api/v1/companies/company-1")
-        );
-        assertThat(registerCounter.count()).isZero();
+        assertThat(service.updateSettings(registry, new PeppolSettings(false))).isEqualTo(new PeppolSettings(false));
+        assertThat(service.getSettings(registry)).isEqualTo(new PeppolSettings(false));
+        assertThat(registry.getVariables()).containsOnlyKeys("companyId");
+        assertThat(requests).extracting(Request::method).containsExactly("PUT");
     }
 
     @Test
-    void rejectsAnUnsuccessfulVerificationResponse() {
-        respond(200, "{\"success\":true,\"company\":{\"id\":\"company-1\"}}");
-        respond(200, "{\"success\":false}");
+    void enablingReceivingChecksOnly0208() {
+        var registry = cachedRegistry(false);
+        respond(200, "{\"success\":true,\"isValid\":false}");
         respond(200, "{\"success\":true}");
-
-        assertThatThrownBy(() -> service.register("0208:0685912734", registrationWithContract()))
-                .hasStackTraceContaining("Recommand did not verify the company by contract");
-        assertThat(requests.get(2).method()).isEqualTo("DELETE");
-        assertThat(registerCounter.count()).isZero();
+        assertThat(service.updateSettings(registry, new PeppolSettings(true))).isEqualTo(new PeppolSettings(true));
+        assertThat(requests).extracting(Request::method).containsExactly("POST", "PUT");
+        assertThat(readBody(requests.get(0)).path("peppolAddress").asText()).isEqualTo(ID);
     }
 
     @Test
-    void rejectsAnEmptyVerificationResponse() {
-        respond(200, "{\"success\":true,\"company\":{\"id\":\"company-1\"}}");
-        respond(200, "");
-        respond(200, "{\"success\":true}");
+    void failedReceivingWriteReconcilesOnlyCompanyStateAndPreservesRegistrationVariables() {
+        var registry = cachedRegistry(true);
+        registry.setVariables(Map.of("companyId", "company-1", "verificationUrl", "https://example.test/verify"));
+        var registrationVariables = registry.getVariables();
+        respond(503, "{}");
 
-        assertThatThrownBy(() -> service.register("0208:0685912734", registrationWithContract()))
-                .hasStackTraceContaining("Empty response from Recommand verify company by contract");
-        assertThat(registerCounter.count()).isZero();
+        assertThatThrownBy(() -> service.updateSettings(registry, new PeppolSettings(false)))
+                .isInstanceOf(org.springframework.web.reactive.function.client.WebClientResponseException.class);
+        assertThat(registry.getReceiveDocuments()).isNull();
+        respondCompany(false);
+
+        assertThat(service.getSettings(registry)).isEqualTo(new PeppolSettings(false));
+        assertThat(service.getSettings(registry)).isEqualTo(new PeppolSettings(false));
+        assertThat(registry.getVariables()).isSameAs(registrationVariables);
+        assertThat(requests).extracting(Request::method).containsExactly("PUT", "GET");
+    }
+
+    @Test
+    void unknownReceivingStateIsFetchedOnce() {
+        var registry = new Registry(ID, AccessPoint.RECOMMAND, companyVariables());
+        respondCompany(false);
+        assertThat(service.getSettings(registry)).isEqualTo(new PeppolSettings(false));
+        assertThat(service.getSettings(registry)).isEqualTo(new PeppolSettings(false));
+        assertThat(requests).hasSize(1);
+
+    }
+
+    @Test
+    void failedReceivingWriteCommitsInvalidationThroughBothTransactionalServices() throws Exception {
+        var registry = cachedRegistry(true);
+        when(registryRepository.findByIdForSettings(ID)).thenReturn(Optional.of(registry));
+        var dataSource = mock(DataSource.class);
+        var connection = mock(Connection.class);
+        when(dataSource.getConnection()).thenReturn(connection);
+        when(connection.getAutoCommit()).thenReturn(true);
+        var transactions = new DataSourceTransactionManager(dataSource);
+        var providers = mock(AccessPointServiceRegistry.class);
+        when(providers.get(AccessPoint.RECOMMAND)).thenReturn((RecommandService) transactionalProxy(service, transactions));
+        var registryService = (RegistryService) transactionalProxy(new RegistryService(registryRepository, providers), transactions);
+        respond(503, "{}");
+
+        assertThatThrownBy(() -> registryService.updateSettings(ID, new PeppolSettings(false)))
+                .isInstanceOf(org.springframework.web.reactive.function.client.WebClientResponseException.class);
+        assertThat(registry.getReceiveDocuments()).isNull();
+        assertThat(registry.getVariables()).containsOnlyKeys("companyId");
+        verify(connection).commit();
+        verify(connection, never()).rollback();
+    }
+
+    private static final String ID = "0208:0685912734";
+    private static final List<String> REQUIRED_TYPES = List.of(RecommandService.INVOICE, RecommandService.CREDIT_NOTE,
+            RecommandService.SELF_BILLING_INVOICE, RecommandService.SELF_BILLING_CREDIT_NOTE);
+
+    private Object transactionalProxy(Object target, DataSourceTransactionManager transactions) {
+        var interceptor = new TransactionInterceptor();
+        interceptor.setTransactionManager(transactions);
+        interceptor.setTransactionAttributeSource(new AnnotationTransactionAttributeSource());
+        var factory = new ProxyFactory(target);
+        factory.setProxyTargetClass(true);
+        factory.addAdvice(interceptor);
+        return factory.getProxy();
     }
 
     private RegistrationRequest registrationWithContract() {
-        return new RegistrationRequest("Example BV", "EN", "BE", "Main Street 1", "1000", "Brussels",
-                "BE0685912734", SIGNED_CONTRACT);
+        return new RegistrationRequest("Example BV", "EN", "BE", "Main Street 1", "1000", "Brussels", "BE0685912734", SIGNED_CONTRACT);
+    }
+
+    private Map<String, Object> companyVariables() {
+        return new java.util.HashMap<>(Map.of("companyId", "company-1"));
+    }
+
+    private Registry cachedRegistry(boolean receiving) {
+        var registry = new Registry(ID, AccessPoint.RECOMMAND, companyVariables());
+        registry.setReceiveDocuments(receiving);
+        return registry;
+    }
+
+    private List<Map<String, String>> typeRecords(List<String> types) {
+        return types.stream().map(type -> Map.of("id", "type-" + REQUIRED_TYPES.indexOf(type), "docTypeId", type,
+                "processId", type.contains("selfbilling") ? RecommandService.SELF_BILLING_PROCESS : RecommandService.BILLING_PROCESS)).toList();
+    }
+
+    private void respondCreatedType(String type) {
+        respond(200, objectMapper.writeValueAsString(Map.of("success", true, "documentType", typeRecords(List.of(type)).getFirst())));
+    }
+
+    private void respondRegistrationSetup() {
+        respond(200, "{\"success\":true,\"company\":{\"id\":\"company-1\"}}");
+        respond(200, "{\"success\":true}");
+        for (String type : REQUIRED_TYPES) respondCreatedType(type);
+        respond(200, "{\"success\":true}");
+    }
+
+    private void respondCompany(boolean receiving) {
+        respond(200, "{\"success\":true,\"company\":{\"id\":\"company-1\",\"isSmpRecipient\":" + receiving + ",\"vatNumber\":\"BE0685912734\"}}");
     }
 
     @ParameterizedTest
@@ -360,7 +461,7 @@ class RecommandServiceTest {
                 exchange.getRequestHeaders().getFirst("Content-Type"),
                 bodyBytes
         ));
-        Response response = responses.remove(0);
+        Response response = responses.isEmpty() ? new Response(500, "Unexpected provider request") : responses.remove(0);
         byte[] responseBody = response.body().getBytes(StandardCharsets.UTF_8);
         exchange.getResponseHeaders().set("Content-Type", "application/json");
         exchange.sendResponseHeaders(response.status(), responseBody.length);

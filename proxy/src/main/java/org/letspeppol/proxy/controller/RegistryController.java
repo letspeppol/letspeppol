@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.proxy.dto.AppLinkRequest;
 import org.letspeppol.proxy.dto.RegistrationRequest;
 import org.letspeppol.proxy.dto.RegistryDto;
+import org.letspeppol.proxy.dto.PeppolSettings;
 import org.letspeppol.proxy.exception.NotFoundException;
 import org.letspeppol.proxy.mapper.RegistryMapper;
 import org.letspeppol.proxy.model.AccessPoint;
@@ -59,6 +60,18 @@ public class RegistryController {
         ));
     }
 
+    @GetMapping("/settings")
+    @Operation(summary = "Get cached company Peppol settings", description = "Reads the receiving flag stored in the proxy registry, fetching it from the provider only when unknown.")
+    public PeppolSettings getSettings(@RequestParam String peppolId) {
+        return registryService.getSettings(peppolId);
+    }
+
+    @PutMapping("/settings")
+    @Operation(summary = "Update company Peppol settings", description = "Changes receiving settings without deleting the company or its document history. Omitted fields are unchanged.")
+    public PeppolSettings updateSettings(@RequestParam String peppolId, @RequestBody PeppolSettings settings) {
+        return registryService.updateSettings(peppolId, settings);
+    }
+
     @Hidden
     @PostMapping("/{peppolId}/move")
     public synchronized ResponseEntity<?> move(@PathVariable String peppolId,
@@ -93,7 +106,7 @@ public class RegistryController {
         var previousVariables = registry.getVariables();
         source.unregister(peppolId, previousVariables);
         try {
-            registry.setVariables(target.register(peppolId, data));
+            target.register(registry, data);
             registry.setAccessPoint(targetAccessPoint);
             return ResponseEntity.ok(RegistryMapper.toDto(registryRepository.save(registry)));
         } catch (RuntimeException failure) {
@@ -107,8 +120,9 @@ public class RegistryController {
             }
             registry.setVariables(previousVariables);
             registry.setAccessPoint(AccessPoint.NONE);
+            registry.setReceiveDocuments(false);
             try {
-                registry.setVariables(source.register(peppolId, data));
+                source.register(registry, data);
                 registry.setAccessPoint(previousAccessPoint);
             } catch (RuntimeException recoveryFailure) {
                 log.error("Failed to restore {} registration for {}", previousAccessPoint, peppolId, recoveryFailure);

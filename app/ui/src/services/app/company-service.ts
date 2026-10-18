@@ -35,6 +35,10 @@ export interface PeppolRegistrationDto {
     accessPoint: string | null;
 }
 
+export interface PeppolSettings {
+    receiveDocuments: boolean;
+}
+
 export interface Address {
     city?: string,
     postalCode?: string,
@@ -50,6 +54,16 @@ export class CompanyService {
 
     async getPeppolRegistration(): Promise<PeppolRegistrationDto> {
         const response = await this.appApi.httpClient.get('/sapi/company/peppol-registration');
+        return response.json();
+    }
+
+    async getPeppolSettings(): Promise<PeppolSettings> {
+        const response = await this.appApi.httpClient.get('/sapi/company/peppol-registration/settings');
+        return response.json();
+    }
+
+    async updatePeppolSettings(settings: PeppolSettings): Promise<PeppolSettings> {
+        const response = await this.appApi.httpClient.put('/sapi/company/peppol-registration/settings', JSON.stringify(settings));
         return response.json();
     }
 

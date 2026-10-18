@@ -4,6 +4,7 @@ import jakarta.servlet.Filter;
 import org.junit.jupiter.api.*;
 import org.letspeppol.proxy.config.SecurityConfig;
 import org.letspeppol.proxy.exception.GlobalExceptionHandler;
+import org.letspeppol.proxy.dto.PeppolSettings;
 import org.letspeppol.proxy.model.AccessPoint;
 import org.letspeppol.proxy.model.Registry;
 import org.letspeppol.proxy.repository.RegistryRepository;
@@ -40,6 +41,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class RegistryControllerTest {
@@ -82,15 +85,25 @@ class RegistryControllerTest {
     @BeforeEach
     void setUp() {
         reset(repository, accessPoints, scrada, recommand);
+        reset(context.getBean(RegistryService.class));
         when(accessPoints.get(AccessPoint.SCRADA)).thenReturn(scrada);
         when(accessPoints.get(AccessPoint.RECOMMAND)).thenReturn(recommand);
         doCallRealMethod().when(scrada).validateRegistration(anyString(), any());
         doCallRealMethod().when(recommand).validateRegistration(anyString(), any());
         registry = new Registry(ID, AccessPoint.SCRADA, Map.of("uuid", "original"));
+        registry.setReceiveDocuments(true);
         when(repository.findById(ID)).thenReturn(Optional.of(registry));
         when(repository.save(any())).thenAnswer(call -> call.getArgument(0));
-        when(recommand.register(eq(ID), any())).thenReturn(Map.of("companyId", "recommand-1"));
-        when(scrada.register(eq(ID), any())).thenReturn(Map.of("uuid", "restored"));
+        doAnswer(call -> {
+            call.<Registry>getArgument(0).setVariables(Map.of("companyId", "recommand-1"));
+            call.<Registry>getArgument(0).setReceiveDocuments(false);
+            return null;
+        }).when(recommand).register(any(), any());
+        doAnswer(call -> {
+            call.<Registry>getArgument(0).setVariables(Map.of("uuid", "restored"));
+            call.<Registry>getArgument(0).setReceiveDocuments(true);
+            return null;
+        }).when(scrada).register(any(), any());
     }
 
     @Test
@@ -99,36 +112,61 @@ class RegistryControllerTest {
                 .andExpect(status().isOk()).andExpect(jsonPath("$.accessPoint").value("RECOMMAND"));
 
         assertThat(registry.getVariables()).containsEntry("companyId", "recommand-1");
+        assertThat(registry.getReceiveDocuments()).isFalse();
         var order = inOrder(scrada, recommand);
         order.verify(recommand).validateRegistration(eq(ID), any());
         order.verify(scrada).validateRegistration(eq(ID), any());
         order.verify(scrada).unregister(ID, Map.of("uuid", "original"));
-        order.verify(recommand).register(eq(ID), any());
+        order.verify(recommand).register(eq(registry), any());
         verify(scrada, never()).register(any(), any());
     }
 
     @Test
+    void serviceCanReadAndChangeCompanySettings() throws Exception {
+        var service = context.getBean(RegistryService.class);
+        when(service.getSettings(ID)).thenReturn(new PeppolSettings(true));
+        when(service.updateSettings(ID, new PeppolSettings(false))).thenReturn(new PeppolSettings(false));
+
+        mvc.perform(get("/sapi/registry/settings").param("peppolId", ID))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.receiveDocuments").value(true));
+        mvc.perform(put("/sapi/registry/settings").param("peppolId", ID).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"receiveDocuments\":false}"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.receiveDocuments").value(false));
+        verify(service).updateSettings(ID, new PeppolSettings(false));
+    }
+
+    @Test
+    void endUserCannotBypassTheAdminCheckThroughTheServiceSettingsEndpoint() throws Exception {
+        mvc.perform(put("/sapi/registry/settings").param("peppolId", ID)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer user-token").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"receiveDocuments\":false}"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
     void failedMoveRestoresScradaAndSavesItsFreshCredentials() throws Exception {
-        when(recommand.register(eq(ID), any())).thenThrow(new IllegalStateException("Unavailable"));
+        doThrow(new IllegalStateException("Unavailable")).when(recommand).register(any(), any());
 
         mvc.perform(post(PATH).contentType(MediaType.APPLICATION_JSON).content(PAYLOAD))
                 .andExpect(status().isFailedDependency()).andExpect(jsonPath("$.accessPoint").value("SCRADA"))
                 .andExpect(jsonPath("$.peppolActive").value(true));
 
         assertThat(registry.getVariables()).containsEntry("uuid", "restored");
+        assertThat(registry.getReceiveDocuments()).isTrue();
         verify(repository).save(registry);
     }
 
     @Test
     void failedRecoveryRecordsAnInactiveRegistration() throws Exception {
-        when(recommand.register(eq(ID), any())).thenThrow(new IllegalStateException("Unavailable"));
-        when(scrada.register(eq(ID), any())).thenThrow(new IllegalStateException("Unavailable"));
+        doThrow(new IllegalStateException("Unavailable")).when(recommand).register(any(), any());
+        doThrow(new IllegalStateException("Unavailable")).when(scrada).register(any(), any());
 
         mvc.perform(post(PATH).contentType(MediaType.APPLICATION_JSON).content(PAYLOAD))
                 .andExpect(status().isFailedDependency()).andExpect(jsonPath("$.accessPoint").value("NONE"))
                 .andExpect(jsonPath("$.peppolActive").value(false));
 
         assertThat(registry.getVariables()).containsEntry("uuid", "original");
+        assertThat(registry.getReceiveDocuments()).isFalse();
     }
 
     @Test
@@ -181,7 +219,7 @@ class RegistryControllerTest {
 
         var order = inOrder(recommand, scrada);
         order.verify(recommand).unregister(ID, Map.of("companyId", "original-company"));
-        order.verify(scrada).register(eq(ID), any());
+        order.verify(scrada).register(eq(registry), any());
         assertThat(registry.getVariables()).containsEntry("uuid", "restored");
     }
 
@@ -189,7 +227,7 @@ class RegistryControllerTest {
     void restoresRecommandWhenMovingToScradaFails() throws Exception {
         registry.setAccessPoint(AccessPoint.RECOMMAND);
         registry.setVariables(Map.of("companyId", "original-company"));
-        when(scrada.register(eq(ID), any())).thenThrow(new IllegalStateException("Unavailable"));
+        doThrow(new IllegalStateException("Unavailable")).when(scrada).register(any(), any());
 
         mvc.perform(post(MOVE_PATH).param("accessPoint", "SCRADA").contentType(MediaType.APPLICATION_JSON).content(PAYLOAD))
                 .andExpect(status().isFailedDependency()).andExpect(jsonPath("$.accessPoint").value("RECOMMAND"))
@@ -202,7 +240,11 @@ class RegistryControllerTest {
     void usesOtherRegisteredProvidersWithoutRequiringARecommandContract() throws Exception {
         var provider = mock(AccessPointServiceInterface.class);
         when(accessPoints.get(AccessPoint.E_INVOICE)).thenReturn(provider);
-        when(provider.register(eq(ID), any())).thenReturn(Map.of("tenantId", "tenant-1"));
+        doAnswer(call -> {
+            call.<Registry>getArgument(0).setVariables(Map.of("tenantId", "tenant-1"));
+            call.<Registry>getArgument(0).setReceiveDocuments(true);
+            return null;
+        }).when(provider).register(any(), any());
 
         mvc.perform(post(MOVE_PATH).param("accessPoint", "E_INVOICE").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"Example\",\"country\":\"BE\"}"))
@@ -229,7 +271,7 @@ class RegistryControllerTest {
                 .andExpect(status().isOk()).andExpect(jsonPath("$.accessPoint").value("SCRADA"));
 
         verify(recommand).unregister(ID, Map.of("companyId", "original-company"));
-        verify(scrada).register(eq(ID), any());
+        verify(scrada).register(eq(registry), any());
     }
 
     @Test
@@ -274,9 +316,9 @@ class RegistryControllerTest {
 
         var order = inOrder(recommand, scrada);
         order.verify(scrada).unregister(ID, Map.of("uuid", "original"));
-        order.verify(recommand).register(eq(ID), any());
+        order.verify(recommand).register(eq(registry), any());
         order.verify(recommand).unregister(ID, Map.of("companyId", "recommand-1"));
-        order.verify(scrada).register(eq(ID), any());
+        order.verify(scrada).register(eq(registry), any());
     }
 
     @Configuration
@@ -287,6 +329,7 @@ class RegistryControllerTest {
         @Bean ScradaService scrada() { return mock(ScradaService.class); }
         @Bean RecommandService recommand() { return mock(RecommandService.class); }
         @Bean AccessPointServiceRegistry accessPoints() { return mock(AccessPointServiceRegistry.class); }
+        @Bean RegistryService registryService() { return mock(RegistryService.class); }
         @Bean JwtDecoder decoder() {
             var decoder = mock(JwtDecoder.class);
             when(decoder.decode("service-token")).thenReturn(Jwt.withTokenValue("service-token")
@@ -297,8 +340,8 @@ class RegistryControllerTest {
         }
         @Bean CorsConfigurationSource corsConfigurationSource() { return request -> new CorsConfiguration(); }
         @Bean GlobalExceptionHandler errors() { return new GlobalExceptionHandler(); }
-        @Bean RegistryController controller(RegistryRepository repository, AccessPointServiceRegistry accessPoints) {
-            return new RegistryController(mock(AppLinkService.class), mock(RegistryService.class), repository, accessPoints);
+        @Bean RegistryController controller(RegistryRepository repository, AccessPointServiceRegistry accessPoints, RegistryService registryService) {
+            return new RegistryController(mock(AppLinkService.class), registryService, repository, accessPoints);
         }
         @Bean SecurityFilterChain security(HttpSecurity http) throws Exception {
             return new SecurityConfig().securityFilterChain(http);

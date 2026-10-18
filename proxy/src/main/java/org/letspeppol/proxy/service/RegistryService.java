@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.proxy.dto.RegistrationRequest;
 import org.letspeppol.proxy.dto.RegistryDto;
+import org.letspeppol.proxy.dto.PeppolSettings;
+import org.letspeppol.proxy.exception.ConflictException;
 import org.letspeppol.proxy.exception.BadRequestException;
 import org.letspeppol.proxy.exception.NotFoundException;
 import org.letspeppol.proxy.mapper.RegistryMapper;
@@ -13,7 +15,6 @@ import org.letspeppol.proxy.repository.RegistryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -34,11 +35,35 @@ public class RegistryService {
         return optionalRegistry.isPresent() ? optionalRegistry.get().getAccessPoint() : AccessPoint.NONE;
     }
 
+    public PeppolSettings getSettings(String peppolId) {
+        Registry registry = registryRepository.findByIdForSettings(peppolId)
+                .orElseThrow(() -> new NotFoundException("Company is not registered here"));
+        return settingsService(registry).getSettings(registry);
+    }
+
+    @Transactional(noRollbackFor = RuntimeException.class)
+    public PeppolSettings updateSettings(String peppolId, PeppolSettings settings) {
+        Registry registry = registryRepository.findByIdForSettings(peppolId)
+                .orElseThrow(() -> new NotFoundException("Company is not registered here"));
+        // The locked entity is managed by JPA. Commit confirmed state or invalidation even if
+        // the provider write fails, so the next read can recover an uncertain remote outcome.
+        return settingsService(registry).updateSettings(registry, settings);
+    }
+
+    private AccessPointServiceInterface settingsService(Registry registry) {
+        var service = accessPointServiceRegistry.get(registry.getAccessPoint());
+        if (registry.getAccessPoint() == AccessPoint.NONE || service == null) {
+            throw new ConflictException("An active access point is required to change company settings");
+        }
+        return service;
+    }
+
     /** Correct stale local registration without deregistering or deleting anything at the provider. */
     public void markNotRegistered(String peppolId, AccessPoint expectedAccessPoint) {
         registryRepository.findById(peppolId).ifPresent(registry -> {
             if (registry.getAccessPoint() == expectedAccessPoint) {
                 registry.setAccessPoint(AccessPoint.NONE);
+                registry.setReceiveDocuments(false);
                 registryRepository.save(registry);
             }
         });
@@ -51,8 +76,7 @@ public class RegistryService {
                 if (service == null) {
                     throw new BadRequestException("Peppol Access Point " + accessPoint + " is not active");
                 }
-                Map<String, Object> variables = service.register(registry.getPeppolId(), data);
-                registry.setVariables(variables);
+                service.register(registry, data);
                 log.info("Registered PeppolId {} at access point {}", registry.getPeppolId(), accessPoint);
             }
             registry.setAccessPoint(accessPoint);
@@ -75,6 +99,7 @@ public class RegistryService {
                 }
             }
             registry.setAccessPoint(AccessPoint.NONE);
+            registry.setReceiveDocuments(false);
         } catch (Exception _) {
             log.error("Failed to unregister {} at access point {}", registry.getPeppolId(), accessPoint);
         }

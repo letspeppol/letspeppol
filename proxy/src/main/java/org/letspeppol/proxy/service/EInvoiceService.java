@@ -7,6 +7,7 @@ import org.letspeppol.proxy.dto.StatusReport;
 import org.letspeppol.proxy.dto.e_invoice.*;
 import org.letspeppol.proxy.model.AccessPoint;
 import org.letspeppol.proxy.model.UblDocument;
+import org.letspeppol.proxy.model.Registry;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -45,7 +46,8 @@ public class EInvoiceService implements AccessPointServiceInterface {
     }
 
     @Override
-    public Map<String, Object> register(String peppolId, RegistrationRequest data) {
+    public void register(Registry registry, RegistrationRequest data) {
+        String peppolId = registry.getPeppolId();
         validateRegistration(peppolId, data);
         try {
             TenantCreateResponse tenantCreateResponse = eInvoiceOrganisationWebClient
@@ -86,7 +88,8 @@ public class EInvoiceService implements AccessPointServiceInterface {
 
             registerCounter.increment();
             Variables variables = new Variables(tenantId, keyId, key);
-            return objectMapper.convertValue(variables, new TypeReference<>() {});
+            registry.setVariables(objectMapper.convertValue(variables, new TypeReference<>() {}));
+            registry.setReceiveDocuments(registerPeppolResponse.registered());
         } catch (WebClientResponseException e) { // HTTP error (non-2xx)
             throw new RuntimeException("e-invoice API error: " + e.getStatusCode(), e);
         } catch (Exception e) { // timeouts, connection issues, deserialization errors, etc.

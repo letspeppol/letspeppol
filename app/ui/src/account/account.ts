@@ -1,9 +1,10 @@
-import {CompanyDto, CompanyService, PeppolRegistrationDto} from "../services/app/company-service";
+import {CompanyDto, CompanyService, PeppolRegistrationDto, PeppolSettings} from "../services/app/company-service";
+import {OwnershipService} from "../services/app/ownership-service";
 import {resolve} from "@aurelia/kernel";
 import {AlertType} from "../components/alert/alert";
 import {IEventAggregator, IDisposable} from "aurelia";
 import {RegistrationService} from "../services/kyc/registration-service";
-import {PeppolDirService} from "../services/peppol/peppol-dir-service";
+import {AccountService, CurrentAccount} from "../services/kyc/account-service";
 import {ChangePasswordModal} from "./change-password-modal";
 import {ConfirmationModalContext} from "../components/confirmation/confirmation-modal-context";
 import {validateEmail} from "../app/util/email-validation";
@@ -20,13 +21,15 @@ export class Account {
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
     private sub?: IDisposable;
     private readonly companyService = resolve(CompanyService);
+    private readonly ownershipService = resolve(OwnershipService);
     private readonly registrationService = resolve(RegistrationService);
+    private readonly accountService = resolve(AccountService);
+    private currentAccount?: CurrentAccount;
+    private accountRequest = 0;
     private readonly confirmationModalContext = resolve(ConfirmationModalContext);
-    private readonly peppolDirService = resolve(PeppolDirService);
     private readonly i18n = resolve(I18N);
     private readonly vatDisplay = resolve(IVatDisplay);
     private company: CompanyDto;
-    private alreadyPeppolActivated = false;
     changePasswordModal: ChangePasswordModal;
     private warningKey;
     private alreadyRegisteredProvider = '';
@@ -34,6 +37,44 @@ export class Account {
     private peppolRegistration?: PeppolRegistrationDto;
     private accessPointLoading = true;
     private registrationRequest = 0;
+    private peppolSettings?: PeppolSettings;
+    private initialPeppolSettings?: PeppolSettings;
+    private peppolSettingsLoading = false;
+    private peppolSettingsFailed = false;
+    private accountSaving = false;
+    private pendingSending?: boolean;
+
+    get sendingAllowed(): boolean {
+        return this.pendingSending ?? this.peppolRegistration?.peppolActive ?? !!this.company?.peppolActive;
+    }
+
+    changeSending(event: Event) {
+        const input = event.target as HTMLInputElement;
+        const enabled = input.checked;
+        input.checked = this.sendingAllowed;
+        this.confirmSending(enabled);
+    }
+
+    private confirmSending(enabled: boolean) {
+        if (!this.canEditPeppolSettings || this.accountSaving || enabled === this.sendingAllowed) return;
+        const company = this.company;
+        this.confirmationModalContext.showConfirmationModal(
+            this.i18n.tr(enabled ? 'account.allow-sending' : 'account.remove-sending'),
+            this.i18n.tr(enabled ? 'account.confirm.sending-enable' : 'account.confirm.sending-disable'),
+            () => {
+                if (company === this.company) this.pendingSending = enabled;
+            },
+            undefined
+        );
+    }
+
+    get canEditPeppolSettings(): boolean {
+        return this.ownershipService.getCurrentOwnershipType() === 'ADMIN';
+    }
+
+    get supportsPeppolSettings(): boolean {
+        return !!this.peppolRegistration?.peppolActive && this.peppolRegistration.accessPoint === 'RECOMMAND';
+    }
 
     get accessPointName(): string {
         if (this.accessPointLoading) return this.i18n.tr('account.access-point-loading');
@@ -55,13 +96,72 @@ export class Account {
         const request = ++this.registrationRequest;
         this.accessPointLoading = true;
         this.peppolRegistration = undefined;
+        this.peppolSettings = undefined;
+        this.initialPeppolSettings = undefined;
+        this.peppolSettingsFailed = false;
         try {
             const registration = await this.companyService.getPeppolRegistration();
-            if (request === this.registrationRequest) this.peppolRegistration = registration;
+            if (request !== this.registrationRequest) return;
+            this.peppolRegistration = registration;
+            this.accessPointLoading = false;
+            if (this.supportsPeppolSettings) {
+                this.peppolSettingsLoading = true;
+                try {
+                    const settings = await this.companyService.getPeppolSettings();
+                    if (request === this.registrationRequest) {
+                        this.peppolSettings = {...settings};
+                        this.initialPeppolSettings = {...settings};
+                    }
+                } catch {
+                    if (request === this.registrationRequest) this.peppolSettingsFailed = true;
+                }
+            }
         } catch {
             // Provider lookup failure must not prevent loading or updating the account.
         } finally {
-            if (request === this.registrationRequest) this.accessPointLoading = false;
+            if (request === this.registrationRequest) {
+                this.accessPointLoading = false;
+                this.peppolSettingsLoading = false;
+            }
+        }
+    }
+
+    changeReceiving(event: Event) {
+        const input = event.target as HTMLInputElement;
+        const enabled = input.checked;
+        const settings = this.peppolSettings;
+        if (!settings) return;
+        input.checked = settings.receiveDocuments;
+        if (!this.sendingAllowed || !this.canEditPeppolSettings || this.accountSaving || settings.receiveDocuments === enabled) return;
+        const action = enabled ? 'enable' : 'disable';
+        this.confirmationModalContext.showConfirmationModal(
+            this.i18n.tr(`account.confirm.receiving-${action}-title`),
+            this.i18n.tr(`account.confirm.receiving-${action}`),
+            () => {
+                if (this.peppolSettings === settings) settings.receiveDocuments = enabled;
+            },
+            undefined
+        );
+    }
+
+    private async savePeppolSettings(): Promise<boolean> {
+        if (!this.peppolSettings || !this.initialPeppolSettings || !this.canEditPeppolSettings) return true;
+        if (this.peppolSettings.receiveDocuments === this.initialPeppolSettings.receiveDocuments) return true;
+        const request = this.registrationRequest;
+        try {
+            const settings = await this.companyService.updatePeppolSettings({receiveDocuments: this.peppolSettings.receiveDocuments});
+            if (request !== this.registrationRequest) return false;
+            this.peppolSettings = {...settings};
+            this.initialPeppolSettings = {...settings};
+            return true;
+        } catch (error) {
+            if (request !== this.registrationRequest) return false;
+            // Reload the receiving flag when a provider write has an uncertain outcome.
+            await this.refreshPeppolRegistration();
+            const key = error instanceof Response && error.status === 409
+                ? 'alert.account.receiving-conflict' : 'alert.account.peppol-settings-failed';
+            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr(key)});
+            return false;
         }
     }
 
@@ -90,21 +190,38 @@ export class Account {
     }
 
     attaching() {
-        this.getCompany().catch(() => {
+        void this.refreshCurrentAccount();
+        const st = (history.state ?? {}) as { runRegister?: boolean };
+        if (st.runRegister) {
+            history.replaceState({ ...st, runRegister: false }, '');
+        }
+        this.getCompany().then(() => {
+            if (st.runRegister) this.register();
+        }).catch(() => {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.account.load-failed')});
         });
         this.sub = this.ea.subscribe('account:register', () => {
             this.register();
         });
-        const st = (history.state ?? {}) as { runRegister?: boolean };
-        if (st.runRegister) {
-            history.replaceState({ ...st, runRegister: false }, '');// consume it so refresh doesn't re-run
-            this.register();
-        }
     }
 
     unbinding() {
         this.sub?.dispose();
+        ++this.accountRequest;
+        ++this.registrationRequest;
+    }
+
+    private async refreshCurrentAccount() {
+        const request = ++this.accountRequest;
+        this.currentAccount = undefined;
+        try {
+            const account = await this.accountService.getCurrentAccount();
+            if (request === this.accountRequest) this.currentAccount = account;
+        } catch {
+            if (request === this.accountRequest) {
+                this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.account.load-failed')});
+            }
+        }
     }
 
     async getCompany() {
@@ -116,25 +233,27 @@ export class Account {
         this.initialVatDisplayMode = this.vatDisplay.mode;
 
         void this.refreshPeppolRegistration();
-
-        if (!this.company.peppolActive && this.company.peppolId) {
-            const peppolDirectoryResponse = await this.peppolDirService.findByParticipant(this.company.peppolId); // TODO : peppolId undefined ?
-            if (peppolDirectoryResponse.matches.length > 0) { //TODO : why not peppolDirectoryResponse.total-result-count ?
-                this.alreadyPeppolActivated = true;
-            }
-        }
     }
 
     async saveAccount() {
+        if (this.accountSaving) return;
+        this.accountSaving = true;
         try {
             this.ea.publish('showOverlay', this.i18n.tr('overlay.saving'));
             await this.companyService.updateCompany(this.company);
             this.initialVatDisplayMode = this.vatDisplay.mode;
+            if (this.pendingSending != null && this.pendingSending !== (this.peppolRegistration?.peppolActive ?? this.company.peppolActive)) {
+                const changed = this.pendingSending ? await this.registerOnPeppol() : await this.unregisterFromPeppol();
+                if (!changed) return;
+            }
+            this.pendingSending = undefined;
+            if (!await this.savePeppolSettings()) return;
             this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.account.updated')});
         } catch(e) {
             console.error(e);
             this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.account.update-failed')});
         } finally {
+            this.accountSaving = false;
             this.ea.publish('hideOverlay');
         }
     }
@@ -142,40 +261,26 @@ export class Account {
     cancelChanges() {
         this.company = JSON.parse(JSON.stringify(this.companyService.myCompany));
         this.vatDisplay.setMode(this.initialVatDisplayMode);
+        this.peppolSettings = this.initialPeppolSettings ? {...this.initialPeppolSettings} : undefined;
+        this.pendingSending = undefined;
         this.ea.publish('alert', {alertType: AlertType.Info, text: this.i18n.tr('alert.account.reverted')});
     }
 
-    async register() {
-        const peppolDirectoryResponse = await this.peppolDirService.findByParticipant(this.company.peppolId);
-        if (peppolDirectoryResponse.matches.length > 0) { //TODO : why not peppolDirectoryResponse.total-result-count ?
-            this.confirmationModalContext.showConfirmationModal(
-                "Activate on Peppol",
-                "It looks like you are currently registered to the Peppol network via another Access Point.\n" +
-                "Are you sure you wish to subscribe yourself to the Peppol network via Let’s Peppol?\n" +
-                "It might fail if you are still registered at the other Access Point provider.",
-                () => this.registerOnPeppol(),
-                undefined
-            );
-        } else {
-            this.confirmationModalContext.showConfirmationModal(
-                "Activate on Peppol",
-                "Are you sure you wish to subscribe yourself to the Peppol network via Let’s Peppol?\n" +
-                "Make sure you are not subscribed via another service.",
-                () => this.registerOnPeppol(),
-                undefined
-            );
-        }
+    register() {
+        this.confirmSending(true);
     }
 
-    async registerOnPeppol() {
+    private async registerOnPeppol(): Promise<boolean> {
         try {
             this.setPeppolActive(await this.registrationService.registerCompany());
-            void this.refreshPeppolRegistration();
-            this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.account.peppol-activated')});
+            if (!this.company.peppolActive) throw new Error('Sending was not activated');
+            this.pendingSending = undefined;
+            await this.refreshPeppolRegistration();
+            return true;
         } catch (error: unknown) {
             if (!(error instanceof Response)) {
                 this.ea.publish('alert', { alertType: AlertType.Danger, text: this.i18n.tr('alert.account.peppol-activation-request-failed') });
-                return;
+                return false;
             }
             const status = error.status;
             const body = await error.text().catch(() => "");
@@ -197,26 +302,20 @@ export class Account {
                     break;
             }
             this.ea.publish('alert', { alertType: AlertType.Danger, text: this.i18n.tr('alert.account.peppol-activation-failed') });
+            return false;
         }
     }
 
-    unregister() {
-        this.confirmationModalContext.showConfirmationModal(
-            "Remove From Peppol",
-            "Are you sure you wish to unsubscribe yourself from the Peppol network?\n" +
-            "Your invoices and credit notes will still be available.",
-            () => this.unregisterFromPeppol(),
-            undefined
-        );
-    }
-
-    async unregisterFromPeppol() {
+    private async unregisterFromPeppol(): Promise<boolean> {
         try {
             this.setPeppolActive(await this.registrationService.unregisterCompany());
-            void this.refreshPeppolRegistration();
-            this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.account.peppol-removed')});
+            if (this.company.peppolActive) throw new Error('Sending was not removed');
+            this.pendingSending = undefined;
+            await this.refreshPeppolRegistration();
+            return true;
         } catch {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.account.peppol-remove-failed')});
+            return false;
         }
     }
 

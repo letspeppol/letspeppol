@@ -10,6 +10,7 @@ import org.letspeppol.proxy.exception.AlreadyRegisteredException;
 import org.letspeppol.proxy.exception.ServiceUnavailableException;
 import org.letspeppol.proxy.model.AccessPoint;
 import org.letspeppol.proxy.model.UblDocument;
+import org.letspeppol.proxy.model.Registry;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -68,7 +69,8 @@ public class ScradaService implements AccessPointServiceInterface {
 
     /// DOCS : [Scrada : Register company](https://www.scrada.be/api-documentation/#tag/Peppol-inbound/paths/~1v1~1company~1%7BcompanyID%7D~1peppol~1register/post)
     @Override
-    public Map<String, Object> register(String peppolId, RegistrationRequest data) {
+    public void register(Registry registry, RegistrationRequest data) {
+        String peppolId = registry.getPeppolId();
         validateRegistration(peppolId, data);
         try {
             RegisterRequest registerRequest = new RegisterRequest(
@@ -113,7 +115,8 @@ public class ScradaService implements AccessPointServiceInterface {
                     .orElseThrow(() -> new IllegalStateException("Empty response from Scrada register company"));
 
             registerCounter.increment();
-            return Map.of("uuid", uuid);
+            registry.setVariables(Map.of("uuid", uuid));
+            registry.setReceiveDocuments(true);
         } catch (WebClientResponseException e) { // HTTP error (non-2xx)
             String body = e.getResponseBodyAsString();
             ErrorResponse errorResponse = null;
