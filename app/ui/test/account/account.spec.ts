@@ -28,15 +28,13 @@ interface AccountHarness {
     vatDisplay: {mode: string; setMode: ReturnType<typeof vi.fn>};
     ownershipService: {getCurrentOwnershipType: ReturnType<typeof vi.fn>};
     peppolSettings?: PeppolSettings;
-    initialPeppolSettings?: PeppolSettings;
     peppolSettingsFailed: boolean;
-    savePeppolSettings: () => Promise<boolean>;
+    savePeppolSettings: (receiveDocuments: boolean) => Promise<boolean>;
     saveAccount: () => Promise<void>;
     accountSaving: boolean;
     changeReceiving: (event: Event) => void;
     changeSending: (event: Event) => void;
     sendingAllowed: boolean;
-    pendingSending?: boolean;
     cancelChanges: () => void;
     register: () => void;
     confirmationModalContext: {showConfirmationModal: ReturnType<typeof vi.fn>};
@@ -205,23 +203,21 @@ describe('Account Peppol status changes', () => {
         const account = createAccountHarness();
         account.company.peppolActive = true;
         await account.refreshPeppolRegistration();
-        account.peppolSettings.receiveDocuments = true;
         account.companyService.updatePeppolSettings.mockResolvedValue({receiveDocuments: true});
 
-        await account.savePeppolSettings();
+        await account.savePeppolSettings(true);
 
         expect(account.companyService.updatePeppolSettings).toHaveBeenCalledWith({receiveDocuments: true});
         expect(account.company.peppolActive).toBe(true);
-        expect(account.initialPeppolSettings).toEqual({receiveDocuments: true});
+        expect(account.peppolSettings).toEqual({receiveDocuments: true});
     });
 
     it('does not update provider settings for non-administrators', async () => {
         const account = createAccountHarness();
         await account.refreshPeppolRegistration();
         account.ownershipService.getCurrentOwnershipType.mockReturnValue('USER');
-        account.peppolSettings.receiveDocuments = true;
 
-        await account.savePeppolSettings();
+        await account.savePeppolSettings(true);
 
         expect(account.companyService.updatePeppolSettings).not.toHaveBeenCalled();
     });
@@ -229,10 +225,9 @@ describe('Account Peppol status changes', () => {
     it('reloads remote settings after a failed update and explains a receiving conflict', async () => {
         const account = createAccountHarness();
         await account.refreshPeppolRegistration();
-        account.peppolSettings.receiveDocuments = true;
         account.companyService.updatePeppolSettings.mockRejectedValue(new Response('', {status: 409}));
 
-        await account.savePeppolSettings();
+        await account.savePeppolSettings(true);
 
         expect(account.peppolSettings.receiveDocuments).toBe(false);
         expect(account.ea.publish).toHaveBeenCalledWith('alert', expect.objectContaining({text: 'alert.account.receiving-conflict'}));
@@ -255,161 +250,156 @@ describe('Account Peppol status changes', () => {
 });
 
 describe('Peppol settings confirmations and saving', () => {
-    it('saves company and Peppol settings through the main Save action', async () => {
-        const account = createAccountHarness();
-        await account.refreshPeppolRegistration();
-        account.peppolSettings.receiveDocuments = true;
-        account.companyService.updatePeppolSettings.mockResolvedValue({receiveDocuments: false});
-
-        await account.saveAccount();
-
-        expect(account.companyService.updateCompany).toHaveBeenCalledOnce();
-        expect(account.companyService.updatePeppolSettings).toHaveBeenCalledWith({receiveDocuments: true});
-        expect(account.ea.publish).toHaveBeenCalledWith('alert', expect.objectContaining({text: 'alert.account.updated'}));
-        expect(account.accountSaving).toBe(false);
-    });
-
-    it('does not show success when saving the Peppol settings fails', async () => {
-        const account = createAccountHarness();
-        await account.refreshPeppolRegistration();
-        account.peppolSettings.receiveDocuments = true;
-        account.companyService.updatePeppolSettings.mockRejectedValue(new Response('', {status: 409}));
-
-        await account.saveAccount();
-
-        expect(account.ea.publish).toHaveBeenCalledWith('alert', expect.objectContaining({text: 'alert.account.receiving-conflict'}));
-        expect(account.ea.publish).not.toHaveBeenCalledWith('alert', expect.objectContaining({text: 'alert.account.updated'}));
-        expect(account.ea.publish).toHaveBeenCalledWith('hideOverlay');
-        expect(account.accountSaving).toBe(false);
-    });
-
-    it('confirms disabling receiving and waits for the main Save action', async () => {
+    it.each([true, false])('applies receiving=%s immediately after warning confirmation', async enabled => {
         const account = createAccountHarness();
         account.company.peppolActive = true;
-        account.companyService.getPeppolSettings.mockResolvedValue({receiveDocuments: true});
+        account.companyService.getPeppolSettings.mockResolvedValue({receiveDocuments: !enabled});
         await account.refreshPeppolRegistration();
+        account.companyService.updatePeppolSettings.mockResolvedValue({receiveDocuments: enabled});
         const input = document.createElement('input');
         input.type = 'checkbox';
-        input.checked = false;
+        input.checked = enabled;
 
         account.changeReceiving({target: input} as unknown as Event);
 
-        expect(input.checked).toBe(true);
-        expect(account.peppolSettings.receiveDocuments).toBe(true);
+        expect(input.checked).toBe(!enabled);
+        expect(account.peppolSettings.receiveDocuments).toBe(!enabled);
+        const action = enabled ? 'enable' : 'disable';
         expect(account.confirmationModalContext.showConfirmationModal).toHaveBeenCalledWith(
-            'account.confirm.receiving-disable-title', 'account.confirm.receiving-disable', expect.any(Function), undefined);
+            `account.confirm.receiving-${action}-title`, `account.confirm.receiving-${action}`, expect.any(Function), undefined, 'warning');
         expect(account.companyService.updatePeppolSettings).not.toHaveBeenCalled();
-        const confirm = account.confirmationModalContext.showConfirmationModal.mock.calls[0][2];
-        confirm();
-        expect(account.peppolSettings.receiveDocuments).toBe(false);
-        expect(account.company.peppolActive).toBe(true);
+
+        await account.confirmationModalContext.showConfirmationModal.mock.calls[0][2]();
+
+        expect(account.companyService.updatePeppolSettings).toHaveBeenCalledOnce();
+        expect(account.companyService.updatePeppolSettings).toHaveBeenCalledWith({receiveDocuments: enabled});
+        expect(account.peppolSettings.receiveDocuments).toBe(enabled);
+        expect(account.companyService.updateCompany).not.toHaveBeenCalled();
         expect(account.registrationService.unregisterCompany).not.toHaveBeenCalled();
-        expect(account.companyService.updatePeppolSettings).not.toHaveBeenCalled();
-        account.companyService.updatePeppolSettings.mockResolvedValue({...account.peppolSettings});
+        expect(account.ea.publish).toHaveBeenCalledWith('alert', expect.objectContaining({text: 'alert.account.peppol-settings-updated'}));
+        expect(account.accountSaving).toBe(false);
 
+        account.cancelChanges();
+        expect(account.peppolSettings.receiveDocuments).toBe(enabled);
         await account.saveAccount();
-
-        expect(account.companyService.updatePeppolSettings).toHaveBeenCalledWith({receiveDocuments: false});
+        expect(account.companyService.updatePeppolSettings).toHaveBeenCalledOnce();
     });
 
-    it('stages onboarding activation and waits for the main Save action', async () => {
+    it('applies onboarding activation immediately after confirmation', async () => {
         const account = createAccountHarness();
+        account.registrationService.registerCompany.mockResolvedValue(true);
 
         account.register();
 
         expect(account.confirmationModalContext.showConfirmationModal).toHaveBeenCalledWith(
-            'account.allow-sending', 'account.confirm.sending-enable', expect.any(Function), undefined);
-        account.confirmationModalContext.showConfirmationModal.mock.calls[0][2]();
-        expect(account.pendingSending).toBe(true);
+            'account.allow-sending', 'account.confirm.sending-enable', expect.any(Function), undefined, 'warning');
         expect(account.registrationService.registerCompany).not.toHaveBeenCalled();
-        account.registrationService.registerCompany.mockResolvedValue(true);
 
-        await account.saveAccount();
+        await account.confirmationModalContext.showConfirmationModal.mock.calls[0][2]();
 
         expect(account.registrationService.registerCompany).toHaveBeenCalledOnce();
-        expect(account.ea.publish).toHaveBeenCalledWith('alert', expect.objectContaining({text: 'alert.account.updated'}));
+        expect(account.sendingAllowed).toBe(true);
+        expect(account.companyService.updateCompany).not.toHaveBeenCalled();
+        expect(account.ea.publish).toHaveBeenCalledWith('alert', expect.objectContaining({text: 'alert.account.peppol-settings-updated'}));
     });
 
-    it('stages unchecking sending after confirmation and removes it only on Save', async () => {
+    it.each([true, false])('applies sending=%s immediately after warning confirmation', async enabled => {
         const account = createAccountHarness();
-        account.company.peppolActive = true;
-        account.companyService.myCompany.peppolActive = true;
-        account.companyService.getPeppolSettings.mockResolvedValue({receiveDocuments: true});
+        account.company.peppolActive = !enabled;
+        account.companyService.myCompany.peppolActive = !enabled;
+        account.companyService.getPeppolRegistration.mockResolvedValue({peppolActive: !enabled, accessPoint: enabled ? 'NONE' : 'RECOMMAND'});
         await account.refreshPeppolRegistration();
-        const input = document.createElement('input');
-        input.type = 'checkbox';
-        input.checked = false;
-
-        account.changeSending({target: input} as unknown as Event);
-
-        expect(input.checked).toBe(true);
-        expect(account.sendingAllowed).toBe(true);
-        expect(account.confirmationModalContext.showConfirmationModal).toHaveBeenCalledWith(
-            'account.remove-sending', 'account.confirm.sending-disable', expect.any(Function), undefined);
-        account.confirmationModalContext.showConfirmationModal.mock.calls[0][2]();
-        expect(account.sendingAllowed).toBe(false);
-        expect(account.company.peppolActive).toBe(true);
-        expect(account.registrationService.unregisterCompany).not.toHaveBeenCalled();
+        account.registrationService.registerCompany.mockResolvedValue(true);
         account.registrationService.unregisterCompany.mockResolvedValue(false);
-        account.companyService.getPeppolRegistration.mockResolvedValue({peppolActive: false, accessPoint: 'NONE'});
-
-        await account.saveAccount();
-
-        expect(account.registrationService.unregisterCompany).toHaveBeenCalledOnce();
-        expect(account.sendingAllowed).toBe(false);
-        expect(account.peppolSettings).toBeUndefined();
-        expect(account.companyService.updatePeppolSettings).not.toHaveBeenCalled();
-    });
-
-    it('uses Save to activate sending after checking the box and confirming', async () => {
-        const account = createAccountHarness();
+        account.companyService.getPeppolRegistration.mockResolvedValue({peppolActive: enabled, accessPoint: enabled ? 'RECOMMAND' : 'NONE'});
         const input = document.createElement('input');
         input.type = 'checkbox';
-        input.checked = true;
+        input.checked = enabled;
 
         account.changeSending({target: input} as unknown as Event);
-        expect(input.checked).toBe(false);
-        account.confirmationModalContext.showConfirmationModal.mock.calls[0][2]();
-        expect(account.sendingAllowed).toBe(true);
+
+        expect(input.checked).toBe(!enabled);
+        expect(account.sendingAllowed).toBe(!enabled);
         expect(account.registrationService.registerCompany).not.toHaveBeenCalled();
-        account.registrationService.registerCompany.mockResolvedValue(true);
-
-        await account.saveAccount();
-
-        expect(account.registrationService.registerCompany).toHaveBeenCalledOnce();
-        expect(account.pendingSending).toBeUndefined();
-        expect(account.sendingAllowed).toBe(true);
-        expect(account.peppolSettings).toEqual({receiveDocuments: false});
-    });
-
-    it('cancels a staged sending change without unregistering the company', async () => {
-        const account = createAccountHarness();
-        account.company.peppolActive = true;
-        account.companyService.myCompany.peppolActive = true;
-        await account.refreshPeppolRegistration();
-        account.pendingSending = false;
-
-        account.cancelChanges();
-
-        expect(account.sendingAllowed).toBe(true);
         expect(account.registrationService.unregisterCompany).not.toHaveBeenCalled();
+        expect(account.confirmationModalContext.showConfirmationModal).toHaveBeenCalledWith(
+            enabled ? 'account.allow-sending' : 'account.remove-sending',
+            enabled ? 'account.confirm.sending-enable' : 'account.confirm.sending-disable', expect.any(Function), undefined, 'warning');
+
+        await account.confirmationModalContext.showConfirmationModal.mock.calls[0][2]();
+
+        expect(enabled ? account.registrationService.registerCompany : account.registrationService.unregisterCompany).toHaveBeenCalledOnce();
+        expect(account.sendingAllowed).toBe(enabled);
+        expect(account.companyService.updateCompany).not.toHaveBeenCalled();
+        expect(account.companyService.updatePeppolSettings).not.toHaveBeenCalled();
+        expect(account.peppolSettings).toEqual(enabled ? {receiveDocuments: false} : undefined);
+        account.cancelChanges();
+        expect(account.sendingAllowed).toBe(enabled);
+        await account.saveAccount();
+        expect(enabled ? account.registrationService.registerCompany : account.registrationService.unregisterCompany).toHaveBeenCalledOnce();
     });
 
-    it('does not report success or save dependent settings when removing sending fails', async () => {
+    it('keeps the saved receiving state and reports a conflict if confirmation fails', async () => {
         const account = createAccountHarness();
-        account.company.peppolActive = true;
         await account.refreshPeppolRegistration();
-        account.pendingSending = false;
-        account.registrationService.unregisterCompany.mockRejectedValue(new Error('Unavailable'));
+        account.companyService.updatePeppolSettings.mockRejectedValue(new Response('', {status: 409}));
+        account.changeReceiving({target: {checked: true}} as unknown as Event);
 
+        await account.confirmationModalContext.showConfirmationModal.mock.calls[0][2]();
+
+        expect(account.peppolSettings.receiveDocuments).toBe(false);
+        expect(account.ea.publish).toHaveBeenCalledWith('alert', expect.objectContaining({text: 'alert.account.receiving-conflict'}));
+        expect(account.ea.publish).not.toHaveBeenCalledWith('alert', expect.objectContaining({text: 'alert.account.peppol-settings-updated'}));
+        expect(account.ea.publish).toHaveBeenCalledWith('hideOverlay');
+        expect(account.accountSaving).toBe(false);
+    });
+
+    it('keeps sending active and reports an error if removal fails', async () => {
+        const account = createAccountHarness();
+        await account.refreshPeppolRegistration();
+        account.registrationService.unregisterCompany.mockRejectedValue(new Error('Unavailable'));
+        account.changeSending({target: {checked: false}} as unknown as Event);
+
+        await account.confirmationModalContext.showConfirmationModal.mock.calls[0][2]();
+
+        expect(account.sendingAllowed).toBe(true);
+        expect(account.ea.publish).toHaveBeenCalledWith('alert', expect.objectContaining({text: 'alert.account.peppol-remove-failed'}));
+        expect(account.ea.publish).not.toHaveBeenCalledWith('alert', expect.objectContaining({text: 'alert.account.peppol-settings-updated'}));
+        expect(account.accountSaving).toBe(false);
+    });
+
+    it('prevents duplicate writes and keeps the confirmed checkbox state until the server responds', async () => {
+        const account = createAccountHarness();
+        await account.refreshPeppolRegistration();
+        let complete: (settings: PeppolSettings) => void;
+        account.companyService.updatePeppolSettings.mockReturnValue(new Promise(resolve => { complete = resolve; }));
+        account.changeReceiving({target: {checked: true}} as unknown as Event);
+        const confirm = account.confirmationModalContext.showConfirmationModal.mock.calls[0][2];
+
+        const pending = confirm();
+        await confirm();
         await account.saveAccount();
 
-        expect(account.ea.publish).toHaveBeenCalledWith('alert', expect.objectContaining({text: 'alert.account.peppol-remove-failed'}));
-        expect(account.ea.publish).not.toHaveBeenCalledWith('alert', expect.objectContaining({text: 'alert.account.updated'}));
-        expect(account.companyService.updatePeppolSettings).not.toHaveBeenCalled();
+        expect(account.accountSaving).toBe(true);
+        expect(account.peppolSettings.receiveDocuments).toBe(false);
+        expect(account.companyService.updatePeppolSettings).toHaveBeenCalledOnce();
+        expect(account.companyService.updateCompany).not.toHaveBeenCalled();
+        complete({receiveDocuments: true});
+        await pending;
+        expect(account.accountSaving).toBe(false);
+        expect(account.peppolSettings.receiveDocuments).toBe(true);
+    });
+
+    it('does not apply a confirmation for a company that is no longer displayed', async () => {
+        const account = createAccountHarness();
+        account.register();
+        account.company = {peppolActive: false};
+
+        await account.confirmationModalContext.showConfirmationModal.mock.calls[0][2]();
+
+        expect(account.registrationService.registerCompany).not.toHaveBeenCalled();
     });
 });
-
 describe('Account identity', () => {
     it('loads the signed-in account using the current-account endpoint', async () => {
         const get = vi.fn().mockResolvedValue({json: async () => ({

@@ -40,3 +40,10 @@
 .access-point-link svg {
     flex-shrink: 0;
 }
+
+.peppol-document-types {
+    margin: var(--space-05) 0 0;
+    padding-left: 2.5rem;
+    color: var(--muted);
+    font-size: 0.875rem;
+}

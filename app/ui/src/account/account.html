@@ -95,7 +95,7 @@
                     </div>
                     <label class="field checkbox">
                         <input type="checkbox" checked.to-view="sendingAllowed" change.trigger="changeSending($event)" disabled.bind="!canEditPeppolSettings || accountSaving" />
-                        <span t="account.allow-sending">Allow sending</span>
+                        <span t="account.allow-sending">Send Peppol documents</span>
                     </label>
                     <template if.bind="supportsPeppolSettings">
                         <span if.bind="peppolSettingsLoading" t="account.peppol-settings-loading">Loading Peppol settings…</span>
@@ -104,10 +104,18 @@
                             <button type="button" class="btn" click.trigger="refreshPeppolRegistration()" t="account.peppol-settings-retry">Retry</button>
                         </div>
                         <template if.bind="peppolSettings">
-                            <label class="field checkbox">
-                                <input type="checkbox" checked.to-view="sendingAllowed && peppolSettings.receiveDocuments" change.trigger="changeReceiving($event)" disabled.bind="!sendingAllowed || !canEditPeppolSettings || accountSaving" />
-                                <span t="account.receive-peppol-documents">Receive Peppol Documents in Let’s Peppol</span>
-                            </label>
+                            <div>
+                                <label class="field checkbox">
+                                    <input type="checkbox" checked.to-view="sendingAllowed && peppolSettings.receiveDocuments" change.trigger="changeReceiving($event)" disabled.bind="!sendingAllowed || !canEditPeppolSettings || accountSaving" aria-describedby="peppol-received-document-types" />
+                                    <span t="account.receive-peppol-documents">Receive Peppol documents</span>
+                                </label>
+                                <ul id="peppol-received-document-types" class="peppol-document-types">
+                                    <li t="account.received-document-types.invoices">Invoices</li>
+                                    <li t="account.received-document-types.credit-notes">Credit notes</li>
+                                    <li t="account.received-document-types.self-billed-invoices">Self-billing invoices</li>
+                                    <li t="account.received-document-types.self-billed-credit-notes">Self-billing credit notes</li>
+                                </ul>
+                            </div>
                         </template>
                     </template>
                     <template if.bind="warningKey">

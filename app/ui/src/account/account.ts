@@ -38,14 +38,12 @@ export class Account {
     private accessPointLoading = true;
     private registrationRequest = 0;
     private peppolSettings?: PeppolSettings;
-    private initialPeppolSettings?: PeppolSettings;
     private peppolSettingsLoading = false;
     private peppolSettingsFailed = false;
     private accountSaving = false;
-    private pendingSending?: boolean;
 
     get sendingAllowed(): boolean {
-        return this.pendingSending ?? this.peppolRegistration?.peppolActive ?? !!this.company?.peppolActive;
+        return this.peppolRegistration?.peppolActive ?? !!this.company?.peppolActive;
     }
 
     changeSending(event: Event) {
@@ -62,9 +60,11 @@ export class Account {
             this.i18n.tr(enabled ? 'account.allow-sending' : 'account.remove-sending'),
             this.i18n.tr(enabled ? 'account.confirm.sending-enable' : 'account.confirm.sending-disable'),
             () => {
-                if (company === this.company) this.pendingSending = enabled;
+                if (company !== this.company || enabled === this.sendingAllowed) return;
+                return this.applyPeppolChange(() => enabled ? this.registerOnPeppol() : this.unregisterFromPeppol());
             },
-            undefined
+            undefined,
+            'warning'
         );
     }
 
@@ -97,7 +97,6 @@ export class Account {
         this.accessPointLoading = true;
         this.peppolRegistration = undefined;
         this.peppolSettings = undefined;
-        this.initialPeppolSettings = undefined;
         this.peppolSettingsFailed = false;
         try {
             const registration = await this.companyService.getPeppolRegistration();
@@ -110,7 +109,6 @@ export class Account {
                     const settings = await this.companyService.getPeppolSettings();
                     if (request === this.registrationRequest) {
                         this.peppolSettings = {...settings};
-                        this.initialPeppolSettings = {...settings};
                     }
                 } catch {
                     if (request === this.registrationRequest) this.peppolSettingsFailed = true;
@@ -138,21 +136,36 @@ export class Account {
             this.i18n.tr(`account.confirm.receiving-${action}-title`),
             this.i18n.tr(`account.confirm.receiving-${action}`),
             () => {
-                if (this.peppolSettings === settings) settings.receiveDocuments = enabled;
+                if (this.peppolSettings !== settings || !this.sendingAllowed) return;
+                return this.applyPeppolChange(() => this.savePeppolSettings(enabled));
             },
-            undefined
+            undefined,
+            'warning'
         );
     }
 
-    private async savePeppolSettings(): Promise<boolean> {
-        if (!this.peppolSettings || !this.initialPeppolSettings || !this.canEditPeppolSettings) return true;
-        if (this.peppolSettings.receiveDocuments === this.initialPeppolSettings.receiveDocuments) return true;
+    private async applyPeppolChange(change: () => Promise<boolean>) {
+        if (this.accountSaving || !this.canEditPeppolSettings) return;
+        this.accountSaving = true;
+        try {
+            this.ea.publish('showOverlay', this.i18n.tr('overlay.saving'));
+            if (await change()) {
+                this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.account.peppol-settings-updated')});
+            }
+        } finally {
+            this.accountSaving = false;
+            this.ea.publish('hideOverlay');
+        }
+    }
+
+    private async savePeppolSettings(receiveDocuments: boolean): Promise<boolean> {
+        if (!this.peppolSettings || !this.canEditPeppolSettings) return false;
+        if (this.peppolSettings.receiveDocuments === receiveDocuments) return true;
         const request = this.registrationRequest;
         try {
-            const settings = await this.companyService.updatePeppolSettings({receiveDocuments: this.peppolSettings.receiveDocuments});
+            const settings = await this.companyService.updatePeppolSettings({receiveDocuments});
             if (request !== this.registrationRequest) return false;
             this.peppolSettings = {...settings};
-            this.initialPeppolSettings = {...settings};
             return true;
         } catch (error) {
             if (request !== this.registrationRequest) return false;
@@ -242,12 +255,6 @@ export class Account {
             this.ea.publish('showOverlay', this.i18n.tr('overlay.saving'));
             await this.companyService.updateCompany(this.company);
             this.initialVatDisplayMode = this.vatDisplay.mode;
-            if (this.pendingSending != null && this.pendingSending !== (this.peppolRegistration?.peppolActive ?? this.company.peppolActive)) {
-                const changed = this.pendingSending ? await this.registerOnPeppol() : await this.unregisterFromPeppol();
-                if (!changed) return;
-            }
-            this.pendingSending = undefined;
-            if (!await this.savePeppolSettings()) return;
             this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.account.updated')});
         } catch(e) {
             console.error(e);
@@ -261,8 +268,6 @@ export class Account {
     cancelChanges() {
         this.company = JSON.parse(JSON.stringify(this.companyService.myCompany));
         this.vatDisplay.setMode(this.initialVatDisplayMode);
-        this.peppolSettings = this.initialPeppolSettings ? {...this.initialPeppolSettings} : undefined;
-        this.pendingSending = undefined;
         this.ea.publish('alert', {alertType: AlertType.Info, text: this.i18n.tr('alert.account.reverted')});
     }
 
@@ -274,7 +279,6 @@ export class Account {
         try {
             this.setPeppolActive(await this.registrationService.registerCompany());
             if (!this.company.peppolActive) throw new Error('Sending was not activated');
-            this.pendingSending = undefined;
             await this.refreshPeppolRegistration();
             return true;
         } catch (error: unknown) {
@@ -310,7 +314,6 @@ export class Account {
         try {
             this.setPeppolActive(await this.registrationService.unregisterCompany());
             if (this.company.peppolActive) throw new Error('Sending was not removed');
-            this.pendingSending = undefined;
             await this.refreshPeppolRegistration();
             return true;
         } catch {

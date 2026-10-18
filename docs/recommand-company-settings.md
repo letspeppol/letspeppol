@@ -1,6 +1,6 @@
 # Recommand company settings
 
-The Account page has two Peppol checkboxes: **Allow sending** and **Receive Peppol Documents in Let’s Peppol**. Changes use the main Save action. Removing sending also removes receiving; confirmation modals explain the consequences.
+The Account page has two Peppol checkboxes: **Send Peppol documents** and **Receive Peppol documents**. Receiving lists invoices, credit notes, self-billed invoices, and self-billed credit notes. Changes apply immediately after confirmation in an amber warning modal. Removing sending also removes receiving; confirmation modals explain the consequences. The main Save and Cancel actions only affect the other account fields.
 
 Self-billing is part of the standard receiving setup. There is no separate option to disable it. Every company is configured for ordinary invoices and credit notes plus self-billed invoices and credit notes, including companies that currently send only. Turning receiving off stops delivery of all four types until it is turned on again.
 
