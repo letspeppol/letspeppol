@@ -29,6 +29,18 @@ export interface CompanyDto {
     registeredOffice: Address
 }
 
+export interface PeppolRegistrationDto {
+    peppolId: string;
+    peppolActive: boolean;
+    accessPoint: string | null;
+    defaultAccessPoint?: string | null;
+}
+
+export interface PeppolSettings {
+    receiveDocuments: boolean;
+    receivingSmpUrl?: string | null;
+}
+
 export interface Address {
     city?: string,
     postalCode?: string,
@@ -41,6 +53,26 @@ export interface Address {
 export class CompanyService {
     private appApi = resolve(AppApi);
     public myCompany: CompanyDto;
+
+    async getPeppolRegistration(): Promise<PeppolRegistrationDto> {
+        const response = await this.appApi.httpClient.get('/sapi/company/peppol-registration');
+        return response.json();
+    }
+
+    async getPeppolSettings(): Promise<PeppolSettings> {
+        const response = await this.appApi.httpClient.get('/sapi/company/peppol-registration/settings');
+        return response.json();
+    }
+
+    async getReceivingAvailability(): Promise<PeppolSettings> {
+        const response = await this.appApi.httpClient.get('/sapi/company/peppol-registration/receiving-availability');
+        return response.json();
+    }
+
+    async updatePeppolSettings(settings: PeppolSettings): Promise<PeppolSettings> {
+        const response = await this.appApi.httpClient.put('/sapi/company/peppol-registration/settings', JSON.stringify(settings));
+        return response.json();
+    }
 
     async getAndSetMyCompanyForToken() : Promise<CompanyDto> {
         this.myCompany = await this.appApi.httpClient.get(`/sapi/company`).then(response => response.json());

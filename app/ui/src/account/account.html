@@ -11,8 +11,8 @@
     <div class="section-header">
         <h1 t="account.title">Account</h1>
         <div class="actions">
-            <button type="button" class="btn" click.trigger="cancelChanges()" t="account.cancel">Cancel</button>
-            <button class="btn primary" click.trigger="saveAccount()">
+            <button type="button" class="btn" click.trigger="cancelChanges()" disabled.bind="accountSaving" t="account.cancel">Cancel</button>
+            <button class="btn primary" click.trigger="saveAccount()" disabled.bind="accountSaving">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save-icon lucide-save"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>
                 <span t="account.save">Save</span>
             </button>
@@ -23,23 +23,16 @@
             <div class="card">
                 <div class="card-header">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-star-icon lucide-user-star"><path d="M16.051 12.616a1 1 0 0 1 1.909.024l.737 1.452a1 1 0 0 0 .737.535l1.634.256a1 1 0 0 1 .588 1.806l-1.172 1.168a1 1 0 0 0-.282.866l.259 1.613a1 1 0 0 1-1.541 1.134l-1.465-.75a1 1 0 0 0-.912 0l-1.465.75a1 1 0 0 1-1.539-1.133l.258-1.613a1 1 0 0 0-.282-.866l-1.156-1.153a1 1 0 0 1 .572-1.822l1.633-.256a1 1 0 0 0 .737-.535z"/><path d="M8 15H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/></svg>
-                    <h2 t="account.subscriber-info">Subscriber Info</h2>
+                    <h2 t="account.account-info">Account Info</h2>
                 </div>
                 <div class="grid">
                     <label class="field full">
                         <span t="label.name">Name</span>
-                        <input type="text" value.bind="company.subscriber" disabled />
+                        <input type="text" value.to-view="currentAccount.name" disabled />
                     </label>
                     <label class="field full">
                         <span t="label.email">Email</span>
-                        <input type="text" value.bind="company.subscriberEmail" disabled />
-                    </label>
-                    <label class="field full">
-                        <span t="account.download-contract">Download Contract</span>
-                        <button type="button" class="btn" style="width: fit-content" click.trigger="downloadContract()">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-down-icon lucide-file-down"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg>
-                            <span t="account.download-contract">Download Contract</span>
-                        </button>
+                        <input type="text" value.to-view="currentAccount.email" disabled />
                     </label>
                     <label class="field full">
                         <span t="account.change-password">Change Password</span>
@@ -56,7 +49,7 @@
                     <h2 t="account.company-info">Company Info</h2>
                 </div>
                 <div style="display: grid; gap: var(--space-1)">
-                    <div style="display: flex; gap: var(--space-1)">
+                    <div class="company-identifiers">
                         <label class="field">
                             <span t="label.enterprise-number">Enterprise Number</span>
                             <input type="text" value.bind="company.identifier" disabled />
@@ -70,21 +63,63 @@
                         <span t="account.company-legal-name">Company legal name</span>
                         <input type="text" value.bind="company.name" disabled />
                     </label>
-                    <label class="field">
-                        <span t="label.peppolId">Peppol ID</span>
-                        <input type="text" value.bind="company.peppolId" disabled />
-                    </label>
                     <label class="field full">
-                        <span t="account.peppol-registration">Peppol Registration</span>
-                        <button if.bind="company.peppolActive" type="button" class="btn danger" style="width: fit-content" title="Remove this company from Peppol" click.trigger="unregister()">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-icon lucide-trash"><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                            <span t="account.remove-from-peppol">Remove From Peppol</span>
-                        </button>
-                        <button else type="button" class="btn danger" style="width: fit-content" title="Activate this company on Peppol" click.trigger="register()">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-square-check-big-icon lucide-square-check-big"><path d="M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344"/><path d="m9 11 3 3L22 4"/></svg>
-                            <span t="account.activate-on-peppol">Activate On Peppol</span>
+                        <span t="account.download-contract">Download Contract</span>
+                        <button type="button" class="btn" style="width: fit-content" click.trigger="downloadContract()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-down-icon lucide-file-down"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg>
+                            <span t="account.download-contract">Download Contract</span>
                         </button>
                     </label>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><path d="M17 14V7h-7M7 10v7h7"/></svg>
+                    <h2 t="account.peppol-settings">Peppol Settings</h2>
+                </div>
+                <div style="display: grid; gap: var(--space-1)">
+                    <div class="company-identifiers">
+                        <label class="field">
+                            <span t="label.peppolId">Peppol ID</span>
+                            <input type="text" value.to-view="company.peppolId" readonly />
+                        </label>
+                        <div class="field">
+                            <span t="account.access-point">Access Point</span>
+                            <div class="access-point-value">
+                                <input type="text" value.to-view="accessPointName" title.bind="peppolRegistration && (!peppolRegistration.peppolActive || peppolRegistration.accessPoint === 'NONE') ? i18n.tr('account.access-point-none-description') : ''" aria-label.bind="i18n.tr('account.access-point')" readonly />
+                                <a if.bind="accessPointUrl" class="access-point-link" href.bind="accessPointUrl" aria-label.bind="accessPointName" title.bind="accessPointUrl" target="_blank" rel="noopener noreferrer">
+                                    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <label if.bind="!accessPointLoading" class="field checkbox">
+                        <input type="checkbox" checked.to-view="sendingAllowed" change.trigger="changeSending($event)" disabled.bind="!canEditPeppolSettings || accountSaving" />
+                        <span t.bind="isScrada ? 'account.send-and-receive-peppol-documents' : 'account.allow-sending'">Send Peppol documents</span>
+                    </label>
+                    <template if.bind="supportsPeppolSettings">
+                        <span if.bind="peppolSettingsLoading" t="account.peppol-settings-loading">Loading Peppol settings…</span>
+                        <div if.bind="peppolSettingsFailed" role="alert">
+                            <span t="account.peppol-settings-unavailable">Peppol settings are unavailable.</span>
+                            <button type="button" class="btn" click.trigger="refreshReceivingSettings()" disabled.bind="accountSaving || peppolSettingsLoading" t="account.peppol-settings-retry">Retry</button>
+                        </div>
+                        <div>
+                            <label class="field checkbox">
+                                <input type="checkbox" checked.to-view="sendingAllowed && !receivingBlocked && peppolSettings.receiveDocuments" change.trigger="changeReceiving($event)" disabled.bind="!canChangeReceiving" aria-describedby.bind="receivingBlocked ? 'peppol-receiving-provider' : 'peppol-received-document-types'" />
+                                <span t="account.receive-peppol-documents">Receive Peppol documents</span>
+                            </label>
+                            <div if.bind="receivingBlocked" id="peppol-receiving-provider" class="peppol-receiving-provider" role="status">
+                                <p t="account.receiving-provider" t-params.bind="{ provider: peppolSettings.receivingSmpUrl }">This company already receives Peppol documents through another provider.</p>
+                                <button type="button" class="btn" click.trigger="refreshReceivingSettings()" disabled.bind="accountSaving || peppolSettingsLoading || accessPointLoading" t="account.receiving-refresh">Refresh</button>
+                            </div>
+                            <ul if.bind="!receivingBlocked" id="peppol-received-document-types" class="peppol-document-types">
+                                <li t="account.received-document-types.invoices">Invoices</li>
+                                <li t="account.received-document-types.credit-notes">Credit notes</li>
+                                <li t="account.received-document-types.self-billed-invoices">Self-billing invoices</li>
+                                <li t="account.received-document-types.self-billed-credit-notes">Self-billing credit notes</li>
+                            </ul>
+                        </div>
+                    </template>
                     <template if.bind="warningKey">
                         <div class="alert alert--warning warning-box" t.bind="warningKey" t-params.bind="{ provider: alreadyRegisteredProvider }"></div>
                     </template>

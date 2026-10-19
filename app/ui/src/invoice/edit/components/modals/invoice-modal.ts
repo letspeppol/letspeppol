@@ -9,7 +9,7 @@ export class InvoiceModal {
     private readonly invoiceComposer = resolve(InvoiceComposer);
     private readonly invoiceService = resolve(InvoiceService);
     private readonly i18n = resolve(I18N);
-    private documentTypes = Object.values(DocumentType) as string[];
+    private documentTypes = [DocumentType.INVOICE, DocumentType.CREDIT_NOTE];
     @bindable invoiceContext;
     @bindable originalDocumentType: DocumentType;
     open = false;

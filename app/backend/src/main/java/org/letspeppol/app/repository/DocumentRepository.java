@@ -44,17 +44,20 @@ public interface DocumentRepository extends JpaRepository<Document, UUID>, JpaSp
       COALESCE(SUM(CASE WHEN direction = 'OUTGOING' AND processed_status IS NULL AND paid_on IS NULL THEN signed_excl END), 0) AS totalReceivableOpenExclVat,
       COALESCE(SUM(CASE WHEN direction = 'OUTGOING' AND processed_status IS NULL AND paid_on IS NULL AND due_date < NOW() THEN signed_excl END), 0) AS totalReceivableOverdueExclVat,
       COALESCE(SUM(CASE WHEN direction = 'OUTGOING' AND processed_status IS NULL AND issue_date >= date_trunc('year', NOW()) AND issue_date < date_trunc('year', NOW()) + INTERVAL '1 year' THEN signed_excl END), 0) AS totalReceivableThisYearExclVat,
-      COALESCE(SUM(CASE WHEN direction = 'OUTGOING' AND processed_status IS NOT NULL AND error_seen_on IS NULL THEN 1 ELSE 0 END), 0) AS erroredUnseenCount
+      COALESCE(SUM(CASE WHEN transport_direction = 'OUTGOING' AND processed_status IS NOT NULL AND error_seen_on IS NULL THEN 1 ELSE 0 END), 0) AS erroredUnseenCount
     FROM (
       SELECT
-        direction,
+        direction AS transport_direction,
+        CASE WHEN type IN ('SELF_BILLING_INVOICE', 'SELF_BILLING_CREDIT_NOTE')
+             THEN CASE WHEN direction = 'INCOMING' THEN 'OUTGOING' ELSE 'INCOMING' END
+             ELSE direction::text END AS direction,
         paid_on,
         due_date,
         issue_date,
         processed_status,
         error_seen_on,
-        CASE WHEN type = 'CREDIT_NOTE' THEN -amount_incl_vat ELSE amount_incl_vat END AS signed_incl,
-        CASE WHEN type = 'CREDIT_NOTE' THEN -amount_excl_vat ELSE amount_excl_vat END AS signed_excl
+        CASE WHEN type IN ('CREDIT_NOTE', 'SELF_BILLING_CREDIT_NOTE') THEN -amount_incl_vat ELSE amount_incl_vat END AS signed_incl,
+        CASE WHEN type IN ('CREDIT_NOTE', 'SELF_BILLING_CREDIT_NOTE') THEN -amount_excl_vat ELSE amount_excl_vat END AS signed_excl
       FROM app.document
       WHERE owner_peppol_id = :ownerPeppolId AND drafted_on IS NULL
     ) d

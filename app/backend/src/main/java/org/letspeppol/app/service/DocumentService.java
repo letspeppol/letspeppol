@@ -80,6 +80,7 @@ public class DocumentService {
         try {
             UblDto ublDto = UblParser.parse(documentDirection, ublXml);
             if (documentDirection == DocumentDirection.OUTGOING && !peppolId.equals(ublDto.senderPeppolId())) {
+                log.warn("The user {} send a Peppol document as {} to {}, REJECTED !", peppolId, ublDto.senderPeppolId(), ublDto.receiverPeppolId());
                 throw new SecurityException(AppErrorCodes.PEPPOL_ID_MISMATCH);
             }
             if (documentDirection == DocumentDirection.INCOMING && !peppolId.equals(ublDto.receiverPeppolId())) {
@@ -87,6 +88,7 @@ public class DocumentService {
                     log.warn("The user {} received a Peppol document for {} but will be allowed", peppolId, ublDto.receiverPeppolId());
                     return ublDto;
                 }
+                log.warn("The user {} received a Peppol document for {} from {}, REJECTED !", peppolId, ublDto.receiverPeppolId(), ublDto.senderPeppolId());
                 throw new SecurityException(AppErrorCodes.PEPPOL_ID_MISMATCH);
             }
             return ublDto;
@@ -425,7 +427,7 @@ public class DocumentService {
         document.setUbl(ublDocumentDto.ubl());
         if (DocumentType.CREDIT_NOTE.equals(document.getType())) {
             document.getCompany().setLastCreditNoteReference(document.getInvoiceReference());
-        } else {
+        } else if (DocumentType.INVOICE.equals(document.getType())) {
             document.getCompany().setLastInvoiceReference(document.getInvoiceReference());
         }
 
@@ -495,7 +497,7 @@ public class DocumentService {
         document.setProcessedStatus(ublDocumentDto.processedStatus());
         if (DocumentType.CREDIT_NOTE.equals(document.getType())) {
             document.getCompany().setLastCreditNoteReference(document.getInvoiceReference());
-        } else {
+        } else if (DocumentType.INVOICE.equals(document.getType())) {
             document.getCompany().setLastInvoiceReference(document.getInvoiceReference());
         }
         document = documentRepository.save(document);
@@ -532,7 +534,7 @@ public class DocumentService {
         }
     }
 
-    @Scheduled(cron = "0 0 * * * *")
+    @Scheduled(cron = "0 */5 * * * *")
     public void periodicSynchronize() {
         try {
             List<UblDocumentDto> ublDocumentDtos;

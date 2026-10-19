@@ -11,11 +11,9 @@ import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.Doc
 import oasis.names.specification.ubl.schema.xsd.creditnote_21.CreditNoteType;
 import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
 import org.letspeppol.app.dto.DocumentNotificationEmailDto;
-import org.letspeppol.app.dto.DocumentNotificationEmailDto;
 import org.letspeppol.app.dto.EmailDto;
 import org.letspeppol.app.exception.NotFoundException;
 import org.letspeppol.app.model.Document;
-import org.letspeppol.app.model.DocumentType;
 import org.letspeppol.app.model.EmailJob;
 import org.letspeppol.app.repository.DocumentRepository;
 import org.letspeppol.app.repository.EmailJobRepository;
@@ -151,7 +149,7 @@ public class EmailService {
 
     private void addPdfAttachment(Document document, DocumentNotificationEmailDto dto, MimeMessageHelper helper) throws MessagingException {
         boolean pdfAttachmentAdded = false;
-        if (document.getType().equals(DocumentType.INVOICE)) {
+        if (document.getType().isInvoice()) {
             org.w3c.dom.Document doc = DOMReader.readXMLDOM(
                     new ByteArrayInputStream(document.getUbl().getBytes(StandardCharsets.UTF_8)),
                     new DOMReaderSettings().setSchema(UBL21Marshaller.invoice().getSchema())
@@ -180,7 +178,7 @@ public class EmailService {
                     }
                 }
             }
-        } else if (document.getType().equals(DocumentType.CREDIT_NOTE)) {
+        } else if (document.getType().isCreditNote()) {
             org.w3c.dom.Document doc = DOMReader.readXMLDOM(
                     new ByteArrayInputStream(document.getUbl().getBytes(StandardCharsets.UTF_8)),
                     new DOMReaderSettings().setSchema(UBL21Marshaller.creditNote().getSchema())

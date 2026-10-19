@@ -1,15 +1,24 @@
 package org.letspeppol.proxy.controller;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.proxy.dto.AppLinkRequest;
 import org.letspeppol.proxy.dto.RegistrationRequest;
 import org.letspeppol.proxy.dto.RegistryDto;
+import org.letspeppol.proxy.dto.PeppolSettings;
+import org.letspeppol.proxy.exception.NotFoundException;
+import org.letspeppol.proxy.mapper.RegistryMapper;
 import org.letspeppol.proxy.model.AccessPoint;
+import org.letspeppol.proxy.repository.RegistryRepository;
+import org.letspeppol.proxy.service.AccessPointServiceRegistry;
 import org.letspeppol.proxy.service.AppLinkService;
 import org.letspeppol.proxy.service.RegistryService;
+import org.letspeppol.proxy.service.RecommandService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
  * request parameter rather than read from the token, because the service token does not represent
  * an individual end user.
  */
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/sapi/registry")
@@ -29,11 +39,29 @@ public class RegistryController {
 
     private final AppLinkService appLinkService;
     private final RegistryService registryService;
+    private final RegistryRepository registryRepository;
+    private final AccessPointServiceRegistry accessPoints;
+    private final RecommandService recommandService;
+
+    @Value("${proxy.access-point}")
+    private AccessPoint accessPoint;
 
     @GetMapping()
     @Operation(summary = "Get registry state", description = "Returns the current proxy registration state for the given company.")
     public RegistryDto getById(@RequestParam String peppolId) {
         return registryService.get(peppolId);
+    }
+
+    @GetMapping("/registration-status")
+    @Operation(summary = "Get registration state and default access point", description = "Includes the configured access point for new registrations, even when the company has never registered.")
+    public RegistryDto getRegistrationStatus(@RequestParam String peppolId) {
+        try {
+            RegistryDto registration = registryService.get(peppolId);
+            return new RegistryDto(registration.peppolId(), registration.peppolActive(),
+                    registration.accessPoint(), accessPoint.name());
+        } catch (NotFoundException ex) {
+            return new RegistryDto(peppolId, false, AccessPoint.NONE.name(), accessPoint.name());
+        }
     }
 
     @PostMapping()
@@ -42,8 +70,86 @@ public class RegistryController {
         return ResponseEntity.status(HttpStatus.OK).body(registryService.register(
             peppolId,
             data,
-            AccessPoint.SCRADA
+            accessPoint
         ));
+    }
+
+    @GetMapping("/settings")
+    @Operation(summary = "Get company Peppol settings", description = "Reads the receiving flag, fetching it from the provider when unknown, and checks the current receiving SMP for send-only companies.")
+    public PeppolSettings getSettings(@RequestParam String peppolId) {
+        return registryService.getSettings(peppolId);
+    }
+
+    @GetMapping("/receiving-availability")
+    @Operation(summary = "Check the current receiving SMP", description = "Uses Recommand to look up a Peppol identifier without requiring a local registration. Reserved for trusted backend services.")
+    public PeppolSettings getReceivingAvailability(@RequestParam String peppolId) {
+        return recommandService.getReceivingAvailability(peppolId);
+    }
+
+    @PutMapping("/settings")
+    @Operation(summary = "Update company Peppol settings", description = "Changes receiving settings without deleting the company or its document history. Omitted fields are unchanged.")
+    public PeppolSettings updateSettings(@RequestParam String peppolId, @RequestBody PeppolSettings settings) {
+        return registryService.updateSettings(peppolId, settings);
+    }
+
+    @Hidden
+    @PostMapping("/{peppolId}/move")
+    public synchronized ResponseEntity<?> move(@PathVariable String peppolId,
+                                              @RequestParam(required = false) String accessPoint,
+                                              @RequestBody RegistrationRequest data) {
+        AccessPoint targetAccessPoint;
+        try {
+            targetAccessPoint = accessPoint == null ? this.accessPoint : AccessPoint.valueOf(accessPoint);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Invalid accessPoint parameter");
+        }
+        var target = accessPoints.get(targetAccessPoint);
+        if (target == null) {
+            return ResponseEntity.badRequest().body("The target access point is not available");
+        }
+        var registry = registryRepository.findById(peppolId)
+                .orElseThrow(() -> new NotFoundException("Peppol ID is not registered here"));
+        var previousAccessPoint = registry.getAccessPoint();
+        if (previousAccessPoint == targetAccessPoint) {
+            return ResponseEntity.ok(RegistryMapper.toDto(registry));
+        }
+        var source = accessPoints.get(previousAccessPoint);
+        if (source == null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("An active, available source access point is required");
+        }
+        try {
+            target.validateRegistration(peppolId, data);
+            source.validateRegistration(peppolId, data);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+        var previousVariables = registry.getVariables();
+        source.unregister(peppolId, previousVariables);
+        try {
+            target.register(registry, data);
+            registry.setAccessPoint(targetAccessPoint);
+            return ResponseEntity.ok(RegistryMapper.toDto(registryRepository.save(registry)));
+        } catch (RuntimeException failure) {
+            log.error("Operator move to {} failed for {}", targetAccessPoint, peppolId, failure);
+            if (registry.getAccessPoint() == targetAccessPoint) {
+                try {
+                    target.unregister(peppolId, registry.getVariables());
+                } catch (RuntimeException cleanupFailure) {
+                    log.error("Failed to clean up {} registration for {}", targetAccessPoint, peppolId, cleanupFailure);
+                }
+            }
+            registry.setVariables(previousVariables);
+            registry.setAccessPoint(AccessPoint.NONE);
+            registry.setReceiveDocuments(false);
+            try {
+                source.register(registry, data);
+                registry.setAccessPoint(previousAccessPoint);
+            } catch (RuntimeException recoveryFailure) {
+                log.error("Failed to restore {} registration for {}", previousAccessPoint, peppolId, recoveryFailure);
+            }
+            return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY)
+                    .body(RegistryMapper.toDto(registryRepository.save(registry)));
+        }
     }
 
     @PutMapping("unregister")

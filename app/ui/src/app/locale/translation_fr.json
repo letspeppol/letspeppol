@@ -1,14 +1,29 @@
 {
   "account": {
+    "access-point": "Point d'accès",
+    "access-point-loading": "Chargement du point d'accès…",
+    "access-point-none": "Non connecté",
+    "access-point-none-description": "Non enregistré via Let’s Peppol",
+    "access-point-unavailable": "Point d'accès indisponible",
+    "account-info": "Informations du compte",
     "account-name": "Nom du compte",
-    "activate-on-peppol": "Activer sur Peppol",
     "add-attachment-to-notification": "Ajouter une pièce jointe à la notification",
     "address": "Adresse",
+    "allow-sending": "Envoyer des documents Peppol",
     "cancel": "Annuler",
     "change-password": "Changer le mot de passe",
     "company-display-name": "Nom commercial",
     "company-info": "Informations société",
     "company-legal-name": "Dénomination sociale",
+    "confirm": {
+      "receiving-disable": "Cette entreprise ne recevra plus de factures, de notes de crédit, de factures d’autofacturation ni de notes de crédit d’autofacturation Peppol dans Let’s Peppol. L’envoi reste activé. Appliquer ce changement maintenant ?",
+      "receiving-disable-title": "Arrêter la réception de documents Peppol",
+      "receiving-enable": "Cette entreprise recevra les factures, notes de crédit, factures d’autofacturation et notes de crédit d’autofacturation Peppol dans Let’s Peppol. Désinscrivez d’abord la réception auprès de tout autre prestataire Peppol. Appliquer ce changement maintenant ?",
+      "receiving-enable-title": "Autoriser la réception de documents Peppol",
+      "sending-disable": "Cette entreprise cessera d’envoyer et de recevoir des factures et notes de crédit Peppol, y compris les documents d’autofacturation, via Let’s Peppol. Appliquer ce changement maintenant ?",
+      "sending-enable": "Inscrire cette entreprise pour envoyer des factures et notes de crédit Peppol via Let’s Peppol ? La réception sera également activée si son adresse Peppol est disponible. Ce changement s’applique immédiatement.",
+      "sending-receiving-enable": "Inscrire cette entreprise pour envoyer et recevoir des factures et notes de crédit Peppol via Scrada ? L’envoi et la réception sont activés ensemble. Ce changement s’applique immédiatement."
+    },
     "download-contract": "Télécharger le contrat",
     "email-notification-cc-list-incoming": "Documents entrants : liste CC des notifications par e-mail",
     "email-notification-cc-list-outgoing": "Documents sortants : liste CC des notifications par e-mail",
@@ -18,16 +33,29 @@
     "number": "Numéro",
     "payment-info": "Infos paiement",
     "payment-terms": "Conditions de paiement",
-    "peppol-registration": "Enregistrement Peppol",
+    "peppol-settings": "Paramètres Peppol",
+    "peppol-settings-loading": "Chargement des paramètres Peppol…",
+    "peppol-settings-retry": "Réessayer",
+    "peppol-settings-unavailable": "Les paramètres Peppol sont indisponibles.",
+    "receive-peppol-documents": "Recevoir des documents Peppol",
+    "received-document-types": {
+      "credit-notes": "Notes de crédit",
+      "invoices": "Factures",
+      "self-billed-credit-notes": "Notes de crédit d’autofacturation",
+      "self-billed-invoices": "Factures d’autofacturation"
+    },
+    "receiving-provider": "Cette entreprise reçoit déjà des documents Peppol via {{provider}} (SMP). Désinscrivez la réception auprès de ce prestataire, puis actualisez pour activer la réception ici.",
+    "receiving-refresh": "Actualiser",
     "registration-failed": {
       "contact-provider": "Votre identifiant Peppol est actuellement enregistré auprès de {{provider}}. Veuillez les contacter pour le désinscrire, puis connectez-vous et réessayez l’activation.",
       "contact-us": "L'inscription n'a pas été finalisée. Veuillez contacter le support à l’adresse support@letspeppol.org pour la suite.",
       "try-again-one-day": "L'inscription n'a pas été finalisée. Veuillez réessayer demain. Si le problème persiste, contactez le support à l’adresse support@letspeppol.org en indiquant les informations de votre compte.",
       "try-again-one-hour": "L'inscription n'a pas été finalisée. Veuillez réessayer dans environ une heure. Le réseau Peppol est peut-être temporairement surchargé."
     },
-    "remove-from-peppol": "Retirer de Peppol",
+    "remove-sending": "Désactiver l’envoi",
     "save": "Enregistrer",
-    "subscriber-info": "Info abonné",
+    "send-and-receive-peppol-documents": "Envoyer et recevoir des documents Peppol",
+    "stop-sending-and-receiving": "Arrêter l’envoi et la réception de documents Peppol",
     "title": "Compte",
     "vat-display": {
       "description": "Choisissez si les totaux du tableau de bord et de la liste des factures sont affichés TVA comprise ou hors TVA.",
@@ -47,11 +75,12 @@
     "account": {
       "contract-download-failed": "Échec du téléchargement du contrat signé",
       "load-failed": "Échec de la récupération du compte",
-      "peppol-activated": "Entreprise activée sur Peppol",
       "peppol-activation-failed": "Échec de l'activation de l'entreprise sur Peppol",
       "peppol-activation-request-failed": "Échec de l'envoi de la demande d'activation",
       "peppol-remove-failed": "Échec du retrait de l'entreprise de Peppol",
-      "peppol-removed": "Entreprise retirée de Peppol",
+      "peppol-settings-failed": "Échec de la mise à jour des paramètres Peppol. Les paramètres actuels ont été rechargés.",
+      "peppol-settings-updated": "Paramètres Peppol mis à jour avec succès",
+      "receiving-conflict": "Cette entreprise reçoit déjà via un autre prestataire Peppol. Désinscrivez-y d’abord la réception.",
       "reverted": "Modifications du compte annulées",
       "update-failed": "Échec de la mise à jour du compte",
       "updated": "Compte mis à jour avec succès"
@@ -256,7 +285,9 @@
   },
   "documentType": {
     "CREDIT_NOTE": "Note de crédit",
-    "INVOICE": "Facture"
+    "INVOICE": "Facture",
+    "SELF_BILLING_CREDIT_NOTE": "Avoir autofacturé",
+    "SELF_BILLING_INVOICE": "Facture autofacturée"
   },
   "donations": {
     "active-companies": "entreprises",
@@ -303,7 +334,7 @@
     "DUPLICATE_REQUEST": "Cette demande a déjà été traitée.",
     "login-failed": "Échec de la connexion",
     "no_ownership": "Ce compte n’est lié à aucune entreprise.",
-    "not-peppol-active": "Vous n'êtes actuellement pas enregistré sur Peppol",
+    "not-peppol-active": "Votre entreprise n'est actuellement pas enregistrée via Let’s Peppol",
     "not-peppol-active-action": "Résoudre cela maintenant",
     "registration-company-affiliate-contact-admin": "Cette entreprise a déjà un administrateur. Veuillez contacter votre administrateur pour poursuivre l’onboarding affilié.",
     "registration-company-already-registered": "Entreprise déjà enregistrée",
@@ -392,6 +423,7 @@
       "corner1-id": "ID Corner 1",
       "corner2-id": "ID Corner 2",
       "corner3-id": "ID Corner 3",
+      "delivered": "Livré",
       "error-stamp-label": "Cachet d'erreur de livraison",
       "from": "de",
       "invoice-number": "Numéro de facture",
@@ -647,7 +679,7 @@
   },
   "navigation": {
     "account": "Compte",
-    "brand-alt": "Let's Peppol",
+    "brand-alt": "Let’s Peppol",
     "dashboard": "Tableau de bord",
     "downloads": "Téléchargements",
     "invoices": "Factures",
@@ -903,7 +935,7 @@
     "empty": "Pas encore de sponsors.",
     "load-error": "Impossible de charger les sponsors pour le moment.",
     "loading": "Chargement des sponsors...",
-    "subtitle": "Entreprises et personnes qui aident à faire vivre Let's Peppol.",
+    "subtitle": "Entreprises et personnes qui aident à faire vivre Let’s Peppol.",
     "table": {
       "amount": "Montant",
       "date": "Date",

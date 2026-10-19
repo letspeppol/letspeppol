@@ -2,6 +2,8 @@ package org.letspeppol.proxy.service;
 
 import io.micrometer.core.instrument.Counter;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.letspeppol.proxy.model.AccessPoint;
 import org.letspeppol.proxy.model.DocumentDirection;
@@ -22,9 +24,24 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class UblDocumentReceiverServiceTest {
+
+    @ParameterizedTest
+    @CsvSource({"SELF_BILLING_INVOICE, Invoice, InvoiceTypeCode, 389",
+            "SELF_BILLING_CREDIT_NOTE, CreditNote, CreditNoteTypeCode, 261"})
+    void classifiesReceivedSelfBilledDocumentsFromTheirXml(
+            DocumentType expected, String root, String typeCode, String code) {
+        String xml = "<%s xmlns=\"urn:oasis:names:specification:ubl:schema:xsd:%s-2\"><%s>%s</%s></%s>"
+                .formatted(root, root, typeCode, code, typeCode, root);
+        when(ublDocumentRepository.save(any())).thenAnswer(call -> call.getArgument(0));
+        service.createAsReceived("customer", "supplier", xml, AccessPoint.RECOMMAND, "received-id", null);
+        var saved = org.mockito.ArgumentCaptor.forClass(UblDocument.class);
+        verify(ublDocumentRepository).save(saved.capture());
+        assertThat(saved.getValue().getType()).isEqualTo(expected);
+    }
 
     @Mock
     private UblDocumentRepository ublDocumentRepository;

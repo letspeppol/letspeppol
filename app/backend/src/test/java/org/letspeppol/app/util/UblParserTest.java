@@ -12,6 +12,36 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class UblParserTest {
 
+    @Test
+    void selfBillingReversesTransportPartiesAndSelectsCustomerAsIncomingPartner() throws Exception {
+        for (String code : new String[]{"389", "527"}) {
+            String xml = invoiceWithMonetaryTotal("<cbc:PayableAmount currencyID=\"EUR\">121.00</cbc:PayableAmount>")
+                    .replace("<cbc:ID>INV-1", "<cbc:InvoiceTypeCode>" + code + "</cbc:InvoiceTypeCode><cbc:ID>INV-1");
+            UblDto incoming = UblParser.parse(DocumentDirection.INCOMING, xml);
+            assertThat(incoming.senderPeppolId()).isEqualTo("0208:9876543210");
+            assertThat(incoming.receiverPeppolId()).isEqualTo("0208:0123456789");
+            assertThat(incoming.partnerName()).isEqualTo("Customer Ltd");
+            assertThat(incoming.type()).isEqualTo(DocumentType.SELF_BILLING_INVOICE);
+            assertThat(incoming.amountInclVat()).isEqualByComparingTo("121.00");
+            assertThat(UblParser.parse(DocumentDirection.OUTGOING, xml).partnerName()).isEqualTo("Supplier Ltd");
+            assertThat(UblParser.parsePeppolParties(xml).receiver()).isEqualTo("0208:0123456789");
+        }
+    }
+
+    @Test
+    void selfBillingProfileAndCreditNoteAreRecognized() throws Exception {
+        String invoice = invoiceWithMonetaryTotal("").replace("<cbc:ID>INV-1",
+                "<cbc:CustomizationID>urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:selfbilling:3.0</cbc:CustomizationID><cbc:ID>INV-1");
+        assertThat(UblParser.parse(DocumentDirection.INCOMING, invoice).partnerName()).isEqualTo("Customer Ltd");
+        String creditNote = invoiceWithMonetaryTotal("")
+                .replace("Invoice", "CreditNote")
+                .replace("<cbc:ID>INV-1", "<cbc:CreditNoteTypeCode>261</cbc:CreditNoteTypeCode><cbc:ID>INV-1");
+        UblDto parsed = UblParser.parse(DocumentDirection.INCOMING, creditNote);
+        assertThat(parsed.type()).isEqualTo(DocumentType.SELF_BILLING_CREDIT_NOTE);
+        assertThat(parsed.receiverPeppolId()).isEqualTo("0208:0123456789");
+        assertThat(parsed.partnerName()).isEqualTo("Customer Ltd");
+    }
+
     private static final String SUPPLIER_PARTY = """
             <cac:AccountingSupplierParty>
                 <cac:Party>

@@ -34,6 +34,7 @@ public class CompanyService {
     private final OwnershipRepository ownershipRepository;
     private final KboLookupService kboLookupService;
     private final ProxyService proxyService;
+    private final ContractStorageService contractStorageService;
     private final Counter companyUnregistrationCounter;
 
     public List<CompanySearchResponse> search(String identifier, String vatNumber, String peppolId, String name) {
@@ -85,7 +86,19 @@ public class CompanyService {
             log.info("Will skip registration for already registered company {}", company.getName());
             return new RegistrationResponse(true, KycErrorCodes.PROXY_REGISTRATION_NOT_NEEDED, "Account is already registered");
         }
-        RegistrationResponse registrationResponse = proxyService.registerCompany(company.getPeppolId(), company.getName());
+        var adminOwnership = ownershipRepository.findFirstByCompanyPeppolIdAndTypeOrderByLastUsedDesc(
+                company.getPeppolId(), AccountType.ADMIN)
+                .orElseThrow(() -> new KycException(KycErrorCodes.NO_OWNERSHIP));
+        byte[] signedContract = contractStorageService.getContract(company.getPeppolId(), adminOwnership.getAccount().getId());
+        RegistrationResponse registrationResponse = proxyService.registerCompany(
+                company.getPeppolId(),
+                company.getName(),
+                company.getStreet(),
+                company.getPostalCode(),
+                company.getCity(),
+                company.getVatNumber(),
+                signedContract
+        );
         log.info("Registering company for {} has Peppol active = {}", company.getPeppolId(), registrationResponse.peppolActive());
         company.setRegisteredOnPeppol(registrationResponse.peppolActive());
         companyRepository.save(company);

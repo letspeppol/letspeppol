@@ -4,7 +4,7 @@ import java.util.List;
 
 public record ErrorResponse(
         int errorCode,
-        int errorType,
+        Integer errorType,
         String defaultFormat,
         List<String> parameters,
         List<ErrorResponse> innerErrors

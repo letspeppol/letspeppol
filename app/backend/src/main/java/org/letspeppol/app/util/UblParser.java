@@ -20,6 +20,27 @@ import java.util.Currency;
 
 public final class UblParser {
 
+    private static DocumentType parseDocumentType(org.w3c.dom.Element root) {
+        boolean selfBilling = false;
+        for (var child = root.getFirstChild(); child != null; child = child.getNextSibling()) {
+            selfBilling = switch (child.getLocalName() == null ? "" : child.getLocalName()) {
+                case "CustomizationID", "ProfileID" -> child.getTextContent().contains("urn:fdc:peppol.eu:2017:poacc:selfbilling:");
+                case "InvoiceTypeCode" -> switch (child.getTextContent().trim()) {
+                    case "389", "527" -> true;
+                    default -> false;
+                };
+                case "CreditNoteTypeCode" -> "261".equals(child.getTextContent().trim());
+                default -> false;
+            };
+            if (selfBilling) break;
+        }
+        return switch (root.getLocalName()) {
+            case "Invoice" -> selfBilling ? DocumentType.SELF_BILLING_INVOICE : DocumentType.INVOICE;
+            case "CreditNote" -> selfBilling ? DocumentType.SELF_BILLING_CREDIT_NOTE : DocumentType.CREDIT_NOTE;
+            default -> throw new IllegalArgumentException("Unsupported UBL document type: " + root.getLocalName());
+        };
+    }
+
     private static Document prepareDomDocument(String xml) throws ParserConfigurationException, IOException, SAXException {
         // Strip a leading UTF-8 BOM if present \u2014 SAX rejects it as "Content is not allowed in prolog".
         if (xml != null && !xml.isEmpty() && xml.charAt(0) == '\uFEFF') {
@@ -50,7 +71,10 @@ public final class UblParser {
         }
         String receiverPeppolId = receiverScheme.isEmpty() ? receiverId : receiverScheme + ":" + receiverId;
 
-        return new PeppolParties(senderPeppolId, receiverPeppolId);
+        // In self-billing the customer sends the document to the supplier.
+        return parseDocumentType(document.getDocumentElement()).isSelfBilling()
+                ? new PeppolParties(receiverPeppolId, senderPeppolId)
+                : new PeppolParties(senderPeppolId, receiverPeppolId);
     }
 
     public static PeppolParties parsePeppolParties(String xml) throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
@@ -71,7 +95,11 @@ public final class UblParser {
         PeppolParties peppolParties = getPeppolParties(document);
 
         // partnerName (customer name -> legal name -> supplier name -> supplier legal name)
-        String[] xpaths = switch (documentDirection) {
+        DocumentType type = parseDocumentType(document.getDocumentElement());
+        DocumentDirection partnerDirection = type.isSelfBilling()
+                ? (documentDirection == DocumentDirection.INCOMING ? DocumentDirection.OUTGOING : DocumentDirection.INCOMING)
+                : documentDirection;
+        String[] xpaths = switch (partnerDirection) {
             case OUTGOING -> new String[] {
                 "/*/*[local-name()='AccountingCustomerParty']/*[local-name()='Party']/*[local-name()='PartyName']/*[local-name()='Name']",
                 "/*/*[local-name()='AccountingCustomerParty']/*[local-name()='Party']/*[local-name()='PartyLegalEntity']/*[local-name()='RegistrationName']"
@@ -102,11 +130,6 @@ public final class UblParser {
         // orderReference
         String orderReference = xp.evaluate("/*/*[local-name()='OrderReference']/*[local-name()='ID']", document).trim();
         if (orderReference.isEmpty()) orderReference = null;
-
-        // type (from root local name)
-        DocumentType type = "Invoice".equals(document.getDocumentElement().getLocalName()) ? DocumentType.INVOICE
-                : "CreditNote".equals(document.getDocumentElement().getLocalName()) ? DocumentType.CREDIT_NOTE
-                : null;
 
         // Per-path evaluation, not an XPath union — `(A|B|C)[1]` returns document-order first, not listed-order.
         String currencyCode = firstNonEmpty(xp, document,

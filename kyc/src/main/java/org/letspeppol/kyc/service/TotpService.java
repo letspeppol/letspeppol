@@ -41,7 +41,7 @@ import static dev.samstevens.totp.util.Utils.getDataUriForImage;
 @Service
 public class TotpService {
 
-    private static final String ISSUER = "Let's Peppol";
+    private static final String ISSUER = "Let’s Peppol";
     private static final int RECOVERY_CODE_COUNT = 8;
     private static final int RECOVERY_CODE_LENGTH = 8;
     private static final int TIME_PERIOD_SECONDS = 30;

@@ -1,0 +1,26 @@
+.confirmation-card {
+    width: 300px;
+    max-width: calc(100vw - 2rem);
+}
+
+.confirmation-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-065);
+}
+
+.confirmation-warning {
+    width: 440px;
+    border-color: #d97706;
+}
+
+.confirmation-warning .modal-header {
+    background: #fff8e6;
+    color: #92400e;
+    border-bottom: 1px solid #d97706;
+}
+
+.confirmation-warning-icon {
+    flex-shrink: 0;
+    color: #b45309;
+}

@@ -26,10 +26,12 @@ sequenceDiagram
     UI->>KYC: POST /kyc/api/identity/sign/prepare
     UI->>KYC: GET /kyc/api/identity/contract/{peppolId}/{directorId}
     UI->>KYC: POST /kyc/api/identity/sign/finalize
+    KYC->>KYC: Save signed contract PDF
     opt ADMIN company is eligible for Peppol activation
         KYC->>KYC: POST /kyc/auth/oauth2/token (client_credentials, service)
-        KYC->>Proxy: POST /proxy/sapi/registry
+        KYC->>Proxy: POST /proxy/sapi/registry (includes signedContract)
         Proxy->>AP: register participant
+        Proxy->>AP: complete company activation
     end
     UI->>KYC: POST /kyc/api/register/verify-account
     opt Authenticated company management
@@ -45,5 +47,17 @@ sequenceDiagram
 An affiliate-originated request uses `POST /kyc/sapi/linked/request-company`. The verification
 response includes its requester, but there is currently no affiliate approval mutation API; the
 older diagrams' nonexistent `/app/sapi/affiliate/**` calls have therefore been removed.
+
+KYC saves the signed PDF under `CONTRACT_DATA_DIR/contracts` before requesting registration.
+The service-only registry request carries it as the Base64-encoded JSON field `signedContract`.
+Later activation attempts reload the company's ADMIN contract from the same storage.
+Registration is successful only after the access point confirms company activation.
+If activation fails, the proxy attempts to delete the newly created company so registration
+can be retried. Failed cleanup is logged; the signed contract remains available in KYC.
+
+Executable proof: [`CompanyRegistrationContractTest`](../kyc/src/test/java/org/letspeppol/kyc/service/CompanyRegistrationContractTest.java)
+checks contract forwarding and retention after failure;
+[`RecommandServiceTest`](../proxy/src/test/java/org/letspeppol/proxy/service/RecommandServiceTest.java)
+checks company activation, response handling, and cleanup on failure.
 
 Return to the [API network flow guide](./api-network-flows.md).

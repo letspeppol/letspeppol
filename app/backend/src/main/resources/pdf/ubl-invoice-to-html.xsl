@@ -131,7 +131,10 @@
 
       <div class="content">
 
-      <h1>Invoice</h1>
+      <h1><xsl:choose>
+        <xsl:when test="/*/*[local-name()='InvoiceTypeCode'] = '389' or /*/*[local-name()='InvoiceTypeCode'] = '527' or contains(/*/*[local-name()='CustomizationID'], 'urn:fdc:peppol.eu:2017:poacc:selfbilling:') or contains(/*/*[local-name()='ProfileID'], 'urn:fdc:peppol.eu:2017:poacc:selfbilling:')">Self-billed invoice</xsl:when>
+        <xsl:otherwise>Invoice</xsl:otherwise>
+      </xsl:choose></h1>
 
       <table class="meta">
         <tr>

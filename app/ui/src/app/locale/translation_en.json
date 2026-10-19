@@ -1,14 +1,29 @@
 {
   "account": {
+    "access-point": "Access Point",
+    "access-point-loading": "Loading Access Point…",
+    "access-point-none": "Not connected",
+    "access-point-none-description": "Not registered through Let’s Peppol",
+    "access-point-unavailable": "Access Point unavailable",
+    "account-info": "Account Info",
     "account-name": "Account Name",
-    "activate-on-peppol": "Activate On Peppol",
     "add-attachment-to-notification": "Add attachment to notification",
     "address": "Address",
+    "allow-sending": "Send Peppol documents",
     "cancel": "Cancel",
     "change-password": "Change Password",
     "company-display-name": "Company display name",
     "company-info": "Company Info",
     "company-legal-name": "Company legal name",
+    "confirm": {
+      "receiving-disable": "This company will stop receiving Peppol invoices, credit notes, self-billed invoices and self-billed credit notes in Let’s Peppol. Sending stays enabled. Apply this change now?",
+      "receiving-disable-title": "Stop receiving Peppol documents",
+      "receiving-enable": "This company will receive Peppol invoices, credit notes, self-billed invoices and self-billed credit notes in Let’s Peppol. First unregister receiving with any other Peppol provider. Apply this change now?",
+      "receiving-enable-title": "Allow receiving Peppol documents",
+      "sending-disable": "This company will stop sending and receiving Peppol invoices and credit notes, including self-billed documents, via Let’s Peppol. Apply this change now?",
+      "sending-enable": "Register this company to send Peppol invoices and credit notes via Let’s Peppol? Receiving is also enabled if its Peppol address is available. This change applies immediately.",
+      "sending-receiving-enable": "Register this company to send and receive Peppol invoices and credit notes through Scrada? Sending and receiving are enabled together. This change applies immediately."
+    },
     "download-contract": "Download Contract",
     "email-notification-cc-list-incoming": "Incoming documents: email CC list",
     "email-notification-cc-list-outgoing": "Outgoing documents: email CC list",
@@ -18,16 +33,29 @@
     "number": "Number",
     "payment-info": "Payment Info",
     "payment-terms": "Payment Terms",
-    "peppol-registration": "Peppol Registration",
+    "peppol-settings": "Peppol Settings",
+    "peppol-settings-loading": "Loading Peppol settings…",
+    "peppol-settings-retry": "Retry",
+    "peppol-settings-unavailable": "Peppol settings are unavailable.",
+    "receive-peppol-documents": "Receive Peppol documents",
+    "received-document-types": {
+      "credit-notes": "Credit notes",
+      "invoices": "Invoices",
+      "self-billed-credit-notes": "Self-billing credit notes",
+      "self-billed-invoices": "Self-billing invoices"
+    },
+    "receiving-provider": "This company already receives Peppol documents through {{provider}} (SMP). Unregister receiving with that provider, then refresh to enable receiving here.",
+    "receiving-refresh": "Refresh",
     "registration-failed": {
       "contact-provider": "Your Peppol ID is currently registered with {{provider}}. Please contact them to unregister it, then log in and try activating again.",
       "contact-us": "Registration was not finalized. Please contact support at support@letspeppol.org for the next steps.",
       "try-again-one-day": "Registration was not finalized. Please try again tomorrow. If the problem persists, contact support at support@letspeppol.org and include your account details.",
       "try-again-one-hour": "Registration was not finalized. Please try again in about an hour. The Peppol network may be temporarily overloaded."
     },
-    "remove-from-peppol": "Remove From Peppol",
+    "remove-sending": "Remove sending",
     "save": "Save",
-    "subscriber-info": "Subscriber Info",
+    "send-and-receive-peppol-documents": "Send and receive Peppol documents",
+    "stop-sending-and-receiving": "Stop sending and receiving Peppol documents",
     "title": "Account",
     "vat-display": {
       "description": "Choose whether totals in the dashboard and invoice list are shown including or excluding VAT.",
@@ -47,11 +75,12 @@
     "account": {
       "contract-download-failed": "Failed to download signed contract",
       "load-failed": "Failed to get account",
-      "peppol-activated": "Activated company on Peppol",
       "peppol-activation-failed": "Failed to activate company on Peppol",
       "peppol-activation-request-failed": "Failed to send activation request",
       "peppol-remove-failed": "Failed to remove company from Peppol",
-      "peppol-removed": "Removed company from Peppol",
+      "peppol-settings-failed": "Failed to update Peppol settings. The current settings have been reloaded.",
+      "peppol-settings-updated": "Peppol settings updated successfully",
+      "receiving-conflict": "This company already receives through another Peppol provider. Unregister receiving there first.",
       "reverted": "Account changes reverted",
       "update-failed": "Failed to update account",
       "updated": "Account updated successfully"
@@ -257,7 +286,9 @@
   },
   "documentType": {
     "CREDIT_NOTE": "Credit Note",
-    "INVOICE": "Invoice"
+    "INVOICE": "Invoice",
+    "SELF_BILLING_CREDIT_NOTE": "Self-billed credit note",
+    "SELF_BILLING_INVOICE": "Self-billed invoice"
   },
   "donations": {
     "active-companies": "companies",
@@ -304,7 +335,7 @@
     "DUPLICATE_REQUEST": "This request was already processed.",
     "login-failed": "Login failed",
     "no_ownership": "This account is not linked to a company.",
-    "not-peppol-active": "You are currently not registered on Peppol",
+    "not-peppol-active": "Your company is not currently registered through Let’s Peppol",
     "not-peppol-active-action": "Solve this now",
     "registration-company-affiliate-contact-admin": "This company already has an administrator. Please contact your administrator to continue affiliate onboarding.",
     "registration-company-already-registered": "Company already registered",
@@ -394,6 +425,7 @@
       "corner1-id": "Corner 1 ID",
       "corner2-id": "Corner 2 ID",
       "corner3-id": "Corner 3 ID",
+      "delivered": "Delivered",
       "error-stamp-label": "Delivery error stamp",
       "from": "from",
       "invoice-number": "Invoice Number",
@@ -650,7 +682,7 @@
   },
   "navigation": {
     "account": "Account",
-    "brand-alt": "Let's Peppol",
+    "brand-alt": "Let’s Peppol",
     "dashboard": "Dashboard",
     "downloads": "Downloads",
     "invoices": "Invoices",

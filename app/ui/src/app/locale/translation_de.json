@@ -1,14 +1,29 @@
 {
   "account": {
+    "access-point": "Access Point",
+    "access-point-loading": "Access Point wird geladen…",
+    "access-point-none": "Nicht verbunden",
+    "access-point-none-description": "Nicht über Let’s Peppol registriert",
+    "access-point-unavailable": "Access Point nicht verfügbar",
+    "account-info": "Kontoinformationen",
     "account-name": "Kontoname",
-    "activate-on-peppol": "Auf Peppol aktivieren",
     "add-attachment-to-notification": "Anhang zur Benachrichtigung hinzufügen",
     "address": "Adresse",
+    "allow-sending": "Peppol-Dokumente senden",
     "cancel": "Abbrechen",
     "change-password": "Passwort ändern",
     "company-display-name": "Anzeigename des Unternehmens",
     "company-info": "Unternehmensinformationen",
     "company-legal-name": "Rechtlicher Unternehmensname",
+    "confirm": {
+      "receiving-disable": "Dieses Unternehmen empfängt keine Peppol-Rechnungen, Gutschriften, Self-Billing-Rechnungen oder Self-Billing-Gutschriften mehr in Let’s Peppol. Senden bleibt aktiviert. Diese Änderung jetzt anwenden?",
+      "receiving-disable-title": "Keine Peppol-Dokumente mehr empfangen",
+      "receiving-enable": "Dieses Unternehmen empfängt Peppol-Rechnungen, Gutschriften, Self-Billing-Rechnungen und Self-Billing-Gutschriften in Let’s Peppol. Melden Sie den Empfang zuerst bei einem anderen Peppol-Anbieter ab. Diese Änderung jetzt anwenden?",
+      "receiving-enable-title": "Empfang von Peppol-Dokumenten erlauben",
+      "sending-disable": "Dieses Unternehmen sendet und empfängt keine Peppol-Rechnungen und Gutschriften, einschließlich Self-Billing-Dokumenten, mehr über Let’s Peppol. Diese Änderung jetzt anwenden?",
+      "sending-enable": "Dieses Unternehmen zum Senden von Peppol-Rechnungen und Gutschriften über Let’s Peppol registrieren? Der Empfang wird ebenfalls aktiviert, wenn seine Peppol-Adresse verfügbar ist. Diese Änderung wird sofort angewendet.",
+      "sending-receiving-enable": "Dieses Unternehmen zum Senden und Empfangen von Peppol-Rechnungen und Gutschriften über Scrada registrieren? Senden und Empfangen werden gemeinsam aktiviert. Diese Änderung wird sofort angewendet."
+    },
     "download-contract": "Vertrag herunterladen",
     "email-notification-cc-list-incoming": "Eingehende Dokumente: E-Mail-CC-Liste",
     "email-notification-cc-list-outgoing": "Ausgehende Dokumente: E-Mail-CC-Liste",
@@ -18,16 +33,29 @@
     "number": "Nummer",
     "payment-info": "Zahlungsinformationen",
     "payment-terms": "Zahlungsbedingungen",
-    "peppol-registration": "Peppol-Registrierung",
+    "peppol-settings": "Peppol-Einstellungen",
+    "peppol-settings-loading": "Peppol-Einstellungen werden geladen…",
+    "peppol-settings-retry": "Erneut versuchen",
+    "peppol-settings-unavailable": "Peppol-Einstellungen sind nicht verfügbar.",
+    "receive-peppol-documents": "Peppol-Dokumente empfangen",
+    "received-document-types": {
+      "credit-notes": "Gutschriften",
+      "invoices": "Rechnungen",
+      "self-billed-credit-notes": "Self-Billing-Gutschriften",
+      "self-billed-invoices": "Self-Billing-Rechnungen"
+    },
+    "receiving-provider": "Dieses Unternehmen empfängt bereits Peppol-Dokumente über {{provider}} (SMP). Melden Sie den Empfang bei diesem Anbieter ab und aktualisieren Sie anschließend, um den Empfang hier zu aktivieren.",
+    "receiving-refresh": "Aktualisieren",
     "registration-failed": {
       "contact-provider": "Ihre Peppol-ID ist derzeit bei {{provider}} registriert. Bitte kontaktieren Sie den Anbieter, um sie dort abzumelden, und melden Sie sich anschließend an und versuchen Sie die Aktivierung erneut.",
       "contact-us": "Die Registrierung wurde nicht abgeschlossen. Bitte wenden Sie sich an den Support unter support@letspeppol.org für die nächsten Schritte.",
       "try-again-one-day": "Die Registrierung wurde nicht abgeschlossen. Bitte versuchen Sie es morgen erneut. Wenn das Problem weiterhin besteht, wenden Sie sich an den Support unter support@letspeppol.org und geben Sie Ihre Kontodaten an.",
       "try-again-one-hour": "Die Registrierung wurde nicht abgeschlossen. Bitte versuchen Sie es in etwa einer Stunde erneut. Das Peppol-Netzwerk ist möglicherweise vorübergehend überlastet."
     },
-    "remove-from-peppol": "Aus Peppol entfernen",
+    "remove-sending": "Senden deaktivieren",
     "save": "Speichern",
-    "subscriber-info": "Teilnehmerinformationen",
+    "send-and-receive-peppol-documents": "Peppol-Dokumente senden und empfangen",
+    "stop-sending-and-receiving": "Senden und Empfangen von Peppol-Dokumenten beenden",
     "title": "Konto",
     "vat-display": {
       "description": "Wählen Sie, ob Summen im Dashboard und in der Rechnungsliste inklusive oder exklusive MwSt. angezeigt werden.",
@@ -47,11 +75,12 @@
     "account": {
       "contract-download-failed": "Unterschriebener Vertrag konnte nicht heruntergeladen werden",
       "load-failed": "Konto konnte nicht geladen werden",
-      "peppol-activated": "Unternehmen auf Peppol aktiviert",
       "peppol-activation-failed": "Unternehmen konnte nicht auf Peppol aktiviert werden",
       "peppol-activation-request-failed": "Aktivierungsanfrage konnte nicht gesendet werden",
       "peppol-remove-failed": "Unternehmen konnte nicht aus Peppol entfernt werden",
-      "peppol-removed": "Unternehmen aus Peppol entfernt",
+      "peppol-settings-failed": "Peppol-Einstellungen konnten nicht aktualisiert werden. Die aktuellen Einstellungen wurden neu geladen.",
+      "peppol-settings-updated": "Peppol-Einstellungen erfolgreich aktualisiert",
+      "receiving-conflict": "Dieses Unternehmen empfängt bereits über einen anderen Peppol-Anbieter. Melden Sie den Empfang dort zuerst ab.",
       "reverted": "Kontoänderungen rückgängig gemacht",
       "update-failed": "Konto konnte nicht aktualisiert werden",
       "updated": "Konto erfolgreich aktualisiert"
@@ -256,7 +285,9 @@
   },
   "documentType": {
     "CREDIT_NOTE": "Gutschrift",
-    "INVOICE": "Rechnung"
+    "INVOICE": "Rechnung",
+    "SELF_BILLING_CREDIT_NOTE": "Gutschrift im Gutschriftverfahren",
+    "SELF_BILLING_INVOICE": "Rechnung im Gutschriftverfahren"
   },
   "donations": {
     "active-companies": "Unternehmen",
@@ -303,7 +334,7 @@
     "DUPLICATE_REQUEST": "Diese Anfrage wurde bereits verarbeitet.",
     "login-failed": "Anmeldung fehlgeschlagen",
     "no_ownership": "Dieses Konto ist mit keinem Unternehmen verknüpft.",
-    "not-peppol-active": "Sie sind derzeit nicht bei Peppol registriert",
+    "not-peppol-active": "Ihr Unternehmen ist derzeit nicht über Let’s Peppol registriert",
     "not-peppol-active-action": "Jetzt lösen",
     "registration-company-affiliate-contact-admin": "Dieses Unternehmen hat bereits einen Administrator. Bitte wenden Sie sich an Ihren Administrator, um das Affiliate-Onboarding fortzusetzen.",
     "registration-company-already-registered": "Unternehmen bereits registriert",
@@ -392,6 +423,7 @@
       "corner1-id": "Corner 1-ID",
       "corner2-id": "Corner 2-ID",
       "corner3-id": "Corner 3-ID",
+      "delivered": "Zugestellt",
       "error-stamp-label": "Fehlerstempel",
       "from": "von",
       "invoice-number": "Rechnungsnummer",
@@ -647,7 +679,7 @@
   },
   "navigation": {
     "account": "Konto",
-    "brand-alt": "Let's Peppol",
+    "brand-alt": "Let’s Peppol",
     "dashboard": "Dashboard",
     "downloads": "Downloads",
     "invoices": "Rechnungen",

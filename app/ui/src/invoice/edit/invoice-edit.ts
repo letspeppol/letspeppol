@@ -13,7 +13,7 @@ import {AlertType} from "../../components/alert/alert";
 import {InvoicePaymentModal} from "./components/modals/invoice-payment-modal";
 import {InvoiceCustomerModal} from "./components/modals/invoice-customer-modal";
 import {GENERATED_INVOICE, InvoiceComposer, isGeneratedInvoicePlaceholder, isPdfAttachment} from "../invoice-composer";
-import {DocumentDirection, DocumentType, InvoiceService} from "../../services/app/invoice-service";
+import {baseDocumentType, DocumentDirection, DocumentType, InvoiceService} from "../../services/app/invoice-service";
 import {ValidationResultModal} from "./components/modals/validation-result-modal";
 import {InvoiceModal} from "./components/modals/invoice-modal";
 import {InvoiceAttachmentModal} from "./components/modals/invoice-attachment-modal";
@@ -119,12 +119,17 @@ export class InvoiceEdit {
 
     get canDuplicate() {
         const document = this.invoiceContext.selectedDocument;
-        return !!document?.id && document.direction === DocumentDirection.OUTGOING && !document.processedStatus;
+        return !!document?.id && document.direction === DocumentDirection.OUTGOING && !document.processedStatus
+            && !this.invoiceContext.selfBilling;
     }
 
     get hasDeliveryError() {
         const document = this.invoiceContext.selectedDocument;
         return document?.direction === DocumentDirection.OUTGOING && !!document.processedStatus;
+    }
+
+    get actionDocumentType(): DocumentType {
+        return baseDocumentType(this.selectedDocumentType);
     }
 
     markErrorSeen() {
@@ -161,12 +166,12 @@ export class InvoiceEdit {
     }
 
     async sendInvoice() {
-        const type = this.selectedDocumentType;
+        const type = this.actionDocumentType;
         const selectedDocument = this.invoiceContext.selectedDocument;
         try {
             this.ea.publish('showOverlay', this.i18n.tr(`overlay.sending.${type}`));
             let doc;
-            if (selectedDocument?.createdExternally && selectedDocument.id) {
+            if (selectedDocument?.id && (selectedDocument.createdExternally || this.invoiceContext.selfBilling)) {
                 doc = await this.invoiceService.sendDocument(selectedDocument.id);
             } else {
                 const xml = this.buildXml();
@@ -206,6 +211,7 @@ export class InvoiceEdit {
     // }
 
     buildXml(): string {
+        if (this.invoiceContext.selfBilling) throw new Error('Creating self-billed documents in the editor is not supported');
         this.normalizeUnitPrices();
         if  (this.selectedDocumentType === DocumentType.INVOICE)  {
             return buildInvoiceXml(this.invoiceContext.selectedInvoice as Invoice)
@@ -394,12 +400,7 @@ export class InvoiceEdit {
     }
 
     savePartner() {
-        let partner;
-        if (this.invoiceContext.selectedDocument.direction === DocumentDirection.INCOMING) {
-            partner = this.invoiceContext.mapPartner(this.invoiceContext.selectedInvoice.AccountingSupplierParty.Party);
-        } else {
-            partner = this.invoiceContext.mapPartner(this.invoiceContext.selectedInvoice.AccountingCustomerParty.Party);
-        }
+        const partner = this.invoiceContext.mapPartner(this.invoiceContext.partnerParty);
         this.partnerService.createPartner(partner)
             .then(() => {
                 this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.partner.created')});
@@ -455,6 +456,8 @@ export class InvoiceEdit {
     }
 
     get isValid() {
+        // Uploaded self-billing uses the stored XML and network validation, not editor rules.
+        if (this.invoiceContext.selfBilling && this.invoiceContext.selectedDocument?.id) return true;
         return isInvoiceValid(
             this.invoiceContext.selectedInvoice,
             this.invoiceContext.lines,

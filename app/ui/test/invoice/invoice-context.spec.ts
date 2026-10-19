@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { DocumentType } from '../../src/services/app/invoice-service';
+import { DocumentDirection, DocumentDto, DocumentType } from '../../src/services/app/invoice-service';
+import { sampleCreditNoteXml, sampleInvoiceXml } from '../peppol/ubl-test-utils';
 
 const services = vi.hoisted(() => ({
     getAndSetMyCompanyForToken: vi.fn(),
@@ -17,6 +18,7 @@ vi.mock('@aurelia/kernel', async importOriginal => ({
 }));
 
 import { InvoiceContext } from '../../src/invoice/invoice-context';
+import { PaymentInfo } from '../../src/invoice/edit/components/tiles/payment-info';
 
 const company = (invoiceRef: string, creditNoteRef: string) => ({
     lastInvoiceReference: invoiceRef,
@@ -24,6 +26,47 @@ const company = (invoiceRef: string, creditNoteRef: string) => ({
 });
 
 describe('InvoiceContext', () => {
+    it('only offers a payment QR for an ordinary received invoice', () => {
+        const context = new InvoiceContext();
+        const paymentInfo = new PaymentInfo();
+        Reflect.set(paymentInfo, 'invoiceContext', context);
+        const document = {
+            type: DocumentType.INVOICE,
+            direction: DocumentDirection.INCOMING,
+            processedOn: '2026-10-18T12:00:00Z',
+            ubl: sampleInvoiceXml,
+        } as DocumentDto;
+        context.selectInvoice(document);
+        expect(paymentInfo.shouldShowPaymentQrAction).toBe(true);
+        context.selectInvoice({...document, type: DocumentType.SELF_BILLING_INVOICE, ubl: document.ubl.replace('>380<', '>389<')});
+        expect(paymentInfo.shouldShowPaymentQrAction).toBe(false);
+    });
+
+    it.each([
+        [DocumentType.SELF_BILLING_INVOICE, sampleInvoiceXml.replaceAll('poacc:billing:', 'poacc:selfbilling:').replace('>380<', '>389<')],
+        [DocumentType.SELF_BILLING_CREDIT_NOTE, sampleCreditNoteXml.replaceAll('poacc:billing:', 'poacc:selfbilling:').replace('>381<', '>261<')],
+    ])('opens a received self-billed %s with its customer as partner', (type, ubl) => {
+        const context = new InvoiceContext();
+        context.selectInvoice({type, ubl, direction: DocumentDirection.INCOMING} as DocumentDto);
+
+        expect(context.readOnly).toBe(true);
+        expect(context.selfBilling).toBe(true);
+        expect(context.selectedDocumentType).toBe(type);
+        expect(context.partnerParty).toBe(context.selectedInvoice.AccountingCustomerParty.Party);
+        expect(context.lines.length).toBeGreaterThan(0);
+    });
+
+    it('keeps an outgoing self-billed document read only and uses the supplier as partner', () => {
+        const context = new InvoiceContext();
+        context.selectInvoice({
+            type: DocumentType.SELF_BILLING_INVOICE,
+            ubl: sampleInvoiceXml.replace('>380<', '>389<'),
+            direction: DocumentDirection.OUTGOING,
+        } as DocumentDto);
+        expect(context.readOnly).toBe(true);
+        expect(context.partnerParty).toBe(context.selectedInvoice.AccountingSupplierParty.Party);
+    });
+
     beforeEach(() => {
         services.getAndSetMyCompanyForToken.mockReset();
         services.calculateTaxAndTotals.mockReset();

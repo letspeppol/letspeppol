@@ -13,8 +13,8 @@ export class InvoiceDeliveryModal {
         this.open = false;
     }
 
-    get hasPartnerPeppolAccessPoint(): boolean {
-        return this.details?.partnerPeppolAccessPoint != null;
+    get hasDeliveryStamp(): boolean {
+        return Boolean(this.details?.partnerPeppolAccessPoint || this.details?.partnerPeppolMessageId);
     }
 
     get hasProcessedStatus(): boolean {
@@ -27,6 +27,10 @@ export class InvoiceDeliveryModal {
 
     get processedOnLabel(): string {
         return this.formatDateTime(this.details?.processedOn);
+    }
+
+    deliveryIdLabel(id?: string): string {
+        return id || (this.details?.processedStatus ? "REJECTED" : "/");
     }
 
     private formatDateTime(value?: string): string {
