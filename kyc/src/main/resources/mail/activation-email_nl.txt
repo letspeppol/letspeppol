@@ -5,8 +5,11 @@ We hebben een verzoek ontvangen om het e-mailadres te verifiëren voor het bedri
 Om de verificatie te voltooien, klik op de onderstaande link (7 dagen geldig):
 {{activationLink}}
 
-Volgende stappen (Web eID-installatie & identiteitsverificatie)
-Voor gedetailleerde instructies om Web eID te installeren en te testen, volg onze onboarding-checklist:
+Volgende stappen (eID-ondertekeningssoftware en identiteitsverificatie)
+Installeer op Windows (x64) Let's Peppol eID Bridge:
+https://github.com/letspeppol/eid-bridge/releases/download/v1.1.0/LetsPeppol-eID-Bridge-1.1.0-windows-x64-unsigned.msi
+
+Start uw browser opnieuw en controleer of de Web eID-extensie is ingeschakeld. Volg onze onboarding-checklist voor installatie, testen en andere installatieopties:
 https://be.letspeppol.org/onboarding
 
 Als u deze verificatie niet heeft aangevraagd, kunt u dit bericht veilig negeren.

@@ -16,8 +16,10 @@ import {LibrarySignResponse} from "@web-eid/web-eid-library/models/message/Libra
 import {I18N} from "@aurelia/i18n";
 import {ChoosePassword} from "../components/choose-password/choose-password";
 import {clearTokenFromUrl} from "../services/util/url";
+import {getWebEidSetupIssue, WebEidSetupIssue} from "../components/eid/web-eid-setup";
 
 export class EmailConfirmation {
+    webEidSetupIssue: WebEidSetupIssue = null;
     readonly ea: IEventAggregator = resolve(IEventAggregator);
     readonly kycApi = resolve(KYCApi);
     readonly registrationService = resolve(RegistrationService);
@@ -72,6 +74,7 @@ export class EmailConfirmation {
     public async confirmContract() {
         if (!this.prepareSigningResponse?.allowedToSign || !this.confirmedDirector) return;
         this.confirmInProgress = true;
+        this.webEidSetupIssue = null;
         try {
 //             const {
 //                 certificate,
@@ -120,6 +123,9 @@ export class EmailConfirmation {
             await this.downloadFile(finalizeSigningResponse);
             this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.registration.contract-downloaded')});
         } catch (error) {
+            this.confirmInProgress = false;
+            this.webEidSetupIssue = getWebEidSetupIssue(error);
+            if (this.webEidSetupIssue) return;
             let text = "Signing contract failed";
             if (error instanceof Response) {
                 try {
@@ -132,7 +138,6 @@ export class EmailConfirmation {
                 text = String((error as any).message);
             }
             this.ea.publish('alert', { alertType: AlertType.Danger, text });
-            this.confirmInProgress = false;
         }
     }
 
@@ -182,6 +187,7 @@ export class EmailConfirmation {
         this.suggestedDirector = undefined;
         this.prepareSigningResponse = undefined;
         this.confirmedDirector = director;
+        this.webEidSetupIssue = null;
         try {
             const {
                 certificate,
@@ -205,6 +211,9 @@ export class EmailConfirmation {
             this.signatureAlgorithm = signatureAlgorithm;
             this.step = 2;
         } catch (error) {
+            this.confirmedDirector = undefined;
+            this.webEidSetupIssue = getWebEidSetupIssue(error);
+            if (this.webEidSetupIssue) return;
             let text = "Confirming Identity failed";
             if (error instanceof Response) {
                 try {
@@ -217,7 +226,6 @@ export class EmailConfirmation {
                 text = String((error as any).message);
             }
             this.ea.publish('alert', { alertType: AlertType.Danger, text });
-            this.confirmedDirector = undefined;
         }
 
         return;
