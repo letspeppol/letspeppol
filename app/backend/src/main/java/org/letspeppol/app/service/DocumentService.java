@@ -80,7 +80,7 @@ public class DocumentService {
         try {
             UblDto ublDto = UblParser.parse(documentDirection, ublXml);
             if (documentDirection == DocumentDirection.OUTGOING && !peppolId.equals(ublDto.senderPeppolId())) {
-                log.warn("The user {} send a Peppol document as {}, REJECTED !", peppolId, ublDto.senderPeppolId());
+                log.warn("The user {} send a Peppol document as {} to {}, REJECTED !", peppolId, ublDto.senderPeppolId(), ublDto.receiverPeppolId());
                 throw new SecurityException(AppErrorCodes.PEPPOL_ID_MISMATCH);
             }
             if (documentDirection == DocumentDirection.INCOMING && !peppolId.equals(ublDto.receiverPeppolId())) {
@@ -88,7 +88,7 @@ public class DocumentService {
                     log.warn("The user {} received a Peppol document for {} but will be allowed", peppolId, ublDto.receiverPeppolId());
                     return ublDto;
                 }
-                log.warn("The user {} received a Peppol document for {}, REJECTED !", peppolId, ublDto.receiverPeppolId());
+                log.warn("The user {} received a Peppol document for {} from {}, REJECTED !", peppolId, ublDto.receiverPeppolId(), ublDto.senderPeppolId());
                 throw new SecurityException(AppErrorCodes.PEPPOL_ID_MISMATCH);
             }
             return ublDto;
