@@ -25,6 +25,12 @@ exclude LAPI paths; these operations depend on that network restriction for oper
 curl --fail-with-body -X POST \
   'http://localhost:8443/kyc/lapi/company/0208:0123456789/move?accessPoint=RECOMMAND'
 ```
+or in docker
+```sh
+docker run --rm --network green_default curlimages/curl \
+  --fail-with-body -X POST \
+  'http://kyc:8084/lapi/company/0208:0123456789/move?accessPoint=RECOMMAND'
+```
 
 The optional `accessPoint` selects an available provider: `SCRADA`, `RECOMMAND`, or `E_INVOICE`.
 Omit it to use `proxy.access-point`. Selecting the current provider succeeds without moving it.

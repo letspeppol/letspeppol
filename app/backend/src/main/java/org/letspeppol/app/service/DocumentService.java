@@ -532,7 +532,7 @@ public class DocumentService {
         }
     }
 
-    @Scheduled(cron = "0 0 * * * *")
+    @Scheduled(cron = "0 */5 * * * *")
     public void periodicSynchronize() {
         try {
             List<UblDocumentDto> ublDocumentDtos;
