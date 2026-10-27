@@ -19,6 +19,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -55,6 +56,19 @@ class SapiSecurityIntegrationTest {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token(
                                 List.of("letspeppol-api"), Instant.now().plusSeconds(300))))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void bearerCallKeepsTheBrowserSessionIdSoParallelCallsCannotLoseIt() throws Exception {
+        MockHttpSession session = browserSession();
+        String sessionId = session.getId();
+
+        mockMvc.perform(get("/sapi/account/ownerships")
+                        .session(session)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenWithoutCompany(null)))
+                .andExpect(status().isOk());
+
+        assertThat(session.getId()).isEqualTo(sessionId);
     }
 
     @Test
@@ -113,6 +127,33 @@ class SapiSecurityIntegrationTest {
     }
 
     @Test
+    void tokenWithoutACompanyReachesOnlyAccountScopedEndpoints() throws Exception {
+        String withoutCompany = "Bearer " + tokenWithoutCompany(null);
+
+        mockMvc.perform(get("/sapi/account/ownerships").header(HttpHeaders.AUTHORIZATION, withoutCompany))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isEmpty());
+        mockMvc.perform(get(SEARCH_PATH).header(HttpHeaders.AUTHORIZATION, withoutCompany))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(get("/sapi/users").header(HttpHeaders.AUTHORIZATION, withoutCompany))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(post("/sapi/linked/request-company")
+                        .header(HttpHeaders.AUTHORIZATION, withoutCompany)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"type":"ADMIN","peppolId":"0208:0123456789","email":"director@example.com"}
+                                """))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void roleWithoutACompanyIsNotAnAccountToken() throws Exception {
+        mockMvc.perform(get("/sapi/account/ownerships")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenWithoutCompany("ADMIN")))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
     void malformedExpiredAndWrongAudienceTokensAreRejected() throws Exception {
         mockMvc.perform(get(SEARCH_PATH)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer not-a-jwt"))
@@ -165,5 +206,20 @@ class SapiSecurityIntegrationTest {
                 .claim("accountType", accountType)
                 .build();
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+    }
+
+    private String tokenWithoutCompany(String accountType) {
+        JwtClaimsSet.Builder claims = JwtClaimsSet.builder()
+                .issuer("http://localhost:8084")
+                .subject("person@example.com")
+                .issuedAt(Instant.now().minusSeconds(5))
+                .expiresAt(Instant.now().plusSeconds(300))
+                .audience(List.of("letspeppol-api"))
+                .claim("uid", UUID.randomUUID().toString())
+                .claim("permissionMask", 0);
+        if (accountType != null) {
+            claims.claim("accountType", accountType);
+        }
+        return jwtEncoder.encode(JwtEncoderParameters.from(claims.build())).getTokenValue();
     }
 }

@@ -69,7 +69,8 @@
         "VAT_REGISTERED": "MwSt.-registriert"
       },
       "title": "MwSt.-Einstellungen"
-    }
+    },
+    "without-company": "Dieses Konto ist mit keinem Unternehmen verknüpft. Bitten Sie einen Administrator um eine Einladung oder fügen Sie Ihr eigenes Unternehmen hinzu."
   },
   "alert": {
     "account": {
@@ -225,8 +226,8 @@
       "permissions-failed": "Die Berechtigungen konnten nicht gespeichert werden",
       "reactivate-failed": "Benutzer konnte nicht reaktiviert werden",
       "reactivated": "Benutzer reaktiviert",
-      "remove-failed": "Benutzer konnte nicht entfernt werden",
-      "removed": "Benutzer entfernt",
+      "remove-failed": "Zugriff konnte nicht entzogen werden",
+      "removed": "Zugriff entzogen",
       "resend-failed": "Die Einladung konnte nicht erneut gesendet werden",
       "suspend-failed": "Benutzer konnte nicht gesperrt werden",
       "suspended": "Benutzer gesperrt"
@@ -766,8 +767,8 @@
     "language": "Sprache",
     "partners": "Partner",
     "products": "Produkte",
-    "toggle-theme": "Theme umschalten",
-    "users": "Benutzer"
+    "settings": "Einstellungen",
+    "toggle-theme": "Theme umschalten"
   },
   "new-feature": {
     "click-to-dismiss": "Zum Schließen klicken",
@@ -1020,6 +1021,15 @@
   "session": {
     "continue-title": "Sitzung fortsetzen"
   },
+  "settings": {
+    "company": {
+      "title": "Unternehmen"
+    },
+    "tabs": {
+      "company": "Unternehmen",
+      "users": "Benutzer"
+    }
+  },
   "sponsors-page": {
     "empty": "Noch keine Sponsoren.",
     "load-error": "Die Sponsoren konnten derzeit nicht geladen werden.",
@@ -1065,6 +1075,7 @@
   "users": {
     "action": {
       "reactivate": "Reaktivieren",
+      "remove": "Zugriff entziehen",
       "resend": "Einladung erneut senden",
       "suspend": "Sperren"
     },
@@ -1096,8 +1107,8 @@
       "PRODUCT_MANAGE": "Produkte verwalten"
     },
     "remove": {
-      "confirm": "{{- name}} aus diesem Unternehmen entfernen? Das Konto bleibt bestehen, verliert aber den Zugriff auf dieses Unternehmen.",
-      "title": "Benutzer entfernen"
+      "confirm": "Den Zugriff von {{- name}} auf dieses Unternehmen endgültig entfernen?",
+      "title": "Zugriff entziehen"
     },
     "status": {
       "ACTIVE": "Aktiv",

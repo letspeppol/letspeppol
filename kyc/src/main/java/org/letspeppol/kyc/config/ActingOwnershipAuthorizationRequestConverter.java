@@ -91,10 +91,22 @@ public class ActingOwnershipAuthorizationRequestConverter implements Authenticat
             }
         }
 
+        if (selectedOwnership.isEmpty()
+                && !ownershipRepository.existsByAccountIdAndStatus(userDetails.getAccountId(), OwnershipStatus.ACTIVE)) {
+            parameters.remove(PEPPOL_ID_PARAMETER);
+            parameters.remove(ACCOUNT_TYPE_PARAMETER);
+            return withParameters(authorizationRequest, parameters);
+        }
+
         Ownership ownership = selectedOwnership.orElseThrow(ActingOwnershipAuthorizationRequestConverter::invalidSelection);
         parameters.put(PEPPOL_ID_PARAMETER, ownership.getCompany().getPeppolId());
         parameters.put(ACCOUNT_TYPE_PARAMETER, ownership.getType().name());
+        return withParameters(authorizationRequest, parameters);
+    }
 
+    private static OAuth2AuthorizationCodeRequestAuthenticationToken withParameters(
+            OAuth2AuthorizationCodeRequestAuthenticationToken authorizationRequest,
+            Map<String, Object> parameters) {
         return new OAuth2AuthorizationCodeRequestAuthenticationToken(
                 authorizationRequest.getAuthorizationUri(),
                 authorizationRequest.getClientId(),

@@ -109,6 +109,28 @@ describe('OwnershipService', () => {
 
         expect(service.permissionMask).toBe(0);
         expect(service.admin).toBe(false);
+        expect(service.hasCompany).toBe(false);
+        expect(Object.values(service.granted)).not.toContain(true);
+    });
+
+    it('knows the account and its company from the token', () => {
+        const {service} = createService('previous-token');
+
+        service.onTokenChanged(tokenWith({uid: 'account-1', peppolId: '0208:1234567890', accountType: 'USER', permissionMask: 1}));
+
+        expect(service.hasCompany).toBe(true);
+        expect(service.getCurrentAccountId()).toBe('account-1');
+    });
+
+    it('signs in an account without a company with no permissions at all', () => {
+        const {service} = createService('previous-token');
+
+        service.onTokenChanged(tokenWith({uid: 'account-1', permissionMask: 0}));
+
+        expect(service.hasCompany).toBe(false);
+        expect(service.admin).toBe(false);
+        expect(service.getCurrentPeppolId()).toBeNull();
+        expect(service.getCurrentAccountId()).toBe('account-1');
         expect(Object.values(service.granted)).not.toContain(true);
     });
 });

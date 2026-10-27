@@ -69,7 +69,8 @@
         "VAT_REGISTERED": "Assujetti à la TVA"
       },
       "title": "Paramètres TVA"
-    }
+    },
+    "without-company": "Ce compte n'est lié à aucune entreprise. Demandez une invitation à un administrateur ou ajoutez votre propre entreprise."
   },
   "alert": {
     "account": {
@@ -225,8 +226,8 @@
       "permissions-failed": "Les autorisations n'ont pas pu être enregistrées",
       "reactivate-failed": "Échec de la réactivation de l'utilisateur",
       "reactivated": "Utilisateur réactivé",
-      "remove-failed": "Échec du retrait de l'utilisateur",
-      "removed": "Utilisateur retiré",
+      "remove-failed": "Échec de la révocation de l'accès",
+      "removed": "Accès révoqué",
       "resend-failed": "L'invitation n'a pas pu être renvoyée",
       "suspend-failed": "Échec de la suspension de l'utilisateur",
       "suspended": "Utilisateur suspendu"
@@ -766,8 +767,8 @@
     "language": "Langue",
     "partners": "Partenaires",
     "products": "Produits",
-    "toggle-theme": "Changer de thème",
-    "users": "Utilisateurs"
+    "settings": "Paramètres",
+    "toggle-theme": "Changer de thème"
   },
   "new-feature": {
     "click-to-dismiss": "Cliquer pour fermer",
@@ -1020,6 +1021,15 @@
   "session": {
     "continue-title": "Continuer la session"
   },
+  "settings": {
+    "company": {
+      "title": "Entreprise"
+    },
+    "tabs": {
+      "company": "Entreprise",
+      "users": "Utilisateurs"
+    }
+  },
   "sponsors-page": {
     "empty": "Pas encore de sponsors.",
     "load-error": "Impossible de charger les sponsors pour le moment.",
@@ -1065,6 +1075,7 @@
   "users": {
     "action": {
       "reactivate": "Réactiver",
+      "remove": "Révoquer l'accès",
       "resend": "Renvoyer l'invitation",
       "suspend": "Suspendre"
     },
@@ -1096,8 +1107,8 @@
       "PRODUCT_MANAGE": "Gérer les produits"
     },
     "remove": {
-      "confirm": "Retirer {{- name}} de cette entreprise ? Son compte est conservé, mais il perd l'accès à cette entreprise.",
-      "title": "Retirer l'utilisateur"
+      "confirm": "Retirer définitivement l'accès de {{- name}} à cette entreprise ?",
+      "title": "Révoquer l'accès"
     },
     "status": {
       "ACTIVE": "Actif",

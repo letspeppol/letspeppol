@@ -21,7 +21,6 @@ export class Heading {
     ownerships: OwnershipSummary[] = [];
     selectedOwnershipKey = '';
     swapping = false;
-    canAddOwnership = false;
 
     async attached() {
         await this.loginService.ensureAuthenticated();
@@ -43,7 +42,6 @@ export class Heading {
         this.ownerships = this.ownershipService.getCachedOwnerships();
         const currentOwnershipKey = this.ownershipService.getCurrentOwnershipKey() ?? '';
         this.selectedOwnershipKey = currentOwnershipKey;
-        this.canAddOwnership = this.ownershipService.admin;
         if (currentOwnershipKey && this.ownerships.some(ownership => this.getOwnershipKey(ownership) === currentOwnershipKey)) {
             queueMicrotask(() => {
                 this.selectedOwnershipKey = currentOwnershipKey;
@@ -68,7 +66,7 @@ export class Heading {
     get partnersPath() { return this.loginService.getCurrentOwnershipRoute('/partners'); }
     get productsPath() { return this.loginService.getCurrentOwnershipRoute('/products'); }
     get downloadsPath() { return this.loginService.getCurrentOwnershipRoute('/downloads'); }
-    get usersPath() { return this.loginService.getCurrentOwnershipRoute('/users'); }
+    get settingsPath() { return this.loginService.getCurrentOwnershipRoute('/settings'); }
     get accountPath() { return this.loginService.getCurrentOwnershipRoute('/account'); }
 
     async changeOwnership() {

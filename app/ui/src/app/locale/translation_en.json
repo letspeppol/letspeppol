@@ -69,7 +69,8 @@
         "VAT_REGISTERED": "Subject to VAT"
       },
       "title": "VAT Settings"
-    }
+    },
+    "without-company": "This account is not linked to a company. Ask an administrator for an invitation, or add your own company."
   },
   "alert": {
     "account": {
@@ -226,8 +227,8 @@
       "permissions-failed": "The permissions could not be saved",
       "reactivate-failed": "Failed to reactivate user",
       "reactivated": "User reactivated",
-      "remove-failed": "Failed to remove user",
-      "removed": "User removed",
+      "remove-failed": "Failed to revoke access",
+      "removed": "Access revoked",
       "resend-failed": "The invitation could not be sent again",
       "suspend-failed": "Failed to suspend user",
       "suspended": "User suspended"
@@ -768,8 +769,8 @@
     "language": "Language",
     "partners": "Partners",
     "products": "Products",
-    "toggle-theme": "Toggle theme",
-    "users": "Users"
+    "settings": "Settings",
+    "toggle-theme": "Toggle theme"
   },
   "new-feature": {
     "click-to-dismiss": "Click to dismiss",
@@ -1022,6 +1023,15 @@
   "session": {
     "continue-title": "Continue Session"
   },
+  "settings": {
+    "company": {
+      "title": "Company"
+    },
+    "tabs": {
+      "company": "Company",
+      "users": "Users"
+    }
+  },
   "sponsors-page": {
     "empty": "No sponsors yet.",
     "load-error": "Could not load sponsors right now.",
@@ -1067,6 +1077,7 @@
   "users": {
     "action": {
       "reactivate": "Reactivate",
+      "remove": "Revoke access",
       "resend": "Resend invitation",
       "suspend": "Suspend"
     },
@@ -1098,8 +1109,8 @@
       "PRODUCT_MANAGE": "Manage products"
     },
     "remove": {
-      "confirm": "Remove {{- name}} from this company? Their account stays, but they lose access to this company.",
-      "title": "Remove user"
+      "confirm": "Permanently remove the access of {{- name}} to this company?",
+      "title": "Revoke access"
     },
     "status": {
       "ACTIVE": "Active",

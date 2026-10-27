@@ -230,8 +230,7 @@ class CompanyUserTest {
         assertEquals(OwnershipStatus.SUSPENDED, companyUserSteps.user(companyUserSteps.trySuspend(adminToken, user.id())).status());
         assertEquals("user_not_editable", companyUserSteps.trySuspend(adminToken, user.id()).errorCode());
         assertEquals(HttpStatus.UNAUTHORIZED, companyUserSteps.ownershipsStatus(userToken));
-        assertEquals("ownership_unavailable",
-                companyUserSteps.authorize(email, userPassword, peppolId, AccountType.USER).error());
+        assertSignsInWithoutACompany(email, AccountType.USER);
 
         assertEquals(OwnershipStatus.ACTIVE, companyUserSteps.user(companyUserSteps.tryReactivate(adminToken, user.id())).status());
         assertEquals(HttpStatus.UNAUTHORIZED, companyUserSteps.ownershipsStatus(userToken));
@@ -341,8 +340,7 @@ class CompanyUserTest {
         assertTrue(accountRepository.findByEmail(email).isPresent());
         assertTrue(companyUserSteps.listUsers(adminToken).stream().noneMatch(row -> row.id().equals(user.id())));
         assertEquals(HttpStatus.UNAUTHORIZED, companyUserSteps.ownershipsStatus(userToken));
-        assertEquals("ownership_unavailable",
-                companyUserSteps.authorize(email, userPassword, peppolId, AccountType.USER).error());
+        assertSignsInWithoutACompany(email, AccountType.USER);
         assertEquals(HttpStatus.NOT_FOUND, companyUserSteps.tryRemove(adminToken, user.id()).status());
 
         CompanyUserDto pending = companyUserSteps.invite(adminToken, "withdrawn@users-company.com", "Wim Withdrawn", 1);
@@ -443,8 +441,7 @@ class CompanyUserTest {
         assertEquals(17L, ((Number) jwt.getClaim("permissionMask")).longValue());
 
         assertEquals(OwnershipStatus.SUSPENDED, companyUserSteps.user(companyUserSteps.trySuspend(adminToken, id)).status());
-        assertEquals("ownership_unavailable",
-                companyUserSteps.authorize(email, userPassword, peppolId, AccountType.AFFILIATE).error());
+        assertSignsInWithoutACompany(email, AccountType.AFFILIATE);
         assertEquals(OwnershipStatus.ACTIVE, companyUserSteps.user(companyUserSteps.tryReactivate(adminToken, id)).status());
         assertNull(companyUserSteps.authorize(email, userPassword, peppolId, AccountType.AFFILIATE).error());
 
@@ -488,5 +485,21 @@ class CompanyUserTest {
 
     private CompanyUserDto listedUser(long id) {
         return companyUserSteps.listUsers(adminToken).stream().filter(row -> row.id() == id).findFirst().orElseThrow();
+    }
+
+    private void assertSignsInWithoutACompany(String email, AccountType requestedType) {
+        Authorization authorization = companyUserSteps.authorize(email, userPassword, peppolId, requestedType);
+        assertNull(authorization.error());
+        Jwt jwt = jwtDecoder.decode(authorization.accessToken());
+        assertNull(jwt.getClaimAsString("peppolId"));
+        assertNull(jwt.getClaimAsString("accountType"));
+        assertEquals(0L, ((Number) jwt.getClaim("permissionMask")).longValue());
+
+        assertEquals(List.of(), companyUserSteps.ownedPeppolIds(authorization.accessToken()));
+        ApiResult account = companyUserSteps.call(HttpMethod.GET, "/sapi/account", authorization.accessToken(), null);
+        assertEquals(HttpStatus.OK, account.status());
+        assertEquals(email, account.body().path("email").asString());
+        assertEquals(HttpStatus.FORBIDDEN,
+                companyUserSteps.call(HttpMethod.GET, "/sapi/company/account", authorization.accessToken(), null).status());
     }
 }

@@ -71,9 +71,9 @@ public class SecurityConfig {
             if (scopes != null && scopes.contains("service")) {
                 authorities.add(new SimpleGrantedAuthority(ROLE_SERVICE));
             }
-            // Both end-user tokens and the APP service token carry a uid; the APP service token's
-            // peppolId is its sending company, so uid (not peppolId) is the correct discriminator for ROLE_KYC_USER here.
-            if (jwt.hasClaim(UID)) {
+            // Both end-user tokens and the APP service token carry a uid and a peppolId (the APP service token's
+            // is its sending company); a token of an account without a company has no peppolId and gets nothing here.
+            if (jwt.hasClaim(UID) && jwt.hasClaim(PEPPOL_ID)) {
                 authorities.add(new SimpleGrantedAuthority(ROLE_KYC_USER));
                 int permissionMask = JwtUtil.getPermissionMask(jwt);
                 for (CompanyPermission permission : CompanyPermission.values()) {

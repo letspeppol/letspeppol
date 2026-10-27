@@ -24,6 +24,7 @@ export interface OwnershipSummary {
 }
 
 interface JwtClaims {
+    uid?: string,
     peppolId?: string,
     accountType?: string,
     permissionMask?: number
@@ -45,6 +46,7 @@ export class OwnershipService {
     public ownerships: OwnershipSummary[] = [];
     public permissionMask = 0;
     public admin = false;
+    public hasCompany = false;
     public granted: PermissionFlags = flagsFromMask(0);
 
     constructor() {
@@ -154,7 +156,12 @@ export class OwnershipService {
         const accountType = claims?.peppolId ? claims.accountType : undefined;
         this.permissionMask = accountType ? effectivePermissionMask(claims.permissionMask, accountType) : 0;
         this.admin = accountType === ADMIN_ACCOUNT_TYPE;
+        this.hasCompany = !!accountType;
         this.granted = flagsFromMask(this.permissionMask);
+    }
+
+    getCurrentAccountId(): string | null {
+        return this.claims()?.uid ?? null;
     }
 
     getCurrentOwnershipKey(): string | null {

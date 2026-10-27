@@ -10,6 +10,7 @@ import {OwnershipService} from "../services/app/ownership-service";
 
 export interface CompanyRouteData {
     allowEveryone?: boolean;
+    withoutCompany?: string;
     adminOnly?: boolean;
     requiresAny?: CompanyPermission[];
 }

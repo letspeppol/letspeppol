@@ -95,6 +95,19 @@ class CompanyPermissionAuthoritiesTest {
     }
 
     @Test
+    void accountWithoutACompanyGetsNothing() {
+        Jwt jwt = Jwt.withTokenValue("token")
+                .header("alg", "none")
+                .claim(SecurityConfig.UID, UUID.randomUUID().toString())
+                .claim(SecurityConfig.PERMISSION_MASK, 0)
+                .build();
+
+        assertThat(authorities(jwt))
+                .doesNotContain(SecurityConfig.ROLE_KYC_USER, SecurityConfig.ROLE_SERVICE)
+                .doesNotContain(ALL_PERMISSIONS);
+    }
+
+    @Test
     void methodSecurityIsEnabled() {
         assertThat(SecurityConfig.class.isAnnotationPresent(EnableMethodSecurity.class)).isTrue();
     }

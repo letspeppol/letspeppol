@@ -14,7 +14,9 @@ exact selection with the authorization code, and revalidates it during token exc
 the default when login or a context-free `/dashboard` request supplies no selection. If the account
 has no ownership for the requested Peppol ID, KYC selects its most recently used ownership and the UI
 opens that company's dashboard, discarding the stale deep link. An unavailable role on a company the
-account still owns remains an error, as does an account without any ownership.
+account still owns remains an error. An account without any active ownership signs in without a
+company: its token has no `peppolId` or `accountType` and a `permissionMask` of 0, and the UI opens
+`/account`, where the person can manage their sign-in or add a company.
 
 Executable proof: [`RegistrationTest`](../kyc/src/test/java/org/letspeppol/kyc/controller/RegistrationTest.java), method `oauth2AuthorizationCodeWithPkce`. TOTP and passkey branches are covered by [`TotpAuthenticationSuccessHandlerTest`](../kyc/src/test/java/org/letspeppol/kyc/config/TotpAuthenticationSuccessHandlerTest.java) and [`PasskeyControllerBrowserAuthTest`](../kyc/src/test/java/org/letspeppol/kyc/controller/PasskeyControllerBrowserAuthTest.java).
 

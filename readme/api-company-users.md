@@ -66,6 +66,12 @@ stored mask; `ADMIN` and `APP` tokens always carry all bits.
 An `AFFILIATE` ownership is created by the affiliate registration with all bits set. The ADMIN can
 change its mask and suspend or reactivate it like a `USER`. It cannot be invited or removed here.
 
+`APP` ownerships, such as the email-notification app, are not listed. Companies that linked that app
+before ownerships existed got the link as a second `ADMIN` row from the `V1.4` backfill. `V1.10` turns
+those rows into `APP` rows. It finds the app account through the Flyway placeholder
+`app-account-external-id`, which follows `oauth2.app-client.account-external-id`
+(`KYC_AUTH_APP_EXTERNAL_ID`).
+
 ## Token revocation
 
 Changing a mask, suspending an ownership or removing it revokes the access tokens already issued for
@@ -78,7 +84,9 @@ that ownership. Other ownerships of the same account keep their tokens.
   (`oauth2.revocation-feed.poll-delay-ms`) and answer `401` for a listed token. The feed address is
   derived from the JWKS URI unless `oauth2.revocation-feed.uri` is set.
 - On `401` the UI signs the user in again silently. After a changed mask the new token carries the new
-  permissions; after a suspension or removal the sign-in for that company is refused.
+  permissions; after a suspension or removal the sign-in for that company is refused. An account with
+  another company falls back to that one, and an account left without any company signs in without
+  one; see [Browser authentication](./api-authentication-and-account-security.md).
 
 The feed lives under `/lapi`, which is not routed publicly, and holds token ids only. It is kept in
 memory: after a KYC restart, tokens revoked before the restart are accepted again until they expire.
@@ -114,6 +122,8 @@ company and email address, separate from registration mails.
 | First password missing or too short | 400 | `invalid_password` |
 
 `POST /kyc/sapi/linked/request-company` is limited to `ADMIN` and `AFFILIATE` tokens, so a `USER`
-cannot start a registration for another company.
+cannot start a registration for another company. Adding a company the person is a director of is open
+to every signed-in account, with or without a company; see
+[Registration new ADMIN by a signed-in account](./registration-new-admin-by-active-admin.md).
 
 Return to the [API network flow guide](./api-network-flows.md).

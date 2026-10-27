@@ -12,7 +12,7 @@ sequenceDiagram
     Note over ADMIN, KYC: Executable proof: CompanyUserTest.adminInvitesNewUser
 
 Note over ADMIN, KYC: Inviting a user
-    Note left of ADMIN: Already logged in as ADMIN <br> Visit /{peppolId}/users
+    Note left of ADMIN: Already logged in as ADMIN <br> Visit /{peppolId}/settings/users
     ADMIN ->> Frontend: Invite( email, name, permissions )
     Frontend ->> KYC: POST /kyc/sapi/users <br> Authorization: Bearer ADMIN_JWT <br> ( email, name, permissionMask )
     Note right of KYC: JWT == ADMIN <br> ADMIN ownership is ACTIVE in the database <br> Email is not yet a member <br> Find or create pending Account <br> Link as INVITED USER with normalised mask <br> Generate invitation token

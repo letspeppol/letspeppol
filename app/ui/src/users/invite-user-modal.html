@@ -3,7 +3,7 @@
     <div class="modal-card" style="width: min(460px, calc(100% - var(--space-2rem)))" keydown.trigger="onKeyDown($event)">
         <header class="modal-header">
             <h3 t="users.invite.title">Invite user</h3>
-            <button type="button" class="icon-btn" aria-label="Close dialog" t="[aria-label]common.close" title="Close" t="[title]common.close" click.trigger="closeModal()">×</button>
+            <button type="button" class="icon-btn" aria-label="Close dialog" title="Close" t="[aria-label,title]common.close" click.trigger="closeModal()">×</button>
         </header>
         <div class="modal-body">
             <form class="auth-form">
@@ -30,8 +30,8 @@
             </form>
         </div>
         <footer class="modal-footer">
-            <button type="button" class="btn" title="Cancel" t="[title]common.cancel" click.trigger="closeModal()" t="common.cancel">Cancel</button>
-            <button type="button" class="btn primary" disabled.bind="!canInvite" title="Send invitation" t="[title]users.invite.send" click.trigger="invite()" t="users.invite.send">Send invitation</button>
+            <button type="button" class="btn" title="Cancel" t="[title]common.cancel;common.cancel" click.trigger="closeModal()">Cancel</button>
+            <button type="button" class="btn primary" disabled.bind="!canInvite" title="Send invitation" t="[title]users.invite.send;users.invite.send" click.trigger="invite()">Send invitation</button>
         </footer>
     </div>
 </div>

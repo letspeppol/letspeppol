@@ -24,7 +24,7 @@ public class SignerAccountResolverService {
 
     public SignerResolution resolveSignerAccount(FinalizeSigningRequest signingRequest, String fullName) {
         if (signingRequest.email() == null || signingRequest.email().isBlank()) {
-            return resolveAuthenticatedAdmin(signingRequest);
+            return resolveAuthenticatedAccount(signingRequest);
         }
 
         EmailVerification emailVerification = activationService.getPendingVerification(signingRequest.email(), signingRequest.peppolId());
@@ -34,9 +34,9 @@ public class SignerAccountResolverService {
         return new SignerResolution(account, emailVerification.getType());
     }
 
-    private SignerResolution resolveAuthenticatedAdmin(FinalizeSigningRequest signingRequest) {
+    private SignerResolution resolveAuthenticatedAccount(FinalizeSigningRequest signingRequest) {
         JwtInfo jwtInfo = jwtClaimExtractor.extract();
-        if (jwtInfo.accountType() != AccountType.ADMIN) {
+        if (jwtInfo.accountType() == AccountType.APP) {
             throw new ForbiddenException(KycErrorCodes.NOT_ADMIN);
         }
         ownershipService.verifyPeppolIdNotRegistered(signingRequest.peppolId());

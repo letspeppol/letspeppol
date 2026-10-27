@@ -55,11 +55,11 @@ export class ApplicationView {
         if (!this.ownershipService.admin) {
             return;
         }
-        if (this.currentRoute.path.endsWith('/account')) {
+        if (this.currentRoute.path.endsWith('/settings')) {
             this.ea.publish('account:register');
             return;
         }
         history.replaceState({ ...(history.state ?? {}), runRegister: true }, '');
-        this.router.load(currentOwnershipRoute('/account'));
+        this.router.load(currentOwnershipRoute('/settings'));
     }
 }

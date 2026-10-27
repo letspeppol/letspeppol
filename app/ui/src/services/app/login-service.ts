@@ -9,12 +9,14 @@ import {PartnerService} from "./partner-service";
 import {SponsorService} from "./sponsor-service";
 import {StatisticsService} from "./statistics-service";
 import {SEEN_NOTIFICATION_KEY} from "./welcome-notification-service";
+import {IVatDisplay} from "./vat-display-service";
 import {
     consumePendingNavigation,
     getPeppolIdFromPath,
     ownershipRoute,
     peekPendingNavigation,
     rememberCurrentNavigation,
+    routeWithoutCompany,
 } from "./ownership-route";
 
 const KYC_BASE = '/kyc';
@@ -51,6 +53,7 @@ export class LoginService {
     private partnerService = resolve(PartnerService);
     private sponsorService = resolve(SponsorService);
     private statisticsService = resolve(StatisticsService);
+    private vatDisplay = resolve(IVatDisplay);
     public authenticated = false;
 
     // Tokens live in memory only (never localStorage) so an XSS foothold can't read them at rest;
@@ -259,6 +262,7 @@ export class LoginService {
         this.authenticated = true;
         localStorage.setItem(SESSION_HINT_KEY, '1');
         this.ownershipService.onTokenChanged(token);
+        this.vatDisplay.useAccount(this.ownershipService.getCurrentAccountId());
     }
 
     setAuthHeader(token: string) {
@@ -278,6 +282,7 @@ export class LoginService {
         this.clearSeenNotificationFlag();
         this.authenticated = false;
         this.ownershipService.onTokenChanged(null);
+        this.vatDisplay.useAccount(null);
 
         if (redirectToAuthServer && idToken) {
             const postLogoutRedirect = encodeURIComponent(window.location.origin + '/login');
@@ -294,16 +299,16 @@ export class LoginService {
         const pendingNavigation = consumePendingNavigation();
         if (pendingNavigation) {
             const pendingPath = new URL(pendingNavigation, window.location.origin).pathname;
-            if (peppolId && getPeppolIdFromPath(pendingPath) === peppolId) {
+            if (peppolId ? getPeppolIdFromPath(pendingPath) === peppolId : routeWithoutCompany(pendingPath) === pendingPath) {
                 return pendingNavigation;
             }
         }
-        return peppolId ? ownershipRoute(peppolId, '/dashboard') : '/dashboard';
+        return this.getCurrentOwnershipRoute('/dashboard');
     }
 
     getCurrentOwnershipRoute(target: string): string {
         const peppolId = this.ownershipService.getCurrentPeppolId();
-        return peppolId ? ownershipRoute(peppolId, target) : '/dashboard';
+        return peppolId ? ownershipRoute(peppolId, target) : routeWithoutCompany(target);
     }
 
     private selectorForPendingNavigation(): OwnershipSelector | null {

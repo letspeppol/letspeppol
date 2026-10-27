@@ -40,6 +40,8 @@ public interface OwnershipRepository extends JpaRepository<Ownership, Long> {
 
     boolean existsByTypeAndCompanyPeppolId(AccountType type, String peppolId);
 
+    boolean existsByAccountIdAndStatus(Long accountId, OwnershipStatus status);
+
     @EntityGraph(attributePaths = {"account", "company"})
     Optional<Ownership> findFirstByAccountIdAndStatusOrderByLastUsedDesc(Long accountId, OwnershipStatus status);
 

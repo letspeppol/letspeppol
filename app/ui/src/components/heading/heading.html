@@ -10,6 +10,7 @@
 
         <div class="tabs-row">
             <nav class="tabs" role="tablist">
+                <template if.bind="ownershipService.hasCompany">
                 <button load="route.bind: dashboardPath; context.bind: null" class="btn tab" title="Dashboard" t="[title]navigation.dashboard">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chart-no-axes-combined-icon lucide-chart-no-axes-combined"><path d="M12 16v5"/><path d="M16 14v7"/><path d="M20 10v11"/><path d="m22 3-8.646 8.646a.5.5 0 0 1-.708 0L9.354 8.354a.5.5 0 0 0-.707 0L2 15"/><path d="M4 18v3"/><path d="M8 14v7"/></svg>
                     <span t="navigation.dashboard">Dashboard</span>
@@ -30,10 +31,11 @@
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
                     <span t="navigation.downloads">Downloads</span>
                 </button>
-                <button if.bind="ownershipService.admin" load="route.bind: usersPath; context.bind: null" class="btn tab" title="Users" t="[title]navigation.users">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users-icon lucide-users" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></svg>
-                    <span t="navigation.users">Users</span>
+                <button load="route.bind: settingsPath; context.bind: null" class="btn tab" title="Settings" t="[title]navigation.settings" new-feature-section="settings">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings-icon lucide-settings" aria-hidden="true"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/></svg>
+                    <span t="navigation.settings">Settings</span>
                 </button>
+                </template>
                 <button load="route.bind: accountPath; context.bind: null" class="btn tab" title="Account" t="[title]navigation.account" new-feature-section="account">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-building-icon lucide-building"><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M12 6h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/><path d="M8 6h.01"/><path d="M9 22v-3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><rect x="4" y="2" width="16" height="20" rx="2"/></svg>
                     <span t="navigation.account">Account</span>
@@ -42,9 +44,8 @@
         </div>
 
         <div style="display: flex; align-items: center; gap: var(--space-06); padding: var(--space-09) var(--space-12)">
-            <div if.bind="ownerships.length > 1 || canAddOwnership" class="heading-switcher-group" new-feature="add-account">
-                <button if.bind="canAddOwnership"
-                        type="button"
+            <div class="heading-switcher-group" new-feature="add-account">
+                <button type="button"
                         class="btn ghost"
                         class.bind="ownerships.length > 1 ? 'icon-only' : ''"
                         click.trigger="goToAddOwnership()"
@@ -72,7 +73,7 @@
                     </select>
                 </label>
             </div>
-            <button class="btn ghost" title="Log out" t="[title]common.logout" click.trigger="logout()" t="common.logout">Log out</button>
+            <button class="btn ghost" title="Log out" t="[title]common.logout;common.logout" click.trigger="logout()">Log out</button>
             <theme-selector></theme-selector>
             <language-selector></language-selector>
         </div>

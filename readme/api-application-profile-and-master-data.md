@@ -20,7 +20,7 @@ sequenceDiagram
     opt App has not cached the company profile
         App->>KYC: GET /kyc/sapi/company (forward user token)
     end
-    opt Account page reads the current Access Point
+    opt Company settings page reads the current Access Point
         UI->>App: GET /app/sapi/company/peppol-registration (user token)
         App->>KYC: POST /kyc/auth/oauth2/token (client_credentials, service)
         App->>Proxy: GET /proxy/sapi/registry?peppolId=JWT company (service token)
@@ -49,7 +49,7 @@ Master-data route coverage: `/app/sapi/partner/search`, `/app/sapi/partner/{id}`
 The Access Point is read from the proxy's stored company registry, independently of the company
 profile loaded at login. The app derives the Peppol ID from the authenticated JWT. No provider
 field is stored in App or KYC. A missing registry entry returns inactive registration with
-`accessPoint: NONE`; proxy failures return 503 and the Account page shows that the provider is
+`accessPoint: NONE`; proxy failures return 503 and the company settings page shows that the provider is
 unavailable. The page refreshes the lookup after registration and unregistration.
 
 ## Permissions

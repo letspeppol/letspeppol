@@ -48,6 +48,16 @@ class OwnershipClaimsTest {
     }
 
     @Test
+    void accountWithoutACompanyCarriesNoCompanyAndNoPermissions() {
+        JwtClaimsSet.Builder builder = JwtClaimsSet.builder().claim("uid", "account");
+        SecurityConfig.addAccountOnlyClaims(builder);
+
+        assertThat(builder.build().getClaims())
+                .containsEntry("permissionMask", 0)
+                .doesNotContainKeys("peppolId", "accountType", "peppolActive");
+    }
+
+    @Test
     void newOwnershipsAreActiveWithoutPermissions() {
         Ownership ownership = ownership(AccountType.USER, 0);
 

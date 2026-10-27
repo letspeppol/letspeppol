@@ -6,8 +6,11 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.letspeppol.kyc.dto.AccountDto;
 import org.letspeppol.kyc.dto.AuthRequest;
 import org.letspeppol.kyc.dto.OwnershipSummary;
+import org.letspeppol.kyc.mapper.AccountMapper;
+import org.letspeppol.kyc.service.AccountService;
 import org.letspeppol.kyc.service.OwnershipService;
 import org.letspeppol.kyc.service.jwt.JwtClaimExtractor;
 import org.letspeppol.kyc.service.jwt.JwtInfo;
@@ -28,7 +31,16 @@ import java.util.List;
 public class AccountController {
 
     private final OwnershipService ownershipService;
+    private final AccountService accountService;
     private final JwtClaimExtractor jwtClaimExtractor;
+
+    @GetMapping
+    @Operation(summary = "Load the signed-in account",
+            description = "Returns the name and email of the authenticated account. Also available to a token without "
+                    + "an acting company, which is what an account receives once it is no longer linked to any company.")
+    public AccountDto getAccount() {
+        return AccountMapper.toAccountDto(accountService.getByExternalId(jwtClaimExtractor.extract().uid()));
+    }
 
     @GetMapping("/ownerships")
     @Operation(summary = "List linked ownerships", description = "Returns the companies, roles, and ownership relationships available to the currently authenticated identity.")

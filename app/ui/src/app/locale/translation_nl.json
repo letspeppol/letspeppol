@@ -69,7 +69,8 @@
         "VAT_REGISTERED": "Btw-geregistreerd"
       },
       "title": "Btw-instellingen"
-    }
+    },
+    "without-company": "Dit account is niet aan een bedrijf gekoppeld. Vraag een beheerder om een uitnodiging, of voeg uw eigen bedrijf toe."
   },
   "alert": {
     "account": {
@@ -225,8 +226,8 @@
       "permissions-failed": "De rechten konden niet worden opgeslagen",
       "reactivate-failed": "Gebruiker opnieuw activeren mislukt",
       "reactivated": "Gebruiker opnieuw geactiveerd",
-      "remove-failed": "Gebruiker verwijderen mislukt",
-      "removed": "Gebruiker verwijderd",
+      "remove-failed": "Toegang intrekken mislukt",
+      "removed": "Toegang ingetrokken",
       "resend-failed": "De uitnodiging kon niet opnieuw worden verzonden",
       "suspend-failed": "Gebruiker schorsen mislukt",
       "suspended": "Gebruiker geschorst"
@@ -766,8 +767,8 @@
     "language": "Taal",
     "partners": "Partners",
     "products": "Producten",
-    "toggle-theme": "Thema wisselen",
-    "users": "Gebruikers"
+    "settings": "Instellingen",
+    "toggle-theme": "Thema wisselen"
   },
   "new-feature": {
     "click-to-dismiss": "Klik om te sluiten",
@@ -1020,6 +1021,15 @@
   "session": {
     "continue-title": "Sessies voortzetten"
   },
+  "settings": {
+    "company": {
+      "title": "Bedrijf"
+    },
+    "tabs": {
+      "company": "Bedrijf",
+      "users": "Gebruikers"
+    }
+  },
   "sponsors-page": {
     "empty": "Nog geen sponsors.",
     "load-error": "De sponsors konden nu niet worden geladen.",
@@ -1065,6 +1075,7 @@
   "users": {
     "action": {
       "reactivate": "Opnieuw activeren",
+      "remove": "Toegang intrekken",
       "resend": "Uitnodiging opnieuw verzenden",
       "suspend": "Schorsen"
     },
@@ -1096,8 +1107,8 @@
       "PRODUCT_MANAGE": "Producten beheren"
     },
     "remove": {
-      "confirm": "{{- name}} uit dit bedrijf verwijderen? Het account blijft bestaan, maar verliest de toegang tot dit bedrijf.",
-      "title": "Gebruiker verwijderen"
+      "confirm": "De toegang voor {{- name}} definitief uit dit bedrijf verwijderen?",
+      "title": "Toegang intrekken"
     },
     "status": {
       "ACTIVE": "Actief",

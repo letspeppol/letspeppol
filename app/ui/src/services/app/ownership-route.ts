@@ -5,10 +5,14 @@ const CONTEXT_SECTIONS = new Set([
     'products',
     'sponsors',
     'downloads',
-    'users',
+    'settings',
     'account',
     'add-ownership',
 ]);
+
+const SECTIONS_WITHOUT_COMPANY = new Set(['account', 'add-ownership']);
+
+export const ACCOUNT_WITHOUT_COMPANY_PATH = '/account';
 
 const PENDING_NAVIGATION_KEY = 'peppol.pending-navigation.v1';
 const ACTING_OWNERSHIP_KEY = 'peppol.acting-ownership.v1';
@@ -35,6 +39,11 @@ export function ownershipRoute(peppolId: string, target = '/dashboard'): string 
     const encodedPeppolId = encodeURIComponent(peppolId).replace(/%3A/gi, ':');
     const normalizedTarget = `/${target.replace(/^\/+/, '')}`;
     return `/${encodedPeppolId}${normalizedTarget}`;
+}
+
+export function routeWithoutCompany(target: string): string {
+    const section = target.replace(/^\/+/, '').split(/[/?#]/)[0];
+    return SECTIONS_WITHOUT_COMPANY.has(section) ? `/${section}` : ACCOUNT_WITHOUT_COMPANY_PATH;
 }
 
 export function currentOwnershipRoute(target: string): string {
