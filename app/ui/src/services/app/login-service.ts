@@ -1,5 +1,6 @@
 import {resolve} from "@aurelia/kernel";
 import {singleton} from "aurelia";
+import {Router} from "@aurelia/router";
 import {jwtDecode} from "jwt-decode";
 import {KYCApi} from "../kyc/kyc-api";
 import {AppApi} from "./app-api";
@@ -54,6 +55,7 @@ export class LoginService {
     private sponsorService = resolve(SponsorService);
     private statisticsService = resolve(StatisticsService);
     private vatDisplay = resolve(IVatDisplay);
+    private readonly router = resolve(Router);
     public authenticated = false;
 
     // Tokens live in memory only (never localStorage) so an XSS foothold can't read them at rest;
@@ -216,6 +218,24 @@ export class LoginService {
     async refreshToken(): Promise<boolean> {
         // The URL's company plus this tab's remembered role is sent on every renewal.
         return (await this.silentLogin(this.selectorForPath(window.location.pathname))).authorized;
+    }
+
+    async recoverFromUnauthorized(rejectedAuthorization: string | null): Promise<void> {
+        if (this.accessToken) {
+            if (rejectedAuthorization !== `Bearer ${this.accessToken}`) return;
+            const peppolId = this.ownershipService.getCurrentPeppolId();
+            if (await this.refreshToken()) {
+                if (this.ownershipService.getCurrentPeppolId() !== peppolId) {
+                    void this.router.load(this.getCurrentOwnershipRoute('/dashboard'));
+                }
+                return;
+            }
+            this.logout(false);
+        }
+        rememberCurrentNavigation();
+        localStorage.removeItem('token');
+        localStorage.removeItem(PEPPOL_ACTIVE_KEY);
+        void this.router.load(LOGIN_PATH);
     }
 
     private async exchangeCode(code: string, verifier: string): Promise<void> {

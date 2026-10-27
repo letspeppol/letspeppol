@@ -11,7 +11,7 @@ const info: InvitationInfo = {
     passwordRequired: true,
 };
 
-function createInvitation(token: string | null = 'invite-token') {
+function createInvitation(token: string | null = 'invite-token', authenticated = false) {
     const companyUserService = {
         verifyInvitation: vi.fn(),
         acceptInvitation: vi.fn(),
@@ -19,6 +19,7 @@ function createInvitation(token: string | null = 'invite-token') {
     const invitation = Object.create(Invitation.prototype) as Invitation;
     Object.assign(invitation, {
         companyUserService,
+        loginService: {authenticated},
         i18n: {tr: (key: string) => `tr:${key}`},
         token,
         info: undefined,
@@ -118,5 +119,19 @@ describe('Invitation', () => {
         expect(invitation.accepted).toBe(false);
         expect(invitation.submitting).toBe(false);
         expect(invitation.errorText).toBe('tr:error.invitation_not_found');
+    });
+
+    it('sends a signed-in invitee to the new company instead of signing them out', () => {
+        const {invitation} = createInvitation('invite-token', true);
+        Object.assign(invitation, {info, accepted: true});
+
+        expect(invitation.continuePath).toBe('/0208:0123456789/dashboard');
+    });
+
+    it('sends an invitee without a session to the login page', () => {
+        const {invitation} = createInvitation();
+        Object.assign(invitation, {info, accepted: true});
+
+        expect(invitation.continuePath).toBe('/login');
     });
 });

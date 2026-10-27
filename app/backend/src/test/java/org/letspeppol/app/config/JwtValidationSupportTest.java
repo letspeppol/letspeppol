@@ -35,6 +35,15 @@ class JwtValidationSupportTest {
     }
 
     @Test
+    void tokenWithAnUnknownAccountTypeIsRejected() {
+        Jwt.Builder token = Jwt.withTokenValue("token").header("alg", "RS256").subject("user");
+
+        assertThat(SecurityConfig.validateAccountType(token.claim("accountType", "USER").build()).hasErrors()).isFalse();
+        assertThat(SecurityConfig.validateAccountType(token.claims(claims -> claims.remove("accountType")).build()).hasErrors()).isFalse();
+        assertThat(SecurityConfig.validateAccountType(token.claim("accountType", "USER_DRAFT").build()).hasErrors()).isTrue();
+    }
+
+    @Test
     void loopbackJwksRequiresExplicitOptInUnderPostgresProfile() {
         Environment environment = mock(Environment.class);
         when(environment.matchesProfiles("postgres")).thenReturn(true);

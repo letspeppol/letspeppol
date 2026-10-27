@@ -70,8 +70,8 @@ An account whose companies were all removed or suspended still signs in. Its tok
 `permissionMask: 0`, but no `peppolId` or `accountType`. KYC accepts that token only on the account
 endpoints in the diagram (`/sapi/account/**`, `/sapi/password/change`, `/sapi/totp/**`,
 `/sapi/passkeys/**`); App and the proxy grant it nothing. The UI then offers the Account page and Add
-company only. A selector naming a role the account does not hold on a company it still belongs to keeps
-failing with `ownership_unavailable`.
+company only. A selector naming a role the account does not hold on a company where it still has an active
+ownership keeps failing with `ownership_unavailable`; a suspended or pending ownership counts as none.
 
 OAuth2 and OpenID Connect discovery remain at their standardized, issuer-derived
 `/.well-known/**` locations rather than moving under `/auth/**`; the public KYC reverse proxy must

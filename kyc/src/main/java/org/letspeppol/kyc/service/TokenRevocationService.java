@@ -31,9 +31,18 @@ public class TokenRevocationService {
     private final OAuth2AuthorizationService authorizationService;
     private final TokenRevocationFeed feed;
 
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
-    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT, fallbackExecution = true)
     public void revokeTokensOf(OwnershipAccessChanged ownership) {
+        revokeLiveTokensOf(ownership);
+    }
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+    public void revokeTokensIssuedWhileCommitting(OwnershipAccessChanged ownership) {
+        revokeLiveTokensOf(ownership);
+    }
+
+    private void revokeLiveTokensOf(OwnershipAccessChanged ownership) {
         List<String> authorizationIds = jdbcOperations.queryForList(
                 AUTHORIZATIONS_WITH_A_LIVE_ACCESS_TOKEN, String.class, ownership.email(), Timestamp.from(Instant.now()));
         int revoked = 0;
@@ -46,21 +55,16 @@ public class TokenRevocationService {
     }
 
     private boolean revokeAccessToken(String authorizationId, OwnershipAccessChanged ownership) {
-        try {
-            OAuth2Authorization authorization = authorizationService.findById(authorizationId);
-            OAuth2Authorization.Token<OAuth2AccessToken> accessToken = authorization == null ? null : authorization.getAccessToken();
-            Map<String, Object> claims = accessToken == null ? null : accessToken.getClaims();
-            if (claims == null
-                    || !ownership.peppolId().equals(claims.get("peppolId"))
-                    || !ownership.type().name().equals(claims.get("accountType"))
-                    || !(claims.get(JwtClaimNames.JTI) instanceof String tokenId)) {
-                return false;
-            }
-            feed.revoke(tokenId, accessToken.getToken().getExpiresAt());
-            return true;
-        } catch (RuntimeException e) {
-            log.warn("Could not read authorization {} while revoking tokens of {}: {}", authorizationId, ownership.email(), e.getMessage());
+        OAuth2Authorization authorization = authorizationService.findById(authorizationId);
+        OAuth2Authorization.Token<OAuth2AccessToken> accessToken = authorization == null ? null : authorization.getAccessToken();
+        Map<String, Object> claims = accessToken == null ? null : accessToken.getClaims();
+        if (claims == null
+                || !ownership.peppolId().equals(claims.get("peppolId"))
+                || !ownership.type().name().equals(claims.get("accountType"))
+                || !(claims.get(JwtClaimNames.JTI) instanceof String tokenId)) {
             return false;
         }
+        feed.revoke(tokenId, accessToken.getToken().getExpiresAt());
+        return true;
     }
 }

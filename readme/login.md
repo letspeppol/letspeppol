@@ -12,9 +12,9 @@ Protected application URLs start with the active Peppol ID, for example
 `peppol_id` and `account_type` on the authorization request. KYC validates the ownership, stores the
 exact selection with the authorization code, and revalidates it during token exchange. `lastUsed` is
 the default when login or a context-free `/dashboard` request supplies no selection. If the account
-has no ownership for the requested Peppol ID, KYC selects its most recently used ownership and the UI
-opens that company's dashboard, discarding the stale deep link. An unavailable role on a company the
-account still owns remains an error. An account without any active ownership signs in without a
+has no active ownership for the requested Peppol ID, KYC selects its most recently used ownership and the UI
+opens that company's dashboard, discarding the stale deep link. An unavailable role on a company where
+the account still has an active ownership remains an error. An account without any active ownership signs in without a
 company: its token has no `peppolId` or `accountType` and a `permissionMask` of 0, and the UI opens
 `/account`, where the person can manage their sign-in or add a company.
 
@@ -70,6 +70,8 @@ Note over SME, App: Obtain an access token with Authorization Code + PKCE
 
 The SPA keeps tokens in memory only. On reload, or when the access token expires, it re-authorizes
 silently (`prompt=none`) against the HttpOnly KYC session cookie instead of storing a refresh token.
+A `401` from App or KYC starts the same silent renewal; only when it fails does the UI drop its
+tokens, without ending the KYC session, and open the login page.
 Every contextual renewal gets its Peppol ID from the URL and its role from `sessionStorage`, so tabs
 can renew different ownerships independently. A pending relative URL is also kept in
 `sessionStorage` during interactive login and restored after `/callback`, including its query and

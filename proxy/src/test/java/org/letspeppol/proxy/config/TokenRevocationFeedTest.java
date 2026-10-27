@@ -16,10 +16,11 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 class TokenRevocationFeedTest {
 
@@ -27,15 +28,18 @@ class TokenRevocationFeedTest {
     private static final URI FEED_URI = URI.create("http://kyc:8084/lapi/revocations");
 
     private final MutableClock clock = new MutableClock();
-    private final List<URI> requestedUris = new ArrayList<>();
+    private final List<URI> requestedUris = new CopyOnWriteArrayList<>();
+    private final List<String> pollingThreads = new CopyOnWriteArrayList<>();
     private ExchangeFunction kyc = request -> Mono.error(new IllegalStateException("not stubbed"));
     private final TokenRevocationFeed feed = new TokenRevocationFeed(
             WebClient.builder().exchangeFunction(request -> {
                 requestedUris.add(request.url());
+                pollingThreads.add(Thread.currentThread().getName());
                 return kyc.exchange(request);
             }).build(),
             FEED_URI,
-            clock);
+            clock,
+            Duration.ofMillis(10));
 
     @Test
     void feedUriFollowsTheJwksUriUnlessConfigured() {
@@ -61,6 +65,22 @@ class TokenRevocationFeedTest {
         assertThat(requestedUris).containsExactly(FEED_URI);
         assertThat(feed.validate(jwt("revoked-token")).hasErrors()).isTrue();
         assertThat(feed.validate(jwt("other-token")).hasErrors()).isFalse();
+    }
+
+    @Test
+    void pollingStartsOnItsOwnThread() {
+        kyc = respondWith("""
+                [{"jti":"revoked-token","expiresAt":"2026-10-06T10:31:00Z"}]
+                """);
+
+        feed.startPolling();
+        try {
+            await().atMost(Duration.ofSeconds(5))
+                    .untilAsserted(() -> assertThat(feed.validate(jwt("revoked-token")).hasErrors()).isTrue());
+        } finally {
+            feed.stopPolling();
+        }
+        assertThat(pollingThreads).first().isEqualTo("token-revocation-feed");
     }
 
     @Test

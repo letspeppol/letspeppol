@@ -12,6 +12,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
+import org.springframework.security.oauth2.core.OAuth2Error;
+import org.springframework.security.oauth2.core.OAuth2TokenValidatorResult;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
@@ -24,12 +26,15 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
+
+    private static final OAuth2Error UNKNOWN_ACCOUNT_TYPE = new OAuth2Error("invalid_token", "The token has an unknown account type", null);
 
     public static final String PEPPOL_ID = "peppolId";
     public static final String PEPPOL_ACTIVE = "peppolActive";
@@ -73,8 +78,15 @@ public class SecurityConfig {
         requireTrustworthyJwkSetUri(jwkSetUri, environment, allowLoopbackJwks);
         NimbusJwtDecoder decoder = NimbusJwtDecoder.withJwkSetUri(jwkSetUri).build();
         decoder.setJwtValidator(new DelegatingOAuth2TokenValidator<Jwt>(
-                JwtValidationSupport.build(audience, issuer), tokenRevocationFeed::validate));
+                JwtValidationSupport.build(audience, issuer), SecurityConfig::validateAccountType, tokenRevocationFeed::validate));
         return decoder;
+    }
+
+    static OAuth2TokenValidatorResult validateAccountType(Jwt jwt) {
+        String accountType = jwt.getClaimAsString(ACCOUNT_TYPE);
+        return accountType == null || Arrays.stream(AccountType.values()).map(Enum::name).anyMatch(accountType::equals)
+                ? OAuth2TokenValidatorResult.success()
+                : OAuth2TokenValidatorResult.failure(UNKNOWN_ACCOUNT_TYPE);
     }
 
     // The JWKS endpoint is the JWT signature trust anchor, so in a deployed profile refuse to start

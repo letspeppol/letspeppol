@@ -114,8 +114,8 @@ public class CompanyUserService {
     }
 
     public void resendInvitation(Ownership admin, Long id, String acceptLanguage) {
-        InvitationMail mail = transactionTemplate.execute(status -> rotateInvitation(admin, id));
-        send(mail, LocaleUtil.extractLanguageTag(acceptLanguage));
+        String languageTag = LocaleUtil.extractLanguageTag(acceptLanguage);
+        transactionTemplate.executeWithoutResult(status -> send(rotateInvitation(admin, id), languageTag));
     }
 
     @Transactional

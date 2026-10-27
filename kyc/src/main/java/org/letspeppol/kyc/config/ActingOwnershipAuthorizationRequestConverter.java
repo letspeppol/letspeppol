@@ -83,9 +83,9 @@ public class ActingOwnershipAuthorizationRequestConverter implements Authenticat
             }
             // A stale company URL should use this account's default. A missing role on a
             // company the account still owns remains an invalid explicit selection.
-            if (selectedOwnership.isEmpty() && (requestedAccountType == null || ownershipRepository
-                    .findFirstByAccountIdAndCompanyPeppolIdOrderByLastUsedDesc(
-                            userDetails.getAccountId(), requestedPeppolId).isEmpty())) {
+            if (selectedOwnership.isEmpty() && (requestedAccountType == null || !ownershipRepository
+                    .existsByAccountIdAndCompanyPeppolIdAndStatus(
+                            userDetails.getAccountId(), requestedPeppolId, OwnershipStatus.ACTIVE))) {
                 selectedOwnership = ownershipRepository.findFirstByAccountIdAndStatusOrderByLastUsedDesc(
                         userDetails.getAccountId(), OwnershipStatus.ACTIVE);
             }

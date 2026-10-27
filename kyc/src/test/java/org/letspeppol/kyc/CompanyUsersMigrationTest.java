@@ -27,6 +27,10 @@ class CompanyUsersMigrationTest {
     private static long app;
     private static long linkedBeforeOwnerships;
     private static long linkedTwice;
+    private static long legacyRoles;
+    private static long user;
+    private static long userRow;
+    private static long drafter;
 
     @BeforeAll
     static void migrateLegacyAppLinks() throws SQLException {
@@ -41,6 +45,15 @@ class CompanyUsersMigrationTest {
             insertOwnership(connection, app, linkedBeforeOwnerships, "ADMIN");
             insertOwnership(connection, app, linkedTwice, "ADMIN");
             insertOwnership(connection, app, linkedTwice, "APP");
+
+            legacyRoles = insertCompany(connection, "0208:0000000003");
+            user = insertAccount(connection, UUID.randomUUID().toString());
+            drafter = insertAccount(connection, UUID.randomUUID().toString());
+            long readRow = insertOwnership(connection, user, legacyRoles, "USER_READ");
+            insertOwnership(connection, user, legacyRoles, "USER_DRAFT");
+            userRow = insertOwnership(connection, user, legacyRoles, "USER");
+            insertEmailVerification(connection, readRow, "requested-through-the-read-role");
+            insertOwnership(connection, drafter, legacyRoles, "USER_DRAFT");
         }
         migrate("1.10");
     }
@@ -63,6 +76,29 @@ class CompanyUsersMigrationTest {
     @Test
     void realAdminIsUntouched() throws SQLException {
         assertThat(types(admin, linkedBeforeOwnerships)).containsExactly("ADMIN");
+    }
+
+    @Test
+    void legacyRolesOfOneAccountMergeIntoOneUserWithTheWidestMask() throws SQLException {
+        assertThat(types(user, legacyRoles)).containsExactly("USER");
+        assertThat(permissionMasks(user, legacyRoles)).containsExactly(255);
+    }
+
+    @Test
+    void verificationRequestedThroughAMergedRowFollowsTheKeptRow() throws SQLException {
+        try (Connection connection = connect();
+             PreparedStatement statement = connection.prepareStatement(
+                     "SELECT requester_ownership_id FROM email_verification WHERE token = 'requested-through-the-read-role'")) {
+            try (ResultSet result = statement.executeQuery()) {
+                assertThat(result.next()).isTrue();
+                assertThat(result.getLong(1)).isEqualTo(userRow);
+            }
+        }
+    }
+
+    @Test
+    void draftRoleKeepsReadingDraftingAndPaymentStatus() throws SQLException {
+        assertThat(permissionMasks(drafter, legacyRoles)).containsExactly(11);
     }
 
     private static void migrate(String target) {
@@ -95,12 +131,25 @@ class CompanyUsersMigrationTest {
                 externalId + "@example.com", externalId);
     }
 
-    private static void insertOwnership(Connection connection, long accountId, long companyId, String type) throws SQLException {
+    private static long insertOwnership(Connection connection, long accountId, long companyId, String type) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(
-                "INSERT INTO ownership (account_id, company_id, type, created_on, last_used) VALUES (?, ?, ?::account_type, now(), now())")) {
+                "INSERT INTO ownership (account_id, company_id, type, created_on, last_used) VALUES (?, ?, ?::account_type, now(), now()) RETURNING id")) {
             statement.setLong(1, accountId);
             statement.setLong(2, companyId);
             statement.setString(3, type);
+            try (ResultSet result = statement.executeQuery()) {
+                result.next();
+                return result.getLong(1);
+            }
+        }
+    }
+
+    private static void insertEmailVerification(Connection connection, long requesterOwnershipId, String token) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(
+                "INSERT INTO email_verification (email, peppol_id, token, verified, expires_on, created_on, requester_ownership_id, type) "
+                        + "VALUES ('invitee@example.com', '0208:0000000003', ?, false, now() + interval '1 day', now(), ?, 'USER_READ')")) {
+            statement.setString(1, token);
+            statement.setLong(2, requesterOwnershipId);
             statement.executeUpdate();
         }
     }
@@ -114,6 +163,22 @@ class CompanyUsersMigrationTest {
                 result.next();
                 return result.getLong(1);
             }
+        }
+    }
+
+    private static List<Integer> permissionMasks(long accountId, long companyId) throws SQLException {
+        try (Connection connection = connect();
+             PreparedStatement statement = connection.prepareStatement(
+                     "SELECT permission_mask FROM ownership WHERE account_id = ? AND company_id = ?")) {
+            statement.setLong(1, accountId);
+            statement.setLong(2, companyId);
+            List<Integer> masks = new ArrayList<>();
+            try (ResultSet result = statement.executeQuery()) {
+                while (result.next()) {
+                    masks.add(result.getInt(1));
+                }
+            }
+            return masks;
         }
     }
 

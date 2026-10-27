@@ -33,6 +33,7 @@ import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.OAuth2ErrorCodes;
+import org.springframework.security.oauth2.core.OAuth2TokenValidatorResult;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
@@ -74,6 +75,7 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -81,6 +83,8 @@ import java.util.UUID;
 
 @Configuration
 public class SecurityConfig {
+
+    private static final OAuth2Error UNKNOWN_ACCOUNT_TYPE = new OAuth2Error("invalid_token", "The token has an unknown account type", null);
 
     public static final String ROLE_KYC_USER = "kyc_user";
     public static final String ROLE_KYC_ACCOUNT = "kyc_account";
@@ -235,8 +239,15 @@ public class SecurityConfig {
             TokenRevocationFeed tokenRevocationFeed) {
         NimbusJwtDecoder decoder = NimbusJwtDecoder.withPublicKey(publicKey).build();
         decoder.setJwtValidator(new DelegatingOAuth2TokenValidator<Jwt>(
-                JwtValidationSupport.build(audience, issuer), tokenRevocationFeed::validate));
+                JwtValidationSupport.build(audience, issuer), SecurityConfig::validateAccountType, tokenRevocationFeed::validate));
         return decoder;
+    }
+
+    static OAuth2TokenValidatorResult validateAccountType(Jwt jwt) {
+        String accountType = jwt.getClaimAsString("accountType");
+        return accountType == null || Arrays.stream(AccountType.values()).map(Enum::name).anyMatch(accountType::equals)
+                ? OAuth2TokenValidatorResult.success()
+                : OAuth2TokenValidatorResult.failure(UNKNOWN_ACCOUNT_TYPE);
     }
 
     @Bean

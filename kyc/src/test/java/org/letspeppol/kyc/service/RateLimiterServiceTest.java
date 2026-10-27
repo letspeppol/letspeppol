@@ -15,6 +15,8 @@ class RateLimiterServiceTest {
         ReflectionTestUtils.setField(s, "loginWindowSeconds", loginWindow);
         ReflectionTestUtils.setField(s, "emailMax", emailMax);
         ReflectionTestUtils.setField(s, "emailWindowSeconds", emailWindow);
+        ReflectionTestUtils.setField(s, "invitationCompanyMax", 1000);
+        ReflectionTestUtils.setField(s, "invitationCompanyWindowSeconds", 86400L);
         return s;
     }
 
@@ -67,5 +69,15 @@ class RateLimiterServiceTest {
         assertThrows(TooManyRequestsException.class, () -> s.checkInvitation(1L, "Invited@Example.com"));
         assertDoesNotThrow(() -> s.checkInvitation(2L, "invited@example.com"));
         assertDoesNotThrow(() -> s.checkActivation("invited@example.com"));
+    }
+
+    @Test
+    void invitationsOfOneCompanyAreCappedAcrossAddresses() {
+        RateLimiterService s = newLimiter(10, 300, 5, 3600);
+        ReflectionTestUtils.setField(s, "invitationCompanyMax", 2);
+        s.checkInvitation(1L, "first@example.com");
+        s.checkInvitation(1L, "second@example.com");
+        assertThrows(TooManyRequestsException.class, () -> s.checkInvitation(1L, "third@example.com"));
+        assertDoesNotThrow(() -> s.checkInvitation(2L, "third@example.com"));
     }
 }

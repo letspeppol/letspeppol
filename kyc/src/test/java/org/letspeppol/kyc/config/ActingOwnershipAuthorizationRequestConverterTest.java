@@ -140,9 +140,8 @@ class ActingOwnershipAuthorizationRequestConverterTest {
     @Test
     void unavailableRoleOnAnOwnedCompanyDoesNotFallBack() {
         OwnershipRepository repository = mock(OwnershipRepository.class);
-        Ownership selected = ownership(AccountType.USER);
-        when(repository.findFirstByAccountIdAndCompanyPeppolIdOrderByLastUsedDesc(ACCOUNT_ID, PEPPOL_ID))
-                .thenReturn(Optional.of(selected));
+        when(repository.existsByAccountIdAndCompanyPeppolIdAndStatus(ACCOUNT_ID, PEPPOL_ID, OwnershipStatus.ACTIVE))
+                .thenReturn(true);
         when(repository.existsByAccountIdAndStatus(ACCOUNT_ID, OwnershipStatus.ACTIVE)).thenReturn(true);
 
         assertThatThrownBy(() -> convert(repository, Map.of(
@@ -150,6 +149,28 @@ class ActingOwnershipAuthorizationRequestConverterTest {
                 ActingOwnershipAuthorizationRequestConverter.ACCOUNT_TYPE_PARAMETER, "ADMIN")))
                 .isInstanceOf(OAuth2AuthorizationCodeRequestAuthenticationException.class);
         verify(repository, never()).findFirstByAccountIdAndStatusOrderByLastUsedDesc(ACCOUNT_ID, OwnershipStatus.ACTIVE);
+    }
+
+    @Test
+    void suspendedRoleOnACompanyUsesTheAccountsOtherActiveCompany() {
+        OwnershipRepository repository = mock(OwnershipRepository.class);
+        Ownership suspended = ownership(AccountType.USER);
+        Ownership other = ownership(AccountType.ADMIN);
+        when(repository.findFirstByAccountIdAndCompanyPeppolIdOrderByLastUsedDesc(ACCOUNT_ID, "0208:9999999999"))
+                .thenReturn(Optional.of(suspended));
+        when(repository.findFirstByAccountIdAndStatusOrderByLastUsedDesc(ACCOUNT_ID, OwnershipStatus.ACTIVE))
+                .thenReturn(Optional.of(other));
+        when(repository.existsByAccountIdAndStatus(ACCOUNT_ID, OwnershipStatus.ACTIVE)).thenReturn(true);
+
+        OAuth2AuthorizationCodeRequestAuthenticationToken result = convert(repository, Map.of(
+                ActingOwnershipAuthorizationRequestConverter.PEPPOL_ID_PARAMETER, "0208:9999999999",
+                ActingOwnershipAuthorizationRequestConverter.ACCOUNT_TYPE_PARAMETER, "USER"));
+
+        assertThat(result.getAdditionalParameters())
+                .containsEntry(ActingOwnershipAuthorizationRequestConverter.PEPPOL_ID_PARAMETER, PEPPOL_ID)
+                .containsEntry(ActingOwnershipAuthorizationRequestConverter.ACCOUNT_TYPE_PARAMETER, "ADMIN");
+        verify(repository).existsByAccountIdAndCompanyPeppolIdAndStatus(
+                ACCOUNT_ID, "0208:9999999999", OwnershipStatus.ACTIVE);
     }
 
     @Test

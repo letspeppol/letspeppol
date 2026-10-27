@@ -38,6 +38,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtValidationException;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
@@ -72,6 +73,7 @@ class CompanyUserTest {
     @Autowired private JwtDecoder jwtDecoder;
     @MockitoBean private JavaMailSender javaMailSender;
     @MockitoSpyBean private RateLimiterService rateLimiterService;
+    @MockitoSpyBean private OAuth2AuthorizationService authorizationService;
 
     String company = "Users Company";
     String peppolId = "0208:6100000001";
@@ -248,8 +250,10 @@ class CompanyUserTest {
         assertEquals("Typed By Admin", listedUser(invited.id()).name());
         assertEquals("Typed By Admin", companyUserSteps.updatePermissions(adminToken, invited.id(), 3).name());
         assertEquals(List.of(otherPeppolId), companyUserSteps.ownedPeppolIds(otherAdminToken));
-        assertEquals("ownership_unavailable",
-                companyUserSteps.authorize(otherAdminEmail, otherAdminPassword, peppolId, AccountType.USER).error());
+        Jwt beforeAccepting = jwtDecoder.decode(
+                companyUserSteps.authorize(otherAdminEmail, otherAdminPassword, peppolId, AccountType.USER).accessToken());
+        assertEquals(otherPeppolId, beforeAccepting.getClaimAsString("peppolId"));
+        assertEquals("ADMIN", beforeAccepting.getClaimAsString("accountType"));
 
         ApiResult duplicate = companyUserSteps.tryInvite(adminToken, otherAdminEmail, otherAdminName, 1);
         assertEquals(HttpStatus.BAD_REQUEST, duplicate.status());
@@ -371,7 +375,9 @@ class CompanyUserTest {
         CompanyUserDto saved = companyUserSteps.listUsers(adminToken).stream()
                 .filter(row -> row.email().equals(email)).findFirst().orElseThrow();
         assertEquals(OwnershipStatus.INVITED, saved.status());
+        String savedToken = companyUserSteps.invitationToken(saved.id());
         assertEquals("invitation_not_sent", companyUserSteps.tryResend(adminToken, saved.id()).errorCode());
+        assertEquals(savedToken, companyUserSteps.invitationToken(saved.id()));
 
         Mockito.doNothing().when(javaMailSender).send(Mockito.any(MimeMessage.class));
         assertEquals(HttpStatus.NO_CONTENT, companyUserSteps.tryResend(adminToken, saved.id()).status());
@@ -481,6 +487,22 @@ class CompanyUserTest {
         String renewedToken = companyUserSteps.authorize(email, userPassword, peppolId, AccountType.USER).accessToken();
         assertEquals(3L, ((Number) jwtDecoder.decode(renewedToken).getClaim("permissionMask")).longValue());
         assertEquals(List.of(peppolId), companyUserSteps.ownedPeppolIds(renewedToken));
+    }
+
+    @Test
+    @Order(16)
+    void permissionChangeIsUndoneWhenItsTokensCannotBeRevoked() {
+        String email = "unrevokable@users-company.com";
+        CompanyUserDto user = companyUserSteps.inviteAndAccept(adminToken, email, "Uma Unrevokable", 1, userPassword);
+        String token = companyUserSteps.authorize(email, userPassword, peppolId, AccountType.USER).accessToken();
+        Mockito.doThrow(new IllegalStateException("unreadable authorization"))
+                .when(authorizationService).findById(Mockito.anyString());
+
+        ApiResult failed = companyUserSteps.tryUpdatePermissions(adminToken, user.id(), 2);
+
+        assertTrue(failed.status().is5xxServerError());
+        assertEquals(1, listedUser(user.id()).permissionMask());
+        assertEquals(HttpStatus.OK, companyUserSteps.ownershipsStatus(token));
     }
 
     private CompanyUserDto listedUser(long id) {

@@ -7,9 +7,26 @@ ALTER TABLE ownership
     ADD COLUMN permission_mask integer          NOT NULL DEFAULT 0;
 
 UPDATE ownership SET permission_mask = 255 WHERE type IN ('USER', 'AFFILIATE');
-UPDATE ownership SET type = 'USER', permission_mask = 3 WHERE type = 'USER_DRAFT';
+UPDATE ownership SET type = 'USER', permission_mask = 11 WHERE type = 'USER_DRAFT';
 UPDATE ownership SET type = 'USER', permission_mask = 1 WHERE type = 'USER_READ';
 UPDATE email_verification SET type = 'USER' WHERE type IN ('USER_DRAFT', 'USER_READ');
+
+CREATE TEMPORARY TABLE duplicate_user_ownership AS
+SELECT id, keeper_id
+FROM (SELECT id,
+             first_value(id) OVER (PARTITION BY account_id, company_id
+                                   ORDER BY permission_mask DESC, last_used DESC NULLS LAST, id) AS keeper_id
+      FROM ownership
+      WHERE type = 'USER') ranked
+WHERE id <> keeper_id;
+UPDATE email_verification
+SET requester_ownership_id = duplicate_user_ownership.keeper_id
+FROM duplicate_user_ownership
+WHERE email_verification.requester_ownership_id = duplicate_user_ownership.id;
+DELETE FROM ownership
+USING duplicate_user_ownership
+WHERE ownership.id = duplicate_user_ownership.id;
+DROP TABLE duplicate_user_ownership;
 
 DELETE FROM ownership admin_row
 USING account app_account

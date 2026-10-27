@@ -79,6 +79,8 @@ that ownership. Other ownerships of the same account keep their tokens.
 
 - KYC finds the unexpired access tokens of the ownership in its authorization store and puts their
   `jti` in an in-memory revocation feed. An entry stays until the token has expired.
+- This happens before the change is committed: when the tokens cannot be read, the change is rolled
+  back and the ADMIN gets an error. KYC looks again after the commit for tokens issued in between.
 - KYC checks the feed on every request, so it answers `401` for a revoked token at once.
 - App and Proxy read the feed from `GET /lapi/revocations` on KYC every five seconds
   (`oauth2.revocation-feed.poll-delay-ms`) and answer `401` for a listed token. The feed address is
@@ -105,8 +107,10 @@ see [Token revocation](#token-revocation).
 An `INVITED` row shows the name the ADMIN typed, also when the email address already has an account;
 the account's own name appears once the invitation is accepted. KYC stores the invitation first and
 mails it afterwards. When the mail cannot be sent the row stays `INVITED` and the call answers
-`invitation_not_sent`, so the ADMIN can use `resend`. Invitation mails have their own rate limit per
-company and email address, separate from registration mails.
+`invitation_not_sent`, so the ADMIN can use `resend`. `resend` replaces the token only when the new
+mail was sent, so a failed resend leaves the earlier link working. Invitation mails have their own
+rate limit per company and email address, separate from registration mails, and a company can send
+at most 50 a day (`rate-limit.invitation.company-max-attempts`).
 
 | Situation | Status | `errorCode` |
 | --- | --- | --- |

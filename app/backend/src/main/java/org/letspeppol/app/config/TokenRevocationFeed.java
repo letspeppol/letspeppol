@@ -1,9 +1,10 @@
 package org.letspeppol.app.config;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.OAuth2TokenValidatorResult;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -17,6 +18,9 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @Slf4j
@@ -30,23 +34,37 @@ public class TokenRevocationFeed {
     private final WebClient webClient;
     private final URI feedUri;
     private final Clock clock;
+    private final Duration pollDelay;
+    private final ScheduledExecutorService poller = Executors.newSingleThreadScheduledExecutor(
+            Thread.ofVirtual().name("token-revocation-feed").factory());
     private volatile Map<String, Instant> expiryByTokenId = Map.of();
     private boolean reachable = true;
 
     @Autowired
     public TokenRevocationFeed(
             @Value("${oauth2.revocation-feed.uri:}") String configuredUri,
-            @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}") String jwkSetUri) {
-        this(WebClient.create(), feedUri(configuredUri, jwkSetUri), Clock.systemUTC());
+            @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}") String jwkSetUri,
+            @Value("${oauth2.revocation-feed.poll-delay-ms:5000}") long pollDelayMs) {
+        this(WebClient.create(), feedUri(configuredUri, jwkSetUri), Clock.systemUTC(), Duration.ofMillis(pollDelayMs));
     }
 
-    TokenRevocationFeed(WebClient webClient, URI feedUri, Clock clock) {
+    TokenRevocationFeed(WebClient webClient, URI feedUri, Clock clock, Duration pollDelay) {
         this.webClient = webClient;
         this.feedUri = feedUri;
         this.clock = clock;
+        this.pollDelay = pollDelay;
     }
 
-    @Scheduled(fixedDelayString = "${oauth2.revocation-feed.poll-delay-ms:5000}")
+    @PostConstruct
+    void startPolling() {
+        poller.scheduleWithFixedDelay(this::refresh, 0, pollDelay.toMillis(), TimeUnit.MILLISECONDS);
+    }
+
+    @PreDestroy
+    void stopPolling() {
+        poller.shutdownNow();
+    }
+
     public void refresh() {
         try {
             List<RevokedToken> revokedTokens = webClient.get().uri(feedUri).retrieve()
