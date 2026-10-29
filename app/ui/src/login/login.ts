@@ -6,7 +6,7 @@ import {
     BrowserAuthenticationService,
 } from "../services/kyc/browser-authentication-service";
 import {consumeLoginError, loginErrorKeyFor} from "./pending-login-error";
-import {getRememberedEmail, updateRememberedEmail} from "./remembered-email";
+import {consumeLoginHint, getRememberedEmail, updateRememberedEmail} from "./remembered-email";
 
 const VERIFICATION_CODE_LENGTH = 6;
 
@@ -18,8 +18,8 @@ export class Login {
     private readonly router = resolve(IRouter);
 
     step: LoginStep = 'credentials';
-    email = getRememberedEmail() ?? '';
-    rememberEmail = this.email !== '';
+    email = consumeLoginHint() ?? getRememberedEmail() ?? '';
+    rememberEmail = getRememberedEmail() !== null;
     password = '';
     verificationCode = '';
     useRecoveryCode = false;

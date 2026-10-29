@@ -1,16 +1,20 @@
-import {Params, RouteNode} from "@aurelia/router";
+import {IRouter, Params, RouteNode} from "@aurelia/router";
 import {resolve} from "@aurelia/kernel";
 import {I18N} from "@aurelia/i18n";
 import {toErrorResponse, toLocalizedErrorMessage} from "../app/util/error-response-handler";
 import {ChoosePassword} from "../components/choose-password/choose-password";
+import {rememberLoginHint} from "../login/remembered-email";
 import {CompanyUserService, InvitationInfo} from "../services/kyc/company-user-service";
 import {LoginService} from "../services/app/login-service";
 import {ownershipRoute} from "../services/app/ownership-route";
+import {OwnershipService} from "../services/app/ownership-service";
 import {clearTokenFromUrl} from "../services/util/url";
 
 export class Invitation {
     private readonly companyUserService = resolve(CompanyUserService);
     private readonly loginService = resolve(LoginService);
+    private readonly ownershipService = resolve(OwnershipService);
+    private readonly router = resolve(IRouter);
     private readonly i18n = resolve(I18N);
     token: string | null = null;
     info: InvitationInfo | undefined = undefined;
@@ -43,10 +47,18 @@ export class Invitation {
         }
     }
 
-    get continuePath(): string {
-        return this.loginService.authenticated && this.info
-            ? ownershipRoute(this.info.peppolId, '/dashboard')
-            : '/login';
+    async logIn() {
+        if (await this.loginService.ensureAuthenticated()
+            && this.ownershipService.getCurrentAccountEmail() === this.info.email) {
+            void this.router.load(ownershipRoute(this.info.peppolId, '/dashboard'));
+            return;
+        }
+        rememberLoginHint(this.info.email);
+        if (this.loginService.authenticated) {
+            this.loginService.logout();
+            return;
+        }
+        void this.router.load('/login');
     }
 
     get canAccept(): boolean {

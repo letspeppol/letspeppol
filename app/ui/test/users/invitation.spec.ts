@@ -1,5 +1,6 @@
 import {afterEach, describe, expect, it, vi} from 'vitest';
 import type {Params, RouteNode} from '@aurelia/router';
+import {consumeLoginHint} from '../../src/login/remembered-email';
 import {InvitationInfo} from '../../src/services/kyc/company-user-service';
 import {Invitation} from '../../src/users/invitation';
 
@@ -11,15 +12,23 @@ const info: InvitationInfo = {
     passwordRequired: true,
 };
 
-function createInvitation(token: string | null = 'invite-token', authenticated = false) {
+function createInvitation(token: string | null = 'invite-token', signedInAs: string | null = null) {
     const companyUserService = {
         verifyInvitation: vi.fn(),
         acceptInvitation: vi.fn(),
     };
+    const loginService = {
+        authenticated: signedInAs !== null,
+        ensureAuthenticated: vi.fn().mockResolvedValue(signedInAs !== null),
+        logout: vi.fn(),
+    };
+    const router = {load: vi.fn()};
     const invitation = Object.create(Invitation.prototype) as Invitation;
     Object.assign(invitation, {
         companyUserService,
-        loginService: {authenticated},
+        loginService,
+        ownershipService: {getCurrentAccountEmail: () => signedInAs},
+        router,
         i18n: {tr: (key: string) => `tr:${key}`},
         token,
         info: undefined,
@@ -31,7 +40,7 @@ function createInvitation(token: string | null = 'invite-token', authenticated =
         confirmPassword: '',
         choosePassword: {rules: {pwStrong: true, matchOk: true}},
     });
-    return {invitation, companyUserService};
+    return {invitation, companyUserService, loginService, router};
 }
 
 function errorResponse(errorCode: string): Response {
@@ -40,6 +49,7 @@ function errorResponse(errorCode: string): Response {
 
 afterEach(() => {
     history.replaceState({}, '', '/');
+    sessionStorage.clear();
 });
 
 describe('Invitation', () => {
@@ -121,17 +131,35 @@ describe('Invitation', () => {
         expect(invitation.errorText).toBe('tr:error.invitation_not_found');
     });
 
-    it('sends a signed-in invitee to the new company instead of signing them out', () => {
-        const {invitation} = createInvitation('invite-token', true);
+    it('sends a signed-in invitee to the new company instead of signing them out', async () => {
+        const {invitation, loginService, router} = createInvitation('invite-token', info.email);
         Object.assign(invitation, {info, accepted: true});
 
-        expect(invitation.continuePath).toBe('/0208:0123456789/dashboard');
+        await invitation.logIn();
+
+        expect(router.load).toHaveBeenCalledWith('/0208:0123456789/dashboard');
+        expect(loginService.logout).not.toHaveBeenCalled();
     });
 
-    it('sends an invitee without a session to the login page', () => {
-        const {invitation} = createInvitation();
+    it('signs out another account on this browser so the invitee logs in as themselves', async () => {
+        const {invitation, loginService, router} = createInvitation('invite-token', 'admin@example.be');
         Object.assign(invitation, {info, accepted: true});
 
-        expect(invitation.continuePath).toBe('/login');
+        await invitation.logIn();
+
+        expect(loginService.logout).toHaveBeenCalled();
+        expect(router.load).not.toHaveBeenCalled();
+        expect(consumeLoginHint()).toBe(info.email);
+    });
+
+    it('sends an invitee without a session to the login page with their email filled in', async () => {
+        const {invitation, loginService, router} = createInvitation();
+        Object.assign(invitation, {info, accepted: true});
+
+        await invitation.logIn();
+
+        expect(router.load).toHaveBeenCalledWith('/login');
+        expect(loginService.logout).not.toHaveBeenCalled();
+        expect(consumeLoginHint()).toBe(info.email);
     });
 });

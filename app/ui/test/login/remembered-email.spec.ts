@@ -1,8 +1,9 @@
 import {afterEach, describe, expect, it} from 'vitest';
-import {getRememberedEmail, updateRememberedEmail} from '../../src/login/remembered-email';
+import {consumeLoginHint, getRememberedEmail, rememberLoginHint, updateRememberedEmail} from '../../src/login/remembered-email';
 
 afterEach(() => {
     localStorage.clear();
+    sessionStorage.clear();
 });
 
 describe('remembered login email', () => {
@@ -17,5 +18,12 @@ describe('remembered login email', () => {
         updateRememberedEmail('person@example.com', false);
 
         expect(getRememberedEmail()).toBeNull();
+    });
+
+    it('hands a login hint to the next login page once', () => {
+        rememberLoginHint('invitee@example.com');
+
+        expect(consumeLoginHint()).toBe('invitee@example.com');
+        expect(consumeLoginHint()).toBeNull();
     });
 });

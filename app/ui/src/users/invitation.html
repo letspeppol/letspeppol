@@ -7,7 +7,7 @@
     <div if.bind="accepted" class="auth-form">
         <p t="invitation.accepted" t-params.bind="{company: info.companyName}">You now have access. Log in to continue.</p>
         <div class="auth-actions">
-            <a class="btn primary" href.bind="continuePath" t="login.action">Log in</a>
+            <button type="button" class="btn primary" click.trigger="logIn()" t="login.action">Log in</button>
         </div>
     </div>
     <form if.bind="info && !accepted" class="auth-form" submit.trigger="accept()">

@@ -24,6 +24,7 @@ export interface OwnershipSummary {
 }
 
 interface JwtClaims {
+    sub?: string,
     uid?: string,
     peppolId?: string,
     accountType?: string,
@@ -162,6 +163,10 @@ export class OwnershipService {
 
     getCurrentAccountId(): string | null {
         return this.claims()?.uid ?? null;
+    }
+
+    getCurrentAccountEmail(): string | null {
+        return this.claims()?.sub ?? null;
     }
 
     getCurrentOwnershipKey(): string | null {
