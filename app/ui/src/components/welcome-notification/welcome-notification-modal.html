@@ -1,12 +1,12 @@
-<div class="modal welcome-notification-modal" role="dialog" aria-modal="true" show.bind="open">
+<div class="modal welcome-notification-modal" role="dialog" aria-modal="true" aria-labelledby="welcome-notification-title" show.bind="open">
     <div class="modal-backdrop"></div>
-    <div class="modal-card welcome-notification-card" keydown.trigger="onKeyDown($event)">
+    <div class="modal-card welcome-notification-card" ref="card" tabindex="-1" keydown.trigger="onKeyDown($event)">
         <header class="modal-header">
-            <h3 t="welcome-notification.title">Welcome</h3>
+            <h2 id="welcome-notification-title" t="welcome-notification.title">Welcome</h2>
         </header>
         <div class="modal-body welcome-notification-body" innerhtml.bind="currentHtmlCode"></div>
         <footer class="modal-footer">
-            <span if.bind="notifications.length > 1" class="modal-footer-info">${index + 1} / ${notifications.length}</span>
+            <span if.bind="notifications.length > 1" class="modal-footer-info num">${index + 1} / ${notifications.length}</span>
             <button if.bind="hasNext" type="button" class="btn primary" click.trigger="next()" t="common.next">Next</button>
             <button if.bind="!hasNext" type="button" class="btn primary" click.trigger="complete()" t="common.close">Close</button>
         </footer>

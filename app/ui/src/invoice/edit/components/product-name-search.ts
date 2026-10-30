@@ -2,21 +2,28 @@ import {ProductDto, ProductService} from "../../../services/app/product-service"
 import {resolve} from "@aurelia/kernel";
 import {bindable} from "aurelia";
 import {ProductContext} from "../../../product/product-context";
+import {PriceConverter} from "../../../app/value-converters/price";
 
 export class ProductNameSearch {
     private productService = resolve(ProductService);
     private productContext = resolve(ProductContext);
     @bindable inputValue = '';
     @bindable readonly;
+    @bindable label: string;
     filteredProducts: ProductDto[] = [];
     showSuggestions = false;
     highlightedIndex = -1;
     productSearchInput: HTMLInputElement; // ref from template
     @bindable selectProductFunction: (c: ProductDto) => void;
     @bindable onSearchChangeFunction: (e: UIEvent) => void;
+    private readonly priceConverter = new PriceConverter();
     top = '';
     left = '';
     width= '';
+
+    priceLabel(product: ProductDto): string {
+        return this.priceConverter.toView(product.salePrice);
+    }
 
     attached() {
         this.getProducts();
@@ -26,8 +33,8 @@ export class ProductNameSearch {
         if (!this.productContext.products) {
             try {
                 this.productContext.products = await this.productService.getProducts()
-            } catch (e) {
-                console.warn('Product API failed, using mock data');
+            } catch {
+                console.warn('Product API failed');
             }
         }
     }
@@ -55,10 +62,9 @@ export class ProductNameSearch {
             const input =  e.target as (HTMLInputElement);
             setTimeout(() => {
                 const rect = input.getBoundingClientRect();
-                this.top = `${rect.bottom + window.scrollY}px`;
-                this.left = `${rect.left + window.scrollX}px`;
+                this.top = `${rect.bottom}px`;
+                this.left = `${rect.left}px`;
                 this.width = `${rect.width}px`;
-                console.log(this.left);
                 this.showSuggestions = true;
             });
         } else {

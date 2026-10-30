@@ -1,0 +1,84 @@
+.partner-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: var(--space-3) var(--space-4);
+    margin-bottom: var(--space-4);
+}
+
+.partner-toolbar .segmented {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.partner-toolbar .partner-search {
+    flex: 0 1 18rem;
+}
+
+.partner-row {
+    cursor: pointer;
+}
+
+.partner-link {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--ink);
+    font: inherit;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+}
+
+.partner-link:hover {
+    color: var(--navy-ink);
+    text-decoration: underline;
+}
+
+.partner-table .partner-name-col {
+    width: 22%;
+}
+
+.partner-types {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+}
+
+.partner-address {
+    display: grid;
+}
+
+.partner-nowrap {
+    white-space: nowrap;
+}
+
+.partner-table .num {
+    text-align: left;
+}
+
+.partner-email {
+    overflow-wrap: anywhere;
+}
+
+.partner-empty {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-3);
+}
+
+@media (width <= 767px) {
+    .partner-toolbar {
+        flex-flow: column nowrap;
+        align-items: stretch;
+    }
+
+    .partner-toolbar .partner-search {
+        flex-basis: auto;
+    }
+
+    .data-table.partner-table tbody td.num {
+        text-align: left;
+    }
+}

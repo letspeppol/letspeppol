@@ -1,10 +1,12 @@
 <template>
-    <div>
-        <input id="productSearch"
+    <div class="product-name-search">
+        <input ref="productSearchInput"
                type="text"
                name="productSearch"
-               placeholder="name"
                t="[placeholder]invoice.productSearch.placeholder"
+               aria-label.bind="label"
+               aria-autocomplete="list"
+               aria-expanded.bind="showSuggestions"
                value.bind="inputValue"
                input.trigger="onSearchInput($event)"
                keydown.trigger="onSearchKeydown($event)"
@@ -13,16 +15,17 @@
                autocomplete="off"
                readonly.bind="readonly"
         />
-        <ul class="autocomplete-list" role="listbox" if.bind="showSuggestions" style="max-width: 200px; top: ${top}; left: ${left}; width: ${width}">
+        <ul class="autocomplete-list product-suggestions" role="listbox" if.bind="showSuggestions" style.bind="{top: top, left: left, width: width}">
             <li repeat.for="p of filteredProducts"
                 role="option"
                 class="autocomplete-item"
                 class.bind="$index === highlightedIndex ? 'active' : ''"
+                aria-selected.bind="$index === highlightedIndex"
                 click.trigger="selectProduct(p)"
                 mousedown.trigger="$event.preventDefault()">
                 <div class="title">${p.name}</div>
-                <div class="meta">${p.description}</div>
-                <div class="addr">Price: ${p.salePrice}, stock: ${p.stockQuantity}</div>
+                <div class="meta" if.bind="p.description">${p.description}</div>
+                <div class="addr tabular" t="invoice.productSearch.price-stock" t-params.bind="{price: priceLabel(p), stock: p.stockQuantity}"></div>
             </li>
             <li class="autocomplete-empty" if.bind="filteredProducts.length === 0" t="invoice.productSearch.no-matches">No matches</li>
         </ul>

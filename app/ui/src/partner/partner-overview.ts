@@ -5,6 +5,7 @@ import {IEventAggregator, watch} from "aurelia";
 import {AlertType} from "../components/alert/alert";
 import {I18N} from "@aurelia/i18n";
 import {OwnershipService} from "../services/app/ownership-service";
+import {ConfirmationModalContext} from "../components/confirmation/confirmation-modal-context";
 
 type SortDirection = "asc" | "desc";
 
@@ -14,6 +15,7 @@ export class PartnerOverview {
     private partnerService = resolve(PartnerService);
     private readonly ownershipService = resolve(OwnershipService);
     private readonly i18n = resolve(I18N);
+    private readonly confirmationModalContext = resolve(ConfirmationModalContext);
     searchQuery = '';
     category = 'all';
     activeSortProperty = 'name';
@@ -119,8 +121,19 @@ export class PartnerOverview {
         this.partnerContext.selectedPartner = partner;
     }
 
-    async deleteItem(event: Event, partner: PartnerDto) {
+    deleteItem(event: Event, partner: PartnerDto) {
         event.stopPropagation();
+        this.confirmationModalContext.showConfirmationModal(
+            this.i18n.tr('partner.delete'),
+            this.i18n.tr('partner.delete-confirm', {name: partner.name}),
+            () => this.removePartner(partner),
+            undefined,
+            'default',
+            {confirmLabel: this.i18n.tr('partner.delete'), destructive: true}
+        );
+    }
+
+    private async removePartner(partner: PartnerDto) {
         try {
             await this.partnerService.deletePartner(partner.id)
             this.partnerContext.deletePartner(partner);
@@ -129,7 +142,6 @@ export class PartnerOverview {
         } catch {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.partner.delete-failed')});
         }
-        return false;
     }
 
     private comparePartners(a: PartnerDto, b: PartnerDto) {
@@ -158,6 +170,10 @@ export class PartnerOverview {
                 return partner.registeredOffice?.countryCode;
             case 'vatNumber':
                 return partner.vatNumber;
+            case 'peppolId':
+                return partner.peppolId;
+            case 'email':
+                return partner.email;
             default:
                 return '';
         }

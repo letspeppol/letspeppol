@@ -1,4 +1,4 @@
-import {IDisposable, IEventAggregator} from "aurelia";
+import {IDisposable, IEventAggregator, watch} from "aurelia";
 import {resolve} from "@aurelia/kernel";
 import {I18N} from "@aurelia/i18n";
 import {
@@ -10,6 +10,7 @@ import {
     WelcomeNotificationsResponse
 } from "../../services/app/welcome-notification-service";
 import {onModalEnter} from "../util/modal-keyboard";
+import {focusFirst, keepFocusInside} from "../util/focus-trap";
 import {LoginService} from "../../services/app/login-service";
 
 const SHOW_WELCOME_NOTIFICATIONS = "showWelcomeNotifications";
@@ -25,6 +26,7 @@ export class WelcomeNotificationModal {
     private seenIds = new Set<number>();
     private pendingSeenIds = new Set<number>();
 
+    card?: HTMLElement;
     open = false;
     loading = false;
     notifications: WelcomeNotificationDto[] = [];
@@ -100,7 +102,20 @@ export class WelcomeNotificationModal {
         this.close();
     }
 
+    @watch((vm: WelcomeNotificationModal) => vm.open)
+    focusWhenOpened(open: boolean) {
+        if (open) {
+            requestAnimationFrame(() => focusFirst(this.card));
+        }
+    }
+
     onKeyDown(event: KeyboardEvent) {
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            this.complete();
+            return;
+        }
+        keepFocusInside(event, this.card);
         onModalEnter(event, () => this.hasNext ? this.next() : this.complete());
     }
 

@@ -1,4 +1,4 @@
-﻿<import from="./product-name-search"></import>
+<import from="./product-name-search"></import>
 <import from="../../../app/value-converters/price.ts"></import>
 <import from="./modals/invoice-zero-vat-reason-modal"></import>
 
@@ -11,125 +11,120 @@
     sync-shared-vat-reason-text.bind="(reasonId, reasonText, line) => syncSharedVatReasonText(reasonId, reasonText, line)">
 </invoice-zero-vat-reason-modal>
 
-<div class="line-items">
+<section class="line-items" aria-labelledby="invoice-lines-title">
     <div class="line-items-head">
-        <h3 t="invoice.edit.invoice-lines">Invoice lines</h3>
+        <h2 id="invoice-lines-title" class="composer-section-title" t="invoice.edit.invoice-lines">Invoice lines</h2>
+        <div if.bind="!readOnly" class="line-items-tools">
+            <button type="button" class="btn ghost small" aria-pressed.bind="!!invoiceContext.showAllowanceChargeForLines" click.trigger="toggleAllowanceCharge()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>
+                <span t="invoice.edit.line-discounts">Discounts per line</span>
+            </button>
+            <button type="button" class="btn ghost small" data-action="recreate-positions" click.trigger="recalculateLinePositions()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 5H3"/><path d="M7 12H3"/><path d="M7 19H3"/><path d="M12 18a5 5 0 0 0 9-3 4.5 4.5 0 0 0-4.5-4.5c-1.33 0-2.54.54-3.41 1.41L11 14"/><path d="M11 10v4h4"/></svg>
+                <span t="invoice.edit.recreate-positions">Renumber lines</span>
+            </button>
+        </div>
     </div>
-    <div class="table-wrapper">
-        <table class="data-table line-table">
+    <div class="table-wrapper line-table-wrapper">
+        <table class="data-table line-table" read-only.class="readOnly" aria-labelledby="invoice-lines-title">
             <thead>
             <tr>
-                <th style="width:80px">
-                    <div style="display: flex">
-                        <span t="invoice.edit.pos">Pos</span>
-                        <button if.bind="!readOnly" class="icon-btn" data-action="recreate-positions" title="Recreate line positions" t="[title]invoice.edit.recreate-positions" click.trigger="recalculateLinePositions()">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-restart-icon lucide-list-restart"><path d="M21 5H3"/><path d="M7 12H3"/><path d="M7 19H3"/><path d="M12 18a5 5 0 0 0 9-3 4.5 4.5 0 0 0-4.5-4.5c-1.33 0-2.54.54-3.41 1.41L11 14"/><path d="M11 10v4h4"/></svg>
-                        </button>
-                    </div>
-                </th>
-                <th style="width:18%" t="product.table.name" class="required">Name</th>
-                <th t="product.table.description">Description</th>
-                <th class="num" style="width:120px" t="invoice.edit.amount">Amount</th>
-                <th class="num" style="width:140px" t="invoice.edit.unit-price">Unit price</th>
-                <th if.bind="companyService.myCompany?.vatNumber" class="num" style="width:140px" t="invoice.edit.tax">Tax</th>
-                <th>
-                    <div style="display:flex; flex-direction: row">
-                        <span if.bind="invoiceContext.showAllowanceChargeForLines" t="invoice.allowanceChargeModal.title">Discount/Costs</span>
-                        <button if.bind="!readOnly" class="icon-btn" title="Edit" t="[title]common.edit" click.trigger="toggleAllowanceCharge()">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-tag-icon lucide-tag"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>
-                        </button>
-                    </div>
-                </th>
-                <th class="num" style="width:140px"><span t="invoice.edit.total">Total</span></th>
-                <th if.bind="!readOnly" class="actions-col" style="width:1%" t="invoice.edit.actions">Actions</th>
+                <th class="col-pos" t="invoice.edit.pos">No.</th>
+                <th class="col-name" t="product.table.name">Name</th>
+                <th class="col-desc" t="product.table.description">Description</th>
+                <th class="num col-qty" t="invoice.edit.amount">Quantity</th>
+                <th class="num col-price" t="invoice.edit.unit-price">Unit price</th>
+                <th if.bind="vatRegistered" class="col-vat" t="invoice.edit.tax">VAT</th>
+                <th if.bind="invoiceContext.showAllowanceChargeForLines" class="col-ac" t="invoice.allowanceChargeModal.title">Discounts/costs</th>
+                <th class="num col-total" t="invoice.edit.total">Total</th>
+                <th if.bind="!readOnly" class="actions-col"><span class="visually-hidden" t="invoice.edit.actions">Actions</span></th>
             </tr>
             </thead>
             <tbody if.bind="invoiceContext.selectedInvoice">
             <tr repeat.for="line of invoiceContext.lines">
-                <td>
+                <td class="col-pos" t="[data-label]invoice.edit.pos">
                     <div required-table-input.class="!line.ID">
-                        <input class="pos" type="number" min="1" value.bind="line.ID" readonly.bind="readOnly"/>
+                        <input class="pos" type="number" inputmode="numeric" min="1" value.bind="line.ID" readonly.bind="readOnly" t="[aria-label]invoice.edit.pos"/>
                     </div>
                 </td>
-                <td>
-                    <div required-table-input.class="!line.Item.Name">
-                        <product-name-search input-value.two-way="line.Item.Name" readonly.bind="readOnly"
+                <td class="col-name" t="[data-label]product.table.name">
+                    <p if.bind="readOnly" class="line-text">${line.Item.Name}</p>
+                    <div else required-table-input.class="!line.Item.Name">
+                        <product-name-search input-value.two-way="line.Item.Name"
+                                             label.bind="'product.table.name' & t"
                                              on-search-change-function.bind="() => nameOnChange(line)"
                                              select-product-function.bind="(prod) => selectProduct(prod, line)">
                         </product-name-search>
                     </div>
                 </td>
-                <td><textarea class="description required-input" placeholder="Description" t="[placeholder]label.description" value.bind="line.Item.Description" readonly.bind="readOnly"></textarea></td>
-                <td class="num">
-                    <template if.bind="invoiceContext.isInvoice">
-                        <div required-table-input.class="!line.InvoicedQuantity.value">
-                            <input class="qty" type="number" min="0" step="1" value.bind="line.InvoicedQuantity.value" change.trigger="calcLineTotal(line)" readonly.bind="readOnly" />
-                        </div>
-                    </template>
-                    <template else>
-                        <div required-table-input.class="!line.CreditedQuantity.value">
-                            <input class="qty" type="number" min="0" step="1" value.bind="line.CreditedQuantity.value" change.trigger="calcLineTotal(line)" readonly.bind="readOnly" />
-                        </div>
-                    </template>
+                <td class="col-desc" t="[data-label]product.table.description">
+                    <p if.bind="readOnly" class="line-text">${line.Item.Description}</p>
+                    <textarea else class="description" rows="1" value.bind="line.Item.Description" t="[placeholder,aria-label]label.description"></textarea>
                 </td>
-                <td class="num">
-                    <div required-table-input.class="!line.Price.PriceAmount.value">
-                        <input class="unitPrice" type="number" min="0" step="0.01" value.bind="line.Price.PriceAmount.value" change.trigger="calcLineTotal(line)" readonly.bind="readOnly" />
+                <td class="num col-qty" t="[data-label]invoice.edit.amount">
+                    <div if.bind="invoiceContext.isInvoice" required-table-input.class="!line.InvoicedQuantity.value">
+                        <input class="qty" type="number" inputmode="decimal" min="0" step="1" value.bind="line.InvoicedQuantity.value" change.trigger="calcLineTotal(line)" readonly.bind="readOnly" t="[aria-label]invoice.edit.amount" />
+                    </div>
+                    <div else required-table-input.class="!line.CreditedQuantity.value">
+                        <input class="qty" type="number" inputmode="decimal" min="0" step="1" value.bind="line.CreditedQuantity.value" change.trigger="calcLineTotal(line)" readonly.bind="readOnly" t="[aria-label]invoice.edit.amount" />
                     </div>
                 </td>
-                <td if.bind="companyService.myCompany?.vatNumber" class="num">
-                    <div style="display:flex;gap:.35rem;align-items:center">
+                <td class="num col-price" t="[data-label]invoice.edit.unit-price">
+                    <span class="line-op" aria-hidden="true">×</span>
+                    <div required-table-input.class="!line.Price.PriceAmount.value">
+                        <input class="unitPrice" type="number" inputmode="decimal" min="0" step="0.01" value.bind="line.Price.PriceAmount.value" change.trigger="calcLineTotal(line)" readonly.bind="readOnly" t="[aria-label]invoice.edit.unit-price" />
+                    </div>
+                </td>
+                <td if.bind="vatRegistered" class="col-vat" t="[data-label]invoice.edit.tax">
+                    <div class="vat-cell">
                         <span class="disabled-tooltip-wrapper disabled-tooltip-wrapper-fill" title.bind="getVatSelectionTooltip(line, line.Item.ClassifiedTaxCategory.ID) || null">
-                            <select if.bind="isVatRateEditable()" style="flex:1" change.trigger="vatRateChanged(line, $event.target.value)" disabled.bind="readOnly">
-                                <option repeat.for="taxRate of vatRateOptions" value.bind="taxRate" selected.bind="taxRate === getReadonlyDisplayedVatRate(line?.Item?.ClassifiedTaxCategory)">${taxRate}%</option>
-                            </select>
-                            <select else style="flex:1" disabled>
+                            <select change.trigger="vatRateChanged(line, $event.target.value)" disabled.bind="!vatRateEditable" t="[aria-label]invoice.edit.tax">
                                 <option repeat.for="taxRate of vatRateOptions" value.bind="taxRate" selected.bind="taxRate === getReadonlyDisplayedVatRate(line?.Item?.ClassifiedTaxCategory)">${taxRate}%</option>
                             </select>
                         </span>
                         <span
-                            if.bind="canEditZeroVatReason(line.Item.ClassifiedTaxCategory)"
+                            if.bind="vatRateEditable && line.Item.ClassifiedTaxCategory?.Percent === 0"
                             class="disabled-tooltip-wrapper"
                             title.bind="getVatSelectionTooltip(line, line.Item.ClassifiedTaxCategory.ID) || null">
                             <button
                                 type="button"
                                 class="icon-btn"
                                 click.trigger="zeroVatReasonModal.showModal(line, line.Item.ClassifiedTaxCategory)"
-                                disabled.bind="readOnly"
-                                title="Edit 0% VAT reason"
-                                aria-label="Edit 0% VAT reason"
-                                t="[title]invoice.zero-vat-reason.modal.edit-button;[aria-label]invoice.zero-vat-reason.modal.edit-button">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-badge-percent-icon lucide-badge-percent"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m15 9-6 6"/><path d="M9 9h.01"/><path d="M15 15h.01"/></svg>
+                                t="[title,aria-label]invoice.zero-vat-reason.modal.edit-button">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m15 9-6 6"/><path d="M9 9h.01"/><path d="M15 15h.01"/></svg>
                             </button>
                         </span>
                     </div>
                 </td>
-                <td>
-                    <div if.bind="invoiceContext.showAllowanceChargeForLines" style="display: flex; flex-direction: row; min-width: 200px">
-                        <div>
-                            <div repeat.for="acLine of line.AllowanceCharge" style="display: flex; align-items: center; gap: var(--space-025)">
-                                <small if.bind="acLine.AllowanceChargeReason">${acLine.AllowanceChargeReason}</small>
-                                <small else t="${acLine.ChargeIndicator ? 'invoice.allowanceChargeModal.charge' : 'invoice.allowanceChargeModal.discount'}"></small>
-                                <small class="allowance-charge-separator" aria-hidden="true"></small>
-                                <small if.bind="acLine.ChargeIndicator">+</small>
-                                <small else>-</small>
-                                <small if.bind="acLine.MultiplierFactorNumeric">${acLine.MultiplierFactorNumeric}% ( ${acLine.Amount.value.toFixed(2) | price:acLine.Amount.__currencyID} )</small>
-                                <small else> ${acLine.Amount.value.toFixed(2) | price:acLine.Amount.__currencyID}</small>
-                            </div>
-                        </div>
-                        <button if.bind="!readOnly" class="icon-btn" title="Edit" t="[title]common.edit" click.trigger="showAllowanceChargeModal(line)">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pen-icon lucide-pen"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>
+                <td if.bind="invoiceContext.showAllowanceChargeForLines" class="col-ac" t="[data-label]invoice.allowanceChargeModal.title">
+                    <div class="line-ac">
+                        <ul class="allowance-charge-list">
+                            <li repeat.for="acLine of line.AllowanceCharge" class="allowance-charge-line">
+                                <span if.bind="acLine.AllowanceChargeReason" class="allowance-charge-reason">${acLine.AllowanceChargeReason}</span>
+                                <span else class="allowance-charge-reason" t="${acLine.ChargeIndicator ? 'invoice.allowanceChargeModal.charge' : 'invoice.allowanceChargeModal.discount'}"></span>
+                                <span class="allowance-charge-amount tabular">
+                                    ${acLine.ChargeIndicator ? '+' : '−'}
+                                    <template if.bind="acLine.MultiplierFactorNumeric">${acLine.MultiplierFactorNumeric}% (${acLine.Amount.value | price:acLine.Amount.__currencyID})</template>
+                                    <template else>${acLine.Amount.value | price:acLine.Amount.__currencyID}</template>
+                                </span>
+                            </li>
+                        </ul>
+                        <button if.bind="!readOnly" type="button" class="icon-btn" t="[title,aria-label]invoice.edit.edit-line-discounts" click.trigger="showAllowanceChargeModal(line)">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>
                         </button>
                     </div>
                 </td>
-                <td class="num"><span class="line-total">${lineTotalAmount(line?.LineExtensionAmount?.value, line?.Item?.ClassifiedTaxCategory) | price:item.currency}</span></td>
+                <td class="num col-total" t="[data-label]invoice.edit.total">
+                    <span class="line-op" aria-hidden="true">=</span>
+                    <span class="line-total">${lineTotalAmount(line.LineExtensionAmount?.value, line.Item?.ClassifiedTaxCategory, vatRegistered) | price:currency}</span>
+                </td>
                 <td if.bind="!readOnly" class="actions-col">
-                    <button class="icon-btn" data-action="remove-line" title="Remove" t="[title]common.remove" click.trigger="deleteLine(line)">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-icon lucide-trash"><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    <button type="button" class="icon-btn" data-action="remove-line" t="[title,aria-label]invoice.edit.remove-line" click.trigger="deleteLine(line)">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                     </button>
                 </td>
             </tr>
             </tbody>
         </table>
     </div>
-</div>
+</section>

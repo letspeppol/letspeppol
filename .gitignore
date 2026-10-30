@@ -7,3 +7,4 @@ acme.json
 .env_staging
 .env_live
 *.log
+node_modules/

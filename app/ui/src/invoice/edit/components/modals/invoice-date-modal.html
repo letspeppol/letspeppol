@@ -1,32 +1,34 @@
-<div class="modal" role="dialog" aria-modal="true" show.bind="open">
+<import from="./invoice-modals.css"></import>
+
+<div class="modal" role="dialog" aria-modal="true" aria-labelledby="date-modal-title" show.bind="open">
     <div class="modal-backdrop"></div>
     <div class="modal-card" keydown.trigger="onKeyDown($event)">
         <header class="modal-header">
-            <h2 t="invoice.dateModal.title">Date</h2>
-            <button class="icon-btn" click.trigger="closeModal()" aria-label="Close dialog" t="[aria-label]common.close" title="Close" t="[title]common.close">×</button>
+            <h2 id="date-modal-title" t="invoice.dateModal.title">Dates</h2>
+            <button type="button" class="icon-btn" click.trigger="closeModal()" aria-label="Close" t="[aria-label,title]common.close">×</button>
         </header>
         <div class="modal-body">
-            <div style="display: inline-grid; gap: var(--space-1)">
+            <div class="modal-form">
                 <label class="field">
-                    <span t="invoice.dateModal.issue-date">Issue Date</span>
+                    <span t="invoice.dateModal.issue-date">Issue date</span>
                     <input type="date" name="issueDate" value.bind="issueDate" required />
                 </label>
-                <div class="field full" if.bind="!isCreditNote">
-                    <span t="invoice.dateModal.payment-terms">Payment Terms</span>
+                <div class="field" if.bind="!isCreditNote">
+                    <span t="invoice.dateModal.payment-terms">Payment terms</span>
                     <payment-terms-field value.two-way="selectedPaymentTerm"></payment-terms-field>
                 </div>
                 <label class="field" if.bind="!isCreditNote">
-                    <span t="invoice.dateModal.due-date">Due Date</span>
+                    <span t="invoice.dateModal.due-date">Due date</span>
                     <input type="date" name="dueDate" value.bind="dueDate" min.bind="minDueDate" />
                 </label>
-                <p if.bind="dueDateError" class="form-error" t="invoice.dateModal.validation.${dueDateError}"></p>
+                <p if.bind="dueDateError" class="form-error" role="alert" t="invoice.dateModal.validation.${dueDateError}"></p>
                 <template if.bind="requiresDeliveryDetails">
                     <label class="field">
-                        <span t="invoice.dateModal.actual-delivery-date">Actual Delivery Date</span>
+                        <span t="invoice.dateModal.actual-delivery-date">Delivery date</span>
                         <input type="date" name="actualDeliveryDate" value.bind="actualDeliveryDate" required />
                     </label>
                     <label class="field">
-                        <span t="invoice.dateModal.delivery-country">Deliver To Country</span>
+                        <span t="invoice.dateModal.delivery-country">Delivery country</span>
                         <select value.bind="deliveryCountryCode" required>
                             <option value="" t="common.none"></option>
                             <option repeat.for="country of Object.entries(countryList)" value.bind="country[0]">${country[1]}</option>
@@ -36,8 +38,8 @@
             </div>
         </div>
         <footer class="modal-footer">
-            <button type="button" class="btn" click.trigger="closeModal()" title="Cancel" t="[title]common.cancel" t="common.cancel">Cancel</button>
-            <button type="button" class="btn primary" click.trigger="saveDate()" disabled.bind="!issueDate || dueDateError || (requiresDeliveryDetails && (!actualDeliveryDate || !deliveryCountryCode))" title="Confirm" t="[title]common.confirm" t="common.confirm">Confirm</button>
+            <button type="button" class="btn" click.trigger="closeModal()" t="common.cancel">Cancel</button>
+            <button type="button" class="btn primary" click.trigger="saveDate()" disabled.bind="!issueDate || dueDateError || (requiresDeliveryDetails && (!actualDeliveryDate || !deliveryCountryCode))" t="common.apply">Apply</button>
         </footer>
     </div>
 </div>

@@ -1,0 +1,24 @@
+.lang-select {
+    appearance: none;
+    min-height: 2.5rem;
+    padding: 0 1.75rem 0 var(--space-3);
+    border: 1px solid var(--tool-border, var(--rule-strong));
+    border-radius: var(--radius);
+    background:
+        var(--tool-chevron, url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238a94b0' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>"))
+        right .625rem center / 12px no-repeat,
+        var(--tool-bg, var(--sheet));
+    color: var(--tool-fg-hover, var(--ink));
+    font-size: .9375rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.lang-select:hover {
+    background-color: var(--tool-hover-bg, var(--hover));
+}
+
+.lang-select option {
+    background: var(--sheet);
+    color: var(--ink);
+}

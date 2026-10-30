@@ -1,20 +1,36 @@
 <import from="../lang/language-selector"></import>
 <import from="../theme/theme-selector"></import>
 
-<div class="centered">
-    <div class="language">
+<div class="wizard" is-wide.class="wide">
+    <header class="wizard-panel">
+        <div class="wizard-brand-block">
+            <button type="button" class="wizard-brand" click.trigger="goHome()">
+                <svg class="wizard-mark" viewBox="16 16 300 300" aria-hidden="true" focusable="false">
+                    <g transform="translate(32 32)" fill="none" stroke="currentColor" stroke-width="16">
+                        <circle cx="128" cy="128" r="128"/>
+                        <path d="M0 128h256M128 0v256M17 64h222M17 192h222"/>
+                        <path d="m128 0a32 64 0 0 0 0 256a32 64 0 0 0 0-256"/>
+                        <polyline class="wizard-mark-check" points="120,120 160,160 264,64" stroke-width="32" stroke-linecap="round" stroke-linejoin="round"/>
+                    </g>
+                </svg>
+                <span class="wizard-name">Let’s Peppol</span>
+            </button>
+            <p class="wizard-tagline" t="wizard.tagline">Free e-invoicing on the Peppol network for Belgian businesses.</p>
+        </div>
+    </header>
+
+    <div class="wizard-tools">
         <theme-selector></theme-selector>
         <language-selector></language-selector>
     </div>
 
-    <div class="container">
-        <au-slot name="stepper"></au-slot>
-        <div class="card">
-            <img src.bind="this.theme.themeDark?'logo-dark.png':'logo.png'" class="logo" height="80" alt="Let’s Peppol" click.trigger="goHome()" />
-            <div class="section-header">
+    <main class="wizard-main">
+        <div class="wizard-sheet">
+            <au-slot name="stepper"></au-slot>
+            <div class="wizard-header">
                 <au-slot name="header"></au-slot>
             </div>
             <au-slot></au-slot>
         </div>
-    </div>
+    </main>
 </div>

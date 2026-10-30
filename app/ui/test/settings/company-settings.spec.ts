@@ -353,7 +353,7 @@ describe('Peppol settings confirmations and saving', () => {
         expect(account.confirmationModalContext.showConfirmationModal).toHaveBeenCalledWith(
             defaultAccessPoint === 'SCRADA' ? 'account.send-and-receive-peppol-documents' : 'account.allow-sending',
             defaultAccessPoint === 'SCRADA' ? 'account.confirm.sending-receiving-enable' : 'account.confirm.sending-enable',
-            expect.any(Function), undefined, 'warning');
+            expect.any(Function), undefined, 'warning', {confirmLabel: 'account.confirm.register-action', destructive: false});
     });
 
     it('shows the receiving SMP before activation and unlocks receiving after refresh releases it', async () => {
@@ -443,7 +443,7 @@ describe('Peppol settings confirmations and saving', () => {
 
         expect(input.checked).toBe(true);
         expect(account.confirmationModalContext.showConfirmationModal).toHaveBeenCalledWith(
-            'account.stop-sending-and-receiving', 'account.confirm.sending-disable', expect.any(Function), undefined, 'warning');
+            'account.stop-sending-and-receiving', 'account.confirm.sending-disable', expect.any(Function), undefined, 'warning', {confirmLabel: 'account.confirm.unregister-action', destructive: true});
         expect(account.registrationService.unregisterCompany).not.toHaveBeenCalled();
 
         await account.confirmationModalContext.showConfirmationModal.mock.calls[0][2]();
@@ -469,7 +469,7 @@ describe('Peppol settings confirmations and saving', () => {
         expect(account.peppolSettings.receiveDocuments).toBe(!enabled);
         const action = enabled ? 'enable' : 'disable';
         expect(account.confirmationModalContext.showConfirmationModal).toHaveBeenCalledWith(
-            `account.confirm.receiving-${action}-title`, `account.confirm.receiving-${action}`, expect.any(Function), undefined, 'warning');
+            `account.confirm.receiving-${action}-title`, `account.confirm.receiving-${action}`, expect.any(Function), undefined, 'warning', {confirmLabel: `account.confirm.receiving-${action}-action`, destructive: !enabled});
         expect(account.companyService.updatePeppolSettings).not.toHaveBeenCalled();
 
         await account.confirmationModalContext.showConfirmationModal.mock.calls[0][2]();
@@ -495,7 +495,7 @@ describe('Peppol settings confirmations and saving', () => {
         account.register();
 
         expect(account.confirmationModalContext.showConfirmationModal).toHaveBeenCalledWith(
-            'account.allow-sending', 'account.confirm.sending-enable', expect.any(Function), undefined, 'warning');
+            'account.allow-sending', 'account.confirm.sending-enable', expect.any(Function), undefined, 'warning', {confirmLabel: 'account.confirm.register-action', destructive: false});
         expect(account.registrationService.registerCompany).not.toHaveBeenCalled();
 
         await account.confirmationModalContext.showConfirmationModal.mock.calls[0][2]();
@@ -527,7 +527,7 @@ describe('Peppol settings confirmations and saving', () => {
         expect(account.registrationService.unregisterCompany).not.toHaveBeenCalled();
         expect(account.confirmationModalContext.showConfirmationModal).toHaveBeenCalledWith(
             enabled ? 'account.allow-sending' : 'account.remove-sending',
-            enabled ? 'account.confirm.sending-enable' : 'account.confirm.sending-disable', expect.any(Function), undefined, 'warning');
+            enabled ? 'account.confirm.sending-enable' : 'account.confirm.sending-disable', expect.any(Function), undefined, 'warning', {confirmLabel: enabled ? 'account.confirm.register-action' : 'account.confirm.unregister-action', destructive: !enabled});
 
         await account.confirmationModalContext.showConfirmationModal.mock.calls[0][2]();
 

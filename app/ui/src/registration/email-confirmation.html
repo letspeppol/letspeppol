@@ -3,137 +3,88 @@
 <import from="../components/eid/card-reader"></import>
 <import from="../components/choose-password/choose-password"></import>
 
-<wizard-view>
-    <stepper if.bind="step !== 3" au-slot="stepper" steps.bind="[1,2,3,4,5]" completed-steps.bind="step+2"></stepper>
-    <h1 au-slot="header" t="confirmation.header" if.bind="step === 1">Confirm Identity</h1>
-    <h1 au-slot="header" t="confirmation.header-sign" if.bind="step === 2">Sign Contract</h1>
-    <template if.bind="errorMessage">
-        <div class="alert error">${errorMessage}</div>
+<wizard-view wide.bind="true">
+    <stepper au-slot="stepper" steps.bind="steps" completed-steps.bind="step + 2"></stepper>
+    <h1 au-slot="header" t.bind="titleKey">Confirm your identity</h1>
+
+    <template if.bind="errorKey">
+        <p class="form-error" role="alert" t.bind="errorKey">This confirmation link can’t be used.</p>
+        <p class="auth-alt"><a href="../registration" t="confirmation.register-again">Register again</a></p>
     </template>
-    <template if.bind="warningKey">
-        <div class="alert alert--warning warning-box" t.bind="warningKey" t-params.bind="{ provider: alreadyRegisteredProvider }"></div>
-    </template>
-    <template if.bind="!errorMessage && !tokenVerificationResponse">
-        <div class="loading-msg" t="confirmation.loading">Loading company details…</div>
-    </template>
-    <form class="auth-form" if.bind="tokenVerificationResponse">
-        <div class="confirmation-layout" if.bind="step === 1">
-            <div>
-                <h3 t="confirmation.company">1. Verify the company</h3>
-                <div class="grid single">
-                    <label class="field full">
-                        <span t="label.enterprise-number">Enterprise number</span>
-                        <input name="tokenVerificationResponse.identifier" type="text" readonly value.bind="tokenVerificationResponse.company.identifier"/>
-                    </label>
-                    <label class="field full">
-                        <span t="label.name">Name</span>
-                        <input name="tokenVerificationResponse.companyName" type="text" readonly value.bind="tokenVerificationResponse.company.name"/>
-                    </label>
+    <p if.bind="!errorKey && !tokenVerificationResponse" class="wizard-lead" role="status" t="confirmation.loading">Loading company details…</p>
+    <div if.bind="warningKey" class="wizard-notice" role="status" t.bind="warningKey" t-params.bind="{ provider: alreadyRegisteredProvider }"></div>
+
+    <div if.bind="tokenVerificationResponse && step === 1" class="wizard-columns">
+        <div class="wizard-section">
+            <h2 t="confirmation.company">Company</h2>
+            <dl class="wizard-facts">
+                <div>
+                    <dt t="label.name">Name</dt>
+                    <dd>${tokenVerificationResponse.company.name}</dd>
                 </div>
-            </div>
-
-            <div class="vertical-separator"></div>
-
-            <div class="directors-section">
-                <h3 t="confirmation.directors">2. Select the director</h3>
-                <div if.bind="prepareSigningResponse && !prepareSigningResponse.allowedToSign" class="alert alert--warning warning-box" role="alert">
-                    <div>
-                        <p t="confirmation.director-mismatch">The name on your eID does not match the selected director. Select the correct director to continue.</p>
-                        <template if.bind="suggestedDirector">
-                            <p t="confirmation.director-suggestion" t-params.bind="{ name: suggestedDirector.name }">Your eID may match another director.</p>
-                            <button type="button" class="btn primary small" click.trigger="confirmDirector(suggestedDirector)" t="confirmation.director-choose-suggested">Select this director</button>
-                        </template>
-                        <p if.bind="!suggestedDirector" t="confirmation.director-no-match">If your name is missing from the list, contact support.</p>
-                    </div>
+                <div>
+                    <dt t="label.enterprise-number">Enterprise number</dt>
+                    <dd class="tabular">${tokenVerificationResponse.company.identifier}</dd>
                 </div>
-                <div class="directors-layout">
-                    <div class="directors-table-col">
-                        <template if.bind="tokenVerificationResponse.company.directors.length">
-                            <div class="table-wrapper" style="max-height: 230px">
-                                <table class="data-table directors-table">
-                                    <thead>
-                                    <tr>
-                                        <th t="confirmation.table.name">Name</th>
-                                        <th class="actions-col" t="confirmation.table.action">Action</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr repeat.for="d of tokenVerificationResponse.company.directors">
-                                        <td>${d.name}</td>
-                                        <td class="actions-col">
-                                            <button class="btn primary small" type="button"
-                                                    disabled.bind="confirmedDirector"
-                                                    click.trigger="confirmDirector(d)">
-                                                <span if.bind="confirmedDirector === d" t="confirmation.director-confirmed">Confirmed</span>
-                                                <span if.bind="confirmedDirector !== d" t="confirmation.director-confirm">Confirm</span>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </template>
-                        <template else>
-                            <div class="empty-state" t="confirmation.no-directors">No directors found.</div>
-                        </template>
-                    </div>
-                </div>
-            </div>
+            </dl>
 
-            <div class="vertical-separator"></div>
-
-            <div>
-                <h3 t="confirmation.sign-eid-title">3. Validate with eID of the director</h3>
-                <card-reader caption-key="confirmation.anim-caption-validate" reader-label-key="confirmation.anim-reader-label" signed.bind="confirmedDirector"></card-reader>
+            <h2 t="confirmation.directors">Which director are you?</h2>
+            <div if.bind="prepareSigningResponse && !prepareSigningResponse.allowedToSign" class="wizard-notice" role="alert">
+                <p t="confirmation.director-mismatch">The name on your eID does not match the selected director.</p>
+                <template if.bind="suggestedDirector">
+                    <p t="confirmation.director-suggestion" t-params.bind="{ name: suggestedDirector.name }">Your eID may match another director.</p>
+                    <button type="button" class="btn small" click.trigger="confirmDirector(suggestedDirector)" t="confirmation.director-choose-suggested">Select this director</button>
+                </template>
+                <p else t="confirmation.director-no-match">If your name is missing from the list, contact support.</p>
             </div>
+            <ul if.bind="tokenVerificationResponse.company.directors.length" class="director-list">
+                <li repeat.for="d of tokenVerificationResponse.company.directors">
+                    <span class="director-name">${d.name}</span>
+                    <button class="btn small" type="button"
+                            disabled.bind="confirmedDirector"
+                            click.trigger="confirmDirector(d)"
+                            t.bind="confirmedDirector === d ? 'confirmation.director-confirmed' : 'confirmation.director-confirm'">Confirm with eID</button>
+                </li>
+            </ul>
+            <p else class="wizard-lead" t="confirmation.no-directors">No directors found.</p>
         </div>
 
-        <div if.bind="step === 2" style="display: flex; flex-direction: column; gap: 1rem; align-items: center">
-            <div class="confirmation-layout" style="justify-content: space-around; gap: var(--space-125)">
-                <div style="width: 100%">
-                    <h3 t="confirmation.read-contract-title">1. Read the Contract</h3>
-                    <div class="grid single">
-                        <p t="confirmation.read-contract-info">You will receive a signed copy when the registration flow is complete.</p>
-                        <label class="field full" style="display: flex">
-                            <input name="confirm" type="checkbox" checked.bind="agreedToContract" disabled.bind="confirmInProgress && agreedToContract" style="min-width: 15px; height: 15px"/>
-                            <span t="confirmation.read-contract-agree">I have read the contract and agree to the terms</span>
-                        </label>
-                    </div>
-                </div>
+        <div class="wizard-section">
+            <h2 t="confirmation.validate-eid-title">Confirm with your eID</h2>
+            <card-reader caption-key="confirmation.anim-caption-validate" reader-label-key="confirmation.anim-reader-label" signed.bind="confirmedDirector"></card-reader>
+        </div>
+    </div>
 
-                <div class="vertical-separator"></div>
-
-                <div show.bind="!agreedToContract" class="contract">
-                    <iframe src.bind="getContractUrl()" width="100%" height="100%"></iframe>
-                </div>
-
-                <div style="width: 100%" show.bind="agreedToContract">
-                    <choose-password component.ref="choosePassword" password.two-way="password" confirm-password.two-way="passwordDuplicate" show-heading.bind="true"></choose-password>
-                </div>
-
-                <div class="vertical-separator" show.bind="agreedToContract"></div>
-
-                <div show.bind="agreedToContract">
-                    <h3 t="confirmation.sign-eid-title">3. Sign with eID</h3>
-                    <card-reader caption-key="confirmation.anim-caption-sign" reader-label-key="confirmation.anim-reader-label" signed.bind="confirmedDirector"></card-reader>
-                </div>
-                <div show.bind="agreedToContract">
-                    <div class="auth-actions" style="margin-top: 15px">
-                        <button type="button" class="btn primary" disabled.bind="!choosePassword || !choosePassword.rules.pwStrong || !password || !choosePassword.rules.matchOk || !agreedToContract || confirmInProgress" click.trigger="confirmContract()" t="confirmation.sign-button">
-                            Sign
-                        </button>
-                    </div>
-                </div>
+    <div if.bind="tokenVerificationResponse && step === 2" class="wizard-columns contract-step" is-agreed.class="agreedToContract">
+        <div class="wizard-section contract-read">
+            <h2 t="confirmation.read-contract-title">Read the contract</h2>
+            <p class="wizard-lead" t="confirmation.read-contract-info">You will receive a signed copy when the registration is complete.</p>
+            <div show.bind="!agreedToContract" class="contract-frame">
+                <iframe src.bind="getContractUrl()" t="[title]confirmation.contract-frame-title" title="Contract"></iframe>
             </div>
+            <a show.bind="!agreedToContract" href.bind="getContractUrl()" target="_blank" rel="noopener noreferrer" class="contract-open" t="confirmation.open-contract">Open the contract in a new tab</a>
+            <label class="field checkbox">
+                <input name="confirm" type="checkbox" checked.bind="agreedToContract" disabled.bind="confirmInProgress && agreedToContract"/>
+                <span t="confirmation.read-contract-agree">I have read the contract and agree to the terms</span>
+            </label>
         </div>
 
-        <div if.bind="step === 3">
-            <div style="display: flex; flex-direction: column; align-items: center; margin-left: auto; margin-right: auto">
-                <h3 class="full" t="confirmation.success-title">Success!</h3>
-                <svg width="64px" height="64px" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" color="#000000"><path d="M7 12.5L10 15.5L17 8.5" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-                <p t="confirmation.success-contract">The signed contract can be found in your downloads folder</p>
-                <p class="auth-alt"><span t="confirmation.success-login-prefix">You can now</span> <a href="../login" t="login.action">Log in</a></p>
+        <div show.bind="agreedToContract" class="wizard-section">
+            <choose-password component.ref="choosePassword" password.two-way="password" confirm-password.two-way="passwordDuplicate" show-heading.bind="true"></choose-password>
+            <h2 t="confirmation.sign-eid-title">Sign with your eID</h2>
+            <card-reader caption-key="confirmation.anim-caption-sign" reader-label-key="confirmation.anim-reader-label" signed.bind="confirmedDirector"></card-reader>
+            <div class="auth-actions">
+                <button type="button" class="btn primary" disabled.bind="!choosePassword || !choosePassword.rules.pwStrong || !password || !choosePassword.rules.matchOk || !agreedToContract || confirmInProgress" click.trigger="confirmContract()" t="confirmation.sign-button">Sign contract</button>
             </div>
         </div>
-    </form>
+    </div>
+
+    <div if.bind="step === 3" class="auth-form">
+        <svg if.bind="!warningKey" class="wizard-success-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m7.5 12.5 3 3 6-6.5"/></svg>
+        <p t="confirmation.success-contract">A signed copy of the contract is in your downloads folder.</p>
+        <p if.bind="!warningKey" t="confirmation.success-next">Sign in to start sending and receiving invoices.</p>
+        <div class="auth-actions">
+            <a href="../login" class="btn primary" t="login.action">Sign in</a>
+        </div>
+    </div>
 </wizard-view>

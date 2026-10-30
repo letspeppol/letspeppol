@@ -27,7 +27,7 @@ export class ProductContext {
     }
 
     replaceProduct(currentProduct: ProductDto, newProduct: ProductDto) {
-        let index = this.products.findIndex(item => item === currentProduct);
+        const index = this.products.findIndex(item => item === currentProduct);
         if (index > -1) {
             this.products.splice(index, 1, newProduct);
         }

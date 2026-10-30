@@ -17,6 +17,7 @@ export class UploadUblModal {
     open = false;
     isDraggingFile = false;
     uploadUblWrapper: HTMLElement;
+    fileInput?: HTMLInputElement;
     validationResult: ValidationResultDto;
 
     showModal() {
@@ -52,8 +53,25 @@ export class UploadUblModal {
     async dragDrop(e: DragEvent) {
         e.preventDefault();
         this.isDraggingFile = false;
+        await this.upload(e.dataTransfer.files[0]);
+    }
 
-        const file = e.dataTransfer.files[0];
+    openFilePicker() {
+        this.fileInput?.click();
+    }
+
+    async onFileSelected() {
+        const file = this.fileInput?.files?.[0];
+        if (this.fileInput) {
+            this.fileInput.value = '';
+        }
+        await this.upload(file);
+    }
+
+    private async upload(file: File | undefined) {
+        if (!file) {
+            return;
+        }
         if (file.size > (10 * (1024 ** 2))) {
             this.ea.publish('alert', {alertType: AlertType.Warning, text: this.i18n.tr('alert.upload.size-too-large')});
             return;

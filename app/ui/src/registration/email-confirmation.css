@@ -1,76 +1,59 @@
-/* Confirmation layout */
-.warning-box {
-  margin: auto;
-  margin-bottom: 2rem;
+.director-list {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--rule-soft);
+    list-style: none;
 }
 
-.confirmation-layout {
-  display: flex;
-  gap: var(--space-1);
-  align-items: flex-start;
+.director-list > li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2) var(--space-4);
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--rule-soft);
 }
 
-.confirmation-layout h3 {
-  margin-top: 0;
-  margin-bottom: var(--space-075);
-  font-size: 1rem;
-  color: var(--muted);
+.director-name {
+    min-width: 0;
+    color: var(--ink);
+    overflow-wrap: anywhere;
 }
 
-.vertical-separator {
-  width: 1px;
-  background: var(--border-soft);
-  align-self: stretch;
-  opacity: .6;
+.contract-step:not(.is-agreed) > .contract-read {
+    grid-column: 1 / -1;
 }
 
-.grid.single {
-  grid-template-columns: 1fr;
+.contract-frame {
+    block-size: min(70dvh, 720px);
+    min-block-size: 320px;
+    overflow: hidden;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    background: var(--ground);
 }
 
-@media (max-width: 860px) {
-  .confirmation-layout {
-    flex-direction: column;
-  }
-  .vertical-separator {
-    display: none;
-  }
+.contract-frame iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
 }
 
-.directors-layout {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-1);
+.contract-open {
+    justify-self: start;
+    color: var(--navy-ink);
+    font-weight: 600;
 }
 
-.directors-table-col {
-  flex: 1 1 0;
-  min-width: 300px;
-}
+@media (width <= 767px) {
+    .contract-frame {
+        block-size: 60dvh;
+    }
 
-.directors-table {
-  font-size: .85rem;
+    .director-list .btn {
+        flex: 1 1 100%;
+    }
 }
-
-.directors-table thead th {
-  font-size: .75rem;
-  letter-spacing: .02em;
-}
-
-.information {
-  color: var(--primary-strong);
-  text-align: center;
-  font-weight: bold;
-}
-
-.contract {
-  width: 100%;
-  height: 100%;
-  min-width: 40vw;
-  min-height: 60vh;
-}
-
-.pw-hints { margin:.5rem 0 0; padding-left:1rem; }
-.pw-hints li { color:#b33; }
-.pw-hints li.ok { color:#2a7; }
-meter { width:100%; height:.5rem; }

@@ -1,81 +1,169 @@
 <import from="../lang/language-selector"></import>
 <import from="../theme/theme-selector"></import>
+<import from="./nav-icon"></import>
 
-<header class="app-header">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-        <div class="brand">
-            <img src.bind="this.theme.themeDark?'logo-dark.png':'logo.png'" class="logo" height="30" alt="Let’s Peppol" t="[alt]navigation.brand-alt" />
-            <i data-lucide="menu"></i>
+<header class="app-header" ref="headerEl" data-layout="full">
+    <div class="band on-navy" ref="bandEl">
+        <a class="band-brand" load="route.bind: homePath; context.bind: null" t="[aria-label]navigation.brand-alt">
+            <svg class="band-mark" viewBox="0 0 320 320" aria-hidden="true" focusable="false">
+                <g transform="translate(32,32)" fill="none" stroke-width="16">
+                    <circle cx="128" cy="128" r="128" stroke="currentColor"/>
+                    <path d="M0 128h256M128 0v256M17 64h222M17 192h222" stroke="currentColor"/>
+                    <path d="m128,0 a32,64 0 0,0 0,256 a32,64 0 0,0 0,-256" stroke="currentColor"/>
+                    <polyline class="band-mark-halo" points="120,120 160,160 264,64" stroke-width="64" stroke-linecap="round" stroke-linejoin="round"/>
+                    <polyline points="120,120 160,160 264,64" stroke="#faa21d" stroke-width="32" stroke-linecap="round" stroke-linejoin="round"/>
+                </g>
+            </svg>
+            <span class="band-wordmark" t="navigation.brand-alt">Let’s Peppol</span>
+        </a>
+
+        <nav class="band-nav" t="[aria-label]navigation.main">
+            <a repeat.for="item of navItems"
+               class="band-link"
+               is-secondary.class="!item.inBar"
+               load="route.bind: item.path; context.bind: null"
+               aria-current.bind="item.id === activeSection ? 'page' : null"
+               click.trigger="onNavigate(item)"
+               new-feature-section.bind="item.feature">
+                <nav-icon name.bind="item.id"></nav-icon>
+                <span t.bind="item.labelKey"></span>
+            </a>
+        </nav>
+
+        <div class="band-spacer"></div>
+
+        <label if.bind="ownerships.length > 1" class="company-switcher" title.bind="'navigation.switch-company' & t">
+            <nav-icon name="switch-company"></nav-icon>
+            <span class="company-name">${currentCompanyName}</span>
+            <nav-icon name="chevron"></nav-icon>
+            <select class="company-select"
+                    value.bind="selectedOwnershipKey"
+                    change.trigger="changeOwnership()"
+                    disabled.bind="swapping"
+                    aria-label.bind="'navigation.switch-company' & t">
+                <option repeat.for="ownership of ownerships" value.bind="getOwnershipKey(ownership)">${getOwnershipLabel(ownership)}</option>
+            </select>
+        </label>
+        <div if.bind="ownerships.length === 1" class="company-switcher is-static">
+            <span class="company-name">${currentCompanyName}</span>
         </div>
 
-        <div class="tabs-row">
-            <nav class="tabs" role="tablist">
-                <template if.bind="ownershipService.hasCompany">
-                <button load="route.bind: dashboardPath; context.bind: null" class="btn tab" title="Dashboard" t="[title]navigation.dashboard">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chart-no-axes-combined-icon lucide-chart-no-axes-combined"><path d="M12 16v5"/><path d="M16 14v7"/><path d="M20 10v11"/><path d="m22 3-8.646 8.646a.5.5 0 0 1-.708 0L9.354 8.354a.5.5 0 0 0-.707 0L2 15"/><path d="M4 18v3"/><path d="M8 14v7"/></svg>
-                    <span t="navigation.dashboard">Dashboard</span>
-                </button>
-                <button if.bind="ownershipService.granted.INVOICE_READ" click.trigger="clearInvoice()" load="route.bind: invoicesPath; context.bind: null" class="btn tab" title="Invoices" t="[title]navigation.invoices" new-feature-section="invoices">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-landmark-icon lucide-landmark"><path d="M10 18v-7"/><path d="M11.12 2.198a2 2 0 0 1 1.76.006l7.866 3.847c.476.233.31.949-.22.949H3.474c-.53 0-.695-.716-.22-.949z"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M3 22h18"/><path d="M6 18v-7"/></svg>
-                    <span t="navigation.invoices">Invoices</span>
-                </button>
-                <button if.bind="ownershipService.granted.INVOICE_READ || ownershipService.granted.PARTNER_MANAGE" load="route.bind: partnersPath; context.bind: null" class="btn tab" title="Partners" t="[title]navigation.partners">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-handshake-icon lucide-handshake"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"/><path d="m21 3 1 11h-2"/><path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"/><path d="M3 4h8"/></svg>
-                    <span t="navigation.partners">Partners</span>
-                </button>
-                <button if.bind="ownershipService.granted.INVOICE_READ || ownershipService.granted.PRODUCT_MANAGE" load="route.bind: productsPath; context.bind: null" class="btn tab" title="Products" t="[title]navigation.products">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-basket-icon lucide-shopping-basket"><path d="m15 11-1 9"/><path d="m19 11-4-7"/><path d="M2 11h20"/><path d="m3.5 11 1.6 7.4a2 2 0 0 0 2 1.6h9.8a2 2 0 0 0 2-1.6l1.7-7.4"/><path d="M4.5 15.5h15"/><path d="m5 11 4-7"/><path d="m9 11 1 9"/></svg>
-                    <span t="navigation.products">Products</span>
-                </button>
-                <button if.bind="ownershipService.granted.INVOICE_EXPORT" load="route.bind: downloadsPath; context.bind: null" class="btn tab active" title="Downloads" t="[title]navigation.downloads" new-feature-section="downloads">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
-                    <span t="navigation.downloads">Downloads</span>
-                </button>
-                <button load="route.bind: settingsPath; context.bind: null" class="btn tab" title="Settings" t="[title]navigation.settings" new-feature-section="settings">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings-icon lucide-settings" aria-hidden="true"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/></svg>
-                    <span t="navigation.settings">Settings</span>
-                </button>
-                </template>
-                <button load="route.bind: accountPath; context.bind: null" class="btn tab" title="Account" t="[title]navigation.account" new-feature-section="account">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-building-icon lucide-building"><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M12 6h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/><path d="M8 6h.01"/><path d="M9 22v-3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><rect x="4" y="2" width="16" height="20" rx="2"/></svg>
-                    <span t="navigation.account">Account</span>
-                </button>
-            </nav>
-        </div>
-
-        <div style="display: flex; align-items: center; gap: var(--space-06); padding: var(--space-09) var(--space-12)">
-            <div class="heading-switcher-group" new-feature="add-account">
-                <button type="button"
-                        class="btn ghost"
-                        class.bind="ownerships.length > 1 ? 'icon-only' : ''"
-                        click.trigger="goToAddOwnership()"
-                        title.bind="'ownershipAdd.tooltip' & t"
-                        aria-label.bind="'ownershipAdd.tooltip' & t">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-plus-icon lucide-user-plus"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg>
-                    <span if.bind="ownerships.length <= 1" t="ownershipAdd.action">Add company</span>
-                </button>
-                <label if.bind="ownerships.length > 1" class="heading-switcher" title.bind="'Switch account' & t">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users-icon lucide-users" aria-hidden="true">
-                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                        <path d="M16 3.128a4 4 0 0 1 0 7.744"></path>
-                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-                        <circle cx="9" cy="7" r="4"></circle>
-                    </svg>
-                    <select value.bind="selectedOwnershipKey"
-                            change.trigger="changeOwnership()"
-                            disabled.bind="swapping"
-                            title.bind="'Switch account' & t"
-                            aria-label.bind="'Switch account' & t">
-                        <option repeat.for="ownership of ownerships"
-                                value.bind="getOwnershipKey(ownership)">
-                            ${getOwnershipLabel(ownership)}
-                        </option>
-                    </select>
-                </label>
-            </div>
-            <button class="btn ghost" title="Log out" t="[title]common.logout;common.logout" click.trigger="logout()">Log out</button>
+        <div class="band-tools">
+            <button type="button"
+                    class="band-button"
+                    click.trigger="goToAddOwnership()"
+                    title.bind="'ownershipAdd.tooltip' & t"
+                    aria-label.bind="'ownershipAdd.action' & t"
+                    new-feature="add-account">
+                <nav-icon name="add-company"></nav-icon>
+                <span if.bind="ownerships.length <= 1" t="ownershipAdd.action">Add company</span>
+            </button>
             <theme-selector></theme-selector>
             <language-selector></language-selector>
+            <button type="button" class="band-button" t="[title]common.logout;[aria-label]common.logout" click.trigger="logout()">
+                <nav-icon name="log-out"></nav-icon>
+            </button>
         </div>
+
+        <button type="button"
+                class="band-button account-button"
+                aria-haspopup="dialog"
+                aria-expanded.bind="menuOpen ? 'true' : 'false'"
+                t="[aria-label]navigation.account-menu;[title]navigation.account-menu"
+                click.trigger="toggleMenu($event)">
+            <nav-icon name="user"></nav-icon>
+            <nav-icon name="chevron"></nav-icon>
+        </button>
+        <button type="button"
+                class="band-button menu-button"
+                aria-haspopup="dialog"
+                aria-expanded.bind="menuOpen ? 'true' : 'false'"
+                aria-label.bind="(menuOpen ? 'navigation.close-menu' : 'navigation.menu') & t"
+                click.trigger="toggleMenu($event)">
+            <nav-icon name.bind="menuOpen ? 'close' : 'menu'"></nav-icon>
+        </button>
     </div>
 </header>
+
+<nav class="bottom-bar" t="[aria-label]navigation.bottom-bar">
+    <a repeat.for="item of barItems"
+       class="bar-item"
+       load="route.bind: item.path; context.bind: null"
+       aria-current.bind="item.id === activeSection ? 'page' : null"
+       click.trigger="onNavigate(item)"
+       new-feature-section.bind="item.feature">
+        <nav-icon name.bind="item.id"></nav-icon>
+        <span class="bar-label" t.bind="item.labelKey"></span>
+    </a>
+    <button type="button"
+            class="bar-item"
+            aria-haspopup="dialog"
+            aria-expanded.bind="menuOpen ? 'true' : 'false'"
+            click.trigger="toggleMenu($event)">
+        <nav-icon name="more"></nav-icon>
+        <span class="bar-label" t="navigation.more">More</span>
+    </button>
+</nav>
+
+<div if.bind="menuOpen"
+     class="modal app-menu menu-${menuKind}"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="app-menu-title"
+     keydown.trigger="onMenuKeydown($event)">
+    <div class="modal-backdrop" click.trigger="closeMenu()"></div>
+    <div class="modal-card app-menu-card" ref="menuCard" tabindex="-1">
+        <header class="modal-header app-menu-header">
+            <h2 id="app-menu-title" t="navigation.menu">Menu</h2>
+            <button type="button" class="icon-btn app-menu-close" t="[aria-label]navigation.close-menu" click.trigger="closeMenu()">
+                <nav-icon name="close"></nav-icon>
+            </button>
+        </header>
+        <div class="modal-body app-menu-body">
+            <ul if.bind="menuItems.length" class="menu-list">
+                <li repeat.for="item of menuItems">
+                    <a class="menu-row"
+                       load="route.bind: item.path; context.bind: null"
+                       aria-current.bind="item.id === activeSection ? 'page' : null"
+                       click.trigger="onNavigate(item)"
+                       new-feature-section.bind="item.feature">
+                        <nav-icon name.bind="item.id"></nav-icon>
+                        <span class="menu-label" t.bind="item.labelKey"></span>
+                    </a>
+                </li>
+            </ul>
+            <ul class="menu-list">
+                <li>
+                    <button type="button" class="menu-row" click.trigger="goToAddOwnership()">
+                        <nav-icon name="add-company"></nav-icon>
+                        <span class="menu-label" t="ownershipAdd.action">Add company</span>
+                    </button>
+                </li>
+                <li>
+                    <button type="button"
+                            class="menu-row"
+                            role="switch"
+                            aria-checked.bind="theme.themeDark ? 'true' : 'false'"
+                            click.trigger="theme.switchTheme()">
+                        <nav-icon name.bind="theme.themeDark ? 'moon' : 'sun'"></nav-icon>
+                        <span class="menu-label" t="navigation.dark-mode">Dark mode</span>
+                        <span class="menu-switch" aria-hidden="true"></span>
+                    </button>
+                </li>
+                <li>
+                    <label class="menu-row">
+                        <nav-icon name="language"></nav-icon>
+                        <span class="menu-label" t="navigation.language">Language</span>
+                        <language-selector></language-selector>
+                    </label>
+                </li>
+                <li>
+                    <button type="button" class="menu-row" click.trigger="logout()">
+                        <nav-icon name="log-out"></nav-icon>
+                        <span class="menu-label" t="common.logout">Log out</span>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

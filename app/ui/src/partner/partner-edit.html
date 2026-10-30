@@ -1,42 +1,32 @@
 <import from="../components/search/company-search"></import>
 
-<div class="invoices-main">
-    <div class="section-header">
-        <div style="display:flex;align-items:center;gap:.5rem">
-            <h1 style="margin:0" t="partner.edit.new">New partner</h1>
-        </div>
-        <div class="editor-header-actions">
-            <button type="button" class="btn" click.trigger="partnerContext.clearSelectedPartner()" t="partner.edit.cancel">Cancel</button>
-            <button if.bind="ownershipService.granted.PARTNER_MANAGE" type="button" class="btn primary" click.trigger="savePartner()" disabled.bind="!partnerContext.selectedPartner.name || !partnerContext.selectedPartner.peppolId || !partnerContext.selectedPartner.peppolId.includes(':')" t="partner.edit.save">Save partner</button>
-        </div>
-    </div>
+<div class="section-header">
+    <h1 t.bind="partnerContext.selectedPartner?.id ? 'partner.edit.edit' : 'partner.edit.new'">New partner</h1>
 </div>
-<section>
-    <fieldset class="readonly-fieldset" disabled.bind="!ownershipService.granted.PARTNER_MANAGE">
-    <div style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(250px, 320px));">
-        <div class="card">
-            <div class="card-header">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-building-icon lucide-building"><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M12 6h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/><path d="M8 6h.01"/><path d="M9 22v-3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><rect x="4" y="2" width="16" height="20" rx="2"/></svg>
-                <h2 t="partner.edit.company-info">Company Info</h2>
-            </div>
-            <div style="display: grid; gap: var(--space-1)">
-                <div style="display: flex; gap: var(--space-1)">
-                    <label class="field">
-                        <span t="label.enterprise-number">Enterprise Number</span>
-                        <input type="text" value.bind="partnerContext.selectedPartner.identifier" change.trigger="enterpriseNumberChanged()"/>
-                    </label>
-                    <label class="field">
-                        <span t="label.vat-number">VAT Number</span>
-                        <input type="text" value.bind="partnerContext.selectedPartner.vatNumber" change.trigger="vatNumberChanged()"/>
-                    </label>
-                </div>
+
+<fieldset class="readonly-fieldset partner-sheets" disabled.bind="!ownershipService.granted.PARTNER_MANAGE">
+    <section class="card partner-sheet" aria-labelledby="partner-company-heading">
+        <h2 id="partner-company-heading" t="partner.edit.company-info">Company</h2>
+        <div class="grid">
+            <div class="partner-span-2">
                 <company-search select-company-function.bind="(company) => completePartnerInfo(company)"
                                 search-query.two-way="partnerContext.selectedPartner.name">
                 </company-search>
-                <label class="field">
-                    <span t="label.email">Email</span>
-                    <input type="text" value.bind="partnerContext.selectedPartner.email" />
-                </label>
+            </div>
+            <label class="field">
+                <span t="label.enterprise-number">Enterprise number</span>
+                <input type="text" class="num" value.bind="partnerContext.selectedPartner.identifier" change.trigger="enterpriseNumberChanged()"/>
+            </label>
+            <label class="field">
+                <span t="label.vat-number">VAT number</span>
+                <input type="text" class="num" value.bind="partnerContext.selectedPartner.vatNumber" change.trigger="vatNumberChanged()"/>
+            </label>
+            <label class="field partner-row-start partner-span-2">
+                <span t="label.email">Email</span>
+                <input type="email" inputmode="email" autocomplete="off" value.bind="partnerContext.selectedPartner.email" />
+            </label>
+            <fieldset class="partner-roles partner-span-2">
+                <legend t="partner.edit.roles">This partner is a</legend>
                 <label class="field checkbox">
                     <input type="checkbox" checked.bind="partnerContext.selectedPartner.customer" />
                     <span t="partner.edit.customer">Customer</span>
@@ -45,69 +35,66 @@
                     <input type="checkbox" checked.bind="partnerContext.selectedPartner.supplier" />
                     <span t="partner.edit.supplier">Supplier</span>
                 </label>
-            </div>
+            </fieldset>
         </div>
+    </section>
 
-        <div class="card">
-            <div class="card-header">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-globe-icon lucide-globe"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
-                <h2 t="partner.edit.peppol">Peppol</h2>
-            </div>
-            <label class="field required">
+    <section class="card partner-sheet" aria-labelledby="partner-peppol-heading">
+        <h2 id="partner-peppol-heading" t="partner.edit.peppol">Peppol</h2>
+        <div class="grid">
+            <label class="field required partner-span-2">
                 <span t="label.peppolId">Peppol ID</span>
-                <input type="text" value.bind="partnerContext.selectedPartner.peppolId" change.trigger="peppolIdChanged()"/>
+                <input type="text" class="num" value.bind="partnerContext.selectedPartner.peppolId" change.trigger="peppolIdChanged()" aria-describedby="partner-peppol-hint"/>
+                <small id="partner-peppol-hint" class="muted" t="partner.edit.peppol-hint">For Belgian companies this is 0208: followed by the enterprise number.</small>
             </label>
         </div>
+    </section>
 
-        <div class="card" style="min-width: 300px; width: 320px">
-            <div class="card-header">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin-house-icon lucide-map-pin-house"><path d="M15 22a1 1 0 0 1-1-1v-4a1 1 0 0 1 .445-.832l3-2a1 1 0 0 1 1.11 0l3 2A1 1 0 0 1 22 17v4a1 1 0 0 1-1 1z"/><path d="M18 10a8 8 0 0 0-16 0c0 4.993 5.539 10.193 7.399 11.799a1 1 0 0 0 .601.2"/><path d="M18 22v-3"/><circle cx="10" cy="10" r="3"/></svg>
-                <h2 t="partner.edit.address">Address</h2>
-            </div>
-            <div class="grid grid-col-73">
-                <label class="field">
-                    <span t="label.city">City</span>
-                    <input type="text" value.bind="partnerContext.selectedPartner.registeredOffice.city" />
-                </label>
-                <label class="field">
-                    <span t="label.postal-code">Postal Code</span>
-                    <input type="text" value.bind="partnerContext.selectedPartner.registeredOffice.postalCode" />
-                </label>
-                <label class="field full">
-                    <span t="label.street">Street</span>
-                    <input type="text" value.bind="partnerContext.selectedPartner.registeredOffice.street" />
-                </label>
-            </div>
-            <label class="field" style="margin-top: 20px">
+    <section class="card partner-sheet" aria-labelledby="partner-address-heading">
+        <h2 id="partner-address-heading" t="partner.edit.address">Address</h2>
+        <div class="grid">
+            <label class="field partner-span-2">
+                <span t="label.street">Street</span>
+                <input type="text" autocomplete="off" value.bind="partnerContext.selectedPartner.registeredOffice.street" />
+            </label>
+            <label class="field">
+                <span t="label.postal-code">Postal code</span>
+                <input type="text" class="num" autocomplete="off" value.bind="partnerContext.selectedPartner.registeredOffice.postalCode" />
+            </label>
+            <label class="field">
+                <span t="label.city">City</span>
+                <input type="text" autocomplete="off" value.bind="partnerContext.selectedPartner.registeredOffice.city" />
+            </label>
+            <label class="field">
                 <span t="label.country">Country</span>
                 <select value.bind="partnerContext.selectedPartner.registeredOffice.countryCode">
                     <option repeat.for="country of Object.entries(countryList)" value.bind="country[0]">${country[1]}</option>
                 </select>
             </label>
         </div>
+    </section>
 
-        <div class="card" >
-            <div class="card-header">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-banknote-arrow-down-icon lucide-banknote-arrow-down"><path d="M12 18H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5"/><path d="m16 19 3 3 3-3"/><path d="M18 12h.01"/><path d="M19 16v6"/><path d="M6 12h.01"/><circle cx="12" cy="12" r="2"/></svg>
-                <h2 t="partner.edit.payment-info">Payment Info</h2>
-            </div>
-            <div class="grid">
-                <label class="field full">
-                    <span t="label.iban">IBAN</span>
-                    <input type="text" value.bind="partnerContext.selectedPartner.iban" />
-                </label>
-                <label class="field full">
-                    <span t="label.account-name">Account Name</span>
-                    <input type="text" value.bind="partnerContext.selectedPartner.paymentAccountName" />
-                </label>
-                <div class="field full" if.bind="partnerContext.selectedPartner">
-                    <span t="label.payment-terms">Payment Terms</span>
-                    <payment-terms-field value.two-way="partnerContext.selectedPartner.paymentTerms"></payment-terms-field>
-                    <small class="muted" t="paymentTerms.partner-hint">Leave empty to use your own payment terms.</small>
-                </div>
+    <section class="card partner-sheet" aria-labelledby="partner-payment-heading">
+        <h2 id="partner-payment-heading" t="partner.edit.payment-info">Payment details</h2>
+        <div class="grid">
+            <label class="field partner-span-2">
+                <span t="label.iban">IBAN</span>
+                <input type="text" class="num" value.bind="partnerContext.selectedPartner.iban" />
+            </label>
+            <label class="field partner-span-2">
+                <span t="label.account-name">Account name</span>
+                <input type="text" value.bind="partnerContext.selectedPartner.paymentAccountName" />
+            </label>
+            <div class="field partner-row-start partner-span-2" if.bind="partnerContext.selectedPartner">
+                <span t="label.payment-terms">Payment terms</span>
+                <payment-terms-field value.two-way="partnerContext.selectedPartner.paymentTerms"></payment-terms-field>
+                <small class="muted" t="paymentTerms.partner-hint">Leave empty to use your own payment terms.</small>
             </div>
         </div>
-    </div>
-    </fieldset>
+    </section>
+</fieldset>
 
-</section>
+<div class="action-bar partner-action-bar">
+    <button type="button" class="btn" click.trigger="partnerContext.clearSelectedPartner()" t.bind="ownershipService.granted.PARTNER_MANAGE ? 'partner.edit.cancel' : 'partner.edit.back'">Cancel</button>
+    <button if.bind="ownershipService.granted.PARTNER_MANAGE" type="button" class="btn primary" click.trigger="savePartner()" disabled.bind="!canSave" t="partner.edit.save">Save partner</button>
+</div>

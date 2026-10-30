@@ -1,9 +1,13 @@
-<div class="stepper-wrapper">
-
-    <template repeat.for="step of steps">
-        <div class="stepper-item" completed.class="($index) < completedSteps" active.class="$index === completedSteps">
-            <div class="step-counter">${step}</div>
-        </div>
-    </template>
-
-</div>
+<ol class="stepper" t="[aria-label]stepper.label">
+    <li repeat.for="labelKey of steps"
+        class="stepper-item"
+        completed.class="$index < completedSteps"
+        active.class="$index === completedSteps"
+        aria-current.bind="$index === completedSteps ? 'step' : null">
+        <span class="stepper-counter" aria-hidden="true">${$index + 1}</span>
+        <span class="stepper-label">
+            <span t.bind="labelKey"></span>
+            <span if.bind="$index < completedSteps" class="visually-hidden" t="stepper.completed">completed</span>
+        </span>
+    </li>
+</ol>

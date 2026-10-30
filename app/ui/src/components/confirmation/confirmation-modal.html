@@ -1,19 +1,25 @@
-<div class="modal" role="dialog" aria-modal="true" aria-label.bind="confirmationContext.title" show.bind="confirmationContext.open">
-    <div class="modal-backdrop"></div>
+<div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmation-title" show.bind="confirmationContext.open">
+    <div class="modal-backdrop" click.trigger="no()"></div>
     <div class="modal-card confirmation-card" confirmation-warning.class="confirmationContext.variant === 'warning'" keydown.trigger="onKeyDown($event)">
         <header class="modal-header">
-            <h3 class="confirmation-title">
-                <svg if.bind="confirmationContext.variant === 'warning'" class="confirmation-warning-icon" aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m10.3 3.9-8.5 14.2A2 2 0 0 0 3.5 21h17a2 2 0 0 0 1.7-2.9L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+            <h2 id="confirmation-title" class="confirmation-title">
+                <svg if.bind="confirmationContext.variant === 'warning'" class="confirmation-warning-icon" aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m10.3 3.9-8.5 14.2A2 2 0 0 0 3.5 21h17a2 2 0 0 0 1.7-2.9L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
                 <span>${confirmationContext.title}</span>
-            </h3>
-            <button class="icon-btn" aria-label="Close dialog" title="Close" t="[aria-label,title]common.close" click.trigger="no()">×</button>
+            </h2>
+            <button type="button" class="icon-btn" aria-label="Close dialog" title="Close" t="[aria-label,title]common.close" click.trigger="no()">×</button>
         </header>
         <div class="modal-body">
-            <p>${confirmationContext.text}</p>
+            <p class="confirmation-text">${confirmationContext.text}</p>
         </div>
         <footer class="modal-footer">
-            <button type="button" class="btn" click.trigger="no()" title="No" t="[title]common.no;common.no">No</button>
-            <button type="button" class="btn primary" click.trigger="yes()" title="Yes" t="[title]common.yes;common.yes">Yes</button>
+            <button type="button" class="btn" click.trigger="no()">
+                <span if.bind="confirmationContext.cancelLabel">${confirmationContext.cancelLabel}</span>
+                <span else t="common.cancel">Cancel</span>
+            </button>
+            <button type="button" class="btn" danger.class="confirmationContext.destructive" primary.class="!confirmationContext.destructive" click.trigger="yes()">
+                <span if.bind="confirmationContext.confirmLabel">${confirmationContext.confirmLabel}</span>
+                <span else t="common.confirm">Confirm</span>
+            </button>
         </footer>
     </div>
 </div>

@@ -19,6 +19,11 @@ export class PartnerEdit {
     private readonly i18n = resolve(I18N);
     private countryList = countryListAlpha2;
 
+    get canSave(): boolean {
+        const partner = this.partnerContext.selectedPartner;
+        return !!partner?.name && !!partner.peppolId?.includes(':');
+    }
+
     async savePartner() {
         if (!this.ownershipService.granted.PARTNER_MANAGE) {
             return;

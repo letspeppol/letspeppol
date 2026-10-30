@@ -1,4 +1,4 @@
-import {Params, RouteNode} from "@aurelia/router";
+import {IRouterEvents, Params, RouteNode} from "@aurelia/router";
 import {resolve} from "@aurelia/kernel";
 import * as webeid from '@web-eid/web-eid-library/web-eid';
 import {IEventAggregator} from "aurelia";
@@ -10,12 +10,13 @@ import {
     RegistrationService,
     TokenVerificationResponse
 } from "../services/kyc/registration-service";
-import {PeppolDirectoryResponse, PeppolDirService} from "../services/peppol/peppol-dir-service";
+import {PeppolDirService} from "../services/peppol/peppol-dir-service";
 import {SignatureAlgorithm} from "@web-eid/web-eid-library/models/SignatureAlgorithm";
 import {LibrarySignResponse} from "@web-eid/web-eid-library/models/message/LibraryResponse";
 import {I18N} from "@aurelia/i18n";
 import {ChoosePassword} from "../components/choose-password/choose-password";
 import {clearTokenFromUrl} from "../services/util/url";
+import {REGISTRATION_STEPS} from "./registration";
 
 export class EmailConfirmation {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -23,7 +24,9 @@ export class EmailConfirmation {
     readonly registrationService = resolve(RegistrationService);
     readonly peppolDirService = resolve(PeppolDirService);
     readonly i18n = resolve(I18N);
-    public errorMessage: string | undefined; // made public for template binding
+    private readonly routerEvents = resolve(IRouterEvents);
+    readonly steps = REGISTRATION_STEPS;
+    public errorKey: string | undefined;
     public emailToken: string;
     public tokenVerificationResponse: TokenVerificationResponse | undefined; // made public for template binding
     public confirmedDirector: Director | undefined; // holds the chosen director
@@ -44,17 +47,31 @@ export class EmailConfirmation {
     public loading(params: Params, next: RouteNode) {
         this.emailToken = next.queryParams.get('token');
         if (!this.emailToken) {
-            this.errorMessage = 'Token not available';
+            this.errorKey = 'confirmation.token-missing';
             return;
         }
-        clearTokenFromUrl();
+        const navigationEnd = this.routerEvents.subscribe('au:router:navigation-end', () => {
+            navigationEnd.dispose();
+            clearTokenFromUrl();
+        });
         this.registrationService.verifyToken(this.emailToken).then(result => {
             this.tokenVerificationResponse = result;
             this.step = 1;
             this.checkPeppolDirectory(result.company.peppolId);
-        }).catch(error => {
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.registration.token-invalid')});
+        }).catch(() => {
+            this.errorKey = 'confirmation.token-invalid';
         });
+    }
+
+    get titleKey(): string {
+        switch (this.step) {
+            case 2:
+                return 'confirmation.header-sign';
+            case 3:
+                return 'confirmation.success-title';
+            default:
+                return 'confirmation.header';
+        }
     }
 
     getContractUrl() {
@@ -107,12 +124,13 @@ export class EmailConfirmation {
               case 'MANUAL_REVIEW':
                 this.warningKey = 'account.registration-failed.contact-us';
                 break;
-              case 'CONFLICT':
+              case 'CONFLICT': {
                 const raw = finalizeSigningResponse.headers.get('Registration-Provider') ?? '';
                 const provider = raw ? decodeURIComponent(raw) : '';
                 this.warningKey = 'account.registration-failed.contact-provider';
                 this.alreadyRegisteredProvider = provider;
                 break;
+              }
               case 'OK':
               default:
                 break;
@@ -129,7 +147,7 @@ export class EmailConfirmation {
                     text = `${error.status} ${error.statusText}`;
                 }
             } else if (error && typeof error === "object" && "message" in error) {
-                text = String((error as any).message);
+                text = String((error as {message: unknown}).message);
             }
             this.ea.publish('alert', { alertType: AlertType.Danger, text });
             this.confirmInProgress = false;
@@ -214,7 +232,7 @@ export class EmailConfirmation {
                     text = `${error.status} ${error.statusText}`;
                 }
             } else if (error && typeof error === "object" && "message" in error) {
-                text = String((error as any).message);
+                text = String((error as {message: unknown}).message);
             }
             this.ea.publish('alert', { alertType: AlertType.Danger, text });
             this.confirmedDirector = undefined;

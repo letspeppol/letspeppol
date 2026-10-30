@@ -1,14 +1,16 @@
-<div class="modal" role="dialog" aria-modal="true" show.bind="open">
+<import from="./invoice-modals.css"></import>
+
+<div class="modal" role="dialog" aria-modal="true" aria-labelledby="payment-modal-title" show.bind="open">
     <div class="modal-backdrop"></div>
     <div class="modal-card" keydown.trigger="onKeyDown($event)">
         <header class="modal-header">
-            <h2 t="invoice.paymentModal.title">Payment</h2>
-            <button class="icon-btn" click.trigger="closeModal()" aria-label="Close dialog" t="[aria-label]common.close" title="Close" t="[title]common.close">×</button>
+            <h2 id="payment-modal-title" t="invoice.paymentModal.title">Payment</h2>
+            <button type="button" class="icon-btn" click.trigger="closeModal()" aria-label="Close" t="[aria-label,title]common.close">×</button>
         </header>
         <div class="modal-body">
-            <div style="display: inline-grid; gap: var(--space-1)">
+            <div class="modal-form">
                 <label class="field">
-                    <span t="invoice.paymentModal.type">Type</span>
+                    <span t="invoice.paymentModal.type">Payment method</span>
                     <select name="paymentMeanCode" value.bind="paymentMeansCode" change.trigger="paymentMeansCodeChanged()" required>
                         <option value="" t="common.none">None</option>
                         <option repeat.for="paymentMeanCode of invoiceComposer.paymentMeansCodes" model.bind="paymentMeanCode.value">${paymentMeanCode.__name}</option>
@@ -16,29 +18,28 @@
                 </label>
                 <template if.bind="paymentMeansCode === 30">
                     <label class="field required">
-                        <span t="invoice.paymentModal.name">Name</span>
-                        <input type="text" name="payeeFinancialAccountName" placeholder="Acccount name" t="[placeholder]label.account-name" value.bind="paymentMeans.PayeeFinancialAccount.Name" />
+                        <span t="invoice.paymentModal.name">Account holder</span>
+                        <input type="text" name="payeeFinancialAccountName" autocomplete="off" value.bind="paymentMeans.PayeeFinancialAccount.Name" />
                     </label>
-                    <label class="field required">
-                        <span t="invoice.paymentModal.iban">IBAN</span>
-                        <input type="text" name="payeeFinancialAccountID" placeholder="IBAN" t="[placeholder]label.iban" value.bind="paymentMeans.PayeeFinancialAccount.ID" />
-                        <button if.bind="!companyService.myCompany.iban && paymentMeans.PayeeFinancialAccount.ID && paymentMeans.PayeeFinancialAccount.ID.length >= 15" type="button" class="btn" click.trigger="saveIbanToAccount()" t="invoice.paymentModal.store-iban">Store IBAN in account</button>
-                    </label>
+                    <div class="field required">
+                        <label for="payment-modal-iban" t="invoice.paymentModal.iban">IBAN</label>
+                        <input id="payment-modal-iban" type="text" name="payeeFinancialAccountID" class="tabular" autocomplete="off" value.bind="paymentMeans.PayeeFinancialAccount.ID" />
+                        <button if.bind="!companyService.myCompany.iban && paymentMeans.PayeeFinancialAccount.ID && paymentMeans.PayeeFinancialAccount.ID.length >= 15" type="button" class="btn small store-iban" click.trigger="saveIbanToAccount()" t="invoice.paymentModal.store-iban">Save IBAN in account</button>
+                    </div>
                     <label class="field">
                         <span t="invoice.paymentModal.bic">BIC</span>
-                        <input type="text" name="payeeFinancialInstitutionBranchID" placeholder="BIC" t="[placeholder]label.bic" value.bind="paymentMeans.PayeeFinancialAccount.FinancialInstitutionBranch.ID" />
+                        <input type="text" name="payeeFinancialInstitutionBranchID" class="tabular" autocomplete="off" value.bind="paymentMeans.PayeeFinancialAccount.FinancialInstitutionBranch.ID" />
                     </label>
                     <label class="field">
-                        <span t="invoice.paymentModal.reference">Reference</span>
-                        <input type="text" name="reference" placeholder="100-00001-00" t="[placeholder]label.reference" value.bind="paymentMeans.PaymentID" />
+                        <span t="invoice.paymentModal.reference">Structured communication</span>
+                        <input type="text" name="reference" class="tabular" placeholder="+++000/0000/00000+++" autocomplete="off" value.bind="paymentMeans.PaymentID" />
                     </label>
                 </template>
             </div>
         </div>
         <footer class="modal-footer">
-            <button type="button" class="btn" click.trigger="closeModal()" title="Cancel" t="[title]common.cancel" t="common.cancel">Cancel</button>
-            <button type="button" class="btn primary" click.trigger="savePaymentMeans()" title="Confirm" t="[title]common.confirm" t="common.confirm"
-            disabled.bind="paymentMeansCode === 30 && !paymentMeans.PayeeFinancialAccount.ID">Confirm</button>
+            <button type="button" class="btn" click.trigger="closeModal()" t="common.cancel">Cancel</button>
+            <button type="button" class="btn primary" click.trigger="savePaymentMeans()" disabled.bind="paymentMeansCode === 30 && !paymentMeans.PayeeFinancialAccount.ID" t="common.apply">Apply</button>
         </footer>
     </div>
 </div>

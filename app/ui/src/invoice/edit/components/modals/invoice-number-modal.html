@@ -1,29 +1,24 @@
-<div class="modal" role="dialog" aria-modal="true" show.bind="open">
+<import from="./invoice-modals.css"></import>
+
+<div class="modal" role="dialog" aria-modal="true" aria-labelledby="number-modal-title" show.bind="open">
     <div class="modal-backdrop"></div>
     <div class="modal-card" keydown.trigger="onKeyDown($event)">
         <header class="modal-header">
-            <h2 t="${isCreditNote ? 'invoice.modal.credit-note-number' : 'invoice.modal.invoice-number'}">Invoice Number</h2>
-            <button class="icon-btn" click.trigger="closeModal()" aria-label="Close dialog" t="[aria-label]common.close" title="Close" t="[title]common.close">×</button>
+            <h2 id="number-modal-title" t="${isCreditNote ? 'invoice.modal.credit-note-number' : 'invoice.modal.invoice-number'}">Invoice number</h2>
+            <button type="button" class="icon-btn" click.trigger="closeModal()" aria-label="Close" t="[aria-label,title]common.close">×</button>
         </header>
         <div class="modal-body">
-            <p if.bind="invoiceContext.lastReference" style="color: var(--muted)">Last number: <strong>${invoiceContext.lastReference}</strong></p>
-            <div style="display: inline-grid; gap: var(--space-1)">
+            <p if.bind="invoiceContext.lastReference" class="modal-lead tabular" t="invoice.edit.last-number" t-params.bind="{number: invoiceContext.lastReference}"></p>
+            <div class="modal-form">
                 <label class="field required">
                     <span t="${isCreditNote ? 'invoice.modal.credit-note-number' : 'invoice.modal.invoice-number'}">Invoice number</span>
-                    <input type="text" name="invoice-number" placeholder.bind="invoiceNumber" t="[placeholder]label.account-name" value.bind="invoiceNumber" required />
+                    <input type="text" name="invoice-number" class="tabular" value.bind="invoiceNumber" required />
                 </label>
             </div>
         </div>
         <footer class="modal-footer">
-            <button type="button" class="btn"
-                    click.trigger="closeModal()"
-                    title="Cancel" t="[title]common.cancel"
-                    t="common.cancel">Cancel</button>
-            <button type="button" class="btn primary"
-                    click.trigger="sendInvoice()"
-                    title="Confirm" t="[title]common.confirm"
-                    t="common.confirm"
-                    disabled.bind="!invoiceNumber">Send</button>
+            <button type="button" class="btn" click.trigger="closeModal()" t="common.cancel">Cancel</button>
+            <button type="button" class="btn primary" click.trigger="sendInvoice()" disabled.bind="!invoiceNumber" t="invoice.edit.send.${isCreditNote ? 'CREDIT_NOTE' : 'INVOICE'}">Send invoice</button>
         </footer>
     </div>
 </div>

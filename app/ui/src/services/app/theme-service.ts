@@ -1,11 +1,14 @@
-import {IContainer, singleton} from '@aurelia/kernel';
-import {watch} from 'aurelia';
+import {singleton} from '@aurelia/kernel';
 
 const STORAGE_KEY_THEME: string = 'peppol.theme.v1';
+
+type Theme = 'light' | 'dark';
 
 @singleton()
 export class ThemeService {
     themeDark: boolean = false;
+
+    private readonly systemDark: MediaQueryList | undefined = window.matchMedia?.('(prefers-color-scheme: dark)');
 
     constructor() {
         this.initTheme();
@@ -16,21 +19,30 @@ export class ThemeService {
         if (savedTheme === 'light' || savedTheme === 'dark') {
             this.applyTheme(savedTheme);
         } else {
-            // const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches; // TODO Dark theme needs restyling
-            const prefersDark = false;
-            this.applyTheme(prefersDark ? 'dark' : 'light');
+            document.documentElement.removeAttribute('data-theme');
+            this.themeDark = this.resolvedTheme() === 'dark';
         }
+        this.systemDark?.addEventListener('change', () => {
+            this.themeDark = this.resolvedTheme() === 'dark';
+        });
     }
 
     switchTheme() {
-        const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
-        const next = current === 'dark' ? 'light' : 'dark';
+        const next: Theme = this.resolvedTheme() === 'dark' ? 'light' : 'dark';
         this.applyTheme(next);
         localStorage.setItem(STORAGE_KEY_THEME, next);
     }
 
-    applyTheme(mode) {
+    applyTheme(mode: Theme) {
         document.documentElement.setAttribute('data-theme', mode);
-        this.themeDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        this.themeDark = mode === 'dark';
+    }
+
+    private resolvedTheme(): Theme {
+        const explicit = document.documentElement.getAttribute('data-theme');
+        if (explicit === 'light' || explicit === 'dark') {
+            return explicit;
+        }
+        return this.systemDark?.matches ? 'dark' : 'light';
     }
 }

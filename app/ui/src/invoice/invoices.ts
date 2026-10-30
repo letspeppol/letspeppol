@@ -1,6 +1,6 @@
 import {resolve} from "@aurelia/kernel";
 import {IEventAggregator} from "aurelia";
-import {Params} from "@aurelia/router";
+import {Params, RouteNode} from "@aurelia/router";
 import {InvoiceContext} from "./invoice-context";
 import {InvoiceService} from "../services/app/invoice-service";
 import {AlertType} from "../components/alert/alert";
@@ -16,8 +16,9 @@ export class Invoices {
         this.invoiceContext.clearSelectedInvoice();
     }
 
-    loading(params: Params) {
+    loading(params: Params, next?: RouteNode) {
         const requestedId = params.id;
+        this.invoiceContext.requestStatusFilter(next?.queryParams?.get('status'));
         // Track the invoice id the router is navigating to, so a late getDocument()
         // response can't re-select an invoice after the user already navigated away.
         this.invoiceContext.selectedRouteId = requestedId;

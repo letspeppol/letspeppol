@@ -20,6 +20,10 @@ export class ConfirmationModal {
     }
 
     onKeyDown(event: KeyboardEvent) {
+        if (event.key === 'Escape') {
+            this.no();
+            return;
+        }
         onModalEnter(event, () => this.yes());
     }
 }

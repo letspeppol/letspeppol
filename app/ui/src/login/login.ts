@@ -122,7 +122,9 @@ export class Login {
 
             await this.completePasskeySignIn(credential as PublicKeyCredential);
         } catch (error) {
-            if (!isPasskeyCancellation(error)) {
+            if (isPasskeyUnsupported(error)) {
+                this.errorKey = 'login.passkey-unsupported';
+            } else if (!isPasskeyCancellation(error)) {
                 this.setAuthenticationError(error, 'login.passkey-error');
             }
         } finally {
@@ -140,19 +142,22 @@ export class Login {
     private async offerPasskeyAutofill() {
         this.passkeyAutofillRequest = new AbortController();
         const signal = this.passkeyAutofillRequest.signal;
+        let credential: Credential | null;
         try {
             const publicKey = await this.browserAuthentication.getPasskeyAuthenticationOptions();
             if (signal.aborted) return;
 
-            const credential = await navigator.credentials.get({publicKey, mediation: 'conditional', signal});
-            if (!credential || signal.aborted) return;
+            credential = await navigator.credentials.get({publicKey, mediation: 'conditional', signal});
+        } catch {
+            return;
+        }
+        if (!credential || signal.aborted) return;
 
-            this.busy = true;
+        this.busy = true;
+        try {
             await this.completePasskeySignIn(credential as PublicKeyCredential);
         } catch (error) {
-            if (!isPasskeyCancellation(error)) {
-                this.setAuthenticationError(error, 'login.passkey-error');
-            }
+            this.setAuthenticationError(error, 'login.passkey-error');
         } finally {
             this.busy = false;
         }
@@ -241,10 +246,18 @@ export class Login {
 }
 
 export function isPasskeyCancellation(error: unknown): boolean {
-    const name = typeof error === 'object' && error !== null && 'name' in error
+    const name = errorName(error);
+    return name === 'AbortError' || name === 'NotAllowedError';
+}
+
+export function isPasskeyUnsupported(error: unknown): boolean {
+    return errorName(error) === 'NotSupportedError';
+}
+
+function errorName(error: unknown): string {
+    return typeof error === 'object' && error !== null && 'name' in error
         ? String((error as {name: unknown}).name)
         : '';
-    return name === 'AbortError' || name === 'NotAllowedError';
 }
 
 async function passkeyAutofillSupported(): Promise<boolean> {

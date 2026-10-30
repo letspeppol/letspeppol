@@ -1,9 +1,17 @@
+.allowance-charge-list {
+    display: grid;
+    gap: var(--space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
 .allowance-charge-line {
     display: flex;
-    align-items: center;
-    gap: var(--space-025);
-    max-width: 100%;
+    justify-content: space-between;
+    gap: var(--space-2);
     min-width: 0;
+    font-size: var(--text-sm);
 }
 
 .allowance-charge-reason {
@@ -14,16 +22,9 @@
     white-space: nowrap;
 }
 
-.allowance-charge-line > span:not(.allowance-charge-reason) {
-    flex-shrink: 0;
-}
-
-.allowance-charge-separator {
-    width: 2px;
-    height: 1.0em;
-    background: var(--border-soft);
-}
-
 .allowance-charge-amount {
+    flex-shrink: 0;
+    color: var(--ink);
+    font-weight: 600;
     white-space: nowrap;
 }

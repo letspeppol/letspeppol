@@ -1,0 +1,123 @@
+.vat-mode-tag {
+    margin-left: var(--space-2);
+    color: var(--muted);
+    font-size: var(--text-md);
+    font-weight: 500;
+    letter-spacing: normal;
+}
+
+.dashboard-errored {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid color-mix(in srgb, var(--danger) 35%, transparent);
+    border-radius: var(--radius);
+    background: var(--danger-tint);
+    color: var(--danger);
+}
+
+.dashboard-errored-icon {
+    flex: none;
+}
+
+.dashboard-errored p {
+    flex: 1 1 16rem;
+    margin: 0;
+    font-weight: 600;
+}
+
+.dashboard-errored .btn {
+    margin-left: auto;
+    border-color: currentcolor;
+    background: var(--sheet);
+    color: var(--danger);
+}
+
+.dashboard-errored .btn:hover {
+    background: var(--sheet);
+    color: var(--ink);
+}
+
+.ledgers {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4);
+}
+
+.ledger {
+    min-width: 0;
+    padding: var(--space-5) var(--space-6) var(--space-3);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    background: var(--sheet);
+}
+
+.ledger h2 {
+    margin: 0 0 var(--space-2);
+}
+
+.ledger-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.ledger-table th,
+.ledger-table td {
+    padding: var(--space-3) 0;
+    border-top: 1px solid var(--rule-soft);
+    vertical-align: baseline;
+}
+
+.ledger-table tr:first-child :is(th, td) {
+    border-top: 0;
+}
+
+.ledger-table th {
+    color: var(--muted);
+    font-weight: 500;
+    text-align: left;
+}
+
+.ledger-table td {
+    padding-left: var(--space-4);
+    color: var(--ink);
+    font-size: var(--text-lg);
+    font-weight: 600;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.ledger-table .ledger-total th {
+    color: var(--text);
+}
+
+.ledger-table .ledger-total td {
+    font-size: var(--text-display);
+    line-height: 1.15;
+    font-weight: 700;
+}
+
+.ledger-table td.is-overdue {
+    color: var(--danger);
+}
+
+@media (width <= 767px) {
+    .ledgers {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .ledger {
+        padding: var(--space-4) var(--space-4) var(--space-2);
+    }
+
+    .ledger-table .ledger-total td {
+        font-size: 1.75rem;
+    }
+
+    .dashboard-errored .btn {
+        flex: 1 1 100%;
+    }
+}

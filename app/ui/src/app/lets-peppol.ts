@@ -1,6 +1,4 @@
 import {NavigationStrategy, route} from "@aurelia/router";
-import {resolve} from "@aurelia/kernel";
-import {Alert} from "../components/alert/alert";
 import {CompanyPermission} from "../services/app/company-permission";
 
 // NavigationStrategy invokes the dynamic import only after its route matches. Previously every
@@ -34,5 +32,4 @@ const lazy = (load: () => Promise<Record<string, unknown>>) => new NavigationStr
     ],
 })
 export class LetsPeppol {
-    private alert = resolve(Alert);
 }

@@ -1,91 +1,83 @@
 <import from="../customer-search"></import>
 <import from="../../../../components/search/company-search"></import>
+<import from="./invoice-modals.css"></import>
 
-<div class="modal" role="dialog" aria-modal="true" show.bind="open">
+<div class="modal" role="dialog" aria-modal="true" aria-labelledby="customer-modal-title" show.bind="open">
     <div class="modal-backdrop"></div>
-    <div class="modal-card" style="width: 800px" keydown.trigger="onKeyDown($event)">
+    <div class="modal-card modal-wide" keydown.trigger="onKeyDown($event)">
         <header class="modal-header">
-            <h2 t="invoice.customerModal.title">Customer</h2>
-            <button class="icon-btn" aria-label="Close dialog" t="[aria-label]common.close" title="Close" t="[title]common.close" click.trigger="closeModal()">×</button>
+            <h2 id="customer-modal-title" t="invoice.customerModal.title">Customer</h2>
+            <button type="button" class="icon-btn" click.trigger="closeModal()" aria-label="Close" t="[aria-label,title]common.close">×</button>
         </header>
         <div class="modal-body">
-            <div style="display: inline-grid; gap: var(--space-1)">
-                <h3 style="margin-bottom: 0px" t="invoice.customerModal.search-title">Search Customer</h3>
-                <customer-search style="max-width: 250px"
-                                 component.ref="customerSearch"
-                                 select-customer-function.bind="(c) => selectCustomer(c)"
-                                 confirm-customer-function.bind="() => customer && saveCustomer()">
-                </customer-search>
+            <div class="modal-form">
+                <section class="modal-form" aria-labelledby="customer-modal-search">
+                    <h3 id="customer-modal-search" class="modal-section-title" t="invoice.customerModal.search-title">Select partner</h3>
+                    <customer-search component.ref="customerSearch"
+                                     select-customer-function.bind="(c) => selectCustomer(c)"
+                                     confirm-customer-function.bind="() => customer && saveCustomer()">
+                    </customer-search>
+                </section>
 
-                <h3 class="field full" style="margin-bottom: 0px" t="invoice.customerModal.create-new">Create New</h3>
-                <div style="display: grid; gap: 1rem; grid-template-columns: auto auto;">
-                    <div class="card">
-                        <div class="card-header">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-building-icon lucide-building"><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M12 6h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/><path d="M8 6h.01"/><path d="M9 22v-3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><rect x="4" y="2" width="16" height="20" rx="2"/></svg>
-                            <h2 t="partner.edit.company-info">Company Info</h2>
-                        </div>
-                        <div style="display: grid; gap: var(--space-1)">
-
-                            <div style="display: flex; gap: var(--space-1)">
-                                <label class="field">
-                                    <span t="label.enterprise-number">Enterprise Number</span>
-                                    <input type="text" value.bind="customer.PartyLegalEntity.CompanyID.value" change.trigger="enterpriseNumberChanged()"/>
-                                </label>
-                                <label class="field">
-                                    <span t="label.vat-number">VAT Number</span>
-                                    <input type="text" name="customerId" placeholder="VAT Number" t="[placeholder]label.vat-number" value.bind="customer.PartyTaxScheme.CompanyID.value"  required change.trigger="vatNumberChanged()" style="width: 130px" />
-                                </label>
-                            </div>
-                            <company-search select-company-function.bind="(company) => completeCustomerInfo(company)"
+                <h3 class="modal-section-title" t="invoice.customerModal.create-new">Or enter a new customer</h3>
+                <div class="customer-modal-groups">
+                    <fieldset class="modal-fieldset">
+                        <legend t="partner.edit.company-info">Company</legend>
+                        <div class="modal-form two-col">
+                            <label class="field">
+                                <span t="label.enterprise-number">Enterprise number</span>
+                                <input type="text" class="tabular" inputmode="numeric" value.bind="customer.PartyLegalEntity.CompanyID.value" change.trigger="enterpriseNumberChanged()"/>
+                            </label>
+                            <label class="field">
+                                <span t="label.vat-number">VAT number</span>
+                                <input type="text" name="customerId" class="tabular" t="[placeholder]placeholder.vat-number" value.bind="customer.PartyTaxScheme.CompanyID.value" required change.trigger="vatNumberChanged()" />
+                            </label>
+                            <company-search class="full"
+                                            select-company-function.bind="(company) => completeCustomerInfo(company)"
                                             search-query.two-way="customer.PartyName.Name"
                                             on-change-function.bind="() => nameChanged()">
                             </company-search>
-                            <label class="field required">
+                            <label class="field required full">
                                 <span t="label.peppolId">Peppol ID</span>
-                                <input type="text" value.bind="peppolId" change.trigger="peppolIdChanged()"/>
+                                <input type="text" class="tabular" value.bind="peppolId" change.trigger="peppolIdChanged()"/>
                             </label>
                         </div>
-                    </div>
+                    </fieldset>
 
-                    <div class="card">
-                        <div class="card-header">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin-house-icon lucide-map-pin-house"><path d="M15 22a1 1 0 0 1-1-1v-4a1 1 0 0 1 .445-.832l3-2a1 1 0 0 1 1.11 0l3 2A1 1 0 0 1 22 17v4a1 1 0 0 1-1 1z"/><path d="M18 10a8 8 0 0 0-16 0c0 4.993 5.539 10.193 7.399 11.799a1 1 0 0 0 .601.2"/><path d="M18 22v-3"/><circle cx="10" cy="10" r="3"/></svg>
-                            <h2 t="partner.edit.address">Address</h2>
-                        </div>
-
-                        <div class="grid grid-col-73">
+                    <fieldset class="modal-fieldset">
+                        <legend t="partner.edit.address">Address</legend>
+                        <div class="modal-form two-col">
                             <label class="field full">
                                 <span t="label.street">Street</span>
-                                <input type="text" name="customerStreet" placeholder="Street" t="[placeholder]label.street" value.bind="customer.PostalAddress.StreetName" required />
+                                <input type="text" name="customerStreet" autocomplete="off" value.bind="customer.PostalAddress.StreetName" required />
+                            </label>
+                            <label class="field">
+                                <span t="label.postal-code">Postal code</span>
+                                <input type="text" name="customerPostalCode" class="tabular" autocomplete="off" value.bind="customer.PostalAddress.PostalZone" required />
                             </label>
                             <label class="field">
                                 <span t="label.city">City</span>
-                                <input type="text" name="customerCity" placeholder="City" t="[placeholder]label.city" value.bind="customer.PostalAddress.CityName" required />
+                                <input type="text" name="customerCity" autocomplete="off" value.bind="customer.PostalAddress.CityName" required />
                             </label>
-                            <label class="field">
-                                <span t="label.postal-code">Postal Code</span>
-                                <input type="text" name="customerPostalCode" placeholder="Postal Code" t="[placeholder]label.postal-code" value.bind="customer.PostalAddress.PostalZone" required />
+                            <label class="field full">
+                                <span t="label.country">Country</span>
+                                <select value.bind="customer.PostalAddress.Country.IdentificationCode">
+                                    <option repeat.for="country of Object.entries(countryList)" value.bind="country[0]">${country[1]}</option>
+                                </select>
                             </label>
                         </div>
-
-                        <label class="field" style="margin-top: 20px">
-                            <span t="label.country">Country</span>
-                            <select value.bind="customer.PostalAddress.Country.IdentificationCode">
-                                <option repeat.for="country of Object.entries(countryList)" value.bind="country[0]">${country[1]}</option>
-                            </select>
-                        </label>
-                    </div>
+                    </fieldset>
                 </div>
             </div>
         </div>
         <footer class="modal-footer">
-            <label if.bind="ownershipService.granted.PARTNER_MANAGE" class="field checkbox">
+            <label if.bind="ownershipService.granted.PARTNER_MANAGE" class="field checkbox modal-footer-info">
                 <input type="checkbox" checked.bind="saveAsPartner" disabled.bind="!customer.PartyName.Name || !peppolId" />
-                <span t="invoice.customerModal.save-as-partner"></span>
+                <span t="invoice.customerModal.save-as-partner">Save as partner</span>
             </label>
-            <button type="button" class="btn" click.trigger="closeModal()" t="[title]common.cancel" t="common.cancel">Cancel</button>
-            <button type="button" class="btn primary" click.trigger="saveCustomer()" t="[title]common.confirm" t="common.confirm"
-                    disabled.bind="!customer.PartyName.Name || !customer.PartyLegalEntity.RegistrationName || !customer.PartyTaxScheme.CompanyID || !peppolId || !peppolId.includes(':')">Confirm</button>
+            <button type="button" class="btn" click.trigger="closeModal()" t="common.cancel">Cancel</button>
+            <button type="button" class="btn primary" click.trigger="saveCustomer()" t="invoice.customerModal.use-customer"
+                    disabled.bind="!customer.PartyName.Name || !customer.PartyLegalEntity.RegistrationName || !customer.PartyTaxScheme.CompanyID || !peppolId || !peppolId.includes(':')">Use this customer</button>
         </footer>
     </div>
 </div>

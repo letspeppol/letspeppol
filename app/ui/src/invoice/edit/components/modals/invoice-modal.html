@@ -1,55 +1,54 @@
 <import from="../../../../app/value-converters/date-format.ts"></import>
+<import from="./invoice-modals.css"></import>
 
-<div class="modal" role="dialog" aria-modal="true" show.bind="open">
+<div class="modal" role="dialog" aria-modal="true" aria-labelledby="invoice-modal-title" show.bind="open">
     <div class="modal-backdrop"></div>
     <div class="modal-card">
         <header class="modal-header">
-            <h2 t="${isCreditNote ? 'invoice.modal.title-credit-note' : 'invoice.modal.title'}">Invoice</h2>
-            <button class="icon-btn" click.trigger="closeModal()" aria-label="Close dialog" t="[aria-label]common.close" title="Close" t="[title]common.close">×</button>
+            <h2 id="invoice-modal-title" t="${isCreditNote ? 'invoice.modal.title-credit-note' : 'invoice.modal.title'}">Invoice</h2>
+            <button type="button" class="icon-btn" click.trigger="closeModal()" aria-label="Close" t="[aria-label,title]common.close">×</button>
         </header>
         <div class="modal-body">
-            <div style="display: inline-grid; gap: var(--space-1)">
-                <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-09);">
-                    <label class="field" >
-                        <span t="invoice.modal.document">Document</span>
-                        <select name="documentType" value.bind="selectedDocumentType" required>
-                            <option repeat.for="type of documentTypes" value.bind="type" t="documentType.${type}"></option>
-                        </select>
-                    </label>
-                    <label class="field">
-                        <span t="${isCreditNote ? 'invoice.modal.credit-note-number' : 'invoice.modal.invoice-number'}">Invoice number</span>
-                        <input id="docNumber" type="text" name="docNumber" placeholder.bind="isCreditNote ? 'CRN-2025-0001' : 'INV-2025-0001'" value.bind="id" keydown.trigger="onKeyDown($event)" required />
-                    </label>
-                    <label class="field">
-                        <span t="invoice.buyer-reference">Buyer Reference</span>
-                        <input type="text" name="reference" value.bind="buyerReference" keydown.trigger="onKeyDown($event)" required />
-                    </label>
-                    <label class="field">
-                        <span t="invoice.order-reference">Order Reference</span>
-                        <input type="text" name="reference" value.bind="orderReference" keydown.trigger="onKeyDown($event)" required />
-                    </label>
-                    <label class="field full" missing-required.class="isInvoiceReferenceMissing" if.bind="isCreditNote">
-                        <span t="invoice.modal.invoice-reference">Select invoice reference</span>
-                        <select name="invoiceReference" value.bind="selectedInvoiceReferenceId">
-                            <option model.bind="undefined" t="invoice.modal.invoice-reference-none"></option>
-                            <option repeat.for="inv of referenceableInvoices" model.bind="inv.invoiceReference">
-                                ${inv.invoiceReference} — ${inv.issueDate | dateFormat}
-                            </option>
-                        </select>
-                    </label>
-                    <label class="field full">
-                        <details open.bind="isCreditNote">
-                            <summary><span t="invoice.modal.note-optional">Note (optional)</span></summary>
-                            <textarea name="note" style="min-width: 100%" placeholder="Additional notes for this invoice" t="[placeholder]${isCreditNote ? 'invoice.modal.credit-note-note-placeholder' : 'invoice.modal.note-placeholder'}" value.bind="note"></textarea>
-                        </details>
-                    </label>
+            <div class="modal-form two-col">
+                <label class="field">
+                    <span t="invoice.modal.document">Document</span>
+                    <select name="documentType" value.bind="selectedDocumentType" required>
+                        <option repeat.for="type of documentTypes" value.bind="type" t="documentType.${type}"></option>
+                    </select>
+                </label>
+                <label class="field">
+                    <span t="${isCreditNote ? 'invoice.modal.credit-note-number' : 'invoice.modal.invoice-number'}">Invoice number</span>
+                    <input id="docNumber" type="text" name="docNumber" class="tabular" placeholder.bind="isCreditNote ? 'CRN-2025-0001' : 'INV-2025-0001'" value.bind="id" keydown.trigger="onKeyDown($event)" required />
+                </label>
+                <label class="field">
+                    <span t="invoice.buyer-reference">Buyer reference</span>
+                    <input type="text" name="buyerReference" value.bind="buyerReference" keydown.trigger="onKeyDown($event)" />
+                </label>
+                <label class="field">
+                    <span t="invoice.order-reference">Order reference</span>
+                    <input type="text" name="orderReference" value.bind="orderReference" keydown.trigger="onKeyDown($event)" />
+                </label>
+                <p class="modal-lead full" t="invoice.modal.reference-required">Fill in a buyer reference or an order reference.</p>
+                <label class="field full" missing-required.class="isInvoiceReferenceMissing" if.bind="isCreditNote">
+                    <span t="invoice.modal.invoice-reference">Invoice this credit note corrects</span>
+                    <select name="invoiceReference" value.bind="selectedInvoiceReferenceId">
+                        <option model.bind="undefined" t="invoice.modal.invoice-reference-none"></option>
+                        <option repeat.for="inv of referenceableInvoices" model.bind="inv.invoiceReference">
+                            ${inv.invoiceReference}, ${inv.issueDate | dateFormat}
+                        </option>
+                    </select>
+                </label>
+                <div class="field full">
+                    <details open.bind="isCreditNote">
+                        <summary t="invoice.modal.note-optional">Note (optional)</summary>
+                        <textarea name="note" t="[placeholder,aria-label]${isCreditNote ? 'invoice.modal.credit-note-note-placeholder' : 'invoice.modal.note-placeholder'}" value.bind="note"></textarea>
+                    </details>
                 </div>
             </div>
         </div>
         <footer class="modal-footer">
-            <small class="modal-footer-info" t="invoice.modal.reference-required">Either buyer reference OR order reference is required</small>
-            <button type="button" class="btn" click.trigger="closeModal()" title="Cancel" t="[title]common.cancel" t="common.cancel">Cancel</button>
-            <button type="button" class="btn primary" click.trigger="saveInvoiceInfo()" disabled.bind="!hasReference" title="Confirm" t="[title]common.confirm" t="common.confirm">Confirm</button>
+            <button type="button" class="btn" click.trigger="closeModal()" t="common.cancel">Cancel</button>
+            <button type="button" class="btn primary" click.trigger="saveInvoiceInfo()" disabled.bind="!hasReference" t="common.apply">Apply</button>
         </footer>
     </div>
 </div>

@@ -16,6 +16,8 @@
 <import from="./components/tiles/total-info"></import>
 <import from="./components/tiles/allowance-charge-info"></import>
 <import from="./components/invoice-edit-items"></import>
+<import from="../../components/confirmation/confirmation-modal"></import>
+<import from="../../app/value-converters/date-format.ts"></import>
 
 <invoice-modal component.ref="invoiceModal" invoice-context.bind="invoiceContext" original-document-type.two-way="selectedDocumentType"></invoice-modal>
 <invoice-date-modal component.ref="invoiceDateModal" invoice-context.bind="invoiceContext" document-type.bind="selectedDocumentType"></invoice-date-modal>
@@ -26,103 +28,98 @@
 <validation-result-modal component.ref="validationResultModal"></validation-result-modal>
 <invoice-delivery-modal component.ref="invoiceDeliveryModal"></invoice-delivery-modal>
 <invoice-allowance-charge-modal component.ref="invoiceAllowanceChargeModal"></invoice-allowance-charge-modal>
+<confirmation-modal></confirmation-modal>
 
 <template if.bind="invoiceContext.selectedInvoice">
-<div class="invoices-main">
-    <div class="section-header">
-        <div style="display:flex;align-items:center;gap:.5rem">
-            <h1 if.bind="!readOnly" style="margin:0" t="invoice.new.${selectedDocumentType}">New Invoice/Credit-Note</h1>
-            <h1 else style="margin:0; display: flex; align-items: center">
-                <span t="documentType.${selectedDocumentType}"></span>
-                <span style="margin-left: var(--space-05); margin-right: var(--space-05)" >${invoiceContext.selectedInvoice.ID}</span>
-                <template if.bind="invoiceContext.selectedDocument">
-                    <span class="pill" if.bind="invoiceContext.selectedDocument.draftedOn" t="invoice.status.draft">Drafted</span>
-                    <span class="pill" style="margin-left: 3px; margin-right: 3px" if.bind="invoiceContext.selectedDocument.createdExternally">Uploaded</span>
-                    <span class="pill scheduled" if.bind="invoiceContext.selectedDocument.scheduledOn && !invoiceContext.selectedDocument.processedOn" t="invoice.status.scheduled">Scheduled</span>
-                    <span class="pill processed" if.bind="invoiceContext.selectedDocument.processedOn && !invoiceContext.selectedDocument.processedStatus" t="invoice.status.processed">Processed</span>
-                    <span class="pill error" if.bind="invoiceContext.selectedDocument.processedStatus" t="invoice.status.error" title.bind="invoiceContext.selectedDocument.processedStatus">Error</span>
-                </template>
+<div class="invoices-main invoice-editor">
+    <div class="section-header editor-header">
+        <div class="editor-title">
+            <h1 if.bind="invoiceContext.selectedDocument">
+                <span t="documentType.${selectedDocumentType}">Invoice</span>
+                <span if.bind="invoiceContext.selectedInvoice.ID" class="tabular">${invoiceContext.selectedInvoice.ID}</span>
             </h1>
+            <h1 else t="invoice.new.${selectedDocumentType}">New invoice</h1>
+            <div if.bind="documentStatus" class="editor-status">
+                <span class="pill ${documentStatus.tone}" title.bind="invoiceContext.selectedDocument.processedStatus || null" t="invoice.status.${documentStatus.key}"></span>
+                <span if.bind="invoiceContext.selectedDocument.createdExternally" class="pill" t="invoice.status.uploaded">Uploaded</span>
+                <span if.bind="documentStatus.detailKey" class="status-detail" t="invoice.status-detail.${documentStatus.detailKey}" t-params.bind="{date: documentStatusDate}"></span>
+            </div>
         </div>
         <div class="editor-header-actions">
-            <button if.bind="!readOnly" type="button" class="btn" click.trigger="saveAsDraft()">
-                <span if.bind="invoiceContext.selectedDraft" t="invoice.edit.update-draft">Update draft</span>
-                <span if.bind="!invoiceContext.selectedDraft" t="invoice.edit.save-draft">Save draft</span>
-            </button>
-            <button if.bind="canShowDeliveryDetails" type="button" class="btn" click.trigger="showDeliveryDetails()" disabled.bind="deliveryDetailsLoading">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-badge-icon lucide-file-badge"><path d="M13 22h5a2 2 0 0 0 2-2V8a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 14 2H6a2 2 0 0 0-2 2v3.3"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="m7.69 16.479 1.29 4.88a.5.5 0 0 1-.698.591l-1.843-.849a1 1 0 0 0-.879.001l-1.846.85a.5.5 0 0 1-.692-.593l1.29-4.88"/><circle cx="6" cy="14" r="3"/></svg>
-                <span if.bind="deliveryDetailsLoading" t="invoice.edit.loading">Loading</span>
-                <span if.bind="!deliveryDetailsLoading" t="invoice.edit.delivery">Delivery</span>
-            </button>
-            <button if.bind="canCreateCreditNoteFromInvoice && ownershipService.granted.INVOICE_DRAFT" type="button" class="btn primary" click.trigger="newCreditNoteFromInvoice()" title="New credit note" t="[title]invoice.action.credit-this-invoice">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                </svg>
-                <span t="invoice.new.CREDIT_NOTE">New Credit Note</span>
-            </button>
-            <button if.bind="readOnly" type="button" class="btn" click.trigger="downloadUBL()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-down-icon lucide-file-down"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg>
-                <span t="invoice.edit.download-ubl">UBL</span>
-            </button>
-            <button if.bind="canDownloadPDF" type="button" class="btn" click.trigger="downloadPDF()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-down-icon lucide-file-down"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg>
-                <span t="invoice.edit.download-pdf">PDF</span>
-            </button>
-            <button if.bind="canDuplicate && ownershipService.granted.INVOICE_DRAFT" type="button" class="btn" click.trigger="duplicate()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy-icon lucide-copy"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-                <span t="invoice.edit.duplicate">Duplicate</span>
-            </button>
-            <button if.bind="readOnly && invoiceContext.partnerMissing && ownershipService.granted.PARTNER_MANAGE" type="button" class="btn" click.trigger="savePartner()">Save Partner</button>
-<!--            <button type="button" class="btn" click.trigger="validate()" t="invoice.edit.validate">Validate</button>-->
-            <button if.bind="invoiceContext.selectedDraft && !readOnly" type="button" class="btn" click.trigger="deleteDraft()">
-                <span t="invoice.edit.delete-draft">Delete draft</span>
-            </button>
-            <button type="button" class="btn" click.trigger="returnToOverview()" t="invoice.edit.cancel">Cancel</button>
-            <button if.bind="ownershipService.granted.INVOICE_SEND && (!invoiceContext.selectedDocument || !invoiceContext.selectedDocument.proxyOn)" type="button" class="btn primary" click.trigger="verifyNumberAndSend()" disabled.bind="!isValid" t="invoice.edit.send.${actionDocumentType}">Send invoice</button>
+            <div class="editor-more" open.class="moreOpen" ref="moreHost">
+                <button type="button" class="btn editor-more-toggle" ref="moreToggle" aria-expanded.bind="moreOpen" aria-controls="editor-more-menu" click.trigger="toggleMore()" aria-label="More actions" title="More actions" t="[aria-label,title]invoice.edit.more-actions">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+                </button>
+                <div id="editor-more-menu" class="editor-more-menu" click.trigger="closeMore()">
+                    <button type="button" class="btn" click.trigger="returnToOverview()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+                        <span t="${readOnly ? 'invoice.edit.back' : 'invoice.edit.cancel'}">Back to invoices</span>
+                    </button>
+                    <button if.bind="readOnly" type="button" class="btn" click.trigger="downloadUBL()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg>
+                        <span t="invoice.edit.download-ubl">Download UBL</span>
+                    </button>
+                    <button if.bind="canDownloadPDF" type="button" class="btn" click.trigger="downloadPDF()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg>
+                        <span t="invoice.edit.download-pdf">Download PDF</span>
+                    </button>
+                    <button if.bind="canDuplicate && ownershipService.granted.INVOICE_DRAFT" type="button" class="btn" click.trigger="duplicate()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                        <span t="invoice.edit.duplicate">Duplicate</span>
+                    </button>
+                    <button if.bind="readOnly && invoiceContext.partnerMissing && ownershipService.granted.PARTNER_MANAGE" type="button" class="btn" click.trigger="savePartner()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg>
+                        <span t="invoice.customerModal.save-as-partner">Save as partner</span>
+                    </button>
+                    <button if.bind="isDraft && !readOnly && ownershipService.granted.INVOICE_DRAFT" type="button" class="btn danger-text" click.trigger="confirmDeleteDraft()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        <span t="invoice.edit.delete-draft">Delete draft</span>
+                    </button>
+                </div>
+            </div>
+            <div class="action-bar editor-action-bar">
+                <button if.bind="!readOnly && ownershipService.granted.INVOICE_DRAFT" type="button" class="btn" click.trigger="saveAsDraft()" t="invoice.edit.save-draft">Save draft</button>
+                <button if.bind="canShowDeliveryDetails" type="button" class="btn" click.trigger="showDeliveryDetails()" disabled.bind="deliveryDetailsLoading" aria-busy.bind="deliveryDetailsLoading">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 22h5a2 2 0 0 0 2-2V8a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 14 2H6a2 2 0 0 0-2 2v3.3"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="m7.69 16.479 1.29 4.88a.5.5 0 0 1-.698.591l-1.843-.849a1 1 0 0 0-.879.001l-1.846.85a.5.5 0 0 1-.692-.593l1.29-4.88"/><circle cx="6" cy="14" r="3"/></svg>
+                    <span t="invoice.edit.delivery">Delivery proof</span>
+                </button>
+                <button if.bind="canCreateCreditNoteFromInvoice && ownershipService.granted.INVOICE_DRAFT" type="button" class="btn primary" click.trigger="newCreditNoteFromInvoice()" title="Create a credit note for this invoice" t="[title]invoice.action.credit-this-invoice">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                    <span t="invoice.new.CREDIT_NOTE">New credit note</span>
+                </button>
+                <button if.bind="canSend" type="button" class="btn primary" click.trigger="verifyNumberAndSend()" disabled.bind="!isValid" t="invoice.edit.send.${actionDocumentType}">Send invoice</button>
+            </div>
         </div>
     </div>
 
-    <div if.bind="hasDeliveryError" class="card delivery-error-banner" class.bind="invoiceContext.selectedDocument.errorSeenOn ? 'is-seen' : ''" role="alert">
-        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-alert delivery-error-icon" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+    <div if.bind="hasDeliveryError" class="delivery-error-banner" seen.class="!!invoiceContext.selectedDocument.errorSeenOn" role="alert">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="delivery-error-icon" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
         <div class="delivery-error-text">
             <strong t="invoice.edit.delivery-error.${actionDocumentType}">This invoice could not be delivered</strong>
             <span>${invoiceContext.selectedDocument.processedStatus}</span>
         </div>
         <div if.bind="!invoiceContext.selectedDocument.errorSeenOn" class="delivery-error-actions">
             <button if.bind="ownershipService.granted.INVOICE_SEND" type="button" class="btn" click.trigger="resendErrored()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-cw"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
                 <span t="invoice.action.resend.${actionDocumentType}">Reuse and resend</span>
             </button>
             <button if.bind="ownershipService.granted.INVOICE_STATUS" type="button" class="btn" click.trigger="markErrorSeen()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                 <span t="invoice.action.mark-seen">Mark as seen</span>
             </button>
         </div>
     </div>
 
-    <form id="invoiceForm" class="card composer-card">
+    <form id="invoiceForm" class="composer" submit.trigger="$event.preventDefault()">
         <div class="composer-head">
             <invoice-info read-only.bind="readOnly" show-invoice-modal.bind="() => showInvoiceModal()"></invoice-info>
-
             <date-info read-only.bind="readOnly" show-date-modal.bind="() => showDateModal()"></date-info>
-
-            <customer-info
-                           read-only.bind="readOnly"
-                           party.bind="invoiceContext.partnerParty"
-                           show-customer-modal.bind="() => showCustomerModal()">
-            </customer-info>
-
+            <customer-info read-only.bind="readOnly" party.bind="invoiceContext.partnerParty" show-customer-modal.bind="() => showCustomerModal()"></customer-info>
             <payment-info read-only.bind="readOnly" show-payment-modal.bind="() => showPaymentModal()" component.ref="paymentInfo"></payment-info>
-
-            <div style="display: flex; flex-direction: column; gap: 5px">
+            <div class="composer-extras">
                 <attachment-info read-only.bind="readOnly" show-attachment-modal.bind="() => showAttachmentModal()"></attachment-info>
                 <allowance-charge-info read-only.bind="readOnly" show-allowance-charge-modal.bind="() => showAllowanceChargeModal()" new-feature="allowance-charge"></allowance-charge-info>
             </div>
-
-            <total-info
-                read-only.bind="readOnly"
-                tax-total.bind="invoiceContext.selectedInvoice.TaxTotal[0]">
-            </total-info>
         </div>
 
         <invoice-edit-items read-only.bind="readOnly"
@@ -130,15 +127,18 @@
                             invoice-allowance-charge-modal.bind="invoiceAllowanceChargeModal">
         </invoice-edit-items>
 
-        <button if.bind="!readOnly" type="button" class="btn primary" click.trigger="addLine()">+ <span t="invoice.edit.add-line">Add line</span></button>
-        <div if.bind="invoiceContext.selectedInvoice.Note" style="margin-top: 20px">
-            <div class="line-items-head">
-                <h3 t="invoice.edit.note">Note</h3>
-            </div>
-            <label class="field">
-                <textarea name="note" placeholder="Additional notes for this invoice" t="[placeholder]invoice.modal.note-placeholder" value.bind="invoiceContext.selectedInvoice.Note" disabled></textarea>
-            </label>
+        <div class="composer-foot">
+            <button if.bind="!readOnly" type="button" class="btn add-line" click.trigger="addLine()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                <span t="invoice.edit.add-line">Add line</span>
+            </button>
+            <total-info read-only.bind="readOnly" tax-total.bind="invoiceContext.selectedInvoice.TaxTotal[0]"></total-info>
         </div>
+
+        <section if.bind="invoiceContext.selectedInvoice.Note" class="composer-note" aria-labelledby="invoice-note-title">
+            <h2 id="invoice-note-title" class="composer-section-title" t="invoice.edit.note">Note</h2>
+            <p class="composer-note-text">${invoiceContext.selectedInvoice.Note}</p>
+        </section>
     </form>
 </div>
 </template>

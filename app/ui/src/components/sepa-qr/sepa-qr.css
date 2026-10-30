@@ -6,6 +6,6 @@
 }
 
 .sepa-qr-error {
-    color: var(--pill-error-fg);
-    font-size: .85rem;
+    color: var(--danger);
+    font-size: var(--text-sm);
 }

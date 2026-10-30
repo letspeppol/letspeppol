@@ -1,0 +1,74 @@
+.partner-sheets {
+    display: grid;
+    gap: var(--space-4);
+}
+
+.partner-sheet {
+    display: grid;
+    gap: var(--space-4);
+    min-width: 0;
+    padding: var(--space-5) var(--space-6) var(--space-6);
+}
+
+.partner-sheet h2 {
+    margin: 0;
+}
+
+.partner-span-2 {
+    grid-column: span 2;
+}
+
+.partner-row-start {
+    grid-column-start: 1;
+}
+
+.partner-row-start.partner-span-2 {
+    grid-column: 1 / span 2;
+}
+
+.partner-sheet .grid {
+    align-items: start;
+}
+
+.partner-roles {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-5);
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.partner-roles legend {
+    float: left;
+    width: 100%;
+    margin-bottom: var(--space-1);
+    padding: 0;
+    color: var(--muted);
+    font-size: var(--text-sm);
+    font-weight: 500;
+}
+
+.partner-action-bar {
+    margin-top: var(--space-6);
+}
+
+@media (width <= 767px) {
+    .partner-sheet {
+        padding: var(--space-4);
+    }
+
+    .partner-span-2,
+    .partner-row-start,
+    .partner-row-start.partner-span-2 {
+        grid-column: auto;
+    }
+}
+
+@media (pointer: coarse) {
+    .partner-roles .field.checkbox {
+        min-height: var(--touch-target);
+    }
+}

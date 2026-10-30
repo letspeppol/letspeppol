@@ -1,23 +1,26 @@
-<div class="composer-info" class.bind="!isCustomerInfoComplete ? 'missing-required' : ''">
-    <div style="display: flex; flex-direction: row;" click.trigger="showCustomerModal()">
-        <div class="card-header">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-building-icon lucide-building"><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M12 6h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/><path d="M8 6h.01"/><path d="M9 22v-3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><rect x="4" y="2" width="16" height="20" rx="2"/></svg>
-            <h5 if.bind="invoiceContext.partnerIsSupplier" style="margin: 0" t="invoice.supplier">Supplier</h5>
-            <h5 else style="margin: 0" t="invoice.customer">Customer</h5>
-        </div>
-
-        <button if.bind="!readOnly" class="icon-btn" title="Edit" t="[title]common.edit">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pen-icon lucide-pen"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>
+<section class="composer-info" missing-required.class="!isCustomerInfoComplete" aria-labelledby="tile-customer-title">
+    <header class="tile-head" click.trigger="showCustomerModal()">
+        <h2 class="tile-title" id="tile-customer-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M12 6h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/><path d="M8 6h.01"/><path d="M9 22v-3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><rect x="4" y="2" width="16" height="20" rx="2"/></svg>
+            <span if.bind="invoiceContext.partnerIsSupplier" t="invoice.supplier">Supplier</span>
+            <span else t="invoice.customer">Customer</span>
+        </h2>
+        <button if.bind="!readOnly" type="button" class="icon-btn tile-edit" aria-labelledby="tile-customer-edit tile-customer-title">
+            <span id="tile-customer-edit" class="visually-hidden" t="common.edit">Edit</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>
         </button>
-    </div>
-    <span t="label.name">Name</span>
-    <b>${party.PartyName.Name}</b>
-    <span t="label.address">Address</span>
-    <b>
-        ${party.PostalAddress.StreetName}
-        ${party.PostalAddress.AdditionalStreetName}
-        <br/>
-        ${party.PostalAddress.CityName}
-        ${party.PostalAddress.PostalZone}
-    </b>
-</div>
+    </header>
+    <dl class="tile-fields">
+        <div>
+            <dt t="label.name">Name</dt>
+            <dd>${party.PartyName.Name}</dd>
+        </div>
+        <div if.bind="!readOnly || party.PostalAddress?.StreetName || party.PostalAddress?.CityName">
+            <dt t="label.address">Address</dt>
+            <dd>
+                <span class="address-line">${party.PostalAddress.StreetName} ${party.PostalAddress.AdditionalStreetName}</span>
+                <span class="address-line">${party.PostalAddress.PostalZone} ${party.PostalAddress.CityName}</span>
+            </dd>
+        </div>
+    </dl>
+</section>

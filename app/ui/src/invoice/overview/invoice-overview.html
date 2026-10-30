@@ -5,226 +5,188 @@
 
 <upload-ubl-modal component.ref="uploadUblModal"></upload-ubl-modal>
 
-<div class="invoices-layout">
-    <aside class="mailbox">
-        <div class="mailbox-title" t="invoice.direction">Direction</div>
-        <nav>
-            <button active.class="invoiceContext.activeBox === 'ALL'" class="mail-item" click.trigger="setActiveItems('ALL')">
-                <span class="label" t="invoice.all">All</span>
+<div class="invoice-overview">
+    <div class="section-header overview-header">
+        <h1 id="invoices-title" t="invoice.title">Invoices</h1>
+        <div if.bind="ownershipService.granted.INVOICE_DRAFT" class="actions overview-actions">
+            <button type="button" class="btn upload-ubl" click.trigger="showUploadUblModal()" aria-label="Upload UBL" title="Upload UBL" t="[aria-label,title]invoice.uploadModal.title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M12 12v6"/><path d="m15 15-3-3-3 3"/>
+                </svg>
+                <span class="upload-ubl-label" t="invoice.uploadModal.title">Upload UBL</span>
             </button>
-            <button active.class="invoiceContext.activeBox === 'OUTGOING'" class="mail-item" click.trigger="setActiveItems('OUTGOING')">
-                <span class="label" t="invoice.outgoing">Outgoing</span>
+            <button type="button" class="btn" click.trigger="newCreditNote()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                <span t="invoice.new.CREDIT_NOTE">New credit note</span>
             </button>
-            <button active.class="invoiceContext.activeBox === 'INCOMING'" class="mail-item" click.trigger="setActiveItems('INCOMING')">
-                <span class="label" t="invoice.incoming">Incoming</span>
+            <button type="button" class="btn primary" click.trigger="newInvoice()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                <span t="invoice.new.INVOICE">New invoice</span>
             </button>
-            <button active.class="invoiceContext.activeBox === 'DRAFTS'" class="mail-item" click.trigger="setActiveItems('DRAFTS')">
-                <span class="label" t="invoice.drafts">Drafts</span>
-                <span class="badge">${invoiceContext.draftPage.totalElements}</span>
-            </button>
-        </nav>
-    </aside>
-    <div class="invoices-main">
-        <div>
-            <div class="section-header">
-                <h1 t="invoice.title">Invoices</h1>
-                <div if.bind="ownershipService.granted.INVOICE_DRAFT" class="editor-header-actions">
-                    <button class="btn primary" click.trigger="newCreditNote()" title="New invoice" t="[title]invoice.new.CREDIT_NOTE">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                            <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                        </svg>
-                        <span t="invoice.new.CREDIT_NOTE">New Credit Note</span>
-                    </button>
-                    <button class="btn primary" click.trigger="newInvoice()" title="New invoice" t="[title]invoice.new.INVOICE">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                            <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                        </svg>
-                        <span t="invoice.new.INVOICE">New invoice</span>
-                    </button>
-                    <button class="btn primary" click.trigger="showUploadUblModal()" title="Upload UBL">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-up-icon lucide-file-up">
-                            <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M12 12v6"/><path d="m15 15-3-3-3 3"/>
-                        </svg>
-                    </button>
-                </div>
-            </div>
+        </div>
+    </div>
 
-            <div class="filters toolbar-filters">
-                <label class="select" style="position: relative">
-                    <select change.trigger="changeDocType($event.target.value)" aria-label="Type" t="[aria-label]invoice.table.type">
-                        <option value="" t="invoice.all">All</option>
-                        <option value="INVOICE" t="documentType.INVOICE">Invoice</option>
-                        <option value="CREDIT_NOTE" t="documentType.CREDIT_NOTE">Credit note</option>
-                        <option value="SELF_BILLING_INVOICE" t="documentType.SELF_BILLING_INVOICE">Self-billed invoice</option>
-                        <option value="SELF_BILLING_CREDIT_NOTE" t="documentType.SELF_BILLING_CREDIT_NOTE">Self-billed credit note</option>
-                    </select>
-                </label>
-                <label class="select" style="position: relative">
-                    <select change.trigger="changeStatus($event.target.value)" aria-label="Status" t="[aria-label]invoice.table.status">
-                        <option value="ALL" t="invoice.filter.status.all">All statuses</option>
-                        <option value="UNPAID" t="invoice.filter.status.unpaid">Unpaid</option>
-                        <option value="OVERDUE" t="invoice.filter.status.overdue">Overdue</option>
-                        <option value="PAID" t="invoice.filter.status.paid">Paid</option>
-                        <option value="ERROR" t="invoice.filter.status.error">Error</option>
-                    </select>
-                </label>
-                <label class="search">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                        <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                        <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.5"/>
-                    </svg>
-                    <input type="search" value.bind="query.invoiceReference & debounce:300" placeholder="Search customer or reference" t="[placeholder]placeholder.invoice-search.doc" />
-                </label>
-                <label class="search">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                        <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                        <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.5"/>
-                    </svg>
-                    <input type="search" value.bind="query.partnerName & debounce:300" placeholder="Search customer or reference" t="[placeholder]placeholder.invoice-search.customer" />
-                </label>
-            </div>
+    <div class="segmented invoice-boxes" role="group" aria-label="Direction" t="[aria-label]invoice.direction">
+        <button type="button" class="segment" active.class="invoiceContext.activeBox === 'ALL'" aria-pressed.bind="invoiceContext.activeBox === 'ALL'" click.trigger="setActiveItems('ALL')" t="invoice.all">All</button>
+        <button type="button" class="segment" active.class="invoiceContext.activeBox === 'OUTGOING'" aria-pressed.bind="invoiceContext.activeBox === 'OUTGOING'" click.trigger="setActiveItems('OUTGOING')" t="invoice.outgoing">Outgoing</button>
+        <button type="button" class="segment" active.class="invoiceContext.activeBox === 'INCOMING'" aria-pressed.bind="invoiceContext.activeBox === 'INCOMING'" click.trigger="setActiveItems('INCOMING')" t="invoice.incoming">Incoming</button>
+        <button type="button" class="segment" active.class="invoiceContext.activeBox === 'DRAFTS'" aria-pressed.bind="invoiceContext.activeBox === 'DRAFTS'" click.trigger="setActiveItems('DRAFTS')">
+            <span t="invoice.drafts">Drafts</span>
+            <span class="badge">${invoiceContext.draftPage.totalElements}</span>
+        </button>
+    </div>
 
-            <div class="card table-card">
-                <div class="table-loading-bar" if.bind="invoiceContext.loadingInvoices" aria-hidden="true"></div>
-                <div class="table-wrapper" is-loading.class="invoiceContext.loadingInvoices" aria-busy.bind="invoiceContext.loadingInvoices">
-                    <table class="data-table" aria-describedby="invoices-title">
-                        <thead>
-                        <tr>
-                            <th style="width: 10px"></th>
-                            <th t="invoice.table.direction">Direction</th>
-                            <th t="invoice.table.type">Type</th>
-                            <th>
-                                <button type="button" class="sort-button" click.trigger="toggleSort('invoiceReference')">
-                                    <span t="invoice.table.doc">Doc</span>
-                                    <span class="sort-indicator ${activeSortProperty!=='invoiceReference'?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
+    <div class="filters toolbar-filters invoice-filters">
+        <label class="select">
+            <span class="visually-hidden" t="invoice.table.type">Type</span>
+            <select value.to-view="query.type || ''" change.trigger="changeDocType($event.target.value)">
+                <option value="" t="invoice.filter.type.all">All types</option>
+                <option value="INVOICE" t="documentType.INVOICE">Invoice</option>
+                <option value="CREDIT_NOTE" t="documentType.CREDIT_NOTE">Credit note</option>
+                <option value="SELF_BILLING_INVOICE" t="documentType.SELF_BILLING_INVOICE">Self-billed invoice</option>
+                <option value="SELF_BILLING_CREDIT_NOTE" t="documentType.SELF_BILLING_CREDIT_NOTE">Self-billed credit note</option>
+            </select>
+        </label>
+        <label class="select">
+            <span class="visually-hidden" t="invoice.table.status">Status</span>
+            <select value.to-view="statusFilter" change.trigger="changeStatus($event.target.value)">
+                <option value="ALL" t="invoice.filter.status.all">All statuses</option>
+                <option value="UNPAID" t="invoice.filter.status.unpaid">Unpaid</option>
+                <option value="OVERDUE" t="invoice.filter.status.overdue">Overdue</option>
+                <option value="PAID" t="invoice.filter.status.paid">Paid</option>
+                <option value="ERROR" t="invoice.filter.status.error">Error</option>
+            </select>
+        </label>
+        <label class="search">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+            <input type="search" value.bind="query.invoiceReference & debounce:300" t="[placeholder,aria-label]placeholder.invoice-search.doc" />
+        </label>
+        <label class="search">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+            <input type="search" value.bind="query.partnerName & debounce:300" t="[placeholder,aria-label]placeholder.invoice-search.${partnerRole}" />
+        </label>
+    </div>
+
+    <div class="card table-card invoice-table-card">
+        <div class="table-loading-bar" if.bind="invoiceContext.loadingInvoices" aria-hidden="true"></div>
+        <div class="table-wrapper" is-loading.class="invoiceContext.loadingInvoices" aria-busy.bind="invoiceContext.loadingInvoices">
+            <table class="data-table stack-on-phone invoice-table" aria-labelledby="invoices-title">
+                <thead>
+                <tr>
+                    <th class="col-dot tablet-hide"><span class="visually-hidden" t="invoice.table.payment">Payment</span></th>
+                    <th t="invoice.table.type">Type</th>
+                    <th>
+                        <button type="button" class="sort-button" click.trigger="toggleSort('invoiceReference')">
+                            <span t="invoice.table.doc">Number</span>
+                            <span class="sort-indicator ${sortClass('invoiceReference', activeSortProperty, activeSortDirection)}" aria-hidden="true"></span>
+                        </button>
+                    </th>
+                    <th>
+                        <button type="button" class="sort-button" click.trigger="toggleSort('partnerName')">
+                            <span t="invoice.${partnerRole}">Partner</span>
+                            <span class="sort-indicator ${sortClass('partnerName', activeSortProperty, activeSortDirection)}" aria-hidden="true"></span>
+                        </button>
+                    </th>
+                    <th class="tablet-hide">
+                        <button type="button" class="sort-button" click.trigger="toggleSort('issueDate')">
+                            <span t="invoice.table.issue-date">Issue date</span>
+                            <span class="sort-indicator ${sortClass('issueDate', activeSortProperty, activeSortDirection)}" aria-hidden="true"></span>
+                        </button>
+                    </th>
+                    <th>
+                        <button type="button" class="sort-button" click.trigger="toggleSort('dueDate')">
+                            <span t="invoice.table.due-date">Due date</span>
+                            <span class="sort-indicator ${sortClass('dueDate', activeSortProperty, activeSortDirection)}" aria-hidden="true"></span>
+                        </button>
+                    </th>
+                    <th class="num">
+                        <button type="button" class="sort-button" click.trigger="toggleSort(amountSortProperty)">
+                            <span class="th-stack">
+                                <span t="invoice.table.total">Total</span>
+                                <span class="th-subline" t="invoice.table.total-vat-suffix.${vatMode}"></span>
+                            </span>
+                            <span class="sort-indicator ${sortClass(amountSortProperty, activeSortProperty, activeSortDirection)}" aria-hidden="true"></span>
+                        </button>
+                    </th>
+                    <th t="invoice.table.status">Status</th>
+                    <th class="actions-col"><span class="visually-hidden" t="invoice.table.actions">Actions</span></th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr repeat.for="item of invoiceContext.invoicePage.content" click.trigger="selectItem(item)" row-seen.class="!!item.errorSeenOn">
+                        <td class="col-dot tablet-hide">
+                            <span if.bind="paymentTone(item)" class="status-dot status-${paymentTone(item)}" title.bind="paymentTitle(item)" aria-hidden="true"></span>
+                        </td>
+                        <td t="[data-label]invoice.table.type">
+                            <span class="cell-stack">
+                                <span t="documentType.${item.type}">${item.type}</span>
+                                <span if.bind="invoiceContext.activeBox === 'ALL'" class="cell-subline" t="documentDirection.${item.direction}">${item.direction}</span>
+                            </span>
+                        </td>
+                        <td class="tabular" t="[data-label]invoice.table.doc">${item.invoiceReference}</td>
+                        <td data-primary class="partner-cell" t="[data-label]invoice.${partnerRole}">
+                            <button type="button" class="row-link">${item.partnerName}</button>
+                        </td>
+                        <td class="tabular phone-hide tablet-hide" t="[data-label]invoice.table.issue-date">${item.issueDate | dateFormat}</td>
+                        <td class="tabular" t="[data-label]invoice.table.due-date">${item.dueDate | dateFormat}</td>
+                        <td class="num amount" t="[data-label]invoice.table.total">${totalAmount(item) | price:item.currency}</td>
+                        <td class="status-col" t="[data-label]invoice.table.status">
+                            <span class="status-cell">
+                                <span class="pill ${statusOf(item).tone}" title.bind="item.processedStatus || null" t="invoice.status.${statusOf(item).key}"></span>
+                                <span if.bind="statusOf(item).detailKey" class="status-detail" t="invoice.status-detail.${statusOf(item).detailKey}" t-params.bind="{date: statusDate(statusOf(item))}"></span>
+                            </span>
+                        </td>
+                        <td class="actions-col">
+                            <span class="row-actions">
+                                <button if.bind="invoiceContext.activeBox === 'DRAFTS' && ownershipService.granted.INVOICE_DRAFT" type="button" class="icon-btn" t="[aria-label,title]invoice.edit.delete-draft" click.trigger="deleteDraft($event, item)">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                                 </button>
-                            </th>
-                            <th class="th-filter">
-                                <div class="th-inner">
-                                    <button type="button" class="sort-button" click.trigger="toggleSort('issueDate')">
-                                        <span t="invoice.table.issue-date">Date</span>
-                                        <span class="sort-indicator ${activeSortProperty!=='issueDate'?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
-                                    </button>
-                                </div>
-                                <div class="filter-panel" hidden>
-                                    <label class="field">
-                                        <span t="invoice.filter.from">From</span>
-                                        <input type="date" />
-                                    </label>
-                                    <label class="field">
-                                        <span t="invoice.filter.to">To</span>
-                                        <input type="date" />
-                                    </label>
-                                    <div class="panel-actions">
-                                        <button type="button" class="btn ghost" t="invoice.filter.clear">Clear</button>
-                                        <button type="button" class="btn primary" t="invoice.filter.apply">Apply</button>
-                                    </div>
-                                </div>
-                            </th>
-                            <th class="th-filter">
-                                <div class="th-inner">
-                                    <button type="button" class="sort-button" click.trigger="toggleSort('dueDate')">
-                                        <span t="invoice.table.due-date">Date</span>
-                                        <span class="sort-indicator ${activeSortProperty!=='dueDate'?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
-                                    </button>
-                                </div>
-                                <div class="filter-panel" hidden>
-                                    <label class="field">
-                                        <span t="invoice.filter.from">From</span>
-                                        <input type="date" />
-                                    </label>
-                                    <label class="field">
-                                        <span t="invoice.filter.to">To</span>
-                                        <input type="date" />
-                                    </label>
-                                    <div class="panel-actions">
-                                        <button type="button" class="btn ghost" t="invoice.filter.clear">Clear</button>
-                                        <button type="button" class="btn primary" t="invoice.filter.apply">Apply</button>
-                                    </div>
-                                </div>
-                            </th>
-                            <th>
-                                <button type="button" class="sort-button" click.trigger="toggleSort('partnerName')">
-                                    <span if.bind="invoiceContext.activeBox === 'OUTGOING' || invoiceContext.activeBox === 'DRAFTS'" t="invoice.customer">Customer</span>
-                                    <span if.bind="invoiceContext.activeBox === 'INCOMING'" t="invoice.supplier">Supplier</span>
-                                    <span if.bind="invoiceContext.activeBox === 'ALL'" t="invoice.partner">Partner</span>
-                                    <span class="sort-indicator ${activeSortProperty!=='partnerName'?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
+                                <button if.bind="item.direction === 'OUTGOING' && !item.processedStatus && !isSelfBillingType(item.type) && ownershipService.granted.INVOICE_DRAFT" type="button" class="icon-btn" t="[aria-label,title]invoice.action.duplicate.${baseDocumentType(item.type)}" click.trigger="duplicate($event, item)">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
                                 </button>
-                            </th>
-                            <th>
-                                <button type="button" class="sort-button" click.trigger="toggleSort(amountSortProperty)">
-                                    <span class="th-stack">
-                                        <span t="invoice.table.total">Total</span>
-                                        <span class="th-subline" t="invoice.table.total-vat-suffix.${vatMode}"></span>
-                                    </span>
-                                    <span class="sort-indicator ${activeSortProperty!==amountSortProperty?'is-idle':activeSortDirection==='asc'?'is-asc':'is-desc'}" aria-hidden="true"></span>
+                                <button if.bind="item.paidOn && !item.processedStatus && ownershipService.granted.INVOICE_STATUS" type="button" class="icon-btn" t="[aria-label,title]invoice.action.mark-unpaid.${baseDocumentType(item.type)}" click.trigger="markPaid($event, item)">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5 5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
                                 </button>
-                            </th>
-                            <th t="invoice.table.status">Status</th>
-                            <th class="actions-col" t="invoice.table.actions">Actions</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            <tr repeat.for="item of invoiceContext.invoicePage.content" click.trigger="selectItem(item)" class.bind="item.errorSeenOn ? 'row-seen' : ''">
-                                <td><span class="status-dot" class.bind="item.paidOn ? 'status-ok' : isOverdue(item) ? 'status-overdue' : 'status-open'" title.bind="item.paidOn ? 'Paid at ' + formatDate(item.paidOn) : 'Not paid'"></span></td>
-                                <td><span class="pill" class.bind="item.direction === 'INCOMING' ? 'incoming' : 'sent'" t="documentDirection.${item.direction}">${item.direction}</span></td>
-                                <td><span class="pill" class.bind="isInvoiceType(item.type) ? 'sent' : 'incoming'" t="documentType.${item.type}">${item.type}</span></td>
-                                <td>${item.invoiceReference}</td>
-                                <td>${item.issueDate | dateFormat}</td>
-                                <td>${item.dueDate | dateFormat}</td>
-                                <td>${item.partnerName}</td>
-                                <td>${totalAmount(item) | price:item.currency}</td>
-                                <td>
-                                    <div class="status-cell">
-                                        <span class="pill" if.bind="item.draftedOn" t="invoice.status.draft" title="${item.draftedOn | dateTimeFormat}">Drafted</span>
-                                        <span class="pill scheduled" if.bind="item.scheduledOn && !item.processedOn" t="invoice.status.scheduled" title="${item.scheduledOn | dateTimeFormat}">Scheduled</span>
-                                        <span class="pill processed" if.bind="item.processedOn && !item.processedStatus" t="invoice.status.processed" title="${item.processedOn | dateTimeFormat}">Processed</span>
-                                        <span class="pill error" if.bind="item.processedStatus" t="invoice.status.error" title.bind="item.processedStatus">Error</span>
-                                        <span class="pill paid" if.bind="item.paidOn" t="invoice.status.paid" title="${item.paidOn | dateFormat}">Paid</span>
-                                        <span class="pill overdue" if.bind="!item.paidOn && !item.draftedOn && !item.processedStatus && isOverdue(item)" t="invoice.status.overdue">Overdue</span>
-                                    </div>
-                                </td>
-                                <td class="actions-col">
-                                    <button if.bind="invoiceContext.activeBox === 'DRAFTS' && ownershipService.granted.INVOICE_DRAFT" class="icon-btn" title="Remove" t="[title]common.remove" click.trigger="deleteDraft($event, item)">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-icon lucide-trash"><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                                    </button>
-                                    <button if.bind="item.direction === 'OUTGOING' && !item.processedStatus && !isSelfBillingType(item.type) && ownershipService.granted.INVOICE_DRAFT" class="icon-btn" title="Duplicate" t="[title]invoice.action.duplicate.${baseDocumentType(item.type)}" click.trigger="duplicate($event, item)">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy-icon lucide-copy"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-                                    </button>
-                                    <button if.bind="item.paidOn && !item.processedStatus && ownershipService.granted.INVOICE_STATUS" class="icon-btn" title="Mark invoice as unpaid" t="[title]invoice.action.mark-unpaid.${baseDocumentType(item.type)}" click.trigger="markPaid($event, item)">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-undo-2"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5 5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
-                                    </button>
-                                    <button if.bind="!item.paidOn && !item.draftedOn && !item.processedStatus && ownershipService.granted.INVOICE_STATUS" class="icon-btn success" title="Mark invoice as paid" t="[title]invoice.action.mark-paid.${baseDocumentType(item.type)}" click.trigger="markPaid($event, item)">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-banknote"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01"/><path d="M18 12h.01"/></svg>
-                                    </button>
-                                    <button if.bind="item.direction === 'OUTGOING' && item.processedStatus && !item.errorSeenOn && !item.draftedOn && ownershipService.granted.INVOICE_SEND" class="icon-btn" title="Reuse and resend" t="[title]invoice.action.resend.${baseDocumentType(item.type)}" click.trigger="resendErrored($event, item)">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-cw"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
-                                    </button>
-                                    <button if.bind="item.direction === 'OUTGOING' && item.processedStatus && !item.errorSeenOn && !item.draftedOn && ownershipService.granted.INVOICE_STATUS" class="icon-btn" title="Mark as seen" t="[title]invoice.action.mark-seen" click.trigger="markErrorSeen($event, item)">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div if.bind="!invoiceContext.invoicePage.content || invoiceContext.invoicePage.content.length === 0" class="empty-state" >
-                    <div class="empty-spinner" if.bind="invoiceContext.loadingInvoices" aria-hidden="true"></div>
-                    <div else class="empty-icon" aria-hidden="true">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                            <path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
-                            <path d="M14 3v5h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                    <p if.bind="invoiceContext.loadingInvoices" role="status" t="invoice.loading">Loading invoices...</p>
-                    <p else t="invoice.empty">No invoices match your filters.</p>
-                </div>
-                <div class="table-footer pager">
-                    <button type="button" class="btn ghost" click.trigger="previousPage()" disabled.bind="invoiceContext.loadingInvoices || query.pageable.page <= 0" t="invoice.pager.previous">← Previous</button>
-                    <span class="pager-range">${pageStart} - ${pageEnd} / ${invoiceContext.invoicePage?.totalElements ?? 0}</span>
-                    <button type="button" class="btn ghost" click.trigger="nextPage()" disabled.bind="invoiceContext.loadingInvoices || invoiceContext.invoicePage.last" t="invoice.pager.next">Next →</button>
-                </div>
-            </div>
+                                <button if.bind="!item.paidOn && !item.draftedOn && !item.processedStatus && ownershipService.granted.INVOICE_STATUS" type="button" class="icon-btn success" t="[aria-label,title]invoice.action.mark-paid.${baseDocumentType(item.type)}" click.trigger="markPaid($event, item)">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01"/><path d="M18 12h.01"/></svg>
+                                </button>
+                                <button if.bind="item.direction === 'OUTGOING' && item.processedStatus && !item.errorSeenOn && !item.draftedOn && ownershipService.granted.INVOICE_SEND" type="button" class="icon-btn" t="[aria-label,title]invoice.action.resend.${baseDocumentType(item.type)}" click.trigger="resendErrored($event, item)">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
+                                </button>
+                                <button if.bind="item.direction === 'OUTGOING' && item.processedStatus && !item.errorSeenOn && !item.draftedOn && ownershipService.granted.INVOICE_STATUS" type="button" class="icon-btn" t="[aria-label,title]invoice.action.mark-seen" click.trigger="markErrorSeen($event, item)">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                                </button>
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div if.bind="!invoiceContext.invoicePage.content.length" class="empty-state">
+            <template if.bind="invoiceContext.loadingInvoices">
+                <div class="empty-spinner" aria-hidden="true"></div>
+                <p role="status" t="invoice.loading">Loading invoices</p>
+            </template>
+            <template else>
+                <p t="invoice.empty-state.${emptyState}"></p>
+                <button if.bind="emptyState === 'filtered'" type="button" class="btn" click.trigger="clearFilters()" t="invoice.filter.clear-all">Clear filters</button>
+                <button if.bind="emptyState !== 'filtered' && emptyState !== 'incoming' && ownershipService.granted.INVOICE_DRAFT" type="button" class="btn primary" click.trigger="newInvoice()" t="invoice.new.INVOICE">New invoice</button>
+            </template>
+        </div>
+        <div if.bind="invoiceContext.invoicePage.content.length || query.pageable.page > 0" class="table-footer pager invoice-pager" role="group" aria-label="Pages" t="[aria-label]invoice.pager.label">
+            <button type="button" class="btn ghost" click.trigger="previousPage()" disabled.bind="invoiceContext.loadingInvoices || query.pageable.page <= 0" t="invoice.pager.previous">Previous</button>
+            <span class="pager-range" t="invoice.pager.range" t-params.bind="{start: pageStart, end: pageEnd, total: invoiceContext.invoicePage.totalElements ?? 0}"></span>
+            <button type="button" class="btn ghost" click.trigger="nextPage()" disabled.bind="invoiceContext.loadingInvoices || invoiceContext.invoicePage.last" t="invoice.pager.next">Next</button>
         </div>
     </div>
 </div>

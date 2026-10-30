@@ -1,5 +1,5 @@
 import {describe, expect, test} from 'vitest';
-import {InvoiceCalculator} from '../../src/invoice/invoice-calculator';
+import {displayedLineTotal, InvoiceCalculator} from '../../src/invoice/invoice-calculator';
 import {NOT_SUBJECT_TO_VAT_REASON_TEXT} from '../../src/services/app/vat-rules';
 import type {ClassifiedTaxCategory, Invoice, InvoiceLine} from '../../src/services/peppol/ubl';
 
@@ -374,5 +374,21 @@ describe('InvoiceCalculator', () => {
             TaxInclusiveAmount: {value: 127.44},
             PayableAmount: {value: 127.44},
         });
+    });
+});
+
+describe('displayedLineTotal', () => {
+    const sixPercent: ClassifiedTaxCategory = {ID: 'S', Percent: 6, TaxScheme: {ID: 'VAT'}};
+
+    test('shows the line total excluding VAT for a VAT-registered company', () => {
+        expect(displayedLineTotal(162, sixPercent, true)).toBe(162);
+    });
+
+    test('adds VAT to the line total for a company without a VAT number', () => {
+        expect(displayedLineTotal(162, sixPercent, false)).toBe(171.72);
+    });
+
+    test('leaves a missing line total empty', () => {
+        expect(displayedLineTotal(undefined, sixPercent, false)).toBeUndefined();
     });
 });

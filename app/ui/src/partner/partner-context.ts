@@ -35,7 +35,7 @@ export class PartnerContext {
     }
 
     replacePartner(currentPartner: PartnerDto, newPartner: PartnerDto) {
-        let index = this.partners.findIndex(item => item === currentPartner);
+        const index = this.partners.findIndex(item => item === currentPartner);
         if (index > -1) {
             this.partners.splice(index, 1, newPartner);
         }

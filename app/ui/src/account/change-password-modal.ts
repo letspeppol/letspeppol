@@ -34,7 +34,7 @@ export class ChangePasswordModal {
             this.error = false;
             this.open = false;
             this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.password.changed')});
-        } catch (e) {
+        } catch {
             this.error = true;
         }
     }

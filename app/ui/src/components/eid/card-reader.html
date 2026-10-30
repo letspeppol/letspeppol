@@ -1,25 +1,27 @@
 <template>
     <import from="./card-reader.css"></import>
-    <div class="eid-anim-col" style="width: 100%">
-        <p class="anim-caption" t.bind="captionKey">Insert your eID card and press confirm.</p>
-        <div class="eid-sign-illustration" class.signed.bind="signed">
+    <figure class="eid-anim">
+        <div class="eid-illustration" is-signed.class="signed" aria-hidden="true">
             <div class="eid-card">
-                <div class="chip"></div>
-                <div class="photo"></div>
-                <div class="lines line-1"></div>
-                <div class="lines line-2"></div>
-                <div class="signature-progress">
-                    <div class="sig-line"></div>
-                    <div class="sig-line delay"></div>
-                </div>
-                <div class="check-mark"></div>
+                <span class="eid-card-tag">eID</span>
+                <span class="eid-card-chip"></span>
+                <span class="eid-card-photo"></span>
+                <span class="eid-card-line is-long"></span>
+                <span class="eid-card-line is-short"></span>
+                <span class="eid-signature">
+                    <span class="eid-signature-line"></span>
+                    <span class="eid-signature-line is-delayed"></span>
+                </span>
+                <span class="eid-check">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                </span>
             </div>
-            <div class="card-reader vertical">
-                <div class="reader-slot"></div>
-                <span class="reader-label" t.bind="readerLabelKey">READER</span>
-                <div class="status-led"></div>
-<!--                <span class="sr-only" t="confirmation.anim-reader-sr">Insert eID card into reader slot</span>-->
+            <div class="eid-device">
+                <span class="eid-device-led"></span>
+                <span class="eid-device-slot"></span>
+                <span class="eid-device-label" t.bind="readerLabelKey">Reader</span>
             </div>
         </div>
-    </div>
+        <figcaption class="eid-anim-caption" t.bind="captionKey">Insert your eID card and press confirm.</figcaption>
+    </figure>
 </template>

@@ -1,16 +1,98 @@
-.card > .card-header h2 {
-    font-size: 1rem;
-    color: var(--muted);
-}
-
-.company-identifiers {
+.settings-sheets {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-1);
+    gap: var(--space-4);
 }
 
-.company-identifiers .field {
+.settings-sheet {
+    display: grid;
+    gap: var(--space-4);
     min-width: 0;
+    padding: var(--space-5) var(--space-6) var(--space-6);
+}
+
+.settings-sheet-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2) var(--space-4);
+}
+
+.settings-sheet-header h2 {
+    margin: 0;
+}
+
+.settings-span-2 {
+    grid-column: span 2;
+}
+
+.settings-row-start {
+    grid-column-start: 1;
+}
+
+.settings-row-start.settings-span-2 {
+    grid-column: 1 / span 2;
+}
+
+.settings-sheet .grid {
+    align-items: start;
+}
+
+.settings-checks,
+.settings-peppol-options {
+    display: grid;
+    gap: var(--space-2);
+    justify-items: start;
+}
+
+.settings-checks {
+    margin-bottom: var(--space-4);
+}
+
+.settings-note {
+    margin: 0;
+    font-size: var(--text-sm);
+}
+
+.settings-inline-alert {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-3);
+    color: var(--danger);
+}
+
+.settings-vat-toggle {
+    flex-wrap: wrap;
+}
+
+.settings-vat-toggle .vat-toggle-label {
+    max-width: 40ch;
+}
+
+.settings-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    padding: var(--space-3);
+    border: 1px solid color-mix(in srgb, var(--warn) 30%, transparent);
+    border-radius: var(--radius);
+    background: var(--warn-tint);
+    color: var(--ink);
+}
+
+.settings-notice svg {
+    flex: none;
+    margin-top: .125rem;
+    color: var(--warn);
+}
+
+.settings-notice p {
+    margin: 0;
+}
+
+.settings-action-bar {
+    margin-top: var(--space-6);
 }
 
 .access-point-value {
@@ -21,40 +103,55 @@
 
 .access-point-value input {
     width: 100%;
-    padding-right: calc(var(--space-065) + 1.5rem);
+    padding-right: calc(var(--space-3) + var(--touch-target));
 }
 
 .access-point-link {
     position: absolute;
-    right: var(--space-065);
+    right: 0;
     display: inline-flex;
     align-items: center;
-    color: var(--primary);
-}
-
-.access-point-link:focus-visible {
-    outline: 2px solid var(--primary);
-    outline-offset: 1px;
-}
-
-.access-point-link svg {
-    flex-shrink: 0;
+    justify-content: center;
+    width: var(--touch-target);
+    height: 100%;
+    color: var(--navy-ink);
 }
 
 .peppol-document-types {
-    margin: var(--space-05) 0 0;
-    padding-left: 2.5rem;
+    margin: var(--space-1) 0 0;
+    padding-left: 2.25rem;
     color: var(--muted);
-    font-size: 0.875rem;
+    font-size: var(--text-sm);
 }
 
 .peppol-receiving-provider {
-    margin: var(--space-05) 0 0;
-    padding-left: 1.5rem;
-    font-size: 0.875rem;
+    display: grid;
+    justify-items: start;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+    padding-left: 1.75rem;
+    font-size: var(--text-sm);
     overflow-wrap: anywhere;
 }
 
 .peppol-receiving-provider p {
-    margin: 0 0 var(--space-05);
+    margin: 0;
+}
+
+@media (width <= 767px) {
+    .settings-sheet {
+        padding: var(--space-4);
+    }
+
+    .settings-span-2,
+    .settings-row-start,
+    .settings-row-start.settings-span-2 {
+        grid-column: auto;
+    }
+}
+
+@media (pointer: coarse) {
+    .settings-sheet .field.checkbox {
+        min-height: var(--touch-target);
+    }
 }

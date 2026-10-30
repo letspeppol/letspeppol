@@ -1,38 +1,47 @@
-.payment-qr-modal {
-    width: min(760px, calc(100% - var(--space-2rem)));
-}
-
 .payment-qr-layout {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
-    gap: var(--space-1);
     align-items: center;
+    gap: var(--space-4);
 }
 
 .payment-qr-details {
     display: grid;
-    gap: var(--space-075);
+    gap: var(--space-3);
     margin: 0;
 }
 
 .payment-qr-details div {
     display: grid;
-    gap: var(--space-025);
+    gap: var(--space-1);
 }
 
 .payment-qr-details dt {
     color: var(--muted);
-    font-size: .85rem;
+    font-size: var(--text-sm);
 }
 
 .payment-qr-details dd {
     margin: 0;
+    color: var(--ink);
     font-weight: 600;
     overflow-wrap: anywhere;
 }
 
-@media (width <= 720px) {
+.payment-qr-layout sepa-qr {
+    justify-self: center;
+    max-width: 16rem;
+    padding: var(--space-2);
+    border-radius: var(--radius);
+    background: var(--white);
+}
+
+@media (width <= 767px) {
     .payment-qr-layout {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .payment-qr-layout sepa-qr {
+        order: -1;
     }
 }

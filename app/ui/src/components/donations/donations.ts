@@ -6,6 +6,8 @@ import {IRouter} from "@aurelia/router";
 import {currentOwnershipRoute} from "../../services/app/ownership-route";
 import {OwnershipService} from "../../services/app/ownership-service";
 
+const RECENT_TRANSACTIONS = 2;
+
 export class Donations {
     private statisticsService = resolve(StatisticsService);
     private sponsorService = resolve(SponsorService);
@@ -21,9 +23,9 @@ export class Donations {
     get recentTransactions() {
         const contributions = this.accountInfo?.contributions;
         if (contributions?.length) {
-            return contributions.slice(0, 3);
+            return contributions.slice(0, RECENT_TRANSACTIONS);
         }
-        return this.openCollectiveContributions.slice(0, 3);
+        return this.openCollectiveContributions.slice(0, RECENT_TRANSACTIONS);
     }
 
     private get openCollectiveContributions(): SponsorContributionDto[] {

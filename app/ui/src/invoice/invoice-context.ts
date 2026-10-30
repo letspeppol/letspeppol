@@ -51,6 +51,7 @@ export class InvoiceContext {
     partnerMissing: boolean = false;
     addPdfToSendingInvoice: boolean = false;
     showAllowanceChargeForLines: boolean = false;
+    private requestedStatusFilter: string | undefined = undefined;
 
     get selfBilling(): boolean {
         return isSelfBillingType(this.selectedDocumentType);
@@ -68,6 +69,16 @@ export class InvoiceContext {
 
     get partnerIsSupplier(): boolean {
         return (this.selectedDocument?.direction === DocumentDirection.INCOMING) !== this.selfBilling;
+    }
+
+    requestStatusFilter(status: string | null | undefined) {
+        this.requestedStatusFilter = status || undefined;
+    }
+
+    takeRequestedStatusFilter(): string | undefined {
+        const status = this.requestedStatusFilter;
+        this.requestedStatusFilter = undefined;
+        return status;
     }
 
     clearSelectedInvoice() {
@@ -104,6 +115,7 @@ export class InvoiceContext {
         this.readOnly = false;
         this.partnerMissing = false;
         this.addPdfToSendingInvoice = false;
+        this.requestedStatusFilter = undefined;
     }
 
     selectedInvoiceChanged(newValue: UBLDoc) {

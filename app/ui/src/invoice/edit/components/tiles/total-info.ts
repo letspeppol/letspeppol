@@ -45,6 +45,10 @@ export class TotalInfo {
         this.vatBreakdownRows = getVatBreakdownRows(taxTotal);
     }
 
+    get currency(): string | undefined {
+        return this.invoiceContext.selectedInvoice?.DocumentCurrencyCode;
+    }
+
     totalAmount(taxInclusiveAmount: number | undefined, payableAmount: number | undefined): number {
         return taxInclusiveAmount ?? payableAmount ?? 0;
     }

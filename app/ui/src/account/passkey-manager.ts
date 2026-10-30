@@ -52,8 +52,9 @@ export class PasskeyManager {
             this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('passkey.registered')});
             this.newPasskeyName = '';
             await this.loadPasskeys();
-        } catch (e: any) {
-            if (e.name !== 'AbortError' && e.name !== 'NotAllowedError') {
+        } catch (e: unknown) {
+            const name = e instanceof Error ? e.name : undefined;
+            if (name !== 'AbortError' && name !== 'NotAllowedError') {
                 console.error('Passkey registration failed:', e);
                 this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('passkey.register-error')});
             }
@@ -67,7 +68,9 @@ export class PasskeyManager {
             this.i18n.tr('passkey.delete-title'),
             this.i18n.tr('passkey.delete-confirm', {name: passkey.displayName}),
             () => this.deletePasskey(passkey.id),
-            undefined
+            undefined,
+            'default',
+            {confirmLabel: this.i18n.tr('passkey.delete-title'), destructive: true}
         );
     }
 

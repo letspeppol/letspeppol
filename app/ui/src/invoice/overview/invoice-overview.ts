@@ -18,9 +18,13 @@ import {CompanyService} from "../../services/app/company-service";
 import {currentOwnershipRoute} from "../../services/app/ownership-route";
 import {parseCreditNote, parseInvoice} from "../../services/peppol/ubl-parser";
 import {OwnershipService} from "../../services/app/ownership-service";
+import {DocumentStatus, documentStatus} from "../document-status";
 
 type SortDirection = "asc" | "desc";
-type StatusFilter = "ALL" | "UNPAID" | "OVERDUE" | "PAID" | "ERROR";
+const STATUS_FILTERS = ["ALL", "UNPAID", "OVERDUE", "PAID", "ERROR"] as const;
+type StatusFilter = typeof STATUS_FILTERS[number];
+type PaymentTone = '' | 'ok' | 'open' | 'overdue';
+type EmptyState = 'filtered' | 'all' | 'outgoing' | 'incoming' | 'drafts';
 
 export class InvoiceOverview {
     readonly isInvoiceType = isInvoiceType;
@@ -49,9 +53,9 @@ export class InvoiceOverview {
         await this.invoiceContext.initCompany();
         this.updateVatDisplayMode();
         this.unsubscribeVatDisplay = this.vatDisplay.subscribe(mode => this.updateVatDisplayMode(mode));
-        this.resetSubscription = this.ea.subscribe('invoicesReset', () => this.setActiveItems(this.invoiceContext.activeBox));
-        this.setActiveItems(this.invoiceContext.activeBox);
+        this.resetSubscription = this.ea.subscribe('invoicesReset', () => this.showRequestedView());
         this.loadDrafts();
+        this.showRequestedView();
     }
 
     detaching() {
@@ -100,12 +104,27 @@ export class InvoiceOverview {
     }
 
     changeStatus(value: StatusFilter) {
+        this.applyStatusFilter(value);
+        this.query.pageable.page = 0;
+        this.reloadCurrentView();
+    }
+
+    private applyStatusFilter(value: StatusFilter) {
         this.statusFilter = value;
         this.query.paid = value === 'PAID' ? true : value === 'UNPAID' ? false : undefined;
         this.query.overdue = value === 'OVERDUE' ? true : undefined;
         this.query.errored = value === 'ERROR' ? true : undefined;
-        this.query.pageable.page = 0;
-        this.reloadCurrentView();
+    }
+
+    private showRequestedView() {
+        const requested = this.invoiceContext.takeRequestedStatusFilter()?.toUpperCase();
+        if (STATUS_FILTERS.includes(requested as StatusFilter)) {
+            this.applyStatusFilter(requested as StatusFilter);
+            if (this.invoiceContext.activeBox === 'DRAFTS') {
+                this.invoiceContext.activeBox = 'ALL';
+            }
+        }
+        this.setActiveItems(this.invoiceContext.activeBox);
     }
 
     setActiveItems(box) {
@@ -127,6 +146,80 @@ export class InvoiceOverview {
                 this.loadDrafts();
                 break;
         }
+    }
+
+    get partnerRole(): 'partner' | 'customer' | 'supplier' {
+        switch (this.invoiceContext.activeBox) {
+            case 'ALL':
+                return 'partner';
+            case DocumentDirection.INCOMING:
+                return 'supplier';
+            default:
+                return 'customer';
+        }
+    }
+
+    get hasFilters(): boolean {
+        return !!(this.query.type || this.query.invoiceReference || this.query.partnerName || this.statusFilter !== 'ALL');
+    }
+
+    get emptyState(): EmptyState {
+        if (this.hasFilters) {
+            return 'filtered';
+        }
+        switch (this.invoiceContext.activeBox) {
+            case DocumentDirection.OUTGOING:
+                return 'outgoing';
+            case DocumentDirection.INCOMING:
+                return 'incoming';
+            case 'DRAFTS':
+                return 'drafts';
+            default:
+                return 'all';
+        }
+    }
+
+    clearFilters() {
+        this.query.type = undefined;
+        this.query.invoiceReference = undefined;
+        this.query.partnerName = undefined;
+        this.changeStatus('ALL');
+    }
+
+    statusOf(item: DocumentDto): DocumentStatus {
+        return documentStatus(item);
+    }
+
+    statusDate(status: DocumentStatus): string {
+        const format = status.detailKey === 'scheduled' ? 'D/M/YYYY HH:mm' : 'D/M/YYYY';
+        return status.detailDate ? moment(status.detailDate).format(format) : '';
+    }
+
+    paymentTone(item: DocumentDto): PaymentTone {
+        switch (documentStatus(item).key) {
+            case 'paid':
+                return 'ok';
+            case 'overdue':
+                return 'overdue';
+            case 'sent':
+            case 'received':
+                return 'open';
+            default:
+                return '';
+        }
+    }
+
+    paymentTitle(item: DocumentDto): string {
+        return item.paidOn
+            ? this.i18n.tr('invoice.payment.paid-on', {date: moment(item.paidOn).format('D/M/YYYY')})
+            : this.i18n.tr('invoice.payment.unpaid');
+    }
+
+    sortClass(property: string, activeProperty: string, direction: SortDirection): string {
+        if (property !== activeProperty) {
+            return 'is-idle';
+        }
+        return direction === 'asc' ? 'is-asc' : 'is-desc';
     }
 
     newInvoice() {
@@ -180,13 +273,6 @@ export class InvoiceOverview {
         this.reloadCurrentView();
     }
 
-    isOverdue(item: DocumentDto) {
-        if (!item.dueDate) {
-            return false;
-        }
-        return moment().isAfter(moment(item.dueDate));
-    }
-
     async deleteDraft(event: Event, draft: DocumentDto) {
         event.stopPropagation();
         try {
@@ -197,10 +283,6 @@ export class InvoiceOverview {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.invoice.draft-delete-overview-failed')});
         }
         return false;
-    }
-
-    formatDate(date) {
-        return moment(date).format('D/M/YYYY');
     }
 
     get amountSortProperty(): string {
@@ -216,13 +298,9 @@ export class InvoiceOverview {
         try {
             const datePaid = moment().toISOString();
             await this.invoiceService.togglePaidDocument(item.id);
-            if (item.paidOn) {
-                item.paidOn = undefined;
-                this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(`alert.invoice.marked-unpaid.${baseDocumentType(item.type)}`)});
-            } else {
-                item.paidOn = datePaid;
-                this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(`alert.invoice.marked-paid.${baseDocumentType(item.type)}`)});
-            }
+            this.replaceRow(item, {...item, paidOn: item.paidOn ? undefined : datePaid});
+            const alertKey = item.paidOn ? 'marked-unpaid' : 'marked-paid';
+            this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr(`alert.invoice.${alertKey}.${baseDocumentType(item.type)}`)});
         } catch {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.invoice.paid-status-failed')});
         }
@@ -260,6 +338,14 @@ export class InvoiceOverview {
 
     showUploadUblModal() {
         this.uploadUblModal.showModal();
+    }
+
+    private replaceRow(item: DocumentDto, updated: DocumentDto) {
+        const rows = this.invoiceContext.invoicePage.content;
+        const index = rows.indexOf(item);
+        if (index > -1) {
+            rows.splice(index, 1, updated);
+        }
     }
 
     private beginLoading() {

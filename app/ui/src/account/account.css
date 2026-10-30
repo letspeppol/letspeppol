@@ -1,23 +1,65 @@
-.card > .card-header h2 {
-    font-size: 1rem;
-    color: var(--muted);
-}
-
 .account-without-company {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: var(--space-1);
-    flex-wrap: wrap;
-    margin-bottom: var(--space-1);
+    gap: var(--space-3) var(--space-4);
+    margin-bottom: var(--space-4);
+    border-color: color-mix(in srgb, var(--orange) 55%, var(--rule));
+    background: var(--warn-tint);
 }
 
 .account-without-company p {
     margin: 0;
+    color: var(--ink);
 }
 
-.vat-display-field p {
+.account-layout {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4);
+    align-items: start;
+}
+
+.account-column {
+    display: grid;
+    gap: var(--space-4);
+    min-width: 0;
+}
+
+.account-sheet {
+    display: grid;
+    gap: var(--space-4);
+    min-width: 0;
+    padding: var(--space-5) var(--space-6) var(--space-6);
+}
+
+.account-sheet h2 {
     margin: 0;
+}
+
+.account-hint {
+    margin: calc(-1 * var(--space-2)) 0 0;
     color: var(--muted);
-    font-size: .875rem;
+    font-size: .9375rem;
+}
+
+@media (width <= 1023px) {
+    .account-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (width <= 767px) {
+    .account-sheet {
+        padding: var(--space-4);
+    }
+
+    .account-without-company .btn {
+        flex: 1 1 100%;
+    }
+}
+
+.change-password-card {
+    width: min(440px, calc(100% - var(--space-8)));
 }

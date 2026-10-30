@@ -1,19 +1,20 @@
 <import from="./attachment-info.css"></import>
 
-<div class="composer-info">
-    <div style="display: flex; flex-direction: row; margin-bottom: var(--space-025)" click.trigger="showAttachmentModal()">
-        <div class="card-header">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-paperclip-icon lucide-paperclip"><path d="m16 6-8.414 8.586a2 2 0 0 0 2.829 2.829l8.414-8.586a4 4 0 1 0-5.657-5.657l-8.379 8.551a6 6 0 1 0 8.485 8.485l8.379-8.551"/></svg>
-            <h5 style="margin: 0" t="invoice.edit.attachments">Attachments</h5>
-        </div>
-        <button if.bind="!readOnly" class="icon-btn" title="Edit" t="[title]common.edit">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pen-icon lucide-pen"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>
+<section class="composer-info" aria-labelledby="tile-attachments-title">
+    <header class="tile-head" click.trigger="showAttachmentModal()">
+        <h2 class="tile-title" id="tile-attachments-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 6-8.414 8.586a2 2 0 0 0 2.829 2.829l8.414-8.586a4 4 0 1 0-5.657-5.657l-8.379 8.551a6 6 0 1 0 8.485 8.485l8.379-8.551"/></svg>
+            <span t="invoice.edit.attachments">Attachments</span>
+        </h2>
+        <button if.bind="!readOnly" type="button" class="icon-btn tile-edit" aria-labelledby="tile-attachments-edit tile-attachments-title">
+            <span id="tile-attachments-edit" class="visually-hidden" t="common.edit">Edit</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>
         </button>
-    </div>
+    </header>
     <template repeat.for="additionalDocumentReference of invoiceContext.selectedInvoice.AdditionalDocumentReference">
-        <button if.bind="additionalDocumentReference.Attachment" class="btn attachment-info-btn" title.bind="additionalDocumentReference.DocumentDescription" click.trigger="downloadAttachment(additionalDocumentReference)">
+        <button if.bind="additionalDocumentReference.Attachment" type="button" class="attachment-info-btn" title.bind="additionalDocumentReference.DocumentDescription" click.trigger="downloadAttachment(additionalDocumentReference)">
             <template if.bind="additionalDocumentReference.Attachment.EmbeddedDocumentBinaryObject">
-                <img class="attachment-info-file-icon" src.bind="getAttachmentIconSrc(additionalDocumentReference.Attachment.EmbeddedDocumentBinaryObject)" alt.bind="getAttachmentIconAlt(additionalDocumentReference.Attachment.EmbeddedDocumentBinaryObject)" width="15" height="15">
+                <img class="attachment-info-file-icon" src.bind="getAttachmentIconSrc(additionalDocumentReference.Attachment.EmbeddedDocumentBinaryObject)" alt="" width="24" height="24">
                 <span class="attachment-info-name attachment-info-name-with-extension"
                       title.bind="additionalDocumentReference.Attachment.EmbeddedDocumentBinaryObject.__filename"
                       data-extension="${getAttachmentFilenameExtension(additionalDocumentReference.Attachment.EmbeddedDocumentBinaryObject.__filename)}">
@@ -21,9 +22,9 @@
                 </span>
             </template>
             <template else>
-                <img class="attachment-info-file-icon" src="link.png" alt="Link" width="15" height="15">
+                <img class="attachment-info-file-icon" src="link.png" alt="" width="24" height="24">
                 <span class="attachment-info-name" title.bind="additionalDocumentReference.Attachment.ExternalReference.URI">${additionalDocumentReference.Attachment.ExternalReference.URI}</span>
             </template>
         </button>
     </template>
-</div>
+</section>

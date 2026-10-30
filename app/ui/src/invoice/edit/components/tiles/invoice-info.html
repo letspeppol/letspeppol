@@ -1,43 +1,40 @@
 <import from="../../../../app/value-converters/date-format.ts"></import>
 
-<div class="composer-info" class.bind="isReferenceMissing ? 'missing-required' : ''">
-    <div style="display: flex; flex-direction: row;" click.trigger="showInvoiceModal()">
-        <div class="card-header">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-text-icon lucide-file-text"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
-            <h5 style="margin: 0"><span t="documentType.${invoiceContext.selectedDocumentType}"></span></h5>
-        </div>
-
-        <button if.bind="!readOnly" class="icon-btn" title="Edit" t="[title]common.edit">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pen-icon lucide-pen"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>
+<section class="composer-info" missing-required.class="isReferenceMissing" aria-labelledby="tile-invoice-title">
+    <header class="tile-head" click.trigger="showInvoiceModal()">
+        <h2 class="tile-title" id="tile-invoice-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
+            <span t="documentType.${invoiceContext.selectedDocumentType}"></span>
+        </h2>
+        <button if.bind="!readOnly" type="button" class="icon-btn tile-edit" aria-labelledby="tile-invoice-edit tile-invoice-title">
+            <span id="tile-invoice-edit" class="visually-hidden" t="common.edit">Edit</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>
         </button>
-    </div>
-    <div><span t="documentType.${invoiceContext.selectedDocumentType}"></span> <span t="invoice.edit.number">Number</span></div>
-
-    <template if.bind="!invoiceContext.selectedInvoice.ID">
-        <i if.bind="!invoiceContext.nextReference" style="color: var(--muted); font-size: var(--space-09)">Last number: ${invoiceContext.lastReference}</i>
-        <i else style="color: var(--muted); font-size: var(--space-09)">${invoiceContext.nextReference}</i>
-    </template>
-    <template else>
-        <b>${invoiceContext.selectedInvoice.ID}</b>
-    </template>
-
-    <template if.bind="invoiceContext.selectedInvoice.BuyerReference">
-        <span t="invoice.buyer-reference">Buyer Reference</span>
-        <b>${invoiceContext.selectedInvoice.BuyerReference}</b>
-    </template>
-
-    <template if.bind="invoiceContext.selectedInvoice.OrderReference.ID">
-        <span t="invoice.order-reference">Order Reference</span>
-        <b>${invoiceContext.selectedInvoice.OrderReference.ID}</b>
-    </template>
-
-    <template if.bind="invoiceContext.selectedInvoice.BillingReference[0].InvoiceDocumentReference.ID">
-        <span t="invoice.invoice-reference">Invoice Reference</span>
-        <b>${invoiceContext.selectedInvoice.BillingReference[0].InvoiceDocumentReference.ID}</b>
-    </template>
-
-    <template if.bind="invoiceContext.selectedInvoice.BillingReference[0].InvoiceDocumentReference.IssueDate">
-        <span t="invoice.invoice-reference-date">Invoice Date</span>
-        <b>${invoiceContext.selectedInvoice.BillingReference[0].InvoiceDocumentReference.IssueDate | dateFormat}</b>
-    </template>
-</div>
+    </header>
+    <dl class="tile-fields">
+        <div>
+            <dt t="${invoiceContext.isInvoice ? 'invoice.modal.invoice-number' : 'invoice.modal.credit-note-number'}">Invoice number</dt>
+            <dd if.bind="invoiceContext.selectedInvoice.ID" class="tabular">${invoiceContext.selectedInvoice.ID}</dd>
+            <dd else class="tile-hint tabular">
+                <span if.bind="invoiceContext.nextReference">${invoiceContext.nextReference}</span>
+                <span if.bind="!invoiceContext.nextReference && invoiceContext.lastReference" t="invoice.edit.last-number" t-params.bind="{number: invoiceContext.lastReference}"></span>
+            </dd>
+        </div>
+        <div if.bind="invoiceContext.selectedInvoice.BuyerReference">
+            <dt t="invoice.buyer-reference">Buyer reference</dt>
+            <dd>${invoiceContext.selectedInvoice.BuyerReference}</dd>
+        </div>
+        <div if.bind="invoiceContext.selectedInvoice.OrderReference.ID">
+            <dt t="invoice.order-reference">Order reference</dt>
+            <dd>${invoiceContext.selectedInvoice.OrderReference.ID}</dd>
+        </div>
+        <div if.bind="invoiceContext.selectedInvoice.BillingReference[0].InvoiceDocumentReference.ID">
+            <dt t="invoice.invoice-reference">Invoice reference</dt>
+            <dd class="tabular">${invoiceContext.selectedInvoice.BillingReference[0].InvoiceDocumentReference.ID}</dd>
+        </div>
+        <div if.bind="invoiceContext.selectedInvoice.BillingReference[0].InvoiceDocumentReference.IssueDate">
+            <dt t="invoice.invoice-reference-date">Invoice date</dt>
+            <dd class="tabular">${invoiceContext.selectedInvoice.BillingReference[0].InvoiceDocumentReference.IssueDate | dateFormat}</dd>
+        </div>
+    </dl>
+</section>

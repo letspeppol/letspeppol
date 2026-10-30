@@ -17,7 +17,7 @@ export class CompanySearch {
     async getCompanies() {
         try {
             this.companies = await this.companySearchService.searchCompany({'companyName' : this.searchQuery});
-        } catch (e) {
+        } catch {
             console.warn('KYC API failed, using mock data');
         }
     }
@@ -85,7 +85,7 @@ export class CompanySearch {
         this.showSuggestions = false;
     }
 
-    onChange(event: UIEvent) {
+    onChange() {
         if (this.onChangeFunction) {
             this.onChangeFunction();
         }

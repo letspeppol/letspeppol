@@ -1,11 +1,11 @@
 .users-intro {
+    margin: var(--space-1) 0 0;
     color: var(--muted);
-    margin: var(--space-035) 0 0;
 }
 
 .users-matrix .users-user-col {
-    min-width: 13rem;
-    box-shadow: 1px 0 0 var(--border-soft);
+    min-width: 12rem;
+    border-right: 1px solid var(--rule);
 }
 
 .users-matrix thead .users-user-col {
@@ -17,58 +17,135 @@
     position: sticky;
     left: 0;
     z-index: 2;
-    background-color: var(--panel);
-}
-
-.users-matrix tbody tr:nth-child(even) .users-user-col {
-    background-image: linear-gradient(var(--table-row-alt), var(--table-row-alt));
+    background: var(--sheet);
 }
 
 .users-matrix tbody tr:hover .users-user-col {
-    background-image: linear-gradient(var(--table-row-hover), var(--table-row-hover));
+    box-shadow: inset 0 0 0 100vmax var(--hover);
 }
 
 .users-matrix .users-permission-col {
-    min-width: 5.75rem;
+    min-width: 4.5rem;
+    padding-inline: var(--space-2);
     text-align: center;
 }
 
 .users-matrix thead .users-permission-col {
-    font-size: .82rem;
-    line-height: 1.2;
-    vertical-align: bottom;
+    font-size: var(--text-xs);
+    line-height: 1.25;
 }
 
 .users-name {
     display: flex;
-    align-items: center;
     flex-wrap: wrap;
-    gap: var(--space-04);
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--ink);
     font-weight: 600;
 }
 
 .users-email,
 .users-meta {
     color: var(--muted);
-    font-size: .82rem;
+    font-size: var(--text-sm);
     overflow-wrap: anywhere;
+}
+
+.users-admin-note {
+    display: none;
 }
 
 .users-check {
     display: inline-flex;
-    padding: var(--space-035);
+    align-items: center;
+    justify-content: center;
+    min-width: var(--touch-target);
+    min-height: var(--touch-target);
     cursor: pointer;
 }
 
-.users-check input {
-    width: 1.1rem;
-    height: 1.1rem;
-    cursor: inherit;
-    accent-color: var(--primary);
+.users-check-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
 }
 
-.users-check input:disabled {
+.users-check input {
+    width: 1.125rem;
+    height: 1.125rem;
+    margin: 0;
+    cursor: inherit;
+}
+
+.users-check:has(input:disabled) {
     cursor: not-allowed;
+}
+
+.users-matrix .actions-col {
+    position: sticky;
+    right: 0;
+    z-index: 2;
+    border-left: 1px solid var(--rule);
+    background: var(--sheet);
+}
+
+.users-matrix thead .actions-col {
+    z-index: 3;
+}
+
+.users-matrix tbody tr:hover .actions-col {
+    box-shadow: inset 0 0 0 100vmax var(--hover);
+}
+
+.users-actions {
+    text-align: right;
+}
+
+.users-action {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    min-width: 2.25rem;
+    min-height: 2.25rem;
+    padding: var(--space-1);
+    border: 1px solid transparent;
+    border-radius: var(--radius);
+    background: transparent;
+    color: var(--muted);
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.users-action:hover {
+    background: var(--hover);
+    color: var(--ink);
+}
+
+.users-action-ok {
+    color: var(--ok);
+}
+
+.users-action-danger:hover {
+    color: var(--danger);
+}
+
+.users-action:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+.users-action-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
 }
 
 .users-row-saving {
@@ -76,31 +153,222 @@
 }
 
 .users-note {
+    max-width: none;
     margin: 0;
-    padding: var(--space-075) var(--space-1);
-    border-top: 1px solid var(--border-soft);
+    padding: var(--space-3) var(--space-4);
+    border-top: 1px solid var(--rule);
     color: var(--muted);
-    font-size: .85rem;
+    font-size: var(--text-sm);
+}
+
+.users-card .empty-state {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-3);
+}
+
+.users-card .empty-state p {
+    margin: 0;
+}
+
+@media (pointer: coarse) {
+    .users-action {
+        min-width: var(--touch-target);
+        min-height: var(--touch-target);
+    }
+}
+
+@media (768px <= width <= 1023px) {
+    .users-card {
+        overflow: visible;
+        border: 0;
+        background: transparent;
+    }
+
+    .users-card .table-wrapper {
+        overflow: visible;
+    }
+
+    .users-matrix,
+    .users-matrix tbody,
+    .users-matrix tbody td {
+        display: block;
+    }
+
+    .users-matrix thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+    }
+
+    .users-matrix tbody {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--space-3);
+        align-items: start;
+    }
+
+    .data-table.users-matrix tbody tr {
+        display: flex;
+        flex-direction: column;
+        padding: var(--space-3) var(--space-4);
+        border: 1px solid var(--rule);
+        border-radius: var(--radius);
+        background: var(--sheet);
+    }
+
+    .data-table.users-matrix tbody td {
+        padding: var(--space-1) 0;
+        border: 0;
+    }
+
+    .data-table.users-matrix tbody td.users-status-col {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--space-2);
+        padding-bottom: var(--space-2);
+    }
+
+    .data-table.users-matrix tbody td.users-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+        margin-top: var(--space-2);
+        padding-top: var(--space-3);
+        border-top: 1px solid var(--rule-soft);
+    }
+
+    .users-note {
+        padding-inline: 0;
+        border-top: 0;
+    }
+}
+
+@media (width <= 1023px) {
+    .users-matrix tbody .users-user-col,
+    .users-matrix tbody .actions-col {
+        position: static;
+        min-width: 0;
+        border-right: 0;
+        border-left: 0;
+        background: transparent;
+    }
+
+    .users-matrix tbody tr:hover :is(.users-user-col, .actions-col) {
+        box-shadow: none;
+    }
+
+    .users-admin-note {
+        display: block;
+        max-width: none;
+        margin: var(--space-2) 0 0;
+        color: var(--muted);
+        font-size: var(--text-sm);
+        font-weight: 400;
+    }
+
+    .data-table.users-matrix tbody td.users-permission-col {
+        padding: 0;
+        text-align: left;
+    }
+
+    .data-table.users-matrix tbody td.users-permission-col::before {
+        content: none;
+    }
+
+    .data-table.users-matrix tbody .users-row-admin td.users-permission-col,
+    .data-table.users-matrix tbody td.users-actions:not(:has(button)) {
+        display: none;
+    }
+
+    .users-check {
+        display: flex;
+        justify-content: space-between;
+        gap: var(--space-4);
+        width: 100%;
+        border-top: 1px solid var(--rule-soft);
+    }
+
+    .users-check-label {
+        position: static;
+        width: auto;
+        height: auto;
+        overflow: visible;
+        clip-path: none;
+        white-space: normal;
+        color: var(--text);
+    }
+
+    .users-check input {
+        flex: none;
+        width: 1.25rem;
+        height: 1.25rem;
+    }
+
+    .users-action {
+        flex: 1 1 auto;
+        min-height: var(--touch-target);
+        padding: var(--space-2) var(--space-3);
+        border-color: var(--rule-strong);
+        color: var(--ink);
+    }
+
+    .users-action-danger {
+        color: var(--danger);
+    }
+
+    .users-action-label {
+        position: static;
+        width: auto;
+        height: auto;
+        overflow: visible;
+        clip-path: none;
+    }
+}
+
+
+.invite-card {
+    width: min(480px, calc(100% - var(--space-8)));
+}
+
+.invite-form {
+    display: grid;
+    gap: var(--space-4);
+}
+
+.invite-form .users-intro {
+    margin: 0;
 }
 
 .invite-permissions {
     display: grid;
-    gap: var(--space-05);
     margin: 0;
-    padding: var(--space-075);
-    border: 1px solid var(--border-soft);
-    border-radius: var(--radius-sm);
+    padding: var(--space-1) var(--space-3);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
 }
 
 .invite-permissions legend {
-    padding: 0 var(--space-035);
+    padding: 0 var(--space-1);
     color: var(--muted);
-    font-size: .85rem;
+    font-size: var(--text-sm);
+    font-weight: 500;
 }
 
-@media (width <= 700px) {
-    .users-matrix .users-user-col {
-        min-width: 9rem;
-        max-width: 9rem;
+.invite-permissions .field.checkbox {
+    min-height: 2.25rem;
+}
+
+.invite-permissions .field.checkbox + .field.checkbox {
+    border-top: 1px solid var(--rule-soft);
+}
+
+@media (pointer: coarse) {
+    .invite-permissions .field.checkbox {
+        min-height: var(--touch-target);
     }
 }

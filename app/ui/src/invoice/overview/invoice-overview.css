@@ -1,0 +1,223 @@
+.invoice-boxes {
+    margin-bottom: var(--space-4);
+}
+
+.invoice-boxes .badge {
+    font-weight: 600;
+}
+
+.invoice-filters .search {
+    flex: 1 1 14rem;
+    max-width: 22rem;
+}
+
+.th-stack {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-end;
+    line-height: 1.1;
+}
+
+.th-subline {
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: var(--text-xs);
+    font-weight: 400;
+}
+
+.invoice-table .num .sort-button {
+    flex-direction: row-reverse;
+}
+
+.invoice-table tbody tr {
+    cursor: pointer;
+}
+
+.invoice-table tbody td {
+    vertical-align: middle;
+}
+
+.invoice-table .tabular,
+.invoice-table .num {
+    white-space: nowrap;
+}
+
+.invoice-table .amount {
+    color: var(--ink);
+    font-weight: 600;
+}
+
+.invoice-table .actions-col {
+    text-align: right;
+}
+
+.invoice-table .col-dot {
+    width: 1.75rem;
+    padding-inline: var(--space-4) 0;
+}
+
+.cell-stack {
+    display: grid;
+    gap: 2px;
+}
+
+.cell-subline,
+.status-detail {
+    color: var(--muted);
+    font-size: var(--text-sm);
+    line-height: 1.3;
+}
+
+.row-link {
+    appearance: none;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--ink);
+    font: inherit;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+}
+
+.status-dot {
+    display: inline-block;
+    width: .625rem;
+    height: .625rem;
+    vertical-align: middle;
+    border-radius: var(--radius-pill);
+}
+
+.status-ok {
+    background: var(--ok);
+}
+
+.status-open {
+    background: var(--warn);
+}
+
+.status-overdue {
+    background: var(--danger);
+}
+
+.status-cell {
+    display: inline-grid;
+    justify-items: start;
+    gap: 2px;
+}
+
+.status-detail {
+    white-space: nowrap;
+}
+
+.data-table tbody tr.row-seen {
+    opacity: .55;
+}
+
+.data-table tbody tr.row-seen .pill.error {
+    filter: grayscale(1);
+}
+
+.invoice-table-card .empty-state p {
+    margin: 0 auto var(--space-4);
+}
+
+.invoice-table-card .empty-state .btn {
+    margin-inline: auto;
+}
+
+.invoice-pager {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+}
+
+.invoice-pager > :first-child {
+    justify-self: start;
+}
+
+.invoice-pager > :last-child {
+    justify-self: end;
+}
+
+@media (width <= 1023px) {
+    .invoice-filters {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .invoice-filters .search {
+        max-width: none;
+    }
+
+    .invoice-filters select {
+        width: 100%;
+    }
+}
+
+@media (768px <= width <= 1023px) {
+    .invoice-table thead th,
+    .invoice-table tbody td {
+        padding-inline: var(--space-3);
+    }
+}
+
+@media (width <= 767px) and (height > 500px) {
+    .invoice-filters .search {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (width <= 767px) {
+    .upload-ubl {
+        min-width: var(--touch-target);
+        padding-inline: var(--space-2);
+    }
+
+    .upload-ubl-label {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+    }
+
+    .overview-actions .btn {
+        flex: 1 1 auto;
+    }
+
+    .overview-actions .btn.primary {
+        flex-basis: 100%;
+        order: -1;
+    }
+
+    .overview-actions .upload-ubl {
+        flex: none;
+    }
+
+    .invoice-table.stack-on-phone tbody td.col-dot,
+    .invoice-table.stack-on-phone tbody td.actions-col:not(:has(button)) {
+        display: none;
+    }
+
+    .invoice-table .row-link {
+        font-weight: inherit;
+    }
+
+    .invoice-table.stack-on-phone tbody td.amount::before {
+        font-weight: 400;
+    }
+
+    .invoice-table .status-cell {
+        display: inline-flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--space-1) var(--space-2);
+    }
+
+    .invoice-pager {
+        padding-inline: 0;
+        border-top: 0;
+        background: transparent;
+    }
+}

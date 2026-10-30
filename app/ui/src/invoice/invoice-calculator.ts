@@ -3,7 +3,7 @@ import {
     AllowanceCharge,
     ClassifiedTaxCategory, getAmount, getLines, normalizeLinePrice, TaxCategory, TaxSubtotal, UBLBaseLine, UBLDoc
 } from "../services/peppol/ubl";
-import {getZeroVatReasonCode, NOT_SUBJECT_TO_VAT_REASON_TEXT, type ZeroVatReasonId} from "../services/app/vat-rules";
+import {getDisplayedVatRatePercent, getZeroVatReasonCode, NOT_SUBJECT_TO_VAT_REASON_TEXT, type ZeroVatReasonId} from "../services/app/vat-rules";
 
 @singleton
 export class InvoiceCalculator {
@@ -161,6 +161,14 @@ export class InvoiceCalculator {
 
 export function roundTwoDecimals(value: number): number {
     return Math.round((value + Number.EPSILON) * 100) / 100;
+}
+
+export function displayedLineTotal(lineTotal: number | undefined, taxCategory: ClassifiedTaxCategory | undefined, vatRegistered: boolean): number | undefined {
+    if (lineTotal == null || vatRegistered) {
+        return lineTotal;
+    }
+    const vatRate = getDisplayedVatRatePercent(taxCategory) ?? 0;
+    return roundTwoDecimals(lineTotal * (1 + (vatRate / 100)));
 }
 
 function normalizeTaxCategory(category: TaxCategory | ClassifiedTaxCategory | undefined): TaxCategory | undefined {

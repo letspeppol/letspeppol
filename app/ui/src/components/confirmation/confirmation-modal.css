@@ -1,26 +1,19 @@
 .confirmation-card {
-    width: 300px;
-    max-width: calc(100vw - 2rem);
+    width: min(440px, calc(100% - var(--space-8)));
 }
 
 .confirmation-title {
     display: flex;
     align-items: center;
-    gap: var(--space-065);
-}
-
-.confirmation-warning {
-    width: 440px;
-    border-color: #d97706;
-}
-
-.confirmation-warning .modal-header {
-    background: #fff8e6;
-    color: #92400e;
-    border-bottom: 1px solid #d97706;
+    gap: var(--space-2);
+    font-size: var(--text-lg);
 }
 
 .confirmation-warning-icon {
-    flex-shrink: 0;
-    color: #b45309;
+    flex: none;
+    color: var(--warn);
+}
+
+.confirmation-text {
+    margin: 0;
 }

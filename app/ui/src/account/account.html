@@ -2,70 +2,65 @@
 <import from="./change-password-modal"></import>
 <import from="./passkey-manager"></import>
 <import from="./totp-manager"></import>
+<import from="../components/confirmation/confirmation-modal"></import>
 
 <change-password-modal component.ref="changePasswordModal"></change-password-modal>
+<confirmation-modal></confirmation-modal>
 
 <application-view>
     <div class="section-header">
         <h1 t="account.title">Account</h1>
     </div>
-    <section>
-        <div if.bind="!ownershipService.hasCompany" class="card account-without-company" role="status">
-            <p t="account.without-company">This account is not linked to a company. Ask an administrator for an invitation, or add your own company.</p>
-            <button type="button" class="btn primary" load="route.bind: addCompanyPath; context.bind: null" t="ownershipAdd.action">Add company</button>
-        </div>
-        <div style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
-            <div class="card">
-                <div class="card-header">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-star-icon lucide-user-star"><path d="M16.051 12.616a1 1 0 0 1 1.909.024l.737 1.452a1 1 0 0 0 .737.535l1.634.256a1 1 0 0 1 .588 1.806l-1.172 1.168a1 1 0 0 0-.282.866l.259 1.613a1 1 0 0 1-1.541 1.134l-1.465-.75a1 1 0 0 0-.912 0l-1.465.75a1 1 0 0 1-1.539-1.133l.258-1.613a1 1 0 0 0-.282-.866l-1.156-1.153a1 1 0 0 1 .572-1.822l1.633-.256a1 1 0 0 0 .737-.535z"/><path d="M8 15H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/></svg>
-                    <h2 t="account.account-info">Account Info</h2>
-                </div>
-                <div class="grid">
-                    <label class="field full">
-                        <span t="label.name">Name</span>
-                        <input type="text" value.to-view="currentAccount.name" disabled />
-                    </label>
-                    <label class="field full">
-                        <span t="label.email">Email</span>
-                        <input type="text" value.to-view="currentAccount.email" disabled />
-                    </label>
-                    <label class="field full">
-                        <span t="account.change-password">Change Password</span>
-                        <button type="button" class="btn" style="width: fit-content" click.trigger="showChangePasswordModal()">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-ccw-key-icon lucide-rotate-ccw-key"><path d="m14.5 9.5 1 1"/><path d="m15.5 8.5-4 4"/><path d="M3 12a9 9 0 1 0 9-9 9.74 9.74 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><circle cx="10" cy="14" r="2"/></svg>
-                            <span t="account.change-password">Change Password</span>
-                        </button>
-                    </label>
-                    <div if.bind="showVatDisplaySettings" class="field full vat-display-field" new-feature="vat-display">
-                        <span t="account.vat-display.title">Amount Display</span>
-                        <p class="muted" t="account.vat-display.description">Choose whether totals in the dashboard and invoice list are shown including or excluding VAT.</p>
-                        <div class="display-toggle">
-                            <span class="vat-toggle-label" class.bind="vatMode === 'excl' ? 'active' : ''" click.trigger="vatMode = 'excl'" t="account.vat-display.excl">Exclude VAT</span>
-                            <label class="switch" aria-label="Toggle VAT inclusion">
-                                <input type="checkbox" checked.to-view="vatMode === 'incl'" change.trigger="vatMode = $event.target.checked ? 'incl' : 'excl'" />
-                                <span class="slider"></span>
-                            </label>
-                            <span class="vat-toggle-label" class.bind="vatMode === 'incl' ? 'active' : ''" click.trigger="vatMode = 'incl'" t="account.vat-display.incl">Include VAT</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div if.bind="!ownershipService.hasCompany" class="card account-without-company" role="status">
+        <p t="account.without-company">This account is not linked to a company. Ask an administrator for an invitation, or add your own company.</p>
+        <button type="button" class="btn primary" load="route.bind: addCompanyPath; context.bind: null" t="ownershipAdd.action">Add company</button>
+    </div>
+    <div class="account-layout">
+        <div class="account-column">
+            <section class="card account-sheet" aria-labelledby="account-profile-heading">
+                <h2 id="account-profile-heading" t="account.account-info">Profile</h2>
+                <label class="field">
+                    <span t="label.name">Name</span>
+                    <input type="text" value.to-view="currentAccount.name" disabled />
+                </label>
+                <label class="field">
+                    <span t="label.email">Email</span>
+                    <input type="text" value.to-view="currentAccount.email" disabled />
+                </label>
+            </section>
 
-            <div class="card" style="grid-column: span 2;" new-feature="passkeys">
-                <div class="card-header">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"/><path d="m21 2-9.6 9.6"/><circle cx="7.5" cy="15.5" r="5.5"/></svg>
-                    <h2 t="passkey.title">Passkeys</h2>
+            <section class="card account-sheet" aria-labelledby="account-password-heading">
+                <h2 id="account-password-heading" t="account.password.title">Password</h2>
+                <p class="account-hint" t="account.password.description">Change the password you use to sign in with your email address.</p>
+                <div>
+                    <button type="button" class="btn" click.trigger="showChangePasswordModal()" t="account.change-password">Change password</button>
                 </div>
+            </section>
+
+            <section if.bind="showVatDisplaySettings" class="card account-sheet" new-feature="vat-display" aria-labelledby="account-display-heading">
+                <h2 id="account-display-heading" t="account.vat-display.title">Amount display</h2>
+                <p class="account-hint" t="account.vat-display.description">Choose whether totals in the dashboard and invoice list are shown including or excluding VAT.</p>
+                <div class="display-toggle">
+                    <span class="vat-toggle-label" class.bind="vatMode === 'excl' ? 'active' : ''" click.trigger="vatMode = 'excl'" t="account.vat-display.excl">Exclude VAT</span>
+                    <label class="switch">
+                        <input type="checkbox" checked.to-view="vatMode === 'incl'" change.trigger="vatMode = $event.target.checked ? 'incl' : 'excl'" t="[aria-label]account.vat-display.incl" />
+                        <span class="slider"></span>
+                    </label>
+                    <span class="vat-toggle-label" class.bind="vatMode === 'incl' ? 'active' : ''" click.trigger="vatMode = 'incl'" t="account.vat-display.incl">Include VAT</span>
+                </div>
+            </section>
+        </div>
+
+        <div class="account-column">
+            <section class="card account-sheet" new-feature="passkeys" aria-labelledby="account-passkeys-heading">
+                <h2 id="account-passkeys-heading" t="passkey.title">Passkeys</h2>
                 <passkey-manager></passkey-manager>
-            </div>
+            </section>
 
-            <div class="card" new-feature="totp">
-                <div class="card-header">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
-                    <h2 t="totp.title">Two-Factor Authentication</h2>
-                </div>
+            <section class="card account-sheet" new-feature="totp" aria-labelledby="account-totp-heading">
+                <h2 id="account-totp-heading" t="totp.title">Two-factor authentication</h2>
                 <totp-manager></totp-manager>
-            </div>
+            </section>
         </div>
-    </section>
+    </div>
 </application-view>

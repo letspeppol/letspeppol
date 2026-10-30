@@ -173,7 +173,7 @@ export class InvoiceService {
     }
 
     async createDocument(xml: string, draft: boolean = false, createdExternally: boolean = false) : Promise<DocumentDto> {
-        let url = `/sapi/document?draft=${draft}&createdExternally=${createdExternally}`;
+        const url = `/sapi/document?draft=${draft}&createdExternally=${createdExternally}`;
         return await this.appApi.httpClient.post(url, xml).then(response => response.json());
     }
 

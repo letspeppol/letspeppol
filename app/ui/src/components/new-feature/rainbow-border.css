@@ -52,8 +52,8 @@ span.rainbow-border {
 
 .new-feature-hint {
     position: absolute;
-    top: 8px;
-    right: 8px;
+    top: 0;
+    right: var(--space-4);
     z-index: 2;
     isolation: isolate;
     padding: 2px 10px;
@@ -70,7 +70,8 @@ span.rainbow-border {
     white-space: nowrap;
     pointer-events: none;
     user-select: none;
-    transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+    transform: translateY(-50%);
+    transition: background 0.15s ease, color 0.15s ease, scale 0.15s ease;
 }
 
 .new-feature-hint::before {
@@ -105,7 +106,7 @@ span.rainbow-border {
 }
 
 .new-feature-dismissable:hover .new-feature-hint {
-    transform: scale(1.04);
+    scale: 1.04;
 }
 
 .new-feature-dismissable:hover .new-feature-hint::before {

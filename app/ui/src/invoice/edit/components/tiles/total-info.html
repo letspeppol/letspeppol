@@ -1,24 +1,31 @@
 <import from="../../../../app/value-converters/price.ts"></import>
 
-<div class="head-right">
-    <div class="total-display">
-        <span t="invoice.edit.subtotal">Subtotal</span>
-        <b>${invoiceContext.selectedInvoice.LegalMonetaryTotal.TaxExclusiveAmount.value.toFixed(2) | price:item.currency}</b>
-        <span t="invoice.edit.tax">Tax</span>
-        <b title.bind="vatTooltip() || null">${invoiceContext.selectedInvoice.TaxTotal[0].TaxAmount.value.toFixed(2) | price:item.currency}</b>
-        <div class="vat-breakdown-list" if.bind="vatBreakdownRows.length">
-            <div class="vat-breakdown-item" repeat.for="vatBreakdown of vatBreakdownRows">
-                <span><span t="invoice.edit.tax">Tax</span> ${vatBreakdown.percentage}%</span>
-                <b>${vatBreakdown.amount.toFixed(2) | price:item.currency}</b>
-            </div>
+<section class="composer-totals" aria-labelledby="tile-totals-title">
+    <h2 id="tile-totals-title" class="visually-hidden" t="invoice.edit.total">Total</h2>
+    <dl class="totals">
+        <div class="totals-row">
+            <dt t="invoice.edit.subtotal">Subtotal</dt>
+            <dd>${invoiceContext.selectedInvoice.LegalMonetaryTotal.TaxExclusiveAmount.value | price:currency}</dd>
         </div>
-    </div>
-    <div class="total-display">
-        <span t="invoice.edit.total">Total</span>
-        <strong>${totalAmount(invoiceContext.selectedInvoice.LegalMonetaryTotal.TaxInclusiveAmount?.value, invoiceContext.selectedInvoice.LegalMonetaryTotal.PayableAmount?.value).toFixed(2) | price:item.currency}</strong>
-        <span if.bind="showPrepaidAmount()" t="invoice.edit.prepaid-amount">Prepaid amount</span>
-        <b if.bind="showPrepaidAmount()">${invoiceContext.selectedInvoice.LegalMonetaryTotal.PrepaidAmount.value.toFixed(2) | price:item.currency}</b>
-        <span if.bind="showPayableAmount()" t="invoice.edit.payable-amount">Payable amount</span>
-        <strong if.bind="showPayableAmount()">${invoiceContext.selectedInvoice.LegalMonetaryTotal.PayableAmount.value.toFixed(2) | price:item.currency}</strong>
-    </div>
-</div>
+        <div class="totals-row">
+            <dt t="invoice.edit.tax">VAT</dt>
+            <dd title.bind="vatTooltip() || null">${invoiceContext.selectedInvoice.TaxTotal[0].TaxAmount.value | price:currency}</dd>
+        </div>
+        <div class="totals-row totals-breakdown" repeat.for="vatBreakdown of vatBreakdownRows">
+            <dt><span t="invoice.edit.tax">VAT</span> ${vatBreakdown.percentage}%</dt>
+            <dd>${vatBreakdown.amount | price:currency}</dd>
+        </div>
+        <div class="totals-row totals-grand">
+            <dt t="invoice.edit.total">Total</dt>
+            <dd>${totalAmount(invoiceContext.selectedInvoice.LegalMonetaryTotal.TaxInclusiveAmount?.value, invoiceContext.selectedInvoice.LegalMonetaryTotal.PayableAmount?.value) | price:currency}</dd>
+        </div>
+        <div if.bind="showPrepaidAmount()" class="totals-row">
+            <dt t="invoice.edit.prepaid-amount">Prepaid amount</dt>
+            <dd>${invoiceContext.selectedInvoice.LegalMonetaryTotal.PrepaidAmount.value | price:currency}</dd>
+        </div>
+        <div if.bind="showPayableAmount()" class="totals-row totals-grand">
+            <dt t="invoice.edit.payable-amount">Payable amount</dt>
+            <dd>${invoiceContext.selectedInvoice.LegalMonetaryTotal.PayableAmount.value | price:currency}</dd>
+        </div>
+    </dl>
+</section>

@@ -1,0 +1,391 @@
+.line-items {
+    display: grid;
+    gap: var(--space-3);
+}
+
+.line-items-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2) var(--space-4);
+}
+
+.line-items-tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+}
+
+.line-items-tools .btn[aria-pressed="true"] {
+    background: var(--selected);
+    color: var(--ink);
+}
+
+.line-table-wrapper {
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+}
+
+.line-table {
+    --line-input-h: var(--control-h);
+}
+
+.line-table thead th {
+    vertical-align: bottom;
+}
+
+.line-table thead th,
+.line-table tbody td {
+    padding: var(--space-2);
+}
+
+.line-table tbody td {
+    vertical-align: top;
+}
+
+.line-table thead th:first-child,
+.line-table tbody td:first-child {
+    padding-left: var(--space-3);
+}
+
+.line-table thead th:last-child,
+.line-table tbody td:last-child {
+    padding-right: var(--space-3);
+}
+
+.line-table tbody tr:hover {
+    background: transparent;
+}
+
+.line-table :is(input, textarea, select) {
+    width: 100%;
+    min-width: 0;
+    min-height: var(--line-input-h);
+    padding: var(--space-2);
+    border: 1px solid var(--rule-strong);
+    border-radius: var(--radius);
+    background: var(--sheet);
+    color: var(--ink);
+}
+
+.line-table textarea {
+    display: block;
+    resize: vertical;
+}
+
+.line-table .num input {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.line-table select:disabled {
+    opacity: 1;
+    border-color: var(--rule);
+    background: var(--ground);
+    color: var(--text);
+}
+
+.line-table.read-only :is(input, textarea) {
+    border-color: transparent;
+    background: transparent;
+    resize: none;
+}
+
+.line-table.read-only :is(input, textarea, select) {
+    padding-inline: 0;
+}
+
+.line-table.read-only input[type="number"] {
+    appearance: textfield;
+}
+
+.line-table.read-only input[type="number"]::-webkit-inner-spin-button {
+    display: none;
+}
+
+.line-text {
+    max-width: none;
+    margin: 0;
+    padding-block: calc(var(--space-2) + 1px);
+    color: var(--ink);
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+}
+
+.line-table.read-only ::placeholder {
+    color: transparent;
+}
+
+.line-table.read-only select:disabled {
+    appearance: none;
+    border-color: transparent;
+    background: transparent;
+}
+
+.line-table thead th.col-pos {
+    width: 4.5rem;
+}
+
+.line-table thead th.col-name {
+    width: 22%;
+    min-width: 11rem;
+}
+
+.line-table thead th.col-desc {
+    min-width: 12rem;
+}
+
+.line-table thead th.col-qty {
+    width: 6.5rem;
+}
+
+.line-table thead th:is(.col-price, .col-total) {
+    width: 8rem;
+}
+
+.line-table thead th.col-vat {
+    width: 8.5rem;
+}
+
+.line-table.read-only thead th.col-pos {
+    width: 3.5rem;
+}
+
+.line-table.read-only thead th.col-vat {
+    width: 5rem;
+}
+
+.line-table .col-total {
+    white-space: nowrap;
+}
+
+.line-total {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--line-input-h);
+    color: var(--ink);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.line-op {
+    display: none;
+}
+
+.vat-cell {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.line-ac {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-1);
+    min-width: 12rem;
+}
+
+.line-ac .allowance-charge-list {
+    flex: 1;
+    padding-top: var(--space-2);
+}
+
+.required-table-input {
+    position: relative;
+}
+
+.required-table-input::after {
+    content: "*";
+    position: absolute;
+    top: var(--space-1);
+    right: var(--space-2);
+    color: var(--danger);
+    font-size: var(--text-sm);
+    pointer-events: none;
+}
+
+.disabled-tooltip-wrapper {
+    display: inline-flex;
+}
+
+.disabled-tooltip-wrapper-fill {
+    display: flex;
+    flex: 1;
+}
+
+.disabled-tooltip-wrapper > :disabled {
+    pointer-events: none;
+}
+
+.disabled-tooltip-wrapper[title] {
+    cursor: not-allowed;
+}
+
+.product-name-search {
+    position: relative;
+}
+
+.autocomplete-list.product-suggestions {
+    position: fixed;
+    right: auto;
+    z-index: 60;
+    min-width: 14rem;
+}
+
+@media (pointer: coarse) {
+    .line-table {
+        --line-input-h: var(--touch-target);
+    }
+}
+
+@media (width >= 768px) and (width <= 1023px) {
+    .line-table:not(.read-only) {
+        min-width: 58rem;
+    }
+
+    .line-table:not(.read-only) :is(.col-pos, .col-name) {
+        position: sticky;
+        z-index: 1;
+        background: var(--sheet);
+    }
+
+    .line-table:not(.read-only) .col-pos {
+        left: 0;
+    }
+
+    .line-table:not(.read-only) .col-name {
+        left: 4.5rem;
+        box-shadow: inset -1px 0 0 var(--rule);
+    }
+
+    .line-table:not(.read-only) thead :is(.col-pos, .col-name) {
+        z-index: 2;
+    }
+
+    .line-table.read-only thead :is(.col-name, .col-desc) {
+        min-width: 0;
+    }
+}
+
+@media (width <= 767px) {
+    .line-table-wrapper {
+        overflow: visible;
+        border: 0;
+    }
+
+    .line-table,
+    .line-table tbody {
+        display: block;
+    }
+
+    .line-table thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+    }
+
+    .line-table tbody {
+        display: grid;
+        gap: var(--space-3);
+    }
+
+    .line-table tbody tr {
+        --line-gap: var(--space-5);
+
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-areas:
+            "pos name name"
+            "desc desc desc"
+            "qty price total"
+            "vat vat actions";
+        gap: var(--space-3) var(--line-gap);
+        padding: var(--space-3) var(--space-4) var(--space-4);
+        border: 1px solid var(--rule);
+        border-radius: var(--radius);
+        background: var(--sheet);
+    }
+
+    .line-table tbody td,
+    .line-table tbody td:first-child,
+    .line-table tbody td:last-child {
+        position: relative;
+        display: grid;
+        align-content: start;
+        gap: var(--space-1);
+        min-width: 0;
+        width: auto;
+        padding: 0;
+        border: 0;
+        text-align: left;
+    }
+
+    .line-table tbody td::before {
+        content: attr(data-label);
+        color: var(--muted);
+        font-size: var(--text-sm);
+        line-height: 1.3;
+    }
+
+    .line-table tbody .col-pos {
+        grid-area: pos;
+    }
+
+    .line-table tbody .col-name {
+        grid-area: name;
+    }
+
+    .line-table tbody .col-desc {
+        grid-area: desc;
+    }
+
+    .line-table tbody .col-qty {
+        grid-area: qty;
+    }
+
+    .line-table tbody .col-price {
+        grid-area: price;
+    }
+
+    .line-table tbody .col-total {
+        grid-area: total;
+        justify-items: end;
+    }
+
+    .line-table tbody .col-vat {
+        grid-area: vat;
+    }
+
+    .line-table tbody .col-ac {
+        grid-column: 1 / -1;
+    }
+
+    .line-table tbody td.actions-col {
+        grid-area: actions;
+        align-self: end;
+        justify-items: end;
+    }
+
+    .line-table tbody td.actions-col::before {
+        content: none;
+    }
+
+    .line-op {
+        position: absolute;
+        bottom: 0;
+        left: calc(-1 * var(--line-gap));
+        display: grid;
+        place-items: center;
+        width: var(--line-gap);
+        height: var(--line-input-h);
+        color: var(--muted);
+    }
+
+    .line-ac {
+        min-width: 0;
+    }
+}

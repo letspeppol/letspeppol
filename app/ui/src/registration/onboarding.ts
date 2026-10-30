@@ -13,6 +13,10 @@ export class Onboarding {
     registrationUrl = '../registration';
     registrationLinkTextKey = 'onboarding.step.register-company';
 
+    get webEidWorks(): boolean {
+        return this.certificate != null && this.signatureAlgorithm != null;
+    }
+
     loading(params: Params, next: RouteNode) {
         this.registrationType = next.queryParams.get('flow') === 'affiliate' ? 'AFFILIATE' : 'ADMIN';
         this.registrationUrl = this.registrationType === 'AFFILIATE' ? '../affiliate/registration' : '../registration';
@@ -40,7 +44,7 @@ export class Onboarding {
                         text = `${error.status} ${error.statusText}`;
                     }
                 } else if (error && typeof error === "object" && "message" in error) {
-                    text = String((error as any).message);
+                    text = String((error as {message: unknown}).message);
                 }
                 this.ea.publish('alert', { alertType: AlertType.Danger, text });
             }

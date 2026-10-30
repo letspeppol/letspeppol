@@ -58,7 +58,11 @@ export class CompanySettings {
                 return this.applyPeppolChange(() => enabled ? this.registerOnPeppol() : this.unregisterFromPeppol());
             },
             undefined,
-            'warning'
+            'warning',
+            {
+                confirmLabel: this.i18n.tr(enabled ? 'account.confirm.register-action' : 'account.confirm.unregister-action'),
+                destructive: !enabled,
+            }
         );
     }
 
@@ -161,7 +165,11 @@ export class CompanySettings {
                 return this.applyPeppolChange(() => this.savePeppolSettings(enabled));
             },
             undefined,
-            'warning'
+            'warning',
+            {
+                confirmLabel: this.i18n.tr(`account.confirm.receiving-${action}-action`),
+                destructive: !enabled,
+            }
         );
     }
 

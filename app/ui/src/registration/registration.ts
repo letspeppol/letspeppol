@@ -3,8 +3,17 @@ import {IEventAggregator} from "aurelia";
 import {KycCompanyResponse, RegistrationAccountType, RegistrationService} from "../services/kyc/registration-service";
 import {IRouter, Params, RouteNode} from '@aurelia/router';
 
+export const REGISTRATION_STEPS = [
+    'registration.step.company',
+    'registration.step.details',
+    'registration.step.email',
+    'registration.step.identity',
+    'registration.step.contract',
+];
+
 export class Registration {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
+    readonly steps = REGISTRATION_STEPS;
     private registrationService = resolve(RegistrationService);
     private readonly router = resolve(IRouter);
     registrationType: RegistrationAccountType = 'ADMIN';
@@ -13,25 +22,26 @@ export class Registration {
     enterpriseNumber : string | undefined;
     company : KycCompanyResponse | undefined;
     errorCode: string | undefined;
+    busy = false;
 
     loading(params: Params, next: RouteNode) {
         this.registrationType = next.data?.registrationType === 'AFFILIATE' ? 'AFFILIATE' : 'ADMIN';
     }
 
-    get titleStep0Key() {
-        return this.registrationType === 'AFFILIATE' ? 'registration.affiliate-title-step0' : 'registration.title-step0';
-    }
-
-    get titleStep1Key() {
-        return this.registrationType === 'AFFILIATE' ? 'registration.affiliate-title-step1' : 'registration.title-step1';
+    get titleKey() {
+        const affiliate = this.registrationType === 'AFFILIATE';
+        switch (this.step) {
+            case 0:
+                return affiliate ? 'registration.affiliate-title-step0' : 'registration.title-step0';
+            case 1:
+                return affiliate ? 'registration.affiliate-title-step1' : 'registration.title-step1';
+            default:
+                return 'registration.title-step2';
+        }
     }
 
     get introKey() {
         return this.registrationType === 'AFFILIATE' ? 'registration.affiliate-intro' : 'confirmation.belgian-only';
-    }
-
-    get createAccountKey() {
-        return this.registrationType === 'AFFILIATE' ? 'registration.affiliate-create-account' : 'registration.create-account';
     }
 
     get alreadyRegisteredKey() {
@@ -39,7 +49,9 @@ export class Registration {
     }
 
     async checkEnterpriseNumber() {
+        if (this.busy) return;
         this.errorCode = undefined;
+        this.busy = true;
         try {
             this.ea.publish('showOverlay', "Searching company");
             const digits = (this.enterpriseNumber ?? '').replace(/\D/g, '');
@@ -55,6 +67,7 @@ export class Registration {
         } catch {
             this.errorCode = "registration-company-not-found";
         } finally {
+            this.busy = false;
             this.ea.publish('hideOverlay');
         }
     }
@@ -68,7 +81,9 @@ export class Registration {
     }
 
     async confirmCompany() {
+        if (this.busy) return;
         this.errorCode = undefined;
+        this.busy = true;
         try {
             this.ea.publish('showOverlay', "Confirming registration request");
             await this.registrationService.confirmCompany({
@@ -86,6 +101,7 @@ export class Registration {
                 ? "registration-company-affiliate-contact-admin"
                 : "registration-company-already-registered";
         } finally {
+            this.busy = false;
             this.ea.publish('hideOverlay');
         }
     }

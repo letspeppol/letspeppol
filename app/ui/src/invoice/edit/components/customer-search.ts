@@ -21,8 +21,8 @@ export class CustomerSearch {
         try {
             const response = await this.partnerService.getPartners();
             this.customers = response.filter((partner: PartnerDto) => partner.customer);
-        } catch (e) {
-            console.warn('Partner API failed, using mock data');
+        } catch {
+            console.warn('Partner API failed');
         }
     }
 
@@ -69,7 +69,6 @@ export class CustomerSearch {
     }
 
     onSearchBlur() {
-        console.log('onSearchBlur');
         setTimeout(() => {
             if (this.ignoreNextBlur) {
                 this.ignoreNextBlur = false;

@@ -1,15 +1,31 @@
 .attachment-info-btn {
-    max-width: 100%;
+    appearance: none;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    width: 100%;
     min-width: 0;
-    padding: 0;
-    border: none;
+    min-height: 2rem;
+    padding: var(--space-1);
+    border: 0;
+    border-radius: var(--radius);
+    background: transparent;
+    color: var(--ink);
+    font: inherit;
+    font-size: var(--text-sm);
+    text-align: left;
+    cursor: pointer;
+}
+
+.attachment-info-btn:hover {
+    background: var(--hover);
 }
 
 .attachment-info-file-icon {
     flex: 0 0 auto;
-    height: 32px;
+    width: 24px;
+    height: 24px;
     object-fit: contain;
-    width: 32px;
 }
 
 .attachment-info-name {

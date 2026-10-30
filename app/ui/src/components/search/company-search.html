@@ -1,34 +1,38 @@
-<label class="field" style="position: relative;">
-    <span t="label.company-name">Company Name (search)</span>
-
-    <div style="display: flex; align-items: center">
+<div class="field company-search">
+    <label for="companyNameSearch" t="label.company-name">Company name</label>
+    <div class="company-search-row">
         <input id="companyNameSearch"
                type="text"
                name="companyNameSearch"
-               title="Search by name" t="[title]invoice.customerModal.search-placeholder"
+               role="combobox"
+               aria-autocomplete="list"
+               aria-controls="company-search-results"
+               aria-expanded.bind="showSuggestions"
+               t="[title]invoice.customerModal.search-placeholder"
                value.bind="searchQuery"
                input.trigger="onSearchInput()"
                keydown.trigger="onSearchKeydown($event)"
                blur.trigger="onSearchBlur($event)"
-               change.trigger="onChange($event)"
+               change.trigger="onChange()"
                autocomplete="off"
-               style="width: 100%"
         />
-        <button disabled.bind="searchQuery < 5" click.trigger="searchCompanies(true)" type="button" class="btn" style="padding: var(--space-05) var(--space-065); margin-left: var(--space-02)">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search-icon lucide-search"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+        <button type="button" class="btn company-search-button" disabled.bind="!searchQuery || searchQuery.trim().length < 5" click.trigger="searchCompanies(true)" t="[aria-label,title]company-search.search">
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
         </button>
     </div>
-    <ul class="autocomplete-list" role="listbox" if.bind="showSuggestions" mouseleave.trigger="onSearchBlur($event)">
+    <small class="muted" t="company-search.hint">Type at least 5 characters, then press Enter to search the company register.</small>
+    <ul id="company-search-results" class="company-search-list" role="listbox" if.bind="showSuggestions" mouseleave.trigger="onSearchBlur($event)">
         <li repeat.for="c of companies"
             role="option"
-            class="autocomplete-item"
-            class.bind="$index === highlightedIndex ? 'active' : ''"
+            aria-selected.bind="$index === highlightedIndex"
+            class="company-search-item"
+            active.class="$index === highlightedIndex"
             click.trigger="selectCompany(c)"
             mousedown.trigger="$event.preventDefault()">
-            <div class="title">${c.name}</div>
-            <div class="meta">VAT: ${c.vatNumber}</div>
-            <div class="addr">${c.street} ${c.houseNumber}, ${c.postalCode} ${c.city}</div>
+            <span class="company-search-name">${c.name}</span>
+            <span class="company-search-meta num">${c.vatNumber}</span>
+            <span class="company-search-meta">${c.street} ${c.houseNumber}, ${c.postalCode} ${c.city}</span>
         </li>
-        <li class="autocomplete-empty" if.bind="companies.length === 0" t="invoice.customerModal.no-matches">No matches</li>
+        <li class="company-search-empty" if.bind="companies.length === 0" t="invoice.customerModal.no-matches">No matches</li>
     </ul>
-</label>
+</div>

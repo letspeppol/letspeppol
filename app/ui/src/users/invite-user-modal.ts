@@ -47,6 +47,10 @@ export class InviteUserModal {
         this.open = false;
     }
 
+    get impliedHint(): string {
+        return this.i18n.tr('users.hint.implied');
+    }
+
     get canInvite(): boolean {
         return !!this.name?.trim() && validateEmail(this.email?.trim() ?? '') && !this.submitting;
     }

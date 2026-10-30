@@ -16,7 +16,14 @@ import {currentOwnershipRoute, ownershipRoute} from "../services/app/ownership-r
 import {AccountService} from "../services/kyc/account-service";
 import {LoginService} from "../services/app/login-service";
 
+const ADD_OWNERSHIP_STEPS = [
+    'ownershipAdd.step.company',
+    'ownershipAdd.step.identity',
+    'ownershipAdd.step.contract',
+];
+
 export class AddOwnership {
+    readonly steps = ADD_OWNERSHIP_STEPS;
     readonly ea: IEventAggregator = resolve(IEventAggregator);
     private readonly registrationService = resolve(RegistrationService);
     private readonly ownershipService = resolve(OwnershipService);

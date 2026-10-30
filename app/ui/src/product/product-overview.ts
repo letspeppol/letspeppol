@@ -7,6 +7,7 @@ import {ProductCategoryDto, ProductCategoryService} from "../services/app/produc
 import {ProductCategoryModal} from "./product-category-modal";
 import {I18N} from "@aurelia/i18n";
 import {OwnershipService} from "../services/app/ownership-service";
+import {ConfirmationModalContext} from "../components/confirmation/confirmation-modal-context";
 
 type SortDirection = "asc" | "desc";
 
@@ -17,6 +18,7 @@ export class ProductOverview {
     private productCategoryService = resolve(ProductCategoryService);
     private readonly ownershipService = resolve(OwnershipService);
     private readonly i18n = resolve(I18N);
+    private readonly confirmationModalContext = resolve(ConfirmationModalContext);
     @bindable productCategoryModal: ProductCategoryModal;
     searchQuery = '';
     activeSortProperty = 'name';
@@ -74,8 +76,19 @@ export class ProductOverview {
         this.productContext.selectedProduct = product;
     }
 
-    async deleteItem(event: Event, product: ProductDto) {
+    deleteItem(event: Event, product: ProductDto) {
         event.stopPropagation();
+        this.confirmationModalContext.showConfirmationModal(
+            this.i18n.tr('product.delete'),
+            this.i18n.tr('product.delete-confirm', {name: product.name}),
+            () => this.removeProduct(product),
+            undefined,
+            'default',
+            {confirmLabel: this.i18n.tr('product.delete'), destructive: true}
+        );
+    }
+
+    private async removeProduct(product: ProductDto) {
         try {
             await this.productService.deleteProduct(product.id)
             this.productContext.deleteProduct(product);
@@ -83,7 +96,6 @@ export class ProductOverview {
         } catch {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.product.delete-failed')});
         }
-        return false;
     }
 
     filterItems(category: ProductCategoryDto | undefined) {

@@ -1,90 +1,61 @@
-.login-form {
-    width: min(100%, 420px);
-    margin: 0 auto;
-}
-
-.login-grid {
-    grid-template-columns: 1fr;
-}
-
 .login-field-heading {
     display: flex;
-    align-items: center;
+    flex-wrap: wrap;
+    align-items: baseline;
     justify-content: space-between;
-    gap: var(--space-1);
+    gap: var(--space-1) var(--space-4);
 }
 
-.login-field-heading > a,
-.login-switch > a {
-    color: var(--primary);
-    font-size: .85rem;
+.login-field-heading > a {
+    color: var(--navy-ink);
+    font-weight: 600;
     text-decoration: none;
 }
 
-.login-field-heading > a:hover,
-.login-switch > a:hover {
+.login-field-heading > a:hover {
     text-decoration: underline;
 }
 
-.login-remember {
-    justify-content: flex-start;
+.login-submit,
+.login-passkey {
+    width: 100%;
+}
+
+.login-code {
+    font-size: 1.25rem;
+    font-variant-numeric: tabular-nums;
 }
 
 .login-divider {
     display: flex;
     align-items: center;
-    gap: var(--space-075);
+    gap: var(--space-3);
     color: var(--muted);
-    font-size: .8125rem;
+    font-size: var(--text-sm);
 }
 
 .login-divider::before,
 .login-divider::after {
-    content: '';
+    content: "";
     flex: 1;
     height: 1px;
-    background: var(--border-soft);
+    background: var(--rule);
 }
 
-.login-passkey {
-    justify-content: center;
-    width: 100%;
+.login-register {
+    padding-top: var(--space-2);
 }
 
-.login-loading {
-    min-height: 180px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-1);
-    color: var(--muted);
-}
-
-.login-unavailable {
-    min-height: 180px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-1);
-    text-align: center;
-}
-
-.login-unavailable > p {
-    max-width: 420px;
-    margin: 0;
+.login-status {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-4);
     color: var(--muted);
 }
 
 .login-spinner {
     width: 32px;
     height: 32px;
-    border-color: var(--border-soft);
-    border-top-color: var(--primary);
-}
-
-.login-switch {
-    margin: 0;
-    text-align: center;
+    border-color: var(--rule);
+    border-top-color: var(--navy);
 }

@@ -1,0 +1,27 @@
+.theme-toggle {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    border: 1px solid var(--tool-toggle-border, var(--rule));
+    border-radius: var(--tool-radius, var(--radius-pill));
+    background: var(--tool-bg, var(--sheet));
+    color: var(--tool-fg, var(--muted));
+    cursor: pointer;
+    transition: background-color .16s ease-out, color .16s ease-out;
+}
+
+.theme-toggle:hover {
+    background: var(--tool-hover-bg, var(--hover));
+    color: var(--tool-fg-hover, var(--ink));
+}
+
+@media (pointer: coarse) {
+    .theme-toggle {
+        width: var(--touch-target);
+        height: var(--touch-target);
+    }
+}

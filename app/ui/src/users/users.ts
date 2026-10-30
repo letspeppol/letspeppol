@@ -133,7 +133,9 @@ export class Users {
             this.i18n.tr('users.suspend.title'),
             this.i18n.tr('users.suspend.confirm', {name: row.user.name}),
             () => this.suspend(row),
-            undefined
+            undefined,
+            'default',
+            {confirmLabel: this.i18n.tr('users.suspend.title'), destructive: true}
         );
     }
 
@@ -176,7 +178,9 @@ export class Users {
             this.i18n.tr('users.remove.title'),
             this.i18n.tr('users.remove.confirm', {name: row.user.name}),
             () => this.remove(row),
-            undefined
+            undefined,
+            'default',
+            {confirmLabel: this.i18n.tr('users.remove.title'), destructive: true}
         );
     }
 

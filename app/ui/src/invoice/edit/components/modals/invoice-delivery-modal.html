@@ -1,36 +1,39 @@
 <import from="./invoice-delivery-modal.css"></import>
+<import from="./invoice-modals.css"></import>
 
-<div class="modal" role="dialog" aria-modal="true" show.bind="open">
+<div class="modal" role="dialog" aria-modal="true" aria-labelledby="delivery-modal-title" show.bind="open">
     <div class="modal-backdrop"></div>
-    <div class="modal-card delivery-modal-card">
+    <div class="modal-card modal-wide">
         <header class="modal-header">
-            <h2 t="invoice.deliveryModal.title">Stamp of delivery</h2>
-            <button class="icon-btn" type="button" click.trigger="closeModal()" aria-label="Close dialog" title="Close" t="[aria-label]common.close;[title]common.close">&times;</button>
+            <h2 id="delivery-modal-title" t="invoice.deliveryModal.title">Proof of delivery</h2>
+            <button class="icon-btn" type="button" click.trigger="closeModal()" aria-label="Close" t="[aria-label,title]common.close">&times;</button>
         </header>
         <div class="modal-body" if.bind="details">
             <section class="delivery-stamp-paper">
                 <div class="delivery-stamp-parties">
                     <div>
-                        <span t="invoice.deliveryModal.from">from</span>
-                        <strong>${details.ownerPeppolId}</strong>
+                        <span t="invoice.deliveryModal.from">From</span>
+                        <strong class="tabular">${details.ownerPeppolId}</strong>
                     </div>
                     <div>
-                        <span t="invoice.deliveryModal.to">to</span>
-                        <strong>${details.partnerPeppolId}</strong>
+                        <span t="invoice.deliveryModal.to">To</span>
+                        <strong class="tabular">${details.partnerPeppolId}</strong>
                     </div>
                     <div>
                         <span t="invoice.deliveryModal.invoice-number">Invoice Number</span>
-                        <strong>${details.invoiceReference || '/'}</strong>
+                        <strong class="tabular">${details.invoiceReference || '/'}</strong>
                     </div>
                 </div>
 
                 <div class="delivery-stamp-marks" if.bind="hasDeliveryStamp || hasProcessedStatus">
-                    <div class="delivery-stamp-mark" if.bind="hasDeliveryStamp" aria-label="Delivery stamp" t="[aria-label]invoice.deliveryModal.stamp-label">
+                    <div class="delivery-stamp-mark" if.bind="hasDeliveryStamp" role="img" aria-label="Delivery stamp" t="[aria-label]invoice.deliveryModal.stamp-label">
+                        <svg class="delivery-stamp-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m8 12.5 2.5 2.5L16 9.5"/></svg>
                         <span class="delivery-stamp-body" if.bind="details.partnerPeppolAccessPoint">${details.partnerPeppolAccessPoint}</span>
                         <span class="delivery-stamp-body" else t="invoice.deliveryModal.delivered">Delivered</span>
                         <span class="delivery-stamp-date">${partnerMessageOnLabel}</span>
                     </div>
-                    <div class="delivery-stamp-mark error" if.bind="hasProcessedStatus" aria-label="Delivery error stamp" t="[aria-label]invoice.deliveryModal.error-stamp-label">
+                    <div class="delivery-stamp-mark error" if.bind="hasProcessedStatus" role="img" aria-label="Delivery error stamp" t="[aria-label]invoice.deliveryModal.error-stamp-label">
+                        <svg class="delivery-stamp-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
                         <span class="delivery-stamp-body">${details.processedStatus}</span>
                         <span class="delivery-stamp-date">${processedOnLabel}</span>
                     </div>
@@ -39,15 +42,15 @@
                 <dl class="delivery-stamp-corners">
                     <div>
                         <dt t="invoice.deliveryModal.corner1-id">Corner 1 ID</dt>
-                        <dd>${details.id}</dd>
+                        <dd class="tabular">${details.id}</dd>
                     </div>
                     <div>
                         <dt t="invoice.deliveryModal.corner2-id">Corner 2 ID</dt>
-                        <dd>${deliveryIdLabel(details.accessPointId)}</dd>
+                        <dd class="tabular">${deliveryIdLabel(details.accessPointId)}</dd>
                     </div>
                     <div>
                         <dt t="invoice.deliveryModal.corner3-id">Corner 3 ID</dt>
-                        <dd>${deliveryIdLabel(details.partnerPeppolMessageId)}</dd>
+                        <dd class="tabular">${deliveryIdLabel(details.partnerPeppolMessageId)}</dd>
                     </div>
                 </dl>
             </section>

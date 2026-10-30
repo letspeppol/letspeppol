@@ -1,7 +1,7 @@
 import {resolve} from "@aurelia/kernel";
 import {InvoiceContext} from "../../invoice-context";
 import {ClassifiedTaxCategory, CreditNoteLine, InvoiceLine, UBLLine} from "../../../services/peppol/ubl";
-import {InvoiceCalculator, roundTwoDecimals} from "../../invoice-calculator";
+import {displayedLineTotal, InvoiceCalculator} from "../../invoice-calculator";
 import {DocumentType, InvoiceService} from "../../../services/app/invoice-service";
 import {bindable, IEventAggregator} from "aurelia";
 import {ProductDto} from "../../../services/app/product-service";
@@ -98,17 +98,24 @@ export class InvoiceEditItems {
         return trimmedReasonId;
     }
 
-    hasVatNumber(): boolean {
+    get currency(): string | undefined {
+        return this.invoiceContext.selectedInvoice?.DocumentCurrencyCode;
+    }
+
+    get vatRegistered(): boolean {
         return !!this.companyService.myCompany?.vatNumber?.trim();
     }
 
-    lineTotalAmount(lineTotal: number, taxCategory: ClassifiedTaxCategory | undefined): number {
-        if (this.hasVatNumber()) {
-            return lineTotal;
-        }
+    get vatExempt(): boolean {
+        return isVatExemptRuleset(this.companyService.myCompany?.vatRuleset);
+    }
 
-        const vatRate = getDisplayedVatRatePercent(taxCategory) ?? 0;
-        return roundTwoDecimals(lineTotal * (1 + (vatRate / 100)));
+    get vatRateEditable(): boolean {
+        return !this.readOnly && !this.vatExempt;
+    }
+
+    lineTotalAmount(lineTotal: number | undefined, taxCategory: ClassifiedTaxCategory | undefined, vatRegistered: boolean): number | undefined {
+        return displayedLineTotal(lineTotal, taxCategory, vatRegistered);
     }
 
     recalculateLinePositions() {
@@ -131,7 +138,7 @@ export class InvoiceEditItems {
         if (taxCategoryId === 'O') {
             applySharedVatReasonText(this.invoiceContext.selectedInvoice, 'O', this.i18n.tr('invoice.zero-vat-reason.options.O'), line);
         }
-        if (taxCategoryId === 'E' && this.isAccountVatExempt()) {
+        if (taxCategoryId === 'E' && this.vatExempt) {
             applySharedVatReasonText(this.invoiceContext.selectedInvoice, 'E', this.i18n.tr('account.vat-ruleset.options.VAT_EXEMPT_ART_56BIS'), line);
         }
     }
@@ -154,12 +161,12 @@ export class InvoiceEditItems {
             line.Item.Description = p.description;
         }
         if (p.taxPercentage != null) {
-            if (!this.hasVatNumber()) {
+            if (!this.vatRegistered) {
                 line.Item.ClassifiedTaxCategory = createNotSubjectToVatCategory();
                 this.calcLineTotal(line);
                 return;
             }
-            if (this.isAccountVatExempt()) {
+            if (this.vatExempt) {
                 line.Item.ClassifiedTaxCategory = createVatExemptCategory();
                 this.calcLineTotal(line);
                 return;
@@ -176,32 +183,18 @@ export class InvoiceEditItems {
         }
     }
 
-    isAccountVatExempt(): boolean {
-        return isVatExemptRuleset(this.companyService.myCompany?.vatRuleset);
-    }
-
-    isVatRateEditable(): boolean {
-        return !this.readOnly && !this.isAccountVatExempt();
-    }
-
-    canEditZeroVatReason(taxCategory: ClassifiedTaxCategory): boolean {
-        return !this.readOnly
-            && !this.isAccountVatExempt()
-            && taxCategory?.Percent === 0;
-    }
-
     vatRateChanged(line: UBLLine, value: number | string) {
         const percent = Number(value);
         if (Number.isNaN(percent)) {
             return;
         }
 
-        if (!this.hasVatNumber()) {
+        if (!this.vatRegistered) {
             line.Item.ClassifiedTaxCategory = createNotSubjectToVatCategory();
             this.calcLineTotal(line);
             return;
         }
-        if (this.isAccountVatExempt()) {
+        if (this.vatExempt) {
             line.Item.ClassifiedTaxCategory = createVatExemptCategory();
             this.calcLineTotal(line);
             return;

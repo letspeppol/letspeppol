@@ -1,10 +1,21 @@
 .global-error {
-    margin: auto;
-    margin-top: 1%;
-    max-width: 700px;
-    display: flex;
-    flex-direction: column;
-    padding: 0;
-    border: 1px solid var(--status-overdue);
-    border-radius: var(--radius-input);
+    width: min(100% - 2 * var(--gutter), 700px);
+    margin: var(--space-4) auto 0;
+}
+
+.global-error .form-error {
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.global-error .form-error p {
+    flex: 1 1 16rem;
+    margin: 0;
+}
+
+@media (width <= 767px) {
+    .global-error {
+        width: auto;
+        margin: var(--space-3) var(--gutter);
+    }
 }

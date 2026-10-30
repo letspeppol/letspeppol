@@ -31,6 +31,8 @@ import {isInvoiceValid} from "./invoice-validation";
 import {currentOwnershipRoute} from "../../services/app/ownership-route";
 import {InvoiceAllowanceChargeModal} from "./components/modals/invoice-allowance-charge-modal";
 import {OwnershipService} from "../../services/app/ownership-service";
+import {DocumentStatus, documentStatus} from "../document-status";
+import {ConfirmationModalContext} from "../../components/confirmation/confirmation-modal-context";
 
 export class InvoiceEdit {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
@@ -39,6 +41,7 @@ export class InvoiceEdit {
     private invoiceComposer = resolve(InvoiceComposer);
     private partnerService = resolve(PartnerService);
     private readonly ownershipService = resolve(OwnershipService);
+    private readonly confirmationModalContext = resolve(ConfirmationModalContext);
     private router = resolve(IRouter);
     private readonly i18n = resolve(I18N);
     private newInvoiceSubscription: IDisposable;
@@ -58,6 +61,22 @@ export class InvoiceEdit {
     @bindable invoiceAllowanceChargeModal: InvoiceAllowanceChargeModal;
     @bindable paymentInfo: PaymentInfo;
     deliveryDetailsLoading = false;
+    moreOpen = false;
+    moreHost?: HTMLElement;
+    moreToggle?: HTMLButtonElement;
+
+    private readonly closeMoreOnOutsideClick = (event: MouseEvent) => {
+        if (this.moreOpen && !this.moreHost?.contains(event.target as Node)) {
+            this.moreOpen = false;
+        }
+    };
+
+    private readonly closeMoreOnEscape = (event: KeyboardEvent) => {
+        if (this.moreOpen && event.key === 'Escape') {
+            this.moreOpen = false;
+            this.moreToggle?.focus();
+        }
+    };
 
     returnToOverview() {
         this.invoiceContext.setActiveBoxFromDocument(this.invoiceContext.selectedDocument);
@@ -74,6 +93,44 @@ export class InvoiceEdit {
     unbinding() {
         this.newInvoiceSubscription.dispose();
         this.newCreditNoteSubscription.dispose();
+    }
+
+    attached() {
+        document.addEventListener('click', this.closeMoreOnOutsideClick);
+        document.addEventListener('keydown', this.closeMoreOnEscape);
+    }
+
+    detaching() {
+        document.removeEventListener('click', this.closeMoreOnOutsideClick);
+        document.removeEventListener('keydown', this.closeMoreOnEscape);
+    }
+
+    toggleMore() {
+        this.moreOpen = !this.moreOpen;
+    }
+
+    closeMore() {
+        this.moreOpen = false;
+    }
+
+    get isDraft(): boolean {
+        return !!this.invoiceContext.selectedDocument?.draftedOn;
+    }
+
+    get documentStatus(): DocumentStatus | undefined {
+        const document = this.invoiceContext.selectedDocument;
+        return document ? documentStatus(document) : undefined;
+    }
+
+    get documentStatusDate(): string {
+        const status = this.documentStatus;
+        const format = status?.detailKey === 'scheduled' ? 'D/M/YYYY HH:mm' : 'D/M/YYYY';
+        return status?.detailDate ? moment(status.detailDate).format(format) : '';
+    }
+
+    get canSend(): boolean {
+        const document = this.invoiceContext.selectedDocument;
+        return this.ownershipService.granted.INVOICE_SEND && !document?.proxyOn && (!this.readOnly || !!document?.draftedOn);
     }
 
     newInvoice() {
@@ -264,6 +321,17 @@ export class InvoiceEdit {
         }
     }
 
+    confirmDeleteDraft() {
+        const type = baseDocumentType(this.selectedDocumentType);
+        this.confirmationModalContext.showConfirmationModal(
+            this.i18n.tr(`invoice.edit.delete-draft-confirm.title.${type}`),
+            this.i18n.tr('invoice.edit.delete-draft-confirm.text'),
+            () => this.deleteDraft(),
+            () => undefined,
+            'warning',
+        );
+    }
+
     async deleteDraft() {
         const type = this.selectedDocumentType;
         try {
@@ -362,10 +430,10 @@ export class InvoiceEdit {
                     return body.message;
                 }
             } catch {
-                return 'Could not load delivery details';
+                return this.i18n.tr('alert.invoice.delivery-details-failed');
             }
         }
-        return 'Could not load delivery details';
+        return this.i18n.tr('alert.invoice.delivery-details-failed');
     }
 
     get canShowDeliveryDetails() {

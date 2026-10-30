@@ -4,60 +4,54 @@
 <application-view>
     <div class="section-header">
         <h1>
-            <span>Invoice Totals</span>
+            <span t="dashboard.title">Invoice totals</span>
             <span class="vat-mode-tag" t="dashboard.vat-suffix.${vatMode}"></span>
         </h1>
     </div>
-    <div class="card kpi-error-card" if.bind="erroredCount > 0" role="alert">
-        <span class="kpi-error-count">${erroredCount}</span>
-        <span class="label" t="dashboard.errored"></span>
+    <div if.bind="erroredCount > 0" class="dashboard-errored" role="alert">
+        <svg class="dashboard-errored-icon" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+        <p t="dashboard.errored" t-params.bind="{count: erroredCount}">Some invoices could not be delivered.</p>
+        <button type="button" class="btn" click.trigger="showErroredInvoices()" t="dashboard.show-errored">Show errored invoices</button>
     </div>
-    <div if.bind="!ownershipService.granted.INVOICE_READ" class="card empty-state">
-        <p t="dashboard.no-invoice-access">You do not have access to the invoice figures of this company.</p>
-    </div>
-    <div else class="dashboard-grid">
-        <div class="card kpi-card">
-            <h3 style="text-align: center">Income</h3>
-            <div class="card kpi-card kpi-header">
-                <div class="kpi-line">
-                    <span class="label">Total ${new Date().getFullYear()}</span>
-                    <strong>${activeTotals.receivableThisYear | price}</strong>
-                </div>
-            </div>
-
-            <div class="card kpi-card kpi-body">
-                <h2>Still Open</h2>
-                <div class="kpi-line">
-                    <span class="label">Total</span>
-                    <strong>${activeTotals.receivableOpen | price}</strong>
-                </div>
-                <div class="kpi-line">
-                    <span class="label">Overdue</span>
-                    <strong class.bind="activeTotals.receivableOverdue > 0 ? 'kpi-overdue' : ''">${activeTotals.receivableOverdue | price}</strong>
-                </div>
-            </div>
-        </div>
-
-        <div class="card kpi-card">
-            <h3 style="text-align: center">Expenses</h3>
-            <div class="card kpi-card kpi-header">
-                <div class="kpi-line">
-                    <span class="label">Total ${new Date().getFullYear()}</span>
-                    <strong>${activeTotals.payableThisYear | price}</strong>
-                </div>
-            </div>
-
-            <div class="card kpi-card kpi-body">
-                <h2>Still Open</h2>
-                <div class="kpi-line">
-                    <span class="label">Total</span>
-                    <strong>${activeTotals.payableOpen | price}</strong>
-                </div>
-                <div class="kpi-line">
-                    <span class="label">Overdue</span>
-                    <strong class.bind="activeTotals.payableOverdue > 0 ? 'kpi-overdue' : ''">${activeTotals.payableOverdue | price}</strong>
-                </div>
-            </div>
-        </div>
+    <p if.bind="!ownershipService.granted.INVOICE_READ" class="empty-state" t="dashboard.no-invoice-access">You do not have access to the invoice figures of this company.</p>
+    <div else class="ledgers">
+        <section class="ledger" aria-labelledby="ledger-income">
+            <h2 id="ledger-income" t="dashboard.income">Income</h2>
+            <table class="ledger-table">
+                <tbody>
+                <tr class="ledger-total">
+                    <th scope="row" t="dashboard.total-year" t-params.bind="{year}">Total</th>
+                    <td class="num">${activeTotals.receivableThisYear | price}</td>
+                </tr>
+                <tr>
+                    <th scope="row" t="dashboard.open">Open</th>
+                    <td class="num">${activeTotals.receivableOpen | price}</td>
+                </tr>
+                <tr>
+                    <th scope="row" t="dashboard.overdue">Overdue</th>
+                    <td class="num" is-overdue.class="activeTotals.receivableOverdue > 0">${activeTotals.receivableOverdue | price}</td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+        <section class="ledger" aria-labelledby="ledger-expenses">
+            <h2 id="ledger-expenses" t="dashboard.expenses">Expenses</h2>
+            <table class="ledger-table">
+                <tbody>
+                <tr class="ledger-total">
+                    <th scope="row" t="dashboard.total-year" t-params.bind="{year}">Total</th>
+                    <td class="num">${activeTotals.payableThisYear | price}</td>
+                </tr>
+                <tr>
+                    <th scope="row" t="dashboard.open">Open</th>
+                    <td class="num">${activeTotals.payableOpen | price}</td>
+                </tr>
+                <tr>
+                    <th scope="row" t="dashboard.overdue">Overdue</th>
+                    <td class="num" is-overdue.class="activeTotals.payableOverdue > 0">${activeTotals.payableOverdue | price}</td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
     </div>
 </application-view>

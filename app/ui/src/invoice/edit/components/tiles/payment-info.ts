@@ -51,6 +51,11 @@ export class PaymentInfo {
         return !!document?.processedOn && !document?.processedStatus;
     }
 
+    get paymentMethodName(): string | undefined {
+        const code = this.invoiceContext.selectedInvoice?.PaymentMeans?.PaymentMeansCode?.value;
+        return this.invoiceComposer.paymentMeansCodes.find(item => item.value === code)?.__name;
+    }
+
     get paymentReference(): string {
         const paymentId = this.invoiceContext.selectedInvoice?.PaymentMeans?.PaymentID || '';
         return formatBelgianStructuredCommunication(paymentId) || paymentId;

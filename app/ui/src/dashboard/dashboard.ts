@@ -3,7 +3,9 @@ import {resolve} from "@aurelia/kernel";
 import {CompanyService} from "../services/app/company-service";
 import {getVatDisplayMode, IVatDisplay, VatDisplayMode} from "../services/app/vat-display-service";
 import {IEventAggregator, IDisposable} from "aurelia";
+import {IRouter} from "@aurelia/router";
 import {OwnershipService} from "../services/app/ownership-service";
+import {currentOwnershipRoute} from "../services/app/ownership-route";
 
 const EMPTY_TOTALS: DirectionTotals = {
     payableOpen: 0, payableOverdue: 0, payableThisYear: 0,
@@ -17,7 +19,9 @@ export class Dashboard {
     private vatDisplay = resolve(IVatDisplay);
     private readonly ownershipService = resolve(OwnershipService);
     private readonly ea = resolve(IEventAggregator);
+    private readonly router = resolve(IRouter);
     private sub?: IDisposable;
+    readonly year = new Date().getFullYear();
     totals: Totals;
     vatMode: VatDisplayMode = getVatDisplayMode(this.companyService.myCompany?.vatNumber, this.vatDisplay.mode);
     activeTotals: DirectionTotals = EMPTY_TOTALS;
@@ -74,5 +78,9 @@ export class Dashboard {
 
     get erroredCount(): number {
         return this.totals?.erroredUnseenCount ?? 0;
+    }
+
+    async showErroredInvoices() {
+        await this.router.load(currentOwnershipRoute('/invoices'), {queryParams: {status: 'ERROR'}});
     }
 }

@@ -22,8 +22,20 @@ export function formatSizeInMb(sizeBytes: number | null): string {
     return sizeBytes == null ? "—" : (sizeBytes / 1_000_000).toFixed(2) + " MB";
 }
 
+export function statusPillClass(status: DownloadJobDto["status"]): string {
+    switch (status) {
+        case "READY":
+            return "paid";
+        case "FAILED":
+            return "error";
+        default:
+            return "scheduled";
+    }
+}
+
 export class Downloads {
     readonly formatSizeInMb = formatSizeInMb;
+    readonly statusPillClass = statusPillClass;
     private readonly downloadJobService = resolve(DownloadJobService);
     private readonly ea: IEventAggregator = resolve(IEventAggregator);
     private readonly i18n = resolve(I18N);
