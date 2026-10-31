@@ -8,6 +8,7 @@ import {
     peekPendingNavigation,
     rememberActingOwnership,
     rememberCurrentNavigation,
+    routeWithoutCompany,
 } from '../../src/services/app/ownership-route';
 
 afterEach(() => {
@@ -28,6 +29,21 @@ describe('ownership routes', () => {
         expect(getPeppolIdFromPath('/dashboard')).toBeNull();
         expect(getPeppolIdFromPath('/login')).toBeNull();
         expect(getPeppolIdFromPath('/callback?code=abc')).toBeNull();
+    });
+
+    it('recognises the downloads and settings screens as company routes', () => {
+        expect(getPeppolIdFromPath('/0208:0123456789/downloads')).toBe('0208:0123456789');
+        expect(getPeppolIdFromPath('/0208:0123456789/settings')).toBe('0208:0123456789');
+        expect(getPeppolIdFromPath('/0208:0123456789/settings/users')).toBe('0208:0123456789');
+        expect(getPeppolIdFromPath('/invitation')).toBeNull();
+    });
+
+    it('sends an account without a company to the screens it can use', () => {
+        expect(routeWithoutCompany('/account')).toBe('/account');
+        expect(routeWithoutCompany('/add-ownership')).toBe('/add-ownership');
+        expect(routeWithoutCompany('/dashboard')).toBe('/account');
+        expect(routeWithoutCompany('/settings/users')).toBe('/account');
+        expect(getPeppolIdFromPath('/account')).toBeNull();
     });
 
     it('keeps a bookmarked deep link through the login callback', () => {

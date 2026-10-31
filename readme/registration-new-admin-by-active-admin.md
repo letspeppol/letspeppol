@@ -1,10 +1,13 @@
-# Registration new ADMIN by active ADMIN
+# Registration new ADMIN by a signed-in account
+
+Any signed-in account can add a company it is a director of: an ADMIN, a USER or AFFILIATE of another
+company, or an account that is no longer linked to any company. Only the APP service token is refused.
 
 Executable proof: [`RegistrationTest`](../kyc/src/test/java/org/letspeppol/kyc/controller/RegistrationTest.java), method `registrationNewAdminByActiveAdmin`.
 
 ```mermaid
 sequenceDiagram
-    actor ADMIN as ADMIN
+    actor ADMIN as Signed-in account
     participant Frontend as Frontend
     participant KYC as KYC
     participant Proxy as Proxy
@@ -12,8 +15,8 @@ sequenceDiagram
 
     Note over ADMIN, Peppol: Executable proof: RegistrationTest.registrationNewAdminByActiveAdmin
 
-Note over ADMIN, Peppol: Existing ADMIN claims another company by signing as a director
-    Note left of ADMIN: Already logged in as ADMIN
+Note over ADMIN, Peppol: Signed-in account claims another company by signing as a director
+    Note left of ADMIN: Already logged in, with any role or without a company
     ADMIN ->> Frontend: Add company( VAT )
     Frontend ->> KYC: GET /kyc/api/register/company/{PeppolID}
     Note right of KYC: Find company by PeppolID <br> or do CBE lookup
@@ -34,8 +37,8 @@ Note over ADMIN, Peppol: Existing ADMIN claims another company by signing as a d
     Frontend ->> ADMIN: Show contract
 
     ADMIN ->> Frontend: Sign( eID )
-    Frontend ->> KYC: POST /kyc/api/identity/sign/finalize <br> Authorization: Bearer ADMIN_JWT <br> ( peppolId, directorId, email=null, certificate, <br> signature, signatureAlgorithm, <br> hashToSign, hashToFinalize )
-    Note right of KYC: Validate JWT <br> Use logged-in account as signer <br> Link account as ADMIN to company <br> Record director signature
+    Frontend ->> KYC: POST /kyc/api/identity/sign/finalize <br> Authorization: Bearer JWT <br> ( peppolId, directorId, email=null, certificate, <br> signature, signatureAlgorithm, <br> hashToSign, hashToFinalize )
+    Note right of KYC: Validate JWT, refuse the APP token <br> Use logged-in account as signer <br> Link account as ADMIN to company <br> Record director signature
     opt Company != suspended
         KYC -->> Proxy: POST /proxy/sapi/registry <br> KYC_JWT ( name, language, country )
         Proxy -->> Peppol: Register( PeppolID )

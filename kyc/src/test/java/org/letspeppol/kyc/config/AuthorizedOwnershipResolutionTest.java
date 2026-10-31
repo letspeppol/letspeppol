@@ -3,6 +3,7 @@ package org.letspeppol.kyc.config;
 import org.junit.jupiter.api.Test;
 import org.letspeppol.kyc.model.AccountType;
 import org.letspeppol.kyc.model.Ownership;
+import org.letspeppol.kyc.model.OwnershipStatus;
 import org.letspeppol.kyc.repository.OwnershipRepository;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
@@ -15,6 +16,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 class AuthorizedOwnershipResolutionTest {
@@ -26,28 +28,74 @@ class AuthorizedOwnershipResolutionTest {
     void tokenExchangeUsesTheOwnershipFrozenInTheAuthorizationRequest() {
         OwnershipRepository repository = mock(OwnershipRepository.class);
         Ownership selected = mock(Ownership.class);
-        when(repository.findFirstByAccountIdAndCompanyPeppolIdAndTypeOrderByLastUsedDesc(
-                ACCOUNT_ID, PEPPOL_ID, AccountType.USER)).thenReturn(Optional.of(selected));
+        when(repository.findFirstByAccountIdAndCompanyPeppolIdAndTypeAndStatusOrderByLastUsedDesc(
+                ACCOUNT_ID, PEPPOL_ID, AccountType.USER, OwnershipStatus.ACTIVE)).thenReturn(Optional.of(selected));
 
-        Ownership result = SecurityConfig.resolveAuthorizedOwnership(
+        Optional<Ownership> result = SecurityConfig.resolveAuthorizedOwnership(
                 ACCOUNT_ID, authorizationRequest(AccountType.USER), repository);
 
-        assertThat(result).isSameAs(selected);
-        verify(repository).findFirstByAccountIdAndCompanyPeppolIdAndTypeOrderByLastUsedDesc(
-                ACCOUNT_ID, PEPPOL_ID, AccountType.USER);
+        assertThat(result).containsSame(selected);
+        verify(repository).findFirstByAccountIdAndCompanyPeppolIdAndTypeAndStatusOrderByLastUsedDesc(
+                ACCOUNT_ID, PEPPOL_ID, AccountType.USER, OwnershipStatus.ACTIVE);
         verify(repository, never()).findFirstByAccountIdOrderByLastUsedDesc(ACCOUNT_ID);
+    }
+
+    @Test
+    void authorizationWithoutACompanyProducesATokenWithoutOwnership() {
+        OwnershipRepository repository = mock(OwnershipRepository.class);
+        OAuth2AuthorizationRequest withoutCompany = OAuth2AuthorizationRequest.authorizationCode()
+                .authorizationUri("https://issuer.example/oauth2/authorize")
+                .clientId("letspeppol-ui")
+                .redirectUri("https://app.example/callback")
+                .state("state")
+                .build();
+
+        assertThat(SecurityConfig.resolveAuthorizedOwnership(ACCOUNT_ID, withoutCompany, repository)).isEmpty();
+        verifyNoInteractions(repository);
+    }
+
+    @Test
+    void companyWithoutRoleIsNotTreatedAsAnAuthorizationWithoutCompany() {
+        OwnershipRepository repository = mock(OwnershipRepository.class);
+        OAuth2AuthorizationRequest companyOnly = OAuth2AuthorizationRequest.authorizationCode()
+                .authorizationUri("https://issuer.example/oauth2/authorize")
+                .clientId("letspeppol-ui")
+                .redirectUri("https://app.example/callback")
+                .state("state")
+                .additionalParameters(Map.of(ActingOwnershipAuthorizationRequestConverter.PEPPOL_ID_PARAMETER, PEPPOL_ID))
+                .build();
+
+        assertThatThrownBy(() -> SecurityConfig.resolveAuthorizedOwnership(ACCOUNT_ID, companyOnly, repository))
+                .isInstanceOf(OAuth2AuthenticationException.class);
     }
 
     @Test
     void deletedOwnershipCannotProduceANewToken() {
         OwnershipRepository repository = mock(OwnershipRepository.class);
-        when(repository.findFirstByAccountIdAndCompanyPeppolIdAndTypeOrderByLastUsedDesc(
-                ACCOUNT_ID, PEPPOL_ID, AccountType.ADMIN)).thenReturn(Optional.empty());
+        when(repository.findFirstByAccountIdAndCompanyPeppolIdAndTypeAndStatusOrderByLastUsedDesc(
+                ACCOUNT_ID, PEPPOL_ID, AccountType.ADMIN, OwnershipStatus.ACTIVE)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> SecurityConfig.resolveAuthorizedOwnership(
                 ACCOUNT_ID, authorizationRequest(AccountType.ADMIN), repository))
                 .isInstanceOf(OAuth2AuthenticationException.class)
                 .hasMessageContaining("acting ownership");
+    }
+
+    @Test
+    void invitedOrSuspendedOwnershipCannotProduceANewToken() {
+        OwnershipRepository repository = mock(OwnershipRepository.class);
+        Ownership suspended = mock(Ownership.class);
+        when(repository.findFirstByAccountIdAndCompanyPeppolIdAndTypeOrderByLastUsedDesc(
+                ACCOUNT_ID, PEPPOL_ID, AccountType.USER)).thenReturn(Optional.of(suspended));
+        when(repository.findFirstByAccountIdAndCompanyPeppolIdAndTypeAndStatusOrderByLastUsedDesc(
+                ACCOUNT_ID, PEPPOL_ID, AccountType.USER, OwnershipStatus.ACTIVE)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> SecurityConfig.resolveAuthorizedOwnership(
+                ACCOUNT_ID, authorizationRequest(AccountType.USER), repository))
+                .isInstanceOf(OAuth2AuthenticationException.class)
+                .hasMessageContaining("acting ownership");
+        verify(repository, never()).findFirstByAccountIdAndCompanyPeppolIdAndTypeOrderByLastUsedDesc(
+                ACCOUNT_ID, PEPPOL_ID, AccountType.USER);
     }
 
     private static OAuth2AuthorizationRequest authorizationRequest(AccountType accountType) {

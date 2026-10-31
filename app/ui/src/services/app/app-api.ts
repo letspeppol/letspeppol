@@ -1,13 +1,17 @@
-import {resolve} from "@aurelia/kernel";
-import {newInstanceOf, singleton} from "aurelia";
+import {lazy, resolve} from "@aurelia/kernel";
+import {IEventAggregator, newInstanceOf, singleton} from "aurelia";
 import {IHttpClient} from "@aurelia/fetch-client";
-import {Router} from "@aurelia/router";
-import {rememberCurrentNavigation} from "./ownership-route";
+import {I18N} from "@aurelia/i18n";
+import {LoginService} from "./login-service";
+import {isMissingPermission} from "../util/forbidden-response";
+import {AlertType} from "../../components/alert/alert";
 
 @singleton()
 export class AppApi {
     public httpClient = resolve(newInstanceOf(IHttpClient));
-    private readonly router = resolve(Router);
+    private readonly loginService = resolve(lazy(LoginService));
+    private readonly ea = resolve(IEventAggregator);
+    private readonly i18n = resolve(I18N);
 
     constructor() {
         const baseUrl = import.meta.env.VITE_APP_BASE_URL || '/app';
@@ -20,12 +24,11 @@ export class AppApi {
             })
             .rejectErrorResponses()
             .withInterceptor({
-                responseError: (error: Response) => {
+                responseError: async (error: Response, request?: Request) => {
                     if (error.status === 401) {
-                        rememberCurrentNavigation();
-                        localStorage.removeItem('token');
-                        localStorage.removeItem('peppolActive');
-                        this.router.load('/login');
+                        void this.loginService().recoverFromUnauthorized(request?.headers.get('Authorization') ?? null);
+                    } else if (await isMissingPermission(error)) {
+                        this.ea.publish('alert', {alertType: AlertType.Warning, text: this.i18n.tr('error.MISSING_PERMISSION')});
                     }
                     throw error;
                 }

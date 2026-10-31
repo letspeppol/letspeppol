@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.letspeppol.kyc.model.AccountType;
 import org.letspeppol.kyc.model.Ownership;
+import org.letspeppol.kyc.model.OwnershipStatus;
 import org.letspeppol.kyc.model.kbo.Company;
 import org.letspeppol.kyc.repository.OwnershipRepository;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,6 +19,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -32,8 +34,8 @@ class ActingOwnershipAuthorizationRequestConverterTest {
     void explicitSelectionIsValidatedAndFrozenIntoTheAuthorizationRequest() {
         OwnershipRepository repository = mock(OwnershipRepository.class);
         Ownership selected = ownership(AccountType.USER);
-        when(repository.findFirstByAccountIdAndCompanyPeppolIdAndTypeOrderByLastUsedDesc(
-                ACCOUNT_ID, PEPPOL_ID, AccountType.USER)).thenReturn(Optional.of(selected));
+        when(repository.findFirstByAccountIdAndCompanyPeppolIdAndTypeAndStatusOrderByLastUsedDesc(
+                ACCOUNT_ID, PEPPOL_ID, AccountType.USER, OwnershipStatus.ACTIVE)).thenReturn(Optional.of(selected));
 
         OAuth2AuthorizationCodeRequestAuthenticationToken result = convert(repository, Map.of(
                 ActingOwnershipAuthorizationRequestConverter.PEPPOL_ID_PARAMETER, PEPPOL_ID,
@@ -42,15 +44,15 @@ class ActingOwnershipAuthorizationRequestConverterTest {
         assertThat(result.getAdditionalParameters())
                 .containsEntry(ActingOwnershipAuthorizationRequestConverter.PEPPOL_ID_PARAMETER, PEPPOL_ID)
                 .containsEntry(ActingOwnershipAuthorizationRequestConverter.ACCOUNT_TYPE_PARAMETER, "USER");
-        verify(repository).findFirstByAccountIdAndCompanyPeppolIdAndTypeOrderByLastUsedDesc(
-                ACCOUNT_ID, PEPPOL_ID, AccountType.USER);
+        verify(repository).findFirstByAccountIdAndCompanyPeppolIdAndTypeAndStatusOrderByLastUsedDesc(
+                ACCOUNT_ID, PEPPOL_ID, AccountType.USER, OwnershipStatus.ACTIVE);
     }
 
     @Test
     void omittedSelectionUsesTheRememberedDefaultButFreezesTheResolvedOwnership() {
         OwnershipRepository repository = mock(OwnershipRepository.class);
         Ownership selected = ownership(AccountType.ADMIN);
-        when(repository.findFirstByAccountIdOrderByLastUsedDesc(ACCOUNT_ID))
+        when(repository.findFirstByAccountIdAndStatusOrderByLastUsedDesc(ACCOUNT_ID, OwnershipStatus.ACTIVE))
                 .thenReturn(Optional.of(selected));
 
         OAuth2AuthorizationCodeRequestAuthenticationToken result = convert(repository, Map.of());
@@ -64,8 +66,8 @@ class ActingOwnershipAuthorizationRequestConverterTest {
     void peppolIdWithoutRoleResolvesACompanySpecificDefault() {
         OwnershipRepository repository = mock(OwnershipRepository.class);
         Ownership selected = ownership(AccountType.AFFILIATE);
-        when(repository.findFirstByAccountIdAndCompanyPeppolIdOrderByLastUsedDesc(ACCOUNT_ID, PEPPOL_ID))
-                .thenReturn(Optional.of(selected));
+        when(repository.findFirstByAccountIdAndCompanyPeppolIdAndStatusOrderByLastUsedDesc(
+                ACCOUNT_ID, PEPPOL_ID, OwnershipStatus.ACTIVE)).thenReturn(Optional.of(selected));
 
         OAuth2AuthorizationCodeRequestAuthenticationToken result = convert(repository, Map.of(
                 ActingOwnershipAuthorizationRequestConverter.PEPPOL_ID_PARAMETER, PEPPOL_ID));
@@ -75,22 +77,39 @@ class ActingOwnershipAuthorizationRequestConverterTest {
     }
 
     @Test
-    void accountWithoutAnyOwnershipIsRejected() {
+    void accountWithoutAnyActiveOwnershipIsAuthorizedWithoutACompany() {
         OwnershipRepository repository = mock(OwnershipRepository.class);
-        when(repository.findFirstByAccountIdAndCompanyPeppolIdAndTypeOrderByLastUsedDesc(
-                ACCOUNT_ID, PEPPOL_ID, AccountType.USER)).thenReturn(Optional.empty());
+        when(repository.findFirstByAccountIdAndCompanyPeppolIdAndTypeAndStatusOrderByLastUsedDesc(
+                ACCOUNT_ID, PEPPOL_ID, AccountType.USER, OwnershipStatus.ACTIVE)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> convert(repository, Map.of(
+        OAuth2AuthorizationCodeRequestAuthenticationToken result = convert(repository, Map.of(
                 ActingOwnershipAuthorizationRequestConverter.PEPPOL_ID_PARAMETER, PEPPOL_ID,
-                ActingOwnershipAuthorizationRequestConverter.ACCOUNT_TYPE_PARAMETER, "USER")))
-                .isInstanceOf(OAuth2AuthorizationCodeRequestAuthenticationException.class);
+                ActingOwnershipAuthorizationRequestConverter.ACCOUNT_TYPE_PARAMETER, "USER"));
+
+        assertThat(result.getAdditionalParameters())
+                .doesNotContainKeys(
+                        ActingOwnershipAuthorizationRequestConverter.PEPPOL_ID_PARAMETER,
+                        ActingOwnershipAuthorizationRequestConverter.ACCOUNT_TYPE_PARAMETER);
+        verify(repository).existsByAccountIdAndStatus(ACCOUNT_ID, OwnershipStatus.ACTIVE);
+    }
+
+    @Test
+    void accountWithoutAnyActiveOwnershipAndNoSelectionIsAuthorizedWithoutACompany() {
+        OwnershipRepository repository = mock(OwnershipRepository.class);
+
+        OAuth2AuthorizationCodeRequestAuthenticationToken result = convert(repository, Map.of());
+
+        assertThat(result.getAdditionalParameters())
+                .doesNotContainKeys(
+                        ActingOwnershipAuthorizationRequestConverter.PEPPOL_ID_PARAMETER,
+                        ActingOwnershipAuthorizationRequestConverter.ACCOUNT_TYPE_PARAMETER);
     }
 
     @Test
     void unavailableCompanyUsesTheAccountsDefaultCompanyAndRole() {
         OwnershipRepository repository = mock(OwnershipRepository.class);
         Ownership selected = ownership(AccountType.USER);
-        when(repository.findFirstByAccountIdOrderByLastUsedDesc(ACCOUNT_ID))
+        when(repository.findFirstByAccountIdAndStatusOrderByLastUsedDesc(ACCOUNT_ID, OwnershipStatus.ACTIVE))
                 .thenReturn(Optional.of(selected));
 
         OAuth2AuthorizationCodeRequestAuthenticationToken result = convert(repository, Map.of(
@@ -100,14 +119,14 @@ class ActingOwnershipAuthorizationRequestConverterTest {
         assertThat(result.getAdditionalParameters())
                 .containsEntry(ActingOwnershipAuthorizationRequestConverter.PEPPOL_ID_PARAMETER, PEPPOL_ID)
                 .containsEntry(ActingOwnershipAuthorizationRequestConverter.ACCOUNT_TYPE_PARAMETER, "USER");
-        verify(repository).findFirstByAccountIdOrderByLastUsedDesc(ACCOUNT_ID);
+        verify(repository).findFirstByAccountIdAndStatusOrderByLastUsedDesc(ACCOUNT_ID, OwnershipStatus.ACTIVE);
     }
 
     @Test
     void unavailableCompanyWithoutARoleAlsoUsesTheAccountsDefault() {
         OwnershipRepository repository = mock(OwnershipRepository.class);
         Ownership selected = ownership(AccountType.ADMIN);
-        when(repository.findFirstByAccountIdOrderByLastUsedDesc(ACCOUNT_ID))
+        when(repository.findFirstByAccountIdAndStatusOrderByLastUsedDesc(ACCOUNT_ID, OwnershipStatus.ACTIVE))
                 .thenReturn(Optional.of(selected));
 
         OAuth2AuthorizationCodeRequestAuthenticationToken result = convert(repository, Map.of(
@@ -121,15 +140,37 @@ class ActingOwnershipAuthorizationRequestConverterTest {
     @Test
     void unavailableRoleOnAnOwnedCompanyDoesNotFallBack() {
         OwnershipRepository repository = mock(OwnershipRepository.class);
-        Ownership selected = ownership(AccountType.USER);
-        when(repository.findFirstByAccountIdAndCompanyPeppolIdOrderByLastUsedDesc(ACCOUNT_ID, PEPPOL_ID))
-                .thenReturn(Optional.of(selected));
+        when(repository.existsByAccountIdAndCompanyPeppolIdAndStatus(ACCOUNT_ID, PEPPOL_ID, OwnershipStatus.ACTIVE))
+                .thenReturn(true);
+        when(repository.existsByAccountIdAndStatus(ACCOUNT_ID, OwnershipStatus.ACTIVE)).thenReturn(true);
 
         assertThatThrownBy(() -> convert(repository, Map.of(
                 ActingOwnershipAuthorizationRequestConverter.PEPPOL_ID_PARAMETER, PEPPOL_ID,
                 ActingOwnershipAuthorizationRequestConverter.ACCOUNT_TYPE_PARAMETER, "ADMIN")))
                 .isInstanceOf(OAuth2AuthorizationCodeRequestAuthenticationException.class);
-        verify(repository, never()).findFirstByAccountIdOrderByLastUsedDesc(ACCOUNT_ID);
+        verify(repository, never()).findFirstByAccountIdAndStatusOrderByLastUsedDesc(ACCOUNT_ID, OwnershipStatus.ACTIVE);
+    }
+
+    @Test
+    void suspendedRoleOnACompanyUsesTheAccountsOtherActiveCompany() {
+        OwnershipRepository repository = mock(OwnershipRepository.class);
+        Ownership suspended = ownership(AccountType.USER);
+        Ownership other = ownership(AccountType.ADMIN);
+        when(repository.findFirstByAccountIdAndCompanyPeppolIdOrderByLastUsedDesc(ACCOUNT_ID, "0208:9999999999"))
+                .thenReturn(Optional.of(suspended));
+        when(repository.findFirstByAccountIdAndStatusOrderByLastUsedDesc(ACCOUNT_ID, OwnershipStatus.ACTIVE))
+                .thenReturn(Optional.of(other));
+        when(repository.existsByAccountIdAndStatus(ACCOUNT_ID, OwnershipStatus.ACTIVE)).thenReturn(true);
+
+        OAuth2AuthorizationCodeRequestAuthenticationToken result = convert(repository, Map.of(
+                ActingOwnershipAuthorizationRequestConverter.PEPPOL_ID_PARAMETER, "0208:9999999999",
+                ActingOwnershipAuthorizationRequestConverter.ACCOUNT_TYPE_PARAMETER, "USER"));
+
+        assertThat(result.getAdditionalParameters())
+                .containsEntry(ActingOwnershipAuthorizationRequestConverter.PEPPOL_ID_PARAMETER, PEPPOL_ID)
+                .containsEntry(ActingOwnershipAuthorizationRequestConverter.ACCOUNT_TYPE_PARAMETER, "ADMIN");
+        verify(repository).existsByAccountIdAndCompanyPeppolIdAndStatus(
+                ACCOUNT_ID, "0208:9999999999", OwnershipStatus.ACTIVE);
     }
 
     @Test
@@ -140,7 +181,34 @@ class ActingOwnershipAuthorizationRequestConverterTest {
                 ActingOwnershipAuthorizationRequestConverter.PEPPOL_ID_PARAMETER, "0208:9999999999",
                 ActingOwnershipAuthorizationRequestConverter.ACCOUNT_TYPE_PARAMETER, "admin")))
                 .isInstanceOf(OAuth2AuthorizationCodeRequestAuthenticationException.class);
-        verify(repository, never()).findFirstByAccountIdOrderByLastUsedDesc(ACCOUNT_ID);
+        verify(repository, never()).findFirstByAccountIdAndStatusOrderByLastUsedDesc(ACCOUNT_ID, OwnershipStatus.ACTIVE);
+    }
+
+    @Test
+    void invitedOrSuspendedOwnershipsAreNeverSelected() {
+        OwnershipRepository repository = mock(OwnershipRepository.class);
+        Ownership inactive = ownership(AccountType.USER);
+        when(repository.findFirstByAccountIdOrderByLastUsedDesc(ACCOUNT_ID)).thenReturn(Optional.of(inactive));
+        when(repository.findFirstByAccountIdAndCompanyPeppolIdOrderByLastUsedDesc(ACCOUNT_ID, PEPPOL_ID))
+                .thenReturn(Optional.of(inactive));
+        when(repository.findFirstByAccountIdAndCompanyPeppolIdAndTypeOrderByLastUsedDesc(
+                ACCOUNT_ID, PEPPOL_ID, AccountType.USER)).thenReturn(Optional.of(inactive));
+
+        assertThat(convert(repository, Map.of()).getAdditionalParameters())
+                .doesNotContainKey(ActingOwnershipAuthorizationRequestConverter.PEPPOL_ID_PARAMETER);
+        assertThat(convert(repository, Map.of(
+                ActingOwnershipAuthorizationRequestConverter.PEPPOL_ID_PARAMETER, PEPPOL_ID)).getAdditionalParameters())
+                .doesNotContainKey(ActingOwnershipAuthorizationRequestConverter.PEPPOL_ID_PARAMETER);
+        assertThat(convert(repository, Map.of(
+                ActingOwnershipAuthorizationRequestConverter.PEPPOL_ID_PARAMETER, PEPPOL_ID,
+                ActingOwnershipAuthorizationRequestConverter.ACCOUNT_TYPE_PARAMETER, "USER")).getAdditionalParameters())
+                .doesNotContainKey(ActingOwnershipAuthorizationRequestConverter.PEPPOL_ID_PARAMETER);
+
+        verify(repository, atLeastOnce()).findFirstByAccountIdAndStatusOrderByLastUsedDesc(ACCOUNT_ID, OwnershipStatus.ACTIVE);
+        verify(repository).findFirstByAccountIdAndCompanyPeppolIdAndStatusOrderByLastUsedDesc(
+                ACCOUNT_ID, PEPPOL_ID, OwnershipStatus.ACTIVE);
+        verify(repository).findFirstByAccountIdAndCompanyPeppolIdAndTypeAndStatusOrderByLastUsedDesc(
+                ACCOUNT_ID, PEPPOL_ID, AccountType.USER, OwnershipStatus.ACTIVE);
     }
 
     private static OAuth2AuthorizationCodeRequestAuthenticationToken convert(

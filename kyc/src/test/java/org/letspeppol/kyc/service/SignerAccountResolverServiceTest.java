@@ -39,12 +39,37 @@ class SignerAccountResolverServiceTest {
             new SignerAccountResolverService(jwtClaimExtractor, activationService, accountService, ownershipService);
 
     @Test
-    void addingACompanyRequiresAnAdminToken() {
-        when(jwtClaimExtractor.extract()).thenReturn(new JwtInfo(AccountType.USER, OTHER_PEPPOL_ID, true, UID));
+    void appTokenCannotAddACompany() {
+        when(jwtClaimExtractor.extract()).thenReturn(new JwtInfo(AccountType.APP, OTHER_PEPPOL_ID, true, UID));
 
         assertThatThrownBy(() -> resolver.resolveSignerAccount(request(null), "Jan Peeters"))
                 .isInstanceOf(ForbiddenException.class);
         verifyNoInteractions(ownershipService, accountService);
+    }
+
+    @Test
+    void userOfAnotherCompanyAddsTheirOwnCompany() {
+        Account account = new Account();
+        when(jwtClaimExtractor.extract()).thenReturn(new JwtInfo(AccountType.USER, OTHER_PEPPOL_ID, true, UID));
+        when(accountService.getByExternalId(UID)).thenReturn(account);
+
+        SignerAccountResolverService.SignerResolution resolution = resolver.resolveSignerAccount(request(null), "Jan Peeters");
+
+        assertThat(resolution.account()).isSameAs(account);
+        assertThat(resolution.requestedType()).isEqualTo(AccountType.ADMIN);
+        verify(ownershipService).verifyPeppolIdNotRegistered(PEPPOL_ID);
+    }
+
+    @Test
+    void accountWithoutACompanyAddsItsFirstCompany() {
+        Account account = new Account();
+        when(jwtClaimExtractor.extract()).thenReturn(new JwtInfo(null, null, null, UID));
+        when(accountService.getByExternalId(UID)).thenReturn(account);
+
+        SignerAccountResolverService.SignerResolution resolution = resolver.resolveSignerAccount(request(null), "Jan Peeters");
+
+        assertThat(resolution.account()).isSameAs(account);
+        assertThat(resolution.requestedType()).isEqualTo(AccountType.ADMIN);
     }
 
     @Test
@@ -76,11 +101,13 @@ class SignerAccountResolverServiceTest {
         EmailVerification invitation = new EmailVerification(null, AccountType.AFFILIATE, "jan@example.com", PEPPOL_ID, "token", Instant.now().plusSeconds(60));
         when(activationService.getPendingVerification("jan@example.com", PEPPOL_ID)).thenReturn(invitation);
         when(accountService.findByEmail("jan@example.com")).thenReturn(Optional.of(account));
+        when(accountService.renameUnlessVerified(account, "Jan Peeters")).thenReturn(account);
 
         SignerAccountResolverService.SignerResolution resolution = resolver.resolveSignerAccount(request("jan@example.com"), "Jan Peeters");
 
         assertThat(resolution.account()).isSameAs(account);
         assertThat(resolution.requestedType()).isEqualTo(AccountType.AFFILIATE);
+        verify(accountService, never()).createPendingAccount(any(), any());
         verifyNoInteractions(jwtClaimExtractor);
     }
 

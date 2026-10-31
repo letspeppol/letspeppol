@@ -13,7 +13,7 @@ sequenceDiagram
     participant KYC
     participant API as App or Proxy
 
-    Note over User,API: Proof: RegistrationTest.oauth2AuthorizationCodeWithPkce<br/>TotpAuthenticationSuccessHandlerTest<br/>PasskeyControllerBrowserAuthTest<br/>PasswordResetServiceTests<br/>KYC OpenApiDocumentationTest
+    Note over User,API: Proof: RegistrationTest.oauth2AuthorizationCodeWithPkce<br/>CompanyUserTest.removedUserKeepsTheAccountButLosesTheCompany<br/>TotpAuthenticationSuccessHandlerTest<br/>PasskeyControllerBrowserAuthTest<br/>PasswordResetServiceTests<br/>KYC OpenApiDocumentationTest
     UI->>KYC: GET /kyc/auth/browser/session
     KYC-->>UI: session status + CSRF token
     alt Password, then optional TOTP
@@ -26,7 +26,11 @@ sequenceDiagram
         UI->>KYC: POST /kyc/auth/browser/passkeys/authenticate/verify
     end
     UI->>KYC: GET /kyc/auth/oauth2/authorize (S256 + peppol_id + account_type)
-    KYC->>KYC: Validate and persist exact ownership selection
+    alt Account has an active ownership
+        KYC->>KYC: Validate and persist exact ownership selection
+    else Account is linked to no active company
+        KYC->>KYC: Persist an authorization without a company
+    end
     KYC-->>UI: redirect_uri?code=...&state=...
     UI->>KYC: POST /kyc/auth/oauth2/token (code verifier)
     KYC-->>UI: access_token + id_token, no refresh token
@@ -34,6 +38,7 @@ sequenceDiagram
     API->>KYC: GET /kyc/auth/oauth2/jwks (cached key discovery)
 
     opt Manage authenticated account security
+        UI->>KYC: GET /kyc/sapi/account
         UI->>KYC: GET /kyc/sapi/account/ownerships
         UI->>KYC: POST /kyc/sapi/account/ownership
         UI->>KYC: POST /kyc/sapi/password/change
@@ -60,6 +65,13 @@ sequenceDiagram
 claims come from the explicit ownership selector on the PKCE authorization request. KYC stores that
 selector with the authorization code and revalidates it at exchange, so another tab changing
 `lastUsed` cannot alter the resulting token; see [Swap](./swap.md).
+
+An account whose companies were all removed or suspended still signs in. Its token carries `uid` and
+`permissionMask: 0`, but no `peppolId` or `accountType`. KYC accepts that token only on the account
+endpoints in the diagram (`/sapi/account/**`, `/sapi/password/change`, `/sapi/totp/**`,
+`/sapi/passkeys/**`); App and the proxy grant it nothing. The UI then offers the Account page and Add
+company only. A selector naming a role the account does not hold on a company where it still has an active
+ownership keeps failing with `ownership_unavailable`; a suspended or pending ownership counts as none.
 
 OAuth2 and OpenID Connect discovery remain at their standardized, issuer-derived
 `/.well-known/**` locations rather than moving under `/auth/**`; the public KYC reverse proxy must

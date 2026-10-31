@@ -33,6 +33,10 @@ public class RateLimiterService {
     private int emailMax;
     @Value("${rate-limit.email.window-seconds:3600}")
     private long emailWindowSeconds;
+    @Value("${rate-limit.invitation.company-max-attempts:50}")
+    private int invitationCompanyMax;
+    @Value("${rate-limit.invitation.company-window-seconds:86400}")
+    private long invitationCompanyWindowSeconds;
 
     private final ConcurrentHashMap<String, Window> windows = new ConcurrentHashMap<>();
 
@@ -46,6 +50,11 @@ public class RateLimiterService {
 
     public void checkActivation(String email) {
         check("activation", email, false, emailMax, Duration.ofSeconds(emailWindowSeconds));
+    }
+
+    public void checkInvitation(Long companyId, String email) {
+        check("invitation", companyId + "|" + email, false, emailMax, Duration.ofSeconds(emailWindowSeconds));
+        check("invitation-company", String.valueOf(companyId), false, invitationCompanyMax, Duration.ofSeconds(invitationCompanyWindowSeconds));
     }
 
     public void checkPasswordReset(String email) {

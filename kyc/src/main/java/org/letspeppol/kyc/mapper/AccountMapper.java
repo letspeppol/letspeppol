@@ -1,10 +1,15 @@
 package org.letspeppol.kyc.mapper;
 
+import org.letspeppol.kyc.dto.AccountDto;
 import org.letspeppol.kyc.dto.AccountInfo;
 import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.model.kbo.Company;
 
 public class AccountMapper {
+
+    public static AccountDto toAccountDto(Account account) {
+        return new AccountDto(account.getName(), account.getEmail());
+    }
 
     public static AccountInfo toAccountInfo(Account account, Company company) {
         return new AccountInfo(

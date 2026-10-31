@@ -7,9 +7,12 @@ import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import org.letspeppol.kyc.model.Account;
 import org.letspeppol.kyc.model.AccountType;
+import org.letspeppol.kyc.model.CompanyPermission;
 import org.letspeppol.kyc.model.Ownership;
+import org.letspeppol.kyc.model.OwnershipStatus;
 import org.letspeppol.kyc.repository.AccountRepository;
 import org.letspeppol.kyc.repository.OwnershipRepository;
+import org.letspeppol.kyc.service.TokenRevocationFeed;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,12 +29,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.jackson.SecurityJacksonModules;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
+import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.OAuth2ErrorCodes;
+import org.springframework.security.oauth2.core.OAuth2TokenValidatorResult;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
@@ -69,14 +75,23 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Configuration
 public class SecurityConfig {
 
+    private static final OAuth2Error UNKNOWN_ACCOUNT_TYPE = new OAuth2Error("invalid_token", "The token has an unknown account type", null);
+
     public static final String ROLE_KYC_USER = "kyc_user";
+    public static final String ROLE_KYC_ACCOUNT = "kyc_account";
+
+    static final String[] ACCOUNT_SCOPED_PATHS = {
+            "/sapi/account", "/sapi/account/**", "/sapi/password/change", "/sapi/totp/**", "/sapi/passkeys", "/sapi/passkeys/**"
+    };
 
     @Value("${cors.allowed-origins}")
     private String allowedOrigins;
@@ -142,8 +157,12 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .csrf(AbstractHttpConfigurer::disable)
                 .requestCache(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.anyRequest().hasAuthority(ROLE_KYC_USER))
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        .sessionFixation(fixation -> fixation.none()))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(ACCOUNT_SCOPED_PATHS).hasAnyAuthority(ROLE_KYC_USER, ROLE_KYC_ACCOUNT)
+                        .anyRequest().hasAuthority(ROLE_KYC_USER))
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt
                         .decoder(jwtDecoder)
                         .jwtAuthenticationConverter(jwtAuthenticationConverter())
@@ -204,6 +223,8 @@ public class SecurityConfig {
             Collection<GrantedAuthority> authorities = new ArrayList<>();
             if (jwt.hasClaim("peppolId") && !AccountType.APP.name().equals(jwt.getClaimAsString("accountType"))) {
                 authorities.add(new SimpleGrantedAuthority(ROLE_KYC_USER));
+            } else if (jwt.hasClaim("uid") && !jwt.hasClaim("peppolId") && !jwt.hasClaim("accountType")) {
+                authorities.add(new SimpleGrantedAuthority(ROLE_KYC_ACCOUNT));
             }
             return authorities;
         });
@@ -214,10 +235,19 @@ public class SecurityConfig {
     public JwtDecoder jwtDecoder(
             @Value("${jwt.public-key}") RSAPublicKey publicKey,
             @Value("${oauth2.audience:letspeppol-api}") String audience,
-            @Value("${spring.security.oauth2.authorizationserver.issuer:}") String issuer) {
+            @Value("${spring.security.oauth2.authorizationserver.issuer:}") String issuer,
+            TokenRevocationFeed tokenRevocationFeed) {
         NimbusJwtDecoder decoder = NimbusJwtDecoder.withPublicKey(publicKey).build();
-        decoder.setJwtValidator(JwtValidationSupport.build(audience, issuer));
+        decoder.setJwtValidator(new DelegatingOAuth2TokenValidator<Jwt>(
+                JwtValidationSupport.build(audience, issuer), SecurityConfig::validateAccountType, tokenRevocationFeed::validate));
         return decoder;
+    }
+
+    static OAuth2TokenValidatorResult validateAccountType(Jwt jwt) {
+        String accountType = jwt.getClaimAsString("accountType");
+        return accountType == null || Arrays.stream(AccountType.values()).map(Enum::name).anyMatch(accountType::equals)
+                ? OAuth2TokenValidatorResult.success()
+                : OAuth2TokenValidatorResult.failure(UNKNOWN_ACCOUNT_TYPE);
     }
 
     @Bean
@@ -342,8 +372,8 @@ public class SecurityConfig {
                 OAuth2AuthorizationRequest authorizationRequest = context.getAuthorization() == null
                         ? null
                         : context.getAuthorization().getAttribute(OAuth2AuthorizationRequest.class.getName());
-                addOwnershipClaims(claims, resolveAuthorizedOwnership(
-                        userDetails.getAccountId(), authorizationRequest, ownershipRepository));
+                resolveAuthorizedOwnership(userDetails.getAccountId(), authorizationRequest, ownershipRepository)
+                        .ifPresentOrElse(ownership -> addOwnershipClaims(claims, ownership), () -> addAccountOnlyClaims(claims));
             } else if (AuthorizationGrantType.CLIENT_CREDENTIALS.equals(context.getAuthorizationGrantType())
                     && "kyc-service".equals(context.getRegisteredClient().getClientId())) {
                 // Service-to-service token for the App backend's scheduled document sync:
@@ -358,8 +388,9 @@ public class SecurityConfig {
         };
     }
 
-    private static void addOwnershipClaims(JwtClaimsSet.Builder claims, Ownership ownership) {
+    static void addOwnershipClaims(JwtClaimsSet.Builder claims, Ownership ownership) {
         claims.claim("accountType", ownership.getType().name());
+        claims.claim("permissionMask", CompanyPermission.effectiveMask(ownership.getType(), ownership.getPermissionMask()));
         if (ownership.getCompany() != null && ownership.getCompany().getPeppolId() != null) {
             claims.claim("peppolId", ownership.getCompany().getPeppolId());
             claims.claim("peppolActive", ownership.getCompany().isPeppolActive());
@@ -369,6 +400,10 @@ public class SecurityConfig {
         }
     }
 
+    static void addAccountOnlyClaims(JwtClaimsSet.Builder claims) {
+        claims.claim("permissionMask", 0);
+    }
+
     private static OAuth2AuthenticationException invalidOwnershipGrant() {
         return new OAuth2AuthenticationException(new OAuth2Error(
                 OAuth2ErrorCodes.INVALID_GRANT,
@@ -376,7 +411,7 @@ public class SecurityConfig {
                 null));
     }
 
-    static Ownership resolveAuthorizedOwnership(
+    static Optional<Ownership> resolveAuthorizedOwnership(
             Long accountId,
             OAuth2AuthorizationRequest authorizationRequest,
             OwnershipRepository ownershipRepository) {
@@ -387,6 +422,9 @@ public class SecurityConfig {
                 .get(ActingOwnershipAuthorizationRequestConverter.PEPPOL_ID_PARAMETER);
         Object accountType = authorizationRequest.getAdditionalParameters()
                 .get(ActingOwnershipAuthorizationRequestConverter.ACCOUNT_TYPE_PARAMETER);
+        if (peppolId == null && accountType == null) {
+            return Optional.empty();
+        }
         if (!(peppolId instanceof String selectedPeppolId)
                 || !(accountType instanceof String selectedAccountType)) {
             throw invalidOwnershipGrant();
@@ -398,10 +436,10 @@ public class SecurityConfig {
         } catch (IllegalArgumentException _) {
             throw invalidOwnershipGrant();
         }
-        return ownershipRepository
-                .findFirstByAccountIdAndCompanyPeppolIdAndTypeOrderByLastUsedDesc(
-                        accountId, selectedPeppolId, selectedType)
-                .orElseThrow(SecurityConfig::invalidOwnershipGrant);
+        return Optional.of(ownershipRepository
+                .findFirstByAccountIdAndCompanyPeppolIdAndTypeAndStatusOrderByLastUsedDesc(
+                        accountId, selectedPeppolId, selectedType, OwnershipStatus.ACTIVE)
+                .orElseThrow(SecurityConfig::invalidOwnershipGrant));
     }
 
     @Bean

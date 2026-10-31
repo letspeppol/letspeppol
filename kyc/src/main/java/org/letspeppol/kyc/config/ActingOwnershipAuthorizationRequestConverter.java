@@ -3,6 +3,7 @@ package org.letspeppol.kyc.config;
 import jakarta.servlet.http.HttpServletRequest;
 import org.letspeppol.kyc.model.AccountType;
 import org.letspeppol.kyc.model.Ownership;
+import org.letspeppol.kyc.model.OwnershipStatus;
 import org.letspeppol.kyc.repository.OwnershipRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.OAuth2Error;
@@ -59,15 +60,16 @@ public class ActingOwnershipAuthorizationRequestConverter implements Authenticat
         Optional<Ownership> selectedOwnership;
         if (requestedPeppolId == null) {
             // No URL context: use the remembered default, but freeze it into this authorization.
-            selectedOwnership = ownershipRepository.findFirstByAccountIdOrderByLastUsedDesc(userDetails.getAccountId());
+            selectedOwnership = ownershipRepository.findFirstByAccountIdAndStatusOrderByLastUsedDesc(
+                    userDetails.getAccountId(), OwnershipStatus.ACTIVE);
         } else {
             if (requestedPeppolId.isBlank() || requestedPeppolId.length() > 32) {
                 throw invalidSelection();
             }
             if (requestedAccountType == null) {
                 selectedOwnership = ownershipRepository
-                        .findFirstByAccountIdAndCompanyPeppolIdOrderByLastUsedDesc(
-                                userDetails.getAccountId(), requestedPeppolId);
+                        .findFirstByAccountIdAndCompanyPeppolIdAndStatusOrderByLastUsedDesc(
+                                userDetails.getAccountId(), requestedPeppolId, OwnershipStatus.ACTIVE);
             } else {
                 AccountType accountType;
                 try {
@@ -76,23 +78,35 @@ public class ActingOwnershipAuthorizationRequestConverter implements Authenticat
                     throw invalidSelection();
                 }
                 selectedOwnership = ownershipRepository
-                        .findFirstByAccountIdAndCompanyPeppolIdAndTypeOrderByLastUsedDesc(
-                                userDetails.getAccountId(), requestedPeppolId, accountType);
+                        .findFirstByAccountIdAndCompanyPeppolIdAndTypeAndStatusOrderByLastUsedDesc(
+                                userDetails.getAccountId(), requestedPeppolId, accountType, OwnershipStatus.ACTIVE);
             }
             // A stale company URL should use this account's default. A missing role on a
             // company the account still owns remains an invalid explicit selection.
-            if (selectedOwnership.isEmpty() && (requestedAccountType == null || ownershipRepository
-                    .findFirstByAccountIdAndCompanyPeppolIdOrderByLastUsedDesc(
-                            userDetails.getAccountId(), requestedPeppolId).isEmpty())) {
-                selectedOwnership = ownershipRepository
-                        .findFirstByAccountIdOrderByLastUsedDesc(userDetails.getAccountId());
+            if (selectedOwnership.isEmpty() && (requestedAccountType == null || !ownershipRepository
+                    .existsByAccountIdAndCompanyPeppolIdAndStatus(
+                            userDetails.getAccountId(), requestedPeppolId, OwnershipStatus.ACTIVE))) {
+                selectedOwnership = ownershipRepository.findFirstByAccountIdAndStatusOrderByLastUsedDesc(
+                        userDetails.getAccountId(), OwnershipStatus.ACTIVE);
             }
+        }
+
+        if (selectedOwnership.isEmpty()
+                && !ownershipRepository.existsByAccountIdAndStatus(userDetails.getAccountId(), OwnershipStatus.ACTIVE)) {
+            parameters.remove(PEPPOL_ID_PARAMETER);
+            parameters.remove(ACCOUNT_TYPE_PARAMETER);
+            return withParameters(authorizationRequest, parameters);
         }
 
         Ownership ownership = selectedOwnership.orElseThrow(ActingOwnershipAuthorizationRequestConverter::invalidSelection);
         parameters.put(PEPPOL_ID_PARAMETER, ownership.getCompany().getPeppolId());
         parameters.put(ACCOUNT_TYPE_PARAMETER, ownership.getType().name());
+        return withParameters(authorizationRequest, parameters);
+    }
 
+    private static OAuth2AuthorizationCodeRequestAuthenticationToken withParameters(
+            OAuth2AuthorizationCodeRequestAuthenticationToken authorizationRequest,
+            Map<String, Object> parameters) {
         return new OAuth2AuthorizationCodeRequestAuthenticationToken(
                 authorizationRequest.getAuthorizationUri(),
                 authorizationRequest.getClientId(),

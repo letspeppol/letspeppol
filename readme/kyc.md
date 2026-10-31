@@ -67,7 +67,8 @@ request/response schemas; the Mermaid pages explain scenario order and trust bou
 7. [Registration active ADMIN via AFFILIATE and verify by email](./registration-active-admin-via-affiliate-and-verify-by-email.md)
 8. [Registration new ADMIN via AFFILIATE and verify email before signing](./registration-new-admin-via-affiliate-and-verify-email-before-signing.md)
 9. [Registration new ADMIN via AFFILIATE and sign before email verification](./registration-new-admin-via-affiliate-and-sign-before-email-verification.md)
-10. [Registration new ADMIN by active ADMIN](registration-new-admin-by-active-admin.md)
+10. [Registration new ADMIN by a signed-in account](registration-new-admin-by-active-admin.md)
+11. [Company user invitation](./company-user-invitation.md), covered by `CompanyUserTest`
 
 ## How to read the flow pages
 
