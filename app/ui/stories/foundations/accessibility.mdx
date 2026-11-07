@@ -1,0 +1,30 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Foundations/Accessibility" />
+
+# Accessibility
+
+This is the floor, not the goal. Every story has an **Accessibility** panel at the bottom that runs axe on what is on
+screen; check it when you review a component.
+
+## Focus
+
+A visible 2px `--focus` ring with a 2px offset on everything focusable. Tab through these:
+
+<div className="ds-row" style={{ margin: '1rem 0' }}>
+  <button className="btn primary">Send invoice</button>
+  <button className="btn">Save draft</button>
+  <label className="search" style={{ minWidth: '14rem' }}><input type="search" placeholder="Search partner" aria-label="Search partner" /></label>
+  <label className="switch"><input type="checkbox" aria-label="Receive documents" /><span className="slider"></span></label>
+</div>
+
+## The floor
+
+- Colour is never the only signal: status pills carry text, the delivery stamp has an icon and a label.
+- Text meets AA contrast in both themes. Orange text uses `--orange-ink`, never `--orange` (see Foundations/Colour, where every pair shows its ratio).
+- Landmarks: one `header`, one `nav` with `aria-label`, one `main` per page.
+- Dialogs use `role="dialog"`, `aria-modal`, a labelled title and a focus trap (`components/util/modal-keyboard.ts`, `focus-trap.ts`).
+- Icon-only buttons have an `aria-label`; decorative SVGs have `aria-hidden="true"`.
+- Touch: under `(pointer: coarse)` every control is at least 44px tall and neighbours are at least 8px apart.
+- Motion respects `prefers-reduced-motion`.
+- Table cards on phones keep the column name as a visible, translated `data-label`.

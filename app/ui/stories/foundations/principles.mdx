@@ -1,0 +1,52 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Foundations/Principles" />
+
+# Principles
+
+## Who this is for
+
+Let’s Peppol is a free, open-source way for Belgian businesses to send and receive invoices on the Peppol network.
+Belgium requires structured B2B e-invoicing from 2026, so the people using this are bakers, plumbers, consultants and
+their bookkeepers, not software people. They register once with their eID, then come back to send an invoice, check
+what is still open, and look something up on their phone from a van or a counter.
+
+The interface is a calm public counter: obvious, trustworthy, quick to read, nothing to learn. It is not a SaaS
+dashboard and should not look like one.
+
+## The counter, the sheet, the stamp
+
+The logo gives us everything: a navy globe (the network, the institution) and an orange check (done, delivered).
+
+<div className="ds-grid wide" style={{ margin: '1.5rem 0' }}>
+  <div className="card">
+    <h3 style={{ marginTop: 0 }}>The band</h3>
+    <p className="muted" style={{ margin: 0 }}>A solid navy band across the top is the institution. It is the one strong element on every screen.</p>
+  </div>
+  <div className="card">
+    <h3 style={{ marginTop: 0 }}>The sheet</h3>
+    <p className="muted" style={{ margin: 0 }}>Content sits on flat white sheets on a cool paper ground, like forms and ledgers on a counter.</p>
+  </div>
+  <div className="card">
+    <h3 style={{ marginTop: 0 }}>The stamp</h3>
+    <p className="muted" style={{ margin: 0 }}>Orange is the check mark. It appears once per screen, to mark where attention goes. It is never decoration.</p>
+  </div>
+</div>
+
+Spend boldness on the band and the orange marker. Everything else stays quiet.
+
+## Deliberately not done
+
+<div className="ds-stack">
+  <div className="ds-rule dont"><span className="ds-rule-kind">Don’t</span><div className="ds-rule-body">Gradients, glass blur or decorative radial washes on the ground.</div></div>
+  <div className="ds-rule dont"><span className="ds-rule-kind">Don’t</span><div className="ds-rule-body">Cards nested inside cards.</div></div>
+  <div className="ds-rule dont"><span className="ds-rule-kind">Don’t</span><div className="ds-rule-body">Numbered markers, except the registration stepper, which is a real sequence.</div></div>
+  <div className="ds-rule dont"><span className="ds-rule-kind">Don’t</span><div className="ds-rule-body">Arrows appended to link or button text, middle-dot separators, all-caps eyebrows.</div></div>
+  <div className="ds-rule dont"><span className="ds-rule-kind">Don’t</span><div className="ds-rule-body">Monospace for small data labels. Tabular figures in the body face do that job.</div></div>
+  <div className="ds-rule dont"><span className="ds-rule-kind">Don’t</span><div className="ds-rule-body">Disabled navigation for things the person may not do. Items without permission are simply absent.</div></div>
+</div>
+
+## Where the rules live
+
+`app/ui/DESIGN.md` is the written contract; these pages show it. Tokens and shared mechanics are defined once in
+`src/app/lets-peppol.css`; page CSS sits next to each component and must not redefine shared rules.

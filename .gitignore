@@ -8,3 +8,5 @@ acme.json
 .env_live
 *.log
 node_modules/
+
+app/ui/storybook-static/

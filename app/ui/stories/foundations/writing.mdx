@@ -1,0 +1,47 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Foundations/Writing" />
+
+# Writing
+
+The interface speaks like a helpful clerk at the counter: short, concrete, and in the person’s terms, not ours.
+Every visible string goes through i18n with keys in all four locale files. Review copy with the **Language** toolbar.
+
+## Actions and their echo
+
+Buttons are verbs that name the result. The toast that follows uses the same word.
+
+<div className="card table-card" style={{ margin: '1rem 0 2rem', maxWidth: '36rem' }}>
+  <table className="data-table">
+    <thead><tr><th>Button</th><th>Toast</th></tr></thead>
+    <tbody>
+      <tr><td><button className="btn primary">Send invoice</button></td><td>Invoice sent</td></tr>
+      <tr><td><button className="btn">Save changes</button></td><td>Changes saved</td></tr>
+      <tr><td><button className="btn">Invite user</button></td><td>Invitation sent</td></tr>
+      <tr><td><button className="btn danger">Delete partner</button></td><td>Partner deleted</td></tr>
+    </tbody>
+  </table>
+</div>
+
+## Errors
+
+Say what happened and what to do next, in the interface’s voice. No apologies, no “Oops”, no error codes on their own.
+
+<div className="ds-stack" style={{ maxWidth: '48rem', margin: '1rem 0' }}>
+  <div className="ds-rule do"><span className="ds-rule-kind">Do</span><div className="ds-rule-body">This IBAN is one digit short. Check the number on your bank statement.</div></div>
+  <div className="ds-rule dont"><span className="ds-rule-kind">Don’t</span><div className="ds-rule-body">Oops! Something went wrong (400).</div></div>
+  <div className="ds-rule do"><span className="ds-rule-kind">Do</span><div className="ds-rule-body">Hotel Le Mosan’s access point didn’t accept the invoice. Check their VAT number and send it again.</div></div>
+  <div className="ds-rule dont"><span className="ds-rule-kind">Don’t</span><div className="ds-rule-body">Delivery failed: SMP lookup error.</div></div>
+</div>
+
+## Empty states
+
+Invite the first action with one line and one button. A filtered list that comes up empty only says nothing matches.
+
+## Mechanics
+
+- Sentence case everywhere, including buttons, table heads and page titles.
+- No trailing colons on labels. No “click here”. No arrows in labels.
+- Keep Peppol jargon (SMP, access point, UBL) out of the main path; explain it where it can’t be avoided.
+- References and ids are shown exactly as stored, in tabular figures.
+- `npm run translations:sort` keeps the locale files sorted; `npm run lint:translations` checks that every key exists in all four.
