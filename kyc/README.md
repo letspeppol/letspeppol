@@ -27,30 +27,21 @@ To build the KYC JAR follow the next steps:
 
 ## Run project
 
+Start the database first, see [Local development](../README.md#local-development).
+
 ### Using IntelliJ
-To run the project follow the next steps:
-1. Clone this repository
-2. Open IntelliJ
-3. Open project `lp/kyc/`
-4. Wait for Gradle to setup the project
-5. Go to `kyc > src > main > java > org.letspeppol.kyc > KycApplication`
-6. Right-click on `KycApplication` and select `'Modify run configuration'`
-7. In the `Build and run` section click on `Modify options` and select `Environment variables`
-8. Now add a variable with name `ACCESS_TOKEN_KEY` with the same value as the proxy
-9. In `active profiles` fill in the profile `postgres`
-10. If you want to register using the proxy, also add the variables `PROXY_API_URL` and `PROXY_ENABLED=true`
+1. Open project `lp/kyc/`
+2. Go to `kyc > src > main > java > org.letspeppol.kyc > KycApplication`
+3. Right-click on `KycApplication` and select `'Modify run configuration'`
+4. In `active profiles` fill in the profile `local`
+5. Run the configuration
 
 ### Using CLI
-1. Build the project
-2. Change directory to `lp/kyc/build/libs/`
-3. `export ACCESS_TOKEN_KEY=...`
-4. `export PROXY_API_URL=...`
-5. `export PROXY_ENABLED=...`
-6. Execute the command `java -Dspring.profiles.active=postgres -jar kyc-0.0.1-SNAPSHOT.jar`
+Execute the command `./gradlew bootRun`. It uses the `local` profile unless `SPRING_PROFILES_ACTIVE` is set.
 
 ### PostgreSQL
-PostgreSQL is the only supported database; the `postgres` profile is required.
-Also configure these environment variables: `DB_USER`, `DB_PASS`, `DB_HOST` & `DB_PORT`.
+PostgreSQL is the only supported database. The `local` profile includes the `postgres` profile and connects to `localhost:5432`.
+Deployed environments use the `postgres` profile and configure these environment variables: `DB_USER`, `DB_PASS`, `DB_HOST` & `DB_PORT`.
 
 ## Nix development environment
 

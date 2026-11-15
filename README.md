@@ -66,14 +66,40 @@ cd dev
 test-proxy
 ```
 ## With Docker
-To run this project locally using docker-compose, follow these steps:
-1. Clone this repository.
-2. Point a (sub)domain to localhost and generate a TLS certificate (e.g. letspeppol.example.com).
-3. Navigate to docker/local.
-4. Copy the file .env_example to a new file named .env.
-5. Update the .env file with the required environment variables.
-6. Run `docker compose up -d`
-7. Visit https://letspeppol.example.com in your browser.
+Runs the whole stack. Only Docker is needed, no `.env` file and no certificates.
+
+```sh
+cd docker/local
+docker compose up -d --build
+```
+
+| What | Where |
+| --- | --- |
+| Application | http://localhost:3001 |
+| Design system | http://localhost:6006 |
+| API docs | http://localhost:3001/api-docs.html |
+| Mail sent by the application | http://localhost:8025 |
+| Adminer | http://localhost:8081 |
+| PostgreSQL | `localhost:5432`, databases `kyc`, `app` and `proxy` |
+
+Sign in with `letspeppol@itaa.be` / `letspeppol`. Run the same command again after changing code.
+
+Copy `docker/local/.env_example` to `docker/local/.env` to change ports, to add access point credentials for sending and receiving over Peppol, or to serve the application from another origin. Registering with a Belgian eID needs an HTTPS origin.
+
+## Local development
+Runs the database in Docker, the services from Gradle or your IDE and the UI from the Vite dev server. Needs Docker, JDK 25 and Node.js 22.
+
+```sh
+cd docker/local && docker compose up -d db mail
+cd kyc && ./gradlew bootRun              # port 8084
+cd app/backend && ./gradlew bootRun      # port 8085
+cd proxy && ./gradlew bootRun            # port 8086
+cd app/ui && npm install && npm start    # http://localhost:9000
+```
+
+`bootRun` starts each service with the `local` Spring profile, which holds working defaults for a developer machine and seeds the same accounts as above. From an IDE, run the `KycApplication`, `AppApplication` and `ProxyApplication` classes with `local` as active profile. Environment variables override the defaults. Never use the `local` profile in a deployed environment.
+
+The design system runs on its own with `npm run storybook` in `app/ui`, on http://localhost:6006.
 
 # Sponsored by NLNet
 ![NLNet](./docs/nlnet.svg)
