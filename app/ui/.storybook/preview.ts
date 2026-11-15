@@ -4,15 +4,11 @@ import './preview.css';
 import { AppTask, IContainer } from 'aurelia';
 import { render, renderToCanvas } from '@aurelia/storybook/preview';
 import { I18N, I18nConfiguration } from '@aurelia/i18n';
-import { DateFormatConverter } from '../src/app/value-converters/date-format';
-import { DateTimeFormatConverter } from '../src/app/value-converters/date-time-format';
 import {
   FeatureAckRegistration,
   NewFeatureCustomAttribute,
   NewFeatureSectionCustomAttribute,
 } from '../src/components/new-feature';
-import { VatDisplayRegistration } from '../src/services/app/vat-display-service';
-import { PaymentTermsField } from '../src/components/payment-terms/payment-terms-field';
 import en from '../src/app/locale/translation_en.json';
 import fr from '../src/app/locale/translation_fr.json';
 import nl from '../src/app/locale/translation_nl.json';
@@ -208,20 +204,14 @@ const preview = {
           'Primitives',
           ['Buttons', 'Fields', 'Status and feedback', 'Page structure', 'Data table', 'Modals and action bar'],
           'Components',
-          'Invoice editor',
-          'Screens',
         ],
       },
     },
     aurelia: {
       register: [
-        DateFormatConverter,
-        DateTimeFormatConverter,
         FeatureAckRegistration,
-        VatDisplayRegistration,
         NewFeatureCustomAttribute,
         NewFeatureSectionCustomAttribute,
-        PaymentTermsField,
         ...DesignSystemElements,
         AppTask.activated(I18N, (i18n) => {
           mountedTranslators.add(i18n);

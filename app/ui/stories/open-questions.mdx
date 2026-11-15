@@ -73,20 +73,20 @@ Seen while building this catalogue. These are bugs in `src`, not in the catalogu
 
 <div className="card table-card" style={{ margin: '1rem 0 2rem' }}>
   <table className="data-table">
-    <thead><tr><th>Where</th><th>What</th><th>Story</th></tr></thead>
+    <thead><tr><th>Where</th><th>What</th><th>Where to see it</th></tr></thead>
     <tbody>
-      <tr><td>Product search</td><td>Picking a product puts its <strong>cost price</strong> on the line (<code>selectProduct</code> copies <code>costPrice</code>), not the sale price shown in the suggestion: a €1,45 croissant is invoiced at €0,35.</td><td>Invoice editor/Product search, Product picked</td></tr>
-      <tr><td>Line items</td><td>Between 768 and 1023px with discounts per line on, the 58rem minimum is too small: number, unit price and VAT shrink to about 40px and the pinned name column covers the description.</td><td>Invoice editor/Line items, Tablet portrait</td></tr>
-      <tr><td>Customer and product search</td><td>“No matches” can never appear because the list hides when there are no results; customer suggestions inherit the muted label colour and read as disabled.</td><td>Invoice editor/Customer search, Matches while typing</td></tr>
-      <tr><td>Payment tile</td><td>Payment method names (“Credit Transfer”, “In Cash”) come from <code>InvoiceComposer.paymentMeansCodes</code> and stay English in every language.</td><td>Invoice editor/Tiles/Payment</td></tr>
-      <tr><td>Credit notes</td><td>The editor still titles the lines “Invoice lines”.</td><td>Invoices, a credit note draft</td></tr>
-      <tr><td>Read-only lines</td><td>Unit prices show unformatted (“21,4”) next to totals formatted as money.</td><td>Invoice editor/Line items, Read-only</td></tr>
-      <tr><td>Discounts tile</td><td>The empty “Discounts and costs” tile, with its New marker, still shows on sent and received documents that have none.</td><td>Invoices, a sent invoice</td></tr>
-      <tr><td>Delivery stamp</td><td>A long rejection reason grows the rotated stamp to six or more lines of large text.</td><td>Invoice editor/Modals/Delivery proof, Rejected by the receiver</td></tr>
-      <tr><td>New invoice</td><td>Order reference shows “NA”.</td><td>Invoices, a new invoice</td></tr>
-      <tr><td>Number modal</td><td>Placeholders are fixed to 2025 (“INV-2025-0001”); the first-ever suggestion is “INV-20260001” without the separator.</td><td>Invoice editor/Modals/Number, First invoice ever</td></tr>
-      <tr><td>Overview</td><td>The Drafts badge shows “0” while drafts are still loading.</td><td>Invoices, while the list loads</td></tr>
-      <tr><td>Editor CSS</td><td>Product search borrows its dropdown from <code>customer-search.css</code>, line items borrow from <code>allowance-charge-info.css</code>, tiles need <code>invoice-edit.css</code>: each piece only looks right when the whole editor is loaded.</td><td>Invoice editor/Tiles</td></tr>
+      <tr><td>Product search</td><td>Picking a product puts its <strong>cost price</strong> on the line (<code>selectProduct</code> copies <code>costPrice</code>), not the sale price shown in the suggestion: a €1,45 croissant is invoiced at €0,35.</td><td>Invoice editor, picking a product on a line</td></tr>
+      <tr><td>Line items</td><td>Between 768 and 1023px with discounts per line on, the 58rem minimum is too small: number, unit price and VAT shrink to about 40px and the pinned name column covers the description.</td><td>Invoice editor, at tablet width</td></tr>
+      <tr><td>Customer and product search</td><td>“No matches” can never appear because the list hides when there are no results; customer suggestions inherit the muted label colour and read as disabled.</td><td>Invoice editor, customer dialog</td></tr>
+      <tr><td>Payment tile</td><td>Payment method names (“Credit Transfer”, “In Cash”) come from <code>InvoiceComposer.paymentMeansCodes</code> and stay English in every language.</td><td>Invoice editor, payment tile</td></tr>
+      <tr><td>Credit notes</td><td>The editor still titles the lines “Invoice lines”.</td><td>Invoice editor, a credit note draft</td></tr>
+      <tr><td>Read-only lines</td><td>Unit prices show unformatted (“21,4”) next to totals formatted as money.</td><td>Invoice editor, a sent invoice</td></tr>
+      <tr><td>Discounts tile</td><td>The empty “Discounts and costs” tile, with its New marker, still shows on sent and received documents that have none.</td><td>Invoice editor, a sent invoice without discounts</td></tr>
+      <tr><td>Delivery stamp</td><td>A long rejection reason grows the rotated stamp to six or more lines of large text.</td><td>Invoice editor, delivery proof of a rejected invoice</td></tr>
+      <tr><td>New invoice</td><td>Order reference shows “NA”.</td><td>Invoice editor, a new invoice</td></tr>
+      <tr><td>Number modal</td><td>Placeholders are fixed to 2025 (“INV-2025-0001”); the first-ever suggestion is “INV-20260001” without the separator.</td><td>Invoice editor, sending the first invoice</td></tr>
+      <tr><td>Overview</td><td>The Drafts badge shows “0” while drafts are still loading.</td><td>Invoice list, while it loads</td></tr>
+      <tr><td>Editor CSS</td><td>Product search borrows its dropdown from <code>customer-search.css</code>, line items borrow from <code>allowance-charge-info.css</code>, tiles need <code>invoice-edit.css</code>: each piece only looks right when the whole editor is loaded.</td><td>Any editor piece used outside the editor</td></tr>
     </tbody>
   </table>
 </div>

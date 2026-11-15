@@ -1,7 +1,6 @@
 import type { CompanyDto } from '../../../src/services/app/company-service';
 import type { OwnershipSummary } from '../../../src/services/app/ownership-service';
 import type { PartnerDto } from '../../../src/services/app/partner-service';
-import type { ProductDto } from '../../../src/services/app/product-service';
 
 export const BAKERY_PEPPOL_ID = '0208:0705969661';
 export const ATELIER_PEPPOL_ID = '0208:0123456789';
@@ -127,12 +126,4 @@ export const partners: PartnerDto[] = [
     customer: true,
     supplier: false,
   },
-];
-
-export const products: ProductDto[] = [
-  { id: 1, name: 'Desembrood volkoren', reference: 'BR-001', barcode: '5410000000011', costPrice: 1.1, salePrice: 3.6, taxPercentage: 6, stockQuantity: 40, categoryId: 1 },
-  { id: 2, name: 'Croissant roomboter', reference: 'PA-014', costPrice: 0.35, salePrice: 1.45, taxPercentage: 6, stockQuantity: 120, categoryId: 2 },
-  { id: 3, name: 'Taart van de week (12 personen)', description: 'Wisselend seizoensfruit op frangipane', reference: 'PA-090', costPrice: 9.8, salePrice: 32, taxPercentage: 6, categoryId: 2 },
-  { id: 4, name: 'Broodjeslunch per persoon', description: 'Drie belegde broodjes, soep en fruit', reference: 'CA-200', salePrice: 14.5, taxPercentage: 12, categoryId: 4 },
-  { id: 5, name: 'Levering en opstelling', reference: 'SRV-01', salePrice: 45, taxPercentage: 21 },
 ];
