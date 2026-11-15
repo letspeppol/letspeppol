@@ -172,7 +172,7 @@ services:
       target: storybook
     image: lp-storybook:latest
     ports:
-      - "${STORYBOOK_PORT:-6006}:80"
+      - "${STORYBOOK_PORT:-3002}:80"
 
 volumes:
   db-data:

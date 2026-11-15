@@ -76,7 +76,7 @@ docker compose up -d --build
 | What | Where |
 | --- | --- |
 | Application | http://localhost:3001 |
-| Design system | http://localhost:6006 |
+| Design system | http://localhost:3002 |
 | API docs | http://localhost:3001/api-docs.html |
 | Mail sent by the application | http://localhost:8025 |
 | Adminer | http://localhost:8081 |

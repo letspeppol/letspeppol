@@ -25,7 +25,7 @@ The dev server proxies `/kyc`, `/app` and `/proxy` to the services on ports `808
 * `npm run storybook` to browse the design system on port `6006`
 
 ## Design system
-`npm run storybook` serves the catalogue of every token, shared style and component on port `6006`; the local Docker stack serves the same catalogue. Each sidebar entry is one page.
+`npm run storybook` serves the catalogue of every token, shared style and component on port `6006`; the local Docker stack serves the same catalogue on port `3002`. Each sidebar entry is one page.
 
 Reviewers leave feedback with the **Give feedback** button, which opens a GitHub issue titled `Design feedback: <page>: ...`. List what is open with `gh issue list --search 'in:title "Design feedback"'` and close each issue with the change or the decision. Once nothing is open, the catalogue becomes the design document served by the application next to the API docs.
 
