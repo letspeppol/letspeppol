@@ -1,6 +1,6 @@
 const config = {
   stories: ['../stories/**/*.mdx', '../stories/**/*.stories.ts'],
-  addons: ['@storybook/addon-docs', '@storybook/addon-a11y'],
+  addons: ['@storybook/addon-docs'],
   framework: {
     name: '@aurelia/storybook',
     options: {},
@@ -18,6 +18,13 @@ const config = {
   staticDirs: ['../public'],
   features: {
     sidebarOnboardingChecklist: false,
+    actions: false,
+    backgrounds: false,
+    changeDetection: false,
+    controls: false,
+    interactions: false,
+    measure: false,
+    outline: false,
   },
   docs: {
     defaultName: 'Overview',

@@ -24,7 +24,6 @@
     "@aurelia/storybook": "^2.3.0",
     "@aurelia/testing": "^2.0.0-rc.1",
     "@aurelia/vite-plugin": "^2.0.0-rc.1",
-    "@storybook/addon-a11y": "~10.4.6",
     "@storybook/addon-docs": "~10.4.6",
     "@storybook/builder-vite": "~10.4.6",
     "@types/node": "^22.10.2",

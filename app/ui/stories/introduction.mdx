@@ -1,6 +1,6 @@
 import { Meta } from '@storybook/addon-docs/blocks';
 
-<Meta title="Introduction" />
+<Meta title="Introduction" tags={['dev']} />
 
 # Let’s Peppol design system
 
@@ -26,29 +26,44 @@ interface should behave before anyone writes a ticket.
   </table>
 </div>
 
-Every component has an **Overview** page with its guideline text and all its states side by side.
+Every entry in the sidebar is one page: the guideline text for a component followed by all its states. Phone and tablet
+states are shown at their real width.
 
-## The toolbar
+## Reviewing
 
-- **Theme**: light or dark. Both themes are first-class; review both.
-- **Language**: English, Nederlands, Français, Deutsch. German and French are the stress test for long labels.
-- **Viewport**: small phone 360, phone 390, phone landscape 844×390, tablet portrait 820, tablet landscape 1180,
-  desktop 1440. Layouts switch at the same breakpoints as the app.
-- **Accessibility** panel (bottom): automated axe checks for the story on screen.
+Go through the pages top to bottom. Switch **Theme** and **Language** in the toolbar: both themes are first-class, and
+German and French are the stress test for long labels. Start with **Open questions**, where a decision is needed.
 
-## Discussing a design
+## Giving feedback
 
-1. Open the story, set theme, language and viewport, and copy the URL from the address bar. The link keeps those settings.
-2. Say what you see and what you expect, with the rule from **Foundations** it touches (or that is missing).
-3. Proposals become a new story next to the existing one, so both can be compared before the component changes.
+1. Open the page the feedback is about.
+2. Press **Give feedback** in the toolbar. It opens a GitHub issue with the page, link, theme and language filled in.
+3. Finish the title, say what you see and what you expect, and submit.
+
+**Feedback on this page** lists what is already open for the page, so you can add to an existing issue instead of
+opening a second one. [All open design feedback](https://github.com/letspeppol/letspeppol/issues?q=is%3Aissue+is%3Aopen+in%3Atitle+%22Design+feedback%22)
+is the list for the whole catalogue.
+
+## What happens with feedback
+
+Each issue is closed with either a change to the interface or a decision written into the page it is about. When no
+design feedback is open any more, this catalogue is turned into the design document of the application, served next to
+the API docs.
 
 ## Running it
 
 ```sh
-cd app/ui
-npm run storybook        # http://localhost:6006
-npm run build-storybook  # static site in storybook-static/, can be hosted anywhere
+cd docker/local
+docker compose up -d --build   # http://localhost:6006, next to the application on http://localhost:3001
 ```
 
-Stories live in `app/ui/stories`. Components with injected services get fake services from
-`stories/support/mocks`, so no backend, database or login is needed.
+or, without Docker:
+
+```sh
+cd app/ui
+npm install
+npm run storybook              # http://localhost:6006
+```
+
+Pages live in `app/ui/stories`. Components with injected services get fake services from `stories/support/mocks`, so no
+backend, database or login is needed.

@@ -21,6 +21,11 @@ import { DesignSystemElements } from '../stories/support/elements';
 
 type Theme = 'light' | 'dark';
 type Locale = 'en' | 'nl' | 'fr' | 'de';
+type Globals = { theme?: Theme; locale?: Locale; viewport?: { value?: string } };
+
+const THEME_KEY = 'peppol.theme.v1';
+const LOCALE_KEY = 'locale';
+const embeddedInDocs = !!window.frameElement && window.frameElement.id !== 'storybook-preview-iframe';
 
 const mountedTranslators = new Set<I18N>();
 
@@ -32,12 +37,12 @@ document.addEventListener('submit', (event) => {
 });
 
 function applyTheme(theme: Theme) {
-  localStorage.setItem('peppol.theme.v1', theme);
+  localStorage.setItem(THEME_KEY, theme);
   document.documentElement.setAttribute('data-theme', theme);
 }
 
 function applyLocale(locale: Locale) {
-  localStorage.setItem('locale', locale);
+  localStorage.setItem(LOCALE_KEY, locale);
   document.documentElement.lang = locale;
   for (const i18n of mountedTranslators) {
     if (i18n.getLocale() !== locale) {
@@ -55,10 +60,46 @@ const viewports = {
   desktop: { name: 'Desktop 1440', styles: { width: '1440px', height: '900px' }, type: 'desktop' },
 };
 
+function storedTheme(): Theme {
+  return (localStorage.getItem(THEME_KEY) as Theme | null) ?? 'light';
+}
+
+function storedLocale(): Locale {
+  return (localStorage.getItem(LOCALE_KEY) as Locale | null) ?? 'en';
+}
+
+function currentTheme(globals: Globals): Theme {
+  return embeddedInDocs ? storedTheme() : (globals.theme ?? 'light');
+}
+
+function currentLocale(globals: Globals): Locale {
+  return embeddedInDocs ? storedLocale() : (globals.locale ?? 'en');
+}
+
+function applyGlobals(globals: Globals) {
+  applyTheme(currentTheme(globals));
+  applyLocale(currentLocale(globals));
+}
+
+function fitDocsFrameToViewport(viewport?: { value?: string }) {
+  const width = viewports[viewport?.value as keyof typeof viewports]?.styles.width;
+  if (!embeddedInDocs || !width) {
+    return;
+  }
+  const frame = window.frameElement as HTMLElement;
+  frame.style.width = width;
+  frame.style.maxWidth = '100%';
+}
+
+window.addEventListener('storage', () => {
+  applyTheme(storedTheme());
+  applyLocale(storedLocale());
+});
+
 const preview = {
   render,
   renderToCanvas,
-  tags: ['autodocs'],
+  tags: ['autodocs', '!dev'],
   globalTypes: {
     theme: {
       description: 'Colour theme',
@@ -92,9 +133,9 @@ const preview = {
     locale: 'en',
   },
   decorators: [
-    (storyFn: () => unknown, context: { globals: { theme?: Theme; locale?: Locale } }) => {
-      applyTheme(context.globals.theme ?? 'light');
-      applyLocale(context.globals.locale ?? 'en');
+    (storyFn: () => unknown, context: { globals: Globals }) => {
+      applyGlobals(context.globals);
+      fitDocsFrameToViewport(context.globals.viewport);
       return storyFn();
     },
   ],
@@ -128,9 +169,6 @@ const preview = {
         ],
       },
     },
-    a11y: {
-      test: 'todo',
-    },
     aurelia: {
       register: [
         DateFormatConverter,
@@ -148,11 +186,11 @@ const preview = {
           mountedTranslators.delete(i18n);
         }),
       ],
-      configureContainer: (container: IContainer, context: { globals: { locale?: Locale } }) => {
+      configureContainer: (container: IContainer, context: { globals: Globals }) => {
         container.register(
           I18nConfiguration.customize((options) => {
             options.initOptions = {
-              lng: context.globals.locale ?? 'en',
+              lng: currentLocale(context.globals),
               fallbackLng: 'en',
               resources: {
                 nl: { translation: nl },

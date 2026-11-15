@@ -1,5 +1,7 @@
 import { addons } from 'storybook/manager-api';
 import { create } from 'storybook/theming';
+import './feedback';
+import './toolbar-storage';
 
 addons.setConfig({
   theme: create({
@@ -19,6 +21,8 @@ addons.setConfig({
     barSelectedColor: '#2C3C69',
     fontBase: '"Instrument Sans", system-ui, sans-serif',
   }),
+  bottomPanelHeight: 0,
+  rightPanelWidth: 0,
   sidebar: {
     showRoots: true,
   },

@@ -8,7 +8,7 @@ const meta: Meta = {
       description: {
         component:
           'Breakpoints are written in range notation (stylelint enforces it) and the shared responsive mechanics live once in `lets-peppol.css`. ' +
-          'Use the Viewport toolbar to switch between the six reference sizes; the indicator below shows which media queries match right now. ' +
+          'Resize the window to pass the reference sizes; the indicator below shows which media queries match right now. ' +
           'Everything is left-aligned and numbers are right-aligned; only empty states and the bottom bar are centred.',
       },
     },
@@ -20,7 +20,7 @@ export default meta;
 export const Breakpoints: Story = {
   render: template(`
     <div class="ds-page">
-      <ds-section heading="Live breakpoints" lead="Change the viewport in the toolbar and watch which queries match.">
+      <ds-section heading="Live breakpoints" lead="Resize the window and watch which queries match.">
         <ds-breakpoints></ds-breakpoints>
       </ds-section>
       <ds-section heading="What changes where">

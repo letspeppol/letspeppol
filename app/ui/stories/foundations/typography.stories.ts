@@ -20,7 +20,7 @@ export default meta;
 export const Scale: Story = {
   render: template(`
     <div class="ds-page">
-      <ds-section heading="Type scale" lead="Resize to a phone viewport to see the display and page title step down.">
+      <ds-section heading="Type scale" lead="Narrow the window to phone width to see the display and page title step down.">
         <div class="card">
           <div class="ds-specimen">
             <div class="ds-specimen-meta"><strong>Display</strong><span>2rem / 1.15 / 700</span><span>.display, ledger totals, wizard titles</span></div>
