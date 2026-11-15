@@ -2,7 +2,6 @@ import type { CompanyDto } from '../../../src/services/app/company-service';
 import type { OwnershipSummary } from '../../../src/services/app/ownership-service';
 import type { PartnerDto } from '../../../src/services/app/partner-service';
 import type { ProductDto } from '../../../src/services/app/product-service';
-import type { ProductCategoryDto } from '../../../src/services/app/product-category-service';
 
 export const BAKERY_PEPPOL_ID = '0208:0705969661';
 export const ATELIER_PEPPOL_ID = '0208:0123456789';
@@ -128,12 +127,6 @@ export const partners: PartnerDto[] = [
     customer: true,
     supplier: false,
   },
-];
-
-export const productCategories: ProductCategoryDto[] = [
-  { id: 1, name: 'Brood', color: '#c97b2a' },
-  { id: 2, name: 'Patisserie', color: '#b0477c' },
-  { id: 3, name: 'Catering', color: '#2f7d6d', children: [{ id: 4, name: 'Broodjes', color: '#4f9d8c', parentId: 3 }] },
 ];
 
 export const products: ProductDto[] = [

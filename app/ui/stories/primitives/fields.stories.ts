@@ -116,6 +116,7 @@ export const Rules: Story = {
       <ds-rule kind="do">Label every control with visible text. Placeholders show an example, never the label.</ds-rule>
       <ds-rule kind="do">Say what went wrong and what to do next: “This IBAN is one digit short. Check the number on your bank statement.”</ds-rule>
       <ds-rule kind="dont">End labels with a colon, or write them in capitals.</ds-rule>
+      <ds-rule kind="do">Show the same form, read-only and without a save action, to a person who may not edit it, so they can still look things up.</ds-rule>
       <ds-rule kind="dont">Disable a field to show a value; make it read-only so it stays selectable and readable.</ds-rule>
     </div>
   `),

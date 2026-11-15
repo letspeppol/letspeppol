@@ -100,6 +100,8 @@ export const Rules: Story = {
       <ds-rule kind="do">Set <code>data-label</code> through i18n (<code>t="[data-label]invoice.table.doc"</code>) so phone cards are translated.</ds-rule>
       <ds-rule kind="do">Mark the identifying cell <code>data-primary</code>; it becomes the card title on phones.</ds-rule>
       <ds-rule kind="do">Mark low-priority columns <code>.tablet-hide</code> on both the head and the cells.</ds-rule>
+      <ds-rule kind="do">Page a list at twenty rows and show the pager only when there is more than one page.</ds-rule>
+      <ds-rule kind="do">Leave out the action column and the “New” button for a person who may not change the list; never show them disabled.</ds-rule>
       <ds-rule kind="dont">Hide the status or actions column at any width.</ds-rule>
     </div>
   `),

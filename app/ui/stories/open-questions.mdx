@@ -34,28 +34,28 @@ Counts are from `src/` on 5 November 2026.
 
 ## Bugs found in screens and components
 
-Seen while writing the stories; each one is visible in the story named after it. These are bugs in `src`, not in the catalogue.
+Seen while building this catalogue. These are bugs in `src`, not in the catalogue.
 
 <div className="card table-card" style={{ margin: '1rem 0 2rem' }}>
   <table className="data-table">
-    <thead><tr><th>Where</th><th>What</th><th>Story</th></tr></thead>
+    <thead><tr><th>Where</th><th>What</th><th>Where to see it</th></tr></thead>
     <tbody>
-      <tr><td>Products, Downloads</td><td>Tables have no <code>.tablet-hide</code> columns, so between 768 and 1023px stock, dates and the actions scroll out of view.</td><td>Screens/Products/Overview, Tablet portrait</td></tr>
-      <tr><td>Partners, Products</td><td>Barcodes and email addresses break mid-word at tablet width.</td><td>Screens/Partners/Overview, Tablet portrait</td></tr>
-      <tr><td>Phone row cards</td><td>Empty cells keep their label with nothing next to it; <code>.num</code> values zig-zag to the right; a lone delete icon gets a row of its own.</td><td>Screens/Partners/Overview, Phone, stacked cards</td></tr>
-      <tr><td>Loading states</td><td>Loading looks like data: the dashboard shows zeroes, partners shows the first-use invitation, the products “All” badge is an empty pill, and a failed downloads load looks like an empty list.</td><td>Screens/Dashboard, Loading</td></tr>
-      <tr><td>Dashboard</td><td>The no-access message is centred inside a 65ch box pinned to the left.</td><td>Screens/Dashboard, User without invoice access</td></tr>
-      <tr><td>App shell</td><td>The “not registered on Peppol” banner is a centred 700px box above a left-aligned page.</td><td>Screens/Dashboard, Company not active on Peppol</td></tr>
-      <tr><td>Account</td><td>A long passkey name pushes the page 186px wider than a phone; the ellipsis never applies because <code>passkey-manager</code> keeps its default min-width.</td><td>Screens/Account, Phone</td></tr>
-      <tr><td>Partner edit, Company settings</td><td>No house-number field, although the DTO has <code>houseNumber</code>: “Guido Gezellelaan 49” edits as “Guido Gezellelaan”.</td><td>Screens/Partners/Edit, Existing partner</td></tr>
-      <tr><td>Company search</td><td>Renders “Lindenlaan 1 , 9940” (space before the comma) when the registry returns no house number.</td><td>Screens/Partners/Edit, Company register lookup</td></tr>
-      <tr><td>Read-only forms</td><td>In read-only fieldsets, selects, switches and the search button keep their enabled look; in dark mode disabled inputs look editable.</td><td>Screens/Settings, User without company settings permission</td></tr>
-      <tr><td>Product category modal</td><td>A new category starts with an undefined colour: black swatch and a console warning.</td><td>Screens/Products/Overview, New category dialog</td></tr>
-      <tr><td>Modals</td><td>The category and confirmation modals don’t move focus into the dialog, against the focus-trap rule.</td><td>Screens/Partners/Overview, Delete confirmation</td></tr>
-      <tr><td>Partner edit</td><td>A Peppol ID without its scheme only disables Save; nothing says why.</td><td>Screens/Partners/Edit, Peppol ID without scheme</td></tr>
-      <tr><td>Users</td><td>An empty users list renders an empty card with no message.</td><td>Not in a story; only if the API returns no users</td></tr>
-      <tr><td>Sign in, Reset, Invitation</td><td>The primary button is full width on sign-in but auto width on reset password and invitation.</td><td>Screens/Sign in</td></tr>
-      <tr><td>Account</td><td>“Last used Never” capitalises a word mid-sentence.</td><td>Screens/Account, Passkeys added, two-factor off</td></tr>
+      <tr><td>Products, Downloads</td><td>Tables have no <code>.tablet-hide</code> columns, so between 768 and 1023px stock, dates and the actions scroll out of view.</td><td>Products, at tablet width</td></tr>
+      <tr><td>Partners, Products</td><td>Barcodes and email addresses break mid-word at tablet width.</td><td>Partners, at tablet width</td></tr>
+      <tr><td>Phone row cards</td><td>Empty cells keep their label with nothing next to it; <code>.num</code> values zig-zag to the right; a lone delete icon gets a row of its own.</td><td>Partners, on a phone</td></tr>
+      <tr><td>Loading states</td><td>Loading looks like data: the dashboard shows zeroes, partners shows the first-use invitation, the products “All” badge is an empty pill, and a failed downloads load looks like an empty list.</td><td>Dashboard, while it loads</td></tr>
+      <tr><td>Dashboard</td><td>The no-access message is centred inside a 65ch box pinned to the left.</td><td>Dashboard, as a user without invoice access</td></tr>
+      <tr><td>App shell</td><td>The “not registered on Peppol” banner is a centred 700px box above a left-aligned page.</td><td>Any page, for a company not active on Peppol</td></tr>
+      <tr><td>Account</td><td>A long passkey name pushes the page 186px wider than a phone; the ellipsis never applies because <code>passkey-manager</code> keeps its default min-width.</td><td>Account, on a phone</td></tr>
+      <tr><td>Partner edit, Company settings</td><td>No house-number field, although the DTO has <code>houseNumber</code>: “Guido Gezellelaan 49” edits as “Guido Gezellelaan”.</td><td>Partners, editing a partner</td></tr>
+      <tr><td>Company search</td><td>Renders “Lindenlaan 1 , 9940” (space before the comma) when the registry returns no house number.</td><td>Partners, company register lookup</td></tr>
+      <tr><td>Read-only forms</td><td>In read-only fieldsets, selects, switches and the search button keep their enabled look; in dark mode disabled inputs look editable.</td><td>Settings, as a user without the company settings permission</td></tr>
+      <tr><td>Product category modal</td><td>A new category starts with an undefined colour: black swatch and a console warning.</td><td>Products, New category</td></tr>
+      <tr><td>Modals</td><td>The category and confirmation modals don’t move focus into the dialog, against the focus-trap rule.</td><td>Products, New category; Components/Confirmation modal</td></tr>
+      <tr><td>Partner edit</td><td>A Peppol ID without its scheme only disables Save; nothing says why.</td><td>Partners, a Peppol ID typed without 0208:</td></tr>
+      <tr><td>Users</td><td>An empty users list renders an empty card with no message.</td><td>Users, only if the API returns no users</td></tr>
+      <tr><td>Sign in, Reset, Invitation</td><td>The primary button is full width on sign-in but auto width on reset password and invitation.</td><td>Sign in, reset password, invitation</td></tr>
+      <tr><td>Account</td><td>“Last used Never” capitalises a word mid-sentence.</td><td>Account, passkey list</td></tr>
       <tr><td>New-feature marker</td><td><code>.rainbow-border</code> sets <code>border-radius: inherit</code> and loads after the global sheet, so a marked card or button loses its 6px corners.</td><td>Components/New feature marker</td></tr>
       <tr><td>New-feature marker</td><td>When items fold away (into More on phones, into the account menu when the desktop band collapses), their “New” markers go with them and the More/account button carries none, so they’re never seen.</td><td>Components/App band, Account menu open</td></tr>
       <tr><td>Confirmation modal</td><td>Focus stays on the page when it opens: Escape and Enter do nothing until the person tabs in, and there is no focus trap.</td><td>Components/Confirmation modal</td></tr>
@@ -79,13 +79,13 @@ Seen while writing the stories; each one is visible in the story named after it.
       <tr><td>Line items</td><td>Between 768 and 1023px with discounts per line on, the 58rem minimum is too small: number, unit price and VAT shrink to about 40px and the pinned name column covers the description.</td><td>Invoice editor/Line items, Tablet portrait</td></tr>
       <tr><td>Customer and product search</td><td>“No matches” can never appear because the list hides when there are no results; customer suggestions inherit the muted label colour and read as disabled.</td><td>Invoice editor/Customer search, Matches while typing</td></tr>
       <tr><td>Payment tile</td><td>Payment method names (“Credit Transfer”, “In Cash”) come from <code>InvoiceComposer.paymentMeansCodes</code> and stay English in every language.</td><td>Invoice editor/Tiles/Payment</td></tr>
-      <tr><td>Credit notes</td><td>The editor still titles the lines “Invoice lines”.</td><td>Screens/Invoices/Editor, Credit note draft</td></tr>
+      <tr><td>Credit notes</td><td>The editor still titles the lines “Invoice lines”.</td><td>Invoices, a credit note draft</td></tr>
       <tr><td>Read-only lines</td><td>Unit prices show unformatted (“21,4”) next to totals formatted as money.</td><td>Invoice editor/Line items, Read-only</td></tr>
-      <tr><td>Discounts tile</td><td>The empty “Discounts and costs” tile, with its New marker, still shows on sent and received documents that have none.</td><td>Screens/Invoices/Editor, Sent invoice</td></tr>
+      <tr><td>Discounts tile</td><td>The empty “Discounts and costs” tile, with its New marker, still shows on sent and received documents that have none.</td><td>Invoices, a sent invoice</td></tr>
       <tr><td>Delivery stamp</td><td>A long rejection reason grows the rotated stamp to six or more lines of large text.</td><td>Invoice editor/Modals/Delivery proof, Rejected by the receiver</td></tr>
-      <tr><td>New invoice</td><td>Order reference shows “NA”.</td><td>Screens/Invoices/Editor, New invoice being filled in</td></tr>
+      <tr><td>New invoice</td><td>Order reference shows “NA”.</td><td>Invoices, a new invoice</td></tr>
       <tr><td>Number modal</td><td>Placeholders are fixed to 2025 (“INV-2025-0001”); the first-ever suggestion is “INV-20260001” without the separator.</td><td>Invoice editor/Modals/Number, First invoice ever</td></tr>
-      <tr><td>Overview</td><td>The Drafts badge shows “0” while drafts are still loading.</td><td>Screens/Invoices/Overview, Loading</td></tr>
+      <tr><td>Overview</td><td>The Drafts badge shows “0” while drafts are still loading.</td><td>Invoices, while the list loads</td></tr>
       <tr><td>Editor CSS</td><td>Product search borrows its dropdown from <code>customer-search.css</code>, line items borrow from <code>allowance-charge-info.css</code>, tiles need <code>invoice-edit.css</code>: each piece only looks right when the whole editor is loaded.</td><td>Invoice editor/Tiles</td></tr>
     </tbody>
   </table>
