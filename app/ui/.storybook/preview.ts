@@ -96,10 +96,54 @@ window.addEventListener('storage', () => {
   applyLocale(storedLocale());
 });
 
+let interactionFinished = false;
+let lastOwnInput = 0;
+let releaseFocusTurn: (() => void) | undefined;
+
+function waitForFocusTurn(): Promise<() => void> {
+  return new Promise((granted) => {
+    void navigator.locks.request(
+      'letspeppol-docs-focus',
+      () =>
+        new Promise<void>((release) => {
+          granted(release);
+          setTimeout(release, 8000);
+        }),
+    );
+  });
+}
+
+if (embeddedInDocs) {
+  const noteOwnInput = (event: Event) => {
+    if (event.isTrusted) {
+      lastOwnInput = performance.now();
+    }
+  };
+  const keepStateWhenAnotherFrameTakesFocus = (event: Event) => {
+    if (interactionFinished && performance.now() - lastOwnInput > 1000) {
+      event.stopImmediatePropagation();
+    }
+  };
+  window.addEventListener('pointerdown', noteOwnInput, true);
+  window.addEventListener('keydown', noteOwnInput, true);
+  window.addEventListener('blur', keepStateWhenAnotherFrameTakesFocus, true);
+  window.addEventListener('focusout', keepStateWhenAnotherFrameTakesFocus, true);
+}
+
 const preview = {
   render,
   renderToCanvas,
   tags: ['autodocs', '!dev'],
+  beforeEach: async () => {
+    interactionFinished = false;
+    if (embeddedInDocs && navigator.locks) {
+      releaseFocusTurn = await waitForFocusTurn();
+    }
+  },
+  afterEach: () => {
+    interactionFinished = true;
+    releaseFocusTurn?.();
+  },
   globalTypes: {
     theme: {
       description: 'Colour theme',
