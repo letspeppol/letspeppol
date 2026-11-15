@@ -165,5 +165,14 @@ services:
     ports:
       - "${UI_PORT:-3001}:80"
 
+  storybook:
+    build:
+      context: ../../app/ui
+      dockerfile: Dockerfile
+      target: storybook
+    image: lp-storybook:latest
+    ports:
+      - "${STORYBOOK_PORT:-6006}:80"
+
 volumes:
   db-data:

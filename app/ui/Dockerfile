@@ -9,6 +9,15 @@ COPY . .
 FROM source AS build
 RUN npm run build
 
+FROM source AS storybook-build
+RUN npm run build-storybook
+
+FROM nginx:1.27-alpine AS storybook
+RUN rm -rf /usr/share/nginx/html/*
+COPY --from=storybook-build /app/storybook-static /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+
 FROM nginx:1.27-alpine AS runtime
 
 RUN rm -rf /usr/share/nginx/html/*
