@@ -22,6 +22,7 @@ import org.letspeppol.proxy.dto.recommand.SendDocumentResponse;
 import org.letspeppol.proxy.dto.recommand.VerifyCompanyResponse;
 import org.letspeppol.proxy.exception.NotFoundException;
 import org.letspeppol.proxy.exception.SendAuthorizationException;
+import org.letspeppol.proxy.exception.SendDocumentException;
 import org.letspeppol.proxy.model.AccessPoint;
 import org.letspeppol.proxy.model.Registry;
 import org.letspeppol.proxy.model.UblDocument;
@@ -325,7 +326,7 @@ public class RecommandService implements AccessPointServiceInterface {
 
     /// Recommand API: POST /api/v1/{companyId}/send
     @Override
-    @Transactional(noRollbackFor = SendAuthorizationException.class)
+    @Transactional(noRollbackFor = {SendAuthorizationException.class, SendDocumentException.class})
     public String sendDocument(UblDocument ublDocument) {
         RecommandVariables variables = variablesFor(ublDocument.getOwnerPeppolId());
         parsePeppolId(ublDocument.getPartnerPeppolId());
@@ -352,6 +353,9 @@ public class RecommandService implements AccessPointServiceInterface {
         } catch (WebClientResponseException e) {
             if (e.getStatusCode().value() == 401) {
                 throw new SendAuthorizationException(companyMissing(variables.companyId()), e);
+            }
+            if (e.getStatusCode().value() == 422) {
+                throw new SendDocumentException("Recommand send failed (HTTP 422): " + e.getResponseBodyAsString(), e);
             }
             throw apiFailure("send document", e);
         } catch (Exception e) {
