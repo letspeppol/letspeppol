@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.letspeppol.proxy.exception.SendAuthorizationException;
 import org.letspeppol.proxy.exception.SendDocumentException;
 import org.letspeppol.proxy.dto.PeppolSettings;
@@ -449,7 +450,7 @@ class RecommandServiceTest {
         when(registryRepository.findById("0208:0685912734")).thenReturn(Optional.of(new Registry(
                 "0208:0685912734", AccessPoint.RECOMMAND, Map.of("companyId", "company-1"))));
         respond(422, """
-                {"success":false,"errors":{"root":["Recipient 0208:0668377312 is not registered"]},
+                {"success":false,"errors":{"root":["Failed to send document over Peppol network. Recipient 0208:0668377312 is not registered on the Peppol network."]},
                  "deliveryFailure":{"channel":"peppol","category":"recipient_not_found"}}
                 """);
         UblDocument document = new UblDocument();
@@ -459,15 +460,27 @@ class RecommandServiceTest {
 
         assertThatThrownBy(() -> service.sendDocument(document))
                 .isInstanceOf(SendDocumentException.class)
-                .hasMessageContaining("HTTP 422", "0208:0668377312", "not registered");
+                .hasMessage("Failed to send document over Peppol network. Recipient 0208:0668377312 is not registered on the Peppol network.");
         assertThat(requests).hasSize(1);
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"{}", "not json", "null",
-            "{\"deliveryFailure\":{\"channel\":\"email\",\"category\":\"recipient_not_found\"}}",
-            "{\"deliveryFailure\":{\"channel\":\"peppol\",\"category\":\"other\"}}"})
-    void sendErrorHandlingDoesNotDependOnResponseFormat(String body) {
+    @CsvSource(delimiter = '|', value = {
+            "{}|{}",
+            "not json|not json",
+            "null|null",
+            "''|''",
+            "{\"errors\":null}|{\"errors\":null}",
+            "{\"errors\":{\"root\":[]}}|{\"root\":[]}",
+            "{\"errors\":{\"root\":[null,\" \"]}}|{\"root\":[null,\" \"]}",
+            "{\"errors\":{\"document\":[\"Invalid XML\"]}}|{\"document\":[\"Invalid XML\"]}",
+            "{\"deliveryFailure\":{\"channel\":\"email\",\"category\":\"recipient_not_found\"}}|{\"deliveryFailure\":{\"channel\":\"email\",\"category\":\"recipient_not_found\"}}",
+            "{\"deliveryFailure\":{\"channel\":\"peppol\",\"category\":\"recipient_not_found\"}}|recipient_not_found",
+            "{\"errors\":{\"document\":[\"Invalid XML\"]},\"deliveryFailure\":{\"channel\":\"peppol\",\"category\":\"recipient_not_found\"}}|recipient_not_found",
+            "{\"errors\":{\"document\":[\"Invalid XML\"]},\"deliveryFailure\":{\"channel\":\"email\",\"category\":\"recipient_not_found\"}}|{\"document\":[\"Invalid XML\"]}",
+            "{\"errors\":{},\"deliveryFailure\":{\"channel\":\"peppol\",\"category\":\"\"}}|{}"
+    })
+    void usesSendErrorFallbacksInPriorityOrder(String body, String expectedMessage) {
         when(registryRepository.findById("0208:0685912734")).thenReturn(Optional.of(new Registry(
                 "0208:0685912734", AccessPoint.RECOMMAND, Map.of("companyId", "company-1"))));
         respond(422, body);
@@ -478,7 +491,27 @@ class RecommandServiceTest {
 
         assertThatThrownBy(() -> service.sendDocument(document))
                 .isInstanceOf(SendDocumentException.class)
-                .hasMessageContaining("HTTP 422", body);
+                .hasMessage(expectedMessage);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "{\"errors\":{\"root\":[\"First error.\",\"Second error.\"]}}",
+            "{\"errors\":{\"root\":[null,\"First error.\",\" \",\"Second error.\"]}}",
+            "{\"errors\":{\"root\":\"First error. Second error.\"}}"
+    })
+    void usesOnlyRootErrorMessagesForRejectedSends(String body) {
+        when(registryRepository.findById("0208:0685912734")).thenReturn(Optional.of(new Registry(
+                "0208:0685912734", AccessPoint.RECOMMAND, Map.of("companyId", "company-1"))));
+        respond(422, body);
+        UblDocument document = new UblDocument();
+        document.setOwnerPeppolId("0208:0685912734");
+        document.setPartnerPeppolId("0208:0668377312");
+        document.setUbl("<Invoice/>");
+
+        assertThatThrownBy(() -> service.sendDocument(document))
+                .isInstanceOf(SendDocumentException.class)
+                .hasMessage("First error. Second error.");
     }
 
     @Test
