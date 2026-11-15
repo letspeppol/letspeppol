@@ -33,11 +33,12 @@ export default defineConfig({
             proxyReq.removeHeader('origin');
             proxyReq.removeHeader('referer');
             proxyReq.setHeader('X-Forwarded-Prefix', '/kyc');
+            const forwardedHost = req.headers['x-forwarded-host'];
+            proxyReq.setHeader('X-Forwarded-Host', forwardedHost || req.headers.host);
             proxyReq.setHeader(
-                'X-Forwarded-Host',
-                req.headers['x-forwarded-host'] || 'letspeppol.httpsonlan.com:3001'
+                'X-Forwarded-Proto',
+                req.headers['x-forwarded-proto'] || (forwardedHost ? 'https' : 'http')
             );
-            proxyReq.setHeader('X-Forwarded-Proto', 'https');
           });
         },
       },
