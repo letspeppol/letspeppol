@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.letspeppol.proxy.exception.SendAuthorizationException;
+import org.letspeppol.proxy.exception.SendDocumentException;
 import org.letspeppol.proxy.dto.PeppolSettings;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -388,12 +389,19 @@ class RecommandServiceTest {
                 org.assertj.core.groups.Tuple.tuple("GET", "/api/v1/companies/company-1"));
     }
 
-    @Test
-    void authorizationFailureDoesNotRollBackTheSchedulersTransaction() throws Exception {
+    @ParameterizedTest
+    @ValueSource(ints = {401, 422, 400, 500, 503})
+    void onlyHandledSendFailuresAllowTheSchedulersTransactionToCommit(int httpStatus) throws Exception {
         when(registryRepository.findById("0208:0685912734")).thenReturn(Optional.of(new Registry(
                 "0208:0685912734", AccessPoint.RECOMMAND, Map.of("companyId", "company-1"))));
-        respond(401, "{}");
-        respond(404, "{}");
+        if (httpStatus == 401) {
+            respond(401, "{}");
+            respond(404, "{}");
+        } else {
+            respond(httpStatus, """
+                    {"success":false,"deliveryFailure":{"channel":"peppol","category":"recipient_not_found"}}
+                    """);
+        }
         UblDocument document = new UblDocument();
         document.setOwnerPeppolId("0208:0685912734");
         document.setPartnerPeppolId("0208:0123456789");
@@ -412,14 +420,65 @@ class RecommandServiceTest {
         factory.addAdvice(interceptor);
         RecommandService transactionalService = (RecommandService) factory.getProxy();
 
-        new TransactionTemplate(transactions).executeWithoutResult(status -> {
-            assertThatThrownBy(() -> transactionalService.sendDocument(document))
-                    .isInstanceOf(SendAuthorizationException.class);
-            assertThat(status.isRollbackOnly()).isFalse();
+        Runnable sendInTransaction = () -> new TransactionTemplate(transactions).executeWithoutResult(status -> {
+            var failure = assertThatThrownBy(() -> transactionalService.sendDocument(document));
+            if (httpStatus == 401) {
+                failure.isInstanceOf(SendAuthorizationException.class);
+            } else if (httpStatus == 422) {
+                failure.isInstanceOf(SendDocumentException.class);
+            } else {
+                failure.isInstanceOf(RuntimeException.class).isNotInstanceOf(SendDocumentException.class);
+            }
+            assertThat(status.isRollbackOnly()).isEqualTo(httpStatus != 401 && httpStatus != 422);
         });
 
-        verify(connection).commit();
-        verify(connection, never()).rollback();
+        if (httpStatus == 401 || httpStatus == 422) {
+            sendInTransaction.run();
+            verify(connection).commit();
+            verify(connection, never()).rollback();
+        } else {
+            assertThatThrownBy(sendInTransaction::run)
+                    .isInstanceOf(org.springframework.transaction.UnexpectedRollbackException.class);
+            verify(connection).rollback();
+            verify(connection, never()).commit();
+        }
+    }
+
+    @Test
+    void preservesSendErrorResponseWithoutLookingUpTheSender() {
+        when(registryRepository.findById("0208:0685912734")).thenReturn(Optional.of(new Registry(
+                "0208:0685912734", AccessPoint.RECOMMAND, Map.of("companyId", "company-1"))));
+        respond(422, """
+                {"success":false,"errors":{"root":["Recipient 0208:0668377312 is not registered"]},
+                 "deliveryFailure":{"channel":"peppol","category":"recipient_not_found"}}
+                """);
+        UblDocument document = new UblDocument();
+        document.setOwnerPeppolId("0208:0685912734");
+        document.setPartnerPeppolId("0208:0668377312");
+        document.setUbl("<Invoice/>");
+
+        assertThatThrownBy(() -> service.sendDocument(document))
+                .isInstanceOf(SendDocumentException.class)
+                .hasMessageContaining("HTTP 422", "0208:0668377312", "not registered");
+        assertThat(requests).hasSize(1);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"{}", "not json", "null",
+            "{\"deliveryFailure\":{\"channel\":\"email\",\"category\":\"recipient_not_found\"}}",
+            "{\"deliveryFailure\":{\"channel\":\"peppol\",\"category\":\"other\"}}"})
+    void sendErrorHandlingDoesNotDependOnResponseFormat(String body) {
+        when(registryRepository.findById("0208:0685912734")).thenReturn(Optional.of(new Registry(
+                "0208:0685912734", AccessPoint.RECOMMAND, Map.of("companyId", "company-1"))));
+        respond(422, body);
+        UblDocument document = new UblDocument();
+        document.setOwnerPeppolId("0208:0685912734");
+        document.setPartnerPeppolId("0208:0668377312");
+        document.setUbl("<Invoice/>");
+
+        assertThatThrownBy(() -> service.sendDocument(document))
+                .isInstanceOf(SendDocumentException.class)
+                .hasMessageContaining("HTTP 422", body);
     }
 
     @Test

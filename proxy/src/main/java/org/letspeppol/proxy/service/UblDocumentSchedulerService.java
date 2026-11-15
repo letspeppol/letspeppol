@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.letspeppol.proxy.dto.StatusReport;
 import org.letspeppol.proxy.exception.SendAuthorizationException;
+import org.letspeppol.proxy.exception.SendDocumentException;
 import org.letspeppol.proxy.model.AccessPoint;
 import org.letspeppol.proxy.model.DocumentDirection;
 import org.letspeppol.proxy.model.UblDocument;
@@ -96,6 +97,13 @@ public class UblDocumentSchedulerService {
             accessPointId = service.sendDocument(ublDocument);
         } catch (SendAuthorizationException e) {
             handleAuthorizationFailure(ublDocument, accessPoint, e.isCompanyMissing());
+            return;
+        } catch (SendDocumentException e) {
+            clearAuthorizationFailures(ublDocument);
+            pickedUp(ublDocument, accessPoint, null);
+            delivered(ublDocument, new StatusReport(false, e.getMessage()));
+            log.warn("PEPPOL_SEND_FAILED document={} accessPoint={} reason={}",
+                    ublDocument.getId(), accessPoint, e.getMessage());
             return;
         }
         if (accessPointId == null) {

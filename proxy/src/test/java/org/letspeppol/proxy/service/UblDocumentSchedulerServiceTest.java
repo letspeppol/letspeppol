@@ -3,6 +3,7 @@ package org.letspeppol.proxy.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.letspeppol.proxy.exception.SendAuthorizationException;
+import org.letspeppol.proxy.exception.SendDocumentException;
 import org.letspeppol.proxy.model.AccessPoint;
 import org.letspeppol.proxy.model.DocumentDirection;
 import org.letspeppol.proxy.model.UblDocument;
@@ -38,6 +39,28 @@ class UblDocumentSchedulerServiceTest {
         when(providers.get(AccessPoint.RECOMMAND)).thenReturn(provider);
         when(documents.findAllByDirectionAndScheduledOnBeforeAndAccessPointIsNull(
                 eq(DocumentDirection.OUTGOING), any(), any())).thenReturn(List.of(document));
+    }
+
+    @Test
+    void sendFailureIsProcessedWithoutChargingAndBatchContinues() {
+        document.setAccessPointDetails(retryDetails(Instant.now().minusSeconds(60), 1));
+        UblDocument other = outgoing("0208:0123456789");
+        when(documents.findAllByDirectionAndScheduledOnBeforeAndAccessPointIsNull(
+                eq(DocumentDirection.OUTGOING), any(), any())).thenReturn(List.of(document, other));
+        when(provider.sendDocument(document)).thenThrow(
+                new SendDocumentException("Provider rejected document: recipient not registered", null));
+        when(provider.sendDocument(other)).thenReturn("accepted-document");
+
+        scheduler.sendDueOutgoing();
+
+        assertThat(document.getProcessedOn()).isNotNull();
+        assertThat(document.getProcessedStatus()).isEqualTo("Provider rejected document: recipient not registered");
+        assertThat(document.getAccessPoint()).isEqualTo(AccessPoint.RECOMMAND);
+        assertThat(document.getAccessPointId()).isNull();
+        assertThat(document.getAccessPointDetails()).isNull();
+        assertThat(other.getAccessPointId()).isEqualTo("accepted-document");
+        assertThat(balance.get()).isEqualTo(-1); // Only the accepted document is charged.
+        verify(registry, never()).markNotRegistered(any(), any());
     }
 
     @Test
