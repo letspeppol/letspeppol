@@ -129,8 +129,9 @@ services:
       DB_PASS: ${KYC_PASS:-kyc}
       ISSUER_URI: ${ISSUER_URI:-http://localhost:${UI_PORT:-3001}/kyc}
       OAUTH2_REDIRECT_URI: ${OAUTH2_REDIRECT_URI:-http://localhost:${UI_PORT:-3001}/callback}
-      JWT_PRIVATE_KEY: ${JWT_PRIVATE_KEY:-classpath:kyc-private.pem}
-      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY:-classpath:kyc-public.pem}
+      JWT_PRIVATE_KEY:
+      JWT_PUBLIC_KEY:
+      JWT_KEY_DIR: /opt/data/kyc/keys
       KYC_AUTH_APP_EXTERNAL_ID: ${KYC_AUTH_APP_EXTERNAL_ID:-b095630d-1bf3-4250-bf9e-2d49e6ce505b}
       KYC_TOKEN_URI: ${KYC_TOKEN_URI:-http://kyc:8084/auth/oauth2/token}
       ENCRYPTION_KEY_1:
