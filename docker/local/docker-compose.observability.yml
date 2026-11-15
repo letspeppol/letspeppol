@@ -1,0 +1,18 @@
+services:
+  proxy:
+    networks:
+      - default
+      - observability
+  app:
+    networks:
+      - default
+      - observability
+  kyc:
+    networks:
+      - default
+      - observability
+
+networks:
+  observability:
+    external: true
+    name: observability

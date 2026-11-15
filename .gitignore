@@ -1,6 +1,7 @@
 .env
 acme.json
 **/var/
+docker/local/opt/
 .DS_store
 .idea
 .run
