@@ -355,7 +355,30 @@ public class RecommandService implements AccessPointServiceInterface {
                 throw new SendAuthorizationException(companyMissing(variables.companyId()), e);
             }
             if (e.getStatusCode().value() == 422) {
-                throw new SendDocumentException("Recommand send failed (HTTP 422): " + e.getResponseBodyAsString(), e);
+                String message = e.getResponseBodyAsString();
+                try {
+                    JsonNode response = objectMapper.readTree(message);
+                    JsonNode errorsNode = response.path("errors");
+                    if (!errorsNode.isMissingNode() && !errorsNode.isNull()) {
+                        message = errorsNode.toString();
+                    }
+                    JsonNode deliveryFailure = response.path("deliveryFailure");
+                    String category = deliveryFailure.path("category").asText("");
+                    if ("peppol".equals(deliveryFailure.path("channel").asText()) && !category.isBlank()) {
+                        message = category;
+                    }
+                    JsonNode root = errorsNode.path("root");
+                    String errors = root.isArray()
+                            ? String.join(" ", objectMapper.convertValue(root, new TypeReference<List<String>>() {})
+                                    .stream().filter(Objects::nonNull).filter(value -> !value.isBlank()).toList())
+                            : root.asText("");
+                    if (!errors.isBlank()) {
+                        message = errors;
+                    }
+                } catch (Exception parseFailure) {
+                    log.debug("Could not read Recommand send error message", parseFailure);
+                }
+                throw new SendDocumentException(message, e);
             }
             throw apiFailure("send document", e);
         } catch (Exception e) {
