@@ -84,3 +84,9 @@ tasks.named('test') {
 tasks.named('bootJar') {
 	archiveFileName = 'app.jar'
 }
+
+tasks.named('bootRun') {
+    if (!System.getenv('SPRING_PROFILES_ACTIVE')) {
+        systemProperty 'spring.profiles.active', 'local'
+    }
+}

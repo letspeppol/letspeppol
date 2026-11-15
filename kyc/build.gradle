@@ -67,3 +67,9 @@ tasks.named('test') {
 tasks.named('bootJar') {
     archiveFileName = 'kyc.jar'
 }
+
+tasks.named('bootRun') {
+    if (!System.getenv('SPRING_PROFILES_ACTIVE')) {
+        systemProperty 'spring.profiles.active', 'local'
+    }
+}
