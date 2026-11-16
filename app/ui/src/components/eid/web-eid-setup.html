@@ -1,0 +1,24 @@
+<template>
+    <div if.bind="issue" class="alert alert--warning warning-box" role="alert">
+        <template if.bind="issue === 'extension'">
+            <p t="web-eid-setup.extension">Web eID is unavailable in this browser. Install or enable its extension.</p>
+            <p if.bind="recommendedStore">
+                <a href.bind="recommendedStore.url" target="_blank" rel="noopener noreferrer">
+                    <span t="web-eid-setup.install">Open the Web eID extension store for</span> ${recommendedStore.name}
+                </a>
+            </p>
+            <template else>
+                <p t="web-eid-setup.choose-browser">Use a desktop browser and choose its Web eID extension:</p>
+                <ul>
+                    <li repeat.for="store of stores"><a href.bind="store.url" target="_blank" rel="noopener noreferrer">${store.name}</a></li>
+                </ul>
+            </template>
+            <p t="web-eid-setup.retry">After installing or enabling the extension, return to this page and try again. If needed, reload the page.</p>
+        </template>
+        <template else>
+            <p t="web-eid-setup.native">The extension cannot reach the desktop eID application. Install or repair it, then restart your browser.</p>
+            <a href="/onboarding" target="_blank" rel="noopener noreferrer" t="web-eid-setup.instructions">Open setup instructions</a>
+        </template>
+        <p if.bind="emailConfirmation" t="web-eid-setup.email-reopen">If you reload or restart, reopen the confirmation link from your email to continue.</p>
+    </div>
+</template>
