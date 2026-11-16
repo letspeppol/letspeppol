@@ -7,6 +7,7 @@ export type VatDisplayListener = (mode: VatDisplayMode) => void;
 export interface IVatDisplay {
     mode: VatDisplayMode;
     setMode(mode: VatDisplayMode): void;
+    useAccount(accountId: string | null): void;
     subscribe(fn: VatDisplayListener): () => void;
 }
 
@@ -30,26 +31,40 @@ export function getAutomaticVatDisplayMode(vatNumber?: string): VatDisplayMode {
 const STORAGE_KEY = 'lp.vatDisplay.v1';
 
 export class LocalStorageVatDisplay implements IVatDisplay {
+    private accountId: string | null = null;
     mode: VatDisplayMode = this.load();
     private listeners = new Set<VatDisplayListener>();
 
     constructor() {
         if (typeof window !== 'undefined') {
             window.addEventListener('storage', (e) => {
-                if (e.key !== STORAGE_KEY) return;
-                const next: VatDisplayMode = e.newValue === 'incl' ? 'incl' : 'excl';
-                if (this.mode === next) return;
-                this.mode = next;
-                this.notify(next);
+                if (e.key !== this.storageKey) return;
+                this.apply(e.newValue === 'incl' ? 'incl' : 'excl');
             });
         }
+    }
+
+    useAccount(accountId: string | null): void {
+        if (this.accountId === accountId) return;
+        this.accountId = accountId;
+        this.apply(this.load());
     }
 
     setMode(mode: VatDisplayMode): void {
         if (mode !== 'incl' && mode !== 'excl') return;
         if (this.mode === mode) return;
         this.mode = mode;
-        try { localStorage.setItem(STORAGE_KEY, mode); } catch { /* quota / private mode */ }
+        try { localStorage.setItem(this.storageKey, mode); } catch { /* quota / private mode */ }
+        this.notify(mode);
+    }
+
+    private get storageKey(): string {
+        return this.accountId ? `${STORAGE_KEY}:${this.accountId}` : STORAGE_KEY;
+    }
+
+    private apply(mode: VatDisplayMode): void {
+        if (this.mode === mode) return;
+        this.mode = mode;
         this.notify(mode);
     }
 
@@ -67,7 +82,7 @@ export class LocalStorageVatDisplay implements IVatDisplay {
     private load(): VatDisplayMode {
         // Default 'excl' matches pre-feature behaviour so existing users see the same numbers.
         try {
-            const raw = localStorage.getItem(STORAGE_KEY);
+            const raw = localStorage.getItem(this.storageKey) ?? localStorage.getItem(STORAGE_KEY);
             return raw === 'incl' ? 'incl' : 'excl';
         } catch {
             return 'excl';

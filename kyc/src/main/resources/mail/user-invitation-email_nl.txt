@@ -1,0 +1,11 @@
+Hallo,
+
+{{inviterName}} heeft u uitgenodigd om voor {{companyName}} te werken op Let’s Peppol.
+
+Om de uitnodiging te aanvaarden, klik op de onderstaande link ({{validDays}} dagen geldig):
+{{invitationLink}}
+
+Als u deze uitnodiging niet verwachtte, kunt u dit bericht veilig negeren.
+
+Met vriendelijke groeten,
+Let’s Peppol Team

@@ -16,6 +16,7 @@ import org.letspeppol.proxy.util.JwtUtil;
 import org.letspeppol.proxy.util.UblParser;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -48,6 +49,7 @@ public class AppController {
     private final JwtDecoder jwtDecoder;
 
     @GetMapping()
+    @PreAuthorize("hasAuthority('INVOICE_READ')")
     @Operation(summary = "Poll new inbound documents", description = "Returns newly available inbound documents for the authenticated user or linked app context.")
     public List<UblDocumentDto> getAllNew(@AuthenticationPrincipal Jwt jwt, @RequestParam(defaultValue = DEFAULT_SIZE) int size) {
         AccountType accountType = JwtUtil.getAccountType(jwt);
@@ -61,6 +63,7 @@ public class AppController {
     }
 
     @PostMapping("status")
+    @PreAuthorize("hasAuthority('INVOICE_READ')")
     @Operation(summary = "Fetch document status updates", description = "Returns the latest known status for the provided proxy document identifiers.")
     public List<UblDocumentDto> getStatusUpdates(@AuthenticationPrincipal Jwt jwt, @RequestBody List<UUID> ids) {
         String peppolId = JwtUtil.getUserPeppolId(jwt);
@@ -84,6 +87,7 @@ public class AppController {
     * */
 
     @GetMapping("{id}")
+    @PreAuthorize("hasAuthority('INVOICE_READ')")
     @Operation(summary = "Get proxy document by id", description = "Loads a single document visible to the authenticated company context.")
     public UblDocumentDto getById(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
         String peppolId = JwtUtil.getUserPeppolId(jwt);
@@ -91,6 +95,7 @@ public class AppController {
     }
 
     @GetMapping("{id}/details")
+    @PreAuthorize("hasAuthority('INVOICE_READ')")
     @Operation(summary = "Get proxy document details", description = "Returns transport and UBL-derived details for one document visible to the authenticated company or linked app.")
     public DocumentDetailsDto getDetails(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
         String peppolId = JwtUtil.getUserPeppolId(jwt);
@@ -98,6 +103,7 @@ public class AppController {
     }
 
     @PostMapping()
+    @PreAuthorize("hasAuthority('INVOICE_SEND')")
     @Operation(summary = "Create outbound proxy document", description = "Stores a new outbound UBL document for later transmission through the configured access point.")
     public ResponseEntity<UblDocumentDto> createToSend(@AuthenticationPrincipal Jwt jwt,
                                                        @RequestBody UblDocumentDto ublDocumentDto,
@@ -108,6 +114,7 @@ public class AppController {
     }
 
     @PutMapping("{id}")
+    @PreAuthorize("hasAuthority('INVOICE_SEND')")
     @Operation(summary = "Update outbound proxy document", description = "Replaces the contents or metadata of an outbound document that has not completed sending yet.")
     public ResponseEntity<UblDocumentDto> update(@AuthenticationPrincipal Jwt jwt,
                                                  @PathVariable UUID id,
@@ -119,6 +126,7 @@ public class AppController {
     }
 
     @PutMapping("{id}/reschedule")
+    @PreAuthorize("hasAuthority('INVOICE_SEND')")
     @Operation(summary = "Schedule or resend outbound document", description = "Queues an outbound document for sending immediately or at a later scheduled time.")
     public ResponseEntity<UblDocumentDto> reschedule(@AuthenticationPrincipal Jwt jwt,
                                                      @PathVariable UUID id,
@@ -129,6 +137,7 @@ public class AppController {
     }
 
     @PutMapping("{id}/downloaded")
+    @PreAuthorize("hasAuthority('INVOICE_READ')")
     @Operation(summary = "Acknowledge one downloaded document", description = "Marks a single inbound document as downloaded by the authenticated user or linked app.")
     public ResponseEntity<Void> downloaded(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestParam(defaultValue = "false") boolean noArchive) {
         AccountType accountType = JwtUtil.getAccountType(jwt);
@@ -143,6 +152,7 @@ public class AppController {
     }
 
     @PutMapping("downloaded")
+    @PreAuthorize("hasAuthority('INVOICE_READ')")
     @Operation(summary = "Acknowledge multiple downloaded documents", description = "Marks a batch of inbound documents as downloaded by the authenticated user or linked app.")
     public ResponseEntity<Void> downloadedBatch(@AuthenticationPrincipal Jwt jwt, @RequestBody List<UUID> ids, @RequestParam(defaultValue = "false") boolean noArchive) {
         AccountType accountType = JwtUtil.getAccountType(jwt);
@@ -157,6 +167,7 @@ public class AppController {
     }
 
     @DeleteMapping("{id}")
+    @PreAuthorize("hasAuthority('INVOICE_SEND')")
     @Operation(summary = "Cancel outbound proxy document", description = "Cancels an outbound document that should no longer be sent through the proxy.")
     public ResponseEntity<Void> delete(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestParam(defaultValue = "false") boolean noArchive) {
         String peppolId = JwtUtil.getUserPeppolId(jwt);

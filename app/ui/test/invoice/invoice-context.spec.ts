@@ -10,6 +10,7 @@ const services = vi.hoisted(() => ({
     searchPartners: vi.fn(() => Promise.resolve([])),
     publish: vi.fn(),
     tr: vi.fn((key: string) => key),
+    granted: {INVOICE_DRAFT: true},
 }));
 
 vi.mock('@aurelia/kernel', async importOriginal => ({

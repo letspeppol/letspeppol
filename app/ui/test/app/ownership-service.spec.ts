@@ -26,8 +26,14 @@ function createService(token: string) {
     return {service, respond: (ownerships: OwnershipSummary[]) => respond(ownerships)};
 }
 
+function tokenWith(claims: Record<string, unknown>): string {
+    const encode = (value: unknown) => btoa(JSON.stringify(value)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    return `${encode({alg: 'none'})}.${encode(claims)}.signature`;
+}
+
 afterEach(() => {
     localStorage.clear();
+    sessionStorage.clear();
 });
 
 describe('OwnershipService', () => {
@@ -52,5 +58,79 @@ describe('OwnershipService', () => {
         expect(await pendingLoad).toEqual([ownership]);
         expect(service.getCachedOwnerships()).toEqual([ownership]);
         expect(JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]')).toEqual([ownership]);
+    });
+
+    it('takes the permissions of a user from the token', () => {
+        const {service} = createService('previous-token');
+
+        service.onTokenChanged(tokenWith({peppolId: '0208:1234567890', accountType: 'USER', permissionMask: 7}));
+
+        expect(service.permissionMask).toBe(7);
+        expect(service.admin).toBe(false);
+        expect(service.granted.INVOICE_SEND).toBe(true);
+        expect(service.granted.PARTNER_MANAGE).toBe(false);
+        expect(service.can(4)).toBe(true);
+        expect(service.can(32)).toBe(false);
+    });
+
+    it('gives an administrator every permission when the token has no mask yet', () => {
+        const {service} = createService('previous-token');
+
+        service.onTokenChanged(tokenWith({peppolId: '0208:1234567890', accountType: 'ADMIN'}));
+
+        expect(service.permissionMask).toBe(255);
+        expect(service.admin).toBe(true);
+        expect(service.granted.COMPANY_SETTINGS).toBe(true);
+    });
+
+    it('gives a user nothing when the token has no mask', () => {
+        const {service} = createService('previous-token');
+
+        service.onTokenChanged(tokenWith({peppolId: '0208:1234567890', accountType: 'USER'}));
+
+        expect(service.permissionMask).toBe(0);
+        expect(service.granted.INVOICE_READ).toBe(false);
+    });
+
+    it('does not treat an affiliate as administrator', () => {
+        const {service} = createService('previous-token');
+
+        service.onTokenChanged(tokenWith({peppolId: '0208:1234567890', accountType: 'AFFILIATE', permissionMask: 255}));
+
+        expect(service.permissionMask).toBe(255);
+        expect(service.admin).toBe(false);
+    });
+
+    it('drops every permission on logout', () => {
+        const {service} = createService('previous-token');
+        service.onTokenChanged(tokenWith({peppolId: '0208:1234567890', accountType: 'ADMIN', permissionMask: 255}));
+
+        service.onTokenChanged(null);
+
+        expect(service.permissionMask).toBe(0);
+        expect(service.admin).toBe(false);
+        expect(service.hasCompany).toBe(false);
+        expect(Object.values(service.granted)).not.toContain(true);
+    });
+
+    it('knows the account and its company from the token', () => {
+        const {service} = createService('previous-token');
+
+        service.onTokenChanged(tokenWith({uid: 'account-1', peppolId: '0208:1234567890', accountType: 'USER', permissionMask: 1}));
+
+        expect(service.hasCompany).toBe(true);
+        expect(service.getCurrentAccountId()).toBe('account-1');
+    });
+
+    it('signs in an account without a company with no permissions at all', () => {
+        const {service} = createService('previous-token');
+
+        service.onTokenChanged(tokenWith({uid: 'account-1', permissionMask: 0}));
+
+        expect(service.hasCompany).toBe(false);
+        expect(service.admin).toBe(false);
+        expect(service.getCurrentPeppolId()).toBeNull();
+        expect(service.getCurrentAccountId()).toBe('account-1');
+        expect(Object.values(service.granted)).not.toContain(true);
     });
 });

@@ -9,6 +9,7 @@ import org.letspeppol.app.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,7 @@ public class PartnerController {
     private final PartnerService partnerService;
 
     @GetMapping("/search")
+    @PreAuthorize("hasAnyAuthority('INVOICE_READ', 'PARTNER_MANAGE')")
     @Operation(summary = "Search partner by Peppol identifier", description = "Looks up an existing partner record for the authenticated company using a Peppol identifier.")
     public ResponseEntity<List<PartnerDto>> search(@AuthenticationPrincipal Jwt jwt, @RequestParam(value = "peppolId", required = true) String peppolId) {
         String ownerPeppolId = JwtUtil.getPeppolId(jwt);
@@ -33,6 +35,7 @@ public class PartnerController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('INVOICE_READ', 'PARTNER_MANAGE')")
     @Operation(summary = "List partners", description = "Returns the partner records owned by the authenticated company.")
     public List<PartnerDto> getParties(@AuthenticationPrincipal Jwt jwt) {
         String peppolId = JwtUtil.getPeppolId(jwt);
@@ -40,6 +43,7 @@ public class PartnerController {
     }
 
     @PutMapping("{id}")
+    @PreAuthorize("hasAuthority('PARTNER_MANAGE')")
     @Operation(summary = "Update partner", description = "Updates one partner record used by the authenticated company.")
     public PartnerDto updatePartner(@AuthenticationPrincipal Jwt jwt, @PathVariable Long id, @RequestBody PartnerDto partnerDto) {
         String peppolId = JwtUtil.getPeppolId(jwt);
@@ -47,6 +51,7 @@ public class PartnerController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('PARTNER_MANAGE')")
     @Operation(summary = "Create partner", description = "Creates a new partner record for the authenticated company.")
     public PartnerDto createPartner(@AuthenticationPrincipal Jwt jwt, @RequestBody PartnerDto partnerDto) {
         String peppolId = JwtUtil.getPeppolId(jwt);
@@ -54,6 +59,7 @@ public class PartnerController {
     }
 
     @DeleteMapping("{id}")
+    @PreAuthorize("hasAuthority('PARTNER_MANAGE')")
     @Operation(summary = "Delete partner", description = "Deletes one partner record from the authenticated company's address book.")
     public void deletePartner(@AuthenticationPrincipal Jwt jwt, @PathVariable Long id) {
         String peppolId = JwtUtil.getPeppolId(jwt);

@@ -24,6 +24,14 @@ public final class KycErrorCodes {
     public static final String PASSWORD_RESET_TOKEN_EXPIRED = "password_reset_token_expired";
     public static final String PASSWORD_RESET_TOKEN_ALREADY_USED = "password_reset_token_already_used";
     public static final String INVALID_PASSWORD = "invalid_password";
+    // Company users
+    public static final String USER_ALREADY_MEMBER = "user_already_member";
+    public static final String USER_NOT_FOUND = "user_not_found";
+    public static final String USER_NOT_EDITABLE = "user_not_editable";
+    public static final String INVALID_PERMISSION_MASK = "invalid_permission_mask";
+    public static final String INVITATION_NOT_FOUND = "invitation_not_found";
+    public static final String INVITATION_EXPIRED = "invitation_expired";
+    public static final String INVITATION_NOT_SENT = "invitation_not_sent";
     // Proxy
     public static final String PROXY_REGISTRATION_FAILED = "proxy_registration_failed";
     public static final String PROXY_UNREGISTRATION_FAILED = "proxy_unregistration_failed";

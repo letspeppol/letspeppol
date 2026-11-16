@@ -36,6 +36,7 @@ while Spring Security retains the endpoint-specific authentication decisions.
 4. [Application profile and master data](./api-application-profile-and-master-data.md)
 5. [Business-document lifecycle and Peppol transport](./api-document-lifecycle.md)
 6. [Service links, registry control, and sponsor invoices](./api-service-links-and-registry.md)
+7. [Company users, invitations, and permissions](./api-company-users.md)
 
 ## How to read the flow pages
 

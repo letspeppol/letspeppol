@@ -80,7 +80,7 @@ class SelfBillingDocumentTest {
         Document draft = uploadedDocument.getValue();
         draft.setId(UUID.randomUUID());
         when(documents.findById(draft.getId())).thenReturn(Optional.of(draft));
-        var updated = service.update(parties.sender(), draft.getId(), xml, true, null, null);
+        var updated = service.update(parties.sender(), draft.getId(), xml, true, null, null, true);
         assertThat(updated.type()).isEqualTo(type);
         assertThat(updated.ubl()).isEqualTo(xml);
         assertThat(updated.draftedOn()).isNotNull();

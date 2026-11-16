@@ -1,8 +1,11 @@
 package org.letspeppol.app.util;
 
 import org.letspeppol.app.config.SecurityConfig;
+import org.letspeppol.app.dto.AccountType;
+import org.letspeppol.app.dto.CompanyPermission;
 import org.letspeppol.app.exception.AppErrorCodes;
 import org.letspeppol.app.exception.SecurityException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.oauth2.jwt.Jwt;
 
 import java.time.Instant;
@@ -46,6 +49,27 @@ public class JwtUtil {
             return Instant.ofEpochSecond(epochSeconds.longValue());
         }
         return Instant.parse(claim.toString());
+    }
+
+    public static int getPermissionMask(Jwt jwt) {
+        if (jwt.getClaim(SecurityConfig.PERMISSION_MASK) instanceof Number mask) {
+            return mask.intValue() & CompanyPermission.ALL;
+        }
+        return AccountType.USER.name().equals(jwt.getClaimAsString(SecurityConfig.ACCOUNT_TYPE)) ? 0 : CompanyPermission.ALL;
+    }
+
+    public static boolean hasPermission(Jwt jwt, CompanyPermission permission) {
+        return permission.in(getPermissionMask(jwt));
+    }
+
+    public static void requirePermission(Jwt jwt, CompanyPermission permission) {
+        if (!hasPermission(jwt, permission)) {
+            throw new AccessDeniedException("Missing permission " + permission.name());
+        }
+    }
+
+    public static boolean isAdmin(Jwt jwt) {
+        return AccountType.ADMIN.name().equals(jwt.getClaimAsString(SecurityConfig.ACCOUNT_TYPE));
     }
 
 }

@@ -12,14 +12,16 @@ import {
 import {LibrarySignResponse} from "@web-eid/web-eid-library/models/message/LibraryResponse";
 import {SignatureAlgorithm} from "@web-eid/web-eid-library/models/SignatureAlgorithm";
 import {OwnershipService} from "../services/app/ownership-service";
-import {CompanyService} from "../services/app/company-service";
-import {currentOwnershipRoute} from "../services/app/ownership-route";
+import {currentOwnershipRoute, ownershipRoute} from "../services/app/ownership-route";
+import {AccountService} from "../services/kyc/account-service";
+import {LoginService} from "../services/app/login-service";
 
 export class AddOwnership {
     readonly ea: IEventAggregator = resolve(IEventAggregator);
     private readonly registrationService = resolve(RegistrationService);
     private readonly ownershipService = resolve(OwnershipService);
-    private readonly companyService = resolve(CompanyService);
+    private readonly accountService = resolve(AccountService);
+    private readonly loginService = resolve(LoginService);
     private readonly router = resolve(IRouter);
 
     enterpriseNumber: string | undefined;
@@ -38,17 +40,12 @@ export class AddOwnership {
     private signatureAlgorithm: SignatureAlgorithm | null = null;
 
     attached() {
-        if (this.ownershipService.getCurrentOwnershipType() !== 'ADMIN') {
-            this.ea.publish('alert', {alertType: AlertType.Danger, text: "Only an admin can add another company"});
-            void this.router.load(currentOwnershipRoute('/dashboard'));
-            return;
-        }
         void this.loadCurrentAccountInfo();
     }
 
     async loadCurrentAccountInfo() {
-        const company = this.companyService.myCompany ?? await this.companyService.getAndSetMyCompanyForToken();
-        this.subscriberEmail = company.subscriberEmail ?? '';
+        const account = await this.accountService.getCurrentAccount();
+        this.subscriberEmail = account.email ?? '';
     }
 
     async checkEnterpriseNumber() {
@@ -247,6 +244,18 @@ export class AddOwnership {
     }
 
     async goToDashboard() {
+        const added = this.step === 3 && !this.ownershipService.hasCompany
+            ? this.ownershipService.getCachedOwnerships().find(ownership => ownership.peppolId === this.company?.peppolId)
+            : undefined;
+        if (added) {
+            try {
+                await this.loginService.swapOwnership(added);
+                await this.router.load(ownershipRoute(added.peppolId, '/dashboard'));
+                return;
+            } catch {
+                this.ea.publish('alert', {alertType: AlertType.Danger, text: "Failed to switch ownership"});
+            }
+        }
         await this.router.load(currentOwnershipRoute('/dashboard'));
     }
 }

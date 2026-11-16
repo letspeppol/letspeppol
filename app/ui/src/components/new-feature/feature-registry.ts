@@ -5,8 +5,8 @@ export interface FeatureMetadata {
 }
 
 export const FEATURE_REGISTRY: Readonly<Record<string, FeatureMetadata>> = {
-    'account-notifications':            { section: 'account',  expiresAt: '2026-10-01' },
-    'account-notifications-outgoing':   { section: 'account',  expiresAt: '2026-12-01' },
+    'account-notifications':            { section: 'settings', expiresAt: '2026-10-01' },
+    'account-notifications-outgoing':   { section: 'settings', expiresAt: '2026-12-01' },
     'vat-display':                      { section: 'account',  expiresAt: '2026-11-01' },
     'passkeys':                         { section: 'account',  expiresAt: '2026-12-01' },
     'totp':                             { section: 'account',  expiresAt: '2026-12-01' },
