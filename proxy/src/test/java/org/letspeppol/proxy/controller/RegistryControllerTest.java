@@ -189,6 +189,18 @@ class RegistryControllerTest {
     }
 
     @Test
+    void receivingLookupReportsUnavailableWhenRecommandIsNotConfigured() throws Exception {
+        var controller = new RegistryController(mock(AppLinkService.class), context.getBean(RegistryService.class),
+                repository, accessPoints, Optional.empty());
+        var withoutRecommand = MockMvcBuilders.standaloneSetup(controller)
+                .setControllerAdvice(new GlobalExceptionHandler()).build();
+
+        withoutRecommand.perform(get("/sapi/registry/receiving-availability").param("peppolId", ID))
+                .andExpect(status().isServiceUnavailable())
+                .andExpect(jsonPath("$.message").value("Recommand is not configured"));
+    }
+
+    @Test
     void endUserCannotBypassTheAdminCheckThroughTheServiceSettingsEndpoint() throws Exception {
         mvc.perform(put("/sapi/registry/settings").param("peppolId", ID)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer user-token").contentType(MediaType.APPLICATION_JSON)
@@ -394,7 +406,8 @@ class RegistryControllerTest {
         @Bean CorsConfigurationSource corsConfigurationSource() { return request -> new CorsConfiguration(); }
         @Bean GlobalExceptionHandler errors() { return new GlobalExceptionHandler(); }
         @Bean RegistryController controller(RegistryRepository repository, AccessPointServiceRegistry accessPoints, RegistryService registryService) {
-            return new RegistryController(mock(AppLinkService.class), registryService, repository, accessPoints, recommand());
+            return new RegistryController(mock(AppLinkService.class), registryService, repository, accessPoints,
+                    Optional.of(recommand()));
         }
         @Bean SecurityFilterChain security(HttpSecurity http) throws Exception {
             return new SecurityConfig().securityFilterChain(http);

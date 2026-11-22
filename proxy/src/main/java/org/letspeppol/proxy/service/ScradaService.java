@@ -13,7 +13,6 @@ import org.letspeppol.proxy.model.UblDocument;
 import org.letspeppol.proxy.model.Registry;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -28,7 +27,6 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 @Transactional
-@Service
 public class ScradaService implements AccessPointServiceInterface {
 
     public static final String PARTICIPANT_SCHEME = "iso6523-actorid-upis";

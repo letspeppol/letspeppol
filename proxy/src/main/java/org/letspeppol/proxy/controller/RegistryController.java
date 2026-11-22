@@ -11,6 +11,7 @@ import org.letspeppol.proxy.dto.RegistrationRequest;
 import org.letspeppol.proxy.dto.RegistryDto;
 import org.letspeppol.proxy.dto.PeppolSettings;
 import org.letspeppol.proxy.exception.NotFoundException;
+import org.letspeppol.proxy.exception.ServiceUnavailableException;
 import org.letspeppol.proxy.mapper.RegistryMapper;
 import org.letspeppol.proxy.model.AccessPoint;
 import org.letspeppol.proxy.repository.RegistryRepository;
@@ -22,6 +23,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 /**
  * Registry endpoints are reachable only by trusted backend services (ROLE_SERVICE). The acting
@@ -41,7 +44,7 @@ public class RegistryController {
     private final RegistryService registryService;
     private final RegistryRepository registryRepository;
     private final AccessPointServiceRegistry accessPoints;
-    private final RecommandService recommandService;
+    private final Optional<RecommandService> recommandService;
 
     @Value("${proxy.access-point}")
     private AccessPoint accessPoint;
@@ -83,7 +86,8 @@ public class RegistryController {
     @GetMapping("/receiving-availability")
     @Operation(summary = "Check the current receiving SMP", description = "Uses Recommand to look up a Peppol identifier without requiring a local registration. Reserved for trusted backend services.")
     public PeppolSettings getReceivingAvailability(@RequestParam String peppolId) {
-        return recommandService.getReceivingAvailability(peppolId);
+        return recommandService.orElseThrow(() -> new ServiceUnavailableException("Recommand is not configured"))
+                .getReceivingAvailability(peppolId);
     }
 
     @PutMapping("/settings")

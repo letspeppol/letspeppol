@@ -25,7 +25,7 @@ export default defineConfig({
     port: 9000,
     proxy: {
       '/kyc': {
-        target: 'http://localhost:8084',
+        target: `http://127.0.0.1:${process.env.DEV_KYC_PORT || 8084}`,
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/kyc/, ''),
         configure: (proxy) => {
@@ -35,14 +35,14 @@ export default defineConfig({
             proxyReq.setHeader('X-Forwarded-Prefix', '/kyc');
             proxyReq.setHeader(
                 'X-Forwarded-Host',
-                req.headers['x-forwarded-host'] || 'letspeppol.httpsonlan.com:3001'
+                req.headers['x-forwarded-host'] || req.headers.host || 'localhost:9000'
             );
-            proxyReq.setHeader('X-Forwarded-Proto', 'https');
+            proxyReq.setHeader('X-Forwarded-Proto', req.headers['x-forwarded-proto'] || 'http');
           });
         },
       },
       '/app': {
-        target: 'http://localhost:8085',
+        target: `http://127.0.0.1:${process.env.DEV_APP_PORT || 8085}`,
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/app/, ''),
         configure: (proxy) => {
@@ -53,7 +53,7 @@ export default defineConfig({
         },
       },
       '/proxy': {
-        target: 'http://localhost:8086',
+        target: `http://127.0.0.1:${process.env.DEV_PROXY_PORT || 8086}`,
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/proxy/, ''),
         configure: (proxy) => {

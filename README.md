@@ -41,30 +41,29 @@ A public instance of this code will soon be available, please keep an eye on [Le
 [Here is a screencast](https://drive.google.com/file/d/1HHSM9V1_2ez59vlnkL0YO3190X1uOh1j/view?usp=drive_link) of how the application can be used to send and receive invoices via Let’s Peppol.
 
 # Usage
-## With Nix
-[FIXME: docs under construction]
-A `devenv` environment is available in the `dev/proxy` directory to host the proxy locally and run a small test. Make sure you have [`devenv`](https://devenv.sh/getting-started/) installed, and optionally install [`direnv`](https://devenv.sh/automatic-shell-activation/) for automatic shell activation. If you don’t use `direnv`, you’ll need to run `devenv shell` manually in the `dev/proxy` directory. Next, create a `dev/.env` file with the following contents (without quotes):
+## Local development with Nix
+
+See the [local development how-to](dev/README.md) for a step-by-step Mailpit test and optional HTTPS and Recommand Playground setup.
+
+Install [devenv 2.1 or newer](https://devenv.sh/getting-started/). From the repository root:
+
 ```sh
-PORT=3000
-SCRADA_API_KEY="from-scrada"
-SCRADA_API_PWD="from-scrada"
-SCRADA_COMPANY_ID="from-scrada"
-ACCESS_TOKEN_KEY=some-other-secret
-DATABASE_URL="postgres://letspeppol:letspeppol@localhost:5432/letspeppol?sslmode=disable"
-```
-Then run:
-```sh
-cd dev
-# if the environment is blocked then run `direnv allow` to approve its content
-# if you don't use direnv then run `devenv shell`
-start-proxy
+devenv shell -- npm --prefix app/ui ci
+devenv up
 ```
 
-Open a new shell to test the proxy and run:
-```sh
-cd dev
-test-proxy
-```
+Open **http://localhost:9000** for the UI (use `localhost`, not `127.0.0.1`, so the OAuth URLs match) and **http://127.0.0.1:8025** for the Mailpit inbox. The stack starts PostgreSQL, KYC, the app backend, the Java proxy, and Vite. On the first run, Gradle needs time to download dependencies and build the Java services. KYC seeds sample accounts in the `dev` profile; for example, use `alice@letspeppol.org` with password `alice` locally. Press Ctrl+C to stop the stack (confirm if the TUI prompts). The database, local mail, and generated JWT signing keys persist under `.devenv/state/`.
+
+Use `devenv shell` for Java 25, Node 22, and npm at the root. With [direnv](https://devenv.sh/automatic-shell-activation/), run `direnv allow` once at the root to activate the shell automatically. Use `devenv up postgres mailpit` if you prefer to start the applications separately; inside the shell use `dev-backend kyc`, `dev-backend app`, `dev-backend proxy`, or `dev-ui`. `open-kyc` opens the project if an IntelliJ launcher is on `PATH`.
+
+### Local credentials
+
+**No `.env` is required for local startup.** The Java launchers read the checked-in [`.env.defaults`](.env.defaults), then apply overrides from an optional, git-ignored root `.env` using Bash assignment syntax. The defaults are for loopback development and throwaway data only; never reuse them in a deployment.
+
+To test Recommand integration, copy [`.env.example`](.env.example) to `.env` and fill in **both** `RECOMMAND_API_KEY` and `RECOMMAND_API_SECRET` from your own [Recommand](https://app.recommand.eu) Playground team. Restart the proxy after changing them. Leave both blank if you aren't testing Peppol registration or document exchange. Don't use a production team or share its credentials.
+
+Mailpit replaces real SMTP locally. KBO bulk sync, Scrada, and e-invoice.be aren't needed for the default stack. Leave `OPEN_COLLECTIVE_API_KEY` blank to keep donation statistics local; set it in `.env` and restart the app backend to include live OpenCollective data. The root `.env` is for this Nix workflow, not Docker Compose.
+
 ## With Docker
 To run this project locally using docker-compose, follow these steps:
 1. Clone this repository.

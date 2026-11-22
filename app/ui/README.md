@@ -29,4 +29,4 @@ Make sure you have the following tools installed:
 
 ## Nix development environment
 
-A `devenv` environment is available in the `dev/ui` directory. Make sure you have [`devenv`](https://devenv.sh/getting-started/) installed, and optionally install [`direnv`](https://devenv.sh/automatic-shell-activation/) for automatic shell activation. If you don’t use `direnv`, you’ll need to run `devenv shell` manually from the `dev/ui` directory. When working in this environment, add the `--prefix ../../ui` option to commands like `npm install` so they target the actual project directory.
+The [repository-root development environment](../../README.md#local-development-with-nix) provides Node 22 and npm. From the root, run `devenv shell -- npm --prefix app/ui ci` to install dependencies, then `devenv up` for the full stack or `devenv shell -- dev-ui` for Vite alone.

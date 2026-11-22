@@ -1,4 +1,7 @@
 .env
+/.devenv*
+/.direnv/
+/devenv.local.nix
 acme.json
 **/var/
 .DS_store

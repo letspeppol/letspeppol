@@ -1,0 +1,6 @@
+require_version: ">=2.1"
+strict_ports: true
+
+inputs:
+  nixpkgs:
+    url: github:NixOS/nixpkgs/nixos-26.05

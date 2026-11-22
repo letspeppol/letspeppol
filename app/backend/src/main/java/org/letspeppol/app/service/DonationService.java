@@ -10,13 +10,10 @@ import org.letspeppol.app.dto.TotalProcessedDto;
 import org.letspeppol.app.model.SponsorInvoice;
 import org.letspeppol.app.repository.SponsorInvoiceRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
-//import org.springframework.graphql.client.HttpGraphQlClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.graphql.client.HttpGraphQlClient;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -25,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -36,14 +34,14 @@ public class DonationService {
     private BigDecimal pricePerDocument;
     private final StatisticsService statisticsService;
     private final SponsorInvoiceRepository sponsorInvoiceRepository;
-    private final HttpGraphQlClient graphQlClient; // Open collective
+    private final Optional<HttpGraphQlClient> graphQlClient;
     private DonationStatsDto donationStatsDto;
     private MaxProcessedDto maxProcessedDto;
 
-    public DonationService(@Qualifier("OpenCollectiveWebClient") WebClient webClient,
+    public DonationService(@Qualifier("openCollectiveGraphQlClient") Optional<HttpGraphQlClient> graphQlClient,
                            StatisticsService statisticsService,
                            SponsorInvoiceRepository sponsorInvoiceRepository) {
-        this.graphQlClient = HttpGraphQlClient.builder(webClient).build();
+        this.graphQlClient = graphQlClient;
         this.statisticsService = statisticsService;
         this.sponsorInvoiceRepository = sponsorInvoiceRepository;
     }
@@ -75,7 +73,7 @@ public class DonationService {
     public synchronized void updateDonationStats() {
         TotalProcessedDto totalProcessedDto = statisticsService.totalsProcessed();
         if (totalProcessedDto == null) return;
-        OpenCollectiveAccountDto accountInfo = this.queryAccount().block();
+        OpenCollectiveAccountDto accountInfo = graphQlClient.map(this::queryAccount).orElse(null);
         List<OpenCollectiveAccountDto.Transaction> transactions = transactionsOf(accountInfo);
         List<SponsorContributionDto> peppolContributions = sponsorInvoiceRepository.findAllByActiveTrueOrderBySponsoredOnDesc().stream()
                 .map(this::toContribution)
@@ -136,7 +134,7 @@ public class DonationService {
                 .toList();
     }
 
-    private Mono<OpenCollectiveAccountDto> queryAccount() {
+    private OpenCollectiveAccountDto queryAccount(HttpGraphQlClient client) {
         String document = """
                         query account($slug: String, $limit: Int) {
                             account(slug: $slug) {
@@ -181,7 +179,8 @@ public class DonationService {
                 "slug", "letspeppol",
                 "limit", TRANSACTION_LIMIT
         );
-        return graphQlClient.document(document).variables(variables).retrieve("account").toEntity(OpenCollectiveAccountDto.class);
+        return client.document(document).variables(variables).retrieve("account")
+                .toEntity(OpenCollectiveAccountDto.class).block();
     }
 
     private String openCollectiveName(OpenCollectiveAccountDto.Transaction transaction) {

@@ -31,7 +31,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.MultipartBodyBuilder;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -47,7 +46,6 @@ import java.util.regex.Pattern;
 @Slf4j
 @RequiredArgsConstructor
 @Transactional
-@Service
 public class RecommandService implements AccessPointServiceInterface {
 
     static final String BILLING_PROCESS = "urn:fdc:peppol.eu:2017:poacc:billing:01:1.0";

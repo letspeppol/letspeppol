@@ -54,7 +54,7 @@ Also configure these environment variables: `DB_USER`, `DB_PASS`, `DB_HOST` & `D
 
 ## Nix development environment
 
-A devenv environment is available in the `dev/kyc` directory. Make sure you have [`devenv`](https://devenv.sh/getting-started/) installed, and optionally install [`direnv`](https://devenv.sh/automatic-shell-activation/) for automatic shell activation. If you don’t use `direnv`, you’ll need to run `devenv shell` manually from the `dev/kyc` directory. The development environment sets up IntelliJ, installs project plugins, and opens the KYC project.
+Use the [repository-root development environment](../README.md#local-development-with-nix) for Java 25 and the local stack. The KYC launcher generates a local JWT signing key pair if no keys are configured. To open the project in an existing IntelliJ installation, run `devenv shell -- open-kyc` and enable Lombok support in the IDE if needed.
 
 ## Key Rotation
 1. To generate a new key you can use the OpenSSL utility: `openssl rand -base64 32`
