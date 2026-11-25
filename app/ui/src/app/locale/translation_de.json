@@ -260,7 +260,11 @@
     "success-login-prefix": "Sie können jetzt",
     "success-title": "Erfolg!",
     "table.action": "Aktion",
-    "table.name": "Name"
+    "table.name": "Name",
+    "test-complete": "Registrierung abschließen",
+    "test-continue": "Ohne Web eID fortfahren",
+    "test-info": "Bei diesem lokalen Test wird der Vertrag weder unterzeichnet noch an Peppol gesendet.",
+    "test-toggle": "Web eID und Unterschrift überspringen (nur für Tests)"
   },
   "dashboard": {
     "errored": "Fehlerhafte Rechnungen",

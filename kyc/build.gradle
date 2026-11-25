@@ -18,6 +18,15 @@ repositories {
 	mavenCentral()
 }
 
+// Compile the local Web eID test handlers into KYC only on explicit opt-in.
+// Keep them available to unit tests without packaging them in the default bootJar.
+def webEidTesting = providers.gradleProperty('webEidTesting').map { it.toBoolean() }.getOrElse(false)
+if (webEidTesting) {
+    sourceSets.main.java.srcDir('src/webEidTesting/java')
+} else {
+    sourceSets.test.java.srcDir('src/webEidTesting/java')
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
@@ -65,5 +74,5 @@ tasks.named('test') {
 }
 
 tasks.named('bootJar') {
-    archiveFileName = 'kyc.jar'
+    archiveFileName = webEidTesting ? 'kyc-web-eid-testing.jar' : 'kyc.jar'
 }

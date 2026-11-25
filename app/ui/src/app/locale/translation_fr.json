@@ -260,7 +260,11 @@
     "success-login-prefix": "Vous pouvez maintenant",
     "success-title": "Succès !",
     "table.action": "Action",
-    "table.name": "Nom"
+    "table.name": "Nom",
+    "test-complete": "Terminer l’inscription",
+    "test-continue": "Continuer sans Web eID",
+    "test-info": "Pour ce test local, le contrat ne sera ni signé ni envoyé à Peppol.",
+    "test-toggle": "Ignorer Web eID et la signature (tests uniquement)"
   },
   "dashboard": {
     "errored": "Factures en erreur",

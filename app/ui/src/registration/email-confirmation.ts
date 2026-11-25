@@ -32,6 +32,12 @@ export class EmailConfirmation {
     private passwordDuplicate;
     private registrationSuccess = true;
     private agreedToContract = false;
+    private webEidTestBypassAvailable = false;
+    private skipWebEid = false;
+
+    get bypassWebEid() {
+        return __WEB_EID_TEST_BYPASS__ && this.webEidTestBypassAvailable && this.skipWebEid;
+    }
     private step = 0;
     private certificate;
     private signatureAlgorithm;
@@ -52,6 +58,11 @@ export class EmailConfirmation {
             this.tokenVerificationResponse = result;
             this.step = 1;
             this.checkPeppolDirectory(result.company.peppolId);
+            if (__WEB_EID_TEST_BYPASS__) {
+                void this.registrationService.supportsWebEidTestBypass().then(available => {
+                    this.webEidTestBypassAvailable = available;
+                });
+            }
         }).catch(error => {
             this.ea.publish('alert', {alertType: AlertType.Danger, text: this.i18n.tr('alert.registration.token-invalid')});
         });
@@ -70,9 +81,17 @@ export class EmailConfirmation {
     }
 
     public async confirmContract() {
-        if (!this.prepareSigningResponse?.allowedToSign || !this.confirmedDirector) return;
+        const bypassWebEid = __WEB_EID_TEST_BYPASS__ && this.bypassWebEid;
+        if (!bypassWebEid && (!this.prepareSigningResponse?.allowedToSign || !this.confirmedDirector)) return;
         this.confirmInProgress = true;
         try {
+            if (bypassWebEid) {
+                await this.registrationService.verifyAccountWithoutWebEid({
+                    token: this.emailToken, newPassword: this.password, directorId: this.confirmedDirector?.id ?? null
+                });
+                this.step = 3;
+                return;
+            }
 //             const {
 //                 certificate,
 //                 supportedSignatureAlgorithms
@@ -120,7 +139,7 @@ export class EmailConfirmation {
             await this.downloadFile(finalizeSigningResponse);
             this.ea.publish('alert', {alertType: AlertType.Success, text: this.i18n.tr('alert.registration.contract-downloaded')});
         } catch (error) {
-            let text = "Signing contract failed";
+            let text = bypassWebEid ? this.i18n.tr('alert.registration.token-invalid') : 'Signing contract failed';
             if (error instanceof Response) {
                 try {
                     const j = await error.json();
@@ -177,8 +196,15 @@ export class EmailConfirmation {
         window.URL.revokeObjectURL(url);
     }
 
-    public async confirmDirector(director: Director) {
-        if (this.confirmedDirector) return; // already confirmed one
+    public async confirmDirector(director: Director | null) {
+        if (this.confirmedDirector) return;
+        if (__WEB_EID_TEST_BYPASS__ && this.bypassWebEid) {
+            this.confirmedDirector = director ?? undefined;
+            this.agreedToContract = director === null;
+            this.step = 2;
+            return;
+        }
+        if (!director) return; // already confirmed one
         this.suggestedDirector = undefined;
         this.prepareSigningResponse = undefined;
         this.confirmedDirector = director;

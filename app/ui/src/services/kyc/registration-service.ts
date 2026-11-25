@@ -110,6 +110,20 @@ export class RegistrationService {
         return await this.kycApi.httpClient.post(`/api/register/verify-account`, JSON.stringify(request));
     }
 
+    async supportsWebEidTestBypass(): Promise<boolean> {
+        if (!__WEB_EID_TEST_BYPASS__) return false;
+        try {
+            return (await this.kycApi.httpClient.get('/api/register/web-eid-test-bypass')).status === 204;
+        } catch {
+            return false;
+        }
+    }
+
+    async verifyAccountWithoutWebEid(request: VerifyAccountRequest & {directorId: number | null}): Promise<void> {
+        if (!__WEB_EID_TEST_BYPASS__) throw new Error('Web eID testing is not available');
+        await this.kycApi.httpClient.post('/api/register/web-eid-test-bypass', JSON.stringify(request));
+    }
+
     async unregisterCompany(): Promise<boolean> {
         const response = await this.kycApi.httpClient.fetch('/sapi/company/peppol/unregister', { method: 'POST' });
         if (response.status === 204) {

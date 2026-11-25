@@ -35,6 +35,12 @@ The health endpoint should report `UP`. Press Ctrl+C in the first terminal when 
 
 KYC uses normal SMTP, but the dev launcher sends it to Mailpit on `127.0.0.1:1025` by default. Mailpit stores the message locally; it does not deliver it to Bob's real inbox. The sender defaults to `letspeppol@example.invalid`. No SMTP login is needed. If nothing arrives, check the KYC logs and make sure your root `.env` doesn't override `MAIL_HOST` or `MAIL_PORT`.
 
+## Optional: test email confirmation without Web eID
+
+In the repository-root `.env`, set `SPRING_PROFILES_ACTIVE=postgres,dev,web-eid-testing` and restart `devenv up`. Use a private dev stack with a disposable local database, Mailpit, and no live access-point credentials. The launcher opts in to the KYC test build (`-PwebEidTesting=true`). The bypass endpoint is absent from the default KYC artifact. It also requires both `dev` and `web-eid-testing` and a server bound to `127.0.0.1`; either `prod` or `production` disables it. The Vite build flag only enables the switch on the dev server; `npm --prefix app/ui run build` strips the bypass markup from the compiled template.
+
+Open a fresh [Mailpit](http://127.0.0.1:8025) confirmation link and enable **Bypass Web eID and signing (testing only)**. Select a director and review the usual contract if one is listed, then complete registration. Log in with the email you registered with, using the password you chose (or your existing password if that email is already verified). The registration uses the selected company in your local database and consumes the link. It does not record an eID verification, sign a contract, or activate Peppol. Remove `web-eid-testing` and restart to disable the bypass.
+
 ## Optional: use your existing HTTPS proxy
 
 If you already have a TLS proxy and a trusted certificate for `letspeppol.httpsonlan.com`, you can keep using `https://letspeppol.httpsonlan.com:3001`. The proxy, not devenv, serves the certificate. Configure the proxy to forward requests to `http://localhost:9000`, preserve the public host and port (in `Host` or `X-Forwarded-Host`), and set `X-Forwarded-Proto: https`. Enable WebSocket forwarding if you want Vite hot reload to work through the proxy. Keep this development proxy private; the dev stack has known passwords.

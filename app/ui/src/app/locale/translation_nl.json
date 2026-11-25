@@ -260,7 +260,11 @@
     "success-login-prefix": "U kunt nu",
     "success-title": "Gelukt!",
     "table.action": "Actie",
-    "table.name": "Naam"
+    "table.name": "Naam",
+    "test-complete": "Registratie voltooien",
+    "test-continue": "Doorgaan zonder Web eID",
+    "test-info": "Voor deze lokale test wordt het contract niet ondertekend of naar Peppol verstuurd.",
+    "test-toggle": "Web eID en ondertekening overslaan (alleen voor tests)"
   },
   "dashboard": {
     "errored": "Facturen met fout",

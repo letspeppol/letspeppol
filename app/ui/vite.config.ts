@@ -2,7 +2,10 @@ import { defineConfig } from 'vite';
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import aurelia from '@aurelia/vite-plugin';
 
-export default defineConfig({
+export default defineConfig(({command}) => ({
+  define: {
+    __WEB_EID_TEST_BYPASS__: command === 'serve',
+  },
   build: {
     rollupOptions: {
       input: {
@@ -70,8 +73,13 @@ export default defineConfig({
   },
   plugins: [
     aurelia({
-      useDev: true
+      useDev: true,
+      // Aurelia embeds templates as strings, so Vite's JS tree shaking cannot strip these bindings.
+      transformHtml: command === 'build' ? html => html
+        .replace(/^[ \t]*<!-- web-eid-test-only -->[\s\S]*?<!-- \/web-eid-test-only -->\r?\n/gm, '')
+        .replace(/ if\.bind="!bypassWebEid"/g, '')
+        .replace(/t\.bind="bypassWebEid \? 'confirmation\.test-[^']+' : '([^']+)'"/g, 't="$1"') : undefined,
     }),
     nodePolyfills(),
   ],
-});
+}));

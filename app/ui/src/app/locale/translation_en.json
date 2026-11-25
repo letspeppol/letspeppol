@@ -261,7 +261,11 @@
     "success-login-prefix": "You can now",
     "success-title": "Success!",
     "table.action": "Action",
-    "table.name": "Name"
+    "table.name": "Name",
+    "test-complete": "Complete registration",
+    "test-continue": "Continue without Web eID",
+    "test-info": "For this local test, the contract will not be signed or sent to Peppol.",
+    "test-toggle": "Bypass Web eID and signing (testing only)"
   },
   "dashboard": {
     "errored": "Errored invoices",

@@ -1,3 +1,5 @@
+declare const __WEB_EID_TEST_BYPASS__: boolean;
+
 interface ImportMetaEnv {
     readonly VITE_PROXY_BASE_URL?: string;
     readonly VITE_APP_BASE_URL?: string;

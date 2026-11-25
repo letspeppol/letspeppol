@@ -26,11 +26,15 @@ export KYC_JWKS_URI="${KYC_JWKS_URI:-$KYC_API_URL/auth/oauth2/jwks}"
 export KYC_TOKEN_URI="${KYC_TOKEN_URI:-$KYC_API_URL/auth/oauth2/token}"
 export PROXY_API_URL="${PROXY_API_URL:-http://127.0.0.1:$DEV_PROXY_PORT}"
 
+build_options=()
 case "$service" in
   app)
     export DOWNLOAD_ARCHIVE_DIR="${DOWNLOAD_ARCHIVE_DIR:-$DEVENV_STATE/downloads}"
     ;;
   kyc)
+    case ",${SPRING_PROFILES_ACTIVE//[[:space:]]/}," in
+      *,web-eid-testing,*) build_options+=(-PwebEidTesting=true) ;;
+    esac
     export CONTRACT_DATA_DIR="${CONTRACT_DATA_DIR:-$DEVENV_STATE/contracts}"
     export WEBEID_TRUSTED_CA_TRUSTSTORE="${WEBEID_TRUSTED_CA_TRUSTSTORE:-$DEVENV_ROOT/kyc/truststore/belgian-eid.jks}"
     export WEBEID_TRUSTED_CA_TRUSTSTORE_PASSWORD="${WEBEID_TRUSTED_CA_TRUSTSTORE_PASSWORD:-changeit}"
@@ -62,4 +66,4 @@ if [[ $service != proxy ]]; then
 fi
 
 cd "$DEVENV_ROOT/$project"
-exec ./gradlew --no-daemon bootRun "$@"
+exec ./gradlew --no-daemon "${build_options[@]}" bootRun "$@"
