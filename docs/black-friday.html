@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#2C3C69">
+  <title>Let's Peppol | Plans &amp; Pricing · Black Friday</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #2C3C69;
+      --navy-deep: #202D50;
+      --orange: #FAA21D;
+      --ink: #273653;
+      --muted: #7B8295;
+      --white: #FFF;
+      --panel: rgba(255, 255, 255, .78);
+      --line: rgba(44, 60, 105, .11);
+      --radius: 28px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font: 500 16px/1.5 "Work Sans", Arial, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(ellipse 65% 55% at 7% 95%, rgba(198, 195, 234, .67), transparent 77%),
+        radial-gradient(ellipse 50% 50% at 94% 35%, rgba(255, 237, 220, .42), transparent 78%),
+        linear-gradient(158deg, #F2ECEB 0%, #F3E7E3 55%, #E5E5F3 100%);
+    }
+    .page { width: min(1180px, calc(100% - 60px)); margin: 0 auto; padding: 45px 0 45px; }
+    .masthead {
+      display: flex;
+      align-items: stretch;
+      justify-content: space-between;
+      gap: 34px;
+      margin: 0 0 58px;
+    }
+    .intro { max-width: 770px; min-width: 0; }
+    .masthead-side {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: space-between;
+      flex-shrink: 0;
+      gap: 28px;
+    }
+    .logo-link { display: block; width: 224px; max-width: 100%; border-radius: 12px; }
+    .logo-link:focus-visible { outline: 3px solid var(--orange); outline-offset: 4px; }
+    .brand-logo { display: block; width: 100%; height: auto; }
+    .eyebrow {
+      margin: 0 0 11px;
+      color: var(--navy);
+      font-size: .77rem;
+      font-weight: 800;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+    h1 { margin: 0; color: var(--navy-deep); font-size: clamp(2.5rem, 4.35vw, 4rem); line-height: 1.09; font-weight: 600; letter-spacing: -.055em; }
+    .lead { margin: 21px 0 7px; font-size: clamp(1rem, 1.45vw, 1.19rem); font-weight: 600; line-height: 1.44; color: #7F8197; }
+    .intro-detail { margin: 0; color: #777D91; font-size: .91rem; line-height: 1.55; max-width: 730px; }
+    .intro-detail strong { color: var(--navy); }
+    .intro-detail .quote { color: var(--navy); font-weight: 700; }
+    .billing { flex-shrink: 0; display: flex; align-items: center; gap: 4px; padding: 5px; margin-bottom: 8px; border-radius: 50px; background: rgba(255,255,255,.78); box-shadow: 0 8px 25px rgba(44,60,105,.045); }
+    .billing button {
+      cursor: pointer;
+      border: 0;
+      border-radius: 50px;
+      min-width: 113px;
+      padding: 12px 14px;
+      font: 800 .72rem/1 "Work Sans", Arial, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: .065em;
+      background: transparent;
+      color: var(--navy);
+      transition: background .18s ease, box-shadow .18s ease;
+    }
+    .billing button[aria-pressed="true"] { background: var(--orange); color: var(--navy-deep); box-shadow: 0 5px 14px rgba(250,162,29,.26); }
+    .billing button:focus-visible, .plan-button:focus-visible { outline: 3px solid var(--orange); outline-offset: 4px; }
+    .promos { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: -28px 0 31px; }
+    .promos span { font-size: .7rem; line-height: 1; letter-spacing: .045em; text-transform: uppercase; font-weight: 800; color: var(--navy); background: rgba(255,255,255,.64); padding: 10px 13px; border-radius: 30px; border: 1px solid rgba(255,255,255,.65); }
+    .promos span:first-child { background: var(--orange); border-color: var(--orange); }
+    .pricing-shell {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: stretch;
+      position: relative;
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: 0 18px 45px rgba(44,60,105,.09);
+      margin-top: 34px;
+      padding: 0 12px;
+      border: 1px solid rgba(255,255,255,.54);
+    }
+    .plan {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      padding: 47px 31px 30px;
+      min-width: 0;
+      border-radius: var(--radius);
+    }
+    .plan + .plan:before {
+      content: "";
+      position: absolute;
+      inset: 52px auto 42px 0;
+      width: 1px;
+      background: var(--line);
+    }
+    .plan .price-before { color: #7B8295; font-size: .8rem; font-weight: 600; min-height: 20px; }
+    .price-before s { text-decoration-thickness: 2px; }
+    .price-line { display: flex; align-items: baseline; gap: 5px; margin: 3px 0 23px; white-space: nowrap; color: var(--navy-deep); }
+    .price-line .amount { font-size: clamp(2.5rem, 4vw, 3.4rem); font-weight: 800; letter-spacing: -.085em; line-height: 1.1; }
+    .price-line .period { font-size: .93rem; font-weight: 500; color: #8B8CA0; }
+    .plan h2 { margin: 0 0 8px; font-size: clamp(1.35rem, 2vw, 1.8rem); line-height: 1.1; letter-spacing: -.04em; font-weight: 700; color: var(--navy-deep); }
+    .description { margin: 0 0 17px; min-height: 84px; max-width: 270px; color: #86889D; font-size: .89rem; line-height: 1.48; }
+    .features { display: grid; gap: 13px; list-style: none; padding: 0; margin: 0 0 38px; font-size: .84rem; color: #71788D; }
+    .features li { display: flex; align-items: baseline; gap: 11px; }
+    .check { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 21px; width: 21px; height: 21px; border-radius: 50%; background: #FFF0D6; color: var(--navy); font-size: .8rem; font-weight: 800; transform: translateY(3px); }
+    .check::before { content: "✓"; }
+    .plan-button { margin-top: auto; text-align: center; display: block; width: 100%; padding: 14px 12px; background: #A5A1B7; color: #fff; font-size: .93rem; font-weight: 700; border-radius: 100px; text-decoration: none; }
+    .sale-label { display: inline-block; align-self: flex-start; color: var(--navy); font-size: .67rem; letter-spacing: .025em; text-transform: uppercase; font-weight: 800; margin-bottom: 12px; }
+    /* The Gold tier is the one permanently highlighted plan. */
+    .plan--featured {
+      z-index: 1;
+      background: var(--navy-deep);
+      color: var(--white);
+      border-radius: var(--radius);
+      box-shadow: 0 23px 38px rgba(32,45,80,.27);
+      transform: translateY(-19px);
+    }
+    .plan--featured:before { opacity: 0; }
+    .plan--featured h2, .plan--featured .price-line { color: var(--white); }
+    .plan--featured .price-line .period,
+    .plan--featured .description,
+    .plan--featured .features,
+    .plan--featured .price-before { color: #D5D9E8; }
+    .plan--featured .sale-label { color: #FFD085; }
+    .plan--featured .check { background: #34456D; color: var(--white); }
+    .plan--featured .plan-button { background: var(--orange); color: var(--navy-deep); }
+    .popular-tag {
+      position: absolute;
+      top: 16px;
+      right: 17px;
+      border-radius: 999px;
+      padding: 8px 13px;
+      color: #FFD085;
+      background: #3A4774;
+      font-size: .63rem;
+      font-weight: 800;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+    }
+    .footer-note { margin-top: 25px; padding: 14px 3px 0; font-size: .76rem; line-height: 1.5; color: #788097; }
+    .footer-note strong { color: var(--navy); }
+    .brand-footer { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-top: 23px; color: #82869A; font-size: .8rem; }
+    .brand-footer .wordmark { color: var(--navy); font-size: 1.08rem; font-weight: 800; }
+    .brand-footer .tag { display: block; font-size: .79rem; }
+    @media (max-width: 1050px) {
+      .page { width: min(950px, calc(100% - 42px)); }
+      .plan { padding-left: 19px; padding-right: 19px; }
+      .features { font-size: .8rem; }
+    }
+    @media (max-width: 760px) {
+      .page { width: min(540px, calc(100% - 34px)); padding-top: 30px; }
+      .masthead { flex-direction: column-reverse; gap: 16px; margin-bottom: 32px; }
+      .masthead-side { align-items: stretch; gap: 18px; }
+      .logo-link { width: 175px; align-self: flex-end; }
+      .billing { display: inline-flex; align-self: flex-start; margin-top: 6px; }
+      .promos { margin: 0 0 20px; }
+      .pricing-shell { display: flex; flex-direction: column; gap: 14px; background: none; box-shadow: none; padding: 0; border: none; margin: 0; }
+      .plan { background: rgba(255,255,255,.82); border-radius: 24px; padding: 30px 26px 28px; box-shadow: 0 12px 36px rgba(44,60,105,.075); }
+      .plan + .plan:before { display: none; }
+      .plan--featured { transform: none; }
+      .price-line { margin-bottom: 17px; }
+      .description { min-height: 0; max-width: 100%; }
+      .features { margin-bottom: 28px; }
+      .brand-footer { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="masthead">
+      <div class="intro">
+        <p class="eyebrow">Black Friday · Let’s Peppol</p>
+        <h1>Plans &amp; Pricing</h1>
+        <p class="lead">All our plans are on sale.<br>From expensive to extremely affordable.</p>
+        <p class="intro-detail">For Black Friday, every Let’s Peppol tier is available for the unbeatable price of <strong>€0/year</strong>. Because e-invoicing is already complicated enough.</p>
+      </div>
+      <div class="masthead-side">
+        <a class="logo-link" href="https://letspeppol.org" aria-label="Let’s Peppol registration">
+          <svg class="brand-logo" viewBox="0 0 768 320" role="img" aria-labelledby="brand-title" xmlns="http://www.w3.org/2000/svg">
+            <title id="brand-title">Let’s Peppol</title>
+            <g transform="translate(32 32)">
+              <circle cx="128" cy="128" r="128" fill="#FFFFFF" stroke="#2C3C69" stroke-width="16"/>
+              <g fill="none" stroke="#2C3C69" stroke-width="16">
+                <path d="M0 128H256 M128 0V256 M17 64H239 M17 192H239"/>
+                <path d="M128 0a32 64 0 0 0 0 256a32 64 0 0 0 0-256"/>
+              </g>
+              <path d="M120 120L160 160L264 64" fill="none" stroke="#FFFFFF" stroke-width="48" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M120 120L160 160L264 64" fill="none" stroke="#FAA21D" stroke-width="32" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+            <g fill="#2C3C69" font-family="Work Sans,Arial,sans-serif" font-size="112" font-weight="700">
+              <text x="352" y="144">Let’s</text>
+              <text x="352" y="240">Peppol</text>
+            </g>
+          </svg>
+        </a>
+        <div class="billing" role="group" aria-label="Billing period">
+          <button type="button" id="monthly" aria-pressed="false">Monthly</button>
+          <button type="button" id="yearly" aria-pressed="true">Yearly</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="promos" aria-label="Black Friday offers">
+      <span>Black Friday Sale</span><span>100% off</span><span>Limited-time fake pricing page</span>
+    </div>
+
+    <section class="pricing-shell" aria-label="Pricing tiers">
+      <article class="plan" data-yearly="0">
+        <div class="price-before"><s>€0/year</s></div>
+        <div class="price-line"><span class="amount">€0</span><span class="period">/ year</span></div>
+        <h2>Bronze</h2>
+        <p class="description">For people who just want to say they have a pricing tier.</p>
+        <ul class="features">
+          <li><span class="check" aria-hidden="true"></span><span>Send invoices with confidence</span></li>
+          <li><span class="check" aria-hidden="true"></span><span>Receive invoices like a professional</span></li>
+          <li><span class="check" aria-hidden="true"></span><span>Enjoy the emotional support of open standards</span></li>
+        </ul>
+        <span class="sale-label">Black Friday Deal</span>
+        <a class="plan-button" href="https://be.letspeppol.org/registration">Choose Bronze</a>
+      </article>
+      <article class="plan" data-yearly="0">
+        <div class="price-before"><s>€0/year</s></div>
+        <div class="price-line"><span class="amount">€0</span><span class="period">/ year</span></div>
+        <h2>Silver</h2>
+        <p class="description">For teams that appreciate premium value at a deeply suspicious discount.</p>
+        <ul class="features">
+          <li><span class="check" aria-hidden="true"></span><span>Everything in Bronze</span></li>
+          <li><span class="check" aria-hidden="true"></span><span>Extra credibility through the word “Silver”</span></li>
+          <li><span class="check" aria-hidden="true"></span><span>Feels more advanced, even at the same price</span></li>
+        </ul>
+        <span class="sale-label">Black Friday Deal</span>
+        <a class="plan-button" href="https://be.letspeppol.org/registration">Choose Silver</a>
+      </article>
+      <article class="plan plan--featured" data-yearly="0">
+        <span class="popular-tag">Most popular</span>
+        <div class="price-before"><s>€0/year</s></div>
+        <div class="price-line"><span class="amount">€0</span><span class="period">/ year</span></div>
+        <h2>Gold</h2>
+        <p class="description">For organizations that demand the prestige of selecting the most expensive free option.</p>
+        <ul class="features">
+          <li><span class="check" aria-hidden="true"></span><span>Everything in Silver</span></li>
+          <li><span class="check" aria-hidden="true"></span><span>Gold-tier bragging rights</span></li>
+          <li><span class="check" aria-hidden="true"></span><span>Maximum Black Friday absurdity</span></li>
+        </ul>
+        <span class="sale-label">Black Friday Deal</span>
+        <a class="plan-button" href="https://be.letspeppol.org/registration">Choose Gold</a>
+      </article>
+    </section>
+
+    <p class="footer-note" id="note"><strong>Disclaimer:</strong> This is a fake pricing page for a Black Friday joke. All tiers conveniently cost the same: <strong>€0/year</strong>. Let’s Peppol is free, and it always will be.</p>
+    <footer class="brand-footer">
+      <div><strong class="wordmark">Let’s Peppol</strong><span class="tag">E-invoicing without the nonsense.</span></div>
+      <span>letspeppol.org</span>
+    </footer>
+  </main>
+  <script>
+    const buttons = { monthly: document.querySelector('#monthly'), yearly: document.querySelector('#yearly') };
+    function setPeriod(period) {
+      const annual = period === 'yearly';
+      buttons.yearly.setAttribute('aria-pressed', String(annual));
+      buttons.monthly.setAttribute('aria-pressed', String(!annual));
+      for (const card of document.querySelectorAll('[data-yearly]')) {
+        const oldText = annual ? '€0/year' : '€0/month';
+        card.querySelector('.price-before s').textContent = oldText;
+        card.querySelector('.period').textContent = annual ? '/ year' : '/ month';
+      }
+    }
+    buttons.yearly.addEventListener('click', () => setPeriod('yearly'));
+    buttons.monthly.addEventListener('click', () => setPeriod('monthly'));
+  </script>
+</body>
+</html>
