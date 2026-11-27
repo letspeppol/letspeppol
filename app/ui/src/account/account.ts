@@ -13,6 +13,7 @@ import {getVatDisplayMode, hasVatNumber, IVatDisplay, VatDisplayMode} from "../s
 
 const ACCESS_POINTS: Record<string, {name: string; url: string}> = {
     RECOMMAND: {name: 'Recommand', url: 'https://recommand.eu/'},
+    PHOSS: {name: 'PHOSS', url: 'https://github.com/phax/phoss-ap'},
     SCRADA: {name: 'Scrada', url: 'https://www.scrada.be/'},
     E_INVOICE: {name: 'E-Invoice', url: 'https://e-invoice.be/'},
 };

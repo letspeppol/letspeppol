@@ -112,6 +112,17 @@ class RegistryControllerTest {
         }).when(scrada).register(any(), any());
     }
 
+    @Test
+    void phossAvailabilityUsesConfiguredProviderInsteadOfRecommand() throws Exception {
+        ReflectionTestUtils.setField(context.getBean(RegistryController.class), "accessPoint", AccessPoint.PHOSS);
+        var phoss = mock(AccessPointServiceInterface.class);
+        when(accessPoints.get(AccessPoint.PHOSS)).thenReturn(phoss);
+        when(phoss.getReceivingAvailability(ID)).thenReturn(new PeppolSettings(false, "Configured PHOSS SMP"));
+        mvc.perform(get("/sapi/registry/receiving-availability").param("peppolId", ID))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.receivingSmpUrl").value("Configured PHOSS SMP"));
+        verifyNoInteractions(recommand);
+    }
+
     @ParameterizedTest
     @EnumSource(value = AccessPoint.class, names = {"SCRADA", "RECOMMAND"})
     void registrationStatusIncludesTheDefaultForCompaniesThatNeverRegistered(AccessPoint defaultAccessPoint) throws Exception {

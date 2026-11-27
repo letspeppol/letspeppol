@@ -165,9 +165,28 @@ class UblDocumentSchedulerServiceTest {
         assertThat(document.getAccessPointDetails()).isNull();
     }
 
+    @Test
+    void phossUsesProviderForDistinctParticipantsAndPollsItsStatus() {
+        when(registry.getAccessPoint(document.getOwnerPeppolId())).thenReturn(AccessPoint.PHOSS);
+        when(providers.get(AccessPoint.PHOSS)).thenReturn(provider);
+        when(provider.sendDocument(document)).thenReturn("sbdh-instance");
+        scheduler.sendDueOutgoing();
+        assertThat(document.getAccessPoint()).isEqualTo(AccessPoint.PHOSS);
+        assertThat(document.getAccessPointId()).isEqualTo("sbdh-instance");
+        verify(provider).sendDocument(document);
+        when(documents.findAllByDirectionAndProcessedOnIsNullAndAccessPointIsNotNull(
+                eq(DocumentDirection.OUTGOING), any())).thenReturn(List.of(document));
+        when(provider.getStatus(document)).thenReturn(new org.letspeppol.proxy.dto.StatusReport(true, null));
+        scheduler.synchronizeOutgoingDocuments();
+        verify(provider).getStatus(document);
+        assertThat(document.getProcessedOn()).isNotNull();
+        assertThat(document.getProcessedStatus()).isNull();
+    }
+
     private UblDocumentSchedulerService newScheduler() {
         var result = new UblDocumentSchedulerService(documents, registry, providers, backups, balance);
         ReflectionTestUtils.setField(result, "sendSlowDownFactor", 2);
+        ReflectionTestUtils.setField(result, "synchronizeLimitPerInterval", 60);
         return result;
     }
 
@@ -178,6 +197,7 @@ class UblDocumentSchedulerServiceTest {
         result.setPartnerPeppolId("0208:1023290711");
         result.setDirection(DocumentDirection.OUTGOING);
         result.setScheduledOn(Instant.now().minusSeconds(1));
+        result.setUpdatedOn(Instant.now());
         result.setDownloadCount(0);
         return result;
     }

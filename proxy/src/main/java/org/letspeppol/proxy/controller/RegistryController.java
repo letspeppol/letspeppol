@@ -84,8 +84,13 @@ public class RegistryController {
     }
 
     @GetMapping("/receiving-availability")
-    @Operation(summary = "Check the current receiving SMP", description = "Uses Recommand to look up a Peppol identifier without requiring a local registration. Reserved for trusted backend services.")
+    @Operation(summary = "Check the current receiving SMP", description = "Looks up a Peppol identifier without requiring a local registration. Uses configured PHOSS SMP for PHOSS, otherwise Recommand discovery. Reserved for trusted backend services.")
     public PeppolSettings getReceivingAvailability(@RequestParam String peppolId) {
+        if (accessPoint == AccessPoint.PHOSS) {
+            var phoss = accessPoints.get(AccessPoint.PHOSS);
+            if (phoss == null) throw new ServiceUnavailableException("PHOSS is not configured");
+            return phoss.getReceivingAvailability(peppolId);
+        }
         return recommandService.orElseThrow(() -> new ServiceUnavailableException("Recommand is not configured"))
                 .getReceivingAvailability(peppolId);
     }

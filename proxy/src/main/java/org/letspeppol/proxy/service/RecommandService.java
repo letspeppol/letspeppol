@@ -172,6 +172,7 @@ public class RecommandService implements AccessPointServiceInterface {
         }
     }
 
+    @Override
     public PeppolSettings getReceivingAvailability(String peppolId) {
         parsePeppolId(peppolId);
         return new PeppolSettings(false, findReceivingSmp(peppolId));
