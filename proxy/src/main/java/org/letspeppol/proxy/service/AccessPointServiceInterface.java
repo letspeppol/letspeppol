@@ -20,6 +20,11 @@ public interface AccessPointServiceInterface {
 
     void unregister(String peppolId, Map<String, Object> variables);
 
+    /** Read-only participant lookup; this does not register a receiver or submit a document. */
+    default PeppolSettings getReceivingAvailability(String peppolId) {
+        throw new ConflictException("Participant lookup is not supported by this access point");
+    }
+
     /** The caller persists settings changes on the locked registry entity. */
     default PeppolSettings getSettings(Registry registry) {
         throw new ConflictException("Company settings are not supported by this access point");

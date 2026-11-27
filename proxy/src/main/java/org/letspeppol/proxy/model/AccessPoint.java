@@ -5,5 +5,6 @@ public enum AccessPoint {
     LOOPBACK,
     E_INVOICE,
     SCRADA,
-    RECOMMAND
+    RECOMMAND,
+    PHOSS
 }

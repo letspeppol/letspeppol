@@ -24,6 +24,8 @@ public class DeliveryDetailsMapper {
                     valueAsString(details, "peppolC3MessageID"),
                     valueAsInstant(details, "peppolC3Timestamp")
             );
+            case PHOSS -> new DeliveryDetails(null,
+                    valueAsString(details, "receiptMessageId"), valueAsInstant(details, "receiptTimestamp"));
             case NONE, LOOPBACK, E_INVOICE -> new DeliveryDetails(null, null, null);
             case null -> new DeliveryDetails(null, null, null);
         };
