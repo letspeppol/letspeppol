@@ -15,6 +15,7 @@ Architecture and API documentation:
 
 * [KYC and registration flows](./readme/kyc.md) guides users through the onboarding scenarios and
   their matching `RegistrationTest` examples.
+* [Direct PHOSS AP/SMP integration](./readme/phoss-access-point.md) covers the optional proxy provider and isolated local AS4 verification.
 * [API network flows](./readme/api-network-flows.md) groups every implemented API by caller,
   authentication mechanism, and downstream service, with focused diagrams and executable proof.
 * Unified interactive [Swagger UI](https://be.letspeppol.org/api-docs.html) for the KYC, App, and

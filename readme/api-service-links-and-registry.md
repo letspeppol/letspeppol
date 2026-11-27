@@ -26,6 +26,9 @@ sequenceDiagram
     end
     KYC->>KYC: POST /kyc/auth/oauth2/token (client_credentials, service)
     KYC->>Proxy: GET or POST /proxy/sapi/registry
+    KYC->>Proxy: GET /proxy/sapi/registry/registration-status
+    KYC->>Proxy: GET or PUT /proxy/sapi/registry/settings
+    KYC->>Proxy: GET /proxy/sapi/registry/receiving-availability
     KYC->>Proxy: PUT /proxy/sapi/registry/unregister, /allow, or /reject
     KYC->>Proxy: DELETE /proxy/sapi/registry
     Proxy->>AP: apply registry operation
@@ -38,5 +41,16 @@ sequenceDiagram
 
 Registry route coverage: `/proxy/sapi/registry/allow` and `/proxy/sapi/registry/reject` are the two
 app-link decisions represented by "apply registry operation".
+`/proxy/sapi/registry/registration-status` also reports the configured default provider;
+`/proxy/sapi/registry/settings` reads or updates provider-specific receiving settings.
+`/proxy/sapi/registry/receiving-availability` uses the configured local SMP when the
+default provider is PHOSS, otherwise Recommand discovery. PHOSS reports metadata
+availability without claiming that LetsPeppol receiving is enabled. It does not
+expose AP credentials or internal SMP URLs in its response.
+
+PHOSS registration is initially a local **send-only association**, not public SMP
+registration. Receiving cannot be enabled through this adapter yet. See the
+[PHOSS integration guide](./phoss-access-point.md) for transport and local-lab limits.
+Focused proof: [`PhossServiceTest`](../proxy/src/test/java/org/letspeppol/proxy/service/PhossServiceTest.java).
 
 Return to the [API network flow guide](./api-network-flows.md).

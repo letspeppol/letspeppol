@@ -76,4 +76,8 @@ RECOMMAND_API_SECRET='your-playground-secret'
 
 Restart the proxy (or stop and restart `devenv up`) before testing Peppol registration or document exchange. Use test data and don't use a production team or share the credentials. Leave both values unset or blank for local login and email tests. The proxy only loads and polls Recommand when credentials are configured; supplying only one value causes a startup error.
 
+For direct PHOSS AP/SMP integration, see the [PHOSS guide](../readme/phoss-access-point.md).
+Its isolated container setup does not publish lab ports or expose AP credentials to the UI.
+The default host-based devenv processes cannot resolve the lab's Docker hostnames.
+
 Scrada is disabled if `SCRADA_API_KEY` is unset or blank. To enable it, also supply `SCRADA_API_PWD` and `SCRADA_COMPANY_ID`. In devenv, new registrations use Recommand by default; set `PEPPOL_ACCESS_POINT=SCRADA` only if you want to register new companies through Scrada instead.
