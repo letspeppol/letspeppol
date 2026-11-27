@@ -1,0 +1,70 @@
+# Standalone integration-test backend. No host ports, no existing PHOSS container changes.
+# The auth fixture is NOT KYC and must never be deployed or attached to a public network.
+name: letspeppol-phoss-test
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: proxy
+      POSTGRES_USER: proxy
+      POSTGRES_PASSWORD: local-phoss-test-only
+    volumes:
+      - proxy-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U proxy -d proxy"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+    networks: [test]
+
+  auth:
+    image: eclipse-temurin:25-jdk
+    command: [java, --class-path, '/support/libs/*', /support/LabSupport.java, serve]
+    volumes:
+      - ./LabSupport.java:/support/LabSupport.java:ro
+      - ../../proxy/build/phoss-lab-libs:/support/libs:ro
+    networks: [test]
+
+  proxy:
+    image: eclipse-temurin:25-jdk
+    command: [java, --enable-native-access=ALL-UNNAMED, -jar, /proxy.jar]
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: postgres
+      DB_HOST: db
+      DB_USER: proxy
+      DB_PASS: local-phoss-test-only
+      KYC_JWKS_URI: http://auth:8080/jwks
+      KYC_ISSUER_URI: https://kyc.phoss.test
+      OAUTH2_AUDIENCE: letspeppol-api
+      PEPPOL_ACCESS_POINT: PHOSS
+      PHOSS_ENABLED: 'true'
+      PHOSS_AP_URL: http://ap:8080
+      PHOSS_SMP_URL: http://smp:8080
+      PHOSS_TOKEN_FILE: /run/secrets/phoss-token
+      E_INVOICE_ORGANISATION_API_KEY: ''
+      SCRADA_COMPANY_KEY: ''
+      SCHEDULER_SYNC_DELAY: '1000'
+      SCHEDULER_SEND_DELAY: '1000'
+      BACKUP_DATA_DIR: /state/backup
+    volumes:
+      - ../../proxy/build/libs/proxy.jar:/proxy.jar:ro
+      - ${PHOSS_TOKEN_FILE:?Set PHOSS_TOKEN_FILE to a local secret file}:/run/secrets/phoss-token:ro
+      - ./LabSupport.java:/support/LabSupport.java:ro
+      - ../../proxy/build/phoss-lab-libs:/support/libs:ro
+      - ${PHOSS_SAMPLE_SBD:?Set PHOSS_SAMPLE_SBD to the existing lab sample}:/support/sample.xml:ro
+      # Do not mount the state root: it also contains host-only SMP credentials.
+      - ../../.devenv/state/phoss-test/evidence:/state/evidence
+      - ../../.devenv/state/phoss-test/backup:/state/backup
+    networks: [test, phoss]
+
+volumes:
+  proxy-data:
+networks:
+  test:
+    internal: true
+  phoss:
+    external: true
+    name: phoss-local

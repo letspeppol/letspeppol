@@ -61,3 +61,9 @@ tasks.named('test') {
 tasks.named('bootJar') {
     archiveFileName = 'proxy.jar'
 }
+
+// Optional local PHOSS verification tools; never included in the production artifact.
+tasks.register('phossLabLibraries', Copy) {
+    from configurations.runtimeClasspath
+    into layout.buildDirectory.dir('phoss-lab-libs')
+}

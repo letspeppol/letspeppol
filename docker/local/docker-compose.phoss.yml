@@ -1,0 +1,19 @@
+# Optional override: docker compose -f docker-compose.yml -f docker-compose.phoss.yml up -d proxy
+# Keep the regular network for DB/KYC/App; never publish AP/SMP ports.
+services:
+  proxy:
+    environment:
+      PEPPOL_ACCESS_POINT: PHOSS
+      PHOSS_ENABLED: 'true'
+      PHOSS_AP_URL: http://ap:8080
+      PHOSS_SMP_URL: http://smp:8080
+      PHOSS_TOKEN_FILE: /run/secrets/phoss-token
+    volumes:
+      - ${PHOSS_TOKEN_FILE:?Set PHOSS_TOKEN_FILE to a local secret file}:/run/secrets/phoss-token:ro
+    networks:
+      - default
+      - phoss
+networks:
+  phoss:
+    external: true
+    name: phoss-local
