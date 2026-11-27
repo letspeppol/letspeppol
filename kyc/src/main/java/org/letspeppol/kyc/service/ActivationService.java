@@ -155,7 +155,7 @@ public class ActivationService {
     @Transactional
     public void linkAffiliateOwnership(EmailVerification emailVerification) {
         ownershipService.findByAccountEmailAndPeppolIdAndType(emailVerification.getEmail(), emailVerification.getPeppolId(), AccountType.ADMIN)
-                .ifPresent(ownership -> ownershipService.ensureOwnership(ownership.getAccount(), AccountType.AFFILIATE, ownership.getCompany()));
+                .ifPresent(ownership -> ownershipService.ensureAffiliateOwnership(ownership.getAccount(), ownership.getCompany()));
     }
 
     @Transactional

@@ -1,0 +1,4 @@
+<nav if.bind="ownershipService.admin" class="tabs settings-tabs" aria-label="Settings" t="[aria-label]navigation.settings">
+    <button type="button" class="tab" class.bind="active === 'company' ? 'active-route' : ''" aria-current.bind="active === 'company' ? 'page' : null" click.trigger="open('company')" t="settings.tabs.company">Company</button>
+    <button type="button" class="tab" class.bind="active === 'users' ? 'active-route' : ''" aria-current.bind="active === 'users' ? 'page' : null" click.trigger="open('users')" t="settings.tabs.users">Users</button>
+</nav>

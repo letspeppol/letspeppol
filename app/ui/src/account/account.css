@@ -3,58 +3,21 @@
     color: var(--muted);
 }
 
-.company-identifiers {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-1);
-}
-
-.company-identifiers .field {
-    min-width: 0;
-}
-
-.access-point-value {
-    position: relative;
+.account-without-company {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: var(--space-1);
+    flex-wrap: wrap;
+    margin-bottom: var(--space-1);
 }
 
-.access-point-value input {
-    width: 100%;
-    padding-right: calc(var(--space-065) + 1.5rem);
+.account-without-company p {
+    margin: 0;
 }
 
-.access-point-link {
-    position: absolute;
-    right: var(--space-065);
-    display: inline-flex;
-    align-items: center;
-    color: var(--primary);
-}
-
-.access-point-link:focus-visible {
-    outline: 2px solid var(--primary);
-    outline-offset: 1px;
-}
-
-.access-point-link svg {
-    flex-shrink: 0;
-}
-
-.peppol-document-types {
-    margin: var(--space-05) 0 0;
-    padding-left: 2.5rem;
+.vat-display-field p {
+    margin: 0;
     color: var(--muted);
-    font-size: 0.875rem;
-}
-
-.peppol-receiving-provider {
-    margin: var(--space-05) 0 0;
-    padding-left: 1.5rem;
-    font-size: 0.875rem;
-    overflow-wrap: anywhere;
-}
-
-.peppol-receiving-provider p {
-    margin: 0 0 var(--space-05);
+    font-size: .875rem;
 }

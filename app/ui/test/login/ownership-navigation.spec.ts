@@ -8,16 +8,23 @@ const DEFAULT_PEPPOL_ID = '0208:0123456789';
 const STALE_PEPPOL_ID = '0208:9999999999';
 const DEFAULT_DASHBOARD = `/${DEFAULT_PEPPOL_ID}/dashboard`;
 
-function createLoginService() {
+function createLoginService(peppolId: string | null = DEFAULT_PEPPOL_ID) {
     const service = Object.create(LoginService.prototype) as LoginService;
     Object.assign(service, {
         accessToken: null,
         ownershipService: {
-            getCurrentPeppolId: () => DEFAULT_PEPPOL_ID,
+            getCurrentPeppolId: () => peppolId,
             getRememberedOwnershipType: () => null,
         },
     });
     return service;
+}
+
+function hookFor(loginService: LoginService) {
+    const hook = Object.create(AuthenticationHook.prototype) as AuthenticationHook;
+    Object.assign(loginService, {ensureAuthenticated: vi.fn().mockResolvedValue(true)});
+    Object.assign(hook, {loginService});
+    return hook;
 }
 
 afterEach(() => {
@@ -65,6 +72,43 @@ describe('ownership navigation', () => {
         });
 
         expect(await hook.canLoad({} as IRouteViewModel, {peppolId}, {} as RouteNode)).toBe(expected);
+    });
+
+    it('lands an account without a company on its account page after login', () => {
+        history.replaceState({}, '', `/${STALE_PEPPOL_ID}/invoices/17`);
+        rememberCurrentNavigation();
+
+        expect(createLoginService(null).getPostLoginPath()).toBe('/account');
+    });
+
+    it('keeps an account without a company on the add-company screen it asked for', () => {
+        history.replaceState({}, '', '/add-ownership');
+        rememberCurrentNavigation();
+
+        expect(createLoginService(null).getPostLoginPath()).toBe('/add-ownership');
+    });
+
+    it('lets an account without a company open its account page', async () => {
+        const hook = hookFor(createLoginService(null));
+
+        expect(await hook.canLoad({} as IRouteViewModel, {}, {data: {withoutCompany: '/account'}} as unknown as RouteNode))
+            .toBe(true);
+    });
+
+    it('sends an account without a company from company screens to its account page', async () => {
+        const hook = hookFor(createLoginService(null));
+
+        expect(await hook.canLoad({} as IRouteViewModel, {peppolId: STALE_PEPPOL_ID}, {data: {}} as unknown as RouteNode))
+            .toBe('/account');
+        expect(await hook.canLoad({} as IRouteViewModel, {}, {data: {}} as unknown as RouteNode))
+            .toBe('/account');
+    });
+
+    it('sends a company member from the account page without company to the one of its company', async () => {
+        const hook = hookFor(createLoginService());
+
+        expect(await hook.canLoad({} as IRouteViewModel, {}, {data: {withoutCompany: '/account'}} as unknown as RouteNode))
+            .toBe(`/${DEFAULT_PEPPOL_ID}/account`);
     });
 
     it('continues to send failed authorization to login', async () => {

@@ -20,6 +20,11 @@ export class AuthenticationHook {
             this.loginService.rememberCurrentNavigation();
             return '/login';
         }
+        const withoutCompany = next.data?.withoutCompany;
+        if (typeof withoutCompany === 'string') {
+            const route = this.loginService.getCurrentOwnershipRoute(withoutCompany);
+            return route === withoutCompany ? true : route;
+        }
         const dashboard = this.loginService.getCurrentOwnershipRoute('/dashboard');
         return requestedPeppolId && dashboard === ownershipRoute(requestedPeppolId, '/dashboard')
             ? true

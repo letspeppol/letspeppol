@@ -1,6 +1,5 @@
 package org.letspeppol.app.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.core.instrument.Counter;
 import org.junit.jupiter.api.Test;
 import org.letspeppol.app.dto.UblDocumentDto;
@@ -11,6 +10,7 @@ import org.letspeppol.app.model.DocumentType;
 import org.letspeppol.app.repository.CompanyRepository;
 import org.letspeppol.app.repository.DocumentRepository;
 import org.springframework.web.reactive.function.client.WebClient;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -60,9 +60,9 @@ class DocumentServiceNotificationTest {
                 documentRepository,
                 mock(ValidationService.class),
                 notificationService,
-                mock(JwtService.class),
                 mock(UblInvoicePdfService.class),
-                new ObjectMapper(),
+                new JsonMapper(),
+                mock(WebClient.class),
                 mock(WebClient.class),
                 mock(Counter.class),
                 mock(Counter.class),

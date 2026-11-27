@@ -26,3 +26,44 @@ describe('VAT display mode helpers', () => {
         expect(new LocalStorageVatDisplay().mode).toBe('excl');
     });
 });
+
+describe('VAT display preference per account', () => {
+    beforeEach(() => {
+        localStorage.clear();
+    });
+
+    test('each account keeps its own choice in the same browser', () => {
+        const vatDisplay = new LocalStorageVatDisplay();
+        vatDisplay.useAccount('accountant');
+        vatDisplay.setMode('incl');
+
+        vatDisplay.useAccount('director');
+        expect(vatDisplay.mode).toBe('excl');
+        vatDisplay.setMode('excl');
+
+        vatDisplay.useAccount('accountant');
+        expect(vatDisplay.mode).toBe('incl');
+    });
+
+    test('an account without its own choice keeps the choice saved before preferences were per account', () => {
+        localStorage.setItem('lp.vatDisplay.v1', 'incl');
+        const vatDisplay = new LocalStorageVatDisplay();
+
+        vatDisplay.useAccount('director');
+
+        expect(vatDisplay.mode).toBe('incl');
+    });
+
+    test('switching account tells the screens showing totals', () => {
+        const vatDisplay = new LocalStorageVatDisplay();
+        vatDisplay.useAccount('accountant');
+        vatDisplay.setMode('incl');
+        vatDisplay.useAccount(null);
+        const modes: string[] = [];
+        vatDisplay.subscribe(mode => modes.push(mode));
+
+        vatDisplay.useAccount('accountant');
+
+        expect(modes).toEqual(['incl']);
+    });
+});
